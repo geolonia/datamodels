@@ -94,3 +94,7 @@ test('a value-type example violating a code pattern fails', () =>
 test('an entity example whose address violates the referenced value schema fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { e.address.postalCode = 'ABC'; }),
     /RoadClosure\/examples\/example\.json: .*pattern/));
+
+test('a context importing a version that is neither published nor current fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'context.jsonld'), (c) => { c['@context'][0] = 'https://models.geonicdb.com/context/common/v0.9.0.jsonld'; }),
+    /version 0\.9\.0 of subject "common" is neither published/));

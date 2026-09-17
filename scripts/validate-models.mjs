@@ -13,7 +13,8 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import jsonld from 'jsonld';
 import { readFile } from 'node:fs/promises';
-import { loadSubjects, attributesOf, toKeyValues, subjectUrls, modelUrls, resolveContextTerms, subjectForContextUrl, CORE_CONTEXT_URL, CORE_CONTEXT_FIXTURE } from './lib/models.mjs';
+import { loadSubjects, attributesOf, toKeyValues, subjectUrls, modelUrls, resolveContextTerms, CORE_CONTEXT_URL, CORE_CONTEXT_FIXTURE } from './lib/models.mjs';
+import { resolveContextDocument } from './lib/releases.mjs';
 
 const failures = [];
 const fail = (where, msg) => failures.push(`${where}: ${msg}`);
@@ -45,14 +46,14 @@ for (const subject of subjects) {
   const where = `models/${subject.name}`;
   const urls = subjectUrls(subject);
   let ctxTerms;
-  try { ctxTerms = resolveContextTerms(subject, subjects); } catch (e) { fail(`${where}/context.jsonld`, e.message); continue; }
+  try { ctxTerms = await resolveContextTerms(subject.context, subjects, resolveContextDocument); } catch (e) { fail(`${where}/context.jsonld`, e.message); continue; }
   const inlineTerms = subject.inlineTerms;
 
   // Local document loader: our own context URLs resolve to the source file,
   // the core context to the fixture. Anything else is a real fetch.
   const loader = async (url) => {
-    const s = subjectForContextUrl(url, subjects);
-    if (s) return { documentUrl: url, document: s.context };
+    const doc = await resolveContextDocument(url, subjects);
+    if (doc) return { documentUrl: url, document: doc };
     if (url === CORE_CONTEXT_URL) return { documentUrl: url, document: core };
     return jsonld.documentLoaders.node()(url);
   };

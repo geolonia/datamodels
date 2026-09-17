@@ -109,22 +109,23 @@ export function toKeyValues(normalized) {
   return out;
 }
 
-/**
- * All term definitions a subject's context provides, imported catalog contexts
- * first, inline definitions last (later wins, as in JSON-LD processing).
- */
-export function resolveContextTerms(subject, subjects) {
-  const terms = {};
-  for (const url of subject.imports) {
-    const imported = subjectForContextUrl(url, subjects);
-    if (!imported) throw new Error(`${subject.name}/context.jsonld imports ${url}, which is not a catalog subject`);
-    Object.assign(terms, resolveContextTerms(imported, subjects));
-  }
-  return Object.assign(terms, subject.inlineTerms);
+/** Imports (URLs) and merged inline terms of a context document. */
+export function splitContext(doc) {
+  const parts = Array.isArray(doc['@context']) ? doc['@context'] : [doc['@context']];
+  return { imports: parts.filter((p) => typeof p === 'string'), inlineTerms: Object.assign({}, ...parts.filter((p) => p && typeof p === 'object')) };
 }
 
-/** The subject whose context a catalog context URL (exact or alias) refers to. */
-export function subjectForContextUrl(url, subjects) {
-  const m = new RegExp(`^${BASE_URL}/context/([a-z][a-z0-9-]*)/v\\d+(\\.\\d+\\.\\d+)?\\.jsonld$`).exec(url);
-  return m ? subjects.find((s) => s.name === m[1]) : undefined;
+/**
+ * All term definitions a context document provides: imported catalog contexts
+ * first (resolved by version, see releases.mjs), inline definitions last.
+ */
+export async function resolveContextTerms(doc, subjects, resolveDocument) {
+  const { imports, inlineTerms } = splitContext(doc);
+  const terms = {};
+  for (const url of imports) {
+    const imported = await resolveDocument(url, subjects);
+    if (!imported) throw new Error(`context imports ${url}, which is not a catalog context URL`);
+    Object.assign(terms, await resolveContextTerms(imported, subjects, resolveDocument));
+  }
+  return Object.assign(terms, inlineTerms);
 }

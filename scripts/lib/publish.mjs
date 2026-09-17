@@ -51,7 +51,8 @@ export async function publishModels(subjects) {
         type: model.type, kind: model.kind, typeIri: mu.typeIri, subject: subject.name, domain: subject.name, source: subject.source,
         contextUrl: u.contextExact, contextAliasUrl: u.contextAlias, schemaUrl: mu.schemaExact, version: subject.version,
         status: model.catalog.status ?? 'draft', title: model.catalog.title, description: model.catalog.description,
-        sampleProperties: attributesOf(model).map(([n]) => n), pageUrl: mu.page, geonicdbModelUrl: mu.geonicdb,
+        sampleProperties: attributesOf(model).map(([n]) => n), pageUrl: mu.page,
+        ...(model.kind === 'entity' ? { geonicdbModelUrl: mu.geonicdb } : {}),
       });
     }
   }

@@ -39,7 +39,8 @@
     "chome": {
       "type": "string",
       "description": "Chome (丁目), digits only (\"一丁目\" → \"1\")",
-      "x-iri": "https://models.geonicdb.com/ns/common/chome"
+      "x-iri": "https://models.geonicdb.com/ns/common/chome",
+      "pattern": "^\\d+$"
     },
     "banchi": {
       "type": "string",

@@ -54,7 +54,7 @@
       "x-iri": "https://schema.org/address"
     },
     "addressTown": {
-      "description": "Deprecated since 1.1.0, use address. Town name of the address (provisional; to move to the common address model)",
+      "description": "Deprecated since 1.1.0, use address. Town name of the address",
       "type": "string",
       "x-ngsi": {
         "type": "Property"
@@ -63,7 +63,7 @@
       "x-deprecated": true
     },
     "addressBanchi": {
-      "description": "Deprecated since 1.1.0, use address. Block and lot number of the address (provisional; to move to the common address model)",
+      "description": "Deprecated since 1.1.0, use address. Block and lot number of the address",
       "type": "string",
       "x-ngsi": {
         "type": "Property"
