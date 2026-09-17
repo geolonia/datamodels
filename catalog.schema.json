@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://models.geonicdb.com/catalog.schema.json",
   "title": "GeonicDB data models catalog index",
   "description": "Wire format of catalog.json, read by GeonicDB, its console, CLI and MCP tool. Within a formatVersion fields are only added, never removed or retyped, so consumers must ignore unknown fields and this schema does not forbid them.",

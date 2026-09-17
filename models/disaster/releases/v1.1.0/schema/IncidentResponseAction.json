@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://models.geonicdb.com/schema/disaster/IncidentResponseAction/v1.1.0.json",
   "title": "IncidentResponseAction",
   "description": "One response action taken for an incident report: assignee, content and completion.",

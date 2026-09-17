@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://models.geonicdb.com/schema/disaster/IncidentReport/v1.1.0.json",
   "title": "IncidentReport",
   "description": "One report from a resident or staff member: location, category, response status, the person who entered it, and the reporter (personal data).",
@@ -101,11 +101,7 @@
       "x-iri": "https://models.geonicdb.com/ns/disaster/inputterName"
     },
     "address": {
-      "allOf": [
-        {
-          "$ref": "https://models.geonicdb.com/schema/common/JapaneseAddress/v1.0.0.json"
-        }
-      ],
+      "$ref": "https://models.geonicdb.com/schema/common/JapaneseAddress/v1.0.0.json",
       "description": "Address of the location, as a JapaneseAddress value (common subject)",
       "x-ngsi": {
         "type": "Property",

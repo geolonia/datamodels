@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://models.geonicdb.com/schema/disaster/IncidentPhoto/v1.0.0.json",
   "title": "IncidentPhoto",
   "description": "Metadata for one on-site photo attached to an incident report. The image itself stays in external storage; only the key is stored here.",

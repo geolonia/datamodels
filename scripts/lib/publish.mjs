@@ -2,7 +2,7 @@
 // from VitePress, see build.mjs).
 import { mkdir, writeFile, readFile, appendFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import Ajv from 'ajv';
+import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { loadSubjects, attributesOf, subjectUrls, modelUrls, DIST, ROOT, BASE_URL } from './models.mjs';
 import { toCustomDataModel } from './geonicdb.mjs';
@@ -57,7 +57,7 @@ export async function publishModels(subjects) {
     }
   }
 
-  const ajv = new Ajv({ allErrors: true, strict: false }); addFormats(ajv);
+  const ajv = new Ajv2020({ allErrors: true, strict: false }); addFormats(ajv);
   const schema = JSON.parse(await readFile(join(ROOT, 'catalog.schema.json'), 'utf8'));
   const validate = ajv.compile(schema);
   if (!validate(catalog)) throw new Error(`catalog.json does not validate: ${ajv.errorsText(validate.errors)}`);
