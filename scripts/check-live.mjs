@@ -4,6 +4,7 @@
 // Fails on the first contract violation. Needs network access only.
 import jsonld from 'jsonld';
 import { loadSubjects, subjectUrls, modelUrls, BASE_URL } from './lib/models.mjs';
+import { listReleases } from './lib/releases.mjs';
 
 const origin = (process.argv[2] ?? BASE_URL).replace(/\/$/, '');
 const swap = (url) => url.replace(BASE_URL, origin);
@@ -31,6 +32,9 @@ for (const subject of subjects) {
   expect(h(r, 'content-type').startsWith('application/ld+json'), `${u.contextExact}: content-type ${h(r, 'content-type')}`);
   expect(isImmutable(r), `${u.contextExact}: cache-control "${h(r, 'cache-control')}" must be exactly "${IMMUTABLE}"`);
   expect(h(r, 'access-control-allow-origin') === '*', `${u.contextExact}: missing CORS`);
+  for (const release of await listReleases(subject)) {
+    for (const f of release.files) { const rr = await head(f.url); expect(rr.status === 200 && isImmutable(rr), `${f.url}: released file ${rr.status} ${h(rr, 'cache-control')}`); }
+  }
   r = await head(u.contextAlias);
   expect(r.status === 200 && !/immutable/.test(h(r, 'cache-control')), `${u.contextAlias}: alias must not be immutable (${r.status}, ${h(r, 'cache-control')})`);
   r = await head(u.page); expect(r.status === 200, `${u.page}: ${r.status}`);
@@ -43,6 +47,8 @@ for (const subject of subjects) {
     r = await head(mu.typeIri);
     expect(r.status === 302 && h(r, 'location') === mu.page.replace(BASE_URL, ''), `${mu.typeIri}: ${r.status} -> ${h(r, 'location')}`);
     r = await head(mu.page); expect(r.status === 200, `${mu.page}: ${r.status}`);
+    // Value types have no GeonicDB body and no normalized example of their own.
+    if (model.kind === 'value') continue;
     r = await head(mu.geonicdb); expect(r.status === 200 && h(r, 'content-type').startsWith('application/json'), `${mu.geonicdb}: ${r.status} ${h(r, 'content-type')}`);
 
     const norm = model.examples['example-normalized.jsonld'];
