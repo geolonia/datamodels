@@ -11,14 +11,14 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "check:immutability": "node scripts/check-immutability.mjs",
-    "manifest:record": "npm run validate:models && npm run build && node scripts/check-immutability.mjs --record",
+    "manifest:record": "npm run build && node scripts/check-immutability.mjs --record",
     "check": "npm run build:deploy && wrangler deploy --dry-run --outdir .wrangler/dry-run",
     "dev": "npm run build && wrangler dev",
     "deploy": "npm run build:deploy && wrangler deploy",
     "validate:models": "node scripts/validate-models.mjs",
     "test": "node --test \"test/**/*.test.mjs\"",
     "export:geonicdb": "node scripts/export-geonicdb.mjs",
-    "build:deploy": "npm run validate:models && npm run build && npm run check:immutability",
+    "build:deploy": "npm run build && npm run check:immutability",
     "check:live": "node scripts/check-live.mjs",
     "site:dev": "node -e \"import('./scripts/lib/models.mjs').then(async m=>{const s=await m.loadSubjects();const g=await import('./scripts/lib/site.mjs');await g.generateSitePages(s)})\" && vitepress dev site"
   },

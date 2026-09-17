@@ -73,8 +73,8 @@ node scripts/export-geonicdb.mjs disaster --type-prefix Saitai --out ./out
 
 `npm run check` runs on every pull request; `npm run build:deploy` (steps 1 to 3) runs in Cloudflare Workers Builds before every deploy:
 
-1. `validate:models`: key-values examples against `schema.json`; normalized examples against the NGSI-LD representation rules and, projected to key-values, against `schema.json`; JSON-LD expansion of every normalized example with the subject context and the core context, failing on any attribute that does not expand to its IRI or does not survive an expand/compact round-trip; every attribute has a context term unless the core context defines it; no core term is redefined; type names match folders; versions match the subject.
-2. `build`: generates the site pages, builds the VitePress site into `dist/`, publishes the machine files on top and validates `catalog.json` against `catalog.schema.json`.
+1. `build` starts with `validate:models`: key-values examples against `schema.json`; normalized examples against the NGSI-LD representation rules and, projected to key-values, against `schema.json`; JSON-LD expansion of every normalized example with the subject context and the core context, failing on any attribute that does not expand to its IRI or does not survive an expand/compact round-trip; every attribute has a context term unless the core context defines it; no core term is redefined; type names match folders; versions match the subject.
+2. `build` then generates the site pages, builds the VitePress site into `dist/`, publishes the machine files on top and validates `catalog.json` against `catalog.schema.json`. Nothing reaches `dist/` if validation fails, whichever script called the build.
 3. `check:immutability`: no published versioned file changed or disappeared.
 4. `wrangler deploy --dry-run`.
 
