@@ -14,3 +14,6 @@
 
 /.github/CODEOWNERS @geolonia/operations
 /catalog-info.yaml @geolonia/geonicdb
+
+# Model semantics are reviewed by the GeonicDB team.
+/models/ @geolonia/geonicdb
