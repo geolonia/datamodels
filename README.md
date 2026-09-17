@@ -18,6 +18,7 @@ site/        the public website (VitePress, Japanese and English)
 scripts/     build catalog.json, generate specs, validate examples and contexts
 public/      static source (headers, redirects, placeholder pages)
 dist/        published tree deployed to models.geonicdb.com (built, not committed)
+published-manifest.json   hashes of every immutable file ever published; append-only
 ```
 
 ## Contributing
@@ -43,13 +44,16 @@ Workers Builds settings, on the `geonicdb-models` Worker under Settings → Buil
 
 The custom domain `models.geonicdb.com` is declared in `wrangler.jsonc`; the first deploy creates the DNS record and certificate in the `geonicdb.com` zone.
 
-The URL contract (content types, CORS, caching, IRI redirects) lives in `public/_headers` and `public/_redirects`. Published versioned files under `/context/` and `/schema/` are never modified or removed.
+The URL contract (content types, CORS, caching, IRI redirects) lives in `public/_headers` and `public/_redirects`.
+
+**Immutability is enforced, not promised.** `published-manifest.json` records the SHA-256 of every immutable file ever published: exact versions under `/context/` and `/schema/` (for example `v1.0.0.jsonld`) and everything under `/context/mirror/`. `npm run check` rebuilds `dist/` and fails if a recorded file is missing or changed, or if a new immutable file is not yet recorded. New files are recorded with `npm run manifest:record`, and the manifest change is reviewed in the pull request. Aliases such as `v1.jsonld` are mutable by design and not recorded.
 
 Local commands:
 
 ```bash
 npm ci
-npm run check    # build dist/ and dry-run the deploy, no Cloudflare access needed
+npm run check    # build dist/, verify immutability, dry-run the deploy; no Cloudflare access needed
+npm run manifest:record   # record newly added immutable files in published-manifest.json
 npm run dev      # serve locally with wrangler
 ```
 
