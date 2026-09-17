@@ -39,3 +39,27 @@
   letter-spacing: 0.01em;
   color: var(--vp-c-text-1);
 }
+
+/*
+ * Hero title: the default 56px wraps "GeonicDB Data Models" on wide screens.
+ * From 640px up it fits on one line at 44/48px, so wrapping is disabled there.
+ * Below 640px the hero is narrower than the title at any readable size, so it
+ * may wrap.
+ */
+.VPHero .main .name {
+  font-size: 32px !important;
+  line-height: 1.2 !important;
+}
+
+@media (min-width: 640px) {
+  .VPHero .main .name {
+    white-space: nowrap;
+    font-size: 44px !important;
+  }
+}
+
+@media (min-width: 960px) {
+  .VPHero .main .name {
+    font-size: 48px !important;
+  }
+}
