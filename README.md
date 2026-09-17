@@ -6,14 +6,14 @@ Curated bilingual catalog of NGSI-LD data models for [GeonicDB](https://docs.geo
 
 ## Principles
 
-- **Extend, never duplicate.** Global Smart Data Models keep their upstream IRIs. Japanese profiles reference the upstream context by URL and add terms. Only Japan-only models mint new IRIs under `https://models.geonicdb.com/ns/jp/`.
+- **Extend, never duplicate.** Global Smart Data Models keep their upstream IRIs. Japanese profiles reference the upstream context by URL and add terms. New IRIs are minted under `https://models.geonicdb.com/ns/<Subject>/`, organised by subject as upstream, never by region, customer or project.
 - **Upstream-compatible layout.** Each model folder follows the Smart Data Models file set (`schema.json`, `model.yaml`, `notes.yaml`, `ADOPTERS.yaml`, `examples/`, `doc/`), so a model can be proposed upstream unchanged.
 - **Published files are immutable.** A versioned `@context` or schema never changes once published. Breaking changes get a new version. Nothing is deleted.
 
 ## Repository layout (planned)
 
 ```text
-models/      data models; Japan-only models and profiles under models/jp/
+models/      data models, one folder per subject (disaster, common, Building, ...)
 site/        the public website (VitePress, Japanese and English)
 scripts/     build catalog.json, generate specs, validate examples and contexts
 public/      static source (headers, redirects, placeholder pages)
