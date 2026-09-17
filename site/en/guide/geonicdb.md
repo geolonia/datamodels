@@ -30,18 +30,19 @@ The registered definition validates attribute types, required attributes and enu
 
 ## 2. Create an entity
 
-With the NGSI-LD API the catalog context is passed in the `Link` header. The alias (`v1.jsonld`) is the normal choice.
+The "Example (normalized)" on each model page is JSON-LD with its `@context` inside, so it can be posted as it is with `Content-Type: application/ld+json`.
 
 ```bash
+curl -sSf https://models.geonicdb.com/examples/disaster/RoadClosure/example-normalized.jsonld -o entity.jsonld
+
 curl -X POST "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
-  -H "Content-Type: application/json" \
-  -H 'Link: <https://models.geonicdb.com/context/disaster/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -H "Content-Type: application/ld+json" \
   -H "x-api-key: $GEONICDB_API_KEY" \
   -H "NGSILD-Tenant: $GEONICDB_TENANT" \
-  --data @example-normalized.json
+  --data @entity.jsonld
 ```
 
-The "Example (normalized)" on each model page works as the body; remove its `@context` since the `Link` header carries it.
+For your own data, either put `@context` in the body and send `application/ld+json`, or leave it out and send `Content-Type: application/json` with a `Link` header (see the query below). Never both at once. The alias (`v1.jsonld`) is the normal choice.
 
 ## 3. Query
 

@@ -30,18 +30,19 @@ curl -X POST "$GEONICDB_BASE_URL/custom-data-models" \
 
 ## 2. エンティティを作成する
 
-NGSI-LD API では `Link` ヘッダーでカタログの context を渡します。エイリアス（`v1.jsonld`）を使うのが通常です。
+各モデルページの「例（normalized）」は `@context` を含む JSON-LD なので、`Content-Type: application/ld+json` でそのまま POST できます。
 
 ```bash
+curl -sSf https://models.geonicdb.com/examples/disaster/RoadClosure/example-normalized.jsonld -o entity.jsonld
+
 curl -X POST "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
-  -H "Content-Type: application/json" \
-  -H 'Link: <https://models.geonicdb.com/context/disaster/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -H "Content-Type: application/ld+json" \
   -H "x-api-key: $GEONICDB_API_KEY" \
   -H "NGSILD-Tenant: $GEONICDB_TENANT" \
-  --data @example-normalized.json
+  --data @entity.jsonld
 ```
 
-各モデルページの「例（normalized）」がそのまま使えます（`@context` は `Link` ヘッダーで渡すので body から外してください）。
+自分のデータを送るときは、body に `@context` を入れて `application/ld+json` で送るか、`@context` を入れずに `Content-Type: application/json` と `Link` ヘッダー（次の検索の例を参照）で送ります。両方は同時に使いません。エイリアス（`v1.jsonld`）を使うのが通常です。
 
 ## 3. 検索する
 
