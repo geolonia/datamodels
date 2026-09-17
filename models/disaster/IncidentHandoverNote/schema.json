@@ -1,0 +1,84 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://models.geonicdb.com/schema/disaster/IncidentHandoverNote/v1.0.0.json",
+  "title": "IncidentHandoverNote",
+  "description": "One handover note about an incident report, from one team to another.",
+  "x-version": "1.0.0",
+  "x-license-url": "https://models.geonicdb.com/LICENSE-CONTENT",
+  "x-model-tags": "GeonicDB, disaster-response, Japan",
+  "x-derived-from": "https://github.com/geolonia/geonicdb-datamodels",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uri",
+      "description": "Entity id (URN)"
+    },
+    "type": {
+      "type": "string",
+      "const": "IncidentHandoverNote",
+      "description": "Entity type"
+    },
+    "task": {
+      "description": "The incident report this entity refers to",
+      "type": "string",
+      "format": "uri",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "https://models.geonicdb.com/ns/disaster/IncidentReport"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/task",
+      "x-geonicdb": {
+        "indexed": true
+      }
+    },
+    "fromTeam": {
+      "description": "Sending team",
+      "type": "string",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/fromTeam"
+    },
+    "toTeam": {
+      "description": "Receiving team",
+      "type": "string",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/toTeam"
+    },
+    "content": {
+      "description": "Content",
+      "type": "string",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/content"
+    },
+    "sentAt": {
+      "description": "Time the note was sent",
+      "type": "string",
+      "format": "date-time",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://schema.org/dateSent"
+    },
+    "updatedAt": {
+      "description": "Application-level update time, recorded by the app as a business update, separate from the broker system attribute modifiedAt",
+      "type": "string",
+      "format": "date-time",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/updatedAt"
+    }
+  },
+  "required": [
+    "id",
+    "type",
+    "task"
+  ],
+  "additionalProperties": false
+}

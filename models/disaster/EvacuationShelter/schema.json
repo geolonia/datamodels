@@ -1,0 +1,124 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://models.geonicdb.com/schema/disaster/EvacuationShelter/v1.0.0.json",
+  "title": "EvacuationShelter",
+  "description": "Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included; it is referenced by externalShelterId. Only opening status and evacuee counts live here.",
+  "x-version": "1.0.0",
+  "x-license-url": "https://models.geonicdb.com/LICENSE-CONTENT",
+  "x-model-tags": "GeonicDB, disaster-response, Japan",
+  "x-derived-from": "https://github.com/geolonia/geonicdb-datamodels",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uri",
+      "description": "Entity id (URN)"
+    },
+    "type": {
+      "type": "string",
+      "const": "EvacuationShelter",
+      "description": "Entity type"
+    },
+    "project": {
+      "description": "The disaster-response project this entity belongs to",
+      "type": "string",
+      "format": "uri",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "https://models.geonicdb.com/ns/disaster/Project"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/project",
+      "x-geonicdb": {
+        "indexed": true
+      }
+    },
+    "externalShelterId": {
+      "description": "Shelter ID in the external shelter dataset",
+      "type": "string",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/externalShelterId",
+      "x-geonicdb": {
+        "indexed": true
+      }
+    },
+    "openingStatus": {
+      "description": "Opening status. `status` is protected in the core context, hence openingStatus",
+      "type": "string",
+      "enum": [
+        "未開設",
+        "開設中"
+      ],
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/openingStatus"
+    },
+    "evacueeHouseholds": {
+      "description": "Number of evacuated households",
+      "type": "integer",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/evacueeHouseholds"
+    },
+    "evacueeTotal": {
+      "description": "Total number of evacuees",
+      "type": "integer",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/evacueeTotal"
+    },
+    "evacueeFemale": {
+      "description": "Number of female evacuees",
+      "type": "integer",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/evacueeFemale"
+    },
+    "evacueeMale": {
+      "description": "Number of male evacuees",
+      "type": "integer",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/evacueeMale"
+    },
+    "memo": {
+      "description": "Free-text memo",
+      "type": "string",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/memo"
+    },
+    "openedAt": {
+      "description": "Time the shelter opened",
+      "type": "string",
+      "format": "date-time",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/openedAt"
+    },
+    "closedAt": {
+      "description": "Time the shelter closed",
+      "type": "string",
+      "format": "date-time",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/closedAt"
+    }
+  },
+  "required": [
+    "id",
+    "type",
+    "project",
+    "externalShelterId"
+  ],
+  "additionalProperties": false
+}

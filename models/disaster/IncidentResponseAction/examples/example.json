@@ -1,0 +1,10 @@
+{
+  "id": "urn:ngsi-ld:IncidentResponseAction:2026-typhoon-10-012-001",
+  "type": "IncidentResponseAction",
+  "task": "urn:ngsi-ld:IncidentReport:2026-typhoon-10-012",
+  "assignee": "現地①班",
+  "isDone": false,
+  "content": "現地確認済み、通行止め設置",
+  "completedAt": "2026-08-21T11:00:00Z",
+  "updatedAt": "2026-08-21T10:20:00Z"
+}

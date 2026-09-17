@@ -1,0 +1,38 @@
+{
+  "@context": [
+    "https://models.geonicdb.com/context/disaster/v1.0.0.jsonld",
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
+  ],
+  "id": "urn:ngsi-ld:IncidentHandoverNote:2026-typhoon-10-012-001",
+  "type": "IncidentHandoverNote",
+  "task": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:IncidentReport:2026-typhoon-10-012"
+  },
+  "fromTeam": {
+    "type": "Property",
+    "value": "現地①班"
+  },
+  "toTeam": {
+    "type": "Property",
+    "value": "対策本部"
+  },
+  "content": {
+    "type": "Property",
+    "value": "水位上昇中、注視継続"
+  },
+  "sentAt": {
+    "type": "Property",
+    "value": {
+      "@type": "DateTime",
+      "@value": "2026-08-21T11:05:00Z"
+    }
+  },
+  "updatedAt": {
+    "type": "Property",
+    "value": {
+      "@type": "DateTime",
+      "@value": "2026-08-21T10:20:00Z"
+    }
+  }
+}

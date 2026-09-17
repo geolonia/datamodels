@@ -1,0 +1,3 @@
+notes:
+  - Seeded 2026-09-17 from geolonia/geonicdb-datamodels data-models/*.json (Takamatsu City flood-prevention headquarters). Type name generalised from the tenant-specific "Saitai" prefix.
+license: CC BY 4.0 (see /LICENSE-CONTENT.md)

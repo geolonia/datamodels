@@ -1,0 +1,4 @@
+notes:
+  - Seeded 2026-09-17 from geolonia/geonicdb-datamodels data-models/*.json (Takamatsu City flood-prevention headquarters). Type name generalised from the tenant-specific "Saitai" prefix.
+  - Conceptually a subclass of https://schema.org/Project. The type IRI is minted here so it resolves to this page; the relation is documented, not asserted by identity.
+license: CC BY 4.0 (see /LICENSE-CONTENT.md)

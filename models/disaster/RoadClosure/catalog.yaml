@@ -1,0 +1,30 @@
+title:
+  ja: "通行止め"
+  en: "Road closure"
+description:
+  ja: "通行止め1件。路線名、区間（LineString）、状態を持つ。"
+  en: "One road closure: road name, closed section as a LineString, and status."
+status: draft
+tags: [disaster-response, municipality]
+attributes:
+  project:
+    ja: "所属する災害対応プロジェクト"
+    en: "The disaster-response project this entity belongs to"
+  roadName:
+    ja: "路線名"
+    en: "Road name"
+  addressTown:
+    ja: "住所の町名（暫定。共通の住所モデルに移行予定）"
+    en: "Town name of the address (provisional; to move to the common address model)"
+  addressBanchi:
+    ja: "住所の番地（暫定。共通の住所モデルに移行予定）"
+    en: "Block and lot number of the address (provisional; to move to the common address model)"
+  area:
+    ja: "通行止め区間"
+    en: "Closed section"
+  closureStatus:
+    ja: "状態。core context の status は予約語のため closureStatus とする"
+    en: "Closure status. `status` is protected in the core context, hence closureStatus"
+  memo:
+    ja: "メモ"
+    en: "Free-text memo"

@@ -1,0 +1,57 @@
+title:
+  ja: "通報"
+  en: "Incident report"
+description:
+  ja: "住民や職員からの通報1件。位置、カテゴリ、対応状況、入力者、通報者（個人情報）を持つ。"
+  en: "One report from a resident or staff member: location, category, response status, the person who entered it, and the reporter (personal data)."
+status: draft
+tags: [disaster-response, municipality]
+attributes:
+  project:
+    ja: "所属する災害対応プロジェクト"
+    en: "The disaster-response project this entity belongs to"
+  index:
+    ja: "プロジェクト内の通報連番"
+    en: "Sequence number of the report within the project"
+  incidentStatus:
+    ja: "対応状況。対応中=InProgress、対応済み=Responded、保留=OnHold、完了=Completed。core context の status は予約語のため incidentStatus とする"
+    en: "Response status. `status` is a protected term in the NGSI-LD core context, hence incidentStatus"
+  category:
+    ja: "カテゴリ（冠水、土砂災害、倒壊、倒木、断線など。列挙は固定しない）"
+    en: "Category such as flooding, landslide, collapse, fallen tree, broken line. Not a closed list"
+  pressReleaseStatus:
+    ja: "プレスリリース区分"
+    en: "Press-release status"
+  reportedAt:
+    ja: "通報日時"
+    en: "Date and time the report was received"
+  inputterTeam:
+    ja: "入力者の班"
+    en: "Team of the person who entered the report"
+  inputterName:
+    ja: "入力者名"
+    en: "Name of the person who entered the report"
+  addressTown:
+    ja: "住所の町名（暫定。共通の住所モデルに移行予定）"
+    en: "Town name of the address (provisional; to move to the common address model)"
+  addressBanchi:
+    ja: "住所の番地（暫定。共通の住所モデルに移行予定）"
+    en: "Block and lot number of the address (provisional; to move to the common address model)"
+  location:
+    ja: "位置"
+    en: "Location"
+  reporterName:
+    ja: "通報者名【個人情報】"
+    en: "Reporter name (personal data)"
+  reporterPhone:
+    ja: "通報者電話番号【個人情報】"
+    en: "Reporter phone number (personal data)"
+  reporterAddress:
+    ja: "通報者住所【個人情報】"
+    en: "Reporter address (personal data)"
+  memo:
+    ja: "メモ"
+    en: "Free-text memo"
+  updatedAt:
+    ja: "アプリ側の更新日時。ブローカーのシステム属性 modifiedAt とは別に、アプリが業務上の更新として記録する時刻"
+    en: "Application-level update time, recorded by the app as a business update, separate from the broker system attribute modifiedAt"

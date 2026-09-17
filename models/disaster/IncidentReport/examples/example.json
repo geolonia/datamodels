@@ -1,0 +1,26 @@
+{
+  "id": "urn:ngsi-ld:IncidentReport:2026-typhoon-10-001",
+  "type": "IncidentReport",
+  "project": "urn:ngsi-ld:Project:2026-typhoon-10",
+  "index": 12,
+  "incidentStatus": "InProgress",
+  "category": "冠水",
+  "pressReleaseStatus": "プレス予定",
+  "reportedAt": "2026-08-21T10:15:00Z",
+  "inputterTeam": "情報班",
+  "inputterName": "山田",
+  "addressTown": "西宝町",
+  "addressBanchi": "1-1",
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      134.0437,
+      34.3403
+    ]
+  },
+  "reporterName": "非公開",
+  "reporterPhone": "非公開",
+  "reporterAddress": "非公開",
+  "memo": "現地確認中",
+  "updatedAt": "2026-08-21T10:20:00Z"
+}

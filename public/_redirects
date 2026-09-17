@@ -1,5 +1,5 @@
 # Redirects for models.geonicdb.com (Workers static assets).
 #
-# Type and attribute IRIs under /ns/ resolve to the model page that defines
-# them, schema.org style. Entries are added with each model, for example:
-#   /ns/jp/Shelter  /models/jp/Shelter/  302
+# Type and attribute IRIs under /ns/<subject>/ resolve to the page that
+# documents them, schema.org style. The entries are generated at build time
+# from models/ and appended below this header.

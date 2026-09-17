@@ -1,5 +1,6 @@
 # Response headers for models.geonicdb.com (Workers static assets).
-# Rules are glob patterns; all matching rules apply.
+# Rules are glob patterns; every matching rule applies, later rules win for
+# the same header. Verify live after a change: `npm run check:live`.
 #
 # Contexts and schemas are fetched cross-origin by brokers, JSON-LD processors
 # and browsers, so CORS is open for everything. Nothing here is private.
@@ -7,17 +8,34 @@
   Access-Control-Allow-Origin: *
   X-Content-Type-Options: nosniff
 
-# JSON-LD contexts. Exact versions (vX.Y.Z) get long immutable caching once
-# they exist; aliases (vX) get a short max-age. Those rules are added together
-# with the first published version so the pattern is tested against real files.
-/context/*
+# JSON-LD contexts. Aliases (vN.jsonld) advance to the latest compatible
+# version, so they get a short cache. Exact versions are immutable.
+/context/*.jsonld
   Content-Type: application/ld+json; charset=utf-8
+  Cache-Control: public, max-age=300
+/context/*/v*.*.*.jsonld
+  Cache-Control: public, max-age=31536000, immutable
 
-# JSON Schemas.
-/schema/*
+# JSON Schemas, same versioning rules.
+/schema/*.json
   Content-Type: application/schema+json; charset=utf-8
+  Cache-Control: public, max-age=300
+/schema/*/v*.*.*.json
+  Cache-Control: public, max-age=31536000, immutable
+
+# Examples and GeonicDB Custom Data Model bodies.
+/examples/*.jsonld
+  Content-Type: application/ld+json; charset=utf-8
+/examples/*.json
+  Content-Type: application/json; charset=utf-8
+/geonicdb/*.json
+  Content-Type: application/json; charset=utf-8
 
 # The machine-readable catalog index read by GeonicDB.
 /catalog.json
   Content-Type: application/json; charset=utf-8
   Cache-Control: public, max-age=300
+/catalog.schema.json
+  Content-Type: application/schema+json; charset=utf-8
+/LICENSE-CONTENT
+  Content-Type: text/plain; charset=utf-8

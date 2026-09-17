@@ -1,0 +1,14 @@
+# Subject metadata. One context per subject, versioned; the version below is the
+# version of context.jsonld and of every schema in this subject.
+name: disaster
+version: 1.0.0
+title:
+  ja: 災害対応
+  en: Disaster response
+description:
+  ja: 自治体の災害対応オペレーションを表すデータモデル。プロジェクト、通報、対応業務、申し送り、現地写真、通行止め、避難所運用状況。高松市の水防アプリで実運用されているモデルを汎用化したもの。
+  en: Data models for municipal disaster-response operations. Project, incident report, response action, handover note, photo, road closure and shelter operation. Generalised from the models in production use in Takamatsu City's flood-response application.
+source: minted            # minted | profile | global
+origin:
+  repository: https://github.com/geolonia/geonicdb-datamodels
+  note: Seeded from the seven Custom Data Models of the Takamatsu City flood-prevention headquarters application.
