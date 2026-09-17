@@ -13,7 +13,19 @@ function valueTypeOf(prop) {
   return prop.type; // string | number | integer | boolean | array | object
 }
 
-export function toCustomDataModel(subject, model, { typePrefix = '', contextUrl } = {}) {
+/**
+ * Options:
+ *   typePrefix       prefix for the type name (tenant-specific naming)
+ *   contextUrl       context to declare instead of the exact catalog context
+ *   allowAdditional  additionalProperties: true, so attributes the model does
+ *                    not know are accepted (unvalidated)
+ *   extend           { contextUrl?, description?, propertyDetails? }: a tenant's
+ *                    own attributes merged into the body. A catalog attribute
+ *                    cannot be redefined; a name clash throws. The extension's
+ *                    contextUrl should import the catalog context and define
+ *                    only the added terms.
+ */
+export function toCustomDataModel(subject, model, { typePrefix = '', contextUrl, allowAdditional = false, extend } = {}) {
   const urls = subjectUrls(subject);
   const example = model.examples['example.json'] ?? {};
   const propertyDetails = {};
@@ -38,12 +50,19 @@ export function toCustomDataModel(subject, model, { typePrefix = '', contextUrl 
     if (Object.keys(validation).length) d.validation = validation;
     propertyDetails[name] = d;
   }
+  if (extend?.propertyDetails) {
+    for (const [name, detail] of Object.entries(extend.propertyDetails)) {
+      if (name in propertyDetails) throw new Error(`extension redefines catalog attribute "${name}" of ${model.type}; add a new attribute instead`);
+      if (!detail || typeof detail !== 'object' || !detail.ngsiType || !detail.valueType) throw new Error(`extension attribute "${name}" needs ngsiType and valueType`);
+      propertyDetails[name] = detail;
+    }
+  }
   return {
     type: `${typePrefix}${model.type}`,
     domain: subject.name,
-    description: model.catalog?.description?.ja ?? model.schema.description,
-    contextUrl: contextUrl ?? urls.contextExact,
+    description: extend?.description ?? model.catalog?.description?.ja ?? model.schema.description,
+    contextUrl: extend?.contextUrl ?? contextUrl ?? urls.contextExact,
     propertyDetails,
-    additionalProperties: model.schema.additionalProperties === false ? false : true,
+    additionalProperties: allowAdditional ? true : (model.schema.additionalProperties === false ? false : true),
   };
 }
