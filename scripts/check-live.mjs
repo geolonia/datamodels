@@ -11,6 +11,11 @@ const failures = [];
 const expect = (cond, msg) => { if (!cond) failures.push(msg); };
 const head = async (url) => fetch(swap(url), { method: 'HEAD', redirect: 'manual' });
 const h = (r, name) => r.headers.get(name) ?? '';
+// Exact versions must carry exactly this value: a joined value such as
+// "public, max-age=300, public, max-age=31536000, immutable" means the
+// inherited short cache was not detached.
+const IMMUTABLE = 'public, max-age=31536000, immutable';
+const isImmutable = (r) => h(r, 'cache-control').trim() === IMMUTABLE;
 
 const loader = async (url) => {
   const r = await fetch(swap(url), { headers: { accept: 'application/ld+json, application/json' } });
@@ -24,7 +29,7 @@ for (const subject of subjects) {
   let r = await head(u.contextExact);
   expect(r.status === 200, `${u.contextExact}: ${r.status}`);
   expect(h(r, 'content-type').startsWith('application/ld+json'), `${u.contextExact}: content-type ${h(r, 'content-type')}`);
-  expect(/immutable/.test(h(r, 'cache-control')) && !/,\s*public/.test(h(r, 'cache-control')), `${u.contextExact}: cache-control "${h(r, 'cache-control')}" should be a single immutable value`);
+  expect(isImmutable(r), `${u.contextExact}: cache-control "${h(r, 'cache-control')}" must be exactly "${IMMUTABLE}"`);
   expect(h(r, 'access-control-allow-origin') === '*', `${u.contextExact}: missing CORS`);
   r = await head(u.contextAlias);
   expect(r.status === 200 && !/immutable/.test(h(r, 'cache-control')), `${u.contextAlias}: alias must not be immutable (${r.status}, ${h(r, 'cache-control')})`);
@@ -33,7 +38,8 @@ for (const subject of subjects) {
   for (const model of subject.models) {
     const mu = modelUrls(subject, model);
     r = await head(mu.schemaExact);
-    expect(r.status === 200 && h(r, 'content-type').startsWith('application/schema+json') && /immutable/.test(h(r, 'cache-control')), `${mu.schemaExact}: ${r.status} ${h(r, 'content-type')} ${h(r, 'cache-control')}`);
+    expect(r.status === 200 && h(r, 'content-type').startsWith('application/schema+json'), `${mu.schemaExact}: ${r.status} ${h(r, 'content-type')}`);
+    expect(isImmutable(r), `${mu.schemaExact}: cache-control "${h(r, 'cache-control')}" must be exactly "${IMMUTABLE}"`);
     r = await head(mu.typeIri);
     expect(r.status === 302 && h(r, 'location') === mu.page.replace(BASE_URL, ''), `${mu.typeIri}: ${r.status} -> ${h(r, 'location')}`);
     r = await head(mu.page); expect(r.status === 200, `${mu.page}: ${r.status}`);
