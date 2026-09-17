@@ -24,7 +24,7 @@ description: 世界と日本で使われているデータモデル・語彙の�
 | [デジタル庁 GIF（政府相互運用性フレームワーク）](https://www.digital.go.jp/policies/data_strategy_government_interoperability_framework) | コアデータモデル（個人、法人、住所、施設、建物 など）と分野別の実装データモデル。XSD と Excel で公開。[GitHub](https://github.com/JDA-DM/GIF) | 対応付けが必要。[JapaneseAddress](/models/common/JapaneseAddress/) は GIF の住所に対応 |
 | [推奨データセット](https://www.digital.go.jp/resources/data_dataset/) | 自治体オープンデータの標準フォーマット（避難所、AED、公共施設、イベント など）。CSV の項目定義書 | 対応付けが必要。このカタログで NGSI-LD 版を提供していく予定 |
 | [アドレス・ベース・レジストリ](https://www.digital.go.jp/policies/base_registry_address) | 町字ID を含む住所の基盤データ | JapaneseAddress の `abrMachiazaId` が参照 |
-| [空間ID（4次元時空間情報利活用のための空間IDガイドライン）](https://www.ipa.go.jp/digital/architecture/guidelines/4dspatio-temporal-guideline.html) | 経産省・国交省・国土地理院・NEDO・IPA。3 次元空間の共通 ID とその運用指針 | GeonicDB がネイティブ対応 |
+| [空間ID（4次元時空間情報利活用のための空間IDガイドライン）](https://www.ipa.go.jp/digital/architecture/guidelines/4dspatio-temporal-guideline.html) | 経産省・国交省・国土地理院・NEDO・IPA。3 次元空間を一意に識別する共通 ID と、時間軸を加えた 4 次元時空間情報の利活用指針 | GeonicDB がネイティブ対応 |
 
 ## Smart Data Models にあるモデルを探すには
 
