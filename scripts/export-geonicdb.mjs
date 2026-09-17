@@ -32,10 +32,19 @@ if (!subjectName) { console.error('usage: export-geonicdb.mjs <subject> [--type 
 const subject = (await loadSubjects()).find((s) => s.name === subjectName);
 if (!subject) { console.error(`unknown subject "${subjectName}"`); process.exit(2); }
 const extensions = extendFile ? JSON.parse(await readFile(extendFile, 'utf8')) : {};
-for (const t of Object.keys(extensions)) if (!subject.models.some((m) => m.type === t)) { console.error(`--extend: "${t}" is not a model of subject "${subjectName}"`); process.exit(2); }
 const urls = subjectUrls(subject);
 const models = subject.models.filter((m) => m.kind === 'entity' && (!onlyType || m.type === onlyType));
 if (onlyType && models.length === 0) { console.error(`no entity model "${onlyType}" in subject "${subjectName}"`); process.exit(2); }
+// Every extension key must name a model this run will emit: an unknown type,
+// a value type (no GeonicDB body) or a type excluded by --type would otherwise
+// be dropped silently.
+for (const t of Object.keys(extensions)) {
+  if (!models.some((m) => m.type === t)) {
+    const known = subject.models.find((m) => m.type === t);
+    const why = !known ? `not a model of subject "${subjectName}"` : known.kind === 'value' ? 'a value type, which has no GeonicDB body' : `excluded by --type ${onlyType}`;
+    console.error(`--extend: "${t}" is ${why}`); process.exit(2);
+  }
+}
 await mkdir(out, { recursive: true });
 for (const model of models) {
   const body = toCustomDataModel(subject, model, {

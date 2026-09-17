@@ -35,7 +35,7 @@ npm test                 # validator tests
 npm run site:dev         # local site with generated model pages
 npm run check:live       # verify the deployed site against the URL contract and the manifest
 npm run manifest:record  # snapshot the current version and record its hashes (last step of a PR)
-node scripts/export-geonicdb.mjs <subject> [--type T] [--type-prefix P] [--allow-additional] [--extend FILE] [--out DIR]   # tenant-adapted GeonicDB bodies
+node scripts/export-geonicdb.mjs <subject> [--type T] [--type-prefix P] [--alias-context] [--allow-additional] [--extend FILE] [--out DIR]   # tenant-adapted GeonicDB bodies
 ```
 
 ## Adding or changing a model
