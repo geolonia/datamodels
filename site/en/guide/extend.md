@@ -34,6 +34,20 @@ Nothing upstream is copied. The upstream context is listed by URL in the `@conte
 
 Use a commit-pinned upstream URL, not `master`, so the meaning of stored data cannot drift when upstream changes.
 
+### When not to adopt an upstream type
+
+"Extend, do not duplicate" means using an upstream model when one fits, not bending everything to fit. Upstream models are sometimes just what someone published first for their own use case without general value, sometimes shaped by North American assumptions that do not hold in Japan, and sometimes fixed before much thought or feedback went into them. Mint your own type when:
+
+- the meaning or the required attributes of the upstream type contradict how things work in Japan;
+- the upstream type depends on a specific product or region;
+- adding attributes is not enough and the meaning would have to change (changing meaning is forbidden, so a new type is the honest option).
+
+Do record the upstream types you considered and why they did not fit in the model's `notes.yaml`, so nobody repeats the same analysis later.
+
+### Where we stand
+
+The first subject, [disaster response](/en/models/disaster/), is a port of the models running in Takamatsu City's application. Its attribute IRIs reuse existing vocabularies, but its types were minted without a comparison against upstream (Smart Data Models `IssueReporting`, `Alert`, `RoadSegment` and others). That comparison is tracked in [issue #16](https://github.com/geolonia/geonicdb-models/issues/16) and may lead to aligning some types with upstream.
+
 ### Rules
 
 - Never change the meaning or type of an upstream attribute. Add a new one instead.
