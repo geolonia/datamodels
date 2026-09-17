@@ -69,3 +69,9 @@ test('a schema version diverging from the subject version fails', () =>
 test('a normalized attribute whose wrapper type contradicts x-ngsi.type fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example-normalized.jsonld'), (e) => { e.project = { type: 'Property', value: e.project.object }; }),
     /"project" is a Property but schema.json declares Relationship/));
+
+test('a subject without an English title fails at load time', () =>
+  withMutatedModels(async (d) => {
+    const f = join(d, 'disaster', 'subject.yaml');
+    await writeFile(f, (await readFile(f, 'utf8')).replace(/^  en: Disaster response$/m, ''));
+  }, /subject\.yaml: title\.en is required/));
