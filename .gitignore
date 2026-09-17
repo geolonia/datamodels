@@ -1,3 +1,7 @@
 node_modules/
 .wrangler/
 dist/
+site/models/
+site/en/models/
+site/.vitepress/cache/
+site/.vitepress/dist/

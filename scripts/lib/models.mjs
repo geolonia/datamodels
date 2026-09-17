@@ -49,6 +49,12 @@ export async function loadSubjects() {
     const meta = await readYaml(join(dir, 'subject.yaml'));
     if (meta.name !== name) throw new Error(`${name}/subject.yaml: name "${meta.name}" does not match folder`);
     if (!SEMVER.test(meta.version)) throw new Error(`${name}/subject.yaml: version must be X.Y.Z`);
+    for (const field of ['title', 'description']) {
+      for (const lang of ['ja', 'en']) {
+        if (typeof meta[field]?.[lang] !== 'string' || !meta[field][lang].trim()) throw new Error(`${name}/subject.yaml: ${field}.${lang} is required (pages are rendered in both languages)`);
+      }
+    }
+    if (!['minted', 'profile', 'global'].includes(meta.source)) throw new Error(`${name}/subject.yaml: source must be minted, profile or global`);
     const context = await readJson(join(dir, 'context.jsonld'));
     if (!context['@context'] || typeof context['@context'] !== 'object') throw new Error(`${name}/context.jsonld: missing @context object`);
     const models = [];

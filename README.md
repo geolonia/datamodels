@@ -22,8 +22,9 @@ models/<subject>/
     examples/example.json                 key-values
     examples/example-normalized.jsonld    NGSI-LD normalized, with @context
     notes.yaml  ADOPTERS.yaml  README.md  LICENSE.md
+site/                     VitePress site (theme and config as docs.geonicdb.com); site/models and site/en/models are generated at build time
 scripts/                  build, validate, publish, export for GeonicDB
-public/                   static source: _headers, _redirects header, index and 404 pages
+public/                   static source: _headers and the _redirects header
 test/                     validator tests and the vendored core context fixture
 dist/                     published tree deployed to models.geonicdb.com (built, not committed)
 catalog.schema.json       wire format of /catalog.json
@@ -31,6 +32,14 @@ published-manifest.json   hashes of every immutable file ever published; append-
 ```
 
 The model folder follows the Smart Data Models layout so a model can be proposed upstream unchanged. `model.yaml` and `doc/spec*.md` are not yet generated; the published pages under `/models/<subject>/<Type>/` serve as the specification for now.
+
+## Website
+
+The pages are a VitePress site with the same theme, local search and light/dark toggle as [docs.geonicdb.com](https://docs.geonicdb.com/). Japanese is the root locale (`/models/...`) and English lives under `/en/models/...`; the navbar language menu switches between the two. Model and subject pages are generated from `models/` by `scripts/lib/site.mjs` at build time and are not committed; hand-written pages (homepages, guides) live in `site/`. Every attribute is a heading with an explicit id, so `/ns/<subject>/<term>` redirects to `/models/<subject>/<Type>/#<term>` keep resolving.
+
+```bash
+npm run site:dev   # generate the model pages and start the VitePress dev server
+```
 
 ## What is published for a subject
 
@@ -41,7 +50,7 @@ The model folder follows the Smart Data Models layout so a model can be proposed
 | `/schema/<subject>/<Type>/vX.Y.Z.json`, `vX.json` | JSON Schema, same rules |
 | `/examples/<subject>/<Type>/` | the examples |
 | `/geonicdb/<subject>/<Type>.json` | a GeonicDB Custom Data Model request body with `contextUrl` set to the exact context |
-| `/models/<subject>/`, `/models/<subject>/<Type>/` | documentation pages |
+| `/models/<subject>/`, `/models/<subject>/<Type>/` | documentation pages (Japanese); `/en/models/...` in English |
 | `/ns/<subject>/<Term>` | type and attribute IRIs, redirecting to the page that documents them |
 | `/catalog.json` | machine-readable index, validated against `/catalog.schema.json` |
 
@@ -64,8 +73,8 @@ node scripts/export-geonicdb.mjs disaster --type-prefix Saitai --out ./out
 
 `npm run check` runs on every pull request; `npm run build:deploy` (steps 1 to 3) runs in Cloudflare Workers Builds before every deploy:
 
-1. `validate:models`: key-values examples against `schema.json`; normalized examples against the NGSI-LD representation rules and, projected to key-values, against `schema.json`; JSON-LD expansion of every normalized example with the subject context and the core context, failing on any attribute that does not expand to its IRI or does not survive an expand/compact round-trip; every attribute has a context term unless the core context defines it; no core term is redefined; type names match folders; versions match the subject.
-2. `build`: publishes `dist/` and validates `catalog.json` against `catalog.schema.json`.
+1. `build` starts with `validate:models`: key-values examples against `schema.json`; normalized examples against the NGSI-LD representation rules and, projected to key-values, against `schema.json`; JSON-LD expansion of every normalized example with the subject context and the core context, failing on any attribute that does not expand to its IRI or does not survive an expand/compact round-trip; every attribute has a context term unless the core context defines it; no core term is redefined; type names match folders; versions match the subject.
+2. `build` then generates the site pages, builds the VitePress site into `dist/`, publishes the machine files on top and validates `catalog.json` against `catalog.schema.json`. Nothing reaches `dist/` if validation fails, whichever script called the build.
 3. `check:immutability`: no published versioned file changed or disappeared.
 4. `wrangler deploy --dry-run`.
 
