@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://models.geonicdb.com/schema/common/JapaneseAddress/v1.0.0.json",
   "title": "JapaneseAddress",
   "x-kind": "value",

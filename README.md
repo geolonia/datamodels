@@ -52,7 +52,7 @@ npm run site:dev   # generate the model pages and start the VitePress dev server
 | `disaster` | Municipal disaster-response operations: `Project`, `IncidentReport`, `IncidentResponseAction`, `IncidentHandoverNote`, `IncidentPhoto`, `RoadClosure`, `EvacuationShelter` |
 | `common` | Shared value types: `JapaneseAddress` (schema.org PostalAddress fields plus 町字, 丁目, 番地, 号, JIS and local-government codes, the Address Base Registry town id and the residential-indication flag) |
 
-An entity schema uses a value type with `allOf: [{ $ref }]` on the attribute and its subject context imports the value type's context by URL. See the [JapaneseAddress page](https://models.geonicdb.com/models/common/JapaneseAddress/) for the snippet.
+An entity schema uses a value type with ``$ref`` on the attribute and its subject context imports the value type's context by URL. See the [JapaneseAddress page](https://models.geonicdb.com/models/common/JapaneseAddress/) for the snippet.
 
 ## What is published for a subject
 

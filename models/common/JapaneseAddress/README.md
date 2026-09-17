@@ -13,7 +13,7 @@ Use from an entity schema:
 
 ```json
 "address": {
-  "allOf": [{ "$ref": "https://models.geonicdb.com/schema/common/JapaneseAddress/v1.0.0.json" }],
+  "$ref": "https://models.geonicdb.com/schema/common/JapaneseAddress/v1.0.0.json",
   "x-ngsi": { "type": "Property", "model": "https://models.geonicdb.com/ns/common/JapaneseAddress" },
   "x-iri": "https://schema.org/address"
 }

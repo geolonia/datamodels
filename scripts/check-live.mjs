@@ -3,7 +3,10 @@
 //   npm run check:live -- https://preview.example   (another origin)
 // Fails on the first contract violation. Needs network access only.
 import jsonld from 'jsonld';
-import { loadSubjects, subjectUrls, modelUrls, BASE_URL } from './lib/models.mjs';
+import { createHash } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { loadSubjects, subjectUrls, modelUrls, BASE_URL, ROOT } from './lib/models.mjs';
 import { listReleases } from './lib/releases.mjs';
 
 const origin = (process.argv[2] ?? BASE_URL).replace(/\/$/, '');
@@ -60,9 +63,21 @@ for (const subject of subjects) {
     }
   }
 }
+// Served bytes of every recorded immutable file must match the manifest. This
+// is what makes an in-place correction of a published file verifiable: after a
+// deploy, the CDN and the origin serve exactly what the repository says.
+const manifest = JSON.parse(await readFile(join(ROOT, 'published-manifest.json'), 'utf8'));
+for (const [path, hash] of Object.entries(manifest.files)) {
+  const url = `${origin}/${path}`;
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) { failures.push(`${url}: ${res.status}`); continue; }
+  const served = createHash('sha256').update(Buffer.from(await res.arrayBuffer())).digest('hex');
+  expect(served === hash, `${url}: served bytes differ from published-manifest.json (deploy not live yet, or a stale cache)`);
+}
+
 const r = await fetch(swap(`${BASE_URL}/catalog.json`));
 expect(r.ok, `catalog.json: ${r.status}`);
 if (r.ok) { const c = await r.json(); expect(c.formatVersion === 1 && Array.isArray(c.models), 'catalog.json: unexpected shape'); }
 
 if (failures.length) { console.error(`Live check failed (${failures.length}) against ${origin}:`); for (const f of failures) console.error(`  ${f}`); process.exit(1); }
-console.log(`live ok: ${origin}, ${subjects.reduce((a, s) => a + s.models.length, 0)} model(s)`);
+console.log(`live ok: ${origin}, ${subjects.reduce((a, s) => a + s.models.length, 0)} model(s), ${Object.keys(manifest.files).length} immutable file(s) match the manifest`);

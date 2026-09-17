@@ -9,7 +9,7 @@
 //   4. the context defines every attribute the schemas use (unless the core
 //      context defines it), defines every type, and redefines no core term
 //   5. type IRIs are unique across subjects; the type name matches the folder
-import Ajv from 'ajv';
+import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import jsonld from 'jsonld';
 import { readFile } from 'node:fs/promises';
@@ -19,7 +19,7 @@ import { resolveContextDocument } from './lib/releases.mjs';
 const failures = [];
 const fail = (where, msg) => failures.push(`${where}: ${msg}`);
 
-const ajv = new Ajv({ allErrors: true, strict: false });
+const ajv = new Ajv2020({ allErrors: true, strict: false });
 addFormats(ajv);
 
 const core = JSON.parse(await readFile(CORE_CONTEXT_FIXTURE, 'utf8'));

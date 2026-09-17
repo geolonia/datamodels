@@ -1,5 +1,5 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://models.geonicdb.com/schema/disaster/EvacuationShelter/v1.0.0.json",
   "title": "EvacuationShelter",
   "description": "Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included; it is referenced by externalShelterId. Only opening status and evacuee counts live here.",

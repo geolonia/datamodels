@@ -96,7 +96,7 @@ function modelPage(lang, prefix, subject, model) {
   }
   if (isValue) {
     const u2 = subjectUrls(subject);
-    md += `## ${t.usage} {#usage}\n\n\`\`\`json\n"address": {\n  "allOf": [{ "$ref": "${mu.schemaExact}" }],\n  "x-ngsi": { "type": "Property", "model": "${mu.typeIri}" },\n  "x-iri": "https://schema.org/address"\n}\n\`\`\`\n\n\`\`\`json\n{ "@context": ["${u2.contextExact}", { ... }] }\n\`\`\`\n\n`;
+    md += `## ${t.usage} {#usage}\n\n\`\`\`json\n"address": {\n  "$ref": "${mu.schemaExact}",\n  "x-ngsi": { "type": "Property", "model": "${mu.typeIri}" },\n  "x-iri": "https://schema.org/address"\n}\n\`\`\`\n\n\`\`\`json\n{ "@context": ["${u2.contextExact}", { ... }] }\n\`\`\`\n\n`;
   }
   if (model.examples['example.json']) md += `## ${t.example} {#example}\n\n${fence(model.examples['example.json'])}\n\n`;
   if (model.examples['example-normalized.jsonld']) md += `## ${t.normalized} {#example-normalized}\n\n${fence(model.examples['example-normalized.jsonld'])}\n\n`;
