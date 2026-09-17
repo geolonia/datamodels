@@ -16,7 +16,7 @@
     "dev": "npm run build && wrangler dev",
     "deploy": "npm run validate:models && npm run build && npm run check:immutability && wrangler deploy",
     "validate:models": "node scripts/validate-models.mjs",
-    "test": "node --test test/",
+    "test": "node --test \"test/**/*.test.mjs\"",
     "export:geonicdb": "node scripts/export-geonicdb.mjs"
   },
   "devDependencies": {
