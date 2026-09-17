@@ -6,7 +6,11 @@ metadata:
   description: Curated bilingual catalog of NGSI-LD data models for GeonicDB, served at models.geonicdb.com. Extends Smart Data Models with Japanese profiles and Japan-only models.
   annotations:
     github.com/project-slug: geolonia/geonicdb-models
-  tags: ['website']
+  tags: ['website', 'ngsi-ld', 'fiware', 'data-models']
+  links:
+    - url: https://github.com/geolonia/geonicdb-docs/blob/main/design/ngsi-ld-data-models-catalog.md
+      title: Design document
+      icon: docs
 spec:
   type: 'website'
   lifecycle: 'experimental'

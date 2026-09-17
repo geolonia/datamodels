@@ -6,6 +6,9 @@
 
 inheritance: true
 
+# Public repository with international contributors: review in English.
+language: en-US
+
 # Repository-specific overrides go below. Examples:
 #
 # language: en-US              # the org default is Japanese
