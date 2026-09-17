@@ -12,7 +12,7 @@ This catalog references and extends what exists elsewhere instead of copying it.
 | Catalog | Content | NGSI-LD |
 |---|---|---|
 | [Smart Data Models](https://smartdatamodels.org/) | Run by FIWARE, TM Forum, IUDX and OASC. Over 900 models for smart cities, agriculture, energy and more. JSON Schema, `@context`, examples, multilingual specs (Japanese is machine-translated) | Ready to use. The upstream of this catalog |
-| [ETSI ISG CIM (NGSI-LD)](https://www.etsi.org/committee/cim) | The ETSI committee that publishes the NGSI-LD specification. Its core context with the reserved terms (`location`, `observedAt`, `status` and others) is published versioned at [uri.etsi.org](https://uri.etsi.org/ngsi-ld/v1/) | Always applied implicitly |
+| [ETSI NGSI-LD specification (GS CIM 009 V1.8.1)](https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.08.01_60/gs_cim009v010801p.pdf) | The NGSI-LD API specification (PDF). Its core context with the reserved terms (`location`, `observedAt`, `status` and others) is published versioned at [uri.etsi.org](https://uri.etsi.org/ngsi-ld/v1/) | Always applied implicitly |
 | [schema.org](https://schema.org/) | General web vocabulary: addresses (PostalAddress), organisations, events | Reused as attribute IRIs, as Smart Data Models does |
 | [SAREF](https://saref.etsi.org/) | ETSI ontologies for smart appliances, energy and buildings | Used together with NGSI-LD |
 | [W3C SOSA/SSN](https://www.w3.org/TR/vocab-ssn/) | Sensor and observation ontology | Reference for observation models |
