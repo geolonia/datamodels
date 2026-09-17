@@ -100,7 +100,7 @@ Workers Builds settings, on the `geonicdb-models` Worker under Settings → Buil
 
 The custom domain `models.geonicdb.com` is declared in `wrangler.jsonc`; the first deploy creates the DNS record and certificate in the `geonicdb.com` zone.
 
-The URL contract (content types, CORS, caching, IRI redirects) lives in `public/_headers` and `public/_redirects`.
+The URL contract (content types, CORS, caching, IRI redirects) lives in `public/_headers` and `public/_redirects`, plus per-file rules generated at build time for immutable exact versions and for IRI redirects. Cloudflare allows one `*` per rule and joins duplicate headers from several matching rules with commas, so exact versions get a literal rule that first detaches the inherited `Cache-Control` with `! Cache-Control`. After every deploy, `npm run check:live` verifies the live site.
 
 **Immutability is enforced, not promised.** `published-manifest.json` records the SHA-256 of every immutable file ever published: exact versions under `/context/` and `/schema/` (for example `v1.0.0.jsonld`) and everything under `/context/mirror/`. `npm run check` rebuilds `dist/` and fails if a recorded file is missing or changed, or if a new immutable file is not yet recorded. New files are recorded with `npm run manifest:record`, and the manifest change is reviewed in the pull request. Aliases such as `v1.jsonld` are mutable by design and not recorded.
 
@@ -110,6 +110,7 @@ Local commands:
 npm ci
 npm run check    # validate models, build dist/, verify immutability, dry-run the deploy; no Cloudflare access needed
 npm test         # validator tests
+npm run check:live   # verify the deployed site against the URL contract (headers, redirects, live JSON-LD expansion)
 npm run manifest:record   # record newly added immutable files in published-manifest.json
 npm run dev      # serve locally with wrangler
 ```
