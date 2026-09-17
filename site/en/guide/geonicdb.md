@@ -12,6 +12,19 @@ Every model page links to a GeonicDB Custom Data Model definition, the request b
 - A GeonicDB tenant and API key ([GeonicDB documentation](https://docs.geonicdb.com/en/saas/api-key))
 - Environment variables: `GEONICDB_BASE_URL` (for example `https://<your-deployment>.geonicdb.jp`), `GEONICDB_TENANT`, `GEONICDB_API_KEY`
 
+## What registering does
+
+Registration is optional. GeonicDB accepts entities of any type without a model. Registering a Custom Data Model attaches rules to that type name within your tenant.
+
+- Every create, replace and partial update is validated: required attributes, `valueType` (datetimes strictly RFC 3339), and `enum`, `pattern`, `minimum`, `maximum` and length rules.
+- Attributes with a `defaultValue` are filled in when missing.
+- Unique constraints, if declared, are enforced with a database index.
+- With `additionalProperties: false`, an attribute the model does not know is rejected with 400. With `true`, it passes unvalidated.
+- `contextUrl` tells GeonicDB which context the type's attribute names belong to, so names still match when entities arrive with a `@context` or `Link` header. Without it, GeonicDB generates a tenant-specific context and IRIs of its own.
+- Registered models feed the generated JSON Schema, the console, and the MCP and A2A tooling.
+
+Existing entities are not re-validated when a model is registered or changed (a conformance report is available separately). Responses do not change either: GeonicDB injects no `@context`, clients pass the context themselves.
+
 ## 1. Register the Custom Data Model
 
 ```bash
@@ -53,6 +66,41 @@ curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadClosure&q=closureStatus==%
   -H "x-api-key: $GEONICDB_API_KEY" \
   -H "NGSILD-Tenant: $GEONICDB_TENANT"
 ```
+
+## The model fits, but you need a few attributes of your own
+
+Three ways, in increasing order of rigour.
+
+1. **Allow unknown attributes.** Export with `--allow-additional` to get `additionalProperties: true`. Your attributes are accepted but not validated, and in JSON-LD they expand to whatever IRI your request context defines, or to GeonicDB's default vocabulary if none does.
+2. **Extend the definition.** Register the catalog attributes plus your own, and point `contextUrl` at a context of yours that imports the catalog context and defines only your terms. Your attributes are validated like the others and carry IRIs you control. It is the same profile pattern the catalog applies to Smart Data Models, one level down.
+
+   ```json
+   {
+     "@context": [
+       "https://models.geonicdb.com/context/disaster/v1.jsonld",
+       { "acme": "https://example.com/ns/acme/", "patrolRoute": "acme:patrolRoute" }
+     ]
+   }
+   ```
+
+   Write an extension file keyed by type and export with it. Redefining a catalog attribute is an error.
+
+   ```json
+   {
+     "RoadClosure": {
+       "contextUrl": "https://example.com/context/acme-disaster.jsonld",
+       "propertyDetails": {
+         "patrolRoute": { "ngsiType": "Property", "valueType": "string", "example": "A-3", "description": "Patrol route", "@context": "https://example.com/ns/acme/patrolRoute" }
+       }
+     }
+   }
+   ```
+
+   ```bash
+   node scripts/export-geonicdb.mjs disaster --type RoadClosure --extend ./acme.json --out ./out
+   ```
+
+3. **Propose it to the catalog.** If the attribute is useful beyond your project, open an [issue](https://github.com/geolonia/geonicdb-models/issues) or a pull request. Once it lands in the next minor version, the extension is no longer needed.
 
 ## Different type names
 

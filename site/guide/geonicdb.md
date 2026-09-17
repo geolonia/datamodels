@@ -12,6 +12,19 @@ description: カタログのデータモデルを GeonicDB に登録し、エン
 - GeonicDB のテナントと API キー（[GeonicDB ドキュメント](https://docs.geonicdb.com/ja/saas/api-key)）
 - 環境変数: `GEONICDB_BASE_URL`（例: `https://<your-deployment>.geonicdb.jp`）、`GEONICDB_TENANT`、`GEONICDB_API_KEY`
 
+## 登録すると何が起きるか
+
+登録は任意です。GeonicDB はモデルの無い型のエンティティもそのまま受け付けます。Custom Data Model を登録すると、テナント内のその型名にルールが付きます。
+
+- 作成・全置換・部分更新のたびに、属性が検証されます。必須属性の有無、`valueType`（日時は RFC 3339 を厳密に検査）、`enum`・`pattern`・`minimum`・`maximum`・長さの制約。
+- `defaultValue` を持つ属性は、無ければ補完されます。
+- 一意制約を宣言していれば、データベースのインデックスで強制されます。
+- `additionalProperties: false` のモデルでは、モデルに無い属性は 400 で拒否されます。`true` なら未検証で通ります。
+- `contextUrl` は、その型の属性名がどの context に属するかを GeonicDB に教えます。`@context` や `Link` ヘッダー付きで書かれたエンティティでも属性名が正しく照合されます。`contextUrl` が無いと GeonicDB はテナント固有の context と IRI を自動生成します。
+- 登録済みモデルは、生成された JSON Schema、コンソール、MCP・A2A のツールから参照できます。
+
+既存のエンティティは、モデルを登録・変更しても再検証されません（適合性レポートを別途取れます）。レスポンスも変わりません。GeonicDB は `@context` を注入しないので、クライアントが自分で context を渡します。
+
 ## 1. Custom Data Model を登録する
 
 ```bash
@@ -53,6 +66,41 @@ curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadClosure&q=closureStatus==%
   -H "x-api-key: $GEONICDB_API_KEY" \
   -H "NGSILD-Tenant: $GEONICDB_TENANT"
 ```
+
+## モデルはほぼ合うが、独自の属性を数個足したいとき
+
+厳密さの順に 3 つのやり方があります。
+
+1. **未知の属性を許す。** `--allow-additional` で `additionalProperties: true` の定義を書き出して登録します。独自の属性は受け付けられますが検証されず、JSON-LD ではリクエストの context が定める IRI（無ければ GeonicDB の既定語彙）に展開されます。
+2. **定義を拡張する。** カタログの属性に自分の属性を足した定義を登録し、`contextUrl` にはカタログの context を取り込んで自分の語だけを定義した context を指定します。独自の属性も他と同じように検証され、IRI は自分の管理下に置けます。カタログが Smart Data Models に対して行っている「プロファイル」を、一段下で行う形です。
+
+   ```json
+   {
+     "@context": [
+       "https://models.geonicdb.com/context/disaster/v1.jsonld",
+       { "acme": "https://example.com/ns/acme/", "patrolRoute": "acme:patrolRoute" }
+     ]
+   }
+   ```
+
+   拡張ファイル（型名をキーにする）を用意して書き出します。カタログの属性を再定義しようとするとエラーになります。
+
+   ```json
+   {
+     "RoadClosure": {
+       "contextUrl": "https://example.com/context/acme-disaster.jsonld",
+       "propertyDetails": {
+         "patrolRoute": { "ngsiType": "Property", "valueType": "string", "example": "A-3", "description": "巡回ルート", "@context": "https://example.com/ns/acme/patrolRoute" }
+       }
+     }
+   }
+   ```
+
+   ```bash
+   node scripts/export-geonicdb.mjs disaster --type RoadClosure --extend ./acme.json --out ./out
+   ```
+
+3. **カタログに提案する。** 自分の案件以外でも役に立つ属性なら、[Issue](https://github.com/geolonia/geonicdb-models/issues) か Pull Request で提案してください。次のマイナーバージョンで追加されれば、拡張は不要になります。
 
 ## 型名を変えたいとき
 
