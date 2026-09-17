@@ -17,6 +17,13 @@ function addVPreToInlineCode(md: MarkdownIt) {
     orig(tokens, idx, options, env, self).replace(/^<code/, '<code v-pre')
 }
 
+const guides = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.SidebarItem[] => [
+  { text: lang === 'ja' ? '拡張する・貢献する' : 'Extend and contribute', link: `${prefix}/guide/extend` },
+  { text: lang === 'ja' ? '変わらない URL' : 'URLs that never change', link: `${prefix}/guide/urls` },
+  { text: lang === 'ja' ? 'GeonicDB で使う' : 'Use with GeonicDB', link: `${prefix}/guide/geonicdb` },
+  { text: lang === 'ja' ? '他のデータモデルカタログ' : 'Other data model catalogs', link: `${prefix}/guide/catalogs` },
+]
+
 function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
   return [
     {
@@ -26,6 +33,7 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
         { text: 'catalog.json', link: '/catalog.json' },
       ],
     },
+    { text: lang === 'ja' ? 'ガイド' : 'Guides', items: guides(prefix, lang) },
     ...subjects.map((s) => ({
       text: s.title[lang],
       collapsed: false,
@@ -39,6 +47,7 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
 
 const nav = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.NavItem[] => [
   { text: lang === 'ja' ? 'データモデル' : 'Data models', link: `${prefix}/models/` },
+  { text: lang === 'ja' ? 'ガイド' : 'Guides', items: guides(prefix, lang) },
   { text: 'GeonicDB Docs', link: lang === 'ja' ? 'https://docs.geonicdb.com/ja/' : 'https://docs.geonicdb.com/en/' },
 ]
 
