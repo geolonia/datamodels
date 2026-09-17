@@ -17,23 +17,19 @@ hero:
       link: https://github.com/geolonia/geonicdb-models
 
 features:
-  - icon: 🔗
-    title: 拡張する、複製しない
+  - title: 拡張する、複製しない
     details: Smart Data Models の型と属性はそのまま使い、日本向けの属性や日本固有のモデルだけを追加します。やり方と貢献の仕方はガイドへ。
     link: /guide/extend
     linkText: 拡張する・貢献する
-  - icon: 🔒
-    title: 変わらない URL
+  - title: 変わらない URL
     details: 公開したバージョン付きの @context と JSON Schema は変更も削除もされません。どの URL を使うべきかはガイドへ。
     link: /guide/urls
     linkText: URL の約束
-  - icon: 🗂️
-    title: GeonicDB でそのまま使える
+  - title: GeonicDB でそのまま使える
     details: 各モデルの Custom Data Model 定義を配信しています。登録からエンティティ作成までの手順はガイドへ。
     link: /guide/geonicdb
     linkText: GeonicDB で使う
-  - icon: 🗺️
-    title: 他のカタログとの関係
+  - title: 他のカタログとの関係
     details: Smart Data Models、デジタル庁 GIF、推奨データセットなど、世界と日本のデータモデルの一覧と、このカタログとの関係。
     link: /guide/catalogs
     linkText: 他のデータモデルカタログ
