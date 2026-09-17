@@ -1,0 +1,42 @@
+name: Check Worker build
+
+# Builds the published tree and dry-runs the Worker deploy on every pull request
+# and on main. It does NOT publish: Cloudflare Workers Builds watches this
+# repository (Worker -> Settings -> Builds) and redeploys on merge to main, so
+# no Cloudflare token lives in GitHub. See README, "Hosting and deployment".
+#
+# No `paths` filter on purpose: this check is meant to be required on main, and
+# a filtered workflow never reports on PRs it skips, which blocks them forever.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Build and dry-run deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # Builds dist/ and runs `wrangler deploy --dry-run`, which validates
+      # wrangler.jsonc and the assets directory without touching Cloudflare.
+      - name: Build and dry-run deploy
+        run: npm run check

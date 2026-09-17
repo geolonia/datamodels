@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // The Worker name must match the Worker created in the Cloudflare dashboard
+  // (Workers Builds rejects a mismatch). Same account as geonicdb-status.
+  "name": "geonicdb-models",
+  "compatibility_date": "2026-08-01",
+  "observability": { "enabled": true },
+
+  // Assets-only Worker: no script, Cloudflare serves the built tree directly.
+  // `_headers` and `_redirects` inside the directory set the URL contract
+  // (content types, CORS, caching, IRI redirects). See public/_headers.
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+
+  // Custom domain: deploying creates the DNS record and certificate in the
+  // geonicdb.com zone, so no manual DNS step is needed.
+  "routes": [
+    { "pattern": "models.geonicdb.com", "custom_domain": true }
+  ]
+}

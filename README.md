@@ -16,12 +16,42 @@ Curated bilingual catalog of NGSI-LD data models for [GeonicDB](https://docs.geo
 models/      data models; Japan-only models and profiles under models/jp/
 site/        the public website (VitePress, Japanese and English)
 scripts/     build catalog.json, generate specs, validate examples and contexts
-dist/        published tree deployed to models.geonicdb.com
+public/      static source (headers, redirects, placeholder pages)
+dist/        published tree deployed to models.geonicdb.com (built, not committed)
 ```
 
 ## Contributing
 
 Issues and pull requests are welcome in Japanese or English. Every model change is validated in CI: examples against schemas, contexts through a JSON-LD processor, IRI uniqueness, and immutability of published versions. A contributing guide will be published with the site.
+
+## Hosting and deployment
+
+The site is a Cloudflare Worker with static assets, in the same Cloudflare account as the GeonicDB status page (`geonicdb-status` in [geonicdb-operations](https://github.com/geolonia/geonicdb-operations)). `wrangler.jsonc` describes it; `public/` is the static source, `npm run build` writes the published tree to `dist/`.
+
+**Publishing needs no credential in GitHub.** Cloudflare Workers Builds watches this repository and redeploys on every merge to `main`. CI only builds and dry-runs the deploy.
+
+Workers Builds settings, on the `geonicdb-models` Worker under Settings → Builds:
+
+| Setting | Value |
+|---|---|
+| Repository | `geolonia/geonicdb-models` |
+| Production branch | `main` |
+| Root directory | `/` |
+| Build command | `npm ci && npm run build` |
+| Deploy command | `npx wrangler deploy` |
+| Builds for non-production branches | off |
+
+The custom domain `models.geonicdb.com` is declared in `wrangler.jsonc`; the first deploy creates the DNS record and certificate in the `geonicdb.com` zone.
+
+The URL contract (content types, CORS, caching, IRI redirects) lives in `public/_headers` and `public/_redirects`. Published versioned files under `/context/` and `/schema/` are never modified or removed.
+
+Local commands:
+
+```bash
+npm ci
+npm run check    # build dist/ and dry-run the deploy, no Cloudflare access needed
+npm run dev      # serve locally with wrangler
+```
 
 ## Licences
 
