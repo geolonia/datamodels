@@ -46,7 +46,7 @@ Do record the upstream types you considered and why they did not fit in the mode
 
 ### Where we stand
 
-The first subject, [disaster response](/en/models/disaster/), is a port of the models running in Takamatsu City's application. Its attribute IRIs reuse existing vocabularies, but its types were minted without a comparison against upstream (Smart Data Models `IssueReporting`, `Alert`, `RoadSegment` and others). That comparison is tracked as an [issue](https://github.com/geolonia/geonicdb-models/issues) and may lead to aligning some types with upstream.
+The first subject, [disaster response](/en/models/disaster/), is a port of the models running in Takamatsu City's application. Its attribute IRIs reuse existing vocabularies, but its types were minted without a comparison against upstream (Smart Data Models `IssueReporting`, `Alert`, `RoadSegment` and others). That comparison is tracked in [issue #16](https://github.com/geolonia/geonicdb-models/issues/16) and may lead to aligning some types with upstream.
 
 ### Rules
 

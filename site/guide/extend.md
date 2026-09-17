@@ -46,7 +46,7 @@ description: 既存のデータモデルを日本向けに拡張する方法、�
 
 ### 現状について
 
-最初のサブジェクト [災害対応](/models/disaster/) は、高松市で実際に動いているアプリのモデルをそのまま移したものです。属性の IRI は既存の語彙を使っていますが、型は上流（Smart Data Models の `IssueReporting`、`Alert`、`RoadSegment` など）との比較を経ずに独自に発行しています。この比較は [Issue](https://github.com/geolonia/geonicdb-models/issues) で進めており、結果によって型を上流に揃える可能性があります。
+最初のサブジェクト [災害対応](/models/disaster/) は、高松市で実際に動いているアプリのモデルをそのまま移したものです。属性の IRI は既存の語彙を使っていますが、型は上流（Smart Data Models の `IssueReporting`、`Alert`、`RoadSegment` など）との比較を経ずに独自に発行しています。この比較は [Issue #16](https://github.com/geolonia/geonicdb-models/issues/16) で進めており、結果によって型を上流に揃える可能性があります。
 
 ### 守ること
 
