@@ -1,0 +1,48 @@
+{
+  "@context": [
+    "https://models.geonicdb.com/context/disaster/v1.0.0.jsonld",
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
+  ],
+  "id": "urn:ngsi-ld:RoadClosure:2026-typhoon-10-001",
+  "type": "RoadClosure",
+  "project": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:Project:2026-typhoon-10"
+  },
+  "roadName": {
+    "type": "Property",
+    "value": "県道14号"
+  },
+  "addressTown": {
+    "type": "Property",
+    "value": "西宝町"
+  },
+  "addressBanchi": {
+    "type": "Property",
+    "value": "2-3"
+  },
+  "area": {
+    "type": "GeoProperty",
+    "value": {
+      "type": "LineString",
+      "coordinates": [
+        [
+          134.04,
+          34.34
+        ],
+        [
+          134.05,
+          34.35
+        ]
+      ]
+    }
+  },
+  "closureStatus": {
+    "type": "Property",
+    "value": "通行止め中"
+  },
+  "memo": {
+    "type": "Property",
+    "value": "冠水のため通行止め"
+  }
+}

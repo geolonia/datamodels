@@ -1,0 +1,47 @@
+{
+  "@context": [
+    "https://models.geonicdb.com/context/disaster/v1.0.0.jsonld",
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
+  ],
+  "id": "urn:ngsi-ld:EvacuationShelter:2026-typhoon-10-001",
+  "type": "EvacuationShelter",
+  "project": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:Project:2026-typhoon-10"
+  },
+  "externalShelterId": {
+    "type": "Property",
+    "value": "1"
+  },
+  "openingStatus": {
+    "type": "Property",
+    "value": "開設中"
+  },
+  "evacueeHouseholds": {
+    "type": "Property",
+    "value": 12
+  },
+  "evacueeTotal": {
+    "type": "Property",
+    "value": 30
+  },
+  "evacueeFemale": {
+    "type": "Property",
+    "value": 16
+  },
+  "evacueeMale": {
+    "type": "Property",
+    "value": 14
+  },
+  "memo": {
+    "type": "Property",
+    "value": "物資不足"
+  },
+  "openedAt": {
+    "type": "Property",
+    "value": {
+      "@type": "DateTime",
+      "@value": "2026-08-26T10:00:00Z"
+    }
+  }
+}

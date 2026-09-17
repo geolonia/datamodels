@@ -1,0 +1,27 @@
+title:
+  ja: "申し送り"
+  en: "Incident handover note"
+description:
+  ja: "通報に対する申し送り1件。送信元・送信先の班と内容を持つ。"
+  en: "One handover note about an incident report, from one team to another."
+status: draft
+tags: [disaster-response, municipality]
+attributes:
+  task:
+    ja: "対象の通報"
+    en: "The incident report this entity refers to"
+  fromTeam:
+    ja: "送信元の班"
+    en: "Sending team"
+  toTeam:
+    ja: "送信先の班"
+    en: "Receiving team"
+  content:
+    ja: "内容"
+    en: "Content"
+  sentAt:
+    ja: "送信日時"
+    en: "Time the note was sent"
+  updatedAt:
+    ja: "アプリ側の更新日時。ブローカーのシステム属性 modifiedAt とは別に、アプリが業務上の更新として記録する時刻"
+    en: "Application-level update time, recorded by the app as a business update, separate from the broker system attribute modifiedAt"

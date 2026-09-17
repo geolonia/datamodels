@@ -1,0 +1,23 @@
+{
+  "@context": [
+    "https://models.geonicdb.com/context/disaster/v1.0.0.jsonld",
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
+  ],
+  "id": "urn:ngsi-ld:IncidentPhoto:2026-typhoon-10-012-001",
+  "type": "IncidentPhoto",
+  "task": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:IncidentReport:2026-typhoon-10-012"
+  },
+  "imageKey": {
+    "type": "Property",
+    "value": "project-2026-typhoon-10/task-012/image-001.jpg"
+  },
+  "updatedAt": {
+    "type": "Property",
+    "value": {
+      "@type": "DateTime",
+      "@value": "2026-08-21T11:10:00Z"
+    }
+  }
+}

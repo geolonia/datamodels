@@ -1,0 +1,6 @@
+notes:
+  - Seeded 2026-09-17 from geolonia/geonicdb-datamodels data-models/*.json (Takamatsu City flood-prevention headquarters). Type name generalised from the tenant-specific "Saitai" prefix.
+  - The original attribute "status" is renamed because status is a protected term in the NGSI-LD core context and cannot be redefined.
+  - Evacuee counts are integers here; the original application stored them as strings.
+  - openingStatus has the two values of the source application (未開設, 開設中). Whether a closed shelter is 未開設 again or needs a third value such as 閉鎖 is an open question for the operating team; the example therefore shows an open shelter without closedAt.
+license: CC BY 4.0 (see /LICENSE-CONTENT.md)

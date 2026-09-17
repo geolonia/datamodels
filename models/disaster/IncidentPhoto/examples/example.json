@@ -1,0 +1,7 @@
+{
+  "id": "urn:ngsi-ld:IncidentPhoto:2026-typhoon-10-012-001",
+  "type": "IncidentPhoto",
+  "task": "urn:ngsi-ld:IncidentReport:2026-typhoon-10-012",
+  "imageKey": "project-2026-typhoon-10/task-012/image-001.jpg",
+  "updatedAt": "2026-08-21T11:10:00Z"
+}

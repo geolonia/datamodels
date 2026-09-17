@@ -36,7 +36,12 @@ jobs:
       - name: Install
         run: npm ci
 
-      # Builds dist/ and runs `wrangler deploy --dry-run`, which validates
-      # wrangler.jsonc and the assets directory without touching Cloudflare.
-      - name: Build and dry-run deploy
+      # Validator tests: each contract rule must fire on a broken model.
+      - name: Test
+        run: npm test
+
+      # Validates models, builds dist/, checks immutability and runs
+      # `wrangler deploy --dry-run`, which validates wrangler.jsonc and the
+      # assets directory without touching Cloudflare.
+      - name: Validate, build and dry-run deploy
         run: npm run check

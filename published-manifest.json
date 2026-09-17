@@ -1,4 +1,13 @@
 {
   "comment": "SHA-256 of every immutable published file (exact versions under context/ and schema/, and context/mirror/). Entries are appended by `npm run manifest:record` and never edited or removed. See scripts/check-immutability.mjs.",
-  "files": {}
+  "files": {
+    "context/disaster/v1.0.0.jsonld": "55500a0bd3707c5a79ce1ac0ca1e445edd34adb6722dbcd1c84ef28b1f83d4f4",
+    "schema/disaster/EvacuationShelter/v1.0.0.json": "d048a32820496a8b582943d64959b1360d8952ca43a567c26c2685c495b1f01c",
+    "schema/disaster/IncidentHandoverNote/v1.0.0.json": "504eedebca07263f98e532e02c344357adbdd4e6eb78373d18dbefd2976e5c9c",
+    "schema/disaster/IncidentPhoto/v1.0.0.json": "2580eca282cb83f5c06135dd85ed35be01f80aa10c849743f4391da1e102d99c",
+    "schema/disaster/IncidentReport/v1.0.0.json": "0a2d4b5ea18c565ff368baa47e311d631ba8510694470fc7fb3e8f26579df693",
+    "schema/disaster/IncidentResponseAction/v1.0.0.json": "cbc964288153dfbda14f92a3aede1ef8f7cc33b66116a0a0b21c1b7c61fda0cd",
+    "schema/disaster/Project/v1.0.0.json": "454e88eb78b60a3b7825d2e5d5543ca0acad9a4abe9e7ff8eef76b0075df670c",
+    "schema/disaster/RoadClosure/v1.0.0.json": "44d2076129a1f6e1250ea5cd389ffd40d079811d38660a16ef34facc9106431b"
+  }
 }

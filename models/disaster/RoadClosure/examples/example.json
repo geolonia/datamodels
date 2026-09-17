@@ -1,0 +1,23 @@
+{
+  "id": "urn:ngsi-ld:RoadClosure:2026-typhoon-10-001",
+  "type": "RoadClosure",
+  "project": "urn:ngsi-ld:Project:2026-typhoon-10",
+  "roadName": "県道14号",
+  "addressTown": "西宝町",
+  "addressBanchi": "2-3",
+  "area": {
+    "type": "LineString",
+    "coordinates": [
+      [
+        134.04,
+        34.34
+      ],
+      [
+        134.05,
+        34.35
+      ]
+    ]
+  },
+  "closureStatus": "通行止め中",
+  "memo": "冠水のため通行止め"
+}

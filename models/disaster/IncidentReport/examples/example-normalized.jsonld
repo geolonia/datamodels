@@ -1,0 +1,84 @@
+{
+  "@context": [
+    "https://models.geonicdb.com/context/disaster/v1.0.0.jsonld",
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
+  ],
+  "id": "urn:ngsi-ld:IncidentReport:2026-typhoon-10-001",
+  "type": "IncidentReport",
+  "project": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:Project:2026-typhoon-10"
+  },
+  "index": {
+    "type": "Property",
+    "value": 12
+  },
+  "incidentStatus": {
+    "type": "Property",
+    "value": "InProgress"
+  },
+  "category": {
+    "type": "Property",
+    "value": "冠水"
+  },
+  "pressReleaseStatus": {
+    "type": "Property",
+    "value": "プレス予定"
+  },
+  "reportedAt": {
+    "type": "Property",
+    "value": {
+      "@type": "DateTime",
+      "@value": "2026-08-21T10:15:00Z"
+    }
+  },
+  "inputterTeam": {
+    "type": "Property",
+    "value": "情報班"
+  },
+  "inputterName": {
+    "type": "Property",
+    "value": "山田"
+  },
+  "addressTown": {
+    "type": "Property",
+    "value": "西宝町"
+  },
+  "addressBanchi": {
+    "type": "Property",
+    "value": "1-1"
+  },
+  "location": {
+    "type": "GeoProperty",
+    "value": {
+      "type": "Point",
+      "coordinates": [
+        134.0437,
+        34.3403
+      ]
+    }
+  },
+  "reporterName": {
+    "type": "Property",
+    "value": "非公開"
+  },
+  "reporterPhone": {
+    "type": "Property",
+    "value": "非公開"
+  },
+  "reporterAddress": {
+    "type": "Property",
+    "value": "非公開"
+  },
+  "memo": {
+    "type": "Property",
+    "value": "現地確認中"
+  },
+  "updatedAt": {
+    "type": "Property",
+    "value": {
+      "@type": "DateTime",
+      "@value": "2026-08-21T10:20:00Z"
+    }
+  }
+}
