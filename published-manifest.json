@@ -1,0 +1,4 @@
+{
+  "comment": "SHA-256 of every immutable published file (exact versions under context/ and schema/, and context/mirror/). Entries are appended by `npm run manifest:record` and never edited or removed. See scripts/check-immutability.mjs.",
+  "files": {}
+}
