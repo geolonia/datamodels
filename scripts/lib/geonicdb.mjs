@@ -8,6 +8,7 @@ function valueTypeOf(prop) {
   if (ngsi === 'Relationship') return 'uri';
   if (ngsi === 'GeoProperty') return 'geojson';
   if (prop.format === 'date-time') return 'datetime';
+  if (prop.allOf || prop.$ref) return 'object'; // value type referenced by $ref
   if (prop.format === 'uri') return 'uri';
   return prop.type; // string | number | integer | boolean | array | object
 }

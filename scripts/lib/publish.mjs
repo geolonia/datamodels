@@ -6,6 +6,7 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { loadSubjects, attributesOf, subjectUrls, modelUrls, DIST, ROOT, BASE_URL } from './models.mjs';
 import { toCustomDataModel } from './geonicdb.mjs';
+import { listReleases } from './releases.mjs';
 import { sharedTerms } from './shared-terms.mjs';
 
 const rel = (url) => url.slice(BASE_URL.length).replace(/^\//, '');
@@ -20,10 +21,16 @@ export async function publishModels(subjects) {
   const catalog = { formatVersion: 1, generatedAt: new Date().toISOString(), models: [] };
   const redirects = ['', '# Generated: type and attribute IRIs resolve to their documentation.'];
   const headers = ['', '# Generated: exact versions are immutable. `! Cache-Control` detaches the short cache inherited from the glob rule above.'];
-  const immutable = (url) => headers.push(rel(url).replace(/^/, '/'), '  ! Cache-Control', '  Cache-Control: public, max-age=31536000, immutable');
+  const immutableDone = new Set();
+  const immutable = (url) => { if (immutableDone.has(url)) return; immutableDone.add(url); headers.push(rel(url).replace(/^/, '/'), '  ! Cache-Control', '  Cache-Control: public, max-age=31536000, immutable'); };
 
   for (const subject of subjects) {
     const u = subjectUrls(subject);
+    // Every published version first, then the current one on top (identical
+    // bytes when it has been snapshotted; the immutability check confirms).
+    for (const release of await listReleases(subject)) {
+      for (const f of release.files) { await write(f.url, await readFile(f.path)); immutable(f.url); }
+    }
     await write(u.contextExact, json(subject.context)); immutable(u.contextExact);
     await write(u.contextAlias, json(subject.context));
     const shared = sharedTerms(subject);
@@ -34,14 +41,14 @@ export async function publishModels(subjects) {
       await write(mu.schemaExact, json(model.schema)); immutable(mu.schemaExact);
       await write(mu.schemaAlias, json(model.schema));
       for (const [f, content] of Object.entries(model.examples)) await write(`${mu.examples}${f}`, json(content));
-      await write(mu.geonicdb, json(toCustomDataModel(subject, model)));
+      if (model.kind === 'entity') await write(mu.geonicdb, json(toCustomDataModel(subject, model)));
       redirects.push(`/ns/${subject.name}/${model.type}  /models/${subject.name}/${model.type}/  302`);
       for (const [name] of attributesOf(model)) if (!shared.has(name) && !(name in {})) {
         const iri = model.schema.properties[name]['x-iri'] ?? '';
         if (iri.startsWith(u.namespace)) redirects.push(`/ns/${subject.name}/${name}  /models/${subject.name}/${model.type}/#${name}  302`);
       }
       catalog.models.push({
-        type: model.type, typeIri: mu.typeIri, subject: subject.name, domain: subject.name, source: subject.source,
+        type: model.type, kind: model.kind, typeIri: mu.typeIri, subject: subject.name, domain: subject.name, source: subject.source,
         contextUrl: u.contextExact, contextAliasUrl: u.contextAlias, schemaUrl: mu.schemaExact, version: subject.version,
         status: model.catalog.status ?? 'draft', title: model.catalog.title, description: model.catalog.description,
         sampleProperties: attributesOf(model).map(([n]) => n), pageUrl: mu.page, geonicdbModelUrl: mu.geonicdb,

@@ -13,7 +13,7 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import jsonld from 'jsonld';
 import { readFile } from 'node:fs/promises';
-import { loadSubjects, attributesOf, toKeyValues, subjectUrls, modelUrls, CORE_CONTEXT_URL, CORE_CONTEXT_FIXTURE } from './lib/models.mjs';
+import { loadSubjects, attributesOf, toKeyValues, subjectUrls, modelUrls, resolveContextTerms, subjectForContextUrl, CORE_CONTEXT_URL, CORE_CONTEXT_FIXTURE } from './lib/models.mjs';
 
 const failures = [];
 const fail = (where, msg) => failures.push(`${where}: ${msg}`);
@@ -27,20 +27,37 @@ const coreTerms = new Set(Object.keys(core['@context']).filter((k) => !k.startsW
 const subjects = await loadSubjects();
 const seenTypeIris = new Map();
 
+// Value schemas (x-kind: value) are referenced by $ref from entity schemas in
+// other subjects; register them so ajv resolves the URL without fetching.
+for (const subject of subjects) for (const model of subject.models) {
+  if (model.kind === 'value') { try { ajv.addSchema(model.schema, model.schema.$id); } catch (e) { fail(`models/${subject.name}/${model.type}/schema.json`, `cannot register: ${e.message}`); } }
+}
+
+/** Every key at any depth of a plain object tree, as "a.b.c" paths. */
+function keyPaths(obj, prefix = '') {
+  const out = [];
+  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return out;
+  for (const [k, v] of Object.entries(obj)) { if (k.startsWith('@')) continue; const path = prefix ? `${prefix}.${k}` : k; out.push(path); out.push(...keyPaths(v, path)); }
+  return out;
+}
+
 for (const subject of subjects) {
   const where = `models/${subject.name}`;
   const urls = subjectUrls(subject);
-  const ctxTerms = subject.context['@context'];
+  let ctxTerms;
+  try { ctxTerms = resolveContextTerms(subject, subjects); } catch (e) { fail(`${where}/context.jsonld`, e.message); continue; }
+  const inlineTerms = subject.inlineTerms;
 
   // Local document loader: our own context URLs resolve to the source file,
   // the core context to the fixture. Anything else is a real fetch.
   const loader = async (url) => {
-    if (url === urls.contextExact || url === urls.contextAlias) return { documentUrl: url, document: subject.context };
+    const s = subjectForContextUrl(url, subjects);
+    if (s) return { documentUrl: url, document: s.context };
     if (url === CORE_CONTEXT_URL) return { documentUrl: url, document: core };
     return jsonld.documentLoaders.node()(url);
   };
 
-  for (const term of Object.keys(ctxTerms)) {
+  for (const term of Object.keys(inlineTerms)) {
     if (coreTerms.has(term)) fail(`${where}/context.jsonld`, `redefines core context term "${term}" (protected)`);
   }
 
@@ -49,14 +66,14 @@ for (const subject of subjects) {
     const murls = modelUrls(subject, model);
     const { schema } = model;
 
-    if (schema.properties?.type?.const !== model.type) fail(`${mwhere}/schema.json`, `properties.type.const must be "${model.type}"`);
+    if (model.kind === 'entity' && schema.properties?.type?.const !== model.type) fail(`${mwhere}/schema.json`, `properties.type.const must be "${model.type}"`);
     if (schema.$id !== murls.schemaExact) fail(`${mwhere}/schema.json`, `$id must be ${murls.schemaExact}`);
     if (schema['x-version'] !== subject.version) fail(`${mwhere}/schema.json`, `x-version must be ${subject.version} (subject version)`);
     if (!ctxTerms[model.type]) fail(`${where}/context.jsonld`, `does not define type "${model.type}"`);
     const prev = seenTypeIris.get(murls.typeIri); if (prev) fail(mwhere, `type IRI ${murls.typeIri} also used by ${prev}`); seenTypeIris.set(murls.typeIri, mwhere);
 
     for (const [name, prop] of attributesOf(model)) {
-      if (!prop['x-ngsi']?.type) fail(`${mwhere}/schema.json`, `${name}: missing x-ngsi.type`);
+      if (model.kind === 'entity' && !prop['x-ngsi']?.type) fail(`${mwhere}/schema.json`, `${name}: missing x-ngsi.type`);
       if (!ctxTerms[name] && !coreTerms.has(name)) fail(`${where}/context.jsonld`, `does not define attribute "${name}" used by ${model.type}`);
       if (!model.catalog?.attributes?.[name]?.ja || !model.catalog?.attributes?.[name]?.en) fail(`${mwhere}/catalog.yaml`, `${name}: needs ja and en descriptions`);
     }
@@ -71,6 +88,18 @@ for (const subject of subjects) {
     if (!kv) fail(mwhere, 'examples/example.json is required');
     else if (!validate(kv)) fail(`${mwhere}/examples/example.json`, ajv.errorsText(validate.errors));
 
+    if (model.kind === 'value') {
+      // A value type has no normalized form of its own; check its fields expand
+      // through this subject's context by wrapping the example in an entity.
+      const probe = { '@context': [urls.contextExact, CORE_CONTEXT_URL], id: 'urn:ngsi-ld:Probe:1', type: 'Probe', address: { type: 'Property', value: kv } };
+      try {
+        const expanded = await jsonld.expand(probe, { documentLoader: loader });
+        const compacted = await jsonld.compact(expanded, { '@context': probe['@context'] }, { documentLoader: loader });
+        const lost = keyPaths(probe).filter((k) => !keyPaths(compacted).includes(k) && k !== 'type');
+        for (const k of lost) fail(`${mwhere}/examples/example.json`, `field "${k}" is not defined by the context and was lost in expansion`);
+      } catch (e) { fail(`${mwhere}/examples/example.json`, `JSON-LD processing failed: ${e.message}`); }
+      continue;
+    }
     const norm = model.examples['example-normalized.jsonld'];
     if (!norm) { fail(mwhere, 'examples/example-normalized.jsonld is required'); continue; }
     for (const [name, prop] of attributesOf(model)) {
@@ -96,7 +125,10 @@ for (const subject of subjects) {
       const typeIri = node['@type']?.[0];
       if (typeIri !== murls.typeIri) fail(`${mwhere}/examples/example-normalized.jsonld`, `type expands to ${typeIri}, expected ${murls.typeIri}`);
       const compacted = await jsonld.compact(expanded, { '@context': norm['@context'] }, { documentLoader: loader });
-      for (const k of Object.keys(norm)) if (k !== '@context' && !(k in compacted)) fail(`${mwhere}/examples/example-normalized.jsonld`, `"${k}" lost in expand/compact round-trip`);
+      // Every key at every depth must survive: a nested field the context does
+      // not define is silently dropped by expansion, so compare key paths.
+      const after = new Set(keyPaths(compacted));
+      for (const k of keyPaths(norm)) if (!after.has(k) && !/(^|\.)(type|value|object)$/.test(k)) fail(`${mwhere}/examples/example-normalized.jsonld`, `"${k}" lost in expand/compact round-trip (not defined by the context?)`);
     } catch (e) {
       fail(`${mwhere}/examples/example-normalized.jsonld`, `JSON-LD processing failed: ${e.message}`);
     }

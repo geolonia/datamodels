@@ -7,7 +7,7 @@ One disaster-response operation, bundling everything done in response to a singl
 災害対応の1回のオペレーション単位。台風や豪雨など1つの事象に対する対応全体を束ねる。schema.org の Project の下位概念。
 
 - Type IRI: `https://models.geonicdb.com/ns/disaster/Project`
-- Context: `https://models.geonicdb.com/context/disaster/v1.jsonld` (alias), `https://models.geonicdb.com/context/disaster/v1.0.0.jsonld` (exact)
+- Context: `https://models.geonicdb.com/context/disaster/v1.jsonld` (alias), `https://models.geonicdb.com/context/disaster/v1.1.0.jsonld` (exact)
 - Schema: `https://models.geonicdb.com/schema/disaster/Project/v1.json`
 - Page: https://models.geonicdb.com/models/disaster/Project/
 

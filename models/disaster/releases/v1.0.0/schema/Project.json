@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://models.geonicdb.com/schema/disaster/Project/v1.0.0.json",
+  "title": "Project",
+  "description": "One disaster-response operation, bundling everything done in response to a single event such as a typhoon or heavy rain. A subclass of schema.org Project.",
+  "x-version": "1.0.0",
+  "x-license-url": "https://models.geonicdb.com/LICENSE-CONTENT",
+  "x-model-tags": "GeonicDB, disaster-response, Japan",
+  "x-derived-from": "https://github.com/geolonia/geonicdb-datamodels",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uri",
+      "description": "Entity id (URN)"
+    },
+    "type": {
+      "type": "string",
+      "const": "Project",
+      "description": "Entity type"
+    },
+    "name": {
+      "description": "Name",
+      "type": "string",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://uri.etsi.org/ngsi-ld/name"
+    },
+    "description": {
+      "description": "Description",
+      "type": "string",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld#description"
+    }
+  },
+  "required": [
+    "id",
+    "type",
+    "name"
+  ],
+  "additionalProperties": false
+}

@@ -7,7 +7,7 @@ One response action taken for an incident report: assignee, content and completi
 通報に対する対応業務1件。担当、内容、完了状態を持つ。
 
 - Type IRI: `https://models.geonicdb.com/ns/disaster/IncidentResponseAction`
-- Context: `https://models.geonicdb.com/context/disaster/v1.jsonld` (alias), `https://models.geonicdb.com/context/disaster/v1.0.0.jsonld` (exact)
+- Context: `https://models.geonicdb.com/context/disaster/v1.jsonld` (alias), `https://models.geonicdb.com/context/disaster/v1.1.0.jsonld` (exact)
 - Schema: `https://models.geonicdb.com/schema/disaster/IncidentResponseAction/v1.json`
 - Page: https://models.geonicdb.com/models/disaster/IncidentResponseAction/
 
