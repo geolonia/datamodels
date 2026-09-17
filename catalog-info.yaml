@@ -1,0 +1,17 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  namespace: geolonia
+  name: geonicdb-models
+  description: Curated bilingual catalog of NGSI-LD data models for GeonicDB, served at models.geonicdb.com. Extends Smart Data Models with Japanese profiles and Japan-only models.
+  annotations:
+    github.com/project-slug: geolonia/geonicdb-models
+  tags: ['website']
+spec:
+  type: 'website'
+  lifecycle: 'experimental'
+  owner: group:geolonia/geonicdb
+  system: system:geolonia/geonicdb
+  # accessGrants:
+  #   - team: group:geolonia/team-name
+  #     permission: write  # read | triage | write | maintain | admin
