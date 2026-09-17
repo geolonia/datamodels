@@ -14,3 +14,28 @@
     font-size: 36px !important;
   }
 }
+
+/*
+ * Navbar title. The GeonicDB wordmark is wide, and with the sidebar open the
+ * title area is only as wide as the sidebar, so "Data Models" next to the logo
+ * ran into the search box. Stack the site title under the logo instead.
+ */
+.VPNavBarTitle .title {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  line-height: 1;
+}
+
+.VPNavBarTitle .logo {
+  height: 20px;
+  margin-right: 0;
+}
+
+.VPNavBarTitle .title > span {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--vp-c-text-2);
+}
