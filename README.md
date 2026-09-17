@@ -19,7 +19,7 @@ models/<subject>/
     notes.yaml  ADOPTERS.yaml  README.md  LICENSE.md
 site/                     VitePress site; site/models and site/en/models are generated
 scripts/                  validate, build, publish, live check, GeonicDB export
-public/                   _headers and the _redirects header
+public/                   _headers and _redirects (the build appends the generated per-file rules to both)
 catalog.schema.json       wire format of /catalog.json
 published-manifest.json   SHA-256 of every published immutable file
 ```
@@ -42,7 +42,9 @@ node scripts/export-geonicdb.mjs <subject> [--type-prefix P] [--out DIR]   # Geo
 
 1. Edit or add files under `models/<subject>/`. Every attribute needs a context term (or a core-context term) and ja/en descriptions; never redefine a core-context term such as `status`.
 2. `npm run check` and `npm test` must pass. CI runs both on every pull request.
-3. Bump the subject version for anything that changes a published file, mark superseded attributes `x-deprecated`, then `npm run manifest:record` as the last step. While the catalog has no consumers, published files may still be corrected in place.
+3. Bump the subject version for anything that changes a published file, mark superseded attributes `x-deprecated`, then run `npm run manifest:record` as the last step. It snapshots the new version into `releases/` and records its hashes in `published-manifest.json`; `npm run check` fails if a recorded file changed or disappeared.
+
+Exception while the catalog has no consumers (until the models are officially promoted): a published file may be corrected in place. To do so, empty `files` in `published-manifest.json`, apply the change to the source and to the matching `releases/` snapshot, and run `npm run manifest:record` again; say so in the pull request. `npm run check:live` then confirms the deployed bytes match the manifest.
 
 Contributions in Japanese or English are welcome as issues or pull requests.
 
