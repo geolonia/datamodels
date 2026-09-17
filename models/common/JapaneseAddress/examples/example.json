@@ -1,0 +1,17 @@
+{
+  "addressCountry": "JP",
+  "postalCode": "760-0017",
+  "addressRegion": "香川県",
+  "addressLocality": "高松市",
+  "machiaza": "番町",
+  "chome": "1",
+  "banchi": "8",
+  "go": "15",
+  "buildingName": "高松市役所 3階",
+  "residentialIndication": true,
+  "jisPrefectureCode": "37",
+  "jisMunicipalityCode": "37201",
+  "localGovernmentCode": "372013",
+  "abrMachiazaId": "0001001",
+  "addressText": "香川県高松市番町1丁目8-15"
+}

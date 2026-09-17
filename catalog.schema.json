@@ -120,6 +120,14 @@
           "supersededBy": {
             "type": "string",
             "format": "uri"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "entity",
+              "value"
+            ],
+            "description": "entity: an NGSI-LD entity type; value: a reusable value structure referenced from entity schemas. Absent means entity."
           }
         }
       }

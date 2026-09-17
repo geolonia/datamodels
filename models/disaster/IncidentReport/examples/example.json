@@ -9,6 +9,15 @@
   "reportedAt": "2026-08-21T10:15:00Z",
   "inputterTeam": "情報班",
   "inputterName": "山田",
+  "address": {
+    "addressRegion": "香川県",
+    "addressLocality": "高松市",
+    "machiaza": "西宝町",
+    "banchi": "1",
+    "go": "1",
+    "jisMunicipalityCode": "37201",
+    "addressText": "香川県高松市西宝町1-1"
+  },
   "addressTown": "西宝町",
   "addressBanchi": "1-1",
   "location": {

@@ -56,11 +56,18 @@ export async function loadSubjects() {
     }
     if (!['minted', 'profile', 'global'].includes(meta.source)) throw new Error(`${name}/subject.yaml: source must be minted, profile or global`);
     const context = await readJson(join(dir, 'context.jsonld'));
-    if (!context['@context'] || typeof context['@context'] !== 'object') throw new Error(`${name}/context.jsonld: missing @context object`);
+    if (!context['@context'] || typeof context['@context'] !== 'object') throw new Error(`${name}/context.jsonld: missing @context (object or array)`);
+    // A context may be an array that imports other catalog contexts by URL
+    // (for example the common subject) followed by inline term definitions.
+    const parts = Array.isArray(context['@context']) ? context['@context'] : [context['@context']];
+    const imports = parts.filter((p) => typeof p === 'string');
+    const inlineTerms = Object.assign({}, ...parts.filter((p) => p && typeof p === 'object'));
+    for (const url of imports) if (!url.startsWith(`${BASE_URL}/context/`)) throw new Error(`${name}/context.jsonld: only catalog contexts may be imported by URL, got ${url}`);
     const models = [];
     for (const type of (await readdir(dir)).sort()) {
       const mdir = join(dir, type);
-      if (!(await isDir(mdir))) continue;
+      if (!(await isDir(mdir)) || type === 'releases') continue;
+      if (!(await exists(join(mdir, 'schema.json')))) throw new Error(`${name}/${type}: a model folder needs schema.json`);
       const schema = await readJson(join(mdir, 'schema.json'));
       const catalog = await readYaml(join(mdir, 'catalog.yaml'));
       const notes = (await exists(join(mdir, 'notes.yaml'))) ? await readYaml(join(mdir, 'notes.yaml')) : {};
@@ -69,9 +76,13 @@ export async function loadSubjects() {
         const p = join(mdir, 'examples', f);
         if (await exists(p)) examples[f] = await readJson(p);
       }
-      models.push({ type, dir: mdir, schema, catalog, notes, examples });
+      // kind: 'entity' (an NGSI-LD entity type) or 'value' (a reusable value
+      // structure such as an address, referenced from entity schemas).
+      const kind = schema['x-kind'] ?? 'entity';
+      if (!['entity', 'value'].includes(kind)) throw new Error(`${name}/${type}/schema.json: x-kind must be entity or value`);
+      models.push({ type, kind, dir: mdir, schema, catalog, notes, examples });
     }
-    subjects.push({ name, dir, ...meta, context, models });
+    subjects.push({ name, dir, ...meta, context, imports, inlineTerms, models });
   }
   return subjects;
 }
@@ -96,4 +107,25 @@ export function toKeyValues(normalized) {
     } else throw new Error(`attribute ${k}: unknown attribute type "${v.type}"`);
   }
   return out;
+}
+
+/** Imports (URLs) and merged inline terms of a context document. */
+export function splitContext(doc) {
+  const parts = Array.isArray(doc['@context']) ? doc['@context'] : [doc['@context']];
+  return { imports: parts.filter((p) => typeof p === 'string'), inlineTerms: Object.assign({}, ...parts.filter((p) => p && typeof p === 'object')) };
+}
+
+/**
+ * All term definitions a context document provides: imported catalog contexts
+ * first (resolved by version, see releases.mjs), inline definitions last.
+ */
+export async function resolveContextTerms(doc, subjects, resolveDocument) {
+  const { imports, inlineTerms } = splitContext(doc);
+  const terms = {};
+  for (const url of imports) {
+    const imported = await resolveDocument(url, subjects);
+    if (!imported) throw new Error(`context imports ${url}, which is not a catalog context URL`);
+    Object.assign(terms, await resolveContextTerms(imported, subjects, resolveDocument));
+  }
+  return Object.assign(terms, inlineTerms);
 }

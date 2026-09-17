@@ -1,0 +1,203 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://models.geonicdb.com/schema/disaster/IncidentReport/v1.0.0.json",
+  "title": "IncidentReport",
+  "description": "One report from a resident or staff member: location, category, response status, the person who entered it, and the reporter (personal data).",
+  "x-version": "1.0.0",
+  "x-license-url": "https://models.geonicdb.com/LICENSE-CONTENT",
+  "x-model-tags": "GeonicDB, disaster-response, Japan",
+  "x-derived-from": "https://github.com/geolonia/geonicdb-datamodels",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uri",
+      "description": "Entity id (URN)"
+    },
+    "type": {
+      "type": "string",
+      "const": "IncidentReport",
+      "description": "Entity type"
+    },
+    "project": {
+      "description": "The disaster-response project this entity belongs to",
+      "type": "string",
+      "format": "uri",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "https://models.geonicdb.com/ns/disaster/Project"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/project",
+      "x-geonicdb": {
+        "indexed": true
+      }
+    },
+    "index": {
+      "description": "Sequence number of the report within the project",
+      "type": "integer",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/index"
+    },
+    "incidentStatus": {
+      "description": "Response status. `status` is a protected term in the NGSI-LD core context, hence incidentStatus",
+      "type": "string",
+      "enum": [
+        "InProgress",
+        "Responded",
+        "OnHold",
+        "Completed"
+      ],
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/incidentStatus"
+    },
+    "category": {
+      "description": "Category such as flooding, landslide, collapse, fallen tree, broken line. Not a closed list",
+      "type": "string",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/category"
+    },
+    "pressReleaseStatus": {
+      "description": "Press-release status",
+      "type": "string",
+      "enum": [
+        "プレス済",
+        "プレス予定",
+        "対象外"
+      ],
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/pressReleaseStatus"
+    },
+    "reportedAt": {
+      "description": "Date and time the report was received",
+      "type": "string",
+      "format": "date-time",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://schema.org/dateReceived"
+    },
+    "inputterTeam": {
+      "description": "Team of the person who entered the report",
+      "type": "string",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/inputterTeam"
+    },
+    "inputterName": {
+      "description": "Name of the person who entered the report",
+      "type": "string",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/inputterName"
+    },
+    "addressTown": {
+      "description": "Town name of the address (provisional; to move to the common address model)",
+      "type": "string",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/addressTown"
+    },
+    "addressBanchi": {
+      "description": "Block and lot number of the address (provisional; to move to the common address model)",
+      "type": "string",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/addressBanchi"
+    },
+    "location": {
+      "description": "Location",
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "Point"
+        },
+        "coordinates": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "items": {
+            "type": "number"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "coordinates"
+      ],
+      "x-ngsi": {
+        "type": "GeoProperty",
+        "model": "https://purl.org/geojson/vocab#Point"
+      },
+      "x-iri": "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld#location"
+    },
+    "reporterName": {
+      "description": "Reporter name (personal data)",
+      "type": "string",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/reporterName",
+      "x-geonicdb": {
+        "pii": true
+      }
+    },
+    "reporterPhone": {
+      "description": "Reporter phone number (personal data)",
+      "type": "string",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/reporterPhone",
+      "x-geonicdb": {
+        "pii": true
+      }
+    },
+    "reporterAddress": {
+      "description": "Reporter address (personal data)",
+      "type": "string",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/reporterAddress",
+      "x-geonicdb": {
+        "pii": true
+      }
+    },
+    "memo": {
+      "description": "Free-text memo",
+      "type": "string",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/memo"
+    },
+    "updatedAt": {
+      "description": "Application-level update time, recorded by the app as a business update, separate from the broker system attribute modifiedAt",
+      "type": "string",
+      "format": "date-time",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://models.geonicdb.com/ns/disaster/updatedAt"
+    }
+  },
+  "required": [
+    "id",
+    "type",
+    "project",
+    "index"
+  ],
+  "additionalProperties": false
+}

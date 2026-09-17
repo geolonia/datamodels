@@ -2,7 +2,7 @@
 
 Curated bilingual catalog of NGSI-LD data models for [GeonicDB](https://docs.geonicdb.com/), served at `https://models.geonicdb.com`. It extends [Smart Data Models](https://smartdatamodels.org/) with Japanese profiles and Japan-only models, and provides stable, versioned URLs for `@context` files, JSON Schemas and type IRIs.
 
-**Status:** first subject published (`disaster`, seven models, draft). The design is in [geonicdb-docs `design/ngsi-ld-data-models-catalog.md`](https://github.com/geolonia/geonicdb-docs/blob/main/design/ngsi-ld-data-models-catalog.md).
+**Status:** two subjects published, `disaster` (seven entity types) and `common` (the `JapaneseAddress` value type). All draft. The design is in [geonicdb-docs `design/ngsi-ld-data-models-catalog.md`](https://github.com/geolonia/geonicdb-docs/blob/main/design/ngsi-ld-data-models-catalog.md).
 
 ## Principles
 
@@ -15,9 +15,13 @@ Curated bilingual catalog of NGSI-LD data models for [GeonicDB](https://docs.geo
 ```text
 models/<subject>/
   subject.yaml            name, version (of the context and all schemas), ja/en title and description, source
-  context.jsonld          the subject's JSON-LD context, published as /context/<subject>/vX.Y.Z.jsonld and vX.jsonld
+  context.jsonld          the subject's JSON-LD context, published as /context/<subject>/vX.Y.Z.jsonld and vX.jsonld;
+                          may be an array that imports other catalog contexts by URL, e.g. the common subject
+  releases/vX.Y.Z/        snapshot of every published version (context and schemas), written by manifest:record;
+                          the build serves all of them so a published URL never disappears
   <Type>/
-    schema.json           JSON Schema of the key-values representation, with x-ngsi, x-iri and x-geonicdb annotations
+    schema.json           JSON Schema of the key-values representation, with x-ngsi, x-iri and x-geonicdb annotations;
+                          x-kind: value marks a reusable value structure (e.g. common/JapaneseAddress) instead of an entity type
     catalog.yaml          ja/en title, description, per-attribute descriptions, status, tags
     examples/example.json                 key-values
     examples/example-normalized.jsonld    NGSI-LD normalized, with @context
@@ -40,6 +44,15 @@ The pages are a VitePress site with the same theme, local search and light/dark 
 ```bash
 npm run site:dev   # generate the model pages and start the VitePress dev server
 ```
+
+## Subjects
+
+| Subject | Content |
+|---|---|
+| `disaster` | Municipal disaster-response operations: `Project`, `IncidentReport`, `IncidentResponseAction`, `IncidentHandoverNote`, `IncidentPhoto`, `RoadClosure`, `EvacuationShelter` |
+| `common` | Shared value types: `JapaneseAddress` (schema.org PostalAddress fields plus 町字, 丁目, 番地, 号, JIS and local-government codes, the Address Base Registry town id and the residential-indication flag) |
+
+An entity schema uses a value type with `allOf: [{ $ref }]` on the attribute and its subject context imports the value type's context by URL. See the [JapaneseAddress page](https://models.geonicdb.com/models/common/JapaneseAddress/) for the snippet.
 
 ## What is published for a subject
 
@@ -82,7 +95,7 @@ node scripts/export-geonicdb.mjs disaster --type-prefix Saitai --out ./out
 
 ## Adding or changing a model
 
-- New attribute or new model in a subject: add it, bump the subject's minor version in `subject.yaml` and every `x-version`, and record the new files with `npm run manifest:record` as the last step of the pull request, once review is done. A recorded hash is a promise the moment the PR merges. The alias advances; the previous exact version stays.
+- New attribute or new model in a subject: add it, bump the subject's minor version in `subject.yaml`, every schema `$id` and `x-version`, and the `@context` URLs in the normalized examples. Attributes that the new version supersedes get `x-deprecated: true` and stay until the next major version. As the last step of the pull request, once review is done, run `npm run manifest:record`: it snapshots the new version into `releases/` and records its hashes. A recorded hash is a promise the moment the PR merges. The alias advances; every previous exact version keeps being served from its snapshot.
 - Changing the meaning or type of an existing attribute is a breaking change: new term name or new subject major version. Never edit a published file.
 - `status`, `description`, `location`, `createdAt`, `modifiedAt`, `observedAt` and the other core context terms cannot be redefined; the validator rejects it.
 

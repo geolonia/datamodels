@@ -1,7 +1,7 @@
 # Subject metadata. One context per subject, versioned; the version below is the
 # version of context.jsonld and of every schema in this subject.
 name: disaster
-version: 1.0.0
+version: 1.1.0
 title:
   ja: 災害対応
   en: Disaster response

@@ -31,12 +31,15 @@ attributes:
   inputterName:
     ja: "入力者名"
     en: "Name of the person who entered the report"
+  address:
+    ja: "住所（common サブジェクトの JapaneseAddress 値）"
+    en: "Address, as a JapaneseAddress value from the common subject"
   addressTown:
-    ja: "住所の町名（暫定。共通の住所モデルに移行予定）"
-    en: "Town name of the address (provisional; to move to the common address model)"
+    ja: "非推奨（1.1.0 以降は address を使う）。住所の町名"
+    en: "Deprecated since 1.1.0, use address. Town name of the address"
   addressBanchi:
-    ja: "住所の番地（暫定。共通の住所モデルに移行予定）"
-    en: "Block and lot number of the address (provisional; to move to the common address model)"
+    ja: "非推奨（1.1.0 以降は address を使う）。住所の番地"
+    en: "Deprecated since 1.1.0, use address. Block and lot number of the address"
   location:
     ja: "位置"
     en: "Location"

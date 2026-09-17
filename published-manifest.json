@@ -1,13 +1,23 @@
 {
   "comment": "SHA-256 of every immutable published file (exact versions under context/ and schema/, and context/mirror/). Entries are appended by `npm run manifest:record` and never edited or removed. See scripts/check-immutability.mjs.",
   "files": {
+    "context/common/v1.0.0.jsonld": "03843b2195b9b6c5c7bad3b3d8e9667ca231dfc4b02790a80eb234675ee21242",
     "context/disaster/v1.0.0.jsonld": "55500a0bd3707c5a79ce1ac0ca1e445edd34adb6722dbcd1c84ef28b1f83d4f4",
+    "context/disaster/v1.1.0.jsonld": "e79006d7257e3543e1d21b48b8c275653f5e44ce0206241f76578dc145444738",
+    "schema/common/JapaneseAddress/v1.0.0.json": "205ecf37f4a8d75a5c6ba17431e1105099ce9ef4823496489af4b56719584ebd",
     "schema/disaster/EvacuationShelter/v1.0.0.json": "d048a32820496a8b582943d64959b1360d8952ca43a567c26c2685c495b1f01c",
+    "schema/disaster/EvacuationShelter/v1.1.0.json": "463442a2a5a12fdea95d7aef768fdaa2f736ebfbca47253ba2d5ca758638bd90",
     "schema/disaster/IncidentHandoverNote/v1.0.0.json": "504eedebca07263f98e532e02c344357adbdd4e6eb78373d18dbefd2976e5c9c",
+    "schema/disaster/IncidentHandoverNote/v1.1.0.json": "0b594488acbfe81e7da7a7c54d4dcba4956d43e8f2d4f65abc28e04c8bb2fd35",
     "schema/disaster/IncidentPhoto/v1.0.0.json": "2580eca282cb83f5c06135dd85ed35be01f80aa10c849743f4391da1e102d99c",
+    "schema/disaster/IncidentPhoto/v1.1.0.json": "e5bae12db8bf0ed3a6729bb84868a44524a81b3de141cec28ff318abad59006a",
     "schema/disaster/IncidentReport/v1.0.0.json": "0a2d4b5ea18c565ff368baa47e311d631ba8510694470fc7fb3e8f26579df693",
+    "schema/disaster/IncidentReport/v1.1.0.json": "776b44fe393d8820566019b2e9d2a9434beaa7fde5f345c2c172327d0e8729d5",
     "schema/disaster/IncidentResponseAction/v1.0.0.json": "cbc964288153dfbda14f92a3aede1ef8f7cc33b66116a0a0b21c1b7c61fda0cd",
+    "schema/disaster/IncidentResponseAction/v1.1.0.json": "3029ddbc4f2cf58eda0c48f292afc1c04a99776e54843020096d81b27b81ca31",
     "schema/disaster/Project/v1.0.0.json": "454e88eb78b60a3b7825d2e5d5543ca0acad9a4abe9e7ff8eef76b0075df670c",
-    "schema/disaster/RoadClosure/v1.0.0.json": "44d2076129a1f6e1250ea5cd389ffd40d079811d38660a16ef34facc9106431b"
+    "schema/disaster/Project/v1.1.0.json": "1a1b4ef44d0447f3d41d7c2c6af164478c088f04746b8fe2171b1e2be0d4367c",
+    "schema/disaster/RoadClosure/v1.0.0.json": "44d2076129a1f6e1250ea5cd389ffd40d079811d38660a16ef34facc9106431b",
+    "schema/disaster/RoadClosure/v1.1.0.json": "47676e8c1cf2a045e478e3ed219a277ab7e4b390b00db34d9709171fc78c94da"
   }
 }

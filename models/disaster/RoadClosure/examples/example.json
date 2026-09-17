@@ -3,6 +3,15 @@
   "type": "RoadClosure",
   "project": "urn:ngsi-ld:Project:2026-typhoon-10",
   "roadName": "県道14号",
+  "address": {
+    "addressRegion": "香川県",
+    "addressLocality": "高松市",
+    "machiaza": "西宝町",
+    "banchi": "2",
+    "go": "3",
+    "jisMunicipalityCode": "37201",
+    "addressText": "香川県高松市西宝町2-3"
+  },
   "addressTown": "西宝町",
   "addressBanchi": "2-3",
   "area": {

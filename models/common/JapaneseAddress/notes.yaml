@@ -1,0 +1,6 @@
+notes:
+  - A value type, not an entity type. Use it as the value of an `address` Property (IRI https://schema.org/address) and reference the schema with $ref from an entity schema.
+  - schema.org PostalAddress terms are reused where the meaning matches (addressCountry, postalCode, addressRegion, addressLocality). streetAddress is not used because it has no defined structure in Japan; the structured fields and addressText replace it.
+  - Codes follow JIS X 0401 (prefecture, 2 digits), JIS X 0402 (municipality, 5 digits) and the 全国地方公共団体コード (6 digits with check digit). abrMachiazaId is the 町字ID of the Digital Agency's Address Base Registry.
+  - GeoProperty coordinates are WGS84 by the GeoJSON specification; JGD2011 coordinates can be used as-is at the precision relevant here.
+license: CC BY 4.0 (see /LICENSE-CONTENT.md)

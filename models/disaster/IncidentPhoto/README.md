@@ -7,7 +7,7 @@ Metadata for one on-site photo attached to an incident report. The image itself 
 通報に紐づく現地写真のメタデータ1件。画像本体は外部ストレージに置き、ここでは参照キーだけを持つ。
 
 - Type IRI: `https://models.geonicdb.com/ns/disaster/IncidentPhoto`
-- Context: `https://models.geonicdb.com/context/disaster/v1.jsonld` (alias), `https://models.geonicdb.com/context/disaster/v1.0.0.jsonld` (exact)
+- Context: `https://models.geonicdb.com/context/disaster/v1.jsonld` (alias), `https://models.geonicdb.com/context/disaster/v1.1.0.jsonld` (exact)
 - Schema: `https://models.geonicdb.com/schema/disaster/IncidentPhoto/v1.json`
 - Page: https://models.geonicdb.com/models/disaster/IncidentPhoto/
 

@@ -19,6 +19,8 @@
 // manifest change shows up in the pull request diff for review. CI runs the
 // check without --record and fails on unrecorded files.
 import { createHash } from 'node:crypto';
+import { loadSubjects } from './lib/models.mjs';
+import { snapshotRelease } from './lib/releases.mjs';
 import { readFile, writeFile, readdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
@@ -82,6 +84,12 @@ if (violations.length > 0) {
   console.error('Immutability check failed:');
   for (const v of violations) console.error(`  ${v}`);
   process.exit(1);
+}
+
+if (record) {
+  // Snapshot the current version of every subject so it keeps being served
+  // after models/ moves on (see lib/releases.mjs).
+  for (const subject of await loadSubjects()) console.log(`release snapshot: ${await snapshotRelease(subject)}`);
 }
 
 if (unrecorded.length > 0) {

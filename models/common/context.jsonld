@@ -1,0 +1,23 @@
+{
+  "@context": {
+    "common": "https://models.geonicdb.com/ns/common/",
+    "schema": "https://schema.org/",
+    "JapaneseAddress": "common:JapaneseAddress",
+    "address": "schema:address",
+    "addressCountry": "schema:addressCountry",
+    "postalCode": "schema:postalCode",
+    "addressRegion": "schema:addressRegion",
+    "addressLocality": "schema:addressLocality",
+    "machiaza": "common:machiaza",
+    "chome": "common:chome",
+    "banchi": "common:banchi",
+    "go": "common:go",
+    "buildingName": "common:buildingName",
+    "residentialIndication": "common:residentialIndication",
+    "jisPrefectureCode": "common:jisPrefectureCode",
+    "jisMunicipalityCode": "common:jisMunicipalityCode",
+    "localGovernmentCode": "common:localGovernmentCode",
+    "abrMachiazaId": "common:abrMachiazaId",
+    "addressText": "common:addressText"
+  }
+}
