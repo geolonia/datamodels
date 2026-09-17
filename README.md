@@ -50,7 +50,7 @@ The model folder follows the Smart Data Models layout so a model can be proposed
 Register the Custom Data Model with the published body, which already carries `contextUrl`:
 
 ```bash
-curl -s https://models.geonicdb.com/geonicdb/disaster/RoadClosure.json > RoadClosure.json
+curl -sSf https://models.geonicdb.com/geonicdb/disaster/RoadClosure.json -o RoadClosure.json
 curl -X POST "$GEONICDB/custom-data-models" -H "Content-Type: application/json" -H "X-Api-Key: $KEY" --data @RoadClosure.json
 ```
 
@@ -62,7 +62,7 @@ node scripts/export-geonicdb.mjs disaster --type-prefix Saitai --out ./out
 
 ## Validation
 
-`npm run check` runs on every pull request and before every deploy:
+`npm run check` runs on every pull request; `npm run build:deploy` (steps 1 to 3) runs in Cloudflare Workers Builds before every deploy:
 
 1. `validate:models`: key-values examples against `schema.json`; normalized examples against the NGSI-LD representation rules and, projected to key-values, against `schema.json`; JSON-LD expansion of every normalized example with the subject context and the core context, failing on any attribute that does not expand to its IRI or does not survive an expand/compact round-trip; every attribute has a context term unless the core context defines it; no core term is redefined; type names match folders; versions match the subject.
 2. `build`: publishes `dist/` and validates `catalog.json` against `catalog.schema.json`.
@@ -73,7 +73,7 @@ node scripts/export-geonicdb.mjs disaster --type-prefix Saitai --out ./out
 
 ## Adding or changing a model
 
-- New attribute or new model in a subject: add it, bump the subject's minor version in `subject.yaml` and every `x-version`, record the new files with `npm run manifest:record`. The alias advances; the previous exact version stays.
+- New attribute or new model in a subject: add it, bump the subject's minor version in `subject.yaml` and every `x-version`, and record the new files with `npm run manifest:record` as the last step of the pull request, once review is done. A recorded hash is a promise the moment the PR merges. The alias advances; the previous exact version stays.
 - Changing the meaning or type of an existing attribute is a breaking change: new term name or new subject major version. Never edit a published file.
 - `status`, `description`, `location`, `createdAt`, `modifiedAt`, `observedAt` and the other core context terms cannot be redefined; the validator rejects it.
 
@@ -85,7 +85,7 @@ Issues and pull requests are welcome in Japanese or English. Every model change 
 
 The site is a Cloudflare Worker with static assets, in the same Cloudflare account as the GeonicDB status page (`geonicdb-status` in [geonicdb-operations](https://github.com/geolonia/geonicdb-operations)). `wrangler.jsonc` describes it; `public/` is the static source, `npm run build` writes the published tree to `dist/`.
 
-**Publishing needs no credential in GitHub.** Cloudflare Workers Builds watches this repository and redeploys on every merge to `main`. CI only builds and dry-runs the deploy.
+**Publishing needs no credential in GitHub.** Cloudflare Workers Builds watches this repository and redeploys on every merge to `main`. Its build command runs the same gate as CI (`build:deploy` = validate models, build, check immutability), so an invalid model or a modified immutable file fails the Cloudflare build instead of being published. CI additionally runs the tests and a dry-run deploy.
 
 Workers Builds settings, on the `geonicdb-models` Worker under Settings → Builds:
 
@@ -94,7 +94,7 @@ Workers Builds settings, on the `geonicdb-models` Worker under Settings → Buil
 | Repository | `geolonia/geonicdb-models` |
 | Production branch | `main` |
 | Root directory | `/` |
-| Build command | `npm ci && npm run build` |
+| Build command | `npm ci && npm run build:deploy` |
 | Deploy command | `npx wrangler deploy` |
 | Builds for non-production branches | off |
 

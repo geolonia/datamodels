@@ -61,7 +61,8 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/evacueeHouseholds"
+      "x-iri": "https://models.geonicdb.com/ns/disaster/evacueeHouseholds",
+      "minimum": 0
     },
     "evacueeTotal": {
       "description": "Total number of evacuees",
@@ -69,7 +70,8 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/evacueeTotal"
+      "x-iri": "https://models.geonicdb.com/ns/disaster/evacueeTotal",
+      "minimum": 0
     },
     "evacueeFemale": {
       "description": "Number of female evacuees",
@@ -77,7 +79,8 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/evacueeFemale"
+      "x-iri": "https://models.geonicdb.com/ns/disaster/evacueeFemale",
+      "minimum": 0
     },
     "evacueeMale": {
       "description": "Number of male evacuees",
@@ -85,7 +88,8 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/evacueeMale"
+      "x-iri": "https://models.geonicdb.com/ns/disaster/evacueeMale",
+      "minimum": 0
     },
     "memo": {
       "description": "Free-text memo",

@@ -65,3 +65,7 @@ test('a type name not matching its folder fails', () =>
 test('a schema version diverging from the subject version fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'Project', 'schema.json'), (s) => { s['x-version'] = '9.9.9'; }),
     /x-version must be 1\.0\.0/));
+
+test('a normalized attribute whose wrapper type contradicts x-ngsi.type fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example-normalized.jsonld'), (e) => { e.project = { type: 'Property', value: e.project.object }; }),
+    /"project" is a Property but schema.json declares Relationship/));

@@ -12,12 +12,13 @@
     "build": "node scripts/build.mjs",
     "check:immutability": "node scripts/check-immutability.mjs",
     "manifest:record": "npm run validate:models && npm run build && node scripts/check-immutability.mjs --record",
-    "check": "npm run validate:models && npm run build && npm run check:immutability && wrangler deploy --dry-run --outdir .wrangler/dry-run",
+    "check": "npm run build:deploy && wrangler deploy --dry-run --outdir .wrangler/dry-run",
     "dev": "npm run build && wrangler dev",
-    "deploy": "npm run validate:models && npm run build && npm run check:immutability && wrangler deploy",
+    "deploy": "npm run build:deploy && wrangler deploy",
     "validate:models": "node scripts/validate-models.mjs",
     "test": "node --test \"test/**/*.test.mjs\"",
-    "export:geonicdb": "node scripts/export-geonicdb.mjs"
+    "export:geonicdb": "node scripts/export-geonicdb.mjs",
+    "build:deploy": "npm run validate:models && npm run build && npm run check:immutability"
   },
   "devDependencies": {
     "ajv": "^8.20.0",

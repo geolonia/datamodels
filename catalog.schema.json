@@ -2,42 +2,144 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://models.geonicdb.com/catalog.schema.json",
   "title": "GeonicDB data models catalog index",
-  "description": "Wire format of catalog.json, read by GeonicDB, its console, CLI and MCP tool. Within a formatVersion fields are only added, never removed or retyped.",
+  "description": "Wire format of catalog.json, read by GeonicDB, its console, CLI and MCP tool. Within a formatVersion fields are only added, never removed or retyped, so consumers must ignore unknown fields and this schema does not forbid them.",
   "type": "object",
-  "required": ["formatVersion", "generatedAt", "models"],
-  "additionalProperties": false,
+  "required": [
+    "formatVersion",
+    "generatedAt",
+    "models"
+  ],
   "properties": {
-    "formatVersion": { "type": "integer", "const": 1 },
-    "generatedAt": { "type": "string", "format": "date-time" },
+    "formatVersion": {
+      "type": "integer",
+      "const": 1
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
     "models": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["type", "typeIri", "subject", "domain", "source", "contextUrl", "contextAliasUrl", "schemaUrl", "version", "status", "title", "description", "sampleProperties", "pageUrl"],
-        "additionalProperties": false,
+        "required": [
+          "type",
+          "typeIri",
+          "subject",
+          "domain",
+          "source",
+          "contextUrl",
+          "contextAliasUrl",
+          "schemaUrl",
+          "version",
+          "status",
+          "title",
+          "description",
+          "sampleProperties",
+          "pageUrl"
+        ],
         "properties": {
-          "type": { "type": "string", "pattern": "^[A-Z][A-Za-z0-9]*$" },
-          "typeIri": { "type": "string", "format": "uri" },
-          "subject": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
-          "domain": { "type": "string" },
-          "source": { "type": "string", "enum": ["global", "profile", "minted"] },
-          "contextUrl": { "type": "string", "format": "uri" },
-          "contextAliasUrl": { "type": "string", "format": "uri" },
-          "schemaUrl": { "type": "string", "format": "uri" },
-          "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
-          "status": { "type": "string", "enum": ["draft", "stable", "deprecated"] },
-          "title": { "$ref": "#/$defs/i18n" },
-          "description": { "$ref": "#/$defs/i18n" },
-          "sampleProperties": { "type": "array", "items": { "type": "string" } },
-          "pageUrl": { "type": "string", "format": "uri" },
-          "geonicdbModelUrl": { "type": "string", "format": "uri" },
-          "upstream": { "type": "object", "properties": { "repository": { "type": "string" }, "commit": { "type": "string" } } },
-          "supersededBy": { "type": "string", "format": "uri" }
+          "type": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Za-z0-9]*$"
+          },
+          "typeIri": {
+            "type": "string",
+            "format": "uri"
+          },
+          "subject": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "global",
+              "profile",
+              "minted"
+            ]
+          },
+          "contextUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "contextAliasUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "schemaUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "stable",
+              "deprecated"
+            ]
+          },
+          "title": {
+            "$ref": "#/$defs/i18n"
+          },
+          "description": {
+            "$ref": "#/$defs/i18n"
+          },
+          "sampleProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "pageUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "geonicdbModelUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "upstream": {
+            "type": "object",
+            "properties": {
+              "repository": {
+                "type": "string"
+              },
+              "commit": {
+                "type": "string"
+              }
+            }
+          },
+          "supersededBy": {
+            "type": "string",
+            "format": "uri"
+          }
         }
       }
     }
   },
   "$defs": {
-    "i18n": { "type": "object", "required": ["ja", "en"], "properties": { "ja": { "type": "string" }, "en": { "type": "string" } } }
+    "i18n": {
+      "type": "object",
+      "required": [
+        "ja",
+        "en"
+      ],
+      "properties": {
+        "ja": {
+          "type": "string"
+        },
+        "en": {
+          "type": "string"
+        }
+      }
+    }
   }
 }

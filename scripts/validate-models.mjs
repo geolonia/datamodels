@@ -73,6 +73,10 @@ for (const subject of subjects) {
 
     const norm = model.examples['example-normalized.jsonld'];
     if (!norm) { fail(mwhere, 'examples/example-normalized.jsonld is required'); continue; }
+    for (const [name, prop] of attributesOf(model)) {
+      const got = norm[name]?.type;
+      if (name in norm && got !== prop['x-ngsi']?.type) fail(`${mwhere}/examples/example-normalized.jsonld`, `attribute "${name}" is a ${got} but schema.json declares ${prop['x-ngsi']?.type}`);
+    }
     let projected;
     try { projected = toKeyValues(norm); } catch (e) { fail(`${mwhere}/examples/example-normalized.jsonld`, e.message); continue; }
     if (!validate(projected)) fail(`${mwhere}/examples/example-normalized.jsonld`, `key-values projection: ${ajv.errorsText(validate.errors)}`);
