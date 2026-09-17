@@ -68,8 +68,8 @@ for (const subject of subjects) {
 // deploy, the CDN and the origin serve exactly what the repository says.
 const manifest = JSON.parse(await readFile(join(ROOT, 'published-manifest.json'), 'utf8'));
 for (const [path, hash] of Object.entries(manifest.files)) {
-  const url = `${BASE_URL}/${path}`;
-  const res = await fetch(swap(url), { cache: 'no-store' });
+  const url = `${origin}/${path}`;
+  const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok) { failures.push(`${url}: ${res.status}`); continue; }
   const served = createHash('sha256').update(Buffer.from(await res.arrayBuffer())).digest('hex');
   expect(served === hash, `${url}: served bytes differ from published-manifest.json (deploy not live yet, or a stale cache)`);
