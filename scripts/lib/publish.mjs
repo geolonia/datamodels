@@ -1,11 +1,12 @@
-// Write the published tree for every subject into dist/.
+// Write the machine-readable tree for every subject into dist/ (pages come
+// from VitePress, see build.mjs).
 import { mkdir, writeFile, readFile, appendFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { loadSubjects, attributesOf, subjectUrls, modelUrls, DIST, ROOT, BASE_URL } from './models.mjs';
 import { toCustomDataModel } from './geonicdb.mjs';
-import { subjectPage, modelPage, sharedTerms } from './pages.mjs';
+import { sharedTerms } from './shared-terms.mjs';
 
 const rel = (url) => url.slice(BASE_URL.length).replace(/^\//, '');
 async function write(url, content) {
@@ -15,8 +16,7 @@ async function write(url, content) {
 }
 const json = (o) => JSON.stringify(o, null, 2) + '\n';
 
-export async function publishModels() {
-  const subjects = await loadSubjects();
+export async function publishModels(subjects) {
   const catalog = { formatVersion: 1, generatedAt: new Date().toISOString(), models: [] };
   const redirects = ['', '# Generated: type and attribute IRIs resolve to their documentation.'];
   const headers = ['', '# Generated: exact versions are immutable. `! Cache-Control` detaches the short cache inherited from the glob rule above.'];
@@ -26,7 +26,6 @@ export async function publishModels() {
     const u = subjectUrls(subject);
     await write(u.contextExact, json(subject.context)); immutable(u.contextExact);
     await write(u.contextAlias, json(subject.context));
-    await write(u.page, subjectPage(subject));
     const shared = sharedTerms(subject);
     for (const [name] of shared) redirects.push(`/ns/${subject.name}/${name}  /models/${subject.name}/#${name}  302`);
 
@@ -36,7 +35,6 @@ export async function publishModels() {
       await write(mu.schemaAlias, json(model.schema));
       for (const [f, content] of Object.entries(model.examples)) await write(`${mu.examples}${f}`, json(content));
       await write(mu.geonicdb, json(toCustomDataModel(subject, model)));
-      await write(mu.page, modelPage(subject, model));
       redirects.push(`/ns/${subject.name}/${model.type}  /models/${subject.name}/${model.type}/  302`);
       for (const [name] of attributesOf(model)) if (!shared.has(name) && !(name in {})) {
         const iri = model.schema.properties[name]['x-iri'] ?? '';

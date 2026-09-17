@@ -19,12 +19,15 @@
     "test": "node --test \"test/**/*.test.mjs\"",
     "export:geonicdb": "node scripts/export-geonicdb.mjs",
     "build:deploy": "npm run validate:models && npm run build && npm run check:immutability",
-    "check:live": "node scripts/check-live.mjs"
+    "check:live": "node scripts/check-live.mjs",
+    "site:dev": "node -e \"import('./scripts/lib/models.mjs').then(async m=>{const s=await m.loadSubjects();const g=await import('./scripts/lib/site.mjs');await g.generateSitePages(s)})\" && vitepress dev site"
   },
   "devDependencies": {
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "jsonld": "^8.3.3",
+    "vitepress": "^1.6.4",
+    "vue": "^3.5.43",
     "wrangler": "4.130.0",
     "yaml": "^2.9.1"
   }
