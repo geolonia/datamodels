@@ -18,7 +18,8 @@
     "validate:models": "node scripts/validate-models.mjs",
     "test": "node --test \"test/**/*.test.mjs\"",
     "export:geonicdb": "node scripts/export-geonicdb.mjs",
-    "build:deploy": "npm run validate:models && npm run build && npm run check:immutability"
+    "build:deploy": "npm run validate:models && npm run build && npm run check:immutability",
+    "check:live": "node scripts/check-live.mjs"
   },
   "devDependencies": {
     "ajv": "^8.20.0",

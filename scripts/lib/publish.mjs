@@ -19,10 +19,12 @@ export async function publishModels() {
   const subjects = await loadSubjects();
   const catalog = { formatVersion: 1, generatedAt: new Date().toISOString(), models: [] };
   const redirects = ['', '# Generated: type and attribute IRIs resolve to their documentation.'];
+  const headers = ['', '# Generated: exact versions are immutable. `! Cache-Control` detaches the short cache inherited from the glob rule above.'];
+  const immutable = (url) => headers.push(rel(url).replace(/^/, '/'), '  ! Cache-Control', '  Cache-Control: public, max-age=31536000, immutable');
 
   for (const subject of subjects) {
     const u = subjectUrls(subject);
-    await write(u.contextExact, json(subject.context));
+    await write(u.contextExact, json(subject.context)); immutable(u.contextExact);
     await write(u.contextAlias, json(subject.context));
     await write(u.page, subjectPage(subject));
     const shared = sharedTerms(subject);
@@ -30,7 +32,7 @@ export async function publishModels() {
 
     for (const model of subject.models) {
       const mu = modelUrls(subject, model);
-      await write(mu.schemaExact, json(model.schema));
+      await write(mu.schemaExact, json(model.schema)); immutable(mu.schemaExact);
       await write(mu.schemaAlias, json(model.schema));
       for (const [f, content] of Object.entries(model.examples)) await write(`${mu.examples}${f}`, json(content));
       await write(mu.geonicdb, json(toCustomDataModel(subject, model)));
@@ -57,5 +59,6 @@ export async function publishModels() {
   await write(`${BASE_URL}/catalog.schema.json`, json(schema));
   await write(`${BASE_URL}/LICENSE-CONTENT`, await readFile(join(ROOT, 'LICENSE-CONTENT.md')));
   await appendFile(join(DIST, '_redirects'), redirects.join('\n') + '\n');
+  await appendFile(join(DIST, '_headers'), headers.join('\n') + '\n');
   return { subjects: subjects.length, models: catalog.models.length };
 }
