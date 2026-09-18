@@ -84,6 +84,7 @@ export default defineConfig({
       ['meta', { property: 'og:title', content: title }],
       ['meta', { property: 'og:description', content: description }],
       ['meta', { property: 'og:url', content: `${SITE_URL}/${path}` }],
+      ['link', { rel: 'canonical', href: `${SITE_URL}/${path}` }],
     );
   },
 
