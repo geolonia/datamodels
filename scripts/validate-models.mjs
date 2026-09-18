@@ -89,6 +89,12 @@ for (const subject of subjects) {
     if (!kv) fail(mwhere, 'examples/example.json is required');
     else if (!validate(kv)) fail(`${mwhere}/examples/example.json`, ajv.errorsText(validate.errors));
 
+    // notes.yaml renders as a bullet list; an entry with an unquoted ": " parses as an object.
+    if (model.notes != null && (typeof model.notes !== 'object' || Array.isArray(model.notes))) fail(`${mwhere}/notes.yaml`, 'root value must be a mapping with notes and license');
+    const notes = (model.notes && typeof model.notes === 'object' && !Array.isArray(model.notes)) ? model.notes : {};
+    if (notes.notes !== undefined && (!Array.isArray(notes.notes) || notes.notes.some((n) => typeof n !== 'string'))) fail(`${mwhere}/notes.yaml`, 'notes must be a list of strings (quote an entry that contains ": ")');
+    if (notes.license !== undefined && typeof notes.license !== 'string') fail(`${mwhere}/notes.yaml`, 'license must be a string');
+
     if (model.kind === 'value') {
       // A value type has no normalized form of its own; check its fields expand
       // through this subject's context by wrapping the example in an entity.
@@ -104,11 +110,17 @@ for (const subject of subjects) {
     const norm = model.examples['example-normalized.jsonld'];
     if (!norm) { fail(mwhere, 'examples/example-normalized.jsonld is required'); continue; }
     for (const [name, prop] of attributesOf(model)) {
-      const got = norm[name]?.type;
-      if (name in norm && got !== prop['x-ngsi']?.type) fail(`${mwhere}/examples/example-normalized.jsonld`, `attribute "${name}" is a ${got} but schema.json declares ${prop['x-ngsi']?.type}`);
+      if (!(name in norm)) continue;
+      const instances = Array.isArray(norm[name]) ? norm[name] : [norm[name]];
+      if (Array.isArray(norm[name]) && !prop['x-ngsi']?.multi) fail(`${mwhere}/examples/example-normalized.jsonld`, `attribute "${name}" is multi-valued in the example but schema.json does not declare x-ngsi.multi`);
+      for (const inst of instances) {
+        const got = inst?.type;
+        if (got !== prop['x-ngsi']?.type) fail(`${mwhere}/examples/example-normalized.jsonld`, `attribute "${name}" is a ${got} but schema.json declares ${prop['x-ngsi']?.type}`);
+      }
     }
+    const multi = new Set(attributesOf(model).filter(([, p]) => p['x-ngsi']?.multi).map(([n]) => n));
     let projected;
-    try { projected = toKeyValues(norm); } catch (e) { fail(`${mwhere}/examples/example-normalized.jsonld`, e.message); continue; }
+    try { projected = toKeyValues(norm, { multi }); } catch (e) { fail(`${mwhere}/examples/example-normalized.jsonld`, e.message); continue; }
     if (!validate(projected)) fail(`${mwhere}/examples/example-normalized.jsonld`, `key-values projection: ${ajv.errorsText(validate.errors)}`);
     if (!Array.isArray(norm['@context']) || !norm['@context'].includes(urls.contextExact)) fail(`${mwhere}/examples/example-normalized.jsonld`, `@context must include ${urls.contextExact}`);
 
@@ -129,7 +141,7 @@ for (const subject of subjects) {
       // Every key at every depth must survive: a nested field the context does
       // not define is silently dropped by expansion, so compare key paths.
       const after = new Set(keyPaths(compacted));
-      for (const k of keyPaths(norm)) if (!after.has(k) && !/(^|\.)(type|value|object)$/.test(k)) fail(`${mwhere}/examples/example-normalized.jsonld`, `"${k}" lost in expand/compact round-trip (not defined by the context?)`);
+      for (const k of keyPaths(norm)) if (!after.has(k) && !/(^|\.)(type|value|object|datasetId)$/.test(k)) fail(`${mwhere}/examples/example-normalized.jsonld`, `"${k}" lost in expand/compact round-trip (not defined by the context?)`);
     } catch (e) {
       fail(`${mwhere}/examples/example-normalized.jsonld`, `JSON-LD processing failed: ${e.message}`);
     }

@@ -4,6 +4,7 @@
     "context/common/v1.0.0.jsonld": "03843b2195b9b6c5c7bad3b3d8e9667ca231dfc4b02790a80eb234675ee21242",
     "context/disaster/v1.0.0.jsonld": "55500a0bd3707c5a79ce1ac0ca1e445edd34adb6722dbcd1c84ef28b1f83d4f4",
     "context/disaster/v1.1.0.jsonld": "e79006d7257e3543e1d21b48b8c275653f5e44ce0206241f76578dc145444738",
+    "context/task/v1.0.0.jsonld": "15dcdc23b55c6c3c5327cf1ebb10afd9560ac1ac96bef6ca866a97c8addd69a1",
     "schema/common/JapaneseAddress/v1.0.0.json": "175fb57ca39943c66c577201782e9a957d8127a9f6bbe4f59a51ab1d8b81f4a1",
     "schema/disaster/EvacuationShelter/v1.0.0.json": "bfc63a8a87d77b521f4cf1c5f954956250ce67640bc36c6eb417dd41633c57fe",
     "schema/disaster/EvacuationShelter/v1.1.0.json": "cf4e54aab13f450559c6f7ff0c9664caa2544e6895ed71b992dd5c40fd9e9fa3",
@@ -18,6 +19,10 @@
     "schema/disaster/Project/v1.0.0.json": "2b6c955dc4fa9b33f9c9961db9ee4207ab5de54394d9d6807cd17ed2bff51a1c",
     "schema/disaster/Project/v1.1.0.json": "085c13b7ab4db4250467544e8687af9a7f1c5f2270658bf922475744f5a36729",
     "schema/disaster/RoadClosure/v1.0.0.json": "8c3d25486431d05f2f963152445cafcefc92c127e36ff711fc1e5f725b69d830",
-    "schema/disaster/RoadClosure/v1.1.0.json": "8e41e7c8df2c5167db02f323c9bd426c2ecb989d69f89ac65ffe8650c72f8bc3"
+    "schema/disaster/RoadClosure/v1.1.0.json": "8e41e7c8df2c5167db02f323c9bd426c2ecb989d69f89ac65ffe8650c72f8bc3",
+    "schema/task/Attachment/v1.0.0.json": "9dbf08881ee939a0ccc6c0dbb5c6fa90a0290ac0353e1d7a9f0aff85c673cf66",
+    "schema/task/Comment/v1.0.0.json": "0eaa40bbc0839d05d3711914e3197ae4081fd4ff02f3b129a288eab1168d9d93",
+    "schema/task/Project/v1.0.0.json": "576e91395b6dc67d22587e5a02aa93789a6c16db30639322caa2d33e12234395",
+    "schema/task/Task/v1.0.0.json": "99206acc49c1400e30546b4550d7448fd010b4582f272a859508e1ab91228bcf"
   }
 }

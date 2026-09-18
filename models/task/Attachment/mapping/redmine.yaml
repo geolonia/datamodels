@@ -1,0 +1,15 @@
+standard:
+  name: { ja: Redmine の添付ファイル, en: Redmine attachment }
+  url: https://www.redmine.org/projects/redmine/wiki/Rest_Attachments
+fields:
+  task: { to: "container_id", note: { ja: container_type が Issue のとき, en: when container_type is Issue } }
+  project: { to: "container_id", note: { ja: container_type が Project のとき（ファイルモジュール）, en: when container_type is Project (Files module) } }
+  author: { to: "author" }
+  contentUrl: { to: "content_url" }
+  filename: { to: "filename" }
+  encodingFormat: { to: "content_type" }
+  contentSize: { to: "filesize" }
+  digest: { to: "digest", note: { ja: Redmine は SHA-256（旧 MD5）の16進のみ。アルゴリズム名を前置する, en: Redmine stores the hex digest (SHA-256, formerly MD5); prefix the algorithm } }
+  description: { to: "description" }
+  dateCreated: { to: "created_on" }
+  externalId: { to: "id" }

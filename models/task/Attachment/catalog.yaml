@@ -1,0 +1,48 @@
+title:
+  ja: "添付ファイル"
+  en: "Attachment"
+description:
+  ja: "タスクまたはプロジェクトに添付されたファイルのメタデータ。ファイル本体はブローカーの外（元システムやオブジェクトストレージ）に置き、URL で参照する。"
+  en: "Metadata of a file attached to a task or a project. The file itself stays outside the broker and is referenced by URL."
+status: draft
+tags: [task-management, gtt, rfc8984]
+attributes:
+  task:
+    ja: "対象のタスク"
+    en: "The task this belongs to"
+  project:
+    ja: "所属プロジェクト"
+    en: "The project this belongs to"
+  author:
+    ja: "作成者（人・組織・チームのエンティティ）"
+    en: "Creator (a person, organisation or team entity)"
+  contentUrl:
+    ja: "ファイルの URL"
+    en: "URL of the file"
+  filename:
+    ja: "ファイル名"
+    en: "File name"
+  encodingFormat:
+    ja: "MIME タイプ"
+    en: "MIME type"
+  contentSize:
+    ja: "サイズ（バイト）"
+    en: "Size in bytes"
+  digest:
+    ja: "ハッシュ。アルゴリズム名:16進（例: sha256:…）"
+    en: "Hash as algorithm:hex, e.g. sha256:…"
+  description:
+    ja: "説明"
+    en: "Description"
+  location:
+    ja: "撮影・取得位置（点）"
+    en: "Where the file was taken (a point)"
+  source:
+    ja: "元システムにおけるこのオブジェクトの URL"
+    en: "URL of this object in the system of record"
+  externalId:
+    ja: "元システムにおける識別子"
+    en: "Identifier in the system of record"
+  dateCreated:
+    ja: "元システムでの作成日時（ブローカーの createdAt とは別）"
+    en: "Creation time in the system of record (distinct from the broker attribute createdAt)"

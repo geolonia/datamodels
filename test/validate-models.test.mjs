@@ -98,3 +98,38 @@ test('an entity example whose address violates the referenced value schema fails
 test('a context importing a version that is neither published nor current fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'context.jsonld'), (c) => { c['@context'][0] = 'https://models.geonicdb.com/context/common/v0.9.0.jsonld'; }),
     /version 0\.9\.0 of subject "common" is neither published/));
+
+test('a multi-valued attribute the schema does not declare as multi fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'task', 'Task', 'schema.json'), (s) => { delete s.properties.assignee['x-ngsi'].multi; }),
+    /"assignee" is multi-valued in the example but schema.json does not declare x-ngsi.multi/));
+
+test('a notes.yaml entry that parses as an object fails', () =>
+  withMutatedModels((d) => writeFile(join(d, 'task', 'Task', 'notes.yaml'), 'notes:\n  - Upstream considered: none\nlicense: CC BY 4.0\n'),
+    /notes must be a list of strings/));
+
+test('two instances of a multi-valued attribute without datasetId fail', () =>
+  withMutatedModels((d) => editJson(join(d, 'task', 'Task', 'examples', 'example-normalized.jsonld'), (e) => { e.assignee = [{ type: 'Relationship', object: 'urn:ngsi-ld:Team:a' }, { type: 'Relationship', object: 'urn:ngsi-ld:Team:b' }]; }),
+    /only one instance of a multi-valued attribute may omit datasetId/));
+
+test('two instances of a multi-valued attribute with the same datasetId fail', () =>
+  withMutatedModels((d) => editJson(join(d, 'task', 'Task', 'examples', 'example-normalized.jsonld'), (e) => { e.assignee = [{ type: 'Relationship', object: 'urn:ngsi-ld:Team:a', datasetId: 'urn:ngsi-ld:dataset:x' }, { type: 'Relationship', object: 'urn:ngsi-ld:Team:b', datasetId: 'urn:ngsi-ld:dataset:x' }]; }),
+    /duplicate datasetId urn:ngsi-ld:dataset:x/));
+
+test('a single instance of a multi-valued attribute projects to a one-element array', () =>
+  withMutatedModels(async (d) => {
+    await editJson(join(d, 'task', 'Task', 'examples', 'example-normalized.jsonld'), (e) => { e.assignee = { type: 'Relationship', object: 'urn:ngsi-ld:Team:a' }; });
+    // The key-values example must then hold a one-element array; a bare string is the mistake.
+    await editJson(join(d, 'task', 'Task', 'examples', 'example.json'), (e) => { e.assignee = 'urn:ngsi-ld:Team:a'; });
+  }, /assignee must be array/));
+
+test('an Attachment owned by both a task and a project fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'task', 'Attachment', 'examples', 'example.json'), (e) => { e.project = 'urn:ngsi-ld:Project:redmine:takamatsu:kasen'; }),
+    /must match exactly one schema in oneOf/));
+
+test('a geometry without coordinates fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'task', 'Project', 'examples', 'example.json'), (e) => { e.location = { type: 'Polygon' }; }),
+    /location/));
+
+test('a notes.yaml whose root is a list fails', () =>
+  withMutatedModels((d) => writeFile(join(d, 'task', 'Task', 'notes.yaml'), '- a note\n- another\n'),
+    /root value must be a mapping/));

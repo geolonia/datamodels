@@ -1,0 +1,133 @@
+{
+  "@context": [
+    "https://models.geonicdb.com/context/task/v1.0.0.jsonld",
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
+  ],
+  "id": "urn:ngsi-ld:Task:redmine:takamatsu:1234",
+  "type": "Task",
+  "name": {
+    "type": "Property",
+    "value": "西宝町1-1 の冠水を確認する"
+  },
+  "description": {
+    "type": "Property",
+    "value": "通報 #12 の現地確認。水位と通行可否を報告すること。"
+  },
+  "project": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:Project:takamatsu-flood-2026-typhoon-10"
+  },
+  "parent": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:Task:redmine:takamatsu:1200"
+  },
+  "relatedTo": [
+    {
+      "type": "Relationship",
+      "object": "urn:ngsi-ld:Task:redmine:takamatsu:1198",
+      "datasetId": "urn:ngsi-ld:dataset:relatedTo:1"
+    }
+  ],
+  "refersTo": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:IncidentReport:2026-typhoon-10-012"
+  },
+  "progress": {
+    "type": "Property",
+    "value": "in-process"
+  },
+  "statusLabel": {
+    "type": "Property",
+    "value": "対応中"
+  },
+  "subtype": {
+    "type": "Property",
+    "value": "現地確認"
+  },
+  "priority": {
+    "type": "Property",
+    "value": 2
+  },
+  "assignee": [
+    {
+      "type": "Relationship",
+      "object": "urn:ngsi-ld:Team:takamatsu:genchi-1",
+      "datasetId": "urn:ngsi-ld:dataset:assignee:1"
+    }
+  ],
+  "author": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:Person:takamatsu:yamada"
+  },
+  "start": {
+    "type": "Property",
+    "value": {
+      "@type": "DateTime",
+      "@value": "2026-08-21T10:30:00+09:00"
+    }
+  },
+  "due": {
+    "type": "Property",
+    "value": {
+      "@type": "DateTime",
+      "@value": "2026-08-21T12:00:00+09:00"
+    }
+  },
+  "estimatedDuration": {
+    "type": "Property",
+    "value": "PT1H30M"
+  },
+  "percentComplete": {
+    "type": "Property",
+    "value": 40
+  },
+  "keywords": {
+    "type": "Property",
+    "value": [
+      "冠水",
+      "巡回"
+    ]
+  },
+  "location": {
+    "type": "GeoProperty",
+    "value": {
+      "type": "Point",
+      "coordinates": [
+        134.0437,
+        34.3403
+      ]
+    }
+  },
+  "spatialId": {
+    "type": "Property",
+    "value": [
+      "/25/0/29803543/13212179"
+    ]
+  },
+  "isPrivate": {
+    "type": "Property",
+    "value": false
+  },
+  "source": {
+    "type": "Property",
+    "value": "https://redmine.example.jp/issues/1234"
+  },
+  "externalId": {
+    "type": "Property",
+    "value": "1234"
+  },
+  "dateCreated": {
+    "type": "Property",
+    "value": {
+      "@type": "DateTime",
+      "@value": "2026-08-21T10:20:00+09:00"
+    }
+  },
+  "dateModified": {
+    "type": "Property",
+    "value": {
+      "@type": "DateTime",
+      "@value": "2026-08-21T11:05:00+09:00"
+    }
+  }
+}

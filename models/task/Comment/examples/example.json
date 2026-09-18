@@ -1,0 +1,12 @@
+{
+  "id": "urn:ngsi-ld:Comment:redmine:takamatsu:1234:3",
+  "type": "Comment",
+  "task": "urn:ngsi-ld:Task:redmine:takamatsu:1234",
+  "author": "urn:ngsi-ld:Team:takamatsu:genchi-1",
+  "text": "水位上昇中、注視継続。対策本部へ申し送り。",
+  "textFormat": "text",
+  "isPrivate": false,
+  "sentAt": "2026-08-21T11:05:00+09:00",
+  "source": "https://redmine.example.jp/issues/1234#note-3",
+  "externalId": "5678"
+}
