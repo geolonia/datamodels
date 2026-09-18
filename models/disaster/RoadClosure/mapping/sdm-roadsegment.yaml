@@ -1,0 +1,36 @@
+standard:
+  name:
+    ja: Smart Data Models RoadSegment（dataModel.Transportation）
+    en: Smart Data Models RoadSegment (dataModel.Transportation)
+  url: https://github.com/smart-data-models/dataModel.Transportation/tree/master/RoadSegment
+  note:
+    ja: RoadSegment は道路網の区間マスタ。通行止めはその区間の状態（status）に相当し、値域と roadName の IRI を借りている。区間マスタを持たない自治体向けに、ここでは通行止めそのものをエンティティにしている。
+    en: RoadSegment is a road-network master; a closure corresponds to the status of a segment. This type borrows the status value space and the roadName IRI, and models the closure itself for municipalities that have no segment master.
+fields:
+  project:
+    to: null
+  roadName:
+    to: roadName
+    note:
+      ja: 同じ IRI
+      en: same IRI
+  address:
+    to: null
+  location:
+    to: location
+    note:
+      ja: RoadSegment は区間全体、ここでは通行止め区間
+      en: the whole segment there, the closed section here
+  closureStatus:
+    to: status
+    note:
+      ja: 同じ値域 closed / limited / open
+      en: same value space closed / limited / open
+  statusLabel:
+    to: statusDescription
+  validFrom:
+    to: null
+  validTo:
+    to: null
+  description:
+    to: null

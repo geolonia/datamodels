@@ -46,7 +46,7 @@ description: 既存のデータモデルを日本向けに拡張する方法、�
 
 ### 現状について
 
-最初のサブジェクト [災害対応](/models/disaster/) は、高松市で実際に動いているアプリのモデルを基にしたものです。1.x では型を上流との比較なしに独自に発行していましたが、2.0.0 で[タスク管理](/models/task/)の上に組み直しました。`DisasterEvent` はタスク管理の `Project` の**エイリアス**（同じ IRI、名前だけ災害対応の言い方）、通報・対応業務・申し送り・現地写真は `Task`・`Comment`・`Attachment` の**サブクラス**（独自の型 IRI を持ち、同名の属性は親の IRI を使う。スキーマの `x-subclass-of`）です。通行止めと避難所は上流（Smart Data Models の `RoadSegment` など）との比較が [Issue #16](https://github.com/geolonia/geonicdb-models/issues/16) に残っています。
+最初のサブジェクト [災害対応](/models/disaster/) は、高松市で実際に動いているアプリのモデルを基にしたものです。1.x では型を上流との比較なしに独自に発行していましたが、2.0.0 で[タスク管理](/models/task/)の上に組み直しました。`DisasterEvent` はタスク管理の `Project` の**エイリアス**（同じ IRI、名前だけ災害対応の言い方）、通報・対応業務・申し送り・現地写真は `Task`・`Comment`・`Attachment` の**サブクラス**（独自の型 IRI を持ち、同名の属性は親の IRI を使う。スキーマの `x-subclass-of`）です。通行止めと避難所は上流（Smart Data Models の `RoadSegment`・`Alert`、デジタル庁の推奨データセット）と比較した結果、型としては合うものがなく独自のままですが、属性の IRI と状態の値域は借りています。検討の経過は各モデルの注記と [Issue #16](https://github.com/geolonia/geonicdb-models/issues/16) にあります。
 
 ### 守ること
 

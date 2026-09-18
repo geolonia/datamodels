@@ -8,8 +8,8 @@ Metadata for one on-site photo attached to an incident report. The image stays i
 
 - Type IRI: `https://models.geonicdb.com/ns/disaster/IncidentPhoto`
 - Subclass of: `https://models.geonicdb.com/ns/task/Attachment`
-- Context: `https://models.geonicdb.com/context/disaster/v2.jsonld` (alias), `https://models.geonicdb.com/context/disaster/v2.1.0.jsonld` (exact)
-- Schema: `https://models.geonicdb.com/schema/disaster/IncidentPhoto/v2.json`
+- Context: `https://models.geonicdb.com/context/disaster/v3.jsonld` (alias), `https://models.geonicdb.com/context/disaster/v3.0.0.jsonld` (exact)
+- Schema: `https://models.geonicdb.com/schema/disaster/IncidentPhoto/v3.json`
 - Page: https://models.geonicdb.com/models/disaster/IncidentPhoto/
 
 Files follow the Smart Data Models layout: `schema.json` (key-values representation, with `x-ngsi`, `x-iri` and `x-geonicdb` annotations), `catalog.yaml` (Japanese and English descriptions), `examples/`, `notes.yaml`, `ADOPTERS.yaml`.

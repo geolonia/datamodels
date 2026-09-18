@@ -1,0 +1,43 @@
+standard:
+  name:
+    ja: 推奨データセット 03 指定緊急避難場所一覧（デジタル庁）
+    en: Recommended dataset 03, designated emergency evacuation sites (Digital Agency)
+  url: https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test
+  license: CC0 1.0
+  note:
+    ja: 自治体が公開する避難場所のマスタ。このモデルは運用状況のオーバーレイで、マスタの行を externalShelterId と localGovernmentCode で参照する。避難者数はマスタに無い。
+    en: The shelter master a municipality publishes. This type is the operational overlay and references a master row by externalShelterId and localGovernmentCode; evacuee counts are not in the master.
+fields:
+  project:
+    to: null
+  externalShelterId:
+    to: ID
+    note:
+      ja: 自治体内で一意
+      en: unique within the municipality
+  localGovernmentCode:
+    to: 全国地方公共団体コード (localGovernmentCode)
+  openingStatus:
+    to: null
+  statusLabel:
+    to: null
+  evacueeHouseholds:
+    to: null
+  evacueeTotal:
+    to: null
+    note:
+      ja: 想定収容人数（maxCapacity）はマスタ側
+      en: maxCapacity is on the master side
+  evacueeFemale:
+    to: null
+  evacueeMale:
+    to: null
+  description:
+    to: 備考 (remarks)
+    note:
+      ja: 意味は異なる（マスタの備考と運用メモ）
+      en: "different meaning: master remarks vs operational memo"
+  openedAt:
+    to: null
+  closedAt:
+    to: null
