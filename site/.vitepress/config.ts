@@ -52,6 +52,8 @@ const nav = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.NavItem[] => [
   { text: 'GeonicDB Docs', link: lang === 'ja' ? 'https://docs.geonicdb.com/ja/' : 'https://docs.geonicdb.com/en/' },
 ]
 
+const SITE_URL = 'https://models.geonicdb.com';
+
 export default defineConfig({
   title: 'GeonicDB Data Models',
   description: 'Curated bilingual catalog of NGSI-LD data models for GeonicDB',
@@ -61,7 +63,30 @@ export default defineConfig({
   // Links to the machine files and IRIs are not pages; everything else must resolve.
   ignoreDeadLinks: [/^\/(context|schema|examples|geonicdb|catalog|ns|LICENSE-CONTENT)/],
   markdown: { config: addVPreToInlineCode },
-  head: [['link', { rel: 'icon', type: 'image/svg+xml', href: '/geonicdb-logo.svg' }]],
+  head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/geonicdb-logo.svg' }],
+    // Link previews (Slack, X, LINE): a PNG, absolute URL. Source: site/og-card.svg,
+    // rendered with `rsvg-convert -w 1200 -h 630 -o site/public/og-image.png site/og-card.svg`.
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:site_name', content: 'GeonicDB Data Models' }],
+    ['meta', { property: 'og:image', content: `${SITE_URL}/og-image.png` }],
+    ['meta', { property: 'og:image:width', content: '1200' }],
+    ['meta', { property: 'og:image:height', content: '630' }],
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+  ],
+  // Per-page title, description and canonical URL for the same previews.
+  transformPageData(pageData) {
+    const path = pageData.relativePath.replace(/(^|\/)index\.md$/, '$1').replace(/\.md$/, '');
+    const title = pageData.title ? `${pageData.title} | GeonicDB Data Models` : 'GeonicDB Data Models';
+    const description = pageData.description || pageData.frontmatter.description || 'Curated bilingual catalog of NGSI-LD data models for GeonicDB';
+    pageData.frontmatter.head ??= [];
+    pageData.frontmatter.head.push(
+      ['meta', { property: 'og:title', content: title }],
+      ['meta', { property: 'og:description', content: description }],
+      ['meta', { property: 'og:url', content: `${SITE_URL}/${path}` }],
+      ['link', { rel: 'canonical', href: `${SITE_URL}/${path}` }],
+    );
+  },
 
   themeConfig: {
     logo: '/geonicdb-logo.svg',
