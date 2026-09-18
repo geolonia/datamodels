@@ -11,7 +11,7 @@ fields:
   parent: { to: "relatedTo[parent]" }
   relatedTo: { to: "relatedTo", note: { ja: first / next / child は拡張, en: first, next and child relations are extensions } }
   refersTo: { to: null }
-  progress: { to: "progress", note: { ja: cancelled は RFC 8984 の vendor 値相当, en: cancelled corresponds to a vendor value in RFC 8984 } }
+  progress: { to: "progress", note: { ja: 値域は同一（cancelled も RFC 8984 の標準値）, en: identical value set (cancelled is a standard RFC 8984 value) } }
   statusLabel: { to: null }
   subtype: { to: null }
   priority: { to: "priority" }

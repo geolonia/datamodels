@@ -159,7 +159,7 @@
     "contentUrl"
   ],
   "additionalProperties": false,
-  "anyOf": [
+  "oneOf": [
     {
       "required": [
         "task"

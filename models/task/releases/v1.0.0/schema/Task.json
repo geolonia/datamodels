@@ -62,7 +62,7 @@
         "format": "uri"
       },
       "minItems": 1,
-      "description": "Related tasks. The kind of relation (blocks, precedes, duplicates) is left to extensions",
+      "description": "Related tasks. Always an array in the key-values form, even with one target. The kind of relation (blocks, precedes, duplicates) is left to extensions",
       "x-ngsi": {
         "type": "Relationship",
         "target": "https://models.geonicdb.com/ns/task/Task",
@@ -89,7 +89,7 @@
         "failed",
         "cancelled"
       ],
-      "description": "Normalised state (RFC 8984 progress)",
+      "description": "Normalised state (RFC 8984 progress: needs-action, in-process, completed, failed, cancelled)",
       "x-ngsi": {
         "type": "Property"
       },
@@ -128,7 +128,7 @@
         "format": "uri"
       },
       "minItems": 1,
-      "description": "Assignees: person, organisation or team entities, possibly outside this subject",
+      "description": "Assignees: person, organisation or team entities, possibly outside this subject. Always an array in the key-values form, even with one target",
       "x-ngsi": {
         "type": "Relationship",
         "target": "agent",
@@ -205,28 +205,30 @@
     },
     "location": {
       "type": "object",
-      "required": [
-        "type"
-      ],
-      "properties": {
-        "type": {
-          "enum": [
-            "Point",
-            "LineString",
-            "Polygon",
-            "MultiPoint",
-            "MultiLineString",
-            "MultiPolygon",
-            "GeometryCollection"
-          ]
+      "oneOf": [
+        {
+          "$ref": "#/$defs/simpleGeometry"
         },
-        "coordinates": {
-          "type": "array"
-        },
-        "geometries": {
-          "type": "array"
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "geometries"
+          ],
+          "properties": {
+            "type": {
+              "const": "GeometryCollection"
+            },
+            "geometries": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/simpleGeometry"
+              }
+            }
+          }
         }
-      },
+      ],
       "description": "Location as any GeoJSON geometry: point, line, polygon or a collection",
       "x-ngsi": {
         "type": "GeoProperty",
@@ -296,5 +298,142 @@
     "project",
     "progress"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$defs": {
+    "position": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 3,
+      "items": {
+        "type": "number"
+      }
+    },
+    "simpleGeometry": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "coordinates"
+          ],
+          "properties": {
+            "type": {
+              "const": "Point"
+            },
+            "coordinates": {
+              "$ref": "#/$defs/position"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "coordinates"
+          ],
+          "properties": {
+            "type": {
+              "const": "LineString"
+            },
+            "coordinates": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "$ref": "#/$defs/position"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "coordinates"
+          ],
+          "properties": {
+            "type": {
+              "const": "Polygon"
+            },
+            "coordinates": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "array",
+                "minItems": 4,
+                "items": {
+                  "$ref": "#/$defs/position"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "coordinates"
+          ],
+          "properties": {
+            "type": {
+              "const": "MultiPoint"
+            },
+            "coordinates": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/position"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "coordinates"
+          ],
+          "properties": {
+            "type": {
+              "const": "MultiLineString"
+            },
+            "coordinates": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "minItems": 2,
+                "items": {
+                  "$ref": "#/$defs/position"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "coordinates"
+          ],
+          "properties": {
+            "type": {
+              "const": "MultiPolygon"
+            },
+            "coordinates": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "array",
+                  "minItems": 4,
+                  "items": {
+                    "$ref": "#/$defs/position"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
 }

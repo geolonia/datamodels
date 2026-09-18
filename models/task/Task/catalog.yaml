@@ -20,14 +20,14 @@ attributes:
     ja: "親タスク（RFC 8984 relatedTo parent）"
     en: "Parent task (RFC 8984 relatedTo parent)"
   relatedTo:
-    ja: "関連するタスク。関係の種類（blocks, precedes, duplicates など）は拡張で表す"
-    en: "Related tasks. The kind of relation (blocks, precedes, duplicates) is left to extensions"
+    ja: "関連するタスク（key-values 形式では対象が 1 つでも配列）。関係の種類（blocks, precedes, duplicates など）は拡張で表す"
+    en: "Related tasks. Always an array in the key-values form, even with one target. The kind of relation (blocks, precedes, duplicates) is left to extensions"
   refersTo:
     ja: "このタスクが対象とするエンティティ（通報、設備、道路など）"
     en: "The entity this task is about (a report, an asset, a road)"
   progress:
     ja: "正規化した進行状態（RFC 8984 progress）。needs-action=未着手、in-process=対応中、completed=完了、failed=失敗、cancelled=取消"
-    en: "Normalised state (RFC 8984 progress)"
+    en: "Normalised state (RFC 8984 progress: needs-action, in-process, completed, failed, cancelled)"
   statusLabel:
     ja: "元システムの状態名そのまま（Redmine のステータス名、GitHub の state と理由など）"
     en: "The source system's own status name (Redmine status, GitHub state and reason)"
@@ -38,8 +38,8 @@ attributes:
     ja: "優先度 0〜9。1 が最高、9 が最低、0 は未定義（RFC 8984）"
     en: "Priority 0 to 9: 1 highest, 9 lowest, 0 undefined (RFC 8984)"
   assignee:
-    ja: "担当者・担当チーム（人・組織・チームのエンティティ。このサブジェクト外の URN でもよい）"
-    en: "Assignees: person, organisation or team entities, possibly outside this subject"
+    ja: "担当者・担当チーム（人・組織・チームのエンティティ。このサブジェクト外の URN でもよい）。key-values 形式では対象が 1 つでも配列"
+    en: "Assignees: person, organisation or team entities, possibly outside this subject. Always an array in the key-values form, even with one target"
   author:
     ja: "作成者（人・組織・チームのエンティティ）"
     en: "Creator (a person, organisation or team entity)"

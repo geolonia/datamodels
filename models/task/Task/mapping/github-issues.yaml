@@ -11,7 +11,7 @@ fields:
   parent: { to: null, note: { ja: サブイシュー（sub-issues）が拡張候補, en: sub-issues are an extension candidate } }
   relatedTo: { to: null }
   refersTo: { to: null }
-  progress: { to: "state + state_reason", note: { ja: open → needs-action または in-process、closed+completed → completed、closed+not_planned → cancelled, en: open → needs-action or in-process; closed+completed → completed; closed+not_planned → cancelled } }
+  progress: { to: "state + state_reason", note: { ja: open → needs-action または in-process、closed+completed → completed、closed+not_planned / duplicate → cancelled, en: open → needs-action or in-process; closed+completed → completed; closed+not_planned or duplicate → cancelled } }
   statusLabel: { to: "state (+ state_reason)" }
   subtype: { to: "type", note: { ja: Issue Types（組織機能）または labels の一つ, en: issue type (organisation feature) or one of the labels } }
   priority: { to: null }
@@ -19,7 +19,7 @@ fields:
   author: { to: "user" }
   start: { to: null }
   due: { to: null, note: { ja: milestone.due_on は拡張, en: milestone.due_on is an extension } }
-  completedAt: { to: "closed_at" }
+  completedAt: { to: "closed_at", note: { ja: state=closed かつ state_reason=completed の場合のみ。not_planned / duplicate の closed_at は対応させない, en: only when state is closed and state_reason is completed; closed_at of not_planned or duplicate issues is not mapped } }
   estimatedDuration: { to: null }
   percentComplete: { to: null }
   keywords: { to: "labels[].name" }

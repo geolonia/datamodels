@@ -103,28 +103,30 @@
     },
     "location": {
       "type": "object",
-      "required": [
-        "type"
-      ],
-      "properties": {
-        "type": {
-          "enum": [
-            "Point",
-            "LineString",
-            "Polygon",
-            "MultiPoint",
-            "MultiLineString",
-            "MultiPolygon",
-            "GeometryCollection"
-          ]
+      "oneOf": [
+        {
+          "$ref": "#/$defs/simpleGeometry"
         },
-        "coordinates": {
-          "type": "array"
-        },
-        "geometries": {
-          "type": "array"
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "geometries"
+          ],
+          "properties": {
+            "type": {
+              "const": "GeometryCollection"
+            },
+            "geometries": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/simpleGeometry"
+              }
+            }
+          }
         }
-      },
+      ],
       "description": "Location as any GeoJSON geometry: point, line, polygon or a collection",
       "x-ngsi": {
         "type": "GeoProperty",
@@ -184,5 +186,142 @@
     "type",
     "name"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$defs": {
+    "position": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 3,
+      "items": {
+        "type": "number"
+      }
+    },
+    "simpleGeometry": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "coordinates"
+          ],
+          "properties": {
+            "type": {
+              "const": "Point"
+            },
+            "coordinates": {
+              "$ref": "#/$defs/position"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "coordinates"
+          ],
+          "properties": {
+            "type": {
+              "const": "LineString"
+            },
+            "coordinates": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "$ref": "#/$defs/position"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "coordinates"
+          ],
+          "properties": {
+            "type": {
+              "const": "Polygon"
+            },
+            "coordinates": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "array",
+                "minItems": 4,
+                "items": {
+                  "$ref": "#/$defs/position"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "coordinates"
+          ],
+          "properties": {
+            "type": {
+              "const": "MultiPoint"
+            },
+            "coordinates": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/position"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "coordinates"
+          ],
+          "properties": {
+            "type": {
+              "const": "MultiLineString"
+            },
+            "coordinates": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "minItems": 2,
+                "items": {
+                  "$ref": "#/$defs/position"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type",
+            "coordinates"
+          ],
+          "properties": {
+            "type": {
+              "const": "MultiPolygon"
+            },
+            "coordinates": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "array",
+                  "minItems": 4,
+                  "items": {
+                    "$ref": "#/$defs/position"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
 }

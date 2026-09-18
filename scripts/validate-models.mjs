@@ -89,6 +89,11 @@ for (const subject of subjects) {
     if (!kv) fail(mwhere, 'examples/example.json is required');
     else if (!validate(kv)) fail(`${mwhere}/examples/example.json`, ajv.errorsText(validate.errors));
 
+    // notes.yaml renders as a bullet list; an entry with an unquoted ": " parses as an object.
+    const notes = model.notes ?? {};
+    if (notes.notes !== undefined && (!Array.isArray(notes.notes) || notes.notes.some((n) => typeof n !== 'string'))) fail(`${mwhere}/notes.yaml`, 'notes must be a list of strings (quote an entry that contains ": ")');
+    if (notes.license !== undefined && typeof notes.license !== 'string') fail(`${mwhere}/notes.yaml`, 'license must be a string');
+
     if (model.kind === 'value') {
       // A value type has no normalized form of its own; check its fields expand
       // through this subject's context by wrapping the example in an entity.
@@ -112,8 +117,9 @@ for (const subject of subjects) {
         if (got !== prop['x-ngsi']?.type) fail(`${mwhere}/examples/example-normalized.jsonld`, `attribute "${name}" is a ${got} but schema.json declares ${prop['x-ngsi']?.type}`);
       }
     }
+    const multi = new Set(attributesOf(model).filter(([, p]) => p['x-ngsi']?.multi).map(([n]) => n));
     let projected;
-    try { projected = toKeyValues(norm); } catch (e) { fail(`${mwhere}/examples/example-normalized.jsonld`, e.message); continue; }
+    try { projected = toKeyValues(norm, { multi }); } catch (e) { fail(`${mwhere}/examples/example-normalized.jsonld`, e.message); continue; }
     if (!validate(projected)) fail(`${mwhere}/examples/example-normalized.jsonld`, `key-values projection: ${ajv.errorsText(validate.errors)}`);
     if (!Array.isArray(norm['@context']) || !norm['@context'].includes(urls.contextExact)) fail(`${mwhere}/examples/example-normalized.jsonld`, `@context must include ${urls.contextExact}`);
 
