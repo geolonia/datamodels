@@ -16,8 +16,8 @@ attributes:
     ja: 対応の詳細
     en: Details of the action
   project:
-    ja: 所属する災害事象（DisasterEvent）
-    en: The disaster event (DisasterEvent) this entity belongs to
+    ja: 所属する災害事象（DisasterEvent）。任意。親の通報が持つ
+    en: The disaster event (DisasterEvent) this action belongs to; optional, the parent report carries it
   parent:
     ja: 対象の通報
     en: The incident report this action responds to

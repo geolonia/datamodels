@@ -1,0 +1,77 @@
+{
+  "@context": [
+    "https://models.geonicdb.com/context/common/v1.0.0.jsonld",
+    {
+      "disaster": "https://models.geonicdb.com/ns/disaster/",
+      "schema": "https://schema.org/",
+      "tm": "https://models.geonicdb.com/ns/task/",
+      "DisasterEvent": "tm:Project",
+      "IncidentReport": "disaster:IncidentReport",
+      "IncidentResponseAction": "disaster:IncidentResponseAction",
+      "IncidentHandoverNote": "disaster:IncidentHandoverNote",
+      "IncidentPhoto": "disaster:IncidentPhoto",
+      "RoadClosure": "disaster:RoadClosure",
+      "EvacuationShelter": "disaster:EvacuationShelter",
+      "area": "disaster:area",
+      "assignee": {
+        "@id": "tm:assignee",
+        "@type": "@id"
+      },
+      "author": {
+        "@id": "schema:author",
+        "@type": "@id"
+      },
+      "closedAt": "disaster:closedAt",
+      "closureStatus": "disaster:closureStatus",
+      "completedAt": "tm:completedAt",
+      "contentUrl": "schema:contentUrl",
+      "dateCreated": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/dateCreated",
+      "dateModified": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/dateModified",
+      "end": "tm:end",
+      "evacueeFemale": "disaster:evacueeFemale",
+      "evacueeHouseholds": "disaster:evacueeHouseholds",
+      "evacueeMale": "disaster:evacueeMale",
+      "evacueeTotal": "disaster:evacueeTotal",
+      "externalId": "tm:externalId",
+      "externalShelterId": "disaster:externalShelterId",
+      "filename": "tm:filename",
+      "homepage": "schema:url",
+      "identifier": "schema:identifier",
+      "isPublic": "tm:isPublic",
+      "keywords": "schema:keywords",
+      "name": "https://uri.etsi.org/ngsi-ld/name",
+      "openedAt": "disaster:openedAt",
+      "openingStatus": "disaster:openingStatus",
+      "parent": {
+        "@id": "tm:parent",
+        "@type": "@id"
+      },
+      "pressReleaseStatus": "disaster:pressReleaseStatus",
+      "progress": "tm:progress",
+      "project": {
+        "@id": "tm:project",
+        "@type": "@id"
+      },
+      "projectStatus": "tm:projectStatus",
+      "recipient": {
+        "@id": "schema:recipient",
+        "@type": "@id"
+      },
+      "reportedAt": "schema:dateReceived",
+      "reporterAddress": "disaster:reporterAddress",
+      "reporterName": "disaster:reporterName",
+      "reporterPhone": "disaster:reporterPhone",
+      "roadName": "disaster:roadName",
+      "sentAt": "schema:dateSent",
+      "source": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/source",
+      "start": "tm:start",
+      "statusLabel": "tm:statusLabel",
+      "subtype": "tm:subtype",
+      "task": {
+        "@id": "tm:task",
+        "@type": "@id"
+      },
+      "text": "schema:text"
+    }
+  ]
+}

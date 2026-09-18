@@ -7,7 +7,7 @@ Operational overlay for one evacuation shelter. The shelter master data (name, l
 避難所の運用状況オーバーレイ1件。避難所そのもののマスタ（名称・位置）は含まず、外部の避難所データを externalShelterId で参照する。開設状況と避難者数だけを持つ。
 
 - Type IRI: `https://models.geonicdb.com/ns/disaster/EvacuationShelter`
-- Context: `https://models.geonicdb.com/context/disaster/v2.jsonld` (alias), `https://models.geonicdb.com/context/disaster/v2.0.0.jsonld` (exact)
+- Context: `https://models.geonicdb.com/context/disaster/v2.jsonld` (alias), `https://models.geonicdb.com/context/disaster/v2.1.0.jsonld` (exact)
 - Schema: `https://models.geonicdb.com/schema/disaster/EvacuationShelter/v2.json`
 - Page: https://models.geonicdb.com/models/disaster/EvacuationShelter/
 

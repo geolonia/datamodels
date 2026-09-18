@@ -1,6 +1,6 @@
 # Universal task management. Semantics follow RFC 8984 (JSCalendar) where they overlap.
 name: task
-version: 1.0.0
+version: 1.1.0
 title:
   ja: タスク管理
   en: Task management
