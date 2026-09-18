@@ -1,3 +1,4 @@
 notes:
   - Seeded 2026-09-17 from geolonia/geonicdb-datamodels data-models/*.json (Takamatsu City flood-prevention headquarters). Type name generalised from the tenant-specific "Saitai" prefix.
+  - "2.0.0: a subclass of task Comment. content → text, fromTeam → author and toTeam → recipient (schema:recipient), both Relationships to team or person entities, updatedAt → dateModified."
 license: CC BY 4.0 (see /LICENSE-CONTENT.md)

@@ -34,7 +34,8 @@ export function modelUrls(subject, model) {
   return {
     schemaExact: `${BASE_URL}/schema/${subject.name}/${model.type}/v${subject.version}.json`,
     schemaAlias: `${BASE_URL}/schema/${subject.name}/${model.type}/v${major}.json`,
-    typeIri: `${BASE_URL}/ns/${subject.name}/${model.type}`,
+    // An alias model (x-alias-of) is another name for a type defined elsewhere: same IRI.
+    typeIri: model.schema?.['x-alias-of'] ?? `${BASE_URL}/ns/${subject.name}/${model.type}`,
     page: `${BASE_URL}/models/${subject.name}/${model.type}/`,
     examples: `${BASE_URL}/examples/${subject.name}/${model.type}/`,
     geonicdb: `${BASE_URL}/geonicdb/${subject.name}/${model.type}.json`,

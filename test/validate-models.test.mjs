@@ -46,7 +46,7 @@ test('a key-values example violating the schema fails', () =>
     /example\.json: .*(enum|allowed values)/));
 
 test('a normalized attribute without value fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'Project', 'examples', 'example-normalized.jsonld'), (e) => { e.name = { type: 'Property' }; }),
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'DisasterEvent', 'examples', 'example-normalized.jsonld'), (e) => { e.name = { type: 'Property' }; }),
     /Property needs a value/));
 
 test('an attribute whose context mapping is not an IRI fails', () =>
@@ -61,12 +61,12 @@ test('an attribute whose context mapping is not an IRI fails', () =>
   }, /(did not expand|lost in expand\/compact round-trip|JSON-LD processing failed)/));
 
 test('a type name not matching its folder fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'Project', 'schema.json'), (s) => { s.properties.type.const = 'Projekt'; }),
-    /properties\.type\.const must be "Project"/));
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'schema.json'), (s) => { s.properties.type.const = 'RoadClosur'; }),
+    /properties\.type\.const must be "RoadClosure"/));
 
 test('a schema version diverging from the subject version fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'Project', 'schema.json'), (s) => { s['x-version'] = '9.9.9'; }),
-    /x-version must be 1\.1\.0/));
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'schema.json'), (s) => { s['x-version'] = '9.9.9'; }),
+    /x-version must be 2\.0\.0/));
 
 test('a normalized attribute whose wrapper type contradicts x-ngsi.type fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example-normalized.jsonld'), (e) => { e.project = { type: 'Property', value: e.project.object }; }),
@@ -133,3 +133,37 @@ test('a geometry without coordinates fails', () =>
 test('a notes.yaml whose root is a list fails', () =>
   withMutatedModels((d) => writeFile(join(d, 'task', 'Task', 'notes.yaml'), '- a note\n- another\n'),
     /root value must be a mapping/));
+
+test('an alias whose attributes differ from the aliased type fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'DisasterEvent', 'schema.json'), (s) => { delete s.properties.keywords; }),
+    /alias of Project: properties differ \(keywords\)/));
+
+test('an alias of a type the catalog does not define fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'DisasterEvent', 'schema.json'), (s) => { s['x-alias-of'] = 'https://models.geonicdb.com/ns/task/Programme'; }),
+    /x-alias-of .* is not a type of this catalog/));
+
+test('a second type claiming an existing IRI without x-alias-of fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'DisasterEvent', 'schema.json'), (s) => { delete s['x-alias-of']; }),
+    /type expands to .*\/ns\/task\/Project, expected .*\/ns\/disaster\/DisasterEvent/));
+
+test('a subclass attribute under a different IRI than the parent fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'IncidentReport', 'schema.json'), (s) => { s.properties.progress['x-iri'] = 'https://models.geonicdb.com/ns/disaster/progress'; }),
+    /progress: subclass of Task must use its IRI/));
+
+test('a subclass that drops a parent-required attribute fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'IncidentReport', 'schema.json'), (s) => { s.required = s.required.filter((r) => r !== 'progress'); }),
+    /subclass of Task: "progress" must stay required/));
+
+test('an alias with a different unknown-attribute policy fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'DisasterEvent', 'schema.json'), (s) => { s.additionalProperties = true; }),
+    /alias of Project: additionalProperties differs/));
+
+test('an alias survives a different key and required order', () =>
+  withMutatedModels(async (d) => {
+    await editJson(join(d, 'disaster', 'DisasterEvent', 'schema.json'), (s) => {
+      s.required = [...s.required].reverse();
+      s.properties = Object.fromEntries(Object.entries(s.properties).reverse());
+      // and break something unrelated so the run still fails where expected
+      s['x-version'] = '9.9.9';
+    });
+  }, /x-version must be 2\.0\.0(?![\s\S]*alias of Project)/));

@@ -34,7 +34,11 @@ export async function publishModels(subjects) {
     await write(u.contextExact, json(subject.context)); immutable(u.contextExact);
     await write(u.contextAlias, json(subject.context));
     const shared = sharedTerms(subject);
-    for (const [name] of shared) redirects.push(`/ns/${subject.name}/${name}  /models/${subject.name}/#${name}  302`);
+    // Only IRIs minted in this namespace get a redirect; reused IRIs (schema.org, task, core) resolve elsewhere.
+    for (const [name, types] of shared) {
+      const iri = subject.models.find((m) => m.type === types[0]).schema.properties[name]['x-iri'] ?? '';
+      if (iri.startsWith(u.namespace)) redirects.push(`/ns/${subject.name}/${name}  /models/${subject.name}/#${name}  302`);
+    }
 
     for (const model of subject.models) {
       const mu = modelUrls(subject, model);
@@ -42,7 +46,8 @@ export async function publishModels(subjects) {
       await write(mu.schemaAlias, json(model.schema));
       for (const [f, content] of Object.entries(model.examples)) await write(`${mu.examples}${f}`, json(content));
       if (model.kind === 'entity') await write(mu.geonicdb, json(toCustomDataModel(subject, model)));
-      redirects.push(`/ns/${subject.name}/${model.type}  /models/${subject.name}/${model.type}/  302`);
+      // An alias has no IRI of its own under this namespace.
+      if (mu.typeIri === `${u.namespace}${model.type}`) redirects.push(`/ns/${subject.name}/${model.type}  /models/${subject.name}/${model.type}/  302`);
       for (const [name] of attributesOf(model)) if (!shared.has(name) && !(name in {})) {
         const iri = model.schema.properties[name]['x-iri'] ?? '';
         if (iri.startsWith(u.namespace)) redirects.push(`/ns/${subject.name}/${name}  /models/${subject.name}/${model.type}/#${name}  302`);
@@ -53,6 +58,8 @@ export async function publishModels(subjects) {
         status: model.catalog.status ?? 'draft', title: model.catalog.title, description: model.catalog.description,
         sampleProperties: attributesOf(model).map(([n]) => n), pageUrl: mu.page,
         ...(model.kind === 'entity' ? { geonicdbModelUrl: mu.geonicdb } : {}),
+        ...(model.schema['x-alias-of'] ? { aliasOf: model.schema['x-alias-of'] } : {}),
+        ...(model.schema['x-subclass-of'] ? { subClassOf: model.schema['x-subclass-of'] } : {}),
       });
     }
   }

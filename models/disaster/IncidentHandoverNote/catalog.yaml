@@ -1,27 +1,29 @@
 title:
-  ja: "申し送り"
-  en: "Incident handover note"
+  ja: 申し送り
+  en: Incident handover note
 description:
-  ja: "通報に対する申し送り1件。送信元・送信先の班と内容を持つ。"
-  en: "One handover note about an incident report, from one team to another."
+  ja: 通報に対する申し送り 1 件。送信元・送信先と内容を持つ。タスク管理サブジェクトの Comment のサブクラス。
+  en: One handover note about an incident report, from one team to another. A subclass of Comment in the task subject.
 status: draft
-tags: [disaster-response, municipality]
+tags:
+  - disaster-response
+  - municipality
 attributes:
   task:
-    ja: "対象の通報"
-    en: "The incident report this entity refers to"
-  fromTeam:
-    ja: "送信元の班"
-    en: "Sending team"
-  toTeam:
-    ja: "送信先の班"
-    en: "Receiving team"
-  content:
-    ja: "内容"
-    en: "Content"
+    ja: 対象の通報
+    en: The incident report this entity refers to
+  author:
+    ja: 送信元の班・人（エンティティの URN）
+    en: The sending team or person (an entity URN)
+  recipient:
+    ja: 送信先の班・人（エンティティの URN）
+    en: The receiving team or person (an entity URN)
+  text:
+    ja: 内容
+    en: The note
   sentAt:
-    ja: "送信日時"
-    en: "Time the note was sent"
-  updatedAt:
-    ja: "アプリ側の更新日時。ブローカーのシステム属性 modifiedAt とは別に、アプリが業務上の更新として記録する時刻"
-    en: "Application-level update time, recorded by the app as a business update, separate from the broker system attribute modifiedAt"
+    ja: 送信日時
+    en: Time the note was sent
+  dateModified:
+    ja: 元システムでの最終更新日時。ブローカーのシステム属性 modifiedAt とは別に、アプリが業務上の更新として記録する時刻
+    en: Last modification in the source system, recorded by the application as a business update, separate from the broker system attribute modifiedAt

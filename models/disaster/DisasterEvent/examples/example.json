@@ -1,0 +1,40 @@
+{
+  "id": "urn:ngsi-ld:DisasterEvent:2026-typhoon-10",
+  "type": "DisasterEvent",
+  "name": "令和8年台風第10号",
+  "description": "8/21〜 高松市水防対応",
+  "identifier": "2026-t10",
+  "projectStatus": "active",
+  "start": "2026-08-21T00:00:00Z",
+  "location": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          133.95,
+          34.25
+        ],
+        [
+          134.15,
+          34.25
+        ],
+        [
+          134.15,
+          34.42
+        ],
+        [
+          133.95,
+          34.42
+        ],
+        [
+          133.95,
+          34.25
+        ]
+      ]
+    ]
+  },
+  "keywords": [
+    "水防",
+    "台風"
+  ]
+}

@@ -28,6 +28,8 @@ const T = {
     statusLabel: { draft: 'ドラフト', stable: '安定', deprecated: '非推奨' },
     sourceLabel: { minted: 'このカタログで定義', profile: '上流モデルの日本向け拡張', global: '上流（Smart Data Models）' },
     subject: 'サブジェクト', mappings: '対応する標準', mappingField: 'このモデル', mappingTo: '対応先', mappingNote: '備考', none: '対応なし',
+    alias: 'エイリアス', aliasNote: (link) => `${link} と同じ型です（IRI が同一）。名称だけがこのサブジェクトの言い方に合わせてあり、属性も必須項目も同じです。GeonicDB では同じ型として保存・照合されます。`,
+    subclass: 'サブクラス', subclassNote: (link) => `${link} のサブクラスです。同名の属性は親と同じ IRI を持ち、親の必須項目はここでも必須です。親向けに書かれたクライアントはこの型をそのまま読めます。`,
   },
   en: {
     models: 'Data models', overview: 'Overview', subjects: 'Subjects', attributes: 'Attributes', example: 'Example (key-values)', normalized: 'Example (normalized)',
@@ -40,6 +42,8 @@ const T = {
     statusLabel: { draft: 'draft', stable: 'stable', deprecated: 'deprecated' },
     sourceLabel: { minted: 'defined in this catalog', profile: 'Japanese profile of an upstream model', global: 'upstream (Smart Data Models)' },
     subject: 'Subject', mappings: 'Corresponding standards', mappingField: 'This model', mappingTo: 'Maps to', mappingNote: 'Note', none: 'no counterpart',
+    alias: 'alias', aliasNote: (link) => `The same type as ${link} (identical IRI). Only the name follows this subject's wording; attributes and required fields are the same. GeonicDB stores and matches both names as one type.`,
+    subclass: 'subclass', subclassNote: (link) => `A subclass of ${link}. Attributes with the same name carry the parent's IRIs, and the parent's required attributes stay required here, so a client written for the parent reads this type unchanged.`,
   },
 };
 
@@ -47,13 +51,24 @@ const badge = (type, text) => `<Badge type="${type}" text="${text}" />`;
 const statusBadge = (lang, status) => badge(status === 'stable' ? 'tip' : status === 'deprecated' ? 'danger' : 'info', T[lang].statusLabel[status] ?? status);
 const front = (title, description) => `---\ntitle: ${JSON.stringify(title)}\ndescription: ${JSON.stringify(description ?? '')}\n---\n\n`;
 
+let allSubjects = [];
+/** The model documenting a type IRI: an alias in the same subject first, then the owner anywhere. */
+function modelForIri(subject, iri, { ownerOnly = false } = {}) {
+  const here = ownerOnly ? null : subject.models.find((m) => modelUrls(subject, m).typeIri === iri);
+  if (here) return { subject, model: here };
+  for (const s of allSubjects) { const m = s.models.find((x) => !x.schema['x-alias-of'] && modelUrls(s, x).typeIri === iri); if (m) return { subject: s, model: m }; }
+  return null;
+}
+const modelLink = (prefix, found) => `[${found.model.type}](${prefix}${rel(modelUrls(found.subject, found.model).page)})`;
+
 function valueText(lang, subject, prop, prefix) {
   const ngsi = prop['x-ngsi']?.type;
   if (ngsi === 'Relationship') {
-    const target = prop['x-ngsi'].target?.split('/').pop();
-    const tm = subject.models.find((m) => m.type === target);
+    const targetIri = prop['x-ngsi'].target;
+    const target = targetIri?.split('/').pop();
+    const found = targetIri?.startsWith('http') ? modelForIri(subject, targetIri) : null;
     const multi = prop['x-ngsi'].multi ? (lang === 'ja' ? '（複数可）' : ' (multiple)') : '';
-    return `Relationship ${T[lang].relationshipTo} ${tm ? `[${target}](${prefix}${rel(modelUrls(subject, tm).page)})` : target === 'any' ? (lang === 'ja' ? '任意のエンティティ' : 'any entity') : target === 'agent' ? (lang === 'ja' ? '人・組織・チーム' : 'person, organisation or team') : target ?? 'entity'}${multi}`;
+    return `Relationship ${T[lang].relationshipTo} ${found ? modelLink(prefix, found) : target === 'any' ? (lang === 'ja' ? '任意のエンティティ' : 'any entity') : target === 'agent' ? (lang === 'ja' ? '人・組織・チーム' : 'person, organisation or team') : target ?? 'entity'}${multi}`;
   }
   if (ngsi === 'GeoProperty') return `GeoProperty (${prop.properties?.type?.const ?? 'GeoJSON'})`;
   const ref = prop.$ref ?? prop.allOf?.find((a) => a.$ref)?.$ref;
@@ -75,9 +90,13 @@ function modelPage(lang, prefix, subject, model) {
   const desc = model.catalog.description?.[lang] ?? '';
   const other = lang === 'ja' ? 'en' : 'ja';
   const isValue = model.kind === 'value';
+  const aliasOf = model.schema['x-alias-of'] ? modelForIri(subject, model.schema['x-alias-of'], { ownerOnly: true }) : null;
+  const subclassOf = model.schema['x-subclass-of'] ? modelForIri(subject, model.schema['x-subclass-of'], { ownerOnly: true }) : null;
   let md = front(`${model.type}`, desc);
-  md += `# ${model.type} ${statusBadge(lang, model.catalog.status ?? 'draft')}${isValue ? ` ${badge('info', t.valueType)}` : ''}\n\n`;
+  md += `# ${model.type} ${statusBadge(lang, model.catalog.status ?? 'draft')}${isValue ? ` ${badge('info', t.valueType)}` : ''}${aliasOf ? ` ${badge('info', t.alias)}` : ''}${subclassOf ? ` ${badge('info', t.subclass)}` : ''}\n\n`;
   if (isValue) md += `> ${t.valueTypeNote}\n\n`;
+  if (aliasOf) md += `> ${t.aliasNote(modelLink(prefix, aliasOf))}\n\n`;
+  if (subclassOf) md += `> ${t.subclassNote(modelLink(prefix, subclassOf))}\n\n`;
   md += `**${title}** <span style="color:var(--vp-c-text-2)">/ ${model.catalog.title?.[other] ?? ''}</span>\n\n${desc}\n\n`;
   md += `| | |\n|---|---|\n`;
   md += `| ${isValue ? 'IRI' : t.typeIri} | ${code(mu.typeIri)} |\n`;
@@ -124,7 +143,7 @@ async function subjectPage(lang, prefix, subject) {
   md += `| | |\n|---|---|\n| ${t.subject} | ${code(subject.name)} ${badge('info', t.sourceLabel[subject.source] ?? subject.source)} |\n| ${t.version} | ${code(subject.version)} |\n`;
   md += `| ${t.context} | ${code(u.contextAlias)} ${t.contextAlias}<br>${code(u.contextExact)} ${t.contextExact} |\n| ${t.namespace} | ${code(u.namespace)} |\n\n`;
   md += `## ${t.models} {#models}\n\n| Type | | |\n|---|---|---|\n`;
-  for (const m of subject.models) md += `| [${m.type}](${prefix}${rel(modelUrls(subject, m).page)}) | ${m.catalog.title?.[lang] ?? ''} | ${statusBadge(lang, m.catalog.status ?? 'draft')}${m.kind === 'value' ? ` ${badge('info', t.valueType)}` : ''} |\n`;
+  for (const m of subject.models) md += `| [${m.type}](${prefix}${rel(modelUrls(subject, m).page)}) | ${m.catalog.title?.[lang] ?? ''} | ${statusBadge(lang, m.catalog.status ?? 'draft')}${m.kind === 'value' ? ` ${badge('info', t.valueType)}` : ''}${m.schema['x-alias-of'] ? ` ${badge('info', t.alias)}` : ''}${m.schema['x-subclass-of'] ? ` ${badge('info', t.subclass)}` : ''} |\n`;
   const releases = await listReleases(subject);
   if (releases.length) {
     md += `\n## ${t.versions} {#versions}\n\n| | @context | JSON Schema |\n|---|---|---|\n`;
@@ -158,6 +177,7 @@ function indexPage(lang, prefix, subjects) {
 async function put(path, content) { await mkdir(join(path, '..'), { recursive: true }); await writeFile(path, content); }
 
 export async function generateSitePages(subjects) {
+  allSubjects = subjects;
   for (const [lang, prefix] of [['ja', ''], ['en', '/en']]) {
     const base = join(SITE, prefix.replace(/^\//, ''), 'models');
     await rm(base, { recursive: true, force: true });

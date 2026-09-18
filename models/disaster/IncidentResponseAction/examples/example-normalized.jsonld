@@ -1,26 +1,33 @@
 {
   "@context": [
-    "https://models.geonicdb.com/context/disaster/v1.1.0.jsonld",
+    "https://models.geonicdb.com/context/disaster/v2.0.0.jsonld",
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
   ],
   "id": "urn:ngsi-ld:IncidentResponseAction:2026-typhoon-10-012-001",
   "type": "IncidentResponseAction",
-  "task": {
+  "name": {
+    "type": "Property",
+    "value": "現地確認、通行止め設置"
+  },
+  "project": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:DisasterEvent:2026-typhoon-10"
+  },
+  "parent": {
     "type": "Relationship",
     "object": "urn:ngsi-ld:IncidentReport:2026-typhoon-10-012"
   },
-  "assignee": {
+  "progress": {
     "type": "Property",
-    "value": "現地①班"
+    "value": "completed"
   },
-  "isDone": {
-    "type": "Property",
-    "value": false
-  },
-  "content": {
-    "type": "Property",
-    "value": "現地確認済み、通行止め設置"
-  },
+  "assignee": [
+    {
+      "type": "Relationship",
+      "object": "urn:ngsi-ld:Team:takamatsu:genchi-1",
+      "datasetId": "urn:ngsi-ld:dataset:assignee:1"
+    }
+  ],
   "completedAt": {
     "type": "Property",
     "value": {
@@ -28,7 +35,7 @@
       "@value": "2026-08-21T11:00:00Z"
     }
   },
-  "updatedAt": {
+  "dateModified": {
     "type": "Property",
     "value": {
       "@type": "DateTime",

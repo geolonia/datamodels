@@ -12,7 +12,8 @@ models/<subject>/
   context.jsonld          the subject's JSON-LD context (may import other catalog contexts by URL)
   releases/vX.Y.Z/        snapshots of published versions, written by `npm run manifest:record`
   <Type>/
-    schema.json           JSON Schema 2020-12 (key-values), with x-ngsi / x-iri / x-geonicdb; x-kind: value for value types
+    schema.json           JSON Schema 2020-12 (key-values), with x-ngsi / x-iri / x-geonicdb; x-kind: value for value types,
+                          x-alias-of (same type under another name) or x-subclass-of (own type, parent attribute IRIs)
     catalog.yaml          ja/en title, description, attribute descriptions, status
     examples/             example.json (key-values), example-normalized.jsonld
     mapping/*.yaml        optional correspondence to an external standard

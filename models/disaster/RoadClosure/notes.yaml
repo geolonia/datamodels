@@ -2,4 +2,5 @@ notes:
   - Seeded 2026-09-17 from geolonia/geonicdb-datamodels data-models/*.json (Takamatsu City flood-prevention headquarters). Type name generalised from the tenant-specific "Saitai" prefix.
   - The original attribute "status" is renamed because status is a protected term in the NGSI-LD core context and cannot be redefined.
   - 1.1.0 adds address (JapaneseAddress from the common subject). addressTown and addressBanchi are deprecated and kept for compatibility; they will be removed in the next major version.
+  - "2.0.0: project now uses the task subject's project IRI and points at DisasterEvent; memo → description (core term); the deprecated addressTown and addressBanchi of 1.1.0 are removed."
 license: CC BY 4.0 (see /LICENSE-CONTENT.md)

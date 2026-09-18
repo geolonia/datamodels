@@ -1,13 +1,13 @@
 {
   "@context": [
-    "https://models.geonicdb.com/context/disaster/v1.1.0.jsonld",
+    "https://models.geonicdb.com/context/disaster/v2.0.0.jsonld",
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
   ],
   "id": "urn:ngsi-ld:EvacuationShelter:2026-typhoon-10-001",
   "type": "EvacuationShelter",
   "project": {
     "type": "Relationship",
-    "object": "urn:ngsi-ld:Project:2026-typhoon-10"
+    "object": "urn:ngsi-ld:DisasterEvent:2026-typhoon-10"
   },
   "externalShelterId": {
     "type": "Property",
@@ -33,7 +33,7 @@
     "type": "Property",
     "value": 14
   },
-  "memo": {
+  "description": {
     "type": "Property",
     "value": "物資不足"
   },
