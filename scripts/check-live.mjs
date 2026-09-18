@@ -47,8 +47,11 @@ for (const subject of subjects) {
     r = await head(mu.schemaExact);
     expect(r.status === 200 && h(r, 'content-type').startsWith('application/schema+json'), `${mu.schemaExact}: ${r.status} ${h(r, 'content-type')}`);
     expect(isImmutable(r), `${mu.schemaExact}: cache-control "${h(r, 'cache-control')}" must be exactly "${IMMUTABLE}"`);
-    r = await head(mu.typeIri);
-    expect(r.status === 302 && h(r, 'location') === mu.page.replace(BASE_URL, ''), `${mu.typeIri}: ${r.status} -> ${h(r, 'location')}`);
+    // An alias (x-alias-of) shares the aliased type's IRI, which redirects to the owner's page; its own name has no IRI.
+    if (mu.typeIri === `${BASE_URL}/ns/${subject.name}/${model.type}`) {
+      r = await head(mu.typeIri);
+      expect(r.status === 302 && h(r, 'location') === mu.page.replace(BASE_URL, ''), `${mu.typeIri}: ${r.status} -> ${h(r, 'location')}`);
+    }
     r = await head(mu.page); expect(r.status === 200, `${mu.page}: ${r.status}`);
     // Value types have no GeonicDB body and no normalized example of their own.
     if (model.kind === 'value') continue;
