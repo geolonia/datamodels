@@ -8,7 +8,7 @@ Metadata for one on-site photo attached to an incident report. The image stays i
 
 - Type IRI: `https://models.geonicdb.com/ns/disaster/IncidentPhoto`
 - Subclass of: `https://models.geonicdb.com/ns/task/Attachment`
-- Context: `https://models.geonicdb.com/context/disaster/v2.jsonld` (alias), `https://models.geonicdb.com/context/disaster/v2.0.0.jsonld` (exact)
+- Context: `https://models.geonicdb.com/context/disaster/v2.jsonld` (alias), `https://models.geonicdb.com/context/disaster/v2.1.0.jsonld` (exact)
 - Schema: `https://models.geonicdb.com/schema/disaster/IncidentPhoto/v2.json`
 - Page: https://models.geonicdb.com/models/disaster/IncidentPhoto/
 

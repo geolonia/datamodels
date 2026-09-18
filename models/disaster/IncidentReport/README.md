@@ -8,7 +8,7 @@ One report from a resident or staff member: location, category, response status,
 
 - Type IRI: `https://models.geonicdb.com/ns/disaster/IncidentReport`
 - Subclass of: `https://models.geonicdb.com/ns/task/Task`
-- Context: `https://models.geonicdb.com/context/disaster/v2.jsonld` (alias), `https://models.geonicdb.com/context/disaster/v2.0.0.jsonld` (exact)
+- Context: `https://models.geonicdb.com/context/disaster/v2.jsonld` (alias), `https://models.geonicdb.com/context/disaster/v2.1.0.jsonld` (exact)
 - Schema: `https://models.geonicdb.com/schema/disaster/IncidentReport/v2.json`
 - Page: https://models.geonicdb.com/models/disaster/IncidentReport/
 

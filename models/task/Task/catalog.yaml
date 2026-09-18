@@ -14,8 +14,8 @@ attributes:
     ja: "説明"
     en: "Description"
   project:
-    ja: "所属プロジェクト"
-    en: "The project this belongs to"
+    ja: "所属プロジェクト（元システムにプロジェクトの概念がある場合）"
+    en: "The project this belongs to, when the source system has projects"
   parent:
     ja: "親タスク（RFC 8984 relatedTo parent）"
     en: "Parent task (RFC 8984 relatedTo parent)"

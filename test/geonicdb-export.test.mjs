@@ -12,7 +12,7 @@ const roadClosure = disaster.models.find((m) => m.type === 'RoadClosure');
 test('default body: exact context, additionalProperties from the schema, catalog IRIs per property', () => {
   const b = toCustomDataModel(disaster, roadClosure);
   assert.equal(b.type, 'RoadClosure');
-  assert.equal(b.contextUrl, 'https://models.geonicdb.com/context/disaster/v2.0.0.jsonld');
+  assert.equal(b.contextUrl, 'https://models.geonicdb.com/context/disaster/v2.1.0.jsonld');
   assert.equal(b.additionalProperties, false);
   assert.equal(b.propertyDetails.closureStatus['@context'], 'https://models.geonicdb.com/ns/disaster/closureStatus');
   assert.equal(b.propertyDetails.address.valueType, 'object');
