@@ -9,6 +9,9 @@
 //   --type-prefix P    tenant-specific type names (SaitaiRoadClosure), catalog vocabulary unchanged
 //   --alias-context    declare the vN.jsonld alias instead of the exact version
 //   --allow-additional additionalProperties: true (unknown attributes accepted, not validated)
+//   --type-name N      replace the type name (needs --type); an alias for the same IRI
+//   --rename a=b,c=d   attribute aliases (needs --type); the contextUrl must map them
+//   --context-url URL  declare this context instead of the catalog's
 //   --extend FILE      JSON keyed by type: { "RoadClosure": { "contextUrl": "...",
 //                      "propertyDetails": { "patrolRoute": { "ngsiType": "Property",
 //                      "valueType": "string", "example": "A-3" } } } }
@@ -27,6 +30,16 @@ const out = opt('--out') ?? 'out';
 const aliasContext = args.includes('--alias-context');
 const allowAdditional = args.includes('--allow-additional');
 const extendFile = opt('--extend');
+const typeName = opt('--type-name');
+const contextUrlOverride = opt('--context-url');
+const renameArg = opt('--rename');
+const rename = Object.fromEntries((renameArg ? renameArg.split(',') : []).map((pair) => {
+  const [from, to] = pair.split('=');
+  if (!from || !to) { console.error(`--rename: expected a=b, got "${pair}"`); process.exit(2); }
+  return [from.trim(), to.trim()];
+}));
+if ((typeName || renameArg) && !onlyType) { console.error('--type-name and --rename apply to one model; add --type T'); process.exit(2); }
+if ((typeName || renameArg) && !contextUrlOverride && !extendFile) console.error('warning: aliases need a context that maps them; pass --context-url (the body still declares the catalog context)');
 if (!subjectName) { console.error('usage: export-geonicdb.mjs <subject> [--type T] [--type-prefix P] [--alias-context] [--allow-additional] [--extend FILE] [--out DIR]'); process.exit(2); }
 
 const subject = (await loadSubjects()).find((s) => s.name === subjectName);
@@ -49,9 +62,11 @@ await mkdir(out, { recursive: true });
 for (const model of models) {
   const body = toCustomDataModel(subject, model, {
     typePrefix,
-    contextUrl: aliasContext ? urls.contextAlias : urls.contextExact,
+    contextUrl: contextUrlOverride ?? (aliasContext ? urls.contextAlias : urls.contextExact),
     allowAdditional,
     extend: extensions[model.type],
+    typeName,
+    rename,
   });
   const file = join(out, `${body.type}.json`);
   await writeFile(file, JSON.stringify(body, null, 2) + '\n');
