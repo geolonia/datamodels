@@ -90,7 +90,8 @@ for (const subject of subjects) {
     else if (!validate(kv)) fail(`${mwhere}/examples/example.json`, ajv.errorsText(validate.errors));
 
     // notes.yaml renders as a bullet list; an entry with an unquoted ": " parses as an object.
-    const notes = model.notes ?? {};
+    if (model.notes != null && (typeof model.notes !== 'object' || Array.isArray(model.notes))) fail(`${mwhere}/notes.yaml`, 'root value must be a mapping with notes and license');
+    const notes = (model.notes && typeof model.notes === 'object' && !Array.isArray(model.notes)) ? model.notes : {};
     if (notes.notes !== undefined && (!Array.isArray(notes.notes) || notes.notes.some((n) => typeof n !== 'string'))) fail(`${mwhere}/notes.yaml`, 'notes must be a list of strings (quote an entry that contains ": ")');
     if (notes.license !== undefined && typeof notes.license !== 'string') fail(`${mwhere}/notes.yaml`, 'license must be a string');
 

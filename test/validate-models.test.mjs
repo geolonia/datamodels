@@ -129,3 +129,7 @@ test('an Attachment owned by both a task and a project fails', () =>
 test('a geometry without coordinates fails', () =>
   withMutatedModels((d) => editJson(join(d, 'task', 'Project', 'examples', 'example.json'), (e) => { e.location = { type: 'Polygon' }; }),
     /location/));
+
+test('a notes.yaml whose root is a list fails', () =>
+  withMutatedModels((d) => writeFile(join(d, 'task', 'Task', 'notes.yaml'), '- a note\n- another\n'),
+    /root value must be a mapping/));
