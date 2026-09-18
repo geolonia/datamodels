@@ -22,6 +22,7 @@ const guides = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.SidebarItem
   { text: lang === 'ja' ? '変わらない URL' : 'URLs that never change', link: `${prefix}/guide/urls` },
   { text: lang === 'ja' ? 'GeonicDB で使う' : 'Use with GeonicDB', link: `${prefix}/guide/geonicdb` },
   { text: lang === 'ja' ? '他のデータモデルカタログ' : 'Other data model catalogs', link: `${prefix}/guide/catalogs` },
+  { text: 'Tips & Tricks', link: `${prefix}/guide/tips` },
 ]
 
 function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {

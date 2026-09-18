@@ -47,3 +47,22 @@ test('extend cannot redefine a catalog attribute', () => {
 test('extend attributes need ngsiType and valueType', () => {
   assert.throws(() => toCustomDataModel(disaster, roadClosure, { extend: { propertyDetails: { x: { example: 1 } } } }), /needs ngsiType and valueType/);
 });
+
+const project = disaster.models.find((m) => m.type === 'Project');
+const action = disaster.models.find((m) => m.type === 'IncidentResponseAction');
+
+test('typeName and rename produce aliases that keep the catalog IRIs', () => {
+  const b = toCustomDataModel(disaster, project, { typeName: 'DisasterEvent', contextUrl: 'https://example.com/context/city.jsonld' });
+  assert.equal(b.type, 'DisasterEvent');
+  assert.equal(b.contextUrl, 'https://example.com/context/city.jsonld');
+  const a = toCustomDataModel(disaster, action, { rename: { assignee: 'responsibleTeam' } });
+  assert.ok(a.propertyDetails.responsibleTeam && !a.propertyDetails.assignee);
+  assert.equal(a.propertyDetails.responsibleTeam['@context'], 'https://models.geonicdb.com/ns/disaster/assignee');
+});
+
+test('rename rejects unknown attributes, non-ASCII aliases and collisions', () => {
+  assert.throws(() => toCustomDataModel(disaster, action, { rename: { nope: 'x' } }), /not an attribute/);
+  assert.throws(() => toCustomDataModel(disaster, action, { rename: { assignee: '担当班' } }), /must match/);
+  assert.throws(() => toCustomDataModel(disaster, action, { rename: { assignee: 'content' } }), /collides/);
+  assert.throws(() => toCustomDataModel(disaster, action, { rename: { assignee: 'x', content: 'x' } }), /same alias/);
+});

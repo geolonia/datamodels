@@ -24,9 +24,21 @@ function valueTypeOf(prop) {
  *                    cannot be redefined; a name clash throws. The extension's
  *                    contextUrl should import the catalog context and define
  *                    only the added terms.
+ *   typeName         full replacement of the type name (alias; same IRI)
+ *   rename           { catalogName: aliasName }: attribute aliases. The body
+ *                    keeps each property's catalog IRI in `@context`, so the
+ *                    caller's contextUrl must map the alias to that IRI.
  */
-export function toCustomDataModel(subject, model, { typePrefix = '', contextUrl, allowAdditional = false, extend } = {}) {
+export function toCustomDataModel(subject, model, { typePrefix = '', typeName, contextUrl, allowAdditional = false, extend, rename = {} } = {}) {
   const urls = subjectUrls(subject);
+  const catalogNames = new Set(attributesOf(model).map(([n]) => n));
+  for (const [from, to] of Object.entries(rename)) {
+    if (!catalogNames.has(from)) throw new Error(`rename: "${from}" is not an attribute of ${model.type}`);
+    if (!/^[A-Za-z0-9_]+$/.test(to)) throw new Error(`rename: alias "${to}" must match [A-Za-z0-9_]+ (GeonicDB attribute name rule)`);
+    if (catalogNames.has(to) && rename[to] === undefined) throw new Error(`rename: alias "${to}" collides with catalog attribute "${to}" of ${model.type}`);
+  }
+  const aliasTargets = Object.values(rename);
+  if (new Set(aliasTargets).size !== aliasTargets.length) throw new Error('rename: two attributes mapped to the same alias');
   const example = model.examples['example.json'] ?? {};
   const propertyDetails = {};
   for (const [name, prop] of attributesOf(model)) {
@@ -48,7 +60,7 @@ export function toCustomDataModel(subject, model, { typePrefix = '', contextUrl,
     const validation = {};
     for (const k of ['minLength', 'maxLength', 'minimum', 'maximum', 'pattern', 'enum']) if (prop[k] !== undefined) validation[k] = prop[k];
     if (Object.keys(validation).length) d.validation = validation;
-    propertyDetails[name] = d;
+    propertyDetails[rename[name] ?? name] = d;
   }
   if (extend?.propertyDetails) {
     for (const [name, detail] of Object.entries(extend.propertyDetails)) {
@@ -58,7 +70,7 @@ export function toCustomDataModel(subject, model, { typePrefix = '', contextUrl,
     }
   }
   return {
-    type: `${typePrefix}${model.type}`,
+    type: typeName ?? `${typePrefix}${model.type}`,
     domain: subject.name,
     description: extend?.description ?? model.catalog?.description?.ja ?? model.schema.description,
     contextUrl: extend?.contextUrl ?? contextUrl ?? urls.contextExact,
