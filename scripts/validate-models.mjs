@@ -32,7 +32,15 @@ const ownersByIri = new Map();
 for (const subject of subjects) for (const model of subject.models) if (!model.schema['x-alias-of']) ownersByIri.set(modelUrls(subject, model).typeIri, { subject, model });
 
 const stripType = (props = {}) => Object.fromEntries(Object.entries(props).filter(([k]) => k !== 'type'));
-const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+/** Structural equality: object key order does not matter, array order does (JSON Schema arrays such as enum and oneOf are ordered). */
+function same(a, b) {
+  if (a === b) return true;
+  if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null || Array.isArray(a) !== Array.isArray(b)) return false;
+  if (Array.isArray(a)) return a.length === b.length && a.every((v, i) => same(v, b[i]));
+  const ka = Object.keys(a).sort(), kb = Object.keys(b).sort();
+  return same(ka, kb) && ka.every((k) => same(a[k], b[k]));
+}
+const sameSet = (a = [], b = []) => same([...a].sort(), [...b].sort());
 
 // Value schemas (x-kind: value) are referenced by $ref from entity schemas in
 // other subjects; register them so ajv resolves the URL without fetching.
@@ -86,7 +94,9 @@ for (const subject of subjects) {
       else {
         const differing = [...new Set([...Object.keys(stripType(schema.properties)), ...Object.keys(stripType(target.model.schema.properties))])].filter((k) => !same(schema.properties[k], target.model.schema.properties[k]));
         if (differing.length) fail(`${mwhere}/schema.json`, `alias of ${target.model.type}: properties differ (${differing.join(', ')}); an alias has the same attributes, a subclass declares x-subclass-of`);
-        if (!same(schema.required, target.model.schema.required)) fail(`${mwhere}/schema.json`, `alias of ${target.model.type}: required differs`);
+        if (!sameSet(schema.required, target.model.schema.required)) fail(`${mwhere}/schema.json`, `alias of ${target.model.type}: required differs`);
+        if (model.kind !== target.model.kind) fail(`${mwhere}/schema.json`, `alias of ${target.model.type}: kind differs (${model.kind} vs ${target.model.kind})`);
+        if ((schema.additionalProperties ?? true) !== (target.model.schema.additionalProperties ?? true)) fail(`${mwhere}/schema.json`, `alias of ${target.model.type}: additionalProperties differs`);
       }
       if (subclassOf) fail(`${mwhere}/schema.json`, 'x-alias-of and x-subclass-of are exclusive');
     } else {

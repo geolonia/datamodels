@@ -47,7 +47,7 @@ export async function publishModels(subjects) {
       for (const [f, content] of Object.entries(model.examples)) await write(`${mu.examples}${f}`, json(content));
       if (model.kind === 'entity') await write(mu.geonicdb, json(toCustomDataModel(subject, model)));
       // An alias has no IRI of its own under this namespace.
-      if (mu.typeIri.startsWith(u.namespace)) redirects.push(`/ns/${subject.name}/${model.type}  /models/${subject.name}/${model.type}/  302`);
+      if (mu.typeIri === `${u.namespace}${model.type}`) redirects.push(`/ns/${subject.name}/${model.type}  /models/${subject.name}/${model.type}/  302`);
       for (const [name] of attributesOf(model)) if (!shared.has(name) && !(name in {})) {
         const iri = model.schema.properties[name]['x-iri'] ?? '';
         if (iri.startsWith(u.namespace)) redirects.push(`/ns/${subject.name}/${name}  /models/${subject.name}/${model.type}/#${name}  302`);

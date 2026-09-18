@@ -153,3 +153,17 @@ test('a subclass attribute under a different IRI than the parent fails', () =>
 test('a subclass that drops a parent-required attribute fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'IncidentReport', 'schema.json'), (s) => { s.required = s.required.filter((r) => r !== 'progress'); }),
     /subclass of Task: "progress" must stay required/));
+
+test('an alias with a different unknown-attribute policy fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'DisasterEvent', 'schema.json'), (s) => { s.additionalProperties = true; }),
+    /alias of Project: additionalProperties differs/));
+
+test('an alias survives a different key and required order', () =>
+  withMutatedModels(async (d) => {
+    await editJson(join(d, 'disaster', 'DisasterEvent', 'schema.json'), (s) => {
+      s.required = [...s.required].reverse();
+      s.properties = Object.fromEntries(Object.entries(s.properties).reverse());
+      // and break something unrelated so the run still fails where expected
+      s['x-version'] = '9.9.9';
+    });
+  }, /x-version must be 2\.0\.0(?![\s\S]*alias of Project)/));
