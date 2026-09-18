@@ -141,6 +141,7 @@
     "type",
     "project",
     "externalShelterId",
+    "localGovernmentCode",
     "openingStatus"
   ],
   "additionalProperties": false
