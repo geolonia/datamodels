@@ -102,6 +102,16 @@ export function toKeyValues(normalized) {
   for (const [k, v] of Object.entries(normalized)) {
     if (k === '@context') continue;
     if (k === 'id' || k === 'type') { out[k] = v; continue; }
+    // Multi-valued attribute: an array of instances distinguished by datasetId.
+    if (Array.isArray(v)) {
+      if (v.length === 0) throw new Error(`attribute ${k}: empty multi-valued attribute`);
+      out[k] = v.map((inst, i) => {
+        const single = toKeyValues({ [k]: inst });
+        if (inst && typeof inst === 'object' && i > 0 && !inst.datasetId) throw new Error(`attribute ${k}: instance ${i + 1} of a multi-valued attribute needs a datasetId`);
+        return single[k];
+      });
+      continue;
+    }
     if (!v || typeof v !== 'object' || !('type' in v)) throw new Error(`attribute ${k}: not a normalized attribute object`);
     if (v.type === 'Relationship') { if (typeof v.object !== 'string') throw new Error(`attribute ${k}: Relationship needs a string object`); out[k] = v.object; }
     else if (v.type === 'GeoProperty') { if (!v.value || typeof v.value !== 'object' || typeof v.value.type !== 'string') throw new Error(`attribute ${k}: GeoProperty needs a GeoJSON value`); out[k] = v.value; }

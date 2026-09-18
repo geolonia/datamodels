@@ -1,0 +1,13 @@
+# Universal task management. Semantics follow RFC 8984 (JSCalendar) where they overlap.
+name: task
+version: 1.0.0
+title:
+  ja: タスク管理
+  en: Task management
+description:
+  ja: 課題管理・作業管理の共通モデル。タスク、プロジェクト、コメント、添付ファイル。Redmine、GitHub Issues、カレンダーの ToDo、自治体の作業指示に共通する属性だけを核にし、状態と優先度の値域は RFC 8984（JSCalendar）に合わせる。位置は点に限らない。システム固有の用語はエイリアスで対応する。
+  en: Common model for issue and work tracking. Task, Project, Comment, Attachment. The core holds only what Redmine, GitHub Issues, calendar to-dos and municipal work orders share; state and priority follow RFC 8984 (JSCalendar). Location is not limited to points. System-specific terminology is handled with aliases.
+source: minted
+origin:
+  repository: https://github.com/geolonia/geonicdb-models/issues/22
+  note: Designed with the GTT project (Redmine geo task tracking, redmine_gtt_fiware) and the Takamatsu disaster-response models as the first two implementations.

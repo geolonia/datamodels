@@ -98,3 +98,7 @@ test('an entity example whose address violates the referenced value schema fails
 test('a context importing a version that is neither published nor current fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'context.jsonld'), (c) => { c['@context'][0] = 'https://models.geonicdb.com/context/common/v0.9.0.jsonld'; }),
     /version 0\.9\.0 of subject "common" is neither published/));
+
+test('a multi-valued attribute the schema does not declare as multi fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'task', 'Task', 'schema.json'), (s) => { delete s.properties.assignee['x-ngsi'].multi; }),
+    /"assignee" is multi-valued in the example but schema.json does not declare x-ngsi.multi/));

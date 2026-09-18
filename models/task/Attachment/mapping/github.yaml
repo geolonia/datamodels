@@ -1,0 +1,9 @@
+standard:
+  name: { ja: GitHub Issue の添付（本文中の埋め込み）, en: GitHub issue attachment (embedded in the body) }
+  url: https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/attaching-files
+  note: { ja: GitHub には添付の API が無く、本文の URL から抽出する, en: GitHub has no attachment API; URLs are extracted from the body }
+fields:
+  task: { to: "issue" }
+  contentUrl: { to: "URL in body" }
+  filename: { to: "URL basename" }
+  encodingFormat: { to: null }

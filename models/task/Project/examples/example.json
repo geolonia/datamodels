@@ -1,0 +1,46 @@
+{
+  "id": "urn:ngsi-ld:Project:takamatsu-flood-2026-typhoon-10",
+  "type": "Project",
+  "name": "令和8年台風第10号 水防対応",
+  "description": "8/21〜 高松市水防本部のオペレーション",
+  "identifier": "takamatsu-flood-2026-t10",
+  "projectStatus": "active",
+  "isPublic": false,
+  "homepage": "https://redmine.example.jp/projects/takamatsu-flood-2026-t10",
+  "start": "2026-08-21T00:00:00+09:00",
+  "location": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          134,
+          34.3
+        ],
+        [
+          134.1,
+          34.3
+        ],
+        [
+          134.1,
+          34.4
+        ],
+        [
+          134,
+          34.4
+        ],
+        [
+          134,
+          34.3
+        ]
+      ]
+    ]
+  },
+  "keywords": [
+    "水防",
+    "台風"
+  ],
+  "source": "https://redmine.example.jp/projects/takamatsu-flood-2026-t10",
+  "externalId": "42",
+  "dateCreated": "2026-08-20T18:00:00+09:00",
+  "dateModified": "2026-08-21T11:05:00+09:00"
+}

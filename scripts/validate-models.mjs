@@ -104,8 +104,13 @@ for (const subject of subjects) {
     const norm = model.examples['example-normalized.jsonld'];
     if (!norm) { fail(mwhere, 'examples/example-normalized.jsonld is required'); continue; }
     for (const [name, prop] of attributesOf(model)) {
-      const got = norm[name]?.type;
-      if (name in norm && got !== prop['x-ngsi']?.type) fail(`${mwhere}/examples/example-normalized.jsonld`, `attribute "${name}" is a ${got} but schema.json declares ${prop['x-ngsi']?.type}`);
+      if (!(name in norm)) continue;
+      const instances = Array.isArray(norm[name]) ? norm[name] : [norm[name]];
+      if (Array.isArray(norm[name]) && !prop['x-ngsi']?.multi) fail(`${mwhere}/examples/example-normalized.jsonld`, `attribute "${name}" is multi-valued in the example but schema.json does not declare x-ngsi.multi`);
+      for (const inst of instances) {
+        const got = inst?.type;
+        if (got !== prop['x-ngsi']?.type) fail(`${mwhere}/examples/example-normalized.jsonld`, `attribute "${name}" is a ${got} but schema.json declares ${prop['x-ngsi']?.type}`);
+      }
     }
     let projected;
     try { projected = toKeyValues(norm); } catch (e) { fail(`${mwhere}/examples/example-normalized.jsonld`, e.message); continue; }
@@ -129,7 +134,7 @@ for (const subject of subjects) {
       // Every key at every depth must survive: a nested field the context does
       // not define is silently dropped by expansion, so compare key paths.
       const after = new Set(keyPaths(compacted));
-      for (const k of keyPaths(norm)) if (!after.has(k) && !/(^|\.)(type|value|object)$/.test(k)) fail(`${mwhere}/examples/example-normalized.jsonld`, `"${k}" lost in expand/compact round-trip (not defined by the context?)`);
+      for (const k of keyPaths(norm)) if (!after.has(k) && !/(^|\.)(type|value|object|datasetId)$/.test(k)) fail(`${mwhere}/examples/example-normalized.jsonld`, `"${k}" lost in expand/compact round-trip (not defined by the context?)`);
     } catch (e) {
       fail(`${mwhere}/examples/example-normalized.jsonld`, `JSON-LD processing failed: ${e.message}`);
     }

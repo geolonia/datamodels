@@ -1,0 +1,4 @@
+notes:
+  - Upstream considered (2026-09-18): Smart Data Models dataModel.IssueTracking (Open311 service_requests/services; IUDX IssueReporting), both citizen-complaint records shaped by one country's municipal process, not task models; dataModel.Transportation CityWork and dataModel.PredictiveMaintenance, domain-specific. RFC 8984 (JSCalendar Task) is the universal reference and supplies the value spaces used here. See issue #22.
+  - The core is deliberately small. System-specific data (time spent, milestones, watchers, custom fields, map rotation) belongs in extensions.
+  - Exactly one of task or project is required (schema anyOf). The file stays outside the broker.\nlicense: CC BY 4.0 (see /LICENSE-CONTENT.md)

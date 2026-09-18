@@ -1,0 +1,13 @@
+standard:
+  name: { ja: Redmine のジャーナル（注記）, en: Redmine journal note }
+  url: https://www.redmine.org/projects/redmine/wiki/Rest_Issues
+  note: { ja: notes が空のジャーナル（フィールド変更のみ）は対象外, en: journals with empty notes (field changes only) are not comments }
+fields:
+  task: { to: "issue_id" }
+  author: { to: "user" }
+  text: { to: "notes" }
+  textFormat: { to: null, note: { ja: インスタンス設定（textile / markdown）, en: instance setting (textile or markdown) } }
+  isPrivate: { to: "private_notes" }
+  sentAt: { to: "created_on" }
+  source: { to: "<base_url>/issues/<issue_id>#note-<n>" }
+  externalId: { to: "id" }

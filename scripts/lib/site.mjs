@@ -52,7 +52,8 @@ function valueText(lang, subject, prop, prefix) {
   if (ngsi === 'Relationship') {
     const target = prop['x-ngsi'].target?.split('/').pop();
     const tm = subject.models.find((m) => m.type === target);
-    return `Relationship ${T[lang].relationshipTo} ${tm ? `[${target}](${prefix}${rel(modelUrls(subject, tm).page)})` : target ?? 'entity'}`;
+    const multi = prop['x-ngsi'].multi ? (lang === 'ja' ? '（複数可）' : ' (multiple)') : '';
+    return `Relationship ${T[lang].relationshipTo} ${tm ? `[${target}](${prefix}${rel(modelUrls(subject, tm).page)})` : target === 'any' ? (lang === 'ja' ? '任意のエンティティ' : 'any entity') : target === 'agent' ? (lang === 'ja' ? '人・組織・チーム' : 'person, organisation or team') : target ?? 'entity'}${multi}`;
   }
   if (ngsi === 'GeoProperty') return `GeoProperty (${prop.properties?.type?.const ?? 'GeoJSON'})`;
   const ref = prop.$ref ?? prop.allOf?.find((a) => a.$ref)?.$ref;

@@ -1,0 +1,11 @@
+standard:
+  name: { ja: GitHub Issue コメント, en: GitHub issue comment }
+  url: https://docs.github.com/en/rest/issues/comments
+fields:
+  task: { to: "issue_url" }
+  author: { to: "user" }
+  text: { to: "body" }
+  textFormat: { to: null, note: { ja: 常に markdown, en: always markdown } }
+  sentAt: { to: "created_at" }
+  source: { to: "html_url" }
+  externalId: { to: "id" }
