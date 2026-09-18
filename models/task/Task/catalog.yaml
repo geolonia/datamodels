@@ -5,7 +5,7 @@ description:
   ja: "追跡される作業単位。課題管理システムの「チケット」「Issue」、カレンダーの ToDo、自治体の作業指示など。状態と優先度の値域は RFC 8984（JSCalendar）に合わせ、元システム固有の状態名や種別は statusLabel と subtype に保持する。位置は任意のジオメトリ。"
   en: "A tracked unit of work: a ticket or issue in a tracker, a calendar to-do, a municipal work order. State and priority follow RFC 8984 (JSCalendar); the source system's own status name and kind are kept in statusLabel and subtype. Location may be any geometry."
 status: draft
-tags: [task-management, gtt, rfc8984]
+tags: [task-management, rfc8984]
 attributes:
   name:
     ja: "名称・件名"
@@ -29,10 +29,10 @@ attributes:
     ja: "正規化した進行状態（RFC 8984 progress）。needs-action=未着手、in-process=対応中、completed=完了、failed=失敗、cancelled=取消"
     en: "Normalised state (RFC 8984 progress: needs-action, in-process, completed, failed, cancelled)"
   statusLabel:
-    ja: "元システムの状態名そのまま（Redmine のステータス名、GitHub の state と理由など）"
-    en: "The source system's own status name (Redmine status, GitHub state and reason)"
+    ja: "元システムの状態名そのまま（「対応中」「解決」など）"
+    en: "The source system's own status name, unchanged (for example \"In progress\", \"Resolved\")"
   subtype:
-    ja: "元システムの種別（Redmine のトラッカー、Issue タイプ、カテゴリ）"
+    ja: "元システムの種別（トラッカー、Issue タイプ、カテゴリなど）"
     en: "The source system's kind: tracker, issue type, category"
   priority:
     ja: "優先度 0〜9。1 が最高、9 が最低、0 は未定義（RFC 8984）"

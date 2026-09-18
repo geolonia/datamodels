@@ -3,5 +3,5 @@ notes:
   - The core is deliberately small. System-specific data (time spent, milestones, watchers, custom fields, map rotation) belongs in extensions.
   - "progress uses the RFC 8984 value set unchanged: needs-action, in-process, completed, failed, cancelled. statusLabel keeps the source system’s own status name; subtype its tracker, issue type or category."
   - relatedTo and assignee are multi-valued Relationships (one instance per target, distinguished by datasetId). In the key-values form they are always arrays, even with a single target. The kind of a relation (blocks, precedes, duplicates) is not in the core.
-  - GTT (redmine_gtt_fiware) can align its frozen Issue vocabulary to this type by alias (Issue -> task:Task) or by declaring Issue a subclass; both keep GTT’s core valid.
+  - A source system keeps its own type and attribute names through a JSON-LD alias context (see the Tips guide); its vocabulary can also declare its types subclasses of these.
 license: CC BY 4.0 (see /LICENSE-CONTENT.md)

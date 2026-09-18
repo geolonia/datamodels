@@ -5,7 +5,7 @@
   "description": "Metadata of a file attached to a task or a project. The file itself stays outside the broker and is referenced by URL.",
   "x-version": "1.0.0",
   "x-license-url": "https://models.geonicdb.com/LICENSE-CONTENT",
-  "x-model-tags": "GeonicDB, task management, GTT",
+  "x-model-tags": "GeonicDB, task management",
   "x-derived-from": "https://www.rfc-editor.org/rfc/rfc8984.html",
   "type": "object",
   "properties": {

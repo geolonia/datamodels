@@ -1,9 +1,9 @@
 {
-  "id": "urn:ngsi-ld:Attachment:redmine:takamatsu:77",
+  "id": "urn:ngsi-ld:Attachment:takamatsu:77",
   "type": "Attachment",
-  "task": "urn:ngsi-ld:Task:redmine:takamatsu:1234",
+  "task": "urn:ngsi-ld:Task:takamatsu:1234",
   "author": "urn:ngsi-ld:Team:takamatsu:genchi-1",
-  "contentUrl": "https://redmine.example.jp/attachments/download/77/IMG_0012.jpg",
+  "contentUrl": "https://tracker.example.jp/attachments/download/77/IMG_0012.jpg",
   "filename": "IMG_0012.jpg",
   "encodingFormat": "image/jpeg",
   "contentSize": 2483011,
@@ -16,7 +16,7 @@
       34.3401
     ]
   },
-  "source": "https://redmine.example.jp/attachments/77",
+  "source": "https://tracker.example.jp/attachments/77",
   "externalId": "77",
   "dateCreated": "2026-08-21T10:58:00+09:00"
 }

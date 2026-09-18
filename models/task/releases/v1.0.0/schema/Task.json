@@ -5,7 +5,7 @@
   "description": "A tracked unit of work: a ticket or issue in a tracker, a calendar to-do, a municipal work order. State and priority follow RFC 8984 (JSCalendar); the source system's own status name and kind are kept in statusLabel and subtype. Location may be any geometry.",
   "x-version": "1.0.0",
   "x-license-url": "https://models.geonicdb.com/LICENSE-CONTENT",
-  "x-model-tags": "GeonicDB, task management, GTT",
+  "x-model-tags": "GeonicDB, task management",
   "x-derived-from": "https://www.rfc-editor.org/rfc/rfc8984.html",
   "type": "object",
   "properties": {
@@ -97,7 +97,7 @@
     },
     "statusLabel": {
       "type": "string",
-      "description": "The source system's own status name (Redmine status, GitHub state and reason)",
+      "description": "The source system's own status name, unchanged (for example \"In progress\", \"Resolved\")",
       "x-ngsi": {
         "type": "Property"
       },

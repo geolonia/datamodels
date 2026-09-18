@@ -3,11 +3,11 @@
     "https://models.geonicdb.com/context/task/v1.0.0.jsonld",
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
   ],
-  "id": "urn:ngsi-ld:Comment:redmine:takamatsu:1234:3",
+  "id": "urn:ngsi-ld:Comment:takamatsu:1234:3",
   "type": "Comment",
   "task": {
     "type": "Relationship",
-    "object": "urn:ngsi-ld:Task:redmine:takamatsu:1234"
+    "object": "urn:ngsi-ld:Task:takamatsu:1234"
   },
   "author": {
     "type": "Relationship",
@@ -34,7 +34,7 @@
   },
   "source": {
     "type": "Property",
-    "value": "https://redmine.example.jp/issues/1234#note-3"
+    "value": "https://tracker.example.jp/issues/1234#note-3"
   },
   "externalId": {
     "type": "Property",

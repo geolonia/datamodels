@@ -3,7 +3,7 @@
     "https://models.geonicdb.com/context/task/v1.0.0.jsonld",
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
   ],
-  "id": "urn:ngsi-ld:Task:redmine:takamatsu:1234",
+  "id": "urn:ngsi-ld:Task:takamatsu:1234",
   "type": "Task",
   "name": {
     "type": "Property",
@@ -19,12 +19,12 @@
   },
   "parent": {
     "type": "Relationship",
-    "object": "urn:ngsi-ld:Task:redmine:takamatsu:1200"
+    "object": "urn:ngsi-ld:Task:takamatsu:1200"
   },
   "relatedTo": [
     {
       "type": "Relationship",
-      "object": "urn:ngsi-ld:Task:redmine:takamatsu:1198",
+      "object": "urn:ngsi-ld:Task:takamatsu:1198",
       "datasetId": "urn:ngsi-ld:dataset:relatedTo:1"
     }
   ],
@@ -110,7 +110,7 @@
   },
   "source": {
     "type": "Property",
-    "value": "https://redmine.example.jp/issues/1234"
+    "value": "https://tracker.example.jp/issues/1234"
   },
   "externalId": {
     "type": "Property",

@@ -2,10 +2,10 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://models.geonicdb.com/schema/task/Project/v1.0.0.json",
   "title": "Project",
-  "description": "A grouping of tasks: a Redmine project, a GitHub repository, one disaster-response operation. Called differently in different settings, with the same common attributes.",
+  "description": "A grouping of tasks: a project in a tracker, one disaster-response operation, a campaign. Called differently in different settings, with the same common attributes.",
   "x-version": "1.0.0",
   "x-license-url": "https://models.geonicdb.com/LICENSE-CONTENT",
-  "x-model-tags": "GeonicDB, task management, GTT",
+  "x-model-tags": "GeonicDB, task management",
   "x-derived-from": "https://www.rfc-editor.org/rfc/rfc8984.html",
   "type": "object",
   "properties": {
@@ -37,7 +37,7 @@
     },
     "identifier": {
       "type": "string",
-      "description": "Short handle (Redmine identifier, GitHub owner/repo)",
+      "description": "Short handle: a slug or code, unique within the source system",
       "x-ngsi": {
         "type": "Property"
       },
