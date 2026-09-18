@@ -6,7 +6,7 @@
   "identifier": "takamatsu-flood-2026-t10",
   "projectStatus": "active",
   "isPublic": false,
-  "homepage": "https://redmine.example.jp/projects/takamatsu-flood-2026-t10",
+  "homepage": "https://tracker.example.jp/projects/takamatsu-flood-2026-t10",
   "start": "2026-08-21T00:00:00+09:00",
   "location": {
     "type": "Polygon",
@@ -39,7 +39,7 @@
     "水防",
     "台風"
   ],
-  "source": "https://redmine.example.jp/projects/takamatsu-flood-2026-t10",
+  "source": "https://tracker.example.jp/projects/takamatsu-flood-2026-t10",
   "externalId": "42",
   "dateCreated": "2026-08-20T18:00:00+09:00",
   "dateModified": "2026-08-21T11:05:00+09:00"

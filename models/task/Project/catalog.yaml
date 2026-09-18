@@ -2,10 +2,10 @@ title:
   ja: "プロジェクト"
   en: "Project"
 description:
-  ja: "タスクをまとめる単位。Redmine のプロジェクト、GitHub のリポジトリ、災害対応の 1 オペレーションなど。名前は用途によって変わっても（案件、イベント、リポジトリ）、共通の属性を持つ。"
-  en: "A grouping of tasks: a Redmine project, a GitHub repository, one disaster-response operation. Called differently in different settings, with the same common attributes."
+  ja: "タスクをまとめる単位。案件、災害対応の 1 オペレーション、キャンペーンなど、名前は用途によって変わっても共通の属性を持つ。"
+  en: "A grouping of tasks: a project in a tracker, one disaster-response operation, a campaign. Called differently in different settings, with the same common attributes."
 status: draft
-tags: [task-management, gtt, rfc8984]
+tags: [task-management, rfc8984]
 attributes:
   name:
     ja: "名称・件名"
@@ -14,8 +14,8 @@ attributes:
     ja: "説明"
     en: "Description"
   identifier:
-    ja: "短い識別子（Redmine の識別子、GitHub の owner/repo）"
-    en: "Short handle (Redmine identifier, GitHub owner/repo)"
+    ja: "短い識別子（スラッグやコード。元システム内で一意）"
+    en: "Short handle: a slug or code, unique within the source system"
   parent:
     ja: "親プロジェクト"
     en: "Parent project"

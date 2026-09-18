@@ -5,7 +5,7 @@ description:
   ja: "タスクまたはプロジェクトに添付されたファイルのメタデータ。ファイル本体はブローカーの外（元システムやオブジェクトストレージ）に置き、URL で参照する。"
   en: "Metadata of a file attached to a task or a project. The file itself stays outside the broker and is referenced by URL."
 status: draft
-tags: [task-management, gtt, rfc8984]
+tags: [task-management, rfc8984]
 attributes:
   task:
     ja: "対象のタスク"

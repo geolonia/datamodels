@@ -27,7 +27,7 @@
   },
   "homepage": {
     "type": "Property",
-    "value": "https://redmine.example.jp/projects/takamatsu-flood-2026-t10"
+    "value": "https://tracker.example.jp/projects/takamatsu-flood-2026-t10"
   },
   "start": {
     "type": "Property",
@@ -75,7 +75,7 @@
   },
   "source": {
     "type": "Property",
-    "value": "https://redmine.example.jp/projects/takamatsu-flood-2026-t10"
+    "value": "https://tracker.example.jp/projects/takamatsu-flood-2026-t10"
   },
   "externalId": {
     "type": "Property",

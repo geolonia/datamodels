@@ -20,9 +20,9 @@
     "schema/disaster/Project/v1.1.0.json": "085c13b7ab4db4250467544e8687af9a7f1c5f2270658bf922475744f5a36729",
     "schema/disaster/RoadClosure/v1.0.0.json": "8c3d25486431d05f2f963152445cafcefc92c127e36ff711fc1e5f725b69d830",
     "schema/disaster/RoadClosure/v1.1.0.json": "8e41e7c8df2c5167db02f323c9bd426c2ecb989d69f89ac65ffe8650c72f8bc3",
-    "schema/task/Attachment/v1.0.0.json": "9dbf08881ee939a0ccc6c0dbb5c6fa90a0290ac0353e1d7a9f0aff85c673cf66",
-    "schema/task/Comment/v1.0.0.json": "0eaa40bbc0839d05d3711914e3197ae4081fd4ff02f3b129a288eab1168d9d93",
-    "schema/task/Project/v1.0.0.json": "576e91395b6dc67d22587e5a02aa93789a6c16db30639322caa2d33e12234395",
-    "schema/task/Task/v1.0.0.json": "99206acc49c1400e30546b4550d7448fd010b4582f272a859508e1ab91228bcf"
+    "schema/task/Attachment/v1.0.0.json": "50de7bc5bdfef064838bfc44091f4e1205e3209af57910d2fd86bd8d7d6a10f7",
+    "schema/task/Comment/v1.0.0.json": "d1f3e92e6187203bd0c46c0f654aad3be94befcbf49116759308b603f7db6246",
+    "schema/task/Project/v1.0.0.json": "66e5d4a4bc86b95a293eb4769f76a66cc8b35d2be04d942a4abf9a26d113cef8",
+    "schema/task/Task/v1.0.0.json": "66d7e3e7abfc4c5ec63bc06506f7b8d92d21dc28e83796a14e55906d46abc633"
   }
 }
