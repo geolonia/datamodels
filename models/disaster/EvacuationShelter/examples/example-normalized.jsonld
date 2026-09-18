@@ -1,6 +1,6 @@
 {
   "@context": [
-    "https://models.geonicdb.com/context/disaster/v2.1.0.jsonld",
+    "https://models.geonicdb.com/context/disaster/v3.0.0.jsonld",
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
   ],
   "id": "urn:ngsi-ld:EvacuationShelter:2026-typhoon-10-001",
@@ -11,9 +11,17 @@
   },
   "externalShelterId": {
     "type": "Property",
-    "value": "1"
+    "value": "CC3720130001"
+  },
+  "localGovernmentCode": {
+    "type": "Property",
+    "value": "372013"
   },
   "openingStatus": {
+    "type": "Property",
+    "value": "open"
+  },
+  "statusLabel": {
     "type": "Property",
     "value": "開設中"
   },

@@ -27,3 +27,6 @@
 /ns/disaster/task  /models/disaster/#versions  302
 /ns/disaster/toTeam  /models/disaster/#versions  302
 /ns/disaster/updatedAt  /models/disaster/#versions  302
+# Retired in disaster 3.0.0: area became location, roadName reuses the Smart Data Models IRI.
+/ns/disaster/area  /models/disaster/#versions  302
+/ns/disaster/roadName  /models/disaster/#versions  302
