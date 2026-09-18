@@ -2,6 +2,14 @@
   "id": "urn:ngsi-ld:IncidentPhoto:2026-typhoon-10-012-001",
   "type": "IncidentPhoto",
   "task": "urn:ngsi-ld:IncidentReport:2026-typhoon-10-012",
-  "imageKey": "project-2026-typhoon-10/task-012/image-001.jpg",
-  "updatedAt": "2026-08-21T11:10:00Z"
+  "contentUrl": "s3://takamatsu-flood/project-2026-typhoon-10/task-012/image-001.jpg",
+  "filename": "image-001.jpg",
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      134.0437,
+      34.3403
+    ]
+  },
+  "dateModified": "2026-08-21T11:10:00Z"
 }

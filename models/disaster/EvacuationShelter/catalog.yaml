@@ -1,39 +1,41 @@
 title:
-  ja: "避難所運用状況"
-  en: "Evacuation shelter operation"
+  ja: 避難所運用状況
+  en: Evacuation shelter operation
 description:
-  ja: "避難所の運用状況オーバーレイ1件。避難所そのもののマスタ（名称・位置）は含まず、外部の避難所データを externalShelterId で参照する。開設状況と避難者数だけを持つ。"
-  en: "Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included; it is referenced by externalShelterId. Only opening status and evacuee counts live here."
+  ja: 避難所の運用状況オーバーレイ1件。避難所そのもののマスタ（名称・位置）は含まず、外部の避難所データを externalShelterId で参照する。開設状況と避難者数だけを持つ。
+  en: Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included; it is referenced by externalShelterId. Only opening status and evacuee counts live here.
 status: draft
-tags: [disaster-response, municipality]
+tags:
+  - disaster-response
+  - municipality
 attributes:
   project:
-    ja: "所属する災害対応プロジェクト"
-    en: "The disaster-response project this entity belongs to"
+    ja: 所属する災害事象（DisasterEvent）
+    en: The disaster event (DisasterEvent) this entity belongs to
   externalShelterId:
-    ja: "外部の避難所データにおける避難所ID"
-    en: "Shelter ID in the external shelter dataset"
+    ja: 外部の避難所データにおける避難所ID
+    en: Shelter ID in the external shelter dataset
   openingStatus:
-    ja: "開設状況。core context の status は予約語のため openingStatus とする"
-    en: "Opening status. `status` is protected in the core context, hence openingStatus"
+    ja: 開設状況。core context の status は予約語のため openingStatus とする
+    en: Opening status. `status` is protected in the core context, hence openingStatus
   evacueeHouseholds:
-    ja: "避難世帯数"
-    en: "Number of evacuated households"
+    ja: 避難世帯数
+    en: Number of evacuated households
   evacueeTotal:
-    ja: "避難人数合計"
-    en: "Total number of evacuees"
+    ja: 避難人数合計
+    en: Total number of evacuees
   evacueeFemale:
-    ja: "避難人数（女）"
-    en: "Number of female evacuees"
+    ja: 避難人数（女）
+    en: Number of female evacuees
   evacueeMale:
-    ja: "避難人数（男）"
-    en: "Number of male evacuees"
-  memo:
-    ja: "メモ"
-    en: "Free-text memo"
+    ja: 避難人数（男）
+    en: Number of male evacuees
+  description:
+    ja: メモ
+    en: Free-text memo
   openedAt:
-    ja: "開設日時"
-    en: "Time the shelter opened"
+    ja: 開設日時
+    en: Time the shelter opened
   closedAt:
-    ja: "閉鎖日時"
-    en: "Time the shelter closed"
+    ja: 閉鎖日時
+    en: Time the shelter closed

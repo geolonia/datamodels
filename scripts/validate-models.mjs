@@ -27,6 +27,12 @@ const coreTerms = new Set(Object.keys(core['@context']).filter((k) => !k.startsW
 
 const subjects = await loadSubjects();
 const seenTypeIris = new Map();
+// Every type that owns its IRI (not an alias), for alias and subclass targets.
+const ownersByIri = new Map();
+for (const subject of subjects) for (const model of subject.models) if (!model.schema['x-alias-of']) ownersByIri.set(modelUrls(subject, model).typeIri, { subject, model });
+
+const stripType = (props = {}) => Object.fromEntries(Object.entries(props).filter(([k]) => k !== 'type'));
+const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
 // Value schemas (x-kind: value) are referenced by $ref from entity schemas in
 // other subjects; register them so ajv resolves the URL without fetching.
@@ -71,7 +77,35 @@ for (const subject of subjects) {
     if (schema.$id !== murls.schemaExact) fail(`${mwhere}/schema.json`, `$id must be ${murls.schemaExact}`);
     if (schema['x-version'] !== subject.version) fail(`${mwhere}/schema.json`, `x-version must be ${subject.version} (subject version)`);
     if (!ctxTerms[model.type]) fail(`${where}/context.jsonld`, `does not define type "${model.type}"`);
-    const prev = seenTypeIris.get(murls.typeIri); if (prev) fail(mwhere, `type IRI ${murls.typeIri} also used by ${prev}`); seenTypeIris.set(murls.typeIri, mwhere);
+    const aliasOf = schema['x-alias-of'];
+    const subclassOf = schema['x-subclass-of'];
+    if (aliasOf) {
+      // An alias is the same type under another name: same IRI, same attributes, same requirements.
+      const target = ownersByIri.get(aliasOf);
+      if (!target) fail(`${mwhere}/schema.json`, `x-alias-of ${aliasOf} is not a type of this catalog`);
+      else {
+        const differing = [...new Set([...Object.keys(stripType(schema.properties)), ...Object.keys(stripType(target.model.schema.properties))])].filter((k) => !same(schema.properties[k], target.model.schema.properties[k]));
+        if (differing.length) fail(`${mwhere}/schema.json`, `alias of ${target.model.type}: properties differ (${differing.join(', ')}); an alias has the same attributes, a subclass declares x-subclass-of`);
+        if (!same(schema.required, target.model.schema.required)) fail(`${mwhere}/schema.json`, `alias of ${target.model.type}: required differs`);
+      }
+      if (subclassOf) fail(`${mwhere}/schema.json`, 'x-alias-of and x-subclass-of are exclusive');
+    } else {
+      const prev = seenTypeIris.get(murls.typeIri); if (prev) fail(mwhere, `type IRI ${murls.typeIri} also used by ${prev}`); seenTypeIris.set(murls.typeIri, mwhere);
+    }
+    if (subclassOf) {
+      // A subclass keeps its own type IRI but shares the parent's attribute IRIs and cannot loosen its requirements.
+      const target = ownersByIri.get(subclassOf);
+      if (!target) fail(`${mwhere}/schema.json`, `x-subclass-of ${subclassOf} is not a type of this catalog`);
+      else {
+        for (const [name, prop] of attributesOf(model)) {
+          const pp = target.model.schema.properties?.[name];
+          if (!pp) continue;
+          if (pp['x-iri'] !== prop['x-iri']) fail(`${mwhere}/schema.json`, `${name}: subclass of ${target.model.type} must use its IRI ${pp['x-iri']}, not ${prop['x-iri']}`);
+          if (pp['x-ngsi']?.type !== prop['x-ngsi']?.type) fail(`${mwhere}/schema.json`, `${name}: subclass of ${target.model.type} must keep the NGSI type ${pp['x-ngsi']?.type}`);
+        }
+        for (const r of target.model.schema.required ?? []) if (!(schema.required ?? []).includes(r)) fail(`${mwhere}/schema.json`, `subclass of ${target.model.type}: "${r}" must stay required`);
+      }
+    }
 
     for (const [name, prop] of attributesOf(model)) {
       if (model.kind === 'entity' && !prop['x-ngsi']?.type) fail(`${mwhere}/schema.json`, `${name}: missing x-ngsi.type`);

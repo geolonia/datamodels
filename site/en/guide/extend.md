@@ -46,7 +46,7 @@ Do record the upstream types you considered and why they did not fit in the mode
 
 ### Where we stand
 
-The first subject, [disaster response](/en/models/disaster/), is a port of the models running in Takamatsu City's application. Its attribute IRIs reuse existing vocabularies, but its types were minted without a comparison against upstream (Smart Data Models `IssueReporting`, `Alert`, `RoadSegment` and others). That comparison is tracked in [issue #16](https://github.com/geolonia/geonicdb-models/issues/16) and may lead to aligning some types with upstream.
+The first subject, [disaster response](/en/models/disaster/), is a port of the models running in Takamatsu City's application. Its 1.x types were minted without a comparison against upstream; 2.0.0 rebuilt it on [task management](/en/models/task/). `DisasterEvent` is an **alias** of the task subject's `Project` (same IRI, only the name follows disaster-response wording); reports, actions, handover notes and photos are **subclasses** of `Task`, `Comment` and `Attachment` (own type IRI, attributes of the same name use the parent's IRIs, declared with `x-subclass-of`). Road closures and shelters still await the upstream comparison (Smart Data Models `RoadSegment` and others) in [issue #16](https://github.com/geolonia/geonicdb-models/issues/16).
 
 ### Rules
 
@@ -54,6 +54,7 @@ The first subject, [disaster response](/en/models/disaster/), is a port of the m
 - Never redefine a protected term of the NGSI-LD core context (`status`, `description`, `location`, `createdAt`, `modifiedAt`, `observedAt` and others). The catalog CI rejects it. When you need a status, name it like `incidentStatus`.
 - Namespaces are organised by subject, never by region, customer or project.
 - Use the value types of the [common](/en/models/common/) subject for shared structures such as addresses.
+- To give an existing type another name, use an alias (`x-alias-of`: same attributes, same required fields). To add attributes or separate the type, use a subclass (`x-subclass-of`: attributes of the same name keep the parent's IRIs, the parent's required attributes stay required). CI checks both.
 
 ## Contributing
 

@@ -1,13 +1,13 @@
 {
   "@context": [
-    "https://models.geonicdb.com/context/disaster/v1.1.0.jsonld",
+    "https://models.geonicdb.com/context/disaster/v2.0.0.jsonld",
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
   ],
   "id": "urn:ngsi-ld:RoadClosure:2026-typhoon-10-001",
   "type": "RoadClosure",
   "project": {
     "type": "Relationship",
-    "object": "urn:ngsi-ld:Project:2026-typhoon-10"
+    "object": "urn:ngsi-ld:DisasterEvent:2026-typhoon-10"
   },
   "roadName": {
     "type": "Property",
@@ -24,14 +24,6 @@
       "jisMunicipalityCode": "37201",
       "addressText": "香川県高松市西宝町2-3"
     }
-  },
-  "addressTown": {
-    "type": "Property",
-    "value": "西宝町"
-  },
-  "addressBanchi": {
-    "type": "Property",
-    "value": "2-3"
   },
   "area": {
     "type": "GeoProperty",
@@ -53,7 +45,7 @@
     "type": "Property",
     "value": "通行止め中"
   },
-  "memo": {
+  "description": {
     "type": "Property",
     "value": "冠水のため通行止め"
   }

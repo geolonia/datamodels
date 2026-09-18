@@ -1,13 +1,13 @@
 {
   "id": "urn:ngsi-ld:EvacuationShelter:2026-typhoon-10-001",
   "type": "EvacuationShelter",
-  "project": "urn:ngsi-ld:Project:2026-typhoon-10",
+  "project": "urn:ngsi-ld:DisasterEvent:2026-typhoon-10",
   "externalShelterId": "1",
   "openingStatus": "開設中",
   "evacueeHouseholds": 12,
   "evacueeTotal": 30,
   "evacueeFemale": 16,
   "evacueeMale": 14,
-  "memo": "物資不足",
+  "description": "物資不足",
   "openedAt": "2026-08-26T10:00:00Z"
 }

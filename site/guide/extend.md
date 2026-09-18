@@ -46,7 +46,7 @@ description: 既存のデータモデルを日本向けに拡張する方法、�
 
 ### 現状について
 
-最初のサブジェクト [災害対応](/models/disaster/) は、高松市で実際に動いているアプリのモデルを基にしたものです（型名の一般化、予約語 `status` の改名、住所の共通化などの調整を加えています）。属性の IRI は既存の語彙を使っていますが、型は上流（Smart Data Models の `IssueReporting`、`Alert`、`RoadSegment` など）との比較を経ずに独自に発行しています。この比較は [Issue #16](https://github.com/geolonia/geonicdb-models/issues/16) で進めており、結果によって型を上流に揃える可能性があります。
+最初のサブジェクト [災害対応](/models/disaster/) は、高松市で実際に動いているアプリのモデルを基にしたものです。1.x では型を上流との比較なしに独自に発行していましたが、2.0.0 で[タスク管理](/models/task/)の上に組み直しました。`DisasterEvent` はタスク管理の `Project` の**エイリアス**（同じ IRI、名前だけ災害対応の言い方）、通報・対応業務・申し送り・現地写真は `Task`・`Comment`・`Attachment` の**サブクラス**（独自の型 IRI を持ち、同名の属性は親の IRI を使う。スキーマの `x-subclass-of`）です。通行止めと避難所は上流（Smart Data Models の `RoadSegment` など）との比較が [Issue #16](https://github.com/geolonia/geonicdb-models/issues/16) に残っています。
 
 ### 守ること
 
@@ -54,6 +54,7 @@ description: 既存のデータモデルを日本向けに拡張する方法、�
 - NGSI-LD core context の予約語（`status`, `description`, `location`, `createdAt`, `modifiedAt`, `observedAt` など）を再定義しない。カタログの CI が弾きます。`status` が要るときは `incidentStatus` のように名前を変えます。
 - 名前空間はサブジェクト（分野）で分け、地域名・顧客名・案件名は入れない。
 - 住所など共通の構造は [common](/models/common/) サブジェクトの値型を使う。
+- 既にある型に名前だけ合わせたいならエイリアス（`x-alias-of`、属性も必須項目も同じ）、属性を足す・型を分けたいならサブクラス（`x-subclass-of`、同名の属性は親の IRI、親の必須項目は維持）。CI が両方を検査します。
 
 ## 貢献する
 

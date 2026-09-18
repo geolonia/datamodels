@@ -1,29 +1,41 @@
 {
   "@context": [
-    "https://models.geonicdb.com/context/disaster/v1.1.0.jsonld",
+    "https://models.geonicdb.com/context/disaster/v2.0.0.jsonld",
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
   ],
-  "id": "urn:ngsi-ld:IncidentReport:2026-typhoon-10-001",
+  "id": "urn:ngsi-ld:IncidentReport:2026-typhoon-10-012",
   "type": "IncidentReport",
+  "name": {
+    "type": "Property",
+    "value": "冠水（西宝町1-1）"
+  },
+  "description": {
+    "type": "Property",
+    "value": "現地確認中"
+  },
   "project": {
     "type": "Relationship",
-    "object": "urn:ngsi-ld:Project:2026-typhoon-10"
+    "object": "urn:ngsi-ld:DisasterEvent:2026-typhoon-10"
   },
-  "index": {
+  "externalId": {
     "type": "Property",
-    "value": 12
+    "value": "12"
   },
-  "incidentStatus": {
+  "progress": {
     "type": "Property",
-    "value": "InProgress"
+    "value": "in-process"
   },
-  "category": {
+  "statusLabel": {
+    "type": "Property",
+    "value": "対応中"
+  },
+  "subtype": {
     "type": "Property",
     "value": "冠水"
   },
-  "pressReleaseStatus": {
-    "type": "Property",
-    "value": "プレス予定"
+  "author": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:Team:takamatsu:joho"
   },
   "reportedAt": {
     "type": "Property",
@@ -32,13 +44,9 @@
       "@value": "2026-08-21T10:15:00Z"
     }
   },
-  "inputterTeam": {
+  "pressReleaseStatus": {
     "type": "Property",
-    "value": "情報班"
-  },
-  "inputterName": {
-    "type": "Property",
-    "value": "山田"
+    "value": "プレス予定"
   },
   "address": {
     "type": "Property",
@@ -51,14 +59,6 @@
       "jisMunicipalityCode": "37201",
       "addressText": "香川県高松市西宝町1-1"
     }
-  },
-  "addressTown": {
-    "type": "Property",
-    "value": "西宝町"
-  },
-  "addressBanchi": {
-    "type": "Property",
-    "value": "1-1"
   },
   "location": {
     "type": "GeoProperty",
@@ -82,11 +82,7 @@
     "type": "Property",
     "value": "非公開"
   },
-  "memo": {
-    "type": "Property",
-    "value": "現地確認中"
-  },
-  "updatedAt": {
+  "dateModified": {
     "type": "Property",
     "value": {
       "@type": "DateTime",

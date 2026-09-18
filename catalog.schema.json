@@ -128,6 +128,16 @@
               "value"
             ],
             "description": "entity: an NGSI-LD entity type; value: a reusable value structure referenced from entity schemas. Absent means entity."
+          },
+          "aliasOf": {
+            "type": "string",
+            "format": "uri",
+            "description": "Present when this type is another name for a type defined elsewhere in the catalog: same IRI, same attributes. typeIri equals aliasOf."
+          },
+          "subClassOf": {
+            "type": "string",
+            "format": "uri",
+            "description": "Present when this type is a subclass of another catalog type: own IRI, attributes with the same name share the parent IRIs, parent required attributes stay required."
           }
         }
       }

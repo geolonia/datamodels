@@ -1,27 +1,35 @@
 title:
-  ja: "対応業務"
-  en: "Incident response action"
+  ja: 対応業務
+  en: Incident response action
 description:
-  ja: "通報に対する対応業務1件。担当、内容、完了状態を持つ。"
-  en: "One response action taken for an incident report: assignee, content and completion."
+  ja: 通報に対する対応業務 1 件。内容、担当、完了状態を持つ。タスク管理サブジェクトの Task のサブクラスで、通報を parent とする。
+  en: "One response action taken for an incident report: what, who, done or not. A subclass of Task in the task subject with the report as its parent."
 status: draft
-tags: [disaster-response, municipality]
+tags:
+  - disaster-response
+  - municipality
 attributes:
-  task:
-    ja: "対象の通報"
-    en: "The incident report this entity refers to"
+  name:
+    ja: 対応の内容（旧 content）
+    en: What was done or is to be done (the former content)
+  description:
+    ja: 対応の詳細
+    en: Details of the action
+  project:
+    ja: 所属する災害事象（DisasterEvent）
+    en: The disaster event (DisasterEvent) this entity belongs to
+  parent:
+    ja: 対象の通報
+    en: The incident report this action responds to
+  progress:
+    ja: 正規化した状態（RFC 8984 progress）。旧 isDone の true は completed
+    en: Normalised state (RFC 8984 progress); the former isDone true is completed
   assignee:
-    ja: "対応者（班名など）"
-    en: "Assignee, such as a team name"
-  isDone:
-    ja: "対応済みフラグ"
-    en: "Whether the action is done"
-  content:
-    ja: "内容"
-    en: "Content"
+    ja: 担当の班・人（エンティティの URN。常に配列）
+    en: Teams or persons responsible (entity URNs, always an array)
   completedAt:
-    ja: "完了日時"
-    en: "Completion time"
-  updatedAt:
-    ja: "アプリ側の更新日時。ブローカーのシステム属性 modifiedAt とは別に、アプリが業務上の更新として記録する時刻"
-    en: "Application-level update time, recorded by the app as a business update, separate from the broker system attribute modifiedAt"
+    ja: 完了日時
+    en: Completion time
+  dateModified:
+    ja: 元システムでの最終更新日時。ブローカーのシステム属性 modifiedAt とは別に、アプリが業務上の更新として記録する時刻
+    en: Last modification in the source system, recorded by the application as a business update, separate from the broker system attribute modifiedAt

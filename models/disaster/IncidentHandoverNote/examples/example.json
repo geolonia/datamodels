@@ -2,9 +2,9 @@
   "id": "urn:ngsi-ld:IncidentHandoverNote:2026-typhoon-10-012-001",
   "type": "IncidentHandoverNote",
   "task": "urn:ngsi-ld:IncidentReport:2026-typhoon-10-012",
-  "fromTeam": "現地①班",
-  "toTeam": "対策本部",
-  "content": "水位上昇中、注視継続",
+  "author": "urn:ngsi-ld:Team:takamatsu:genchi-1",
+  "recipient": "urn:ngsi-ld:Team:takamatsu:honbu",
+  "text": "水位上昇中、注視継続",
   "sentAt": "2026-08-21T11:05:00Z",
-  "updatedAt": "2026-08-21T11:05:00Z"
+  "dateModified": "2026-08-21T11:05:00Z"
 }

@@ -1,33 +1,29 @@
 title:
-  ja: "通行止め"
-  en: "Road closure"
+  ja: 通行止め
+  en: Road closure
 description:
-  ja: "通行止め1件。路線名、区間（LineString）、状態を持つ。"
+  ja: 通行止め1件。路線名、区間（LineString）、状態を持つ。
   en: "One road closure: road name, closed section as a LineString, and status."
 status: draft
-tags: [disaster-response, municipality]
+tags:
+  - disaster-response
+  - municipality
 attributes:
   project:
-    ja: "所属する災害対応プロジェクト"
-    en: "The disaster-response project this entity belongs to"
+    ja: 所属する災害事象（DisasterEvent）
+    en: The disaster event (DisasterEvent) this entity belongs to
   roadName:
-    ja: "路線名"
-    en: "Road name"
+    ja: 路線名
+    en: Road name
   address:
-    ja: "住所（common サブジェクトの JapaneseAddress 値）"
-    en: "Address, as a JapaneseAddress value from the common subject"
-  addressTown:
-    ja: "非推奨（1.1.0 以降は address を使う）。住所の町名"
-    en: "Deprecated since 1.1.0, use address. Town name of the address"
-  addressBanchi:
-    ja: "非推奨（1.1.0 以降は address を使う）。住所の番地"
-    en: "Deprecated since 1.1.0, use address. Block and lot number of the address"
+    ja: 住所（common サブジェクトの JapaneseAddress 値）
+    en: Address, as a JapaneseAddress value from the common subject
   area:
-    ja: "通行止め区間"
-    en: "Closed section"
+    ja: 通行止め区間
+    en: Closed section
   closureStatus:
-    ja: "状態。core context の status は予約語のため closureStatus とする"
-    en: "Closure status. `status` is protected in the core context, hence closureStatus"
-  memo:
-    ja: "メモ"
-    en: "Free-text memo"
+    ja: 状態。core context の status は予約語のため closureStatus とする
+    en: Closure status. `status` is protected in the core context, hence closureStatus
+  description:
+    ja: メモ
+    en: Free-text memo

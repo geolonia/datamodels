@@ -1,6 +1,6 @@
 {
   "@context": [
-    "https://models.geonicdb.com/context/disaster/v1.1.0.jsonld",
+    "https://models.geonicdb.com/context/disaster/v2.0.0.jsonld",
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
   ],
   "id": "urn:ngsi-ld:IncidentPhoto:2026-typhoon-10-012-001",
@@ -9,11 +9,25 @@
     "type": "Relationship",
     "object": "urn:ngsi-ld:IncidentReport:2026-typhoon-10-012"
   },
-  "imageKey": {
+  "contentUrl": {
     "type": "Property",
-    "value": "project-2026-typhoon-10/task-012/image-001.jpg"
+    "value": "s3://takamatsu-flood/project-2026-typhoon-10/task-012/image-001.jpg"
   },
-  "updatedAt": {
+  "filename": {
+    "type": "Property",
+    "value": "image-001.jpg"
+  },
+  "location": {
+    "type": "GeoProperty",
+    "value": {
+      "type": "Point",
+      "coordinates": [
+        134.0437,
+        34.3403
+      ]
+    }
+  },
+  "dateModified": {
     "type": "Property",
     "value": {
       "@type": "DateTime",

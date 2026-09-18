@@ -3,3 +3,27 @@
 # Type and attribute IRIs under /ns/<subject>/ resolve to the page that
 # documents them, schema.org style. The entries are generated at build time
 # from models/ and appended below this header.
+
+# Retired in disaster 2.0.0, which rebuilt the subject on the task subject:
+# Project became DisasterEvent (an alias of task Project) and these attribute
+# terms were replaced by task-subject IRIs or removed. The 1.x IRIs keep their
+# meaning; their documentation is the 1.1.0 release listed on the subject page.
+/ns/disaster/Project  /models/disaster/#versions  302
+/ns/disaster/addressBanchi  /models/disaster/#versions  302
+/ns/disaster/addressTown  /models/disaster/#versions  302
+/ns/disaster/assignee  /models/disaster/#versions  302
+/ns/disaster/category  /models/disaster/#versions  302
+/ns/disaster/completedAt  /models/disaster/#versions  302
+/ns/disaster/content  /models/disaster/#versions  302
+/ns/disaster/fromTeam  /models/disaster/#versions  302
+/ns/disaster/imageKey  /models/disaster/#versions  302
+/ns/disaster/incidentStatus  /models/disaster/#versions  302
+/ns/disaster/index  /models/disaster/#versions  302
+/ns/disaster/inputterName  /models/disaster/#versions  302
+/ns/disaster/inputterTeam  /models/disaster/#versions  302
+/ns/disaster/isDone  /models/disaster/#versions  302
+/ns/disaster/memo  /models/disaster/#versions  302
+/ns/disaster/project  /models/disaster/#versions  302
+/ns/disaster/task  /models/disaster/#versions  302
+/ns/disaster/toTeam  /models/disaster/#versions  302
+/ns/disaster/updatedAt  /models/disaster/#versions  302

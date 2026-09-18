@@ -1,7 +1,7 @@
 {
   "id": "urn:ngsi-ld:RoadClosure:2026-typhoon-10-001",
   "type": "RoadClosure",
-  "project": "urn:ngsi-ld:Project:2026-typhoon-10",
+  "project": "urn:ngsi-ld:DisasterEvent:2026-typhoon-10",
   "roadName": "県道14号",
   "address": {
     "addressRegion": "香川県",
@@ -12,8 +12,6 @@
     "jisMunicipalityCode": "37201",
     "addressText": "香川県高松市西宝町2-3"
   },
-  "addressTown": "西宝町",
-  "addressBanchi": "2-3",
   "area": {
     "type": "LineString",
     "coordinates": [
@@ -28,5 +26,5 @@
     ]
   },
   "closureStatus": "通行止め中",
-  "memo": "冠水のため通行止め"
+  "description": "冠水のため通行止め"
 }

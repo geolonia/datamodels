@@ -1,18 +1,29 @@
 title:
-  ja: "現地写真"
-  en: "Incident photo"
+  ja: 現地写真
+  en: Incident photo
 description:
-  ja: "通報に紐づく現地写真のメタデータ1件。画像本体は外部ストレージに置き、ここでは参照キーだけを持つ。"
-  en: "Metadata for one on-site photo attached to an incident report. The image itself stays in external storage; only the key is stored here."
+  ja: 通報に紐づく現地写真のメタデータ 1 件。画像本体は外部ストレージに置き、contentUrl で参照する。タスク管理サブジェクトの Attachment のサブクラス。
+  en: Metadata for one on-site photo attached to an incident report. The image stays in external storage; contentUrl points at it. A subclass of Attachment in the task subject.
 status: draft
-tags: [disaster-response, municipality]
+tags:
+  - disaster-response
+  - municipality
 attributes:
   task:
-    ja: "対象の通報"
-    en: "The incident report this entity refers to"
-  imageKey:
-    ja: "外部ストレージ上のオブジェクトキー"
-    en: "Object key in external storage"
-  updatedAt:
-    ja: "アプリ側の更新日時。ブローカーのシステム属性 modifiedAt とは別に、アプリが業務上の更新として記録する時刻"
-    en: "Application-level update time, recorded by the app as a business update, separate from the broker system attribute modifiedAt"
+    ja: 対象の通報
+    en: The incident report this entity refers to
+  author:
+    ja: 撮影・登録した人・班（エンティティの URN）
+    en: Who took or uploaded the photo (an entity URN)
+  contentUrl:
+    ja: 画像の保存先 URI（オブジェクトストレージの URL など）。画像本体はブローカーの外に置く
+    en: Where the image is stored, as a URI (for example an object-store URL). The image itself stays outside the broker
+  filename:
+    ja: ファイル名
+    en: File name
+  location:
+    ja: 撮影位置
+    en: Where the photo was taken
+  dateModified:
+    ja: 元システムでの最終更新日時。ブローカーのシステム属性 modifiedAt とは別に、アプリが業務上の更新として記録する時刻
+    en: Last modification in the source system, recorded by the application as a business update, separate from the broker system attribute modifiedAt
