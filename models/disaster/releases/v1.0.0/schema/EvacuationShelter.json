@@ -38,9 +38,9 @@
       "x-iri": "https://datamodels.jp/ns/disaster/externalShelterId"
     },
     "nationalShelterId": {
-      "description": "全国共通避難所・避難場所ID (Cabinet Office SOBO-WEB / GSI 避難所等データ整備ウェブシステム): 14 characters, fixed 'E' + 5-digit municipality code + 5-digit facility code + 2-digit type code (major+minor) + 1 alphanumeric sequence digit. Optional: not every shelter has one assigned yet",
+      "description": "全国共通避難所・避難場所ID (Cabinet Office SOBO-WEB / GSI 避難所等データ整備ウェブシステム): 14 characters, fixed 'E' + 5-digit municipality code + 5-digit facility code + type code (major '1' = designated shelter, the only value valid here; minor '1' = general shelter or '2' = welfare shelter) + 1 alphanumeric sequence starting at 1 (never 0). Optional: not every shelter has one assigned yet; omit the property entirely rather than send an empty string",
       "type": "string",
-      "pattern": "^E[0-9]{12}[0-9A-Za-z]$",
+      "pattern": "^E[0-9]{10}1[12][1-9A-Za-z]$",
       "x-ngsi": {
         "type": "Property"
       },

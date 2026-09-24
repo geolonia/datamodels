@@ -14,5 +14,5 @@ fields:
   nationalShelterId:
     to: 共通ID
     note:
-      ja: 本モデルでは任意項目。未採番の避難所は空欄
-      en: optional in this model; blank for shelters not yet assigned an ID
+      ja: 本モデルでは任意項目かつ、大分類=1（指定避難所）のIDのみ有効（schema.json のパターンで強制）。未採番の避難所は、空文字ではなく属性自体を省略する
+      en: optional in this model, and restricted to major-category=1 (designated shelter) IDs only (enforced by schema.json's pattern); for shelters not yet assigned an ID, omit the property entirely rather than send an empty string
