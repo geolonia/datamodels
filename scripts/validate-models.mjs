@@ -119,6 +119,9 @@ for (const subject of subjects) {
 
     for (const [name, prop] of attributesOf(model)) {
       if (model.kind === 'entity' && !prop['x-ngsi']?.type) fail(`${mwhere}/schema.json`, `${name}: missing x-ngsi.type`);
+      if ('x-personal-data' in prop && prop['x-personal-data'] !== true) fail(`${mwhere}/schema.json`, `${name}: x-personal-data must be true or absent`);
+      // Schemas are product-neutral: broker-specific hints belong in adapters/.
+      for (const k of Object.keys(prop)) if (/^x-(geonicdb|orion|scorpio|stellio)/i.test(k)) fail(`${mwhere}/schema.json`, `${name}: product-specific key ${k}; move it into an adapter`);
       if (!ctxTerms[name] && !coreTerms.has(name)) fail(`${where}/context.jsonld`, `does not define attribute "${name}" used by ${model.type}`);
       if (!model.catalog?.attributes?.[name]?.ja || !model.catalog?.attributes?.[name]?.en) fail(`${mwhere}/catalog.yaml`, `${name}: needs ja and en descriptions`);
     }

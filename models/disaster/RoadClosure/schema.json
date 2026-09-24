@@ -27,10 +27,7 @@
         "type": "Relationship",
         "target": "https://models.geonicdb.com/ns/task/Project"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/project",
-      "x-geonicdb": {
-        "indexed": true
-      }
+      "x-iri": "https://models.geonicdb.com/ns/task/project"
     },
     "roadName": {
       "description": "Road name",

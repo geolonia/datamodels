@@ -44,10 +44,7 @@
         "type": "Relationship",
         "target": "https://models.geonicdb.com/ns/task/Project"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/project",
-      "x-geonicdb": {
-        "indexed": true
-      }
+      "x-iri": "https://models.geonicdb.com/ns/task/project"
     },
     "externalId": {
       "type": "string",
@@ -162,9 +159,7 @@
         "type": "Property"
       },
       "x-iri": "https://models.geonicdb.com/ns/disaster/reporterName",
-      "x-geonicdb": {
-        "pii": true
-      }
+      "x-personal-data": true
     },
     "reporterPhone": {
       "description": "Reporter phone number (personal data)",
@@ -173,9 +168,7 @@
         "type": "Property"
       },
       "x-iri": "https://models.geonicdb.com/ns/disaster/reporterPhone",
-      "x-geonicdb": {
-        "pii": true
-      }
+      "x-personal-data": true
     },
     "reporterAddress": {
       "description": "Reporter address (personal data)",
@@ -184,9 +177,7 @@
         "type": "Property"
       },
       "x-iri": "https://models.geonicdb.com/ns/disaster/reporterAddress",
-      "x-geonicdb": {
-        "pii": true
-      }
+      "x-personal-data": true
     },
     "dateModified": {
       "type": "string",

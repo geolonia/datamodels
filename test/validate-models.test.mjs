@@ -167,3 +167,7 @@ test('an alias survives a different key and required order', () =>
       s['x-version'] = '9.9.9';
     });
   }, /x-version must be 3\.0\.0(?![\s\S]*alias of Project)/));
+
+test('a product-specific annotation in a schema fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'schema.json'), (s) => { s.properties.roadName['x-geonicdb'] = { indexed: true }; }),
+    /roadName: product-specific key x-geonicdb; move it into an adapter/));

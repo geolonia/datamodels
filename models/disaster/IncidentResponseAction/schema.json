@@ -44,10 +44,7 @@
         "type": "Relationship",
         "target": "https://models.geonicdb.com/ns/task/Project"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/project",
-      "x-geonicdb": {
-        "indexed": true
-      }
+      "x-iri": "https://models.geonicdb.com/ns/task/project"
     },
     "parent": {
       "type": "string",
@@ -57,10 +54,7 @@
         "type": "Relationship",
         "target": "https://models.geonicdb.com/ns/disaster/IncidentReport"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/parent",
-      "x-geonicdb": {
-        "indexed": true
-      }
+      "x-iri": "https://models.geonicdb.com/ns/task/parent"
     },
     "progress": {
       "type": "string",

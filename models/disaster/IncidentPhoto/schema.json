@@ -28,10 +28,7 @@
         "type": "Relationship",
         "target": "https://models.geonicdb.com/ns/disaster/IncidentReport"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/task",
-      "x-geonicdb": {
-        "indexed": true
-      }
+      "x-iri": "https://models.geonicdb.com/ns/task/task"
     },
     "author": {
       "type": "string",

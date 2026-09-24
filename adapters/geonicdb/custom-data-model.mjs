@@ -49,7 +49,6 @@ export function toCustomDataModel(subject, model, { typePrefix = '', typeName, c
       required: (model.schema.required ?? []).includes(name),
       description: model.catalog?.attributes?.[name]?.ja ?? prop.description ?? '',
     };
-    if (prop['x-geonicdb']?.indexed) d.indexed = true;
     // GeonicDB reads a property-level `@context` as the term IRI when it
     // generates a context itself (custom-data-model.service.ts, terms.set).
     // With contextUrl set it is not needed, but carrying the IRI keeps the

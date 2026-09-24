@@ -27,10 +27,7 @@
         "type": "Relationship",
         "target": "https://models.geonicdb.com/ns/task/Project"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/project",
-      "x-geonicdb": {
-        "indexed": true
-      }
+      "x-iri": "https://models.geonicdb.com/ns/task/project"
     },
     "externalShelterId": {
       "description": "The shelter's ID in the municipality's 指定緊急避難場所一覧 (推奨データセット; unique within the municipality, e.g. CC0100022200). Together with localGovernmentCode it identifies the shelter nationwide",
@@ -38,10 +35,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/externalShelterId",
-      "x-geonicdb": {
-        "indexed": true
-      }
+      "x-iri": "https://models.geonicdb.com/ns/disaster/externalShelterId"
     },
     "localGovernmentCode": {
       "description": "Local government code of the municipality that publishes the shelter list (全国地方公共団体コード, 6 digits)",
