@@ -56,6 +56,8 @@ Contributions in Japanese or English are welcome as issues or pull requests.
 
 Cloudflare Workers Builds watches this repository and deploys `main`; no credential lives in GitHub. Dashboard settings on the `geonicdb-models` Worker: build command `npm ci && npm run build:deploy`, deploy command `npx wrangler deploy`, root `/`, non-production builds off. The custom domain is declared in `wrangler.jsonc`. After a deploy, run `npm run check:live`.
 
+`models.geonicdb.com`, the pre-launch preview, is retired and must not answer. `wrangler deploy` does not detach a custom domain that disappears from `wrangler.jsonc`, so if it still responds, remove it under the Worker's Settings → Domains & Routes; that also deletes its DNS record.
+
 
 ## Licences
 
