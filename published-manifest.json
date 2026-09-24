@@ -17,7 +17,7 @@
     "schema/task/Project/v1.0.0.json": "0767003d990f3ad7d33c37aeea497914c00b617b215381b8e41ec39deed9594f",
     "schema/task/Task/v1.0.0.json": "ad78fdfafb1460a2701f3dfffb82c659789a3940b7ab294be3677fdba237346a",
     "vocab/common/v1.0.0.jsonld": "9d28800476b5b53fc730bfccbb2098e51a89559ad35642dbf287c04f23ec3233",
-    "vocab/disaster/v1.0.0.jsonld": "a415c3f5dce73b626c14d807329de15d4adc018dbc89accb2e8ef95a6192f36e",
+    "vocab/disaster/v1.0.0.jsonld": "d30b58cba1ae2958252978c2ec11007d3fcabb6f725d9ec0ab92719fbe3c7dec",
     "vocab/task/v1.0.0.jsonld": "87b00eab2ee56806f0183986bcd44dee161250c5fe57d09e1345aa6f260d89d9"
   }
 }

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://datamodels.jp/catalog.schema.json",
   "title": "datamodels.jp catalog index",
-  "description": "Wire format of catalog.json, the machine-readable index of every model, read by brokers, tools and agents. Within a formatVersion fields are only added, never removed or retyped, so consumers must ignore unknown fields and this schema does not forbid them.",
+  "description": "Wire format of catalog.json, the machine-readable index of every model, read by brokers, tools and agents. Within a formatVersion fields are only added, never removed or retyped, so consumers must ignore unknown fields and this schema does not forbid them. formatVersion 1 is the format published at the launch on datamodels.jp; the pre-release index at models.geonicdb.com is not continued.",
   "type": "object",
   "required": [
     "formatVersion",

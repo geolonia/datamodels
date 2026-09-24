@@ -28,7 +28,7 @@ description: カタログのデータモデルを GeonicDB に登録し、エン
 ## 1. Custom Data Model を登録する
 
 ```bash
-curl -sSf https://datamodels.jp/geonicdb/disaster/RoadClosure.json -o RoadClosure.json
+curl -sSf https://datamodels.jp/adapters/geonicdb/disaster/RoadClosure.json -o RoadClosure.json
 
 curl -X POST "$GEONICDB_BASE_URL/custom-data-models" \
   -H "Content-Type: application/json" \

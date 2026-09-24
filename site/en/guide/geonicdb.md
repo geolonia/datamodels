@@ -28,7 +28,7 @@ Existing entities are not re-validated when a model is registered or changed (a 
 ## 1. Register the Custom Data Model
 
 ```bash
-curl -sSf https://datamodels.jp/geonicdb/disaster/RoadClosure.json -o RoadClosure.json
+curl -sSf https://datamodels.jp/adapters/geonicdb/disaster/RoadClosure.json -o RoadClosure.json
 
 curl -X POST "$GEONICDB_BASE_URL/custom-data-models" \
   -H "Content-Type: application/json" \
