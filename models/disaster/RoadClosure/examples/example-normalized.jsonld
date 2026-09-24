@@ -45,6 +45,10 @@
     "type": "Property",
     "value": "closed"
   },
+  "regulationCategory": {
+    "type": "Property",
+    "value": "closedWeather"
+  },
   "statusLabel": {
     "type": "Property",
     "value": "通行止め中"

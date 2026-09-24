@@ -2,9 +2,9 @@
 
 通行止め / Road closure
 
-One road closure: road name, closed section as a LineString, state and period.
+One road closure or traffic regulation: road name, regulated section (point, line or area), status, category and period.
 
-通行止め 1 件。路線名、区間（LineString）、状態、期間を持つ。
+通行止め・通行規制 1 件。路線名、規制区間（点・線・面）、状態、区分、期間を持つ。
 
 - Type IRI: `https://datamodels.jp/ns/disaster/RoadClosure`
 - Context: `https://datamodels.jp/context/disaster/v1.jsonld` (alias), `https://datamodels.jp/context/disaster/v1.0.0.jsonld` (exact)

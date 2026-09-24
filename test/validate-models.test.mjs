@@ -117,6 +117,18 @@ test('a key-values example violating the schema fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { e.closureStatus = '不明'; }),
     /example\.json: .*(enum|allowed values)/));
 
+test('an out-of-vocabulary regulationCategory fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { e.regulationCategory = '全面通行止め'; }),
+    /example\.json: .*(enum|allowed values)/));
+
+test('a RoadClosure example missing location fails now that it is required', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { delete e.location; }),
+    /example\.json: .*required.*location/));
+
+test('a RoadClosure location as a bare polygon (no line/point alternative) still needs coordinates', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { e.location = { type: 'Polygon' }; }),
+    /example\.json: .*location/));
+
 test('a normalized attribute without value fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example-normalized.jsonld'), (e) => { e.description = { type: 'Property' }; }),
     /Property needs a value/));
