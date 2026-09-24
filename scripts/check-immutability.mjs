@@ -81,7 +81,11 @@ for (const [rel, hash] of Object.entries(manifest.files)) {
 const unrecorded = [...built.keys()].filter((rel) => !(rel in manifest.files)).sort();
 
 // The snapshot of each subject's current version must match its sources.
-if (!record) for (const subject of await loadSubjects()) violations.push(...(await verifyRelease(subject)));
+// A version counts as recorded once its exact context is in the manifest.
+if (!record) for (const subject of await loadSubjects()) {
+  const recorded = `context/${subject.name}/v${subject.version}.jsonld` in manifest.files;
+  violations.push(...(await verifyRelease(subject, { recorded })));
+}
 
 if (violations.length > 0) {
   console.error('Immutability check failed:');

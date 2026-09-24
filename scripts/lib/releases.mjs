@@ -6,7 +6,7 @@
 //   models/<subject>/releases/v1.0.0/context.jsonld
 //   models/<subject>/releases/v1.0.0/schema/<Type>.json
 import { cp, mkdir, readdir, readFile, writeFile, stat } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, dirname, basename } from 'node:path';
 import { BASE_URL } from './models.mjs';
 
 async function isDir(p) { try { return (await stat(p)).isDirectory(); } catch { return false; } }
@@ -37,12 +37,13 @@ export async function snapshotRelease(subject) {
  * Read-only counterpart for CI: the snapshot of the current version, when it
  * exists, must hold exactly what the sources produce. The build serves the
  * current version from the sources, so a drifted snapshot would otherwise go
- * unnoticed until the next version made it the served copy. Returns a list of
- * problems (empty when consistent or not yet snapshotted).
+ * unnoticed until the next version made it the served copy. `recorded` says
+ * whether this version's files are already in published-manifest.json: a
+ * missing snapshot is only acceptable before that. Returns a list of problems.
  */
-export async function verifyRelease(subject) {
+export async function verifyRelease(subject, { recorded = false } = {}) {
   const { dir, entries } = releaseContents(subject);
-  if (!(await isDir(dir))) return [];
+  if (!(await isDir(dir))) return recorded ? [`${subject.name} v${subject.version}: recorded in published-manifest.json but its snapshot ${dir} is missing`] : [];
   const problems = [];
   for (const e of entries) {
     let existing;
@@ -50,6 +51,10 @@ export async function verifyRelease(subject) {
     if (existing !== e.content) problems.push(`${e.what}: snapshot differs from the sources (${e.file})`);
   }
   const expected = new Set(entries.map((e) => e.file));
+  const expectedDirs = new Set(entries.map((e) => dirname(e.file)).filter((d) => d !== dir).map((d) => basename(d)));
+  for (const e of await readdir(dir, { withFileTypes: true })) {
+    if (e.isDirectory() ? !expectedDirs.has(e.name) : !expected.has(join(dir, e.name))) problems.push(`${subject.name} v${subject.version}: snapshot has ${e.name}, which is not part of the snapshot`);
+  }
   const schemaDir = join(dir, 'schema');
   if (await isDir(schemaDir)) for (const f of await readdir(schemaDir)) if (!expected.has(join(schemaDir, f))) problems.push(`${subject.name} v${subject.version}: snapshot has ${f}, which is not a model of the subject`);
   return problems;
