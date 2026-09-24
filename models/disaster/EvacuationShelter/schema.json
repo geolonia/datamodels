@@ -22,7 +22,7 @@
     "project": {
       "type": "string",
       "format": "uri",
-      "description": "The disaster event (DisasterEvent) this entity belongs to",
+      "description": "The task subject's Project this entity belongs to, for example one disaster-response operation",
       "x-ngsi": {
         "type": "Relationship",
         "target": "https://datamodels.jp/ns/task/Project"
