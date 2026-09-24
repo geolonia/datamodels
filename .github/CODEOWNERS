@@ -13,7 +13,7 @@
 # checks for it and skips the grant otherwise.
 
 /.github/CODEOWNERS @geolonia/operations
-/catalog-info.yaml @geolonia/geonicdb
 
-# Model semantics are reviewed by the catalog editors (per-subject editors: launch plan #30, Phase 2).
-/models/ @geolonia/geonicdb
+# No code owners for catalog-info.yaml and models/ for now: @geolonia/geonicdb
+# has no access to this repository, which GitHub reports as an error. Per-
+# subject editors come with the launch plan's Phase 2 (#30).
