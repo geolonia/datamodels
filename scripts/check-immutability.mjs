@@ -20,7 +20,7 @@
 // check without --record and fails on unrecorded files.
 import { createHash } from 'node:crypto';
 import { loadSubjects } from './lib/models.mjs';
-import { snapshotRelease } from './lib/releases.mjs';
+import { snapshotRelease, verifyRelease } from './lib/releases.mjs';
 import { readFile, writeFile, readdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
@@ -79,6 +79,9 @@ for (const [rel, hash] of Object.entries(manifest.files)) {
 }
 
 const unrecorded = [...built.keys()].filter((rel) => !(rel in manifest.files)).sort();
+
+// The snapshot of each subject's current version must match its sources.
+if (!record) for (const subject of await loadSubjects()) violations.push(...(await verifyRelease(subject)));
 
 if (violations.length > 0) {
   console.error('Immutability check failed:');

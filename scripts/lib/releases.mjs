@@ -11,17 +11,48 @@ import { BASE_URL } from './models.mjs';
 
 async function isDir(p) { try { return (await stat(p)).isDirectory(); } catch { return false; } }
 
+/** What the snapshot of the subject's current version must contain: [{ file, content, what }]. */
+function releaseContents(subject) {
+  const dir = join(subject.dir, 'releases', `v${subject.version}`);
+  const json = (o) => JSON.stringify(o, null, 2) + '\n';
+  const at = `${subject.name} v${subject.version}`;
+  return {
+    dir,
+    entries: [
+      { file: join(dir, 'context.jsonld'), content: json(subject.context), what: `${at} context` },
+      ...subject.models.map((model) => ({ file: join(dir, 'schema', `${model.type}.json`), content: json(model.schema), what: `${at} ${model.type} schema` })),
+    ],
+  };
+}
+
 /** Write the snapshot of the subject's current version (idempotent). */
 export async function snapshotRelease(subject) {
-  const dir = join(subject.dir, 'releases', `v${subject.version}`);
+  const { dir, entries } = releaseContents(subject);
   await mkdir(join(dir, 'schema'), { recursive: true });
-  const json = (o) => JSON.stringify(o, null, 2) + '\n';
-  const ctx = join(dir, 'context.jsonld');
-  await writeIfAbsentOrEqual(ctx, json(subject.context), `${subject.name} v${subject.version} context`);
-  for (const model of subject.models) {
-    await writeIfAbsentOrEqual(join(dir, 'schema', `${model.type}.json`), json(model.schema), `${subject.name} v${subject.version} ${model.type} schema`);
-  }
+  for (const e of entries) await writeIfAbsentOrEqual(e.file, e.content, e.what);
   return dir;
+}
+
+/**
+ * Read-only counterpart for CI: the snapshot of the current version, when it
+ * exists, must hold exactly what the sources produce. The build serves the
+ * current version from the sources, so a drifted snapshot would otherwise go
+ * unnoticed until the next version made it the served copy. Returns a list of
+ * problems (empty when consistent or not yet snapshotted).
+ */
+export async function verifyRelease(subject) {
+  const { dir, entries } = releaseContents(subject);
+  if (!(await isDir(dir))) return [];
+  const problems = [];
+  for (const e of entries) {
+    let existing;
+    try { existing = await readFile(e.file, 'utf8'); } catch (err) { if (err.code !== 'ENOENT') throw err; problems.push(`${e.what}: missing from ${dir}`); continue; }
+    if (existing !== e.content) problems.push(`${e.what}: snapshot differs from the sources (${e.file})`);
+  }
+  const expected = new Set(entries.map((e) => e.file));
+  const schemaDir = join(dir, 'schema');
+  if (await isDir(schemaDir)) for (const f of await readdir(schemaDir)) if (!expected.has(join(schemaDir, f))) problems.push(`${subject.name} v${subject.version}: snapshot has ${f}, which is not a model of the subject`);
+  return problems;
 }
 
 async function writeIfAbsentOrEqual(file, content, what) {

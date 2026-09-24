@@ -10,13 +10,13 @@ inheritance: true
 language: en-US
 
 # Release snapshots are byte copies of models/<subject>/ written by
-# `npm run manifest:record`; CI verifies them against the sources and the
-# manifest, so reviewing them again only duplicates the model diff. The
-# preview image is a rendered binary of site/og-card.svg.
+# `npm run manifest:record`. CI checks them: the snapshot of the current
+# version against the sources (verifyRelease in scripts/lib/releases.mjs),
+# older ones against published-manifest.json. Reviewing them again only
+# duplicates the model diff.
 reviews:
   path_filters:
     - "!models/*/releases/**"
-    - "!site/public/og-image.png"
 
 # Repository-specific overrides go below. Examples:
 #
