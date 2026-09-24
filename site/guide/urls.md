@@ -12,7 +12,7 @@ description: このカタログが公開する URL の約束。バージョン�
 1. **公開したバージョン付きファイルは変更も削除もしない。** `/context/<subject>/v1.0.0.jsonld` の中身は永久に同じです。CI はハッシュを記録し、変更や削除を含む変更は取り込めません。
 2. **互換性のある変更は新しいマイナーバージョンになる。** 属性の追加は `v1.1.0` として公開され、`v1.jsonld` というエイリアスが最新の 1.x を指します。
 3. **破壊的な変更は新しいメジャーバージョンか新しい語になる。** 属性の意味や型を変えることはありません。変えたいときは新しい IRI を発行し、古い IRI は非推奨として残します。
-4. **型と属性の IRI はドキュメントに解決する。** `https://models.geonicdb.com/ns/disaster/RoadClosure` をブラウザで開くと、その型のページに移動します。
+4. **型と属性の IRI はドキュメントに解決する。** `https://datamodels.jp/ns/disaster/RoadClosure` をブラウザで開くと、その型のページに移動します。
 
 ## どの URL を使うか
 
@@ -31,9 +31,10 @@ description: このカタログが公開する URL の約束。バージョン�
 /context/<subject>/vX.jsonld            エイリアス（最新の X.y.z）
 /schema/<subject>/<Type>/vX.Y.Z.json    JSON Schema（不変）
 /schema/<subject>/<Type>/vX.json        エイリアス
+/vocab/<subject>/vX.Y.Z.jsonld          語彙（RDFS: クラス、サブクラス関係、日英ラベル。不変）
 /examples/<subject>/<Type>/             例
-/geonicdb/<subject>/<Type>.json         GeonicDB 用の Custom Data Model 定義
 /ns/<subject>/<Term>                    型・属性の IRI（ページにリダイレクト）
+/adapters/<name>/<subject>/<Type>.json  アダプターの出力（例: GeonicDB の Custom Data Model 定義）
 /catalog.json                           機械可読な一覧（/catalog.schema.json に準拠）
 ```
 

@@ -1,8 +1,5 @@
 notes:
-  - Seeded 2026-09-17 from geolonia/geonicdb-datamodels data-models/*.json (Takamatsu City flood-prevention headquarters). Type name generalised from the tenant-specific "Saitai" prefix.
-  - The original attribute "status" is renamed because status is a protected term in the NGSI-LD core context and cannot be redefined.
-  - 1.1.0 adds address (JapaneseAddress from the common subject). addressTown and addressBanchi are deprecated and kept for compatibility; they will be removed in the next major version.
-  - "2.0.0: project now uses the task subject's project IRI and points at DisasterEvent; memo → description (core term); the deprecated addressTown and addressBanchi of 1.1.0 are removed."
+  - Derived from the Custom Data Models of the Takamatsu City flood-prevention headquarters application (geolonia/geonicdb-datamodels, September 2026). Type names generalised from the tenant-specific "Saitai" prefix; attribute names aligned with the task subject.
+  - "From the source application: status → closureStatus, normalised to the RoadSegment value space closed | limited | open, with the local wording in statusLabel (依頼中 is open with the label 依頼中: the road is still passable); area → location (core term; the closed section is the location of the closure); memo → description; the flat town and block fields → address (JapaneseAddress)."
   - "Upstream considered (2026-09-18): Smart Data Models RoadSegment (a network master; a closure is a state of a segment the city does not have), RestrictedTrafficArea (regulation, not an incident) and Alert (a broadcast notice with roadClosed but no road name, alertSource required). None fits as a type. Borrowed: the RoadSegment status value space for closureStatus and the Transportation roadName IRI; validFrom/validTo from Smart Data Models."
-  - "3.0.0: area → location (core term; the section is the location of the closure), closureStatus normalised to closed | limited | open with the local wording in statusLabel (依頼中 is open with label 依頼中: the road is still passable), validFrom/validTo added, roadName reuses the Transportation IRI."
 license: CC BY 4.0 (see /LICENSE-CONTENT.md)

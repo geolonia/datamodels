@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://models.geonicdb.com/schema/disaster/IncidentReport/v3.0.0.json",
+  "$id": "https://datamodels.jp/schema/disaster/IncidentReport/v1.0.0.json",
   "title": "IncidentReport",
   "description": "One report from a resident or staff member: location, category, response status, who entered it, and the reporter (personal data). A subclass of Task in the task subject: name, progress, assignee-style attributes share the task IRIs.",
-  "x-version": "3.0.0",
-  "x-license-url": "https://models.geonicdb.com/LICENSE-CONTENT",
+  "x-version": "1.0.0",
+  "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
   "x-model-tags": "GeonicDB, disaster-response, Japan",
   "x-derived-from": "https://github.com/geolonia/geonicdb-datamodels",
-  "x-subclass-of": "https://models.geonicdb.com/ns/task/Task",
+  "x-subclass-of": "https://datamodels.jp/ns/task/Task",
   "type": "object",
   "properties": {
     "id": {
@@ -42,12 +42,9 @@
       "description": "The disaster event (DisasterEvent) this entity belongs to",
       "x-ngsi": {
         "type": "Relationship",
-        "target": "https://models.geonicdb.com/ns/task/Project"
+        "target": "https://datamodels.jp/ns/task/Project"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/project",
-      "x-geonicdb": {
-        "indexed": true
-      }
+      "x-iri": "https://datamodels.jp/ns/task/project"
     },
     "externalId": {
       "type": "string",
@@ -55,7 +52,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/externalId"
+      "x-iri": "https://datamodels.jp/ns/task/externalId"
     },
     "progress": {
       "type": "string",
@@ -70,7 +67,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/progress"
+      "x-iri": "https://datamodels.jp/ns/task/progress"
     },
     "statusLabel": {
       "type": "string",
@@ -78,7 +75,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/statusLabel"
+      "x-iri": "https://datamodels.jp/ns/task/statusLabel"
     },
     "subtype": {
       "type": "string",
@@ -86,7 +83,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/subtype"
+      "x-iri": "https://datamodels.jp/ns/task/subtype"
     },
     "author": {
       "type": "string",
@@ -118,14 +115,14 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/pressReleaseStatus"
+      "x-iri": "https://datamodels.jp/ns/disaster/pressReleaseStatus"
     },
     "address": {
-      "$ref": "https://models.geonicdb.com/schema/common/JapaneseAddress/v1.0.0.json",
+      "$ref": "https://datamodels.jp/schema/common/JapaneseAddress/v1.0.0.json",
       "description": "Address of the location, as a JapaneseAddress value (common subject)",
       "x-ngsi": {
         "type": "Property",
-        "model": "https://models.geonicdb.com/ns/common/JapaneseAddress"
+        "model": "https://datamodels.jp/ns/common/JapaneseAddress"
       },
       "x-iri": "https://schema.org/address"
     },
@@ -161,10 +158,8 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/reporterName",
-      "x-geonicdb": {
-        "pii": true
-      }
+      "x-iri": "https://datamodels.jp/ns/disaster/reporterName",
+      "x-personal-data": true
     },
     "reporterPhone": {
       "description": "Reporter phone number (personal data)",
@@ -172,10 +167,8 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/reporterPhone",
-      "x-geonicdb": {
-        "pii": true
-      }
+      "x-iri": "https://datamodels.jp/ns/disaster/reporterPhone",
+      "x-personal-data": true
     },
     "reporterAddress": {
       "description": "Reporter address (personal data)",
@@ -183,10 +176,8 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/reporterAddress",
-      "x-geonicdb": {
-        "pii": true
-      }
+      "x-iri": "https://datamodels.jp/ns/disaster/reporterAddress",
+      "x-personal-data": true
     },
     "dateModified": {
       "type": "string",

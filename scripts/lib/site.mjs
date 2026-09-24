@@ -20,30 +20,30 @@ const T = {
   ja: {
     models: 'データモデル', overview: '概要', subjects: 'サブジェクト', attributes: '属性', example: '例（key-values）', normalized: '例（normalized）',
     linkHeader: 'Link ヘッダー', notes: '注記', shared: '複数のモデルで共有する属性', usedBy: '使用モデル', typeIri: '型 IRI', context: '@context',
-    contextExact: '（このバージョン、不変）', contextAlias: '（エイリアス、互換性のある最新版）', schema: 'JSON Schema', examples: '例', geonicdb: 'GeonicDB 用定義',
-    geonicdbNote: 'Custom Data Model の request body。`contextUrl` を含みます。', source: 'ソース', namespace: '名前空間', version: 'バージョン',
-    required: '必須', indexed: 'インデックス', pii: '個人情報', deprecated: '非推奨', value: '値', relationshipTo: '→', license: 'このページのモデル内容は CC BY 4.0 で提供されています。',
+    contextExact: '（このバージョン、不変）', contextAlias: '（エイリアス、互換性のある最新版）', schema: 'JSON Schema', examples: '例', adapters: 'アダプター',
+    source: 'ソース', namespace: '名前空間', version: 'バージョン', vocabulary: '語彙', vocabularyNote: '（RDFS: クラス、サブクラス関係、日英ラベル）',
+    required: '必須', pii: '個人情報', deprecated: '非推奨', value: '値', relationshipTo: '→', license: 'このページのモデル内容は CC BY 4.0 で提供されています。',
     valueType: '値型', valueTypeNote: 'これはエンティティ型ではなく、属性の値として使う構造です。', fields: 'フィールド', versions: 'バージョン', current: '現行', usage: '使い方',
     subjectsIntro: 'サブジェクトごとに 1 つの `@context` を公開しています。型と属性の IRI は `/ns/<subject>/<term>` で解決できます。',
     statusLabel: { draft: 'ドラフト', stable: '安定', deprecated: '非推奨' },
     sourceLabel: { minted: 'このカタログで定義', profile: '上流モデルの日本向け拡張', global: '上流（Smart Data Models）' },
     subject: 'サブジェクト', mappings: '対応する標準', mappingField: 'このモデル', mappingTo: '対応先', mappingNote: '備考', none: '対応なし',
-    alias: 'エイリアス', aliasNote: (link) => `${link} と同じ型です（IRI が同一）。名称だけがこのサブジェクトの言い方に合わせてあり、属性も必須項目も同じです。GeonicDB では同じ型として保存・照合されます。`,
-    subclass: 'サブクラス', subclassNote: (link) => `${link} のサブクラスです。同名の属性は親と同じ IRI を持ち、親の必須項目はここでも必須です。親向けに書かれたクライアントはこの型をそのまま読めます。`,
+    alias: 'エイリアス', aliasNote: (link) => `${link} と同じ型です（IRI が同一）。名称だけがこのサブジェクトの言い方に合わせてあり、属性も必須項目も同じです。ブローカーでは同じ型として保存・照合されます。`,
+    subclass: 'サブクラス', subclassNote: (link) => `${link} のサブクラスです。同名の属性は親と同じ IRI を持ち、親の必須項目はここでも必須なので、親の属性を読むコードはこの型もそのまま読めます。型そのものは別なので、親の型で検索するクライアントは語彙の rdfs:subClassOf をたどって初めてこの型を見つけます。`,
   },
   en: {
     models: 'Data models', overview: 'Overview', subjects: 'Subjects', attributes: 'Attributes', example: 'Example (key-values)', normalized: 'Example (normalized)',
     linkHeader: 'Link header', notes: 'Notes', shared: 'Attributes shared by several models', usedBy: 'Used by', typeIri: 'Type IRI', context: '@context',
-    contextExact: '(this version, immutable)', contextAlias: '(alias, latest compatible version)', schema: 'JSON Schema', examples: 'Examples', geonicdb: 'GeonicDB definition',
-    geonicdbNote: 'Custom Data Model request body, `contextUrl` included.', source: 'Source', namespace: 'Namespace', version: 'Version',
-    required: 'required', indexed: 'indexed', pii: 'personal data', deprecated: 'deprecated', value: 'Value', relationshipTo: '→', license: 'Model content on this page is licensed under CC BY 4.0.',
+    contextExact: '(this version, immutable)', contextAlias: '(alias, latest compatible version)', schema: 'JSON Schema', examples: 'Examples', adapters: 'Adapters',
+    source: 'Source', namespace: 'Namespace', version: 'Version', vocabulary: 'Vocabulary', vocabularyNote: '(RDFS: classes, subclass relations, ja/en labels)',
+    required: 'required', pii: 'personal data', deprecated: 'deprecated', value: 'Value', relationshipTo: '→', license: 'Model content on this page is licensed under CC BY 4.0.',
     valueType: 'value type', valueTypeNote: 'This is not an entity type but a structure used as the value of an attribute.', fields: 'Fields', versions: 'Versions', current: 'current', usage: 'Usage',
     subjectsIntro: 'One `@context` is published per subject. Type and attribute IRIs resolve at `/ns/<subject>/<term>`.',
     statusLabel: { draft: 'draft', stable: 'stable', deprecated: 'deprecated' },
     sourceLabel: { minted: 'defined in this catalog', profile: 'Japanese profile of an upstream model', global: 'upstream (Smart Data Models)' },
     subject: 'Subject', mappings: 'Corresponding standards', mappingField: 'This model', mappingTo: 'Maps to', mappingNote: 'Note', none: 'no counterpart',
-    alias: 'alias', aliasNote: (link) => `The same type as ${link} (identical IRI). Only the name follows this subject's wording; attributes and required fields are the same. GeonicDB stores and matches both names as one type.`,
-    subclass: 'subclass', subclassNote: (link) => `A subclass of ${link}. Attributes with the same name carry the parent's IRIs, and the parent's required attributes stay required here, so a client written for the parent reads this type unchanged.`,
+    alias: 'alias', aliasNote: (link) => `The same type as ${link} (identical IRI). Only the name follows this subject's wording; attributes and required fields are the same. A broker stores and matches both names as one type.`,
+    subclass: 'subclass', subclassNote: (link) => `A subclass of ${link}. Attributes with the same name carry the parent's IRIs and the parent's required attributes stay required, so code that reads the parent's attributes reads this type too. The type itself differs: a client that selects by the parent type finds this one only by following rdfs:subClassOf in the vocabulary.`,
   },
 };
 
@@ -52,6 +52,7 @@ const statusBadge = (lang, status) => badge(status === 'stable' ? 'tip' : status
 const front = (title, description) => `---\ntitle: ${JSON.stringify(title)}\ndescription: ${JSON.stringify(description ?? '')}\n---\n\n`;
 
 let allSubjects = [];
+let allAdapters = [];
 /** The model documenting a type IRI: an alias in the same subject first, then the owner anywhere. */
 function modelForIri(subject, iri, { ownerOnly = false } = {}) {
   const here = ownerOnly ? null : subject.models.find((m) => modelUrls(subject, m).typeIri === iri);
@@ -103,11 +104,13 @@ function modelPage(lang, prefix, subject, model) {
   md += `| ${t.context} | ${code(u.contextAlias)} ${t.contextAlias}<br>${code(u.contextExact)} ${t.contextExact} |\n`;
   md += `| ${t.schema} | [${code(rel(mu.schemaAlias))}](${rel(mu.schemaAlias)})<br>[${code(rel(mu.schemaExact))}](${rel(mu.schemaExact)}) |\n`;
   md += isValue ? `| ${t.examples} | [example.json](${rel(mu.examples)}example.json) |\n`
-    : `| ${t.examples} | [key-values](${rel(mu.examples)}example.json) · [normalized](${rel(mu.examples)}example-normalized.jsonld) |\n| ${t.geonicdb} | [${code(rel(mu.geonicdb))}](${rel(mu.geonicdb)}) ${t.geonicdbNote} |\n`;
-  md += `| ${t.source} | [github.com/geolonia/geonicdb-models](https://github.com/geolonia/geonicdb-models/tree/main/models/${subject.name}/${model.type}) |\n\n`;
+    : `| ${t.examples} | [key-values](${rel(mu.examples)}example.json) · [normalized](${rel(mu.examples)}example-normalized.jsonld) |\n`;
+  const adapterLinks = allAdapters.map((a) => [a, a.urlFor(subject, model)]).filter(([, url]) => url);
+  if (adapterLinks.length) md += `| ${t.adapters} | ${adapterLinks.map(([a, url]) => `${a.guide ? `[${a.label[lang]}](${prefix}${a.guide})` : a.label[lang]}: [${code(rel(url))}](${rel(url)})${a.note ? ` ${a.note[lang]}` : ''}`).join('<br>')} |\n`;
+  md += `| ${t.source} | [github.com/geolonia/datamodels](https://github.com/geolonia/datamodels/tree/main/models/${subject.name}/${model.type}) |\n\n`;
   md += `## ${isValue ? t.fields : t.attributes} {#attributes}\n\n`;
   for (const [name, prop] of attributesOf(model)) {
-    const flags = [required.has(name) ? badge('warning', t.required) : '', prop['x-geonicdb']?.indexed ? badge('info', t.indexed) : '', prop['x-geonicdb']?.pii ? badge('danger', t.pii) : '', prop['x-deprecated'] ? badge('danger', t.deprecated) : ''].filter(Boolean).join(' ');
+    const flags = [required.has(name) ? badge('warning', t.required) : '', prop['x-personal-data'] ? badge('danger', t.pii) : '', prop['x-deprecated'] ? badge('danger', t.deprecated) : ''].filter(Boolean).join(' ');
     md += `### ${name} {#${name}}\n\n`;
     if (flags) md += `${flags}\n\n`;
     md += `${model.catalog.attributes?.[name]?.[lang] ?? prop.description ?? ''}\n\n`;
@@ -141,7 +144,7 @@ async function subjectPage(lang, prefix, subject) {
   let md = front(subject.title[lang], subject.description[lang]);
   md += `# ${subject.title[lang]} <span style="color:var(--vp-c-text-2);font-weight:normal">/ ${subject.title[other]}</span>\n\n${subject.description[lang]}\n\n`;
   md += `| | |\n|---|---|\n| ${t.subject} | ${code(subject.name)} ${badge('info', t.sourceLabel[subject.source] ?? subject.source)} |\n| ${t.version} | ${code(subject.version)} |\n`;
-  md += `| ${t.context} | ${code(u.contextAlias)} ${t.contextAlias}<br>${code(u.contextExact)} ${t.contextExact} |\n| ${t.namespace} | ${code(u.namespace)} |\n\n`;
+  md += `| ${t.context} | ${code(u.contextAlias)} ${t.contextAlias}<br>${code(u.contextExact)} ${t.contextExact} |\n| ${t.namespace} | ${code(u.namespace)} |\n| ${t.vocabulary} | [${code(rel(u.vocabExact))}](${rel(u.vocabExact)}) ${t.vocabularyNote} |\n\n`;
   md += `## ${t.models} {#models}\n\n| Type | | |\n|---|---|---|\n`;
   for (const m of subject.models) md += `| [${m.type}](${prefix}${rel(modelUrls(subject, m).page)}) | ${m.catalog.title?.[lang] ?? ''} | ${statusBadge(lang, m.catalog.status ?? 'draft')}${m.kind === 'value' ? ` ${badge('info', t.valueType)}` : ''}${m.schema['x-alias-of'] ? ` ${badge('info', t.alias)}` : ''}${m.schema['x-subclass-of'] ? ` ${badge('info', t.subclass)}` : ''} |\n`;
   const releases = await listReleases(subject);
@@ -149,7 +152,7 @@ async function subjectPage(lang, prefix, subject) {
     md += `\n## ${t.versions} {#versions}\n\n| | @context | JSON Schema |\n|---|---|---|\n`;
     for (const r of [...releases].reverse()) {
       const ctxUrl = r.files[0].url;
-      const schemas = r.files.slice(1).map((f) => `[${f.url.split('/').slice(-2, -1)[0]}](${rel(f.url)})`).join(', ');
+      const schemas = r.files.filter((f) => f.url.includes('/schema/')).map((f) => `[${f.url.split('/').slice(-2, -1)[0]}](${rel(f.url)})`).join(', ');
       md += `| v${r.version}${r.version === subject.version ? ` ${badge('tip', t.current)}` : ''} | [${code(rel(ctxUrl))}](${rel(ctxUrl)}) | ${schemas} |\n`;
     }
   }
@@ -176,8 +179,9 @@ function indexPage(lang, prefix, subjects) {
 
 async function put(path, content) { await mkdir(join(path, '..'), { recursive: true }); await writeFile(path, content); }
 
-export async function generateSitePages(subjects) {
+export async function generateSitePages(subjects, adapters = []) {
   allSubjects = subjects;
+  allAdapters = adapters;
   for (const [lang, prefix] of [['ja', ''], ['en', '/en']]) {
     const base = join(SITE, prefix.replace(/^\//, ''), 'models');
     await rm(base, { recursive: true, force: true });

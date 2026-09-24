@@ -1,7 +1,7 @@
 // Build a GeonicDB Custom Data Model request body from a catalog model.
 // The body is what POST /custom-data-models accepts; contextUrl points at the
 // exact catalog context so the broker uses the catalog vocabulary.
-import { attributesOf, subjectUrls, CORE_CONTEXT_URL } from './models.mjs';
+import { attributesOf, subjectUrls, CORE_CONTEXT_URL } from '../../scripts/lib/models.mjs';
 
 function valueTypeOf(prop) {
   const ngsi = prop['x-ngsi']?.type;
@@ -49,7 +49,6 @@ export function toCustomDataModel(subject, model, { typePrefix = '', typeName, c
       required: (model.schema.required ?? []).includes(name),
       description: model.catalog?.attributes?.[name]?.ja ?? prop.description ?? '',
     };
-    if (prop['x-geonicdb']?.indexed) d.indexed = true;
     // GeonicDB reads a property-level `@context` as the term IRI when it
     // generates a context itself (custom-data-model.service.ts, terms.set).
     // With contextUrl set it is not needed, but carrying the IRI keeps the

@@ -2,8 +2,8 @@
 // catalog vocabulary.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { loadSubjects } from '../scripts/lib/models.mjs';
-import { toCustomDataModel } from '../scripts/lib/geonicdb.mjs';
+import { loadSubjects } from '../../../scripts/lib/models.mjs';
+import { toCustomDataModel } from '../custom-data-model.mjs';
 
 const subjects = await loadSubjects();
 const disaster = subjects.find((s) => s.name === 'disaster');
@@ -12,9 +12,9 @@ const roadClosure = disaster.models.find((m) => m.type === 'RoadClosure');
 test('default body: exact context, additionalProperties from the schema, catalog IRIs per property', () => {
   const b = toCustomDataModel(disaster, roadClosure);
   assert.equal(b.type, 'RoadClosure');
-  assert.equal(b.contextUrl, 'https://models.geonicdb.com/context/disaster/v3.0.0.jsonld');
+  assert.equal(b.contextUrl, 'https://datamodels.jp/context/disaster/v1.0.0.jsonld');
   assert.equal(b.additionalProperties, false);
-  assert.equal(b.propertyDetails.closureStatus['@context'], 'https://models.geonicdb.com/ns/disaster/closureStatus');
+  assert.equal(b.propertyDetails.closureStatus['@context'], 'https://datamodels.jp/ns/disaster/closureStatus');
   assert.equal(b.propertyDetails.address.valueType, 'object');
 });
 
@@ -57,7 +57,7 @@ test('typeName and rename produce aliases that keep the catalog IRIs', () => {
   assert.equal(b.contextUrl, 'https://example.com/context/city.jsonld');
   const a = toCustomDataModel(disaster, action, { rename: { assignee: 'responsibleTeam' } });
   assert.ok(a.propertyDetails.responsibleTeam && !a.propertyDetails.assignee);
-  assert.equal(a.propertyDetails.responsibleTeam['@context'], 'https://models.geonicdb.com/ns/task/assignee');
+  assert.equal(a.propertyDetails.responsibleTeam['@context'], 'https://datamodels.jp/ns/task/assignee');
 });
 
 test('rename rejects unknown attributes, non-ASCII aliases and collisions', () => {

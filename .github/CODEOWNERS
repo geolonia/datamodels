@@ -15,5 +15,5 @@
 /.github/CODEOWNERS @geolonia/operations
 /catalog-info.yaml @geolonia/geonicdb
 
-# Model semantics are reviewed by the GeonicDB team.
+# Model semantics are reviewed by the catalog editors (per-subject editors: launch plan #30, Phase 2).
 /models/ @geolonia/geonicdb

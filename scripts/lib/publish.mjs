@@ -5,9 +5,9 @@ import { join } from 'node:path';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { loadSubjects, attributesOf, subjectUrls, modelUrls, DIST, ROOT, BASE_URL } from './models.mjs';
-import { toCustomDataModel } from './geonicdb.mjs';
 import { listReleases } from './releases.mjs';
 import { sharedTerms } from './shared-terms.mjs';
+import { buildVocabulary } from './vocab.mjs';
 
 const rel = (url) => url.slice(BASE_URL.length).replace(/^\//, '');
 async function write(url, content) {
@@ -17,7 +17,11 @@ async function write(url, content) {
 }
 const json = (o) => JSON.stringify(o, null, 2) + '\n';
 
-export async function publishModels(subjects) {
+/**
+ * adapters: modules discovered under adapters/ by build.mjs (the core never
+ * imports them). Each may add one file per model, listed in catalog.json.
+ */
+export async function publishModels(subjects, adapters = []) {
   const catalog = { formatVersion: 1, generatedAt: new Date().toISOString(), models: [] };
   const redirects = ['', '# Generated: type and attribute IRIs resolve to their documentation.'];
   const headers = ['', '# Generated: exact versions are immutable. `! Cache-Control` detaches the short cache inherited from the glob rule above.'];
@@ -33,6 +37,11 @@ export async function publishModels(subjects) {
     }
     await write(u.contextExact, json(subject.context)); immutable(u.contextExact);
     await write(u.contextAlias, json(subject.context));
+    const vocab = json(buildVocabulary(subject));
+    await write(u.vocabExact, vocab); immutable(u.vocabExact);
+    await write(u.vocabAlias, vocab);
+    // The namespace IRI itself resolves to the subject page.
+    redirects.push(`/ns/${subject.name}/  /models/${subject.name}/  302`);
     const shared = sharedTerms(subject);
     // Only IRIs minted in this namespace get a redirect; reused IRIs (schema.org, task, core) resolve elsewhere.
     for (const [name, types] of shared) {
@@ -45,7 +54,8 @@ export async function publishModels(subjects) {
       await write(mu.schemaExact, json(model.schema)); immutable(mu.schemaExact);
       await write(mu.schemaAlias, json(model.schema));
       for (const [f, content] of Object.entries(model.examples)) await write(`${mu.examples}${f}`, json(content));
-      if (model.kind === 'entity') await write(mu.geonicdb, json(toCustomDataModel(subject, model)));
+      const adapterUrls = {};
+      for (const a of adapters) { const url = a.urlFor(subject, model); if (url) { await write(url, a.content(subject, model)); adapterUrls[a.name] = url; } }
       // An alias has no IRI of its own under this namespace.
       if (mu.typeIri === `${u.namespace}${model.type}`) redirects.push(`/ns/${subject.name}/${model.type}  /models/${subject.name}/${model.type}/  302`);
       for (const [name] of attributesOf(model)) if (!shared.has(name) && !(name in {})) {
@@ -54,10 +64,10 @@ export async function publishModels(subjects) {
       }
       catalog.models.push({
         type: model.type, kind: model.kind, typeIri: mu.typeIri, subject: subject.name, domain: subject.name, source: subject.source,
-        contextUrl: u.contextExact, contextAliasUrl: u.contextAlias, schemaUrl: mu.schemaExact, version: subject.version,
+        contextUrl: u.contextExact, contextAliasUrl: u.contextAlias, schemaUrl: mu.schemaExact, vocabularyUrl: u.vocabExact, version: subject.version,
         status: model.catalog.status ?? 'draft', title: model.catalog.title, description: model.catalog.description,
         sampleProperties: attributesOf(model).map(([n]) => n), pageUrl: mu.page,
-        ...(model.kind === 'entity' ? { geonicdbModelUrl: mu.geonicdb } : {}),
+        ...(Object.keys(adapterUrls).length ? { adapters: adapterUrls } : {}),
         ...(model.schema['x-alias-of'] ? { aliasOf: model.schema['x-alias-of'] } : {}),
         ...(model.schema['x-subclass-of'] ? { subClassOf: model.schema['x-subclass-of'] } : {}),
       });

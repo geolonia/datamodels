@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://models.geonicdb.com/schema/disaster/RoadClosure/v1.0.0.json",
+  "$id": "https://datamodels.jp/schema/disaster/RoadClosure/v1.0.0.json",
   "title": "RoadClosure",
   "description": "One road closure: road name, closed section as a LineString, and status.",
   "x-version": "1.0.0",
-  "x-license-url": "https://models.geonicdb.com/LICENSE-CONTENT",
+  "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
   "x-model-tags": "GeonicDB, disaster-response, Japan",
   "x-derived-from": "https://github.com/geolonia/geonicdb-datamodels",
   "type": "object",
@@ -20,17 +20,14 @@
       "description": "Entity type"
     },
     "project": {
-      "description": "The disaster-response project this entity belongs to",
       "type": "string",
       "format": "uri",
+      "description": "The disaster event (DisasterEvent) this entity belongs to",
       "x-ngsi": {
         "type": "Relationship",
-        "target": "https://models.geonicdb.com/ns/disaster/Project"
+        "target": "https://datamodels.jp/ns/task/Project"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/project",
-      "x-geonicdb": {
-        "indexed": true
-      }
+      "x-iri": "https://datamodels.jp/ns/task/project"
     },
     "roadName": {
       "description": "Road name",
@@ -38,26 +35,19 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/roadName"
+      "x-iri": "https://smartdatamodels.org/dataModel.Transportation/roadName"
     },
-    "addressTown": {
-      "description": "Town name of the address (provisional; to move to the common address model)",
-      "type": "string",
+    "address": {
+      "$ref": "https://datamodels.jp/schema/common/JapaneseAddress/v1.0.0.json",
+      "description": "Address of the location, as a JapaneseAddress value (common subject)",
       "x-ngsi": {
-        "type": "Property"
+        "type": "Property",
+        "model": "https://datamodels.jp/ns/common/JapaneseAddress"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/addressTown"
+      "x-iri": "https://schema.org/address"
     },
-    "addressBanchi": {
-      "description": "Block and lot number of the address (provisional; to move to the common address model)",
-      "type": "string",
-      "x-ngsi": {
-        "type": "Property"
-      },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/addressBanchi"
-    },
-    "area": {
-      "description": "Closed section",
+    "location": {
+      "description": "The closed section, as a LineString",
       "type": "object",
       "properties": {
         "type": {
@@ -84,34 +74,61 @@
         "type": "GeoProperty",
         "model": "https://purl.org/geojson/vocab#LineString"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/area"
+      "x-iri": "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld#location"
     },
     "closureStatus": {
-      "description": "Closure status. `status` is protected in the core context, hence closureStatus",
+      "description": "Normalised closure state, the value space of Smart Data Models RoadSegment.status: closed (no traffic), limited (traffic possible but not in full capacity), open (closure lifted or not yet in place). The local wording goes in statusLabel",
       "type": "string",
       "enum": [
-        "依頼中",
-        "通行止め中",
-        "解除済み"
+        "closed",
+        "limited",
+        "open"
       ],
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/closureStatus"
+      "x-iri": "https://datamodels.jp/ns/disaster/closureStatus"
     },
-    "memo": {
-      "description": "Free-text memo",
+    "statusLabel": {
       "type": "string",
+      "description": "The closure status as the headquarters names it (依頼中, 通行止め中, 解除済み)",
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/memo"
+      "x-iri": "https://datamodels.jp/ns/task/statusLabel"
+    },
+    "validFrom": {
+      "description": "When the closure takes effect",
+      "type": "string",
+      "format": "date-time",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://smartdatamodels.org/validFrom"
+    },
+    "validTo": {
+      "description": "When the closure is lifted",
+      "type": "string",
+      "format": "date-time",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://smartdatamodels.org/dataModel.Alert/validTo"
+    },
+    "description": {
+      "type": "string",
+      "description": "Free-text memo",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld#description"
     }
   },
   "required": [
     "id",
     "type",
-    "project"
+    "project",
+    "closureStatus"
   ],
   "additionalProperties": false
 }

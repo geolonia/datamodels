@@ -28,7 +28,7 @@ description: カタログのデータモデルを GeonicDB に登録し、エン
 ## 1. Custom Data Model を登録する
 
 ```bash
-curl -sSf https://models.geonicdb.com/geonicdb/disaster/RoadClosure.json -o RoadClosure.json
+curl -sSf https://datamodels.jp/adapters/geonicdb/disaster/RoadClosure.json -o RoadClosure.json
 
 curl -X POST "$GEONICDB_BASE_URL/custom-data-models" \
   -H "Content-Type: application/json" \
@@ -46,7 +46,7 @@ curl -X POST "$GEONICDB_BASE_URL/custom-data-models" \
 各モデルページの「例（normalized）」は `@context` を含む JSON-LD なので、`Content-Type: application/ld+json` でそのまま POST できます。
 
 ```bash
-curl -sSf https://models.geonicdb.com/examples/disaster/RoadClosure/example-normalized.jsonld -o entity.jsonld
+curl -sSf https://datamodels.jp/examples/disaster/RoadClosure/example-normalized.jsonld -o entity.jsonld
 
 curl -X POST "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
   -H "Content-Type: application/ld+json" \
@@ -62,7 +62,7 @@ curl -X POST "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
 ```bash
 curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadClosure&q=closureStatus==%22通行止め中%22" \
   -H "Accept: application/ld+json" \
-  -H 'Link: <https://models.geonicdb.com/context/disaster/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -H 'Link: <https://datamodels.jp/context/disaster/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -H "x-api-key: $GEONICDB_API_KEY" \
   -H "NGSILD-Tenant: $GEONICDB_TENANT"
 ```
@@ -77,7 +77,7 @@ curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadClosure&q=closureStatus==%
    ```json
    {
      "@context": [
-       "https://models.geonicdb.com/context/disaster/v1.jsonld",
+       "https://datamodels.jp/context/disaster/v1.jsonld",
        { "acme": "https://example.com/ns/acme/", "patrolRoute": "acme:patrolRoute" }
      ]
    }
@@ -97,18 +97,18 @@ curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadClosure&q=closureStatus==%
    ```
 
    ```bash
-   node scripts/export-geonicdb.mjs disaster --type RoadClosure --extend ./acme.json --out ./out
+   node adapters/geonicdb/export.mjs disaster --type RoadClosure --extend ./acme.json --out ./out
    ```
 
-3. **カタログに提案する。** 自分の案件以外でも役に立つ属性なら、[Issue](https://github.com/geolonia/geonicdb-models/issues) か Pull Request で提案してください。次のマイナーバージョンで追加されれば、拡張は不要になります。
+3. **カタログに提案する。** 自分の案件以外でも役に立つ属性なら、[Issue](https://github.com/geolonia/datamodels/issues) か Pull Request で提案してください。次のマイナーバージョンで追加されれば、拡張は不要になります。
 
 ## 型名を変えたいとき
 
 テナント内で型名に接頭辞を付けたい場合（複数案件が同じテナントを共有し、認可ポリシーを型名で分けているときなど）は、リポジトリのスクリプトで接頭辞付きの定義を書き出せます。語彙（IRI）はカタログのままです。
 
 ```bash
-git clone https://github.com/geolonia/geonicdb-models && cd geonicdb-models && npm ci
-node scripts/export-geonicdb.mjs disaster --type-prefix Saitai --out ./out
+git clone https://github.com/geolonia/datamodels && cd datamodels && npm ci
+node adapters/geonicdb/export.mjs disaster --type-prefix Acme --out ./out
 ```
 
 ## 補足

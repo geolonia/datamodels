@@ -6,9 +6,9 @@ Operational overlay for one evacuation shelter. The shelter master data (name, l
 
 避難所の運用状況オーバーレイ1件。避難所そのもののマスタ（名称・位置）は含まず、外部の避難所データを externalShelterId で参照する。開設状況と避難者数だけを持つ。
 
-- Type IRI: `https://models.geonicdb.com/ns/disaster/EvacuationShelter`
-- Context: `https://models.geonicdb.com/context/disaster/v3.jsonld` (alias), `https://models.geonicdb.com/context/disaster/v3.0.0.jsonld` (exact)
-- Schema: `https://models.geonicdb.com/schema/disaster/EvacuationShelter/v3.json`
-- Page: https://models.geonicdb.com/models/disaster/EvacuationShelter/
+- Type IRI: `https://datamodels.jp/ns/disaster/EvacuationShelter`
+- Context: `https://datamodels.jp/context/disaster/v1.jsonld` (alias), `https://datamodels.jp/context/disaster/v1.0.0.jsonld` (exact)
+- Schema: `https://datamodels.jp/schema/disaster/EvacuationShelter/v1.json` (alias), `https://datamodels.jp/schema/disaster/EvacuationShelter/v1.0.0.json` (exact)
+- Page: https://datamodels.jp/models/disaster/EvacuationShelter/
 
-Files follow the Smart Data Models layout: `schema.json` (key-values representation, with `x-ngsi`, `x-iri` and `x-geonicdb` annotations), `catalog.yaml` (Japanese and English descriptions), `examples/`, `notes.yaml`, `ADOPTERS.yaml`.
+Files follow the Smart Data Models layout: `schema.json` (key-values representation, with `x-ngsi`, `x-iri` and optional `x-personal-data` annotations), `catalog.yaml` (Japanese and English descriptions), `examples/`, `mapping/` where a corresponding standard exists, `notes.yaml`, `ADOPTERS.yaml`.

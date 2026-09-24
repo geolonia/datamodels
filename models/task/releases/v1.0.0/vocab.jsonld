@@ -1,0 +1,425 @@
+{
+  "@context": {
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "label": {
+      "@id": "rdfs:label",
+      "@container": "@language"
+    },
+    "comment": {
+      "@id": "rdfs:comment",
+      "@container": "@language"
+    },
+    "subClassOf": {
+      "@id": "rdfs:subClassOf",
+      "@type": "@id"
+    },
+    "isDefinedBy": {
+      "@id": "rdfs:isDefinedBy",
+      "@type": "@id"
+    },
+    "seeAlso": {
+      "@id": "rdfs:seeAlso",
+      "@type": "@id"
+    },
+    "versionInfo": "owl:versionInfo"
+  },
+  "@graph": [
+    {
+      "@id": "https://datamodels.jp/ns/task/",
+      "@type": "owl:Ontology",
+      "label": {
+        "ja": "タスク管理",
+        "en": "Task management"
+      },
+      "comment": {
+        "ja": "課題管理・作業管理の共通モデル。タスク、プロジェクト、コメント、添付ファイル。課題管理システムのチケット、カレンダーの ToDo、自治体の作業指示に共通する属性だけを核にし、状態と優先度の値域は RFC 8984（JSCalendar）に合わせる。位置は点に限らない。システム固有の用語はエイリアスで対応する。",
+        "en": "Common model for issue and work tracking. Task, Project, Comment, Attachment. The core holds only what issue trackers, calendar to-dos and municipal work orders share; state and priority follow RFC 8984 (JSCalendar). Location is not limited to points. System-specific terminology is handled with aliases."
+      },
+      "versionInfo": "1.0.0",
+      "seeAlso": "https://datamodels.jp/context/task/v1.0.0.jsonld"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/Attachment",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "添付ファイル",
+        "en": "Attachment"
+      },
+      "comment": {
+        "ja": "タスクまたはプロジェクトに添付されたファイルのメタデータ。ファイル本体はブローカーの外（元システムやオブジェクトストレージ）に置き、URL で参照する。",
+        "en": "Metadata of a file attached to a task or a project. The file itself stays outside the broker and is referenced by URL."
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Attachment/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/Comment",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "コメント",
+        "en": "Comment"
+      },
+      "comment": {
+        "ja": "タスクに付けられた記録・申し送り・返信。フィールドの変更履歴は含めない（履歴は Temporal API が持つ）。",
+        "en": "A note, handover or reply on a task. Field change history is not a comment; the temporal API keeps history."
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Comment/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/Project",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "プロジェクト",
+        "en": "Project"
+      },
+      "comment": {
+        "ja": "タスクをまとめる単位。案件、災害対応の 1 オペレーション、キャンペーンなど、名前は用途によって変わっても共通の属性を持つ。",
+        "en": "A grouping of tasks: a project in a tracker, one disaster-response operation, a campaign. Called differently in different settings, with the same common attributes."
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Project/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/Task",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "タスク",
+        "en": "Task"
+      },
+      "comment": {
+        "ja": "追跡される作業単位。課題管理システムの「チケット」「Issue」、カレンダーの ToDo、自治体の作業指示など。状態と優先度の値域は RFC 8984（JSCalendar）に合わせ、元システム固有の状態名や種別は statusLabel と subtype に保持する。位置は任意のジオメトリ。",
+        "en": "A tracked unit of work: a ticket or issue in a tracker, a calendar to-do, a municipal work order. State and priority follow RFC 8984 (JSCalendar); the source system's own status name and kind are kept in statusLabel and subtype. Location may be any geometry."
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Task/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/assignee",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "assignee"
+      },
+      "comment": {
+        "ja": "担当者・担当チーム（人・組織・チームのエンティティ。このサブジェクト外の URN でもよい）。key-values 形式では対象が 1 つでも配列",
+        "en": "Assignees: person, organisation or team entities, possibly outside this subject. Always an array in the key-values form, even with one target"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Task/#assignee"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/completedAt",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "completedAt"
+      },
+      "comment": {
+        "ja": "progress が completed になった日時",
+        "en": "When progress became completed"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Task/#completedAt"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/digest",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "digest"
+      },
+      "comment": {
+        "ja": "ハッシュ。アルゴリズム名:16進（例: sha256:…）",
+        "en": "Hash as algorithm:hex, e.g. sha256:…"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Attachment/#digest"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/due",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "due"
+      },
+      "comment": {
+        "ja": "期限（RFC 8984 due）",
+        "en": "Due time (RFC 8984 due)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Task/#due"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/end",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "end"
+      },
+      "comment": {
+        "ja": "予定期間の終了",
+        "en": "Planned end"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Project/#end"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/estimatedDuration",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "estimatedDuration"
+      },
+      "comment": {
+        "ja": "見積時間。ISO 8601 期間（例: PT1H30M）（RFC 8984 estimatedDuration）",
+        "en": "Estimated effort as an ISO 8601 duration, e.g. PT1H30M (RFC 8984 estimatedDuration)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Task/#estimatedDuration"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/externalId",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "externalId"
+      },
+      "comment": {
+        "ja": "元システムにおける識別子",
+        "en": "Identifier in the system of record"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Attachment/#externalId"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/filename",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "filename"
+      },
+      "comment": {
+        "ja": "ファイル名",
+        "en": "File name"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Attachment/#filename"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/inReplyTo",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "inReplyTo"
+      },
+      "comment": {
+        "ja": "返信先のコメント",
+        "en": "The comment this replies to"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Comment/#inReplyTo"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/isPrivate",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "isPrivate"
+      },
+      "comment": {
+        "ja": "非公開なら true。既定は false",
+        "en": "true when private; default false"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Comment/#isPrivate"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/isPublic",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "isPublic"
+      },
+      "comment": {
+        "ja": "公開プロジェクトなら true",
+        "en": "true when public"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Project/#isPublic"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/parent",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "parent"
+      },
+      "comment": {
+        "ja": "親プロジェクト",
+        "en": "Parent project"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Project/#parent"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/percentComplete",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "percentComplete"
+      },
+      "comment": {
+        "ja": "進捗率 0〜100（RFC 8984 percentComplete）",
+        "en": "Completion 0 to 100 (RFC 8984 percentComplete)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Task/#percentComplete"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/priority",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "priority"
+      },
+      "comment": {
+        "ja": "優先度 0〜9。1 が最高、9 が最低、0 は未定義（RFC 8984）",
+        "en": "Priority 0 to 9: 1 highest, 9 lowest, 0 undefined (RFC 8984)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Task/#priority"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/progress",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "progress"
+      },
+      "comment": {
+        "ja": "正規化した進行状態（RFC 8984 progress）。needs-action=未着手、in-process=対応中、completed=完了、failed=失敗、cancelled=取消",
+        "en": "Normalised state (RFC 8984 progress: needs-action, in-process, completed, failed, cancelled)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Task/#progress"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/project",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "project"
+      },
+      "comment": {
+        "ja": "所属プロジェクト",
+        "en": "The project this belongs to"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Attachment/#project"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/projectStatus",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "projectStatus"
+      },
+      "comment": {
+        "ja": "状態。core context の status は予約語のため projectStatus",
+        "en": "State; status is protected in the core context, hence projectStatus"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Project/#projectStatus"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/refersTo",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "refersTo"
+      },
+      "comment": {
+        "ja": "このタスクが対象とするエンティティ（通報、設備、道路など）",
+        "en": "The entity this task is about (a report, an asset, a road)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Task/#refersTo"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/relatedTo",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "relatedTo"
+      },
+      "comment": {
+        "ja": "関連するタスク（key-values 形式では対象が 1 つでも配列）。関係の種類（blocks, precedes, duplicates など）は拡張で表す",
+        "en": "Related tasks. Always an array in the key-values form, even with one target. The kind of relation (blocks, precedes, duplicates) is left to extensions"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Task/#relatedTo"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/spatialId",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "spatialId"
+      },
+      "comment": {
+        "ja": "タスクの範囲を覆う空間ID（ZFXY）。任意",
+        "en": "Spatial IDs (ZFXY) covering the task. Optional"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Task/#spatialId"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/start",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "start"
+      },
+      "comment": {
+        "ja": "予定期間の開始",
+        "en": "Planned start"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Project/#start"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/statusLabel",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "statusLabel"
+      },
+      "comment": {
+        "ja": "元システムの状態名そのまま（「対応中」「解決」など）",
+        "en": "The source system's own status name, unchanged (for example \"In progress\", \"Resolved\")"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Task/#statusLabel"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/subtype",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "subtype"
+      },
+      "comment": {
+        "ja": "元システムの種別（トラッカー、Issue タイプ、カテゴリなど）",
+        "en": "The source system's kind: tracker, issue type, category"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Task/#subtype"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/task",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "task"
+      },
+      "comment": {
+        "ja": "対象のタスク",
+        "en": "The task this belongs to"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Attachment/#task"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/textFormat",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "textFormat"
+      },
+      "comment": {
+        "ja": "本文の形式",
+        "en": "Format of the text"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Comment/#textFormat"
+    }
+  ]
+}

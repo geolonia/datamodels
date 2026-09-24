@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://models.geonicdb.com/catalog.schema.json",
-  "title": "GeonicDB data models catalog index",
-  "description": "Wire format of catalog.json, read by GeonicDB, its console, CLI and MCP tool. Within a formatVersion fields are only added, never removed or retyped, so consumers must ignore unknown fields and this schema does not forbid them.",
+  "$id": "https://datamodels.jp/catalog.schema.json",
+  "title": "datamodels.jp catalog index",
+  "description": "Wire format of catalog.json, the machine-readable index of every model, read by brokers, tools and agents. Within a formatVersion fields are only added, never removed or retyped, so consumers must ignore unknown fields and this schema does not forbid them. formatVersion 1 is the format published at the launch on datamodels.jp; the pre-release index at models.geonicdb.com is not continued.",
   "type": "object",
   "required": [
     "formatVersion",
@@ -102,10 +102,6 @@
             "type": "string",
             "format": "uri"
           },
-          "geonicdbModelUrl": {
-            "type": "string",
-            "format": "uri"
-          },
           "upstream": {
             "type": "object",
             "properties": {
@@ -138,6 +134,19 @@
             "type": "string",
             "format": "uri",
             "description": "Present when this type is a subclass of another catalog type: own IRI, attributes with the same name share the parent IRIs, parent required attributes stay required."
+          },
+          "adapters": {
+            "type": "object",
+            "description": "Files generated for a particular broker or tool, keyed by adapter name (for example geonicdb: a Custom Data Model request body). Absent when no adapter produces a file for the model.",
+            "additionalProperties": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "vocabularyUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "The subject's RDFS vocabulary (classes, rdfs:subClassOf, labels) at this exact version."
           }
         }
       }

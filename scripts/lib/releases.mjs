@@ -4,10 +4,12 @@
 // snapshot for the current version; publish copies every snapshot into dist/.
 //
 //   models/<subject>/releases/v1.0.0/context.jsonld
+//   models/<subject>/releases/v1.0.0/vocab.jsonld
 //   models/<subject>/releases/v1.0.0/schema/<Type>.json
 import { cp, mkdir, readdir, readFile, writeFile, stat } from 'node:fs/promises';
 import { join, dirname, basename } from 'node:path';
 import { BASE_URL } from './models.mjs';
+import { buildVocabulary } from './vocab.mjs';
 
 async function isDir(p) { try { return (await stat(p)).isDirectory(); } catch { return false; } }
 
@@ -20,6 +22,7 @@ function releaseContents(subject) {
     dir,
     entries: [
       { file: join(dir, 'context.jsonld'), content: json(subject.context), what: `${at} context` },
+      { file: join(dir, 'vocab.jsonld'), content: json(buildVocabulary(subject)), what: `${at} vocabulary` },
       ...subject.models.map((model) => ({ file: join(dir, 'schema', `${model.type}.json`), content: json(model.schema), what: `${at} ${model.type} schema` })),
     ],
   };
@@ -81,6 +84,7 @@ export async function listReleases(subject) {
     const m = /^v(\d+\.\d+\.\d+)$/.exec(name);
     const dir = join(base, name); const version = m[1];
     const files = [{ url: `${BASE_URL}/context/${subject.name}/v${version}.jsonld`, path: join(dir, 'context.jsonld') }];
+    try { await stat(join(dir, 'vocab.jsonld')); files.push({ url: `${BASE_URL}/vocab/${subject.name}/v${version}.jsonld`, path: join(dir, 'vocab.jsonld') }); } catch {}
     const schemaDir = join(dir, 'schema');
     if (await isDir(schemaDir)) for (const f of (await readdir(schemaDir)).sort()) {
       files.push({ url: `${BASE_URL}/schema/${subject.name}/${f.replace(/\.json$/, '')}/v${version}.json`, path: join(schemaDir, f) });

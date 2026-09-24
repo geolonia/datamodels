@@ -1,13 +1,13 @@
 # Subject metadata. One context per subject, versioned; the version below is the
 # version of context.jsonld and of every schema in this subject.
 name: disaster
-version: 3.0.0
+version: 1.0.0
 title:
   ja: 災害対応
   en: Disaster response
 description:
-  ja: 自治体の災害対応を表すデータモデル。災害事象、通報、対応業務、申し送り、現地写真、通行止め、避難所運用状況。高松市の水防アプリで実運用されているモデルを汎用化し、2.0.0 でタスク管理サブジェクトの上に組み直したもの（DisasterEvent は Project のエイリアス、通報・対応業務・申し送り・現地写真は Task・Comment・Attachment のサブクラス）。
-  en: Data models for municipal disaster response. Disaster event, incident report, response action, handover note, photo, road closure and shelter operation. Generalised from the models in production use in Takamatsu City's flood-response application and rebuilt on the task subject in 2.0.0 (DisasterEvent is an alias of Project; reports, actions, notes and photos are subclasses of Task, Comment and Attachment).
+  ja: 自治体の災害対応を表すデータモデル。災害対応はタスク管理の一種としてモデル化しています。災害事象（DisasterEvent）はタスク管理の Project と同じ型（エイリアス）、通報・対応業務・申し送り・現地写真は Task・Comment・Attachment のサブクラスで、共通の属性はタスク管理の IRI を持ちます。タスクの属性を読むコードはこれらの型もそのまま読めますが、型でエンティティを選ぶクライアントは災害対応の型名を知るか、語彙の rdfs:subClassOf をたどる必要があります。通行止めと避難所運用状況は独自の型です。高松市の水防アプリのデータモデルを基に汎用化したもの。
+  en: Data models for municipal disaster response, modelled as task management. DisasterEvent is an alias of the task subject's Project (the same type), and incident reports, response actions, handover notes and photos are subclasses of Task, Comment and Attachment whose shared attributes carry the task IRIs. Code that reads task attributes reads these types too; a client that selects entities by type needs the disaster type names, or follows rdfs:subClassOf in the subject's vocabulary. Road closures and shelter operation are types of their own. Generalised from the data models of Takamatsu City's flood-response application.
 source: minted            # minted | profile | global
 origin:
   repository: https://github.com/geolonia/geonicdb-datamodels

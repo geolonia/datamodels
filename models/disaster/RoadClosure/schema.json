@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://models.geonicdb.com/schema/disaster/RoadClosure/v3.0.0.json",
+  "$id": "https://datamodels.jp/schema/disaster/RoadClosure/v1.0.0.json",
   "title": "RoadClosure",
   "description": "One road closure: road name, closed section as a LineString, and status.",
-  "x-version": "3.0.0",
-  "x-license-url": "https://models.geonicdb.com/LICENSE-CONTENT",
+  "x-version": "1.0.0",
+  "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
   "x-model-tags": "GeonicDB, disaster-response, Japan",
   "x-derived-from": "https://github.com/geolonia/geonicdb-datamodels",
   "type": "object",
@@ -25,12 +25,9 @@
       "description": "The disaster event (DisasterEvent) this entity belongs to",
       "x-ngsi": {
         "type": "Relationship",
-        "target": "https://models.geonicdb.com/ns/task/Project"
+        "target": "https://datamodels.jp/ns/task/Project"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/project",
-      "x-geonicdb": {
-        "indexed": true
-      }
+      "x-iri": "https://datamodels.jp/ns/task/project"
     },
     "roadName": {
       "description": "Road name",
@@ -41,11 +38,11 @@
       "x-iri": "https://smartdatamodels.org/dataModel.Transportation/roadName"
     },
     "address": {
-      "$ref": "https://models.geonicdb.com/schema/common/JapaneseAddress/v1.0.0.json",
+      "$ref": "https://datamodels.jp/schema/common/JapaneseAddress/v1.0.0.json",
       "description": "Address of the location, as a JapaneseAddress value (common subject)",
       "x-ngsi": {
         "type": "Property",
-        "model": "https://models.geonicdb.com/ns/common/JapaneseAddress"
+        "model": "https://datamodels.jp/ns/common/JapaneseAddress"
       },
       "x-iri": "https://schema.org/address"
     },
@@ -90,7 +87,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/closureStatus"
+      "x-iri": "https://datamodels.jp/ns/disaster/closureStatus"
     },
     "statusLabel": {
       "type": "string",
@@ -98,7 +95,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/statusLabel"
+      "x-iri": "https://datamodels.jp/ns/task/statusLabel"
     },
     "validFrom": {
       "description": "When the closure takes effect",

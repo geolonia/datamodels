@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://models.geonicdb.com/schema/disaster/IncidentResponseAction/v3.0.0.json",
+  "$id": "https://datamodels.jp/schema/disaster/IncidentResponseAction/v1.0.0.json",
   "title": "IncidentResponseAction",
   "description": "One response action taken for an incident report: what, who, done or not. A subclass of Task in the task subject with the report as its parent.",
-  "x-version": "3.0.0",
-  "x-license-url": "https://models.geonicdb.com/LICENSE-CONTENT",
+  "x-version": "1.0.0",
+  "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
   "x-model-tags": "GeonicDB, disaster-response, Japan",
   "x-derived-from": "https://github.com/geolonia/geonicdb-datamodels",
-  "x-subclass-of": "https://models.geonicdb.com/ns/task/Task",
+  "x-subclass-of": "https://datamodels.jp/ns/task/Task",
   "type": "object",
   "properties": {
     "id": {
@@ -42,12 +42,9 @@
       "description": "The disaster event (DisasterEvent) this action belongs to; optional, the parent report carries it",
       "x-ngsi": {
         "type": "Relationship",
-        "target": "https://models.geonicdb.com/ns/task/Project"
+        "target": "https://datamodels.jp/ns/task/Project"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/project",
-      "x-geonicdb": {
-        "indexed": true
-      }
+      "x-iri": "https://datamodels.jp/ns/task/project"
     },
     "parent": {
       "type": "string",
@@ -55,12 +52,9 @@
       "description": "The incident report this action responds to",
       "x-ngsi": {
         "type": "Relationship",
-        "target": "https://models.geonicdb.com/ns/disaster/IncidentReport"
+        "target": "https://datamodels.jp/ns/disaster/IncidentReport"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/parent",
-      "x-geonicdb": {
-        "indexed": true
-      }
+      "x-iri": "https://datamodels.jp/ns/task/parent"
     },
     "progress": {
       "type": "string",
@@ -75,7 +69,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/progress"
+      "x-iri": "https://datamodels.jp/ns/task/progress"
     },
     "assignee": {
       "type": "array",
@@ -90,7 +84,7 @@
         "target": "agent",
         "multi": true
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/assignee"
+      "x-iri": "https://datamodels.jp/ns/task/assignee"
     },
     "completedAt": {
       "type": "string",
@@ -99,7 +93,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/completedAt"
+      "x-iri": "https://datamodels.jp/ns/task/completedAt"
     },
     "dateModified": {
       "type": "string",

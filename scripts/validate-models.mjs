@@ -15,6 +15,7 @@ import jsonld from 'jsonld';
 import { readFile } from 'node:fs/promises';
 import { loadSubjects, attributesOf, toKeyValues, subjectUrls, modelUrls, resolveContextTerms, CORE_CONTEXT_URL, CORE_CONTEXT_FIXTURE } from './lib/models.mjs';
 import { resolveContextDocument } from './lib/releases.mjs';
+import { buildVocabulary } from './lib/vocab.mjs';
 
 const failures = [];
 const fail = (where, msg) => failures.push(`${where}: ${msg}`);
@@ -76,6 +77,20 @@ for (const subject of subjects) {
     if (coreTerms.has(term)) fail(`${where}/context.jsonld`, `redefines core context term "${term}" (protected)`);
   }
 
+  // The vocabulary must be valid JSON-LD and state every subclass relation, so
+  // tools other than this validator see them.
+  try {
+    const vocab = buildVocabulary(subject);
+    const expanded = await jsonld.expand(vocab, { documentLoader: loader });
+    const RDFS = 'http://www.w3.org/2000/01/rdf-schema#';
+    for (const model of subject.models) {
+      const parent = model.schema['x-subclass-of'];
+      if (!parent) continue;
+      const cls = expanded.find((n) => n['@id'] === modelUrls(subject, model).typeIri);
+      if (!cls?.[`${RDFS}subClassOf`]?.some((o) => o['@id'] === parent)) fail(`${where}/vocab`, `${model.type}: vocabulary lacks rdfs:subClassOf ${parent}`);
+    }
+  } catch (e) { fail(`${where}/vocab`, `vocabulary does not expand: ${e.message}`); }
+
   for (const model of subject.models) {
     const mwhere = `${where}/${model.type}`;
     const murls = modelUrls(subject, model);
@@ -119,6 +134,9 @@ for (const subject of subjects) {
 
     for (const [name, prop] of attributesOf(model)) {
       if (model.kind === 'entity' && !prop['x-ngsi']?.type) fail(`${mwhere}/schema.json`, `${name}: missing x-ngsi.type`);
+      if ('x-personal-data' in prop && prop['x-personal-data'] !== true) fail(`${mwhere}/schema.json`, `${name}: x-personal-data must be true or absent`);
+      // Schemas are product-neutral: broker-specific hints belong in adapters/.
+      for (const k of Object.keys(prop)) if (/^x-(geonicdb|orion|scorpio|stellio)/i.test(k)) fail(`${mwhere}/schema.json`, `${name}: product-specific key ${k}; move it into an adapter`);
       if (!ctxTerms[name] && !coreTerms.has(name)) fail(`${where}/context.jsonld`, `does not define attribute "${name}" used by ${model.type}`);
       if (!model.catalog?.attributes?.[name]?.ja || !model.catalog?.attributes?.[name]?.en) fail(`${mwhere}/catalog.yaml`, `${name}: needs ja and en descriptions`);
     }

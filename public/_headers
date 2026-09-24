@@ -1,4 +1,4 @@
-# Response headers for models.geonicdb.com (Workers static assets).
+# Response headers for datamodels.jp (Workers static assets).
 #
 # Matching rules (Cloudflare): one `*` splat per rule at most; a request
 # inherits the headers of every matching rule; the same header set by several
@@ -22,20 +22,25 @@
   Content-Type: application/ld+json; charset=utf-8
   Cache-Control: public, max-age=300
 
+# Vocabularies (RDFS classes, subclass relations, labels), same versioning rules.
+/vocab/*.jsonld
+  Content-Type: application/ld+json; charset=utf-8
+  Cache-Control: public, max-age=300
+
 # JSON Schemas, same versioning rules.
 /schema/*.json
   Content-Type: application/schema+json; charset=utf-8
   Cache-Control: public, max-age=300
 
-# Examples and GeonicDB Custom Data Model bodies.
+# Examples and adapter files (for example GeonicDB Custom Data Model bodies).
 /examples/*.jsonld
   Content-Type: application/ld+json; charset=utf-8
 /examples/*.json
   Content-Type: application/json; charset=utf-8
-/geonicdb/*.json
+/adapters/*.json
   Content-Type: application/json; charset=utf-8
 
-# The machine-readable catalog index read by GeonicDB.
+# The machine-readable catalog index.
 /catalog.json
   Content-Type: application/json; charset=utf-8
   Cache-Control: public, max-age=300

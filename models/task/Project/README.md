@@ -2,11 +2,13 @@
 
 プロジェクト / Project
 
-A grouping of tasks: a Redmine project, a GitHub repository, one disaster-response operation. Called differently in different settings, with the same common attributes.
+A grouping of tasks: a project in a tracker, one disaster-response operation, a campaign. Called differently in different settings, with the same common attributes.
 
-タスクをまとめる単位。Redmine のプロジェクト、GitHub のリポジトリ、災害対応の 1 オペレーションなど。名前は用途によって変わっても（案件、イベント、リポジトリ）、共通の属性を持つ。
+タスクをまとめる単位。案件、災害対応の 1 オペレーション、キャンペーンなど、名前は用途によって変わっても共通の属性を持つ。
 
-- Type IRI: `https://models.geonicdb.com/ns/task/Project`
-- Context: `https://models.geonicdb.com/context/task/v1.jsonld` (alias), `https://models.geonicdb.com/context/task/v1.1.0.jsonld` (exact)
-- Schema: `https://models.geonicdb.com/schema/task/Project/v1.json`
-- Page: https://models.geonicdb.com/models/task/Project/
+- Type IRI: `https://datamodels.jp/ns/task/Project`
+- Context: `https://datamodels.jp/context/task/v1.jsonld` (alias), `https://datamodels.jp/context/task/v1.0.0.jsonld` (exact)
+- Schema: `https://datamodels.jp/schema/task/Project/v1.json` (alias), `https://datamodels.jp/schema/task/Project/v1.0.0.json` (exact)
+- Page: https://datamodels.jp/models/task/Project/
+
+Files follow the Smart Data Models layout: `schema.json` (key-values representation, with `x-ngsi`, `x-iri` and optional `x-personal-data` annotations), `catalog.yaml` (Japanese and English descriptions), `examples/`, `mapping/` where a corresponding standard exists, `notes.yaml`, `ADOPTERS.yaml`.

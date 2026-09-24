@@ -4,5 +4,5 @@ notes:
   - "progress uses the RFC 8984 value set unchanged: needs-action, in-process, completed, failed, cancelled. statusLabel keeps the source system’s own status name; subtype its tracker, issue type or category."
   - relatedTo and assignee are multi-valued Relationships (one instance per target, distinguished by datasetId). In the key-values form they are always arrays, even with a single target. The kind of a relation (blocks, precedes, duplicates) is not in the core.
   - A source system keeps its own type and attribute names through a JSON-LD alias context (see the Tips guide); its vocabulary can also declare its types subclasses of these.
-  - "1.1.0: project is optional. RFC 8984 has no project, and a calendar to-do or a stand-alone work order should not have to invent one; trackers whose issues always belong to a project can require it in their own model. name and progress stay required."
+  - "project is optional: RFC 8984 has no project, and a calendar to-do or a stand-alone work order should not have to invent one; trackers whose issues always belong to a project can require it in their own model. name and progress are required."
 license: CC BY 4.0 (see /LICENSE-CONTENT.md)

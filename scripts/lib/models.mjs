@@ -5,10 +5,10 @@ import { dirname, join } from 'node:path';
 import YAML from 'yaml';
 
 export const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
-// GEONICDB_MODELS_DIR lets the test suite point the loader at a mutated copy.
-export const MODELS_DIR = process.env.GEONICDB_MODELS_DIR ?? join(ROOT, 'models');
+// DATAMODELS_MODELS_DIR lets the test suite point the loader at a mutated copy.
+export const MODELS_DIR = process.env.DATAMODELS_MODELS_DIR ?? join(ROOT, 'models');
 export const DIST = join(ROOT, 'dist');
-export const BASE_URL = 'https://models.geonicdb.com';
+export const BASE_URL = 'https://datamodels.jp';
 export const CORE_CONTEXT_URL = 'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld';
 export const CORE_CONTEXT_FIXTURE = join(ROOT, 'test', 'fixtures', 'ngsi-ld-core-context-v1.8.jsonld');
 
@@ -24,6 +24,8 @@ export function subjectUrls(subject) {
   return {
     contextExact: `${BASE_URL}/context/${subject.name}/v${subject.version}.jsonld`,
     contextAlias: `${BASE_URL}/context/${subject.name}/v${major}.jsonld`,
+    vocabExact: `${BASE_URL}/vocab/${subject.name}/v${subject.version}.jsonld`,
+    vocabAlias: `${BASE_URL}/vocab/${subject.name}/v${major}.jsonld`,
     namespace: `${BASE_URL}/ns/${subject.name}/`,
     page: `${BASE_URL}/models/${subject.name}/`,
   };
@@ -38,7 +40,6 @@ export function modelUrls(subject, model) {
     typeIri: model.schema?.['x-alias-of'] ?? `${BASE_URL}/ns/${subject.name}/${model.type}`,
     page: `${BASE_URL}/models/${subject.name}/${model.type}/`,
     examples: `${BASE_URL}/examples/${subject.name}/${model.type}/`,
-    geonicdb: `${BASE_URL}/geonicdb/${subject.name}/${model.type}.json`,
   };
 }
 

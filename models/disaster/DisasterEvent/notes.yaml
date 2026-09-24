@@ -1,5 +1,4 @@
 notes:
-  - Seeded 2026-09-17 from geolonia/geonicdb-datamodels data-models/*.json (Takamatsu City flood-prevention headquarters). Type name generalised from the tenant-specific "Saitai" prefix.
-  - Conceptually a subclass of https://schema.org/Project. The type IRI is minted here so it resolves to this page; the relation is documented, not asserted by identity.
-  - "2.0.0: renamed from Project and made an alias of the task subject’s Project (x-alias-of). Same IRI, same attributes: the alias exists so that disaster response can call the grouping a disaster event. The 1.x type IRI /ns/disaster/Project is retired and not redirected to this page."
+  - Derived from the Custom Data Models of the Takamatsu City flood-prevention headquarters application (geolonia/geonicdb-datamodels, September 2026). Type names generalised from the tenant-specific "Saitai" prefix; attribute names aligned with the task subject.
+  - "An alias of the task subject's Project: the same IRI and the same attributes, under the name disaster response uses. A tenant that stores DisasterEvent and one that stores Project hold the same type."
 license: CC BY 4.0 (see /LICENSE-CONTENT.md)

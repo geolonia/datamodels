@@ -1,5 +1,5 @@
 // Check the deployed site against the URL contract. Run after every deploy:
-//   npm run check:live            (models.geonicdb.com)
+//   npm run check:live            (datamodels.jp)
 //   npm run check:live -- https://preview.example   (another origin)
 // Fails on the first contract violation. Needs network access only.
 import jsonld from 'jsonld';
@@ -38,6 +38,8 @@ for (const subject of subjects) {
   for (const release of await listReleases(subject)) {
     for (const f of release.files) { const rr = await head(f.url); expect(rr.status === 200 && isImmutable(rr), `${f.url}: released file ${rr.status} ${h(rr, 'cache-control')}`); }
   }
+  r = await head(u.vocabExact);
+  expect(r.status === 200 && h(r, 'content-type').startsWith('application/ld+json') && isImmutable(r), `${u.vocabExact}: ${r.status} ${h(r, 'content-type')} ${h(r, 'cache-control')}`);
   r = await head(u.contextAlias);
   expect(r.status === 200 && !/immutable/.test(h(r, 'cache-control')), `${u.contextAlias}: alias must not be immutable (${r.status}, ${h(r, 'cache-control')})`);
   r = await head(u.page); expect(r.status === 200, `${u.page}: ${r.status}`);
@@ -53,9 +55,8 @@ for (const subject of subjects) {
       expect(r.status === 302 && h(r, 'location') === mu.page.replace(BASE_URL, ''), `${mu.typeIri}: ${r.status} -> ${h(r, 'location')}`);
     }
     r = await head(mu.page); expect(r.status === 200, `${mu.page}: ${r.status}`);
-    // Value types have no GeonicDB body and no normalized example of their own.
+    // Value types have no adapter files and no normalized example of their own.
     if (model.kind === 'value') continue;
-    r = await head(mu.geonicdb); expect(r.status === 200 && h(r, 'content-type').startsWith('application/json'), `${mu.geonicdb}: ${r.status} ${h(r, 'content-type')}`);
 
     const norm = model.examples['example-normalized.jsonld'];
     if (norm) {
@@ -80,7 +81,24 @@ for (const [path, hash] of Object.entries(manifest.files)) {
 
 const r = await fetch(swap(`${BASE_URL}/catalog.json`));
 expect(r.ok, `catalog.json: ${r.status}`);
-if (r.ok) { const c = await r.json(); expect(c.formatVersion === 1 && Array.isArray(c.models), 'catalog.json: unexpected shape'); }
+if (r.ok) {
+  const c = await r.json();
+  expect(c.formatVersion === 1 && Array.isArray(c.models), 'catalog.json: unexpected shape');
+  // Adapter files are listed per model in the catalog; each must be served as JSON.
+  for (const m of c.models ?? []) for (const [name, url] of Object.entries(m.adapters ?? {})) {
+    const ar = await head(url);
+    expect(ar.status === 200 && h(ar, 'content-type').startsWith('application/json'), `${name} adapter ${url}: ${ar.status} ${h(ar, 'content-type')}`);
+  }
+}
+
+// The pre-launch hostname redirects every path to datamodels.jp (Redirect Rule
+// on the geonicdb.com zone). Only checked against the production origin.
+if (origin === BASE_URL) {
+  for (const path of ['/', '/models/task/Task/', '/catalog.json']) {
+    const rr = await fetch(`https://models.geonicdb.com${path}`, { method: 'HEAD', redirect: 'manual' });
+    expect(rr.status === 301 && h(rr, 'location') === `${BASE_URL}${path}`, `models.geonicdb.com${path}: expected 301 to ${BASE_URL}${path}, got ${rr.status} ${h(rr, 'location')}`);
+  }
+}
 
 if (failures.length) { console.error(`Live check failed (${failures.length}) against ${origin}:`); for (const f of failures) console.error(`  ${f}`); process.exit(1); }
 console.log(`live ok: ${origin}, ${subjects.reduce((a, s) => a + s.models.length, 0)} model(s), ${Object.keys(manifest.files).length} immutable file(s) match the manifest`);

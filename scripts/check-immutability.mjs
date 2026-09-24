@@ -6,7 +6,7 @@
 // it and fails when a recorded file is missing or has different content.
 //
 // Which files are immutable:
-//   - dist/context/**  and  dist/schema/**  whose file name carries an exact
+//   - dist/context/**, dist/schema/** and dist/vocab/**  whose file name carries an exact
 //     version, e.g. v1.0.0.jsonld or v2.3.1.json. Aliases such as v1.jsonld
 //     are mutable by design (they advance to the latest compatible version)
 //     and are not recorded.
@@ -26,8 +26,9 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
-const dist = join(root, 'dist');
-const manifestPath = join(root, 'published-manifest.json');
+// Overridable for tests (test/releases.test.mjs runs this checker against a fixture).
+const dist = process.env.DATAMODELS_DIST ?? join(root, 'dist');
+const manifestPath = process.env.DATAMODELS_MANIFEST ?? join(root, 'published-manifest.json');
 const record = process.argv.includes('--record');
 
 const EXACT_VERSION = /(^|[^0-9A-Za-z])v\d+\.\d+\.\d+\.[A-Za-z0-9.]+$/;
@@ -35,7 +36,7 @@ const EXACT_VERSION = /(^|[^0-9A-Za-z])v\d+\.\d+\.\d+\.[A-Za-z0-9.]+$/;
 function isImmutable(relPath) {
   const p = relPath.split(sep).join('/');
   if (p.startsWith('context/mirror/')) return true;
-  if (!p.startsWith('context/') && !p.startsWith('schema/')) return false;
+  if (!p.startsWith('context/') && !p.startsWith('schema/') && !p.startsWith('vocab/')) return false;
   return EXACT_VERSION.test(p.slice(p.lastIndexOf('/') + 1));
 }
 

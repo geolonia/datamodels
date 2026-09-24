@@ -1,13 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://models.geonicdb.com/schema/disaster/IncidentPhoto/v3.0.0.json",
+  "$id": "https://datamodels.jp/schema/disaster/IncidentPhoto/v1.0.0.json",
   "title": "IncidentPhoto",
   "description": "Metadata for one on-site photo attached to an incident report. The image stays in external storage; contentUrl points at it. A subclass of Attachment in the task subject.",
-  "x-version": "3.0.0",
-  "x-license-url": "https://models.geonicdb.com/LICENSE-CONTENT",
+  "x-version": "1.0.0",
+  "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
   "x-model-tags": "GeonicDB, disaster-response, Japan",
   "x-derived-from": "https://github.com/geolonia/geonicdb-datamodels",
-  "x-subclass-of": "https://models.geonicdb.com/ns/task/Attachment",
+  "x-subclass-of": "https://datamodels.jp/ns/task/Attachment",
   "type": "object",
   "properties": {
     "id": {
@@ -26,12 +26,9 @@
       "description": "The incident report this entity refers to",
       "x-ngsi": {
         "type": "Relationship",
-        "target": "https://models.geonicdb.com/ns/disaster/IncidentReport"
+        "target": "https://datamodels.jp/ns/disaster/IncidentReport"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/task",
-      "x-geonicdb": {
-        "indexed": true
-      }
+      "x-iri": "https://datamodels.jp/ns/task/task"
     },
     "author": {
       "type": "string",
@@ -58,7 +55,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/filename"
+      "x-iri": "https://datamodels.jp/ns/task/filename"
     },
     "location": {
       "description": "Where the photo was taken",

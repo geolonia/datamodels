@@ -2,9 +2,9 @@
 layout: home
 
 hero:
-  name: GeonicDB Data Models
+  name: datamodels.jp
   text: NGSI-LD data models catalog
-  tagline: Smart Data Models extended for Japan, with @context files and JSON Schemas at stable URLs
+  tagline: Data models that work in practice in Japan, as @context files, JSON Schemas and vocabularies at URLs that never change. Existing standards are extended, not copied
   actions:
     - theme: brand
       text: All data models
@@ -14,7 +14,7 @@ hero:
       link: /catalog.json
     - theme: alt
       text: GitHub
-      link: https://github.com/geolonia/geonicdb-models
+      link: https://github.com/geolonia/datamodels
 
 features:
   - title: Extend, do not duplicate
@@ -25,12 +25,12 @@ features:
     details: Published versioned @context files and JSON Schemas are never modified or removed. The guide says which URL to use when.
     link: /en/guide/urls
     linkText: The URL contract
-  - title: Ready for GeonicDB
-    details: Every model ships as a Custom Data Model definition. The guide walks from registration to the first entity.
+  - title: Validated examples and adapters
+    details: Every example is validated in CI. Broker adapters (GeonicDB today) generate a ready-made definition per model.
     link: /en/guide/geonicdb
     linkText: Use with GeonicDB
   - title: Other catalogs
-    details: Smart Data Models, the Digital Agency's GIF, the recommended datasets and more, and how this catalog relates to them.
+    details: Smart Data Models, the Digital Agency's GIF and municipal standard open datasets, and more, and how this catalog relates to them.
     link: /en/guide/catalogs
     linkText: Other data model catalogs
 ---

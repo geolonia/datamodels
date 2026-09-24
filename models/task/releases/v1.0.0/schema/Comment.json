@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://models.geonicdb.com/schema/task/Comment/v1.0.0.json",
+  "$id": "https://datamodels.jp/schema/task/Comment/v1.0.0.json",
   "title": "Comment",
   "description": "A note, handover or reply on a task. Field change history is not a comment; the temporal API keeps history.",
   "x-version": "1.0.0",
-  "x-license-url": "https://models.geonicdb.com/LICENSE-CONTENT",
+  "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
   "x-model-tags": "GeonicDB, task management",
   "x-derived-from": "https://www.rfc-editor.org/rfc/rfc8984.html",
   "type": "object",
@@ -25,9 +25,9 @@
       "description": "The task this belongs to",
       "x-ngsi": {
         "type": "Relationship",
-        "target": "https://models.geonicdb.com/ns/task/Task"
+        "target": "https://datamodels.jp/ns/task/Task"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/task"
+      "x-iri": "https://datamodels.jp/ns/task/task"
     },
     "author": {
       "type": "string",
@@ -59,7 +59,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/textFormat"
+      "x-iri": "https://datamodels.jp/ns/task/textFormat"
     },
     "inReplyTo": {
       "type": "string",
@@ -67,9 +67,9 @@
       "description": "The comment this replies to",
       "x-ngsi": {
         "type": "Relationship",
-        "target": "https://models.geonicdb.com/ns/task/Comment"
+        "target": "https://datamodels.jp/ns/task/Comment"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/inReplyTo"
+      "x-iri": "https://datamodels.jp/ns/task/inReplyTo"
     },
     "isPrivate": {
       "type": "boolean",
@@ -77,7 +77,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/isPrivate"
+      "x-iri": "https://datamodels.jp/ns/task/isPrivate"
     },
     "sentAt": {
       "type": "string",
@@ -103,7 +103,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/externalId"
+      "x-iri": "https://datamodels.jp/ns/task/externalId"
     }
   },
   "required": [

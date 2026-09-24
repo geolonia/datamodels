@@ -2,6 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   // The Worker name must match the Worker created in the Cloudflare dashboard
   // (Workers Builds rejects a mismatch). Same account as geonicdb-status.
+  // Renaming it means renaming the Worker in the dashboard at the same time.
   "name": "geonicdb-models",
   "compatibility_date": "2026-08-01",
   "observability": { "enabled": true },
@@ -15,9 +16,14 @@
     "not_found_handling": "404-page"
   },
 
-  // Custom domain: deploying creates the DNS record and certificate in the
-  // geonicdb.com zone, so no manual DNS step is needed.
+  // Custom domains: deploying creates the DNS record and certificate in each
+  // zone (both zones are in this Cloudflare account). datamodels.jp is the
+  // catalog. models.geonicdb.com is the pre-launch hostname: it stays attached
+  // so its DNS record exists, and a Redirect Rule on the geonicdb.com zone
+  // answers every request there with a 301 to the same path on datamodels.jp
+  // before the Worker runs (see README, Deployment).
   "routes": [
+    { "pattern": "datamodels.jp", "custom_domain": true },
     { "pattern": "models.geonicdb.com", "custom_domain": true }
   ]
 }
