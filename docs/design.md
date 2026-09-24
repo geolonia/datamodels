@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | Launch of 1.0.0 in preparation ([launch plan #30](https://github.com/geolonia/datamodels/issues/30)) |
+| Status | Pre-release on datamodels.jp since 2026-09-24; official launch pending ([launch plan #30](https://github.com/geolonia/datamodels/issues/30)) |
 | Author | Daniel Kastl |
 | Decisions | Domain `datamodels.jp` (2026-09-18); Cloudflare Workers static assets; repository `geolonia/datamodels`; Apache-2.0 code, CC BY 4.0 content (licence under review); every subject restarts at 1.0.0 at launch |
 | History | Started 2026-09-17 as `geonicdb-docs/design/ngsi-ld-data-models-catalog.md` for a GeonicDB catalog at `models.geonicdb.com`; moved here and rewritten for the product-neutral catalog on 2026-09-24 |
@@ -149,7 +149,8 @@ Every validator rule has a test proving that it fires.
 - One semantic version per subject, shared by its context, vocabulary and schemas. Adding attributes is a minor version; renaming or removing is a major version. Superseded attributes are marked `x-deprecated` for at least one minor version.
 - `npm run manifest:record` snapshots the version into `releases/` and records its hashes; every published version keeps being served.
 - Every model carries a status: `draft`, `stable` or `deprecated`. A model becomes `stable` once two independent implementations are recorded in its `ADOPTERS.yaml`: two organisations or genuinely separate systems, not two tenants of one product.
-- Pre-release history (2026-09-17 to the launch) was dropped: every subject restarts at 1.0.0 on `datamodels.jp`, with all models as drafts.
+- Pre-release history on models.geonicdb.com (2026-09-17 to 2026-09-24) was dropped: every subject restarted at 1.0.0 on `datamodels.jp`, with all models as drafts.
+- The catalog stays in pre-release until the official launch: the site shows a banner, and published files, `v1.0.0` included, may still be corrected in place under the README's documented procedure. At the official launch the banner and the exception are removed, and CI additionally compares `published-manifest.json` with main's so that a pull request cannot rewrite recorded entries.
 
 ## Adapters
 

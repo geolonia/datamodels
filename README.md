@@ -46,7 +46,9 @@ node adapters/geonicdb/export.mjs <subject> [--type T] [--type-prefix P | --type
 
 1. Edit or add files under `models/<subject>/`. Every attribute needs a context term (or a core-context term) and ja/en descriptions; never redefine a core-context term such as `status`.
 2. `npm run check` and `npm test` must pass. CI runs both on every pull request.
-3. Bump the subject version for anything that changes a published file, mark superseded attributes `x-deprecated`, then run `npm run manifest:record` as the last step. It snapshots the new version into `releases/` and records its hashes in `published-manifest.json`; `npm run check` fails if a recorded file changed or disappeared. Published files are never corrected in place.
+3. Bump the subject version for anything that changes a published file, mark superseded attributes `x-deprecated`, then run `npm run manifest:record` as the last step. It snapshots the new version into `releases/` and records its hashes in `published-manifest.json`; `npm run check` fails if a recorded file changed or disappeared.
+
+**Pre-release exception, until the official launch** (launch plan #30): published files, `v1.0.0` included, may be corrected in place. Change the source, delete the affected `releases/` snapshot and its entries in `published-manifest.json`, run `npm run manifest:record`, and say so in the pull request. `npm run check:live` then confirms the deployed bytes. The exception, and the pre-release banner on the site, end at the official launch; from then on published files are never corrected in place.
 
 Every model starts as `status: draft`. It becomes `stable` once two independent implementations are recorded in its `ADOPTERS.yaml`.
 
