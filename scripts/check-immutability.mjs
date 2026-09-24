@@ -26,8 +26,9 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
-const dist = join(root, 'dist');
-const manifestPath = join(root, 'published-manifest.json');
+// Overridable for tests (test/releases.test.mjs runs this checker against a fixture).
+const dist = process.env.DATAMODELS_DIST ?? join(root, 'dist');
+const manifestPath = process.env.DATAMODELS_MANIFEST ?? join(root, 'published-manifest.json');
 const record = process.argv.includes('--record');
 
 const EXACT_VERSION = /(^|[^0-9A-Za-z])v\d+\.\d+\.\d+\.[A-Za-z0-9.]+$/;

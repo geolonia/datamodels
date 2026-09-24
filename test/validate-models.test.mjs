@@ -16,7 +16,7 @@ async function withMutatedModels(mutate, expectMessage) {
   try {
     await cp(join(root, 'models'), dir, { recursive: true });
     await mutate(dir);
-    const r = spawnSync(process.execPath, [join(root, 'scripts', 'validate-models.mjs')], { env: { ...process.env, GEONICDB_MODELS_DIR: dir }, encoding: 'utf8' });
+    const r = spawnSync(process.execPath, [join(root, 'scripts', 'validate-models.mjs')], { env: { ...process.env, DATAMODELS_MODELS_DIR: dir }, encoding: 'utf8' });
     assert.equal(r.status, 1, `validator should fail\nstdout: ${r.stdout}\nstderr: ${r.stderr}`);
     assert.match(r.stderr, expectMessage);
   } finally {

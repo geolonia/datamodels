@@ -5,8 +5,8 @@ import { dirname, join } from 'node:path';
 import YAML from 'yaml';
 
 export const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
-// GEONICDB_MODELS_DIR lets the test suite point the loader at a mutated copy.
-export const MODELS_DIR = process.env.GEONICDB_MODELS_DIR ?? join(ROOT, 'models');
+// DATAMODELS_MODELS_DIR lets the test suite point the loader at a mutated copy.
+export const MODELS_DIR = process.env.DATAMODELS_MODELS_DIR ?? join(ROOT, 'models');
 export const DIST = join(ROOT, 'dist');
 export const BASE_URL = 'https://datamodels.jp';
 export const CORE_CONTEXT_URL = 'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld';
