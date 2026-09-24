@@ -1,4 +1,0 @@
-notes:
-  - Derived from the Custom Data Models of the Takamatsu City flood-prevention headquarters application (geolonia/geonicdb-datamodels, September 2026). Type names generalised from the tenant-specific "Saitai" prefix; attribute names aligned with the task subject.
-  - "An alias of the task subject's Project: the same IRI and the same attributes, under the name disaster response uses. A tenant that stores DisasterEvent and one that stores Project hold the same type."
-license: CC BY 4.0 (see /LICENSE-CONTENT.md)

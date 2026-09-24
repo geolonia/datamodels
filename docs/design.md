@@ -62,8 +62,8 @@ Rules:
 - Never redefine a protected term of the NGSI-LD core context (`status`, `description`, `location`, ...). The validator rejects it.
 - Namespaces are organised by subject (`task`, `disaster`, `common`), never by region, language, customer or project. There is no `/jp/` segment: whether a model is Japan-specific is catalog metadata, not part of a permanent identifier.
 - Shared building blocks (the address, codes) live once in `common`, are referenced from schemas with `$ref` and composed into contexts by listing the context URL.
-- **Alias** (`x-alias-of`): another name for a type the catalog already defines, with the same IRI, attributes and required fields. `DisasterEvent` is an alias of the task subject's `Project`. An alias owns no IRI and no class.
-- **Subclass** (`x-subclass-of`): an own type IRI whose attributes of the same name keep the parent's IRIs and NGSI type, with the parent's required attributes still required. `IncidentReport` is a subclass of `Task`. The relation is published as `rdfs:subClassOf` in the subject's vocabulary, so tools other than this validator see it.
+- **Alias** (`x-alias-of`): another name for a type the catalog already defines, with the same IRI, attributes and required fields. An alias owns no IRI and no class; use it when a domain names an existing type differently.
+- **Subclass** (`x-subclass-of`): an own type IRI whose attributes of the same name keep the parent's IRIs and NGSI type, with the parent's required attributes still required. Use it when a domain needs its own type, for example for its own access rules or extra attributes. The relation is published as `rdfs:subClassOf` in the subject's vocabulary, so tools other than this validator see it.
 - Record the upstream candidates considered, and why they did not fit, in each model's `notes.yaml`.
 
 ## Conventions borrowed
@@ -151,6 +151,7 @@ Every validator rule has a test proving that it fires.
 - Every model carries a status: `draft`, `stable` or `deprecated`. A model becomes `stable` once two independent implementations are recorded in its `ADOPTERS.yaml`: two organisations or genuinely separate systems, not two tenants of one product.
 - Pre-release history on models.geonicdb.com (2026-09-17 to 2026-09-24) was dropped: every subject restarted at 1.0.0 on `datamodels.jp`, with all models as drafts.
 - The catalog stays in pre-release until the official launch: the site shows a banner, and published files, `v1.0.0` included, may still be corrected in place under the README's documented procedure. At the official launch the banner and the exception are removed, and CI additionally compares `published-manifest.json` with main's so that a pull request cannot rewrite recorded entries.
+- Decided 2026-09-24, under the pre-release exception: `DisasterEvent`, `IncidentReport`, `IncidentResponseAction`, `IncidentHandoverNote` and `IncidentPhoto` were removed from `disaster` 1.0.0 in place, without a version bump, because none of them had an external standard behind it. The catalog publishes models built on an existing standard or guideline; `RoadClosure` and `EvacuationShelter` stay and are rebuilt on national guidelines.
 
 ## Adapters
 

@@ -8,7 +8,7 @@
   "relatedTo": [
     "urn:ngsi-ld:Task:takamatsu:1198"
   ],
-  "refersTo": "urn:ngsi-ld:IncidentReport:2026-typhoon-10-012",
+  "refersTo": "urn:ngsi-ld:RoadClosure:2026-typhoon-10-003",
   "progress": "in-process",
   "statusLabel": "対応中",
   "subtype": "現地確認",

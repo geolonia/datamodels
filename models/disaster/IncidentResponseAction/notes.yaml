@@ -1,4 +1,0 @@
-notes:
-  - Derived from the Custom Data Models of the Takamatsu City flood-prevention headquarters application (geolonia/geonicdb-datamodels, September 2026). Type names generalised from the tenant-specific "Saitai" prefix; attribute names aligned with the task subject.
-  - "A subclass of task Task with the incident report as its parent. From the source application: task → parent, content → name, isDone → progress, assignee (a free-text team name) → a multi-valued Relationship to team or person entities, updatedAt → dateModified. project is optional; the parent report carries the disaster event."
-license: CC BY 4.0 (see /LICENSE-CONTENT.md)

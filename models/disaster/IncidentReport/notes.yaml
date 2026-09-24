@@ -1,5 +1,0 @@
-notes:
-  - Derived from the Custom Data Models of the Takamatsu City flood-prevention headquarters application (geolonia/geonicdb-datamodels, September 2026). Type names generalised from the tenant-specific "Saitai" prefix; attribute names aligned with the task subject.
-  - "A subclass of task Task: attributes with Task names carry the Task IRIs. From the source application: index → externalId (string), status → progress + statusLabel (status is a protected term of the NGSI-LD core context), category → subtype, memo → description, inputterTeam/inputterName → author (a Relationship to a person or team entity), updatedAt → dateModified; name is required, as Task requires it."
-  - pressReleaseStatus drops the empty-string enum member of the original; the attribute is simply omitted instead.
-license: CC BY 4.0 (see /LICENSE-CONTENT.md)
