@@ -54,9 +54,10 @@ Contributions in Japanese or English are welcome as issues or pull requests.
 
 ## Deployment
 
-Cloudflare Workers Builds watches this repository and deploys `main`; no credential lives in GitHub. Dashboard settings on the `geonicdb-models` Worker: build command `npm ci && npm run build:deploy`, deploy command `npx wrangler deploy`, root `/`, non-production builds off. Both custom domains are declared in `wrangler.jsonc`. After a deploy, run `npm run check:live`.
+Cloudflare Workers Builds watches this repository and deploys `main`; no credential lives in GitHub. Dashboard settings on the `geonicdb-models` Worker: build command `npm ci && npm run build:deploy`, deploy command `npx wrangler deploy`, root `/`, non-production builds off. The custom domain is declared in `wrangler.jsonc`. After a deploy, run `npm run check:live`.
 
-`models.geonicdb.com`, the pre-launch hostname, answers every request with a `301` to the same path on `datamodels.jp`. This is a Redirect Rule on the `geonicdb.com` zone, not part of the Worker: `http.host eq "models.geonicdb.com"` → dynamic target `concat("https://datamodels.jp", http.request.uri.path)`, status 301, query string preserved. The hostname stays attached to the Worker so its DNS record exists.
+`models.geonicdb.com`, the pre-launch preview, is retired and must not answer. `wrangler deploy` does not detach a custom domain that disappears from `wrangler.jsonc`, so if it still responds, remove it under the Worker's Settings → Domains & Routes; that also deletes its DNS record.
+
 
 ## Licences
 
