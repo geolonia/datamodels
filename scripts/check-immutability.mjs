@@ -6,7 +6,7 @@
 // it and fails when a recorded file is missing or has different content.
 //
 // Which files are immutable:
-//   - dist/context/**  and  dist/schema/**  whose file name carries an exact
+//   - dist/context/**, dist/schema/** and dist/vocab/**  whose file name carries an exact
 //     version, e.g. v1.0.0.jsonld or v2.3.1.json. Aliases such as v1.jsonld
 //     are mutable by design (they advance to the latest compatible version)
 //     and are not recorded.
@@ -35,7 +35,7 @@ const EXACT_VERSION = /(^|[^0-9A-Za-z])v\d+\.\d+\.\d+\.[A-Za-z0-9.]+$/;
 function isImmutable(relPath) {
   const p = relPath.split(sep).join('/');
   if (p.startsWith('context/mirror/')) return true;
-  if (!p.startsWith('context/') && !p.startsWith('schema/')) return false;
+  if (!p.startsWith('context/') && !p.startsWith('schema/') && !p.startsWith('vocab/')) return false;
   return EXACT_VERSION.test(p.slice(p.lastIndexOf('/') + 1));
 }
 

@@ -22,6 +22,11 @@
   Content-Type: application/ld+json; charset=utf-8
   Cache-Control: public, max-age=300
 
+# Vocabularies (RDFS classes, subclass relations, labels), same versioning rules.
+/vocab/*.jsonld
+  Content-Type: application/ld+json; charset=utf-8
+  Cache-Control: public, max-age=300
+
 # JSON Schemas, same versioning rules.
 /schema/*.json
   Content-Type: application/schema+json; charset=utf-8

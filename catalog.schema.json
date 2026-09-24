@@ -142,6 +142,11 @@
               "type": "string",
               "format": "uri"
             }
+          },
+          "vocabularyUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "The subject's RDFS vocabulary (classes, rdfs:subClassOf, labels) at this exact version."
           }
         }
       }

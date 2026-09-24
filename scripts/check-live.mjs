@@ -38,6 +38,8 @@ for (const subject of subjects) {
   for (const release of await listReleases(subject)) {
     for (const f of release.files) { const rr = await head(f.url); expect(rr.status === 200 && isImmutable(rr), `${f.url}: released file ${rr.status} ${h(rr, 'cache-control')}`); }
   }
+  r = await head(u.vocabExact);
+  expect(r.status === 200 && h(r, 'content-type').startsWith('application/ld+json') && isImmutable(r), `${u.vocabExact}: ${r.status} ${h(r, 'content-type')} ${h(r, 'cache-control')}`);
   r = await head(u.contextAlias);
   expect(r.status === 200 && !/immutable/.test(h(r, 'cache-control')), `${u.contextAlias}: alias must not be immutable (${r.status}, ${h(r, 'cache-control')})`);
   r = await head(u.page); expect(r.status === 200, `${u.page}: ${r.status}`);

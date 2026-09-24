@@ -15,6 +15,9 @@
     "schema/task/Attachment/v1.0.0.json": "92d7b4b16b253fdd42c9f095e37fd5f45134dc99c3314c2d18e5147920c0fb2c",
     "schema/task/Comment/v1.0.0.json": "10260a3884fed677710da58bdd49638412a393306b64ff91975df20135688c12",
     "schema/task/Project/v1.0.0.json": "0767003d990f3ad7d33c37aeea497914c00b617b215381b8e41ec39deed9594f",
-    "schema/task/Task/v1.0.0.json": "ad78fdfafb1460a2701f3dfffb82c659789a3940b7ab294be3677fdba237346a"
+    "schema/task/Task/v1.0.0.json": "ad78fdfafb1460a2701f3dfffb82c659789a3940b7ab294be3677fdba237346a",
+    "vocab/common/v1.0.0.jsonld": "9d28800476b5b53fc730bfccbb2098e51a89559ad35642dbf287c04f23ec3233",
+    "vocab/disaster/v1.0.0.jsonld": "a415c3f5dce73b626c14d807329de15d4adc018dbc89accb2e8ef95a6192f36e",
+    "vocab/task/v1.0.0.jsonld": "87b00eab2ee56806f0183986bcd44dee161250c5fe57d09e1345aa6f260d89d9"
   }
 }

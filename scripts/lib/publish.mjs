@@ -7,6 +7,7 @@ import addFormats from 'ajv-formats';
 import { loadSubjects, attributesOf, subjectUrls, modelUrls, DIST, ROOT, BASE_URL } from './models.mjs';
 import { listReleases } from './releases.mjs';
 import { sharedTerms } from './shared-terms.mjs';
+import { buildVocabulary } from './vocab.mjs';
 
 const rel = (url) => url.slice(BASE_URL.length).replace(/^\//, '');
 async function write(url, content) {
@@ -36,6 +37,11 @@ export async function publishModels(subjects, adapters = []) {
     }
     await write(u.contextExact, json(subject.context)); immutable(u.contextExact);
     await write(u.contextAlias, json(subject.context));
+    const vocab = json(buildVocabulary(subject));
+    await write(u.vocabExact, vocab); immutable(u.vocabExact);
+    await write(u.vocabAlias, vocab);
+    // The namespace IRI itself resolves to the subject page.
+    redirects.push(`/ns/${subject.name}/  /models/${subject.name}/  302`);
     const shared = sharedTerms(subject);
     // Only IRIs minted in this namespace get a redirect; reused IRIs (schema.org, task, core) resolve elsewhere.
     for (const [name, types] of shared) {
@@ -58,7 +64,7 @@ export async function publishModels(subjects, adapters = []) {
       }
       catalog.models.push({
         type: model.type, kind: model.kind, typeIri: mu.typeIri, subject: subject.name, domain: subject.name, source: subject.source,
-        contextUrl: u.contextExact, contextAliasUrl: u.contextAlias, schemaUrl: mu.schemaExact, version: subject.version,
+        contextUrl: u.contextExact, contextAliasUrl: u.contextAlias, schemaUrl: mu.schemaExact, vocabularyUrl: u.vocabExact, version: subject.version,
         status: model.catalog.status ?? 'draft', title: model.catalog.title, description: model.catalog.description,
         sampleProperties: attributesOf(model).map(([n]) => n), pageUrl: mu.page,
         ...(Object.keys(adapterUrls).length ? { adapters: adapterUrls } : {}),

@@ -24,6 +24,8 @@ export function subjectUrls(subject) {
   return {
     contextExact: `${BASE_URL}/context/${subject.name}/v${subject.version}.jsonld`,
     contextAlias: `${BASE_URL}/context/${subject.name}/v${major}.jsonld`,
+    vocabExact: `${BASE_URL}/vocab/${subject.name}/v${subject.version}.jsonld`,
+    vocabAlias: `${BASE_URL}/vocab/${subject.name}/v${major}.jsonld`,
     namespace: `${BASE_URL}/ns/${subject.name}/`,
     page: `${BASE_URL}/models/${subject.name}/`,
   };

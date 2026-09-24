@@ -1,0 +1,301 @@
+{
+  "@context": {
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "label": {
+      "@id": "rdfs:label",
+      "@container": "@language"
+    },
+    "comment": {
+      "@id": "rdfs:comment",
+      "@container": "@language"
+    },
+    "subClassOf": {
+      "@id": "rdfs:subClassOf",
+      "@type": "@id"
+    },
+    "isDefinedBy": {
+      "@id": "rdfs:isDefinedBy",
+      "@type": "@id"
+    },
+    "seeAlso": {
+      "@id": "rdfs:seeAlso",
+      "@type": "@id"
+    },
+    "versionInfo": "owl:versionInfo"
+  },
+  "@graph": [
+    {
+      "@id": "https://datamodels.jp/ns/disaster/",
+      "@type": "owl:Ontology",
+      "label": {
+        "ja": "災害対応",
+        "en": "Disaster response"
+      },
+      "comment": {
+        "ja": "自治体の災害対応を表すデータモデル。災害対応はタスク管理の一種としてモデル化しており、災害事象（DisasterEvent）はタスク管理の Project のエイリアス、通報・対応業務・申し送り・現地写真は Task・Comment・Attachment のサブクラスです。タスク管理向けのクライアントはこれらをそのまま読めます。通行止めと避難所運用状況は独自の型です。高松市の水防アプリのデータモデルを基に汎用化したもの。",
+        "en": "Data models for municipal disaster response. Disaster response is modelled as task management: DisasterEvent is an alias of the task subject's Project, and incident reports, response actions, handover notes and photos are subclasses of Task, Comment and Attachment, so a client written for task management reads them unchanged. Road closures and shelter operation are types of their own. Generalised from the data models of Takamatsu City's flood-response application."
+      },
+      "versionInfo": "1.0.0",
+      "seeAlso": "https://datamodels.jp/context/disaster/v1.0.0.jsonld"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/EvacuationShelter",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "避難所運用状況",
+        "en": "Evacuation shelter operation"
+      },
+      "comment": {
+        "ja": "避難所の運用状況オーバーレイ1件。避難所そのもののマスタ（名称・位置）は含まず、外部の避難所データを externalShelterId で参照する。開設状況と避難者数だけを持つ。",
+        "en": "Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included; it is referenced by externalShelterId. Only opening status and evacuee counts live here."
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/EvacuationShelter/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/IncidentHandoverNote",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "申し送り",
+        "en": "Incident handover note"
+      },
+      "comment": {
+        "ja": "通報に対する申し送り 1 件。送信元・送信先と内容を持つ。タスク管理サブジェクトの Comment のサブクラス。",
+        "en": "One handover note about an incident report, from one team to another. A subclass of Comment in the task subject."
+      },
+      "subClassOf": "https://datamodels.jp/ns/task/Comment",
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/IncidentHandoverNote/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/IncidentPhoto",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "現地写真",
+        "en": "Incident photo"
+      },
+      "comment": {
+        "ja": "通報に紐づく現地写真のメタデータ 1 件。画像本体は外部ストレージに置き、contentUrl で参照する。タスク管理サブジェクトの Attachment のサブクラス。",
+        "en": "Metadata for one on-site photo attached to an incident report. The image stays in external storage; contentUrl points at it. A subclass of Attachment in the task subject."
+      },
+      "subClassOf": "https://datamodels.jp/ns/task/Attachment",
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/IncidentPhoto/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/IncidentReport",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "通報",
+        "en": "Incident report"
+      },
+      "comment": {
+        "ja": "住民や職員からの通報 1 件。位置、カテゴリ、対応状況、入力者、通報者（個人情報）を持つ。タスク管理サブジェクトの Task のサブクラスで、name・progress などの属性はタスクの IRI を共有する。",
+        "en": "One report from a resident or staff member: location, category, response status, who entered it, and the reporter (personal data). A subclass of Task in the task subject: name, progress and the other shared attributes use the task IRIs."
+      },
+      "subClassOf": "https://datamodels.jp/ns/task/Task",
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/IncidentReport/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/IncidentResponseAction",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "対応業務",
+        "en": "Incident response action"
+      },
+      "comment": {
+        "ja": "通報に対する対応業務 1 件。内容、担当、完了状態を持つ。タスク管理サブジェクトの Task のサブクラスで、通報を parent とする。",
+        "en": "One response action taken for an incident report: what, who, done or not. A subclass of Task in the task subject with the report as its parent."
+      },
+      "subClassOf": "https://datamodels.jp/ns/task/Task",
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/IncidentResponseAction/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/RoadClosure",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "通行止め",
+        "en": "Road closure"
+      },
+      "comment": {
+        "ja": "通行止め 1 件。路線名、区間（LineString）、状態、期間を持つ。",
+        "en": "One road closure: road name, closed section as a LineString, state and period."
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/RoadClosure/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/closedAt",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "closedAt"
+      },
+      "comment": {
+        "ja": "閉鎖日時",
+        "en": "Time the shelter closed"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/EvacuationShelter/#closedAt"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/closureStatus",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "closureStatus"
+      },
+      "comment": {
+        "ja": "正規化した状態。Smart Data Models RoadSegment.status の値域: closed（通行不可）、limited（片側通行など）、open（解除済み、または未実施）。現場の呼び方は statusLabel に",
+        "en": "Normalised closure state, the value space of Smart Data Models RoadSegment.status: closed (no traffic), limited (traffic possible but not in full capacity), open (closure lifted or not yet in place). The local wording goes in statusLabel"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/RoadClosure/#closureStatus"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/evacueeFemale",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "evacueeFemale"
+      },
+      "comment": {
+        "ja": "避難人数（女）",
+        "en": "Number of female evacuees"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/EvacuationShelter/#evacueeFemale"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/evacueeHouseholds",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "evacueeHouseholds"
+      },
+      "comment": {
+        "ja": "避難世帯数",
+        "en": "Number of evacuated households"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/EvacuationShelter/#evacueeHouseholds"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/evacueeMale",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "evacueeMale"
+      },
+      "comment": {
+        "ja": "避難人数（男）",
+        "en": "Number of male evacuees"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/EvacuationShelter/#evacueeMale"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/evacueeTotal",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "evacueeTotal"
+      },
+      "comment": {
+        "ja": "避難人数合計",
+        "en": "Total number of evacuees"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/EvacuationShelter/#evacueeTotal"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/externalShelterId",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "externalShelterId"
+      },
+      "comment": {
+        "ja": "自治体の指定緊急避難場所一覧（自治体標準オープンデータセット）における ID（自治体内で一意。例 CC0100022200）。localGovernmentCode と合わせて全国で一意になる",
+        "en": "The shelter's ID in the municipality's 指定緊急避難場所一覧 (自治体標準オープンデータセット, the municipal standard open dataset; unique within the municipality, e.g. CC0100022200). Together with localGovernmentCode it identifies the shelter nationwide"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/EvacuationShelter/#externalShelterId"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/openedAt",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "openedAt"
+      },
+      "comment": {
+        "ja": "開設日時",
+        "en": "Time the shelter opened"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/EvacuationShelter/#openedAt"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/openingStatus",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "openingStatus"
+      },
+      "comment": {
+        "ja": "正規化した開設状況: open（開設中）、closed（未開設・閉鎖）、full（満員）。現場の呼び方は statusLabel に",
+        "en": "Normalised opening state: open, closed, full (open but at capacity). The local wording goes in statusLabel"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/EvacuationShelter/#openingStatus"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/pressReleaseStatus",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "pressReleaseStatus"
+      },
+      "comment": {
+        "ja": "プレスリリース区分",
+        "en": "Press-release status"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/IncidentReport/#pressReleaseStatus"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/reporterAddress",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "reporterAddress"
+      },
+      "comment": {
+        "ja": "通報者住所【個人情報】",
+        "en": "Reporter address (personal data)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/IncidentReport/#reporterAddress"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/reporterName",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "reporterName"
+      },
+      "comment": {
+        "ja": "通報者名【個人情報】",
+        "en": "Reporter name (personal data)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/IncidentReport/#reporterName"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/reporterPhone",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "reporterPhone"
+      },
+      "comment": {
+        "ja": "通報者電話番号【個人情報】",
+        "en": "Reporter phone number (personal data)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/IncidentReport/#reporterPhone"
+    }
+  ]
+}
