@@ -48,21 +48,18 @@ test('extend attributes need ngsiType and valueType', () => {
   assert.throws(() => toCustomDataModel(disaster, roadClosure, { extend: { propertyDetails: { x: { example: 1 } } } }), /needs ngsiType and valueType/);
 });
 
-const event = disaster.models.find((m) => m.type === 'DisasterEvent');
-const action = disaster.models.find((m) => m.type === 'IncidentResponseAction');
-
 test('typeName and rename produce aliases that keep the catalog IRIs', () => {
-  const b = toCustomDataModel(disaster, event, { typeName: 'Saigai', contextUrl: 'https://example.com/context/city.jsonld' });
+  const b = toCustomDataModel(disaster, roadClosure, { typeName: 'Saigai', contextUrl: 'https://example.com/context/city.jsonld' });
   assert.equal(b.type, 'Saigai');
   assert.equal(b.contextUrl, 'https://example.com/context/city.jsonld');
-  const a = toCustomDataModel(disaster, action, { rename: { assignee: 'responsibleTeam' } });
-  assert.ok(a.propertyDetails.responsibleTeam && !a.propertyDetails.assignee);
-  assert.equal(a.propertyDetails.responsibleTeam['@context'], 'https://datamodels.jp/ns/task/assignee');
+  const a = toCustomDataModel(disaster, roadClosure, { rename: { project: 'incidentRef' } });
+  assert.ok(a.propertyDetails.incidentRef && !a.propertyDetails.project);
+  assert.equal(a.propertyDetails.incidentRef['@context'], 'https://datamodels.jp/ns/task/project');
 });
 
 test('rename rejects unknown attributes, non-ASCII aliases and collisions', () => {
-  assert.throws(() => toCustomDataModel(disaster, action, { rename: { nope: 'x' } }), /not an attribute/);
-  assert.throws(() => toCustomDataModel(disaster, action, { rename: { assignee: '担当班' } }), /must match/);
-  assert.throws(() => toCustomDataModel(disaster, action, { rename: { assignee: 'name' } }), /collides/);
-  assert.throws(() => toCustomDataModel(disaster, action, { rename: { assignee: 'x', name: 'x' } }), /same alias/);
+  assert.throws(() => toCustomDataModel(disaster, roadClosure, { rename: { nope: 'x' } }), /not an attribute/);
+  assert.throws(() => toCustomDataModel(disaster, roadClosure, { rename: { project: '担当班' } }), /must match/);
+  assert.throws(() => toCustomDataModel(disaster, roadClosure, { rename: { project: 'roadName' } }), /collides/);
+  assert.throws(() => toCustomDataModel(disaster, roadClosure, { rename: { project: 'x', roadName: 'x' } }), /same alias/);
 });
