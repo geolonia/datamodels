@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://datamodels.jp/catalog.schema.json",
-  "title": "GeonicDB data models catalog index",
-  "description": "Wire format of catalog.json, read by GeonicDB, its console, CLI and MCP tool. Within a formatVersion fields are only added, never removed or retyped, so consumers must ignore unknown fields and this schema does not forbid them.",
+  "title": "datamodels.jp catalog index",
+  "description": "Wire format of catalog.json, the machine-readable index of every model, read by brokers, tools and agents. Within a formatVersion fields are only added, never removed or retyped, so consumers must ignore unknown fields and this schema does not forbid them.",
   "type": "object",
   "required": [
     "formatVersion",

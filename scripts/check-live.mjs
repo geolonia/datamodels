@@ -55,7 +55,7 @@ for (const subject of subjects) {
       expect(r.status === 302 && h(r, 'location') === mu.page.replace(BASE_URL, ''), `${mu.typeIri}: ${r.status} -> ${h(r, 'location')}`);
     }
     r = await head(mu.page); expect(r.status === 200, `${mu.page}: ${r.status}`);
-    // Value types have no GeonicDB body and no normalized example of their own.
+    // Value types have no adapter files and no normalized example of their own.
     if (model.kind === 'value') continue;
 
     const norm = model.examples['example-normalized.jsonld'];

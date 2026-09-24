@@ -1,5 +1,4 @@
-// Same theme as docs.geonicdb.com (geolonia/geonicdb-docs): the default
-// VitePress theme with its hero text sizing.
+// The default VitePress theme with hero text sizing (custom.css).
 import DefaultTheme from 'vitepress/theme'
 import './custom.css'
 

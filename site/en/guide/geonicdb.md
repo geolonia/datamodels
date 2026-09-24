@@ -97,18 +97,18 @@ Three ways, in increasing order of rigour.
    ```
 
    ```bash
-   node scripts/export-geonicdb.mjs disaster --type RoadClosure --extend ./acme.json --out ./out
+   node adapters/geonicdb/export.mjs disaster --type RoadClosure --extend ./acme.json --out ./out
    ```
 
-3. **Propose it to the catalog.** If the attribute is useful beyond your project, open an [issue](https://github.com/geolonia/geonicdb-models/issues) or a pull request. Once it lands in the next minor version, the extension is no longer needed.
+3. **Propose it to the catalog.** If the attribute is useful beyond your project, open an [issue](https://github.com/geolonia/datamodels/issues) or a pull request. Once it lands in the next minor version, the extension is no longer needed.
 
 ## Different type names
 
 A tenant that needs a prefix on its type names, for example because several projects share the tenant and authorisation policies match on the type name, can export prefixed definitions from the repository. The vocabulary (IRIs) stays the catalog's.
 
 ```bash
-git clone https://github.com/geolonia/geonicdb-models && cd geonicdb-models && npm ci
-node scripts/export-geonicdb.mjs disaster --type-prefix Saitai --out ./out
+git clone https://github.com/geolonia/datamodels && cd datamodels && npm ci
+node adapters/geonicdb/export.mjs disaster --type-prefix Acme --out ./out
 ```
 
 ## Notes

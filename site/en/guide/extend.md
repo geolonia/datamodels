@@ -46,7 +46,7 @@ Do record the upstream types you considered and why they did not fit in the mode
 
 ### Where we stand
 
-The first subject, [disaster response](/en/models/disaster/), is a port of the models running in Takamatsu City's application. Its 1.x types were minted without a comparison against upstream; 2.0.0 rebuilt it on [task management](/en/models/task/). `DisasterEvent` is an **alias** of the task subject's `Project` (same IRI, only the name follows disaster-response wording); reports, actions, handover notes and photos are **subclasses** of `Task`, `Comment` and `Attachment` (own type IRI, attributes of the same name use the parent's IRIs, declared with `x-subclass-of`). Road closures and shelters were compared against upstream (Smart Data Models `RoadSegment` and `Alert`, the Digital Agency's recommended datasets): no type fits, so both stay minted, but attribute IRIs and status value spaces are borrowed. The notes of each model and [issue #16](https://github.com/geolonia/geonicdb-models/issues/16) record the analysis.
+The first subject, [disaster response](/en/models/disaster/), is based on the data models of Takamatsu City's flood-response application and built on [task management](/en/models/task/). `DisasterEvent` is an **alias** of the task subject's `Project` (same IRI, only the name follows disaster-response wording); reports, actions, handover notes and photos are **subclasses** of `Task`, `Comment` and `Attachment` (own type IRI, attributes of the same name use the parent's IRIs, declared with `x-subclass-of`). Road closures and shelters were compared against upstream (Smart Data Models `RoadSegment` and `Alert`, the Digital Agency's municipal standard open datasets): no type fits, so both stay minted, but attribute IRIs and status value spaces are borrowed. The notes of each model and [issue #16](https://github.com/geolonia/datamodels/issues/16) record the analysis.
 
 ### Rules
 
@@ -58,10 +58,10 @@ The first subject, [disaster response](/en/models/disaster/), is a port of the m
 
 ## Contributing
 
-The catalog lives in the public repository [geolonia/geonicdb-models](https://github.com/geolonia/geonicdb-models). Japanese and English are both welcome.
+The catalog lives in the public repository [geolonia/datamodels](https://github.com/geolonia/datamodels). Japanese and English are both welcome.
 
-- **Adding or changing a model**: open a pull request using the [Smart Data Models folder layout](https://github.com/geolonia/geonicdb-models#repository-layout) (`schema.json`, `catalog.yaml`, `examples/`, `notes.yaml`). CI validates schemas, examples, `@context` expansion, protected terms and versions.
-- **Questions, proposals, reports**: open an [issue](https://github.com/geolonia/geonicdb-models/issues). "I need this model" and "I do not understand this attribute" are welcome too.
+- **Adding or changing a model**: open a pull request using the [Smart Data Models folder layout](https://github.com/geolonia/datamodels#repository-layout) (`schema.json`, `catalog.yaml`, `examples/`, `notes.yaml`). CI validates schemas, examples, `@context` expansion, protected terms and versions.
+- **Questions, proposals, reports**: open an [issue](https://github.com/geolonia/datamodels/issues). "I need this model" and "I do not understand this attribute" are welcome too.
 - **Proposing upstream**: a model that turns out to be useful beyond Japan is proposed to Smart Data Models via [incubated](https://github.com/smart-data-models/incubated). The shared folder layout exists for exactly this.
 
 Published model content is [CC BY 4.0](/LICENSE-CONTENT); the tooling is Apache-2.0.

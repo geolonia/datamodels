@@ -28,18 +28,18 @@ description: モデルを変えずに、属性名や型名を自分たちの用�
 
 ### 守ること
 
-- **短縮名は英数字と `_` だけ。** GeonicDB は属性名を `[A-Za-z0-9_]`（または完全な IRI）に限定しています。日本語のキーは context を見る前に拒否されます。他のクライアントやツールも英数字を前提にしていることが多いので、エイリアスも英数字で付けてください。
+- **短縮名は英数字と `_` だけ。** GeonicDB などのブローカーは属性名を `[A-Za-z0-9_]`（または完全な IRI）に限定しています。日本語のキーは context を見る前に拒否されます。他のクライアントやツールも英数字を前提にしていることが多いので、エイリアスも英数字で付けてください。
 - **ひとつの context の中で、ひとつの IRI にひとつの名前。** カタログの context を取り込んだ上で別名を足すと、同じ IRI に 2 つの語ができ、読み出し時にどちらで返るかは JSON-LD の規則（短いほうが優先）で決まります。確実に自分の名前で受け取りたいなら、エイリアス用の context は「使う語をすべて列挙した完全な一覧」として書き、カタログの context は取り込まないでください。カタログの context をコピーして名前を書き換えるのが早道です。
-- **型のエイリアスは、別の型ではありません。** `DisasterEvent` と `Project` は同じ IRI なので、GeonicDB では同じ型として保存・照合され、認可ポリシーも同じ型として扱います。型を分けたい（認可を型で分ける、属性を足す）場合は別の IRI が必要です。それはエイリアスではなく**サブクラス**で、災害対応の `IncidentReport` が `Task` に対してそうしているように、独自の型 IRI を持ちつつ同名の属性は親の IRI を使います（[拡張する](/guide/extend)）。
+- **型のエイリアスは、別の型ではありません。** `DisasterEvent` と `Project` は同じ IRI なので、ブローカーでは同じ型として保存・照合され、認可ポリシーも同じ型として扱います。型を分けたい（認可を型で分ける、属性を足す）場合は別の IRI が必要です。それはエイリアスではなく**サブクラス**で、災害対応の `IncidentReport` が `Task` に対してそうしているように、独自の型 IRI を持ちつつ同名の属性は親の IRI を使います（[拡張する](/guide/extend)）。
 
-### GeonicDB の Custom Data Model と組み合わせる
+### アダプターと組み合わせる（GeonicDB）
 
 Custom Data Model の `propertyDetails` のキーは短縮名です。エイリアスを使うなら、定義もエイリアスの名前で登録し、`contextUrl` にはエイリアス用の context を指定します。書き出しスクリプトが名前の置き換えをまとめて行います。
 
 ```bash
-node scripts/export-geonicdb.mjs disaster --type DisasterEvent --type-name Saigai \
+node adapters/geonicdb/export.mjs disaster --type DisasterEvent --type-name Saigai \
   --context-url https://example.com/context/city-disaster.jsonld --out ./out
-node scripts/export-geonicdb.mjs disaster --type IncidentResponseAction --rename assignee=responsibleTeam \
+node adapters/geonicdb/export.mjs disaster --type IncidentResponseAction --rename assignee=responsibleTeam \
   --context-url https://example.com/context/city-disaster.jsonld --out ./out
 ```
 

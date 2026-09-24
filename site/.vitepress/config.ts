@@ -1,5 +1,4 @@
-// VitePress config for datamodels.jp, modelled on docs.geonicdb.com
-// (geolonia/geonicdb-docs). Differences: Japanese is the root locale with no
+// VitePress config for datamodels.jp. Japanese is the root locale with no
 // /ja/ prefix, because the /ns IRI redirects point at /models/...; English is
 // under /en/. Model pages are generated from models/ at build time
 // (scripts/lib/site.mjs) and are not committed.
@@ -11,7 +10,7 @@ const subjects = await loadSubjects()
 const rel = (url: string) => url.slice(BASE_URL.length)
 
 function addVPreToInlineCode(md: MarkdownIt) {
-  // As in geonicdb-docs: keep Vue from evaluating {{ }} inside inline code.
+  // Keep Vue from evaluating {{ }} inside inline code.
   const orig = md.renderer.rules.code_inline!
   md.renderer.rules.code_inline = (tokens, idx, options, env, self) =>
     orig(tokens, idx, options, env, self).replace(/^<code/, '<code v-pre')
@@ -20,7 +19,6 @@ function addVPreToInlineCode(md: MarkdownIt) {
 const guides = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.SidebarItem[] => [
   { text: lang === 'ja' ? '拡張する・貢献する' : 'Extend and contribute', link: `${prefix}/guide/extend` },
   { text: lang === 'ja' ? '変わらない URL' : 'URLs that never change', link: `${prefix}/guide/urls` },
-  { text: lang === 'ja' ? 'GeonicDB で使う' : 'Use with GeonicDB', link: `${prefix}/guide/geonicdb` },
   { text: lang === 'ja' ? '他のデータモデルカタログ' : 'Other data model catalogs', link: `${prefix}/guide/catalogs` },
   { text: 'Tips & Tricks', link: `${prefix}/guide/tips` },
 ]
@@ -35,6 +33,10 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
       ],
     },
     { text: lang === 'ja' ? 'ガイド' : 'Guides', items: guides(prefix, lang) },
+    {
+      text: lang === 'ja' ? 'アダプター' : 'Adapters',
+      items: [{ text: lang === 'ja' ? 'GeonicDB で使う' : 'Use with GeonicDB', link: `${prefix}/guide/geonicdb` }],
+    },
     ...subjects.map((s) => ({
       text: s.title[lang],
       collapsed: false,
@@ -49,14 +51,13 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
 const nav = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.NavItem[] => [
   { text: lang === 'ja' ? 'データモデル' : 'Data models', link: `${prefix}/models/` },
   { text: lang === 'ja' ? 'ガイド' : 'Guides', items: guides(prefix, lang) },
-  { text: 'GeonicDB Docs', link: lang === 'ja' ? 'https://docs.geonicdb.com/ja/' : 'https://docs.geonicdb.com/en/' },
 ]
 
 const SITE_URL = 'https://datamodels.jp';
 
 export default defineConfig({
-  title: 'GeonicDB Data Models',
-  description: 'Curated bilingual catalog of NGSI-LD data models for GeonicDB',
+  title: 'datamodels.jp',
+  description: 'Bilingual catalog of NGSI-LD data models: JSON-LD contexts, JSON Schemas and vocabularies at stable URLs',
   base: '/',
   cleanUrls: true,
   lastUpdated: false,
@@ -64,11 +65,11 @@ export default defineConfig({
   ignoreDeadLinks: [/^\/(context|schema|examples|adapters|vocab|catalog|ns|LICENSE-CONTENT)/],
   markdown: { config: addVPreToInlineCode },
   head: [
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/geonicdb-logo.svg' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
     // Link previews (Slack, X, LINE): a PNG, absolute URL. Source: site/og-card.svg,
     // rendered with `rsvg-convert -w 1200 -h 630 -o site/public/og-image.png site/og-card.svg`.
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:site_name', content: 'GeonicDB Data Models' }],
+    ['meta', { property: 'og:site_name', content: 'datamodels.jp' }],
     ['meta', { property: 'og:image', content: `${SITE_URL}/og-image.png` }],
     ['meta', { property: 'og:image:width', content: '1200' }],
     ['meta', { property: 'og:image:height', content: '630' }],
@@ -77,8 +78,8 @@ export default defineConfig({
   // Per-page title, description and canonical URL for the same previews.
   transformPageData(pageData) {
     const path = pageData.relativePath.replace(/(^|\/)index\.md$/, '$1').replace(/\.md$/, '');
-    const title = pageData.title ? `${pageData.title} | GeonicDB Data Models` : 'GeonicDB Data Models';
-    const description = pageData.description || pageData.frontmatter.description || 'Curated bilingual catalog of NGSI-LD data models for GeonicDB';
+    const title = pageData.title && pageData.title !== 'datamodels.jp' ? `${pageData.title} | datamodels.jp` : 'datamodels.jp';
+    const description = pageData.description || pageData.frontmatter.description || 'Bilingual catalog of NGSI-LD data models: JSON-LD contexts, JSON Schemas and vocabularies at stable URLs';
     pageData.frontmatter.head ??= [];
     pageData.frontmatter.head.push(
       ['meta', { property: 'og:title', content: title }],
@@ -89,9 +90,9 @@ export default defineConfig({
   },
 
   themeConfig: {
-    logo: '/geonicdb-logo.svg',
-    siteTitle: 'Data Models',
-    socialLinks: [{ icon: 'github', link: 'https://github.com/geolonia/geonicdb-models' }],
+    // No logo: the catalog is product-neutral; the domain is the wordmark.
+    siteTitle: 'datamodels.jp',
+    socialLinks: [{ icon: 'github', link: 'https://github.com/geolonia/datamodels' }],
     search: {
       provider: 'local',
       options: {
@@ -115,9 +116,10 @@ export default defineConfig({
     root: {
       label: '日本語',
       lang: 'ja',
-      description: 'GeonicDB 向け NGSI-LD データモデルカタログ',
+      description: 'NGSI-LD データモデルカタログ',
       themeConfig: {
         nav: nav('', 'ja'),
+        footer: { message: '運営: <a href="https://geolonia.com/">Geolonia</a> · モデル CC BY 4.0 · コード Apache-2.0' },
         sidebar: sidebar('', 'ja'),
         outline: { label: '目次', level: [2, 3] },
         docFooter: { prev: '前のページ', next: '次のページ' },
@@ -133,6 +135,7 @@ export default defineConfig({
       link: '/en/',
       themeConfig: {
         nav: nav('/en', 'en'),
+        footer: { message: 'Operated by <a href="https://geolonia.com/">Geolonia</a> · Models CC BY 4.0 · Code Apache-2.0' },
         sidebar: sidebar('/en', 'en'),
         outline: { level: [2, 3] },
       },

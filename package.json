@@ -1,8 +1,8 @@
 {
-  "name": "geonicdb-models",
+  "name": "datamodels",
   "private": true,
   "version": "0.0.0",
-  "description": "Curated bilingual catalog of NGSI-LD data models for GeonicDB, served at models.geonicdb.com.",
+  "description": "Bilingual catalog of NGSI-LD data models, served at datamodels.jp.",
   "type": "module",
   "license": "Apache-2.0",
   "engines": {

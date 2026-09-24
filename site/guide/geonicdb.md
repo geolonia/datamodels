@@ -97,18 +97,18 @@ curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadClosure&q=closureStatus==%
    ```
 
    ```bash
-   node scripts/export-geonicdb.mjs disaster --type RoadClosure --extend ./acme.json --out ./out
+   node adapters/geonicdb/export.mjs disaster --type RoadClosure --extend ./acme.json --out ./out
    ```
 
-3. **カタログに提案する。** 自分の案件以外でも役に立つ属性なら、[Issue](https://github.com/geolonia/geonicdb-models/issues) か Pull Request で提案してください。次のマイナーバージョンで追加されれば、拡張は不要になります。
+3. **カタログに提案する。** 自分の案件以外でも役に立つ属性なら、[Issue](https://github.com/geolonia/datamodels/issues) か Pull Request で提案してください。次のマイナーバージョンで追加されれば、拡張は不要になります。
 
 ## 型名を変えたいとき
 
 テナント内で型名に接頭辞を付けたい場合（複数案件が同じテナントを共有し、認可ポリシーを型名で分けているときなど）は、リポジトリのスクリプトで接頭辞付きの定義を書き出せます。語彙（IRI）はカタログのままです。
 
 ```bash
-git clone https://github.com/geolonia/geonicdb-models && cd geonicdb-models && npm ci
-node scripts/export-geonicdb.mjs disaster --type-prefix Saitai --out ./out
+git clone https://github.com/geolonia/datamodels && cd datamodels && npm ci
+node adapters/geonicdb/export.mjs disaster --type-prefix Acme --out ./out
 ```
 
 ## 補足

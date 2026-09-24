@@ -31,9 +31,10 @@ description: このカタログが公開する URL の約束。バージョン�
 /context/<subject>/vX.jsonld            エイリアス（最新の X.y.z）
 /schema/<subject>/<Type>/vX.Y.Z.json    JSON Schema（不変）
 /schema/<subject>/<Type>/vX.json        エイリアス
+/vocab/<subject>/vX.Y.Z.jsonld          語彙（RDFS: クラス、サブクラス関係、日英ラベル。不変）
 /examples/<subject>/<Type>/             例
-/geonicdb/<subject>/<Type>.json         GeonicDB 用の Custom Data Model 定義
 /ns/<subject>/<Term>                    型・属性の IRI（ページにリダイレクト）
+/adapters/<name>/<subject>/<Type>.json  アダプターの出力（例: GeonicDB の Custom Data Model 定義）
 /catalog.json                           機械可読な一覧（/catalog.schema.json に準拠）
 ```
 

@@ -22,7 +22,7 @@ This catalog references and extends what exists elsewhere instead of copying it.
 | Catalog | Content | NGSI-LD |
 |---|---|---|
 | [Digital Agency GIF (Government Interoperability Framework)](https://www.digital.go.jp/policies/data_strategy_government_interoperability_framework) | Core data models (person, legal entity, address, facility, building and more) and domain implementation models. Published as XSD and Excel. [GitHub](https://github.com/JDA-DM/GIF) | Needs mapping. [JapaneseAddress](/en/models/common/JapaneseAddress/) maps to the GIF address |
-| [推奨データセット (Recommended datasets)](https://www.digital.go.jp/resources/data_dataset/) | Standard formats for municipal open data (shelters, AEDs, public facilities, events and more). CSV column definitions | Needs mapping. NGSI-LD versions are planned in this catalog |
+| [自治体標準オープンデータセット (municipal standard open datasets)](https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test), formerly 推奨データセット | Standard formats for municipal open data (shelters, AEDs, public facilities, events and more). CSV column definitions | Needs mapping. NGSI-LD versions are planned in this catalog |
 | [Address Base Registry](https://www.digital.go.jp/policies/base_registry_address) | Base data for addresses including the town id (町字ID) | Referenced by `abrMachiazaId` in JapaneseAddress |
 | [Spatial ID (guideline)](https://www.ipa.go.jp/digital/architecture/guidelines/4dspatio-temporal-guideline.html) | METI, MLIT, GSI, NEDO and IPA. A common identifier for 3D space and the guideline for using it with time as 4D spatiotemporal information | Native in GeonicDB |
 
@@ -30,4 +30,4 @@ This catalog references and extends what exists elsewhere instead of copying it.
 
 Use the [search](https://smartdatamodels.org/index.php/list-of-data-models-3/) on the Smart Data Models site or browse the `dataModel.<Subject>` repositories in the [smart-data-models](https://github.com/smart-data-models) GitHub organisation. GeonicDB's MCP tool `data_models` lists and searches them too.
 
-To extend a model you found for Japan, see [Extend and contribute](/en/guide/extend). To have it listed in this catalog, open an [issue](https://github.com/geolonia/geonicdb-models/issues).
+To extend a model you found for Japan, see [Extend and contribute](/en/guide/extend). To have it listed in this catalog, open an [issue](https://github.com/geolonia/datamodels/issues).

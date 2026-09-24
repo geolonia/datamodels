@@ -16,35 +16,7 @@
 }
 
 /*
- * Navbar title. The GeonicDB wordmark is wide, and with the sidebar open the
- * title area is only as wide as the sidebar, so "Data Models" next to the logo
- * ran into the search box. Stack the site title under the logo instead.
- */
-.VPNavBarTitle .title {
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 2px;
-  line-height: 1;
-}
-
-.VPNavBarTitle .logo {
-  height: 20px;
-  margin-right: 0;
-}
-
-.VPNavBarTitle .title > span {
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  color: var(--vp-c-text-1);
-}
-
-/*
- * Hero title: the default 56px wraps "GeonicDB Data Models" on wide screens.
- * From 640px up it fits on one line at 44/48px, so wrapping is disabled there.
- * Below 640px the hero is narrower than the title at any readable size, so it
- * may wrap.
+ * Hero title: 44/48px from 640px up, on one line. Below 640px it may wrap.
  */
 .VPHero .main .name {
   font-size: 32px !important;

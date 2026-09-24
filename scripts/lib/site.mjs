@@ -28,7 +28,7 @@ const T = {
     statusLabel: { draft: 'ドラフト', stable: '安定', deprecated: '非推奨' },
     sourceLabel: { minted: 'このカタログで定義', profile: '上流モデルの日本向け拡張', global: '上流（Smart Data Models）' },
     subject: 'サブジェクト', mappings: '対応する標準', mappingField: 'このモデル', mappingTo: '対応先', mappingNote: '備考', none: '対応なし',
-    alias: 'エイリアス', aliasNote: (link) => `${link} と同じ型です（IRI が同一）。名称だけがこのサブジェクトの言い方に合わせてあり、属性も必須項目も同じです。GeonicDB では同じ型として保存・照合されます。`,
+    alias: 'エイリアス', aliasNote: (link) => `${link} と同じ型です（IRI が同一）。名称だけがこのサブジェクトの言い方に合わせてあり、属性も必須項目も同じです。ブローカーでは同じ型として保存・照合されます。`,
     subclass: 'サブクラス', subclassNote: (link) => `${link} のサブクラスです。同名の属性は親と同じ IRI を持ち、親の必須項目はここでも必須です。親向けに書かれたクライアントはこの型をそのまま読めます。`,
   },
   en: {
@@ -42,7 +42,7 @@ const T = {
     statusLabel: { draft: 'draft', stable: 'stable', deprecated: 'deprecated' },
     sourceLabel: { minted: 'defined in this catalog', profile: 'Japanese profile of an upstream model', global: 'upstream (Smart Data Models)' },
     subject: 'Subject', mappings: 'Corresponding standards', mappingField: 'This model', mappingTo: 'Maps to', mappingNote: 'Note', none: 'no counterpart',
-    alias: 'alias', aliasNote: (link) => `The same type as ${link} (identical IRI). Only the name follows this subject's wording; attributes and required fields are the same. GeonicDB stores and matches both names as one type.`,
+    alias: 'alias', aliasNote: (link) => `The same type as ${link} (identical IRI). Only the name follows this subject's wording; attributes and required fields are the same. A broker stores and matches both names as one type.`,
     subclass: 'subclass', subclassNote: (link) => `A subclass of ${link}. Attributes with the same name carry the parent's IRIs, and the parent's required attributes stay required here, so a client written for the parent reads this type unchanged.`,
   },
 };
@@ -107,7 +107,7 @@ function modelPage(lang, prefix, subject, model) {
     : `| ${t.examples} | [key-values](${rel(mu.examples)}example.json) · [normalized](${rel(mu.examples)}example-normalized.jsonld) |\n`;
   const adapterLinks = allAdapters.map((a) => [a, a.urlFor(subject, model)]).filter(([, url]) => url);
   if (adapterLinks.length) md += `| ${t.adapters} | ${adapterLinks.map(([a, url]) => `${a.guide ? `[${a.label[lang]}](${prefix}${a.guide})` : a.label[lang]}: [${code(rel(url))}](${rel(url)})${a.note ? ` ${a.note[lang]}` : ''}`).join('<br>')} |\n`;
-  md += `| ${t.source} | [github.com/geolonia/geonicdb-models](https://github.com/geolonia/geonicdb-models/tree/main/models/${subject.name}/${model.type}) |\n\n`;
+  md += `| ${t.source} | [github.com/geolonia/datamodels](https://github.com/geolonia/datamodels/tree/main/models/${subject.name}/${model.type}) |\n\n`;
   md += `## ${isValue ? t.fields : t.attributes} {#attributes}\n\n`;
   for (const [name, prop] of attributesOf(model)) {
     const flags = [required.has(name) ? badge('warning', t.required) : '', prop['x-personal-data'] ? badge('danger', t.pii) : '', prop['x-deprecated'] ? badge('danger', t.deprecated) : ''].filter(Boolean).join(' ');
