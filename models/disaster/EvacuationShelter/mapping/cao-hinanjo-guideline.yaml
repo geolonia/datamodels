@@ -3,7 +3,6 @@ standard:
     ja: 避難所運営等避難生活支援のためのガイドライン（チェックリスト）平成28年4月（令和6年12月改定）内閣府（防災担当）
     en: Guideline (checklist) for shelter operation and evacuation-life support, April 2016 (revised December 2024), Cabinet Office (Disaster Management)
   url: https://www.bousai.go.jp/taisaku/hinanjo/pdf/2412hinanjo_guideline.pdf
-  license: unknown
   note:
     ja: この様式・ガイドラインは openingStatus と evacueeTotal 系属性が公的に認知された運用管理項目であることの裏付け。チェックリスト項目 1-3「避難所の開設状況の確認を実施する」(p.25)、2-1「避難所の開設状況を周知する」(p.28)、5-2「避難者人数の定期報告を実施する」(p.26)。ただし「開設状況」の具体的な区分（列挙値）を定めた統制語彙はこのガイドラインにもデジタル庁データセットにも見つからなかった。openingStatus の列挙値（open/closed/full/requested）はこのカタログ独自の正規化であり、公的なコード表のコピーではない。現場の呼び方は必ず statusLabel で保持すること。
     en: This checklist backs the claim that openingStatus and the evacueeTotal-family attributes are officially recognised operational tracking concepts. Checklist items 1-3 "confirm the shelter's opening status" (p.25), 2-1 "publicise the shelter's opening status" (p.28), 5-2 "report evacuee headcount periodically" (p.26). However, no controlled vocabulary for the specific opening-status values was found here or in the Digital Agency dataset. openingStatus's enum (open/closed/full/requested) is this catalog's own normalisation, not a copy of a public code list; the local wording must always also be kept in statusLabel.

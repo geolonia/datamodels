@@ -1,8 +1,8 @@
 standard:
   name:
-    ja: 自治体標準オープンデータセット・データ項目定義書A（20250501版）シート「03.指定緊急避難場所一覧」（デジタル庁）
-    en: "Municipal standard open dataset, data item definition sheet A (2025-05-01), sheet '03. designated emergency evacuation sites' (Digital Agency)"
-  url: https://www.digital.go.jp/assets/contents/node/basic_page/field_ref_resources/5345f63e-62aa-4ef5-b979-287b6f343e2a/0d6cbe5f/20250501_resources_open_data_municipal-standard-open-dataset_table_a.xlsx
+    ja: 自治体標準オープンデータセット・データ項目定義書A（20260801版）シート「03.指定緊急避難場所一覧」（デジタル庁）
+    en: "Municipal standard open dataset, data item definition sheet A (2026-08-01), sheet '03. designated emergency evacuation sites' (Digital Agency)"
+  url: https://www.digital.go.jp/assets/contents/node/basic_page/field_ref_resources/5345f63e-62aa-4ef5-b979-287b6f343e2a/9ba1a134/20260801_resources_open_data_municipal-standard-open-dataset_table_a.xlsx
   license: CC0 1.0
   note:
     ja: "自治体が公開する避難場所のマスタ。このモデルは運用状況のオーバーレイで、マスタの行を externalShelterId と localGovernmentCode で参照する。避難者数はマスタに無い。注意：このシートは「指定緊急避難場所」（災害対策基本法第49条の4）の定義であり、このモデルが対象とする「指定避難所」（同法第49条の7）とは法的に別の概念。デジタル庁の当データセットには指定避難所の項目定義シートが無いため、externalShelterId は便宜上この緊急避難場所側の ID 体系を借用している。指定避難所そのものの参照には mapping/gsi-national-shelter-id.yaml の nationalShelterId を推奨する。"
