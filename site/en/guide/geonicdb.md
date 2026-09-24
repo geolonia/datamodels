@@ -25,6 +25,10 @@ Registration is optional. GeonicDB accepts entities of any type without a model.
 
 Existing entities are not re-validated when a model is registered or changed (a conformance report is available separately). Responses do not change either: GeonicDB injects no `@context`, clients pass the context themselves.
 
+::: warning Current GeonicDB limitation
+When the request's `@context` (in the body or in a `Link` header) maps the type to an IRI, GeonicDB currently stores the type as that IRI and does not find the model registered under the short name. **Validation is then skipped and the entity is accepted as it is.** The catalog contexts map every type to an IRI, so the way step 2 below sends entities is affected. A fix is in progress in GeonicDB: at registration it derives the type's IRI from the model's `contextUrl` and matches both the short name and the IRI. Until it is released, do not rely on a registered model to reject invalid data.
+:::
+
 ## 1. Register the Custom Data Model
 
 ```bash
@@ -60,7 +64,7 @@ For your own data, either put `@context` in the body and send `application/ld+js
 ## 3. Query
 
 ```bash
-curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadClosure&q=closureStatus==%22通行止め中%22" \
+curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadClosure&q=closureStatus==%22closed%22" \
   -H "Accept: application/ld+json" \
   -H 'Link: <https://datamodels.jp/context/disaster/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -H "x-api-key: $GEONICDB_API_KEY" \
