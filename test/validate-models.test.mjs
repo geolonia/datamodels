@@ -139,6 +139,23 @@ test('a RoadClosure MultiLineString with no lines fails', () =>
     e.location = { type: 'MultiLineString', coordinates: [] };
   }), /example\.json: .*location/));
 
+test('an Attachment location that is not a Point fails (narrowed shared Geometry)', () =>
+  withMutatedModels((d) => editJson(join(d, 'task', 'Attachment', 'examples', 'example.json'), (e) => {
+    e.location = { type: 'LineString', coordinates: [[134.04, 34.34], [134.05, 34.35]] };
+  }), /Attachment\/examples\/example\.json: .*location/));
+
+test('a Geometry value with an unknown geometry type fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'common', 'Geometry', 'examples', 'example.json'), (e) => { e.type = 'Circle'; }),
+    /Geometry\/examples\/example\.json/));
+
+test('a root x-iri on an entity type fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'task', 'Comment', 'schema.json'), (s) => { s['x-iri'] = 'https://schema.org/Comment'; }),
+    /root x-iri is only for value types/));
+
+test('a value type whose context term differs from its x-iri fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'common', 'context.jsonld'), (c) => { inlineTerms(c).Geometry = 'common:Geometry'; }),
+    /type "Geometry" maps to https:\/\/datamodels\.jp\/ns\/common\/Geometry/));
+
 test('a normalized attribute without value fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example-normalized.jsonld'), (e) => { e.description = { type: 'Property' }; }),
     /Property needs a value/));

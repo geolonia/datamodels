@@ -5,7 +5,7 @@
   "description": "Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included; it is referenced by externalShelterId. Only opening status and evacuee counts live here.",
   "x-version": "1.0.0",
   "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
-  "x-model-tags": "GeonicDB, disaster-response, Japan",
+  "x-model-tags": "disaster-response, Japan",
   "x-derived-from": "https://github.com/geolonia/geonicdb-datamodels",
   "type": "object",
   "properties": {

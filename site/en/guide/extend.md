@@ -53,7 +53,7 @@ The first subject, [disaster response](/en/models/disaster/), is based on the da
 - Never change the meaning or type of an upstream attribute. Add a new one instead.
 - Never redefine a protected term of the NGSI-LD core context (`status`, `description`, `location`, `createdAt`, `modifiedAt`, `observedAt` and others). The catalog CI rejects it. When you need a status, name it like `incidentStatus`.
 - Namespaces are organised by subject, never by region, customer or project.
-- Use the value types of the [common](/en/models/common/) subject for shared structures such as addresses.
+- Use the value types of the [common](/en/models/common/) subject for shared structures: [JapaneseAddress](/en/models/common/JapaneseAddress/) for addresses, [Geometry](/en/models/common/Geometry/) for `location` and other GeoProperties. Narrow a geometry next to the `$ref` when a model allows fewer types (Attachment allows only a Point).
 - To give an existing type another name, use an alias (`x-alias-of`: same attributes, same required fields). To add attributes or separate the type, use a subclass (`x-subclass-of`: attributes of the same name keep the parent's IRIs, the parent's required attributes stay required). CI checks both.
 
 ## Contributing

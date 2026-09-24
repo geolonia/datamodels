@@ -2,6 +2,7 @@
   "@context": {
     "common": "https://datamodels.jp/ns/common/",
     "schema": "https://schema.org/",
+    "Geometry": "https://purl.org/geojson/vocab#Geometry",
     "JapaneseAddress": "common:JapaneseAddress",
     "address": "schema:address",
     "addressCountry": "schema:addressCountry",

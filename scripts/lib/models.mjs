@@ -37,7 +37,9 @@ export function modelUrls(subject, model) {
     schemaExact: `${BASE_URL}/schema/${subject.name}/${model.type}/v${subject.version}.json`,
     schemaAlias: `${BASE_URL}/schema/${subject.name}/${model.type}/v${major}.json`,
     // An alias model (x-alias-of) is another name for a type defined elsewhere: same IRI.
-    typeIri: model.schema?.['x-alias-of'] ?? `${BASE_URL}/ns/${subject.name}/${model.type}`,
+    // A value type may instead name an external class it describes (root x-iri),
+    // such as the GeoJSON-LD Geometry class: the catalog mints nothing for it.
+    typeIri: model.schema?.['x-alias-of'] ?? model.schema?.['x-iri'] ?? `${BASE_URL}/ns/${subject.name}/${model.type}`,
     page: `${BASE_URL}/models/${subject.name}/${model.type}/`,
     examples: `${BASE_URL}/examples/${subject.name}/${model.type}/`,
   };

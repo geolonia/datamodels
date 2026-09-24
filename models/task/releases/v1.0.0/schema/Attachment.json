@@ -5,7 +5,7 @@
   "description": "Metadata of a file attached to a task or a project. The file itself stays outside the broker and is referenced by URL.",
   "x-version": "1.0.0",
   "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
-  "x-model-tags": "GeonicDB, task management",
+  "x-model-tags": "task management",
   "x-derived-from": "https://www.rfc-editor.org/rfc/rfc8984.html",
   "type": "object",
   "properties": {
@@ -101,22 +101,10 @@
       "x-iri": "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld#description"
     },
     "location": {
-      "type": "object",
-      "required": [
-        "type",
-        "coordinates"
-      ],
+      "$ref": "https://datamodels.jp/schema/common/Geometry/v1.0.0.json",
       "properties": {
         "type": {
           "const": "Point"
-        },
-        "coordinates": {
-          "type": "array",
-          "minItems": 2,
-          "maxItems": 3,
-          "items": {
-            "type": "number"
-          }
         }
       },
       "description": "Where the file was taken (a point)",
