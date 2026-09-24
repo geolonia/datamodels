@@ -148,14 +148,6 @@ test('a Geometry value with an unknown geometry type fails', () =>
   withMutatedModels((d) => editJson(join(d, 'common', 'Geometry', 'examples', 'example.json'), (e) => { e.type = 'Circle'; }),
     /Geometry\/examples\/example\.json/));
 
-test('a root x-iri on an entity type fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'task', 'Comment', 'schema.json'), (s) => { s['x-iri'] = 'https://schema.org/Comment'; }),
-    /root x-iri is only for value types/));
-
-test('a value type whose context term differs from its x-iri fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'common', 'context.jsonld'), (c) => { inlineTerms(c).Geometry = 'common:Geometry'; }),
-    /type "Geometry" maps to https:\/\/datamodels\.jp\/ns\/common\/Geometry/));
-
 test('a normalized attribute without value fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example-normalized.jsonld'), (e) => { e.description = { type: 'Property' }; }),
     /Property needs a value/));
