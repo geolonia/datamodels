@@ -1,5 +1,5 @@
 {
-  "comment": "SHA-256 of every immutable published file (exact versions under context/ and schema/, and context/mirror/). Entries are appended by `npm run manifest:record` and never edited or removed, except for the one-off disaster v1.0.0 re-baseline recorded in docs/design.md (2026-09-24): the subject had zero external adopters and datamodels.jp had been live for hours, so the commander chose to rewrite v1.0.0 rather than mint a v2 that would keep serving five tenant-specific models forever. See scripts/check-immutability.mjs.",
+  "comment": "SHA-256 of every immutable published file (exact versions under context/, schema/ and vocab/, and context/mirror/). Entries are appended by `npm run manifest:record`. After the official launch they are never edited or removed. During the pre-release, the current version of a subject may still be corrected in place: delete its snapshot and manifest entries and record again, as the README describes. See docs/design.md and scripts/check-immutability.mjs.",
   "files": {
     "context/common/v1.0.0.jsonld": "59fe038a9d8c1f459a86940f17371f1b5842942940afa68da4f21502e07b453d",
     "context/disaster/v1.0.0.jsonld": "b35ed0adf9797c0426a5a3be2b43ee48a373095f11a1bcfd30eb688ca0a187ac",
