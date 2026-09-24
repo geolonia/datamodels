@@ -3,7 +3,7 @@
   // The Worker name must match the Worker created in the Cloudflare dashboard
   // (Workers Builds rejects a mismatch). Same account as geonicdb-status.
   // Renaming it means renaming the Worker in the dashboard at the same time.
-  "name": "geonicdb-models",
+  "name": "datamodels",
   "compatibility_date": "2026-08-01",
   "observability": { "enabled": true },
 
