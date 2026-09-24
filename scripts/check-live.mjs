@@ -91,5 +91,14 @@ if (r.ok) {
   }
 }
 
+// The pre-launch hostname redirects every path to datamodels.jp (Redirect Rule
+// on the geonicdb.com zone). Only checked against the production origin.
+if (origin === BASE_URL) {
+  for (const path of ['/', '/models/task/Task/', '/catalog.json']) {
+    const rr = await fetch(`https://models.geonicdb.com${path}`, { method: 'HEAD', redirect: 'manual' });
+    expect(rr.status === 301 && h(rr, 'location') === `${BASE_URL}${path}`, `models.geonicdb.com${path}: expected 301 to ${BASE_URL}${path}, got ${rr.status} ${h(rr, 'location')}`);
+  }
+}
+
 if (failures.length) { console.error(`Live check failed (${failures.length}) against ${origin}:`); for (const f of failures) console.error(`  ${f}`); process.exit(1); }
 console.log(`live ok: ${origin}, ${subjects.reduce((a, s) => a + s.models.length, 0)} model(s), ${Object.keys(manifest.files).length} immutable file(s) match the manifest`);
