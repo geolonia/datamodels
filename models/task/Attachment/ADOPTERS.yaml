@@ -3,7 +3,3 @@ adopters:
     organization: GTT project / Geolonia Inc.
     since: 2026
     note: Planned first implementation; validation against a live Redmine instance pending.
-  - name: Takamatsu City flood-response application (through the disaster subject)
-    organization: Geolonia Inc. for Takamatsu City
-    since: 2026
-    note: Planned; the disaster subject's incident report, response action, handover note and photo types are subclasses of the task types. Counts once the application runs on the catalog names.

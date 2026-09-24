@@ -10,8 +10,8 @@ tags:
   - municipality
 attributes:
   project:
-    ja: 所属する災害事象（DisasterEvent）
-    en: The disaster event (DisasterEvent) this entity belongs to
+    ja: 所属するプロジェクト（タスク管理の Project。災害対応の 1 オペレーションなど）
+    en: The task subject's Project this entity belongs to, for example one disaster-response operation
   roadName:
     ja: 路線名
     en: Road name
