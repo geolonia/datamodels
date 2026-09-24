@@ -35,3 +35,13 @@
     font-size: 48px !important;
   }
 }
+
+/*
+ * The default theme hides .VPFooter entirely whenever the page has a sidebar
+ * (theme has-sidebar modifier), which is every page here except the
+ * homepage. That silently drops the "運営: Geolonia" attribution line from
+ * almost the whole site, so force it visible.
+ */
+.VPFooter.has-sidebar {
+  display: block !important;
+}
