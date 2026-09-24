@@ -1,0 +1,28 @@
+standard:
+  name:
+    ja: "交通規制情報（拡張版標準フォーマット）説明書 Ver: k_2.1（警察庁、公益財団法人日本道路交通情報センター(JARTIC)発行、初版2024-04-22、改訂2025-01-20）"
+    en: "Traffic Regulation Information (Extended Standard Format) manual, Ver: k_2.1 (National Police Agency; published by JARTIC, first edition 2024-04-22, revised 2025-01-20)"
+  url: https://www.jartic.or.jp/d/opendata/typeD_kisei_73_k_2.1.pdf
+  note:
+    ja: 警察庁が戦略的イノベーション創造プログラム（SIP）第2期の調査研究で策定した、都道府県警察の交通規制データベースを出力するための全国共通フォーマット。通行規制の位置表現を「点規制・線規制・面規制」の3区分（3.5節）に定義しており、本モデルの location（Point/LineString/Polygon）はこの区分をそのまま借りている。規制種別コード（共通規制種別コード、73種）は交通法規上の規制（一方通行、駐車禁止等）が中心で、災害時の通行止めに特化した区分ではないため、種別コードそのものは採用していない。「規制理由」（項目169）は600バイトの自由記述でコード化されていない。本モデルの description もそれにならい自由記述とする。
+    en: A nationwide common CSV format the National Police Agency defined (SIP phase 2 research) for prefectural police traffic-regulation databases to publish. It defines the location of a regulation as one of three forms, point/line/area regulation (点規制・線規制・面規制, section 3.5); this model's location (Point/LineString/Polygon) borrows that geometry taxonomy directly. Its regulation-type code table (73 types) centres on traffic-law regulations (one-way streets, no-parking, etc.), not disaster closures, so the codes themselves were not adopted. Its regulation-reason field (item 169) is 600-byte free text, not coded; this model's description follows the same practice.
+fields:
+  location:
+    to: 規制場所の経度緯度 / 点規制・線規制・面規制
+    note:
+      ja: 幾何表現の区分（点・線・面）を借用。座標項目そのものではなく規制形態の分類を参照
+      en: borrows the point/line/area classification, not the raw coordinate columns
+  regulationCategory:
+    to: null
+    note:
+      ja: この標準の規制種別コードは交通法規上の規制が中心で災害時の通行止めに対応する区分がないため不採用。regulationCategory は国土交通省の道路情報提供システムから採る（別紙 mlit-road-info-prvs.yaml 参照）
+      en: not adopted; this standard's regulation-type codes are traffic-law codes with no disaster-closure category. regulationCategory instead comes from MLIT's Road Information Provision System (see mlit-road-info-prvs.yaml)
+  description:
+    to: 規制理由
+    note:
+      ja: どちらも自由記述（コード化された分類語彙は無い）
+      en: both are free text; no coded vocabulary exists in either
+  validFrom:
+    to: 意思決定日（新規）
+  validTo:
+    to: 意思決定廃止日

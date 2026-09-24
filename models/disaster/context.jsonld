@@ -20,6 +20,7 @@
         "@id": "tm:project",
         "@type": "@id"
       },
+      "regulationCategory": "disaster:regulationCategory",
       "roadName": "https://smartdatamodels.org/dataModel.Transportation/roadName",
       "statusLabel": "tm:statusLabel",
       "validFrom": "https://smartdatamodels.org/validFrom",

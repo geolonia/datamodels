@@ -43,6 +43,30 @@ function same(a, b) {
 }
 const sameSet = (a = [], b = []) => same([...a].sort(), [...b].sort());
 
+// GeoJSON ring closure (RFC 7946 §3.1.6: a linear ring's first and last
+// positions MUST be identical) cannot be expressed in JSON Schema — there is
+// no keyword to compare two elements of a variable-length array to each
+// other. So it is checked here instead, over every Polygon/MultiPolygon found
+// anywhere in an example, however deep (schema.json still enforces the
+// minItems/position shape around it).
+const positionsEqual = (a, b) => Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((v, i) => v === b[i]);
+const ringCloses = (ring) => !Array.isArray(ring) || ring.length === 0 || positionsEqual(ring[0], ring[ring.length - 1]);
+function findUnclosedRings(value, path = '$') {
+  const problems = [];
+  const walk = (v, p) => {
+    if (Array.isArray(v)) { v.forEach((e, i) => walk(e, `${p}[${i}]`)); return; }
+    if (!v || typeof v !== 'object') return;
+    if (v.type === 'Polygon' && Array.isArray(v.coordinates)) {
+      v.coordinates.forEach((ring, i) => { if (!ringCloses(ring)) problems.push(`${p}.coordinates[${i}]`); });
+    } else if (v.type === 'MultiPolygon' && Array.isArray(v.coordinates)) {
+      v.coordinates.forEach((poly, pi) => (Array.isArray(poly) ? poly : []).forEach((ring, ri) => { if (!ringCloses(ring)) problems.push(`${p}.coordinates[${pi}][${ri}]`); }));
+    }
+    for (const [k, vv] of Object.entries(v)) walk(vv, `${p}.${k}`);
+  };
+  walk(value, path);
+  return problems;
+}
+
 // Value schemas (x-kind: value) are referenced by $ref from entity schemas in
 // other subjects; register them so ajv resolves the URL without fetching.
 for (const subject of subjects) for (const model of subject.models) {
@@ -150,6 +174,7 @@ for (const subject of subjects) {
     const kv = model.examples['example.json'];
     if (!kv) fail(mwhere, 'examples/example.json is required');
     else if (!validate(kv)) fail(`${mwhere}/examples/example.json`, ajv.errorsText(validate.errors));
+    if (kv) for (const p of findUnclosedRings(kv)) fail(`${mwhere}/examples/example.json`, `${p}: polygon ring does not close (first and last position must be identical, RFC 7946 §3.1.6)`);
 
     // notes.yaml renders as a bullet list; an entry with an unquoted ": " parses as an object.
     if (model.notes != null && (typeof model.notes !== 'object' || Array.isArray(model.notes))) fail(`${mwhere}/notes.yaml`, 'root value must be a mapping with notes and license');
@@ -184,6 +209,7 @@ for (const subject of subjects) {
     let projected;
     try { projected = toKeyValues(norm, { multi }); } catch (e) { fail(`${mwhere}/examples/example-normalized.jsonld`, e.message); continue; }
     if (!validate(projected)) fail(`${mwhere}/examples/example-normalized.jsonld`, `key-values projection: ${ajv.errorsText(validate.errors)}`);
+    for (const p of findUnclosedRings(projected)) fail(`${mwhere}/examples/example-normalized.jsonld`, `${p}: polygon ring does not close (first and last position must be identical, RFC 7946 §3.1.6)`);
     if (!Array.isArray(norm['@context']) || !norm['@context'].includes(urls.contextExact)) fail(`${mwhere}/examples/example-normalized.jsonld`, `@context must include ${urls.contextExact}`);
 
     try {

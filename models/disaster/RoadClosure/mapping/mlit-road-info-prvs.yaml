@@ -1,0 +1,21 @@
+standard:
+  name:
+    ja: 道路情報提供システム 通行規制情報（国土交通省道路局、road-info-prvs.mlit.go.jp、2026-09-24 時点で確認）
+    en: "Road Information Provision System, traffic regulation information (MLIT Road Bureau, road-info-prvs.mlit.go.jp, verified 2026-09-24)"
+  url: https://www.road-info-prvs.mlit.go.jp/roadinfo/pc/pcTukokisei_81_1.html
+  note:
+    ja: 全国の道路管理者（国道事務所・地方整備局等）が発信する通行規制情報を集約し、ドライバー向けに提供するシステム。凡例に定義された10区分をそのまま regulationCategory の値域として採用した。仕様書PDFは確認できず、稼働中のシステムページの凡例を一次情報として採った。地理院地図の通行止め情報データセット（geospatial.jp/ckan/dataset/1101、国土交通省国道防災課、最終更新2024-10-05）も同一システムの後継リソースとして参照した。
+    en: The system that aggregates driver-facing road-regulation information from road administrators nationwide (regional bureaus, national highway offices) across Japan. Its legend's 10 categories were adopted verbatim as the value space of regulationCategory. No separate specification PDF could be found; the live system page's legend was used as the primary source. The GSI-hosted "road closure" dataset (geospatial.jp/ckan/dataset/1101, MLIT Road Bureau Disaster Prevention Division, last updated 2024-10-05) was checked as a related resource from the same system but adds no further item definitions beyond the legend.
+fields:
+  regulationCategory:
+    to: 凡例（通行規制の種別）
+    note:
+      ja: "1:1 対応。通行止(異常気象等)→closedWeather、通行止(工事)→closedConstruction、大型通行止→closedHeavyVehicle、冬期通行止→closedWinter、車線規制→laneRestriction、片側交互通行→alternatingOneWay、移動規制→mobileRestriction、チェーン規制→chainRestriction、チェーン指導→chainGuidance、その他規制→other"
+      en: "1:1 mapping: 通行止(異常気象等)→closedWeather, 通行止(工事)→closedConstruction, 大型通行止→closedHeavyVehicle, 冬期通行止→closedWinter, 車線規制→laneRestriction, 片側交互通行→alternatingOneWay, 移動規制→mobileRestriction, チェーン規制→chainRestriction, チェーン指導→chainGuidance, その他規制→other"
+  closureStatus:
+    to: null
+  location:
+    to: null
+    note:
+      ja: この凡例には座標表現の仕様が無い（地図上のアイコン表示のみ）。幾何区分は警察庁の標準フォーマットから採った（npa-traffic-regulation-format.yaml 参照）
+      en: the legend has no coordinate specification of its own (map-icon display only); the geometry taxonomy instead comes from the NPA format (see npa-traffic-regulation-format.yaml)

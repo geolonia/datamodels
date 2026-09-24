@@ -26,6 +26,7 @@
     ]
   },
   "closureStatus": "closed",
+  "regulationCategory": "closedWeather",
   "statusLabel": "通行止め中",
   "validFrom": "2026-08-21T11:00:00Z",
   "description": "冠水のため通行止め"

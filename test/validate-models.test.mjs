@@ -117,6 +117,28 @@ test('a key-values example violating the schema fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { e.closureStatus = '不明'; }),
     /example\.json: .*(enum|allowed values)/));
 
+test('an out-of-vocabulary regulationCategory fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { e.regulationCategory = '全面通行止め'; }),
+    /example\.json: .*(enum|allowed values)/));
+
+test('a RoadClosure example missing location fails now that it is required', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { delete e.location; }),
+    /example\.json: .*required.*location/));
+
+test('a RoadClosure location as a bare polygon (no line/point alternative) still needs coordinates', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { e.location = { type: 'Polygon' }; }),
+    /example\.json: .*location/));
+
+test('a RoadClosure polygon whose ring does not close fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => {
+    e.location = { type: 'Polygon', coordinates: [[[134.04, 34.34], [134.05, 34.34], [134.05, 34.35], [134.04, 34.36]]] };
+  }), /example\.json: .*polygon ring does not close/));
+
+test('a RoadClosure MultiLineString with no lines fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => {
+    e.location = { type: 'MultiLineString', coordinates: [] };
+  }), /example\.json: .*location/));
+
 test('a normalized attribute without value fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example-normalized.jsonld'), (e) => { e.description = { type: 'Property' }; }),
     /Property needs a value/));
