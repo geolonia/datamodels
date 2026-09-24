@@ -13,6 +13,10 @@
     "type": "Property",
     "value": "CC3720130001"
   },
+  "nationalShelterId": {
+    "type": "Property",
+    "value": "E3720130001111"
+  },
   "localGovernmentCode": {
     "type": "Property",
     "value": "372013"

@@ -1,22 +1,27 @@
 standard:
   name:
-    ja: 自治体標準オープンデータセット 03 指定緊急避難場所一覧（デジタル庁）
-    en: Municipal standard open dataset 03, designated emergency evacuation sites (Digital Agency)
-  url: https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test
+    ja: 自治体標準オープンデータセット・データ項目定義書A（20250501版）シート「03.指定緊急避難場所一覧」（デジタル庁）
+    en: "Municipal standard open dataset, data item definition sheet A (2025-05-01), sheet '03. designated emergency evacuation sites' (Digital Agency)"
+  url: https://www.digital.go.jp/assets/contents/node/basic_page/field_ref_resources/5345f63e-62aa-4ef5-b979-287b6f343e2a/0d6cbe5f/20250501_resources_open_data_municipal-standard-open-dataset_table_a.xlsx
   license: CC0 1.0
   note:
-    ja: 自治体が公開する避難場所のマスタ。このモデルは運用状況のオーバーレイで、マスタの行を externalShelterId と localGovernmentCode で参照する。避難者数はマスタに無い。
-    en: The shelter master a municipality publishes. This type is the operational overlay and references a master row by externalShelterId and localGovernmentCode; evacuee counts are not in the master.
+    ja: "自治体が公開する避難場所のマスタ。このモデルは運用状況のオーバーレイで、マスタの行を externalShelterId と localGovernmentCode で参照する。避難者数はマスタに無い。注意：このシートは「指定緊急避難場所」（災害対策基本法第49条の4）の定義であり、このモデルが対象とする「指定避難所」（同法第49条の7）とは法的に別の概念。デジタル庁の当データセットには指定避難所の項目定義シートが無いため、externalShelterId は便宜上この緊急避難場所側の ID 体系を借用している。指定避難所そのものの参照には mapping/gsi-national-shelter-id.yaml の nationalShelterId を推奨する。"
+    en: "The shelter master a municipality publishes. This type is the operational overlay and references a master row by externalShelterId and localGovernmentCode; evacuee counts are not in the master. Caveat: this sheet defines 指定緊急避難場所 (designated emergency evacuation site, Basic Act on Disaster Management Art. 49-4), a legally distinct concept from 指定避難所 (designated shelter, Art. 49-7) that this model is actually about. The Digital Agency dataset has no item-definition sheet for 指定避難所, so externalShelterId borrows the emergency-evacuation-site list's ID scheme as a practical fallback. Prefer nationalShelterId (see mapping/gsi-national-shelter-id.yaml) to reference the shelter itself."
 fields:
   project:
     to: null
   externalShelterId:
-    to: ID
+    to: ID (項目No.2)
     note:
       ja: 自治体内で一意
       en: unique within the municipality
+  nationalShelterId:
+    to: null
+    note:
+      ja: このデータセットには無い。GSI の指定緊急避難場所・指定避難所データが「共通ID」列として持つ（mapping/gsi-national-shelter-id.yaml 参照）
+      en: "not present in this dataset; carried as the '共通ID' column of GSI's designated-shelter data instead (see mapping/gsi-national-shelter-id.yaml)"
   localGovernmentCode:
-    to: 全国地方公共団体コード (localGovernmentCode)
+    to: 全国地方公共団体コード (項目No.1, localGovernmentCode)
   openingStatus:
     to: null
   statusLabel:

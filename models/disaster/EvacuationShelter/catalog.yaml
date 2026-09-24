@@ -2,8 +2,8 @@ title:
   ja: 避難所運用状況
   en: Evacuation shelter operation
 description:
-  ja: 避難所の運用状況オーバーレイ1件。避難所そのもののマスタ（名称・位置）は含まず、外部の避難所データを externalShelterId で参照する。開設状況と避難者数だけを持つ。
-  en: Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included; it is referenced by externalShelterId. Only opening status and evacuee counts live here.
+  ja: 避難所の運用状況オーバーレイ1件。避難所そのもののマスタ（名称・位置）は含まず、外部の避難所データを externalShelterId / nationalShelterId で参照する。開設状況と避難者数だけを持つ。災害対策基本法第49条の7に基づき市町村長が指定する「指定避難所」（同法第49条の4の「指定緊急避難場所」とは別の概念）の運用を想定している。
+  en: Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included; it is referenced by externalShelterId / nationalShelterId. Only opening status and evacuee counts live here. Models the operation of a 指定避難所 (designated shelter, Basic Act on Disaster Management Art. 49-7), a distinct legal concept from the 指定緊急避難場所 (designated emergency evacuation site, Art. 49-4).
 status: draft
 tags:
   - disaster-response
@@ -13,17 +13,20 @@ attributes:
     ja: 所属するプロジェクト（タスク管理の Project。災害対応の 1 オペレーションなど）
     en: The task subject's Project this entity belongs to, for example one disaster-response operation
   externalShelterId:
-    ja: 自治体の指定緊急避難場所一覧（自治体標準オープンデータセット）における ID（自治体内で一意。例 CC0100022200）。localGovernmentCode と合わせて全国で一意になる
-    en: The shelter's ID in the municipality's 指定緊急避難場所一覧 (自治体標準オープンデータセット, the municipal standard open dataset; unique within the municipality, e.g. CC0100022200). Together with localGovernmentCode it identifies the shelter nationwide
+    ja: 自治体の指定緊急避難場所一覧（自治体標準オープンデータセット、デジタル庁）における ID（自治体内で一意。例 CC0100022200）。localGovernmentCode と合わせて全国で一意になる。デジタル庁の同データセットは「指定避難所」の一覧を項目定義していないため、この ID は「指定緊急避難場所」側の採番を借用している（下の nationalShelterId を参照）
+    en: The shelter's ID in the municipality's 指定緊急避難場所一覧 (自治体標準オープンデータセット, the Digital Agency's municipal standard open dataset; unique within the municipality, e.g. CC0100022200). Together with localGovernmentCode it identifies the shelter nationwide. That dataset has no item definition for 指定避難所 itself, so this ID borrows the emergency-evacuation-site list's numbering (see nationalShelterId below)
+  nationalShelterId:
+    ja: 全国共通避難所・避難場所ID（内閣府・新総合防災情報システム/SOBO-WEB、国土地理院「避難所等データ整備ウェブシステム」で採番）。14桁：固定値 E ＋ 自治体コード5桁＋施設コード5桁＋種別コード（大分類1桁・小分類1桁）＋種別連番1桁。国土地理院の指定緊急避難場所・指定避難所データ（CSV）にも「共通ID」列として収録される。まだ未採番の避難所もあるため任意項目
+    en: "The nationwide common shelter/evacuation-site ID (assigned by the Cabinet Office's new comprehensive disaster information system, SOBO-WEB, via GSI's shelter-data maintenance web system). 14 characters: fixed 'E' + 5-digit municipality code + 5-digit facility code + type code (1-digit major + 1-digit minor category) + 1-digit sequence number. Also published as the '共通ID' column of GSI's designated-shelter CSV data. Optional, since not every shelter has one assigned yet"
   localGovernmentCode:
-    ja: 一覧を公開する自治体の全国地方公共団体コード（6 桁）
-    en: Local government code of the municipality that publishes the shelter list (全国地方公共団体コード, 6 digits)
+    ja: 一覧を公開する自治体の全国地方公共団体コード（総務省「全国地方公共団体コード仕様」（平成19年4月1日）に基づく、検査数字を含む6桁）
+    en: Local government code of the municipality that publishes the shelter list (全国地方公共団体コード per MIC's "全国地方公共団体コード仕様", 2007-04-01; 6 digits including the check digit)
   openingStatus:
-    ja: "正規化した開設状況: open（開設中）、closed（未開設・閉鎖）、full（満員）。現場の呼び方は statusLabel に"
-    en: "Normalised opening state: open, closed, full (open but at capacity). The local wording goes in statusLabel"
+    ja: "正規化した開設状況: open（開設中）、closed（未開設・閉鎖）、full（満員）、requested（開設を依頼・指示されたが開設未確認。公的な統制語彙は見つからなかった区分）。現場の呼び方は必ず statusLabel にも記載する"
+    en: "Normalised opening state: open, closed, full (open but at capacity), requested (opening has been requested/instructed but not yet confirmed open; no public controlled vocabulary defines this state). The local wording always also goes in statusLabel"
   statusLabel:
-    ja: 本部での開設状況の呼び方（未開設、開設中、満員）
-    en: The opening status as the headquarters names it (未開設, 開設中, 満員)
+    ja: 本部での開設状況の呼び方（例 未開設、開設中、満員、依頼中）。openingStatus の列挙値に対応が無い現場語彙はここで必ず受ける
+    en: The opening status as the headquarters names it (e.g. 未開設, 開設中, 満員, 依頼中). Any local wording without a matching openingStatus value must still be captured here
   evacueeHouseholds:
     ja: 避難世帯数
     en: Number of evacuated households
