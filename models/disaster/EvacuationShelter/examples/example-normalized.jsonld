@@ -7,11 +7,15 @@
   "type": "EvacuationShelter",
   "project": {
     "type": "Relationship",
-    "object": "urn:ngsi-ld:DisasterEvent:2026-typhoon-10"
+    "object": "urn:ngsi-ld:Project:takamatsu:2026-typhoon-10"
   },
   "externalShelterId": {
     "type": "Property",
     "value": "CC3720130001"
+  },
+  "nationalShelterId": {
+    "type": "Property",
+    "value": "E3720130001111"
   },
   "localGovernmentCode": {
     "type": "Property",

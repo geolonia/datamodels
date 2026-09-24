@@ -19,13 +19,18 @@ fields:
   location:
     to: location
     note:
-      ja: RoadSegment は区間全体、ここでは通行止め区間
-      en: the whole segment there, the closed section here
+      ja: RoadSegment は区間（LineString）全体、ここでは点・線・面いずれもとりうる規制区間
+      en: RoadSegment's location is a LineString for the whole segment; here it can be a point, line or area regulated section
   closureStatus:
     to: status
     note:
       ja: 同じ値域 closed / limited / open
       en: same value space closed / limited / open
+  regulationCategory:
+    to: null
+    note:
+      ja: RoadSegment には無い。国土交通省の道路情報提供システムから採る（mlit-road-info-prvs.yaml 参照）
+      en: not in RoadSegment; comes from MLIT's Road Information Provision System (see mlit-road-info-prvs.yaml)
   statusLabel:
     to: statusDescription
   validFrom:

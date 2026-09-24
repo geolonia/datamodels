@@ -30,7 +30,7 @@
   ],
   "refersTo": {
     "type": "Relationship",
-    "object": "urn:ngsi-ld:IncidentReport:2026-typhoon-10-012"
+    "object": "urn:ngsi-ld:RoadClosure:2026-typhoon-10-003"
   },
   "progress": {
     "type": "Property",

@@ -1,0 +1,17 @@
+standard:
+  name:
+    ja: 全国共通避難所・避難場所ID（内閣府 新総合防災情報システム/SOBO-WEB、国土地理院「避難所等データ整備ウェブシステム」で採番。国土地理院の指定緊急避難場所・指定避難所データ CSV にも「共通ID」列として収録）
+    en: "The nationwide common shelter/evacuation-site ID (assigned via the Cabinet Office's new comprehensive disaster information system, SOBO-WEB, and GSI's shelter-data maintenance web system; also published as the '共通ID' column of GSI's designated-shelter/evacuation-site CSV data)"
+  url: https://www.bousai.go.jp/taisaku/hinanjo/r6_setsumeikai/pdf/shiryo10.pdf
+  note:
+    ja: "令和6年11月7日付け内閣府資料（新総合防災情報システムのご紹介、スライド6-7）で構造が示された14桁の全国共通ID。国土地理院の指定緊急避難場所・指定避難所データダウンロードサイト（https://hinanmap.gsi.go.jp/hinanjocp/hinanbasho/koukaidate.html、2026-09-24 時点で確認）で「共通ID」列として、指定緊急避難場所（全国版）・指定避難所（全国版）の両CSVに収録されている。SOBO-WEB では、この共通IDをキーに「開閉情報」と「避難者数」の動的情報を統合する設計になっており（同資料スライド7）、このモデル（開設状況＋避難者数のオーバーレイ）と同じ設計思想。ダウンロードページにライセンスの記載は見当たらない。"
+    en: "A 14-digit nationwide common ID whose structure was published in the Cabinet Office's 2024-11-07 slide deck (slides 6-7). GSI's designated-shelter/evacuation-site download site (https://hinanmap.gsi.go.jp/hinanjocp/hinanbasho/koukaidate.html, confirmed 2026-09-24) carries it as the '共通ID' column of both the nationwide 指定緊急避難場所 and 指定避難所 CSVs. SOBO-WEB is designed to join the dynamic '開閉情報' (opening/closing) and '避難者数' (evacuee count) layers on this ID (same slide deck, slide 7) -- the same overlay pattern this model uses. No licence statement was found on the download page."
+structure:
+  ja: "14桁 = 識別コード1桁（固定値 E）＋自治体コード5桁（市区町村コードの通し番号）＋施設コード5桁（市区町村内の通し番号）＋種別コード大分類1桁（1=指定避難所, 2=指定緊急避難場所）＋種別コード小分類1桁（大分類が指定避難所の場合のみ意味を持つ: 1=一般避難所, 2=福祉避難所。大分類が指定緊急避難場所の場合は0）＋種別連番コード1桁（同一住所内の同一種別施設数。1-9のあと A-Z, a-z）"
+  en: "14 characters = 1-digit fixed identifier 'E' + 5-digit municipality code (serial number of the municipal code) + 5-digit facility code (serial per municipality) + 1-digit major type code (1 = designated shelter, 2 = designated emergency evacuation site) + 1-digit minor type code (meaningful only when major = designated shelter -- 1 = general shelter, 2 = welfare shelter; 0 when major = emergency evacuation site) + 1-digit/char sequence number (count of same-type facilities at the same address; 1-9 then A-Z, a-z)"
+fields:
+  nationalShelterId:
+    to: 共通ID
+    note:
+      ja: 本モデルでは任意項目かつ、大分類=1（指定避難所）のIDのみ有効（schema.json のパターンで強制）。未採番の避難所は、空文字ではなく属性自体を省略する
+      en: optional in this model, and restricted to major-category=1 (designated shelter) IDs only (enforced by schema.json's pattern); for shelters not yet assigned an ID, omit the property entirely rather than send an empty string

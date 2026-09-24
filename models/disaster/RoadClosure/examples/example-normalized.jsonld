@@ -7,7 +7,7 @@
   "type": "RoadClosure",
   "project": {
     "type": "Relationship",
-    "object": "urn:ngsi-ld:DisasterEvent:2026-typhoon-10"
+    "object": "urn:ngsi-ld:Project:takamatsu:2026-typhoon-10"
   },
   "roadName": {
     "type": "Property",
@@ -44,6 +44,10 @@
   "closureStatus": {
     "type": "Property",
     "value": "closed"
+  },
+  "regulationCategory": {
+    "type": "Property",
+    "value": "closedWeather"
   },
   "statusLabel": {
     "type": "Property",

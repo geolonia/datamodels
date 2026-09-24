@@ -22,7 +22,7 @@
     "project": {
       "type": "string",
       "format": "uri",
-      "description": "The disaster event (DisasterEvent) this entity belongs to",
+      "description": "The task subject's Project this entity belongs to, for example one disaster-response operation",
       "x-ngsi": {
         "type": "Relationship",
         "target": "https://datamodels.jp/ns/task/Project"
@@ -37,6 +37,15 @@
       },
       "x-iri": "https://datamodels.jp/ns/disaster/externalShelterId"
     },
+    "nationalShelterId": {
+      "description": "全国共通避難所・避難場所ID (Cabinet Office SOBO-WEB / GSI 避難所等データ整備ウェブシステム): 14 characters, fixed 'E' + 5-digit municipality code + 5-digit facility code + type code (major '1' = designated shelter, the only value valid here; minor '1' = general shelter or '2' = welfare shelter) + 1 alphanumeric sequence starting at 1 (never 0). Optional: not every shelter has one assigned yet; omit the property entirely rather than send an empty string",
+      "type": "string",
+      "pattern": "^E[0-9]{10}1[12][1-9A-Za-z]$",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/disaster/nationalShelterId"
+    },
     "localGovernmentCode": {
       "description": "Local government code of the municipality that publishes the shelter list (全国地方公共団体コード, 6 digits)",
       "type": "string",
@@ -47,12 +56,13 @@
       "x-iri": "https://datamodels.jp/ns/common/localGovernmentCode"
     },
     "openingStatus": {
-      "description": "Normalised opening state: open, closed, full (open but at capacity). The local wording goes in statusLabel",
+      "description": "Normalised opening state: open, closed, full (open but at capacity), requested (opening has been requested/instructed but is not yet confirmed open; no public code list defines this state, see statusLabel). The local wording always goes in statusLabel",
       "type": "string",
       "enum": [
         "open",
         "closed",
-        "full"
+        "full",
+        "requested"
       ],
       "x-ngsi": {
         "type": "Property"
@@ -61,7 +71,7 @@
     },
     "statusLabel": {
       "type": "string",
-      "description": "The opening status as the headquarters names it (未開設, 開設中, 満員)",
+      "description": "The opening status as the headquarters names it (e.g. 未開設, 開設中, 満員, 依頼中). Use this whenever the local wording has no exact match in openingStatus's enum",
       "x-ngsi": {
         "type": "Property"
       },

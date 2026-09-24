@@ -3,7 +3,7 @@
 // and expects a specific failure message.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { cp, mkdtemp, readFile, writeFile, rm } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, readFile, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -27,6 +27,78 @@ async function withMutatedModels(mutate, expectMessage) {
 const inlineTerms = (c) => (Array.isArray(c['@context']) ? c['@context'].find((p) => typeof p === 'object') : c['@context']);
 async function editJson(file, fn) { const o = JSON.parse(await readFile(file, 'utf8')); fn(o); await writeFile(file, JSON.stringify(o, null, 2)); }
 
+// The disaster subject dropped its last x-alias-of/x-subclass-of models
+// (DisasterEvent, IncidentReport/IncidentHandoverNote/IncidentPhoto) on
+// 2026-09-24. These two probes are throwaway models added to the temp copy
+// only, so the alias and subclass validator rules below stay covered without
+// resurrecting tenant-specific models in the real catalog.
+//
+// v1.0.0 is both disaster's current and its recorded version, so
+// resolveContextDocument (releases.mjs) resolves the exact context/vocab URL
+// to the frozen releases/v1.0.0/ snapshot, not to the live, probe-mutated
+// source. Deleting that snapshot from the temp copy (harmless: this suite
+// never runs check-immutability, only validate-models) makes it fall back to
+// the live source, which is what these probes need to be seen at all.
+async function dropFrozenSnapshot(d) { await rm(join(d, 'disaster', 'releases', 'v1.0.0'), { recursive: true, force: true }); }
+
+async function addAliasProbe(d) {
+  await dropFrozenSnapshot(d);
+  const projectSchema = JSON.parse(await readFile(join(root, 'models', 'task', 'Project', 'schema.json'), 'utf8'));
+  const probeSchema = { ...projectSchema, $id: 'https://datamodels.jp/schema/disaster/AliasProbe/v1.0.0.json', title: 'AliasProbe', 'x-alias-of': 'https://datamodels.jp/ns/task/Project', properties: { ...projectSchema.properties, type: { ...projectSchema.properties.type, const: 'AliasProbe' } } };
+  const dir = join(d, 'disaster', 'AliasProbe');
+  await mkdir(join(dir, 'examples'), { recursive: true });
+  await writeFile(join(dir, 'schema.json'), JSON.stringify(probeSchema, null, 2));
+  await cp(join(root, 'models', 'task', 'Project', 'catalog.yaml'), join(dir, 'catalog.yaml'));
+  const kv = JSON.parse(await readFile(join(root, 'models', 'task', 'Project', 'examples', 'example.json'), 'utf8'));
+  await writeFile(join(dir, 'examples', 'example.json'), JSON.stringify({ ...kv, id: 'urn:ngsi-ld:AliasProbe:1', type: 'AliasProbe' }, null, 2));
+  const norm = JSON.parse(await readFile(join(root, 'models', 'task', 'Project', 'examples', 'example-normalized.jsonld'), 'utf8'));
+  await writeFile(join(dir, 'examples', 'example-normalized.jsonld'), JSON.stringify({ ...norm, '@context': ['https://datamodels.jp/context/disaster/v1.0.0.jsonld', 'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld'], id: 'urn:ngsi-ld:AliasProbe:1', type: 'AliasProbe' }, null, 2));
+  // AliasProbe reuses every attribute of task/Project verbatim, so its context
+  // terms are resolved by importing task's context rather than duplicating them.
+  await editJson(join(d, 'disaster', 'context.jsonld'), (c) => {
+    if (!c['@context'].includes('https://datamodels.jp/context/task/v1.0.0.jsonld')) c['@context'].splice(1, 0, 'https://datamodels.jp/context/task/v1.0.0.jsonld');
+    inlineTerms(c).AliasProbe = 'https://datamodels.jp/ns/task/Project';
+  });
+}
+
+async function addSubclassProbe(d) {
+  await dropFrozenSnapshot(d);
+  const subclassSchema = {
+    $schema: 'https://json-schema.org/draft/2020-12/schema',
+    $id: 'https://datamodels.jp/schema/disaster/SubclassProbe/v1.0.0.json',
+    title: 'SubclassProbe',
+    description: 'Probe subclass of Task, for validator tests only.',
+    'x-version': '1.0.0',
+    'x-subclass-of': 'https://datamodels.jp/ns/task/Task',
+    type: 'object',
+    properties: {
+      id: { type: 'string', format: 'uri', description: 'Entity id (URN)' },
+      type: { type: 'string', const: 'SubclassProbe', description: 'Entity type' },
+      name: { type: 'string', description: 'Name', 'x-ngsi': { type: 'Property' }, 'x-iri': 'https://uri.etsi.org/ngsi-ld/name' },
+      progress: { type: 'string', enum: ['needs-action', 'in-process', 'completed', 'failed', 'cancelled'], description: 'Progress', 'x-ngsi': { type: 'Property' }, 'x-iri': 'https://datamodels.jp/ns/task/progress' },
+    },
+    required: ['id', 'type', 'name', 'progress'],
+    additionalProperties: false,
+  };
+  const dir = join(d, 'disaster', 'SubclassProbe');
+  await mkdir(join(dir, 'examples'), { recursive: true });
+  await writeFile(join(dir, 'schema.json'), JSON.stringify(subclassSchema, null, 2));
+  await writeFile(join(dir, 'catalog.yaml'), 'title:\n  ja: "テスト"\n  en: "Probe"\ndescription:\n  ja: "テスト"\n  en: "Probe"\nstatus: draft\ntags: [probe]\nattributes:\n  name:\n    ja: "名前"\n    en: "Name"\n  progress:\n    ja: "状態"\n    en: "Progress"\n');
+  await writeFile(join(dir, 'examples', 'example.json'), JSON.stringify({ id: 'urn:ngsi-ld:SubclassProbe:1', type: 'SubclassProbe', name: 'Probe', progress: 'in-process' }, null, 2));
+  await writeFile(join(dir, 'examples', 'example-normalized.jsonld'), JSON.stringify({
+    '@context': ['https://datamodels.jp/context/disaster/v1.0.0.jsonld', 'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld'],
+    id: 'urn:ngsi-ld:SubclassProbe:1', type: 'SubclassProbe',
+    name: { type: 'Property', value: 'Probe' },
+    progress: { type: 'Property', value: 'in-process' },
+  }, null, 2));
+  await editJson(join(d, 'disaster', 'context.jsonld'), (c) => {
+    const t = inlineTerms(c);
+    t.SubclassProbe = 'disaster:SubclassProbe';
+    t.name = 'https://uri.etsi.org/ngsi-ld/name';
+    t.progress = 'tm:progress';
+  });
+}
+
 test('unmodified models validate', () => {
   const r = spawnSync(process.execPath, [join(root, 'scripts', 'validate-models.mjs')], { encoding: 'utf8' });
   assert.equal(r.status, 0, r.stderr);
@@ -45,19 +117,41 @@ test('a key-values example violating the schema fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { e.closureStatus = '不明'; }),
     /example\.json: .*(enum|allowed values)/));
 
+test('an out-of-vocabulary regulationCategory fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { e.regulationCategory = '全面通行止め'; }),
+    /example\.json: .*(enum|allowed values)/));
+
+test('a RoadClosure example missing location fails now that it is required', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { delete e.location; }),
+    /example\.json: .*required.*location/));
+
+test('a RoadClosure location as a bare polygon (no line/point alternative) still needs coordinates', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { e.location = { type: 'Polygon' }; }),
+    /example\.json: .*location/));
+
+test('a RoadClosure polygon whose ring does not close fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => {
+    e.location = { type: 'Polygon', coordinates: [[[134.04, 34.34], [134.05, 34.34], [134.05, 34.35], [134.04, 34.36]]] };
+  }), /example\.json: .*polygon ring does not close/));
+
+test('a RoadClosure MultiLineString with no lines fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => {
+    e.location = { type: 'MultiLineString', coordinates: [] };
+  }), /example\.json: .*location/));
+
 test('a normalized attribute without value fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'DisasterEvent', 'examples', 'example-normalized.jsonld'), (e) => { e.name = { type: 'Property' }; }),
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example-normalized.jsonld'), (e) => { e.description = { type: 'Property' }; }),
     /Property needs a value/));
 
 test('an attribute whose context mapping is not an IRI fails', () =>
   withMutatedModels(async (d) => {
     // Declared everywhere, but the context maps it to a bare word, not an IRI.
-    await editJson(join(d, 'disaster', 'IncidentPhoto', 'schema.json'), (s) => { s.properties.weird = { type: 'integer', 'x-ngsi': { type: 'Property' }, 'x-iri': 'weird' }; });
+    await editJson(join(d, 'disaster', 'RoadClosure', 'schema.json'), (s) => { s.properties.weird = { type: 'integer', 'x-ngsi': { type: 'Property' }, 'x-iri': 'weird' }; });
     await editJson(join(d, 'disaster', 'context.jsonld'), (c) => { inlineTerms(c).weird = 'weird'; });
-    const cat = join(d, 'disaster', 'IncidentPhoto', 'catalog.yaml');
+    const cat = join(d, 'disaster', 'RoadClosure', 'catalog.yaml');
     await writeFile(cat, (await readFile(cat, 'utf8')) + '  weird:\n    ja: "x"\n    en: "x"\n');
-    await editJson(join(d, 'disaster', 'IncidentPhoto', 'examples', 'example-normalized.jsonld'), (e) => { e.weird = { type: 'Property', value: 1 }; });
-    await editJson(join(d, 'disaster', 'IncidentPhoto', 'examples', 'example.json'), (e) => { e.weird = 1; });
+    await editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example-normalized.jsonld'), (e) => { e.weird = { type: 'Property', value: 1 }; });
+    await editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { e.weird = 1; });
   }, /(did not expand|lost in expand\/compact round-trip|JSON-LD processing failed)/));
 
 test('a type name not matching its folder fails', () =>
@@ -135,32 +229,33 @@ test('a notes.yaml whose root is a list fails', () =>
     /root value must be a mapping/));
 
 test('an alias whose attributes differ from the aliased type fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'DisasterEvent', 'schema.json'), (s) => { delete s.properties.keywords; }),
+  withMutatedModels(async (d) => { await addAliasProbe(d); await editJson(join(d, 'disaster', 'AliasProbe', 'schema.json'), (s) => { delete s.properties.keywords; }); },
     /alias of Project: properties differ \(keywords\)/));
 
 test('an alias of a type the catalog does not define fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'DisasterEvent', 'schema.json'), (s) => { s['x-alias-of'] = 'https://datamodels.jp/ns/task/Programme'; }),
+  withMutatedModels(async (d) => { await addAliasProbe(d); await editJson(join(d, 'disaster', 'AliasProbe', 'schema.json'), (s) => { s['x-alias-of'] = 'https://datamodels.jp/ns/task/Programme'; }); },
     /x-alias-of .* is not a type of this catalog/));
 
 test('a second type claiming an existing IRI without x-alias-of fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'DisasterEvent', 'schema.json'), (s) => { delete s['x-alias-of']; }),
-    /type expands to .*\/ns\/task\/Project, expected .*\/ns\/disaster\/DisasterEvent/));
+  withMutatedModels(async (d) => { await addAliasProbe(d); await editJson(join(d, 'disaster', 'AliasProbe', 'schema.json'), (s) => { delete s['x-alias-of']; }); },
+    /type expands to .*\/ns\/task\/Project, expected .*\/ns\/disaster\/AliasProbe/));
 
 test('a subclass attribute under a different IRI than the parent fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'IncidentReport', 'schema.json'), (s) => { s.properties.progress['x-iri'] = 'https://datamodels.jp/ns/disaster/progress'; }),
+  withMutatedModels(async (d) => { await addSubclassProbe(d); await editJson(join(d, 'disaster', 'SubclassProbe', 'schema.json'), (s) => { s.properties.progress['x-iri'] = 'https://datamodels.jp/ns/disaster/progress'; }); },
     /progress: subclass of Task must use its IRI/));
 
 test('a subclass that drops a parent-required attribute fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'IncidentReport', 'schema.json'), (s) => { s.required = s.required.filter((r) => r !== 'progress'); }),
+  withMutatedModels(async (d) => { await addSubclassProbe(d); await editJson(join(d, 'disaster', 'SubclassProbe', 'schema.json'), (s) => { s.required = s.required.filter((r) => r !== 'progress'); }); },
     /subclass of Task: "progress" must stay required/));
 
 test('an alias with a different unknown-attribute policy fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'DisasterEvent', 'schema.json'), (s) => { s.additionalProperties = true; }),
+  withMutatedModels(async (d) => { await addAliasProbe(d); await editJson(join(d, 'disaster', 'AliasProbe', 'schema.json'), (s) => { s.additionalProperties = true; }); },
     /alias of Project: additionalProperties differs/));
 
 test('an alias survives a different key and required order', () =>
   withMutatedModels(async (d) => {
-    await editJson(join(d, 'disaster', 'DisasterEvent', 'schema.json'), (s) => {
+    await addAliasProbe(d);
+    await editJson(join(d, 'disaster', 'AliasProbe', 'schema.json'), (s) => {
       s.required = [...s.required].reverse();
       s.properties = Object.fromEntries(Object.entries(s.properties).reverse());
       // and break something unrelated so the run still fails where expected
