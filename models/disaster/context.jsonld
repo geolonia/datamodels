@@ -13,6 +13,7 @@
       "evacueeMale": "disaster:evacueeMale",
       "evacueeTotal": "disaster:evacueeTotal",
       "externalShelterId": "disaster:externalShelterId",
+      "nationalShelterId": "disaster:nationalShelterId",
       "openedAt": "disaster:openedAt",
       "openingStatus": "disaster:openingStatus",
       "project": {
