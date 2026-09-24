@@ -13,7 +13,7 @@ The rule of this catalog is "extend, do not duplicate". Types and attributes of 
 |---|---|---|
 | Use a global model as it is | Use the upstream `@context` and type. The catalog adds Japanese descriptions and examples | `WeatherObserved` |
 | Add Japanese attributes to an existing model | **Profile**: import the upstream context by URL and publish a context that defines only the added attributes | `Building` with residential indication |
-| Model something that only exists in Japan | **Own subject**: mint type and attribute IRIs under `https://models.geonicdb.com/ns/<subject>/` | [Disaster response](/en/models/disaster/) |
+| Model something that only exists in Japan | **Own subject**: mint type and attribute IRIs under `https://datamodels.jp/ns/<subject>/` | [Disaster response](/en/models/disaster/) |
 
 ### Writing a profile
 
@@ -23,9 +23,9 @@ Nothing upstream is copied. The upstream context is listed by URL in the `@conte
 {
   "@context": [
     "https://raw.githubusercontent.com/smart-data-models/dataModel.Building/<commit>/context.jsonld",
-    "https://models.geonicdb.com/context/common/v1.jsonld",
+    "https://datamodels.jp/context/common/v1.jsonld",
     {
-      "gb": "https://models.geonicdb.com/ns/Building/",
+      "gb": "https://datamodels.jp/ns/Building/",
       "residentialIndication": "gb:residentialIndication"
     }
   ]

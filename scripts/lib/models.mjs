@@ -8,7 +8,7 @@ export const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 // GEONICDB_MODELS_DIR lets the test suite point the loader at a mutated copy.
 export const MODELS_DIR = process.env.GEONICDB_MODELS_DIR ?? join(ROOT, 'models');
 export const DIST = join(ROOT, 'dist');
-export const BASE_URL = 'https://models.geonicdb.com';
+export const BASE_URL = 'https://datamodels.jp';
 export const CORE_CONTEXT_URL = 'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld';
 export const CORE_CONTEXT_FIXTURE = join(ROOT, 'test', 'fixtures', 'ngsi-ld-core-context-v1.8.jsonld');
 

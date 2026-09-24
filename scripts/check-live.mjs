@@ -1,5 +1,5 @@
 // Check the deployed site against the URL contract. Run after every deploy:
-//   npm run check:live            (models.geonicdb.com)
+//   npm run check:live            (datamodels.jp)
 //   npm run check:live -- https://preview.example   (another origin)
 // Fails on the first contract violation. Needs network access only.
 import jsonld from 'jsonld';

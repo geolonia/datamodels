@@ -16,7 +16,7 @@ There is no need for a new model. In JSON-LD a key is only a term, and the `@con
   "@context": [
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",
     {
-      "tm": "https://models.geonicdb.com/ns/task/",
+      "tm": "https://datamodels.jp/ns/task/",
       "Saigai": "tm:Project",
       "responsibleTeam": "tm:assignee"
     }

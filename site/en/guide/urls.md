@@ -12,7 +12,7 @@ A `@context` URL is stored with every entity and referenced years later. This ca
 1. **A published versioned file is never modified or removed.** The content of `/context/<subject>/v1.0.0.jsonld` stays the same forever. CI records the hashes and rejects any change that modifies or removes one.
 2. **A compatible change is a new minor version.** Added attributes are published as `v1.1.0`, and the alias `v1.jsonld` points at the latest 1.x.
 3. **A breaking change is a new major version or a new term.** The meaning or type of an attribute never changes. When it must, a new IRI is minted and the old one stays, marked deprecated.
-4. **Type and attribute IRIs resolve to documentation.** Opening `https://models.geonicdb.com/ns/disaster/RoadClosure` in a browser takes you to the type's page.
+4. **Type and attribute IRIs resolve to documentation.** Opening `https://datamodels.jp/ns/disaster/RoadClosure` in a browser takes you to the type's page.
 
 ## Which URL to use
 

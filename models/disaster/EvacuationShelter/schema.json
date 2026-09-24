@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://models.geonicdb.com/schema/disaster/EvacuationShelter/v3.0.0.json",
+  "$id": "https://datamodels.jp/schema/disaster/EvacuationShelter/v1.0.0.json",
   "title": "EvacuationShelter",
   "description": "Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included; it is referenced by externalShelterId. Only opening status and evacuee counts live here.",
-  "x-version": "3.0.0",
-  "x-license-url": "https://models.geonicdb.com/LICENSE-CONTENT",
+  "x-version": "1.0.0",
+  "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
   "x-model-tags": "GeonicDB, disaster-response, Japan",
   "x-derived-from": "https://github.com/geolonia/geonicdb-datamodels",
   "type": "object",
@@ -25,17 +25,17 @@
       "description": "The disaster event (DisasterEvent) this entity belongs to",
       "x-ngsi": {
         "type": "Relationship",
-        "target": "https://models.geonicdb.com/ns/task/Project"
+        "target": "https://datamodels.jp/ns/task/Project"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/project"
+      "x-iri": "https://datamodels.jp/ns/task/project"
     },
     "externalShelterId": {
-      "description": "The shelter's ID in the municipality's 指定緊急避難場所一覧 (推奨データセット; unique within the municipality, e.g. CC0100022200). Together with localGovernmentCode it identifies the shelter nationwide",
+      "description": "The shelter's ID in the municipality's 指定緊急避難場所一覧 (自治体標準オープンデータセット; unique within the municipality, e.g. CC0100022200). Together with localGovernmentCode it identifies the shelter nationwide",
       "type": "string",
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/externalShelterId"
+      "x-iri": "https://datamodels.jp/ns/disaster/externalShelterId"
     },
     "localGovernmentCode": {
       "description": "Local government code of the municipality that publishes the shelter list (全国地方公共団体コード, 6 digits)",
@@ -44,7 +44,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/common/localGovernmentCode"
+      "x-iri": "https://datamodels.jp/ns/common/localGovernmentCode"
     },
     "openingStatus": {
       "description": "Normalised opening state: open, closed, full (open but at capacity). The local wording goes in statusLabel",
@@ -57,7 +57,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/openingStatus"
+      "x-iri": "https://datamodels.jp/ns/disaster/openingStatus"
     },
     "statusLabel": {
       "type": "string",
@@ -65,7 +65,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/task/statusLabel"
+      "x-iri": "https://datamodels.jp/ns/task/statusLabel"
     },
     "evacueeHouseholds": {
       "description": "Number of evacuated households",
@@ -73,7 +73,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/evacueeHouseholds",
+      "x-iri": "https://datamodels.jp/ns/disaster/evacueeHouseholds",
       "minimum": 0
     },
     "evacueeTotal": {
@@ -82,7 +82,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/evacueeTotal",
+      "x-iri": "https://datamodels.jp/ns/disaster/evacueeTotal",
       "minimum": 0
     },
     "evacueeFemale": {
@@ -91,7 +91,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/evacueeFemale",
+      "x-iri": "https://datamodels.jp/ns/disaster/evacueeFemale",
       "minimum": 0
     },
     "evacueeMale": {
@@ -100,7 +100,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/evacueeMale",
+      "x-iri": "https://datamodels.jp/ns/disaster/evacueeMale",
       "minimum": 0
     },
     "description": {
@@ -118,7 +118,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/openedAt"
+      "x-iri": "https://datamodels.jp/ns/disaster/openedAt"
     },
     "closedAt": {
       "description": "Time the shelter closed",
@@ -127,7 +127,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/closedAt"
+      "x-iri": "https://datamodels.jp/ns/disaster/closedAt"
     }
   },
   "required": [

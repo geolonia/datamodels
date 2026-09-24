@@ -1,4 +1,4 @@
 notes:
-  - Seeded 2026-09-17 from geolonia/geonicdb-datamodels data-models/*.json (Takamatsu City flood-prevention headquarters). Type name generalised from the tenant-specific "Saitai" prefix.
-  - "2.0.0: a subclass of task Attachment. imageKey → contentUrl (a URI; an object key becomes an object-store URL), updatedAt → dateModified; filename, author and location added from Attachment."
+  - Derived from the Custom Data Models of the Takamatsu City flood-prevention headquarters application (geolonia/geonicdb-datamodels, September 2026). Type names generalised from the tenant-specific "Saitai" prefix; attribute names aligned with the task subject.
+  - "A subclass of task Attachment. From the source application: imageKey → contentUrl (an object key becomes an object-store URL), updatedAt → dateModified; filename, author and location come from Attachment."
 license: CC BY 4.0 (see /LICENSE-CONTENT.md)

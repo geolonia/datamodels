@@ -28,7 +28,7 @@ Existing entities are not re-validated when a model is registered or changed (a 
 ## 1. Register the Custom Data Model
 
 ```bash
-curl -sSf https://models.geonicdb.com/geonicdb/disaster/RoadClosure.json -o RoadClosure.json
+curl -sSf https://datamodels.jp/geonicdb/disaster/RoadClosure.json -o RoadClosure.json
 
 curl -X POST "$GEONICDB_BASE_URL/custom-data-models" \
   -H "Content-Type: application/json" \
@@ -46,7 +46,7 @@ The registered definition validates attribute types, required attributes and enu
 The "Example (normalized)" on each model page is JSON-LD with its `@context` inside, so it can be posted as it is with `Content-Type: application/ld+json`.
 
 ```bash
-curl -sSf https://models.geonicdb.com/examples/disaster/RoadClosure/example-normalized.jsonld -o entity.jsonld
+curl -sSf https://datamodels.jp/examples/disaster/RoadClosure/example-normalized.jsonld -o entity.jsonld
 
 curl -X POST "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
   -H "Content-Type: application/ld+json" \
@@ -62,7 +62,7 @@ For your own data, either put `@context` in the body and send `application/ld+js
 ```bash
 curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadClosure&q=closureStatus==%22通行止め中%22" \
   -H "Accept: application/ld+json" \
-  -H 'Link: <https://models.geonicdb.com/context/disaster/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -H 'Link: <https://datamodels.jp/context/disaster/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -H "x-api-key: $GEONICDB_API_KEY" \
   -H "NGSILD-Tenant: $GEONICDB_TENANT"
 ```
@@ -77,7 +77,7 @@ Three ways, in increasing order of rigour.
    ```json
    {
      "@context": [
-       "https://models.geonicdb.com/context/disaster/v1.jsonld",
+       "https://datamodels.jp/context/disaster/v1.jsonld",
        { "acme": "https://example.com/ns/acme/", "patrolRoute": "acme:patrolRoute" }
      ]
    }

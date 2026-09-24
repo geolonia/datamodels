@@ -66,7 +66,7 @@ test('a type name not matching its folder fails', () =>
 
 test('a schema version diverging from the subject version fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'schema.json'), (s) => { s['x-version'] = '9.9.9'; }),
-    /x-version must be 3\.0\.0/));
+    /x-version must be 1\.0\.0/));
 
 test('a normalized attribute whose wrapper type contradicts x-ngsi.type fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example-normalized.jsonld'), (e) => { e.project = { type: 'Property', value: e.project.object }; }),
@@ -80,7 +80,7 @@ test('a subject without an English title fails at load time', () =>
 
 test('a nested address field the context does not define fails', () =>
   withMutatedModels(async (d) => {
-    await editJson(join(d, 'common', 'JapaneseAddress', 'schema.json'), (s) => { s.properties.wardName = { type: 'string', 'x-iri': 'https://models.geonicdb.com/ns/common/wardName' }; });
+    await editJson(join(d, 'common', 'JapaneseAddress', 'schema.json'), (s) => { s.properties.wardName = { type: 'string', 'x-iri': 'https://datamodels.jp/ns/common/wardName' }; });
     const cat = join(d, 'common', 'JapaneseAddress', 'catalog.yaml');
     await writeFile(cat, (await readFile(cat, 'utf8')) + '  wardName:\n    ja: "x"\n    en: "x"\n');
     await editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example-normalized.jsonld'), (e) => { e.address.value.wardName = '中区'; });
@@ -96,7 +96,7 @@ test('an entity example whose address violates the referenced value schema fails
     /RoadClosure\/examples\/example\.json: .*pattern/));
 
 test('a context importing a version that is neither published nor current fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'context.jsonld'), (c) => { c['@context'][0] = 'https://models.geonicdb.com/context/common/v0.9.0.jsonld'; }),
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'context.jsonld'), (c) => { c['@context'][0] = 'https://datamodels.jp/context/common/v0.9.0.jsonld'; }),
     /version 0\.9\.0 of subject "common" is neither published/));
 
 test('a multi-valued attribute the schema does not declare as multi fails', () =>
@@ -139,7 +139,7 @@ test('an alias whose attributes differ from the aliased type fails', () =>
     /alias of Project: properties differ \(keywords\)/));
 
 test('an alias of a type the catalog does not define fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'DisasterEvent', 'schema.json'), (s) => { s['x-alias-of'] = 'https://models.geonicdb.com/ns/task/Programme'; }),
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'DisasterEvent', 'schema.json'), (s) => { s['x-alias-of'] = 'https://datamodels.jp/ns/task/Programme'; }),
     /x-alias-of .* is not a type of this catalog/));
 
 test('a second type claiming an existing IRI without x-alias-of fails', () =>
@@ -147,7 +147,7 @@ test('a second type claiming an existing IRI without x-alias-of fails', () =>
     /type expands to .*\/ns\/task\/Project, expected .*\/ns\/disaster\/DisasterEvent/));
 
 test('a subclass attribute under a different IRI than the parent fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'IncidentReport', 'schema.json'), (s) => { s.properties.progress['x-iri'] = 'https://models.geonicdb.com/ns/disaster/progress'; }),
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'IncidentReport', 'schema.json'), (s) => { s.properties.progress['x-iri'] = 'https://datamodels.jp/ns/disaster/progress'; }),
     /progress: subclass of Task must use its IRI/));
 
 test('a subclass that drops a parent-required attribute fails', () =>
@@ -166,7 +166,7 @@ test('an alias survives a different key and required order', () =>
       // and break something unrelated so the run still fails where expected
       s['x-version'] = '9.9.9';
     });
-  }, /x-version must be 3\.0\.0(?![\s\S]*alias of Project)/));
+  }, /x-version must be 1\.0\.0(?![\s\S]*alias of Project)/));
 
 test('a product-specific annotation in a schema fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'schema.json'), (s) => { s.properties.roadName['x-geonicdb'] = { indexed: true }; }),

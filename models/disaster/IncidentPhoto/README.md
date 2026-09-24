@@ -6,10 +6,10 @@ Metadata for one on-site photo attached to an incident report. The image stays i
 
 通報に紐づく現地写真のメタデータ 1 件。画像本体は外部ストレージに置き、contentUrl で参照する。タスク管理サブジェクトの Attachment のサブクラス。
 
-- Type IRI: `https://models.geonicdb.com/ns/disaster/IncidentPhoto`
-- Subclass of: `https://models.geonicdb.com/ns/task/Attachment`
-- Context: `https://models.geonicdb.com/context/disaster/v3.jsonld` (alias), `https://models.geonicdb.com/context/disaster/v3.0.0.jsonld` (exact)
-- Schema: `https://models.geonicdb.com/schema/disaster/IncidentPhoto/v3.json`
-- Page: https://models.geonicdb.com/models/disaster/IncidentPhoto/
+- Type IRI: `https://datamodels.jp/ns/disaster/IncidentPhoto`
+- Subclass of: `https://datamodels.jp/ns/task/Attachment`
+- Context: `https://datamodels.jp/context/disaster/v1.jsonld` (alias), `https://datamodels.jp/context/disaster/v1.0.0.jsonld` (exact)
+- Schema: `https://datamodels.jp/schema/disaster/IncidentPhoto/v1.json` (alias), `https://datamodels.jp/schema/disaster/IncidentPhoto/v1.0.0.json` (exact)
+- Page: https://datamodels.jp/models/disaster/IncidentPhoto/
 
-Files follow the Smart Data Models layout: `schema.json` (key-values representation, with `x-ngsi`, `x-iri` and `x-geonicdb` annotations), `catalog.yaml` (Japanese and English descriptions), `examples/`, `notes.yaml`, `ADOPTERS.yaml`.
+Files follow the Smart Data Models layout: `schema.json` (key-values representation, with `x-ngsi`, `x-iri` and optional `x-personal-data` annotations), `catalog.yaml` (Japanese and English descriptions), `examples/`, `mapping/` where a corresponding standard exists, `notes.yaml`, `ADOPTERS.yaml`.

@@ -1,4 +1,4 @@
-// VitePress config for models.geonicdb.com, modelled on docs.geonicdb.com
+// VitePress config for datamodels.jp, modelled on docs.geonicdb.com
 // (geolonia/geonicdb-docs). Differences: Japanese is the root locale with no
 // /ja/ prefix, because the /ns IRI redirects point at /models/...; English is
 // under /en/. Model pages are generated from models/ at build time
@@ -52,7 +52,7 @@ const nav = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.NavItem[] => [
   { text: 'GeonicDB Docs', link: lang === 'ja' ? 'https://docs.geonicdb.com/ja/' : 'https://docs.geonicdb.com/en/' },
 ]
 
-const SITE_URL = 'https://models.geonicdb.com';
+const SITE_URL = 'https://datamodels.jp';
 
 export default defineConfig({
   title: 'GeonicDB Data Models',

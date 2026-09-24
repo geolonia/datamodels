@@ -1,4 +1,4 @@
-# Response headers for models.geonicdb.com (Workers static assets).
+# Response headers for datamodels.jp (Workers static assets).
 #
 # Matching rules (Cloudflare): one `*` splat per rule at most; a request
 # inherits the headers of every matching rule; the same header set by several

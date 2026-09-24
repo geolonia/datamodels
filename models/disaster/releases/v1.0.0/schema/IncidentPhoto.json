@@ -1,12 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://models.geonicdb.com/schema/disaster/IncidentPhoto/v1.0.0.json",
+  "$id": "https://datamodels.jp/schema/disaster/IncidentPhoto/v1.0.0.json",
   "title": "IncidentPhoto",
-  "description": "Metadata for one on-site photo attached to an incident report. The image itself stays in external storage; only the key is stored here.",
+  "description": "Metadata for one on-site photo attached to an incident report. The image stays in external storage; contentUrl points at it. A subclass of Attachment in the task subject.",
   "x-version": "1.0.0",
-  "x-license-url": "https://models.geonicdb.com/LICENSE-CONTENT",
+  "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
   "x-model-tags": "GeonicDB, disaster-response, Japan",
   "x-derived-from": "https://github.com/geolonia/geonicdb-datamodels",
+  "x-subclass-of": "https://datamodels.jp/ns/task/Attachment",
   "type": "object",
   "properties": {
     "id": {
@@ -20,41 +21,83 @@
       "description": "Entity type"
     },
     "task": {
-      "description": "The incident report this entity refers to",
       "type": "string",
       "format": "uri",
+      "description": "The incident report this entity refers to",
       "x-ngsi": {
         "type": "Relationship",
-        "target": "https://models.geonicdb.com/ns/disaster/IncidentReport"
+        "target": "https://datamodels.jp/ns/disaster/IncidentReport"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/task",
-      "x-geonicdb": {
-        "indexed": true
-      }
+      "x-iri": "https://datamodels.jp/ns/task/task"
     },
-    "imageKey": {
-      "description": "Object key in external storage",
+    "author": {
       "type": "string",
+      "format": "uri",
+      "description": "Who took or uploaded the photo (an entity URN)",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "agent"
+      },
+      "x-iri": "https://schema.org/author"
+    },
+    "contentUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "Where the image is stored, as a URI (for example an object-store URL). The image itself stays outside the broker",
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/imageKey"
+      "x-iri": "https://schema.org/contentUrl"
     },
-    "updatedAt": {
-      "description": "Application-level update time, recorded by the app as a business update, separate from the broker system attribute modifiedAt",
+    "filename": {
+      "type": "string",
+      "description": "File name",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/task/filename"
+    },
+    "location": {
+      "description": "Where the photo was taken",
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "Point"
+        },
+        "coordinates": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "items": {
+            "type": "number"
+          }
+        }
+      },
+      "required": [
+        "type",
+        "coordinates"
+      ],
+      "x-ngsi": {
+        "type": "GeoProperty",
+        "model": "https://purl.org/geojson/vocab#Point"
+      },
+      "x-iri": "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld#location"
+    },
+    "dateModified": {
       "type": "string",
       "format": "date-time",
+      "description": "Last modification in the source system, recorded by the application as a business update, separate from the broker system attribute modifiedAt",
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/updatedAt"
+      "x-iri": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/dateModified"
     }
   },
   "required": [
     "id",
     "type",
     "task",
-    "imageKey"
+    "contentUrl"
   ],
   "additionalProperties": false
 }

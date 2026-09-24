@@ -1,6 +1,6 @@
 {
   "@context": {
-    "common": "https://models.geonicdb.com/ns/common/",
+    "common": "https://datamodels.jp/ns/common/",
     "schema": "https://schema.org/",
     "JapaneseAddress": "common:JapaneseAddress",
     "address": "schema:address",

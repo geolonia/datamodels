@@ -1,12 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://models.geonicdb.com/schema/disaster/IncidentReport/v1.0.0.json",
+  "$id": "https://datamodels.jp/schema/disaster/IncidentReport/v1.0.0.json",
   "title": "IncidentReport",
-  "description": "One report from a resident or staff member: location, category, response status, the person who entered it, and the reporter (personal data).",
+  "description": "One report from a resident or staff member: location, category, response status, who entered it, and the reporter (personal data). A subclass of Task in the task subject: name, progress, assignee-style attributes share the task IRIs.",
   "x-version": "1.0.0",
-  "x-license-url": "https://models.geonicdb.com/LICENSE-CONTENT",
+  "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
   "x-model-tags": "GeonicDB, disaster-response, Japan",
   "x-derived-from": "https://github.com/geolonia/geonicdb-datamodels",
+  "x-subclass-of": "https://datamodels.jp/ns/task/Task",
   "type": "object",
   "properties": {
     "id": {
@@ -19,48 +20,89 @@
       "const": "IncidentReport",
       "description": "Entity type"
     },
+    "name": {
+      "type": "string",
+      "description": "Short title of the report, for example category and place",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://uri.etsi.org/ngsi-ld/name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Free text: what was reported, current findings",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld#description"
+    },
     "project": {
-      "description": "The disaster-response project this entity belongs to",
       "type": "string",
       "format": "uri",
+      "description": "The disaster event (DisasterEvent) this entity belongs to",
       "x-ngsi": {
         "type": "Relationship",
-        "target": "https://models.geonicdb.com/ns/disaster/Project"
+        "target": "https://datamodels.jp/ns/task/Project"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/project",
-      "x-geonicdb": {
-        "indexed": true
-      }
+      "x-iri": "https://datamodels.jp/ns/task/project"
     },
-    "index": {
-      "description": "Sequence number of the report within the project",
-      "type": "integer",
+    "externalId": {
+      "type": "string",
+      "description": "Sequence number of the report within the disaster event, as a string",
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/index"
+      "x-iri": "https://datamodels.jp/ns/task/externalId"
     },
-    "incidentStatus": {
-      "description": "Response status. `status` is a protected term in the NGSI-LD core context, hence incidentStatus",
+    "progress": {
       "type": "string",
       "enum": [
-        "InProgress",
-        "Responded",
-        "OnHold",
-        "Completed"
+        "needs-action",
+        "in-process",
+        "completed",
+        "failed",
+        "cancelled"
       ],
+      "description": "Normalised response state (RFC 8984 progress). The original labels map as 対応中 → in-process, 対応済み → in-process, 保留 → needs-action, 完了 → completed",
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/incidentStatus"
+      "x-iri": "https://datamodels.jp/ns/task/progress"
     },
-    "category": {
-      "description": "Category such as flooding, landslide, collapse, fallen tree, broken line. Not a closed list",
+    "statusLabel": {
       "type": "string",
+      "description": "The response status as the headquarters names it (対応中, 対応済み, 保留, 完了)",
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/category"
+      "x-iri": "https://datamodels.jp/ns/task/statusLabel"
+    },
+    "subtype": {
+      "type": "string",
+      "description": "Category such as flooding, landslide, collapse, fallen tree, broken line. Not a closed list",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/task/subtype"
+    },
+    "author": {
+      "type": "string",
+      "format": "uri",
+      "description": "The person or team who entered the report (an entity URN)",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "agent"
+      },
+      "x-iri": "https://schema.org/author"
+    },
+    "reportedAt": {
+      "description": "Date and time the report was received",
+      "type": "string",
+      "format": "date-time",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://schema.org/dateReceived"
     },
     "pressReleaseStatus": {
       "description": "Press-release status",
@@ -73,51 +115,19 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/pressReleaseStatus"
+      "x-iri": "https://datamodels.jp/ns/disaster/pressReleaseStatus"
     },
-    "reportedAt": {
-      "description": "Date and time the report was received",
-      "type": "string",
-      "format": "date-time",
+    "address": {
+      "$ref": "https://datamodels.jp/schema/common/JapaneseAddress/v1.0.0.json",
+      "description": "Address of the location, as a JapaneseAddress value (common subject)",
       "x-ngsi": {
-        "type": "Property"
+        "type": "Property",
+        "model": "https://datamodels.jp/ns/common/JapaneseAddress"
       },
-      "x-iri": "https://schema.org/dateReceived"
-    },
-    "inputterTeam": {
-      "description": "Team of the person who entered the report",
-      "type": "string",
-      "x-ngsi": {
-        "type": "Property"
-      },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/inputterTeam"
-    },
-    "inputterName": {
-      "description": "Name of the person who entered the report",
-      "type": "string",
-      "x-ngsi": {
-        "type": "Property"
-      },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/inputterName"
-    },
-    "addressTown": {
-      "description": "Town name of the address (provisional; to move to the common address model)",
-      "type": "string",
-      "x-ngsi": {
-        "type": "Property"
-      },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/addressTown"
-    },
-    "addressBanchi": {
-      "description": "Block and lot number of the address (provisional; to move to the common address model)",
-      "type": "string",
-      "x-ngsi": {
-        "type": "Property"
-      },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/addressBanchi"
+      "x-iri": "https://schema.org/address"
     },
     "location": {
-      "description": "Location",
+      "description": "Location of the incident",
       "type": "object",
       "properties": {
         "type": {
@@ -148,10 +158,8 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/reporterName",
-      "x-geonicdb": {
-        "pii": true
-      }
+      "x-iri": "https://datamodels.jp/ns/disaster/reporterName",
+      "x-personal-data": true
     },
     "reporterPhone": {
       "description": "Reporter phone number (personal data)",
@@ -159,10 +167,8 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/reporterPhone",
-      "x-geonicdb": {
-        "pii": true
-      }
+      "x-iri": "https://datamodels.jp/ns/disaster/reporterPhone",
+      "x-personal-data": true
     },
     "reporterAddress": {
       "description": "Reporter address (personal data)",
@@ -170,34 +176,26 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/reporterAddress",
-      "x-geonicdb": {
-        "pii": true
-      }
+      "x-iri": "https://datamodels.jp/ns/disaster/reporterAddress",
+      "x-personal-data": true
     },
-    "memo": {
-      "description": "Free-text memo",
-      "type": "string",
-      "x-ngsi": {
-        "type": "Property"
-      },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/memo"
-    },
-    "updatedAt": {
-      "description": "Application-level update time, recorded by the app as a business update, separate from the broker system attribute modifiedAt",
+    "dateModified": {
       "type": "string",
       "format": "date-time",
+      "description": "Last modification in the source system, recorded by the application as a business update, separate from the broker system attribute modifiedAt",
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://models.geonicdb.com/ns/disaster/updatedAt"
+      "x-iri": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/dateModified"
     }
   },
   "required": [
     "id",
     "type",
+    "name",
     "project",
-    "index"
+    "externalId",
+    "progress"
   ],
   "additionalProperties": false
 }

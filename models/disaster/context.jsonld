@@ -1,10 +1,10 @@
 {
   "@context": [
-    "https://models.geonicdb.com/context/common/v1.0.0.jsonld",
+    "https://datamodels.jp/context/common/v1.0.0.jsonld",
     {
-      "disaster": "https://models.geonicdb.com/ns/disaster/",
+      "disaster": "https://datamodels.jp/ns/disaster/",
       "schema": "https://schema.org/",
-      "tm": "https://models.geonicdb.com/ns/task/",
+      "tm": "https://datamodels.jp/ns/task/",
       "DisasterEvent": "tm:Project",
       "IncidentReport": "disaster:IncidentReport",
       "IncidentResponseAction": "disaster:IncidentResponseAction",

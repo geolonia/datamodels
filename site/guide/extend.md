@@ -13,7 +13,7 @@ description: 既存のデータモデルを日本向けに拡張する方法、�
 |---|---|---|
 | 既存のグローバルモデルをそのまま使う | 上流の `@context` と型をそのまま使う。カタログは日本語の説明と例を提供する | `WeatherObserved` |
 | 既存モデルに日本向けの属性を足す | **プロファイル**: 上流の context を URL で取り込み、追加属性だけを定義した context を公開する | `Building` に住居表示を足す |
-| 日本にしかないモデルを作る | **独自サブジェクト**: 型と属性の IRI を `https://models.geonicdb.com/ns/<subject>/` 配下に発行する | [災害対応](/models/disaster/) |
+| 日本にしかないモデルを作る | **独自サブジェクト**: 型と属性の IRI を `https://datamodels.jp/ns/<subject>/` 配下に発行する | [災害対応](/models/disaster/) |
 
 ### プロファイルの書き方
 
@@ -23,9 +23,9 @@ description: 既存のデータモデルを日本向けに拡張する方法、�
 {
   "@context": [
     "https://raw.githubusercontent.com/smart-data-models/dataModel.Building/<commit>/context.jsonld",
-    "https://models.geonicdb.com/context/common/v1.jsonld",
+    "https://datamodels.jp/context/common/v1.jsonld",
     {
-      "gb": "https://models.geonicdb.com/ns/Building/",
+      "gb": "https://datamodels.jp/ns/Building/",
       "residentialIndication": "gb:residentialIndication"
     }
   ]

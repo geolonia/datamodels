@@ -1,6 +1,6 @@
 {
   "@context": {
-    "tm": "https://models.geonicdb.com/ns/task/",
+    "tm": "https://datamodels.jp/ns/task/",
     "schema": "https://schema.org/",
     "Task": "tm:Task",
     "Project": "tm:Project",

@@ -1,6 +1,5 @@
 notes:
-  - Seeded 2026-09-17 from geolonia/geonicdb-datamodels data-models/*.json (Takamatsu City flood-prevention headquarters). Type name generalised from the tenant-specific "Saitai" prefix.
-  - The original attribute "status" is renamed because status is a protected term in the NGSI-LD core context and cannot be redefined.
+  - Derived from the Custom Data Models of the Takamatsu City flood-prevention headquarters application (geolonia/geonicdb-datamodels, September 2026). Type names generalised from the tenant-specific "Saitai" prefix; attribute names aligned with the task subject.
+  - "A subclass of task Task: attributes with Task names carry the Task IRIs. From the source application: index → externalId (string), status → progress + statusLabel (status is a protected term of the NGSI-LD core context), category → subtype, memo → description, inputterTeam/inputterName → author (a Relationship to a person or team entity), updatedAt → dateModified; name is required, as Task requires it."
   - pressReleaseStatus drops the empty-string enum member of the original; the attribute is simply omitted instead.
-  - "2.0.0: a subclass of task Task (x-subclass-of). Renamed to the task vocabulary: index → externalId (string), incidentStatus → progress + statusLabel, category → subtype, memo → description, inputterTeam/inputterName → author (a Relationship to a person or team entity), updatedAt → dateModified. name is new and required, as Task requires it. The deprecated addressTown and addressBanchi of 1.1.0 are removed."
 license: CC BY 4.0 (see /LICENSE-CONTENT.md)
