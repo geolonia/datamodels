@@ -173,6 +173,11 @@ for (const subject of subjects) {
       if (!ctxTerms[name] && !coreTerms.has(name)) fail(`${where}/context.jsonld`, `does not define attribute "${name}" used by ${model.type}`);
       if (!model.catalog?.attributes?.[name]?.ja || !model.catalog?.attributes?.[name]?.en) fail(`${mwhere}/catalog.yaml`, `${name}: needs ja and en descriptions`);
     }
+    // Title and description render every page heading and the catalog entry.
+    for (const field of ['title', 'description']) for (const l of ['ja', 'en']) {
+      const v = model.catalog?.[field]?.[l];
+      if (typeof v !== 'string' || !v.trim()) fail(`${mwhere}/catalog.yaml`, `${field}.${l} must be a non-empty string`);
+    }
     for (const name of Object.keys(model.catalog?.attributes ?? {})) {
       if (!schema.properties?.[name]) fail(`${mwhere}/catalog.yaml`, `${name}: not in schema.json`);
     }

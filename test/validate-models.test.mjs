@@ -156,6 +156,13 @@ test('a value type whose context term differs from its x-iri fails', () =>
   withMutatedModels((d) => editJson(join(d, 'common', 'context.jsonld'), (c) => { inlineTerms(c).Geometry = 'common:Geometry'; }),
     /type "Geometry" maps to https:\/\/datamodels\.jp\/ns\/common\/Geometry/));
 
+test('a model title that is not a string fails', () =>
+  withMutatedModels(async (d) => {
+    const f = join(d, 'task', 'Comment', 'catalog.yaml');
+    const s = await readFile(f, 'utf8');
+    await writeFile(f, s.replace(/^title:\n  ja: .*$/m, 'title:\n  ja: [コメント]'));
+  }, /Comment\/catalog\.yaml: title\.ja must be a non-empty string/));
+
 test('a normalized attribute without value fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example-normalized.jsonld'), (e) => { e.description = { type: 'Property' }; }),
     /Property needs a value/));
