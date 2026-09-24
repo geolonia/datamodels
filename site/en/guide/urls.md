@@ -7,6 +7,10 @@ description: The URL contract of this catalog. Versions, aliases, caching and IR
 
 A `@context` URL is stored with every entity and referenced years later. This catalog makes the following promises about the URLs it publishes.
 
+::: warning Pre-release
+These promises apply **from the official launch**. Until then, published files, `v1.0.0` included, may still be corrected in place. Do not reference them from production data before the launch.
+:::
+
 ## The contract
 
 1. **A published versioned file is never modified or removed.** The content of `/context/<subject>/v1.0.0.jsonld` stays the same forever. CI records the hashes and rejects any change that modifies or removes one.

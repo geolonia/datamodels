@@ -35,3 +35,39 @@
     font-size: 48px !important;
   }
 }
+
+/*
+ * Pre-release banner (theme/index.ts). VitePress offsets the fixed navigation
+ * by --vp-layout-top-height; the banner sets it to its rendered height, so a
+ * wrapped text is never clipped or covered. The values here are only the
+ * first-paint estimate. Remove both at the official launch.
+ */
+:root {
+  --vp-layout-top-height: 32px;
+}
+
+.prerelease-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--vp-z-index-layout-top, 40);
+  min-height: var(--vp-layout-top-height);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+  font-size: 13px;
+  line-height: 1.3;
+  text-align: center;
+  color: var(--vp-c-warning-1);
+  background: var(--vp-c-warning-soft);
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+
+@media (max-width: 639px) {
+  :root {
+    --vp-layout-top-height: 48px;
+  }
+}
