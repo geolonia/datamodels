@@ -25,6 +25,10 @@ description: カタログのデータモデルを GeonicDB に登録し、エン
 
 既存のエンティティは、モデルを登録・変更しても再検証されません（適合性レポートを別途取れます）。レスポンスも変わりません。GeonicDB は `@context` を注入しないので、クライアントが自分で context を渡します。
 
+::: warning 現在の GeonicDB の制限
+リクエストの `@context`（body でも `Link` ヘッダーでも）が型を IRI にマップすると、いまの GeonicDB は型を IRI のまま保存し、短縮名で登録したモデルを見つけられません。そのため**検証が行われず、エンティティはそのまま受け付けられます**。カタログの context はすべての型を IRI にマップするので、下の手順 2 の送り方はこれに当たります。修正は GeonicDB 側で進んでいます（登録時にモデルの `contextUrl` から型の IRI を求め、短縮名と IRI の両方で照合する）。リリースまでは、登録したモデルで不正なデータが弾かれることを前提にしないでください。
+:::
+
 ## 1. Custom Data Model を登録する
 
 ```bash
@@ -60,7 +64,7 @@ curl -X POST "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
 ## 3. 検索する
 
 ```bash
-curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadClosure&q=closureStatus==%22通行止め中%22" \
+curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadClosure&q=closureStatus==%22closed%22" \
   -H "Accept: application/ld+json" \
   -H 'Link: <https://datamodels.jp/context/disaster/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -H "x-api-key: $GEONICDB_API_KEY" \
