@@ -44,7 +44,7 @@ The domain is permanent: every IRI under `datamodels.jp` that someone stores mus
 
 - Registration: Route 53 in the GeonicDB AWS account (decided 2026-09-24), name servers delegated to Cloudflare.
 - Zone and Worker: Geolonia's Cloudflare account, the same as `status.geonicdb.com`.
-- `models.geonicdb.com` answers with a 301 to the same path on `datamodels.jp`, permanently, so links shared before the launch keep working.
+- `models.geonicdb.com`, the pre-launch preview, was retired at the launch. Nothing ever consumed it, so it neither redirects nor keeps serving.
 
 ## Decision 2: Extend, do not duplicate
 
@@ -159,7 +159,7 @@ Brokers integrate from the other side: GeonicDB, for example, can read `catalog.
 
 ## Hosting
 
-Cloudflare Workers static assets, deployed by Cloudflare Workers Builds from `main`; no deploy credential is stored in GitHub, and CI only runs a dry-run deploy. `_headers` and `_redirects` carry the URL contract: one `*` per rule, headers from several matching rules are joined unless detached with `! Header`, so the immutable cache rules are generated per file. A Worker script would stop `_headers` and `_redirects` from applying, so host-level redirects such as `models.geonicdb.com` are Redirect Rules on the zone instead. Cloudflare Pages was not chosen because Cloudflare directs new projects to Workers; GitHub Pages cannot set response headers.
+Cloudflare Workers static assets, deployed by Cloudflare Workers Builds from `main`; no deploy credential is stored in GitHub, and CI only runs a dry-run deploy. `_headers` and `_redirects` carry the URL contract: one `*` per rule, headers from several matching rules are joined unless detached with `! Header`, so the immutable cache rules are generated per file. A Worker script would stop `_headers` and `_redirects` from applying, so any host-level redirect belongs in a Redirect Rule on the zone instead. Cloudflare Pages was not chosen because Cloudflare directs new projects to Workers; GitHub Pages cannot set response headers.
 
 ## Licensing and contribution
 
