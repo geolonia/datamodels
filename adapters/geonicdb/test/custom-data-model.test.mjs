@@ -2,8 +2,8 @@
 // catalog vocabulary.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { loadSubjects } from '../scripts/lib/models.mjs';
-import { toCustomDataModel } from '../scripts/lib/geonicdb.mjs';
+import { loadSubjects } from '../../../scripts/lib/models.mjs';
+import { toCustomDataModel } from '../custom-data-model.mjs';
 
 const subjects = await loadSubjects();
 const disaster = subjects.find((s) => s.name === 'disaster');

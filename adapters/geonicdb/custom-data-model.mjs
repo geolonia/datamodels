@@ -1,7 +1,7 @@
 // Build a GeonicDB Custom Data Model request body from a catalog model.
 // The body is what POST /custom-data-models accepts; contextUrl points at the
 // exact catalog context so the broker uses the catalog vocabulary.
-import { attributesOf, subjectUrls, CORE_CONTEXT_URL } from './models.mjs';
+import { attributesOf, subjectUrls, CORE_CONTEXT_URL } from '../../scripts/lib/models.mjs';
 
 function valueTypeOf(prop) {
   const ngsi = prop['x-ngsi']?.type;

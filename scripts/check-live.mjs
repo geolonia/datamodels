@@ -55,7 +55,6 @@ for (const subject of subjects) {
     r = await head(mu.page); expect(r.status === 200, `${mu.page}: ${r.status}`);
     // Value types have no GeonicDB body and no normalized example of their own.
     if (model.kind === 'value') continue;
-    r = await head(mu.geonicdb); expect(r.status === 200 && h(r, 'content-type').startsWith('application/json'), `${mu.geonicdb}: ${r.status} ${h(r, 'content-type')}`);
 
     const norm = model.examples['example-normalized.jsonld'];
     if (norm) {
@@ -80,7 +79,15 @@ for (const [path, hash] of Object.entries(manifest.files)) {
 
 const r = await fetch(swap(`${BASE_URL}/catalog.json`));
 expect(r.ok, `catalog.json: ${r.status}`);
-if (r.ok) { const c = await r.json(); expect(c.formatVersion === 1 && Array.isArray(c.models), 'catalog.json: unexpected shape'); }
+if (r.ok) {
+  const c = await r.json();
+  expect(c.formatVersion === 1 && Array.isArray(c.models), 'catalog.json: unexpected shape');
+  // Adapter files are listed per model in the catalog; each must be served as JSON.
+  for (const m of c.models ?? []) for (const [name, url] of Object.entries(m.adapters ?? {})) {
+    const ar = await head(url);
+    expect(ar.status === 200 && h(ar, 'content-type').startsWith('application/json'), `${name} adapter ${url}: ${ar.status} ${h(ar, 'content-type')}`);
+  }
+}
 
 if (failures.length) { console.error(`Live check failed (${failures.length}) against ${origin}:`); for (const f of failures) console.error(`  ${f}`); process.exit(1); }
 console.log(`live ok: ${origin}, ${subjects.reduce((a, s) => a + s.models.length, 0)} model(s), ${Object.keys(manifest.files).length} immutable file(s) match the manifest`);

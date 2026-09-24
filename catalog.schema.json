@@ -102,10 +102,6 @@
             "type": "string",
             "format": "uri"
           },
-          "geonicdbModelUrl": {
-            "type": "string",
-            "format": "uri"
-          },
           "upstream": {
             "type": "object",
             "properties": {
@@ -138,6 +134,14 @@
             "type": "string",
             "format": "uri",
             "description": "Present when this type is a subclass of another catalog type: own IRI, attributes with the same name share the parent IRIs, parent required attributes stay required."
+          },
+          "adapters": {
+            "type": "object",
+            "description": "Files generated for a particular broker or tool, keyed by adapter name (for example geonicdb: a Custom Data Model request body). Absent when no adapter produces a file for the model.",
+            "additionalProperties": {
+              "type": "string",
+              "format": "uri"
+            }
           }
         }
       }

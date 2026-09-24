@@ -20,8 +20,8 @@ const T = {
   ja: {
     models: 'データモデル', overview: '概要', subjects: 'サブジェクト', attributes: '属性', example: '例（key-values）', normalized: '例（normalized）',
     linkHeader: 'Link ヘッダー', notes: '注記', shared: '複数のモデルで共有する属性', usedBy: '使用モデル', typeIri: '型 IRI', context: '@context',
-    contextExact: '（このバージョン、不変）', contextAlias: '（エイリアス、互換性のある最新版）', schema: 'JSON Schema', examples: '例', geonicdb: 'GeonicDB 用定義',
-    geonicdbNote: 'Custom Data Model の request body。`contextUrl` を含みます。', source: 'ソース', namespace: '名前空間', version: 'バージョン',
+    contextExact: '（このバージョン、不変）', contextAlias: '（エイリアス、互換性のある最新版）', schema: 'JSON Schema', examples: '例', adapters: 'アダプター',
+    source: 'ソース', namespace: '名前空間', version: 'バージョン',
     required: '必須', indexed: 'インデックス', pii: '個人情報', deprecated: '非推奨', value: '値', relationshipTo: '→', license: 'このページのモデル内容は CC BY 4.0 で提供されています。',
     valueType: '値型', valueTypeNote: 'これはエンティティ型ではなく、属性の値として使う構造です。', fields: 'フィールド', versions: 'バージョン', current: '現行', usage: '使い方',
     subjectsIntro: 'サブジェクトごとに 1 つの `@context` を公開しています。型と属性の IRI は `/ns/<subject>/<term>` で解決できます。',
@@ -34,8 +34,8 @@ const T = {
   en: {
     models: 'Data models', overview: 'Overview', subjects: 'Subjects', attributes: 'Attributes', example: 'Example (key-values)', normalized: 'Example (normalized)',
     linkHeader: 'Link header', notes: 'Notes', shared: 'Attributes shared by several models', usedBy: 'Used by', typeIri: 'Type IRI', context: '@context',
-    contextExact: '(this version, immutable)', contextAlias: '(alias, latest compatible version)', schema: 'JSON Schema', examples: 'Examples', geonicdb: 'GeonicDB definition',
-    geonicdbNote: 'Custom Data Model request body, `contextUrl` included.', source: 'Source', namespace: 'Namespace', version: 'Version',
+    contextExact: '(this version, immutable)', contextAlias: '(alias, latest compatible version)', schema: 'JSON Schema', examples: 'Examples', adapters: 'Adapters',
+    source: 'Source', namespace: 'Namespace', version: 'Version',
     required: 'required', indexed: 'indexed', pii: 'personal data', deprecated: 'deprecated', value: 'Value', relationshipTo: '→', license: 'Model content on this page is licensed under CC BY 4.0.',
     valueType: 'value type', valueTypeNote: 'This is not an entity type but a structure used as the value of an attribute.', fields: 'Fields', versions: 'Versions', current: 'current', usage: 'Usage',
     subjectsIntro: 'One `@context` is published per subject. Type and attribute IRIs resolve at `/ns/<subject>/<term>`.',
@@ -52,6 +52,7 @@ const statusBadge = (lang, status) => badge(status === 'stable' ? 'tip' : status
 const front = (title, description) => `---\ntitle: ${JSON.stringify(title)}\ndescription: ${JSON.stringify(description ?? '')}\n---\n\n`;
 
 let allSubjects = [];
+let allAdapters = [];
 /** The model documenting a type IRI: an alias in the same subject first, then the owner anywhere. */
 function modelForIri(subject, iri, { ownerOnly = false } = {}) {
   const here = ownerOnly ? null : subject.models.find((m) => modelUrls(subject, m).typeIri === iri);
@@ -103,7 +104,9 @@ function modelPage(lang, prefix, subject, model) {
   md += `| ${t.context} | ${code(u.contextAlias)} ${t.contextAlias}<br>${code(u.contextExact)} ${t.contextExact} |\n`;
   md += `| ${t.schema} | [${code(rel(mu.schemaAlias))}](${rel(mu.schemaAlias)})<br>[${code(rel(mu.schemaExact))}](${rel(mu.schemaExact)}) |\n`;
   md += isValue ? `| ${t.examples} | [example.json](${rel(mu.examples)}example.json) |\n`
-    : `| ${t.examples} | [key-values](${rel(mu.examples)}example.json) · [normalized](${rel(mu.examples)}example-normalized.jsonld) |\n| ${t.geonicdb} | [${code(rel(mu.geonicdb))}](${rel(mu.geonicdb)}) ${t.geonicdbNote} |\n`;
+    : `| ${t.examples} | [key-values](${rel(mu.examples)}example.json) · [normalized](${rel(mu.examples)}example-normalized.jsonld) |\n`;
+  const adapterLinks = allAdapters.map((a) => [a, a.urlFor(subject, model)]).filter(([, url]) => url);
+  if (adapterLinks.length) md += `| ${t.adapters} | ${adapterLinks.map(([a, url]) => `${a.guide ? `[${a.label[lang]}](${prefix}${a.guide})` : a.label[lang]}: [${code(rel(url))}](${rel(url)})${a.note ? ` ${a.note[lang]}` : ''}`).join('<br>')} |\n`;
   md += `| ${t.source} | [github.com/geolonia/geonicdb-models](https://github.com/geolonia/geonicdb-models/tree/main/models/${subject.name}/${model.type}) |\n\n`;
   md += `## ${isValue ? t.fields : t.attributes} {#attributes}\n\n`;
   for (const [name, prop] of attributesOf(model)) {
@@ -176,8 +179,9 @@ function indexPage(lang, prefix, subjects) {
 
 async function put(path, content) { await mkdir(join(path, '..'), { recursive: true }); await writeFile(path, content); }
 
-export async function generateSitePages(subjects) {
+export async function generateSitePages(subjects, adapters = []) {
   allSubjects = subjects;
+  allAdapters = adapters;
   for (const [lang, prefix] of [['ja', ''], ['en', '/en']]) {
     const base = join(SITE, prefix.replace(/^\//, ''), 'models');
     await rm(base, { recursive: true, force: true });

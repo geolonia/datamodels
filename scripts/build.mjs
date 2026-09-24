@@ -5,13 +5,13 @@
 //   2. vitepress build site  ->  dist/   (pages, search index, assets, 404)
 //   3. copy public/ on top    (_headers, _redirects header)
 //   4. publish the machine files from models/ (contexts, schemas, examples,
-//      GeonicDB bodies, catalog.json) and append the generated redirects and
-//      immutable-cache header rules
+//      vocabularies, catalog.json) plus each adapter's files (adapters/*), and
+//      append the generated redirects and immutable-cache header rules
 //
 // A versioned file that has been published must never be rewritten with
 // different content. That check runs after this script (check-immutability).
-import { cp, rm, mkdir, access } from 'node:fs/promises';
-import { fileURLToPath } from 'node:url';
+import { cp, rm, access, readdir } from 'node:fs/promises';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { build as vitepressBuild } from 'vitepress';
@@ -31,14 +31,22 @@ const out = join(root, 'dist');
 const validation = spawnSync(process.execPath, [join(root, 'scripts', 'validate-models.mjs')], { stdio: 'inherit' });
 if (validation.status !== 0) process.exit(validation.status ?? 1);
 
+// Adapters live outside the core; discover them rather than import them.
+const adapters = [];
+for (const d of (await readdir(join(root, 'adapters'), { withFileTypes: true })).filter((e) => e.isDirectory()).sort((a, b) => a.name.localeCompare(b.name))) {
+  const entry = join(root, 'adapters', d.name, 'index.mjs');
+  try { await access(entry); } catch { continue; }
+  adapters.push((await import(pathToFileURL(entry).href)).default);
+}
+
 const subjects = await loadSubjects();
-await generateSitePages(subjects);
+await generateSitePages(subjects, adapters);
 
 await rm(out, { recursive: true, force: true });
 await vitepressBuild(site, { outDir: out });
 
 await cp(src, out, { recursive: true });
-const published = await publishModels(subjects);
+const published = await publishModels(subjects, adapters);
 
 // The hosting contract depends on these files being served. Fail loudly
 // rather than deploy a tree without them.

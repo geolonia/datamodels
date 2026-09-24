@@ -61,7 +61,7 @@ export default defineConfig({
   cleanUrls: true,
   lastUpdated: false,
   // Links to the machine files and IRIs are not pages; everything else must resolve.
-  ignoreDeadLinks: [/^\/(context|schema|examples|geonicdb|catalog|ns|LICENSE-CONTENT)/],
+  ignoreDeadLinks: [/^\/(context|schema|examples|adapters|vocab|catalog|ns|LICENSE-CONTENT)/],
   markdown: { config: addVPreToInlineCode },
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/geonicdb-logo.svg' }],

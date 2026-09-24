@@ -1,12 +1,12 @@
 // Write GeonicDB Custom Data Model bodies for one subject, adapted to a tenant.
 //
-//   node scripts/export-geonicdb.mjs disaster --out ./out
-//   node scripts/export-geonicdb.mjs disaster --type RoadClosure --allow-additional --out ./out
-//   node scripts/export-geonicdb.mjs disaster --type-prefix Saitai --alias-context --out ./out
-//   node scripts/export-geonicdb.mjs disaster --extend ./my-extensions.json --out ./out
+//   node adapters/geonicdb/export.mjs disaster --out ./out
+//   node adapters/geonicdb/export.mjs disaster --type RoadClosure --allow-additional --out ./out
+//   node adapters/geonicdb/export.mjs disaster --type-prefix Acme --alias-context --out ./out
+//   node adapters/geonicdb/export.mjs disaster --extend ./my-extensions.json --out ./out
 //
 //   --type T           only this model
-//   --type-prefix P    tenant-specific type names (SaitaiRoadClosure), catalog vocabulary unchanged
+//   --type-prefix P    tenant-specific type names (AcmeRoadClosure), catalog vocabulary unchanged
 //   --alias-context    declare the vN.jsonld alias instead of the exact version
 //   --allow-additional additionalProperties: true (unknown attributes accepted, not validated)
 //   --type-name N      replace the type name (needs --type); an alias for the same IRI
@@ -18,8 +18,8 @@
 //                      The contextUrl should import the catalog context and define the added terms.
 import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { loadSubjects, subjectUrls } from './lib/models.mjs';
-import { toCustomDataModel } from './lib/geonicdb.mjs';
+import { loadSubjects, subjectUrls } from '../../scripts/lib/models.mjs';
+import { toCustomDataModel } from './custom-data-model.mjs';
 
 const args = process.argv.slice(2);
 const subjectName = args.find((a) => !a.startsWith('--') && !args[args.indexOf(a) - 1]?.startsWith('--'));
@@ -40,7 +40,7 @@ const rename = Object.fromEntries((renameArg ? renameArg.split(',') : []).map((p
 }));
 if ((typeName || renameArg) && !onlyType) { console.error('--type-name and --rename apply to one model; add --type T'); process.exit(2); }
 if ((typeName || renameArg) && !contextUrlOverride && !extendFile) console.error('warning: aliases need a context that maps them; pass --context-url (the body still declares the catalog context)');
-if (!subjectName) { console.error('usage: export-geonicdb.mjs <subject> [--type T] [--type-prefix P] [--alias-context] [--allow-additional] [--extend FILE] [--out DIR]'); process.exit(2); }
+if (!subjectName) { console.error('usage: node adapters/geonicdb/export.mjs <subject> [--type T] [--type-prefix P] [--alias-context] [--allow-additional] [--extend FILE] [--out DIR]'); process.exit(2); }
 
 const subject = (await loadSubjects()).find((s) => s.name === subjectName);
 if (!subject) { console.error(`unknown subject "${subjectName}"`); process.exit(2); }
