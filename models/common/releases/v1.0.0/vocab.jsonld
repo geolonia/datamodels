@@ -34,8 +34,8 @@
         "en": "Common"
       },
       "comment": {
-        "ja": "他のサブジェクトから参照する共通の値型。現在は日本の住所（JapaneseAddress）。",
-        "en": "Shared value types referenced from other subjects. Currently the Japanese address (JapaneseAddress)."
+        "ja": "他のサブジェクトから参照する共通の値型。日本の住所（JapaneseAddress）と GeoJSON ジオメトリ（Geometry）。",
+        "en": "Shared value types referenced from other subjects: the Japanese address (JapaneseAddress) and the GeoJSON geometry (Geometry)."
       },
       "versionInfo": "1.0.0",
       "seeAlso": "https://datamodels.jp/context/common/v1.0.0.jsonld"

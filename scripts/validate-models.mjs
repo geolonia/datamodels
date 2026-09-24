@@ -124,6 +124,15 @@ for (const subject of subjects) {
     if (schema.$id !== murls.schemaExact) fail(`${mwhere}/schema.json`, `$id must be ${murls.schemaExact}`);
     if (schema['x-version'] !== subject.version) fail(`${mwhere}/schema.json`, `x-version must be ${subject.version} (subject version)`);
     if (!ctxTerms[model.type]) fail(`${where}/context.jsonld`, `does not define type "${model.type}"`);
+    if (schema['x-iri'] !== undefined) {
+      // A root x-iri names an external class a value type describes (GeoJSON-LD Geometry).
+      if (model.kind !== 'value') fail(`${mwhere}/schema.json`, 'a root x-iri is only for value types; an entity type is minted or declares x-alias-of');
+      if (schema['x-alias-of']) fail(`${mwhere}/schema.json`, 'x-iri and x-alias-of are exclusive');
+      const def = ctxTerms[model.type];
+      const iri = typeof def === 'string' ? def : def?.['@id'];
+      const full = iri && !/^https?:/.test(iri) ? iri.replace(/^([^:]+):/, (_, p) => ctxTerms[p] ?? core['@context'][p] ?? `${p}:`) : iri;
+      if (full && full !== schema['x-iri']) fail(`${where}/context.jsonld`, `type "${model.type}" maps to ${full}, but schema.json x-iri is ${schema['x-iri']}`);
+    }
     const aliasOf = schema['x-alias-of'];
     const subclassOf = schema['x-subclass-of'];
     if (aliasOf) {
@@ -184,8 +193,10 @@ for (const subject of subjects) {
 
     if (model.kind === 'value') {
       // A value type has no normalized form of its own; check its fields expand
-      // through this subject's context by wrapping the example in an entity.
-      const probe = { '@context': [urls.contextExact, CORE_CONTEXT_URL], id: 'urn:ngsi-ld:Probe:1', type: 'Probe', address: { type: 'Property', value: kv } };
+      // through this subject's context by wrapping the example in an entity,
+      // as a GeoProperty (location) when the schema says its values are geometries.
+      const geo = schema['x-ngsi']?.type === 'GeoProperty';
+      const probe = { '@context': [urls.contextExact, CORE_CONTEXT_URL], id: 'urn:ngsi-ld:Probe:1', type: 'Probe', [geo ? 'location' : 'address']: { type: geo ? 'GeoProperty' : 'Property', value: kv } };
       try {
         const expanded = await jsonld.expand(probe, { documentLoader: loader });
         const compacted = await jsonld.compact(expanded, { '@context': probe['@context'] }, { documentLoader: loader });

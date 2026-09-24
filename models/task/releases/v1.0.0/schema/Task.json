@@ -5,7 +5,7 @@
   "description": "A tracked unit of work: a ticket or issue in a tracker, a calendar to-do, a municipal work order. State and priority follow RFC 8984 (JSCalendar); the source system's own status name and kind are kept in statusLabel and subtype. Location may be any geometry.",
   "x-version": "1.0.0",
   "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
-  "x-model-tags": "GeonicDB, task management",
+  "x-model-tags": "task management",
   "x-derived-from": "https://www.rfc-editor.org/rfc/rfc8984.html",
   "type": "object",
   "properties": {
@@ -204,31 +204,7 @@
       "x-iri": "https://schema.org/keywords"
     },
     "location": {
-      "type": "object",
-      "oneOf": [
-        {
-          "$ref": "#/$defs/simpleGeometry"
-        },
-        {
-          "type": "object",
-          "required": [
-            "type",
-            "geometries"
-          ],
-          "properties": {
-            "type": {
-              "const": "GeometryCollection"
-            },
-            "geometries": {
-              "type": "array",
-              "minItems": 1,
-              "items": {
-                "$ref": "#/$defs/simpleGeometry"
-              }
-            }
-          }
-        }
-      ],
+      "$ref": "https://datamodels.jp/schema/common/Geometry/v1.0.0.json",
       "description": "Location as any GeoJSON geometry: point, line, polygon or a collection",
       "x-ngsi": {
         "type": "GeoProperty",
@@ -297,142 +273,5 @@
     "name",
     "progress"
   ],
-  "additionalProperties": false,
-  "$defs": {
-    "position": {
-      "type": "array",
-      "minItems": 2,
-      "maxItems": 3,
-      "items": {
-        "type": "number"
-      }
-    },
-    "simpleGeometry": {
-      "oneOf": [
-        {
-          "type": "object",
-          "required": [
-            "type",
-            "coordinates"
-          ],
-          "properties": {
-            "type": {
-              "const": "Point"
-            },
-            "coordinates": {
-              "$ref": "#/$defs/position"
-            }
-          }
-        },
-        {
-          "type": "object",
-          "required": [
-            "type",
-            "coordinates"
-          ],
-          "properties": {
-            "type": {
-              "const": "LineString"
-            },
-            "coordinates": {
-              "type": "array",
-              "minItems": 2,
-              "items": {
-                "$ref": "#/$defs/position"
-              }
-            }
-          }
-        },
-        {
-          "type": "object",
-          "required": [
-            "type",
-            "coordinates"
-          ],
-          "properties": {
-            "type": {
-              "const": "Polygon"
-            },
-            "coordinates": {
-              "type": "array",
-              "minItems": 1,
-              "items": {
-                "type": "array",
-                "minItems": 4,
-                "items": {
-                  "$ref": "#/$defs/position"
-                }
-              }
-            }
-          }
-        },
-        {
-          "type": "object",
-          "required": [
-            "type",
-            "coordinates"
-          ],
-          "properties": {
-            "type": {
-              "const": "MultiPoint"
-            },
-            "coordinates": {
-              "type": "array",
-              "items": {
-                "$ref": "#/$defs/position"
-              }
-            }
-          }
-        },
-        {
-          "type": "object",
-          "required": [
-            "type",
-            "coordinates"
-          ],
-          "properties": {
-            "type": {
-              "const": "MultiLineString"
-            },
-            "coordinates": {
-              "type": "array",
-              "items": {
-                "type": "array",
-                "minItems": 2,
-                "items": {
-                  "$ref": "#/$defs/position"
-                }
-              }
-            }
-          }
-        },
-        {
-          "type": "object",
-          "required": [
-            "type",
-            "coordinates"
-          ],
-          "properties": {
-            "type": {
-              "const": "MultiPolygon"
-            },
-            "coordinates": {
-              "type": "array",
-              "items": {
-                "type": "array",
-                "minItems": 1,
-                "items": {
-                  "type": "array",
-                  "minItems": 4,
-                  "items": {
-                    "$ref": "#/$defs/position"
-                  }
-                }
-              }
-            }
-          }
-        }
-      ]
-    }
-  }
+  "additionalProperties": false
 }

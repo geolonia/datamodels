@@ -7,7 +7,7 @@
 // which point at `#<term>`, keep working with case preserved.
 import { mkdir, writeFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
-import { attributesOf, subjectUrls, modelUrls, BASE_URL, ROOT } from './models.mjs';
+import { attributesOf, subjectUrls, modelUrls, BASE_URL, ROOT, CORE_CONTEXT_URL } from './models.mjs';
 import { sharedTerms } from './shared-terms.mjs';
 import { listReleases } from './releases.mjs';
 
@@ -71,12 +71,14 @@ function valueText(lang, subject, prop, prefix) {
     const multi = prop['x-ngsi'].multi ? (lang === 'ja' ? '（複数可）' : ' (multiple)') : '';
     return `Relationship ${T[lang].relationshipTo} ${found ? modelLink(prefix, found) : target === 'any' ? (lang === 'ja' ? '任意のエンティティ' : 'any entity') : target === 'agent' ? (lang === 'ja' ? '人・組織・チーム' : 'person, organisation or team') : target ?? 'entity'}${multi}`;
   }
-  if (ngsi === 'GeoProperty') return `GeoProperty (${prop.properties?.type?.const ?? 'GeoJSON'})`;
   const ref = prop.$ref ?? prop.allOf?.find((a) => a.$ref)?.$ref;
-  if (ref) {
-    const m = /\/schema\/([a-z0-9-]+)\/([A-Za-z0-9]+)\//.exec(ref);
-    return `Property, object: ${m ? `[${m[2]}](${prefix}/models/${m[1]}/${m[2]}/)` : code(ref)}`;
+  const m = ref && /\/schema\/([a-z0-9-]+)\/([A-Za-z0-9]+)\//.exec(ref);
+  const refText = ref && (m ? `[${m[2]}](${prefix}/models/${m[1]}/${m[2]}/)` : code(ref));
+  if (ngsi === 'GeoProperty') {
+    const only = prop.properties?.type?.const;
+    return `GeoProperty (${[refText, only].filter(Boolean).join(', ') || 'GeoJSON'})`;
   }
+  if (ref) return `Property, object: ${refText}`;
   let t = prop.type ?? '';
   if (prop.format) t += ` (${prop.format})`;
   if (prop.enum) t += `: ${prop.enum.map(code).join(' \\| ')}`;
@@ -108,7 +110,7 @@ function modelPage(lang, prefix, subject, model) {
   const adapterLinks = allAdapters.map((a) => [a, a.urlFor(subject, model)]).filter(([, url]) => url);
   if (adapterLinks.length) md += `| ${t.adapters} | ${adapterLinks.map(([a, url]) => `${a.guide ? `[${a.label[lang]}](${prefix}${a.guide})` : a.label[lang]}: [${code(rel(url))}](${rel(url)})${a.note ? ` ${a.note[lang]}` : ''}`).join('<br>')} |\n`;
   md += `| ${t.source} | [github.com/geolonia/datamodels](https://github.com/geolonia/datamodels/tree/main/models/${subject.name}/${model.type}) |\n\n`;
-  md += `## ${isValue ? t.fields : t.attributes} {#attributes}\n\n`;
+  if (attributesOf(model).length) md += `## ${isValue ? t.fields : t.attributes} {#attributes}\n\n`;
   for (const [name, prop] of attributesOf(model)) {
     const flags = [required.has(name) ? badge('warning', t.required) : '', prop['x-personal-data'] ? badge('danger', t.pii) : '', prop['x-deprecated'] ? badge('danger', t.deprecated) : ''].filter(Boolean).join(' ');
     md += `### ${name} {#${name}}\n\n`;
@@ -119,7 +121,11 @@ function modelPage(lang, prefix, subject, model) {
   }
   if (isValue) {
     const u2 = subjectUrls(subject);
-    md += `## ${t.usage} {#usage}\n\n\`\`\`json\n"address": {\n  "$ref": "${mu.schemaExact}",\n  "x-ngsi": { "type": "Property", "model": "${mu.typeIri}" },\n  "x-iri": "https://schema.org/address"\n}\n\`\`\`\n\n\`\`\`json\n{ "@context": ["${u2.contextExact}", { ... }] }\n\`\`\`\n\n`;
+    // Geometries are the value of the core location GeoProperty; other value types of a Property.
+    const geo = model.schema['x-ngsi']?.type === 'GeoProperty';
+    const [attr, ngsiType, attrIri] = geo ? ['location', 'GeoProperty', `${CORE_CONTEXT_URL}#location`] : ['address', 'Property', 'https://schema.org/address'];
+    md += `## ${t.usage} {#usage}\n\n\`\`\`json\n"${attr}": {\n  "$ref": "${mu.schemaExact}",\n  "x-ngsi": { "type": "${ngsiType}", "model": "${mu.typeIri}" },\n  "x-iri": "${attrIri}"\n}\n\`\`\`\n\n`;
+    if (!geo) md += `\`\`\`json\n{ "@context": ["${u2.contextExact}", { ... }] }\n\`\`\`\n\n`;
   }
   if (model.examples['example.json']) md += `## ${t.example} {#example}\n\n${fence(model.examples['example.json'])}\n\n`;
   if (model.examples['example-normalized.jsonld']) md += `## ${t.normalized} {#example-normalized}\n\n${fence(model.examples['example-normalized.jsonld'])}\n\n`;

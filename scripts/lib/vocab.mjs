@@ -1,5 +1,5 @@
 // The subject's vocabulary as an RDFS document: one class per type the subject
-// owns (aliases own no IRI), rdfs:subClassOf for every x-subclass-of, and one
+// owns (aliases and value types of an external class own no IRI), rdfs:subClassOf for every x-subclass-of, and one
 // property per attribute IRI minted in the subject's namespace, labelled in
 // Japanese and English. This is what makes the subclass relations visible to
 // tools other than this repository's validator.
@@ -28,7 +28,8 @@ export function buildVocabulary(subject) {
   const props = new Map();
   for (const model of subject.models) {
     const mu = modelUrls(subject, model);
-    if (!model.schema['x-alias-of']) {
+    // Aliases and value types describing an external class own no IRI here.
+    if (!model.schema['x-alias-of'] && mu.typeIri.startsWith(u.namespace)) {
       graph.push({
         '@id': mu.typeIri, '@type': 'rdfs:Class', label: lang(model.catalog.title), comment: lang(model.catalog.description),
         ...(model.schema['x-subclass-of'] ? { subClassOf: model.schema['x-subclass-of'] } : {}),

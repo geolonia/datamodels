@@ -5,7 +5,7 @@
   "description": "One road closure or traffic regulation: road name, regulated section as a point, line or area, status and category.",
   "x-version": "1.0.0",
   "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
-  "x-model-tags": "GeonicDB, disaster-response, Japan",
+  "x-model-tags": "disaster-response, Japan",
   "x-derived-from": "https://github.com/geolonia/geonicdb-datamodels",
   "type": "object",
   "properties": {
@@ -47,31 +47,7 @@
       "x-iri": "https://schema.org/address"
     },
     "location": {
-      "type": "object",
-      "oneOf": [
-        {
-          "$ref": "#/$defs/simpleGeometry"
-        },
-        {
-          "type": "object",
-          "required": [
-            "type",
-            "geometries"
-          ],
-          "properties": {
-            "type": {
-              "const": "GeometryCollection"
-            },
-            "geometries": {
-              "type": "array",
-              "minItems": 1,
-              "items": {
-                "$ref": "#/$defs/simpleGeometry"
-              }
-            }
-          }
-        }
-      ],
+      "$ref": "https://datamodels.jp/schema/common/Geometry/v1.0.0.json",
       "description": "The regulated section, as a GeoJSON geometry. A point for a single-spot closure, a LineString for a section, a polygon for an area, matching the point/line/area regulation forms (点規制・線規制・面規制) of the NPA's traffic regulation data format (交通規制情報（拡張版標準フォーマット）説明書 Ver: k_2.1, JARTIC, 2025-01-20)",
       "x-ngsi": {
         "type": "GeoProperty",
@@ -154,147 +130,5 @@
     "closureStatus",
     "location"
   ],
-  "additionalProperties": false,
-  "$defs": {
-    "position": {
-      "type": "array",
-      "minItems": 2,
-      "maxItems": 3,
-      "items": {
-        "type": "number"
-      }
-    },
-    "simpleGeometry": {
-      "oneOf": [
-        {
-          "type": "object",
-          "required": [
-            "type",
-            "coordinates"
-          ],
-          "properties": {
-            "type": {
-              "const": "Point"
-            },
-            "coordinates": {
-              "$ref": "#/$defs/position"
-            }
-          }
-        },
-        {
-          "type": "object",
-          "required": [
-            "type",
-            "coordinates"
-          ],
-          "properties": {
-            "type": {
-              "const": "LineString"
-            },
-            "coordinates": {
-              "type": "array",
-              "minItems": 2,
-              "items": {
-                "$ref": "#/$defs/position"
-              }
-            }
-          }
-        },
-        {
-          "type": "object",
-          "required": [
-            "type",
-            "coordinates"
-          ],
-          "properties": {
-            "type": {
-              "const": "Polygon"
-            },
-            "coordinates": {
-              "type": "array",
-              "minItems": 1,
-              "items": {
-                "type": "array",
-                "minItems": 4,
-                "items": {
-                  "$ref": "#/$defs/position"
-                },
-                "$comment": "RFC 7946 §3.1.6: a linear ring's first and last positions MUST be identical. JSON Schema has no keyword to compare two elements of a variable-length array, so this cannot be enforced here; scripts/validate-models.mjs checks it for this catalog's own examples."
-              }
-            }
-          }
-        },
-        {
-          "type": "object",
-          "required": [
-            "type",
-            "coordinates"
-          ],
-          "properties": {
-            "type": {
-              "const": "MultiPoint"
-            },
-            "coordinates": {
-              "type": "array",
-              "minItems": 1,
-              "items": {
-                "$ref": "#/$defs/position"
-              }
-            }
-          }
-        },
-        {
-          "type": "object",
-          "required": [
-            "type",
-            "coordinates"
-          ],
-          "properties": {
-            "type": {
-              "const": "MultiLineString"
-            },
-            "coordinates": {
-              "type": "array",
-              "minItems": 1,
-              "items": {
-                "type": "array",
-                "minItems": 2,
-                "items": {
-                  "$ref": "#/$defs/position"
-                }
-              }
-            }
-          }
-        },
-        {
-          "type": "object",
-          "required": [
-            "type",
-            "coordinates"
-          ],
-          "properties": {
-            "type": {
-              "const": "MultiPolygon"
-            },
-            "coordinates": {
-              "type": "array",
-              "minItems": 1,
-              "items": {
-                "type": "array",
-                "minItems": 1,
-                "items": {
-                  "type": "array",
-                  "minItems": 4,
-                  "items": {
-                    "$ref": "#/$defs/position"
-                  },
-                  "$comment": "RFC 7946 §3.1.6: a linear ring's first and last positions MUST be identical. JSON Schema has no keyword to compare two elements of a variable-length array, so this cannot be enforced here; scripts/validate-models.mjs checks it for this catalog's own examples."
-                }
-              }
-            }
-          }
-        }
-      ]
-    }
-  }
+  "additionalProperties": false
 }
