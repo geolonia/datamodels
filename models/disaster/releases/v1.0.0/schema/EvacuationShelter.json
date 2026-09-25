@@ -46,7 +46,7 @@
       "x-iri": "https://datamodels.jp/ns/common/localGovernmentCode"
     },
     "openingStatus": {
-      "description": "Normalised opening state: open, closed, full (open but at capacity), requested (opening has been requested/instructed but is not yet confirmed open; no public code list defines this state, see statusLabel). The local wording always goes in statusLabel",
+      "description": "Normalised opening state: open, closed, full (open but at capacity), requested (opening has been requested/instructed but is not yet confirmed open; no public code list defines this state, see statusLabel). The local wording always goes in statusLabel. When no value fits, leave it out and give the local wording in statusLabel",
       "type": "string",
       "enum": [
         "open",
@@ -61,7 +61,7 @@
     },
     "statusLabel": {
       "type": "string",
-      "description": "The opening status as the headquarters names it (e.g. 未開設, 開設中, 満員, 依頼中). Use this whenever the local wording has no exact match in openingStatus's enum",
+      "description": "The opening status in the local or source system's wording (e.g. 未開設, 開設中, 満員, 依頼中). Use this whenever the local wording has no exact match in openingStatus's enum. Required when openingStatus is left out",
       "x-ngsi": {
         "type": "Property"
       },
@@ -134,8 +134,19 @@
     "id",
     "type",
     "externalShelterId",
-    "localGovernmentCode",
-    "openingStatus"
+    "localGovernmentCode"
+  ],
+  "anyOf": [
+    {
+      "required": [
+        "openingStatus"
+      ]
+    },
+    {
+      "required": [
+        "statusLabel"
+      ]
+    }
   ],
   "additionalProperties": false
 }

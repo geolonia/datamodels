@@ -7,15 +7,15 @@
     "context/transportation/v1.0.0.jsonld": "b905627971574e6cacd2621d78198bb4c7f36a2358329fc3b588cba53048fa01",
     "schema/common/Geometry/v1.0.0.json": "370263be66dbaf5bec92ef1017a6cff8c3183373679a6d63e993fd055777a295",
     "schema/common/JapaneseAddress/v1.0.0.json": "1edbf84226b4280b880cd58e749dc77e3eae05641d4efbff11d79e5d3af1c46b",
-    "schema/disaster/EvacuationShelter/v1.0.0.json": "7e98eb496b276ba365dcef772586a2e13ff64ae9a05bd93cb6022506576bf7df",
+    "schema/disaster/EvacuationShelter/v1.0.0.json": "e4bb52ba88a92c4f098c9d85ac0bb5626cc53a0d587a3a3ddeced3edabb0f7fb",
     "schema/task/Attachment/v1.0.0.json": "7765aa01dd3d03c801f76d88b7d85b2583323decefce7495f77dacb97b47ef02",
     "schema/task/Comment/v1.0.0.json": "4f5f36d2c17adfa9c3847469b65171f3190b1bacbb60aaf44e6169527f90f8e9",
     "schema/task/Project/v1.0.0.json": "089d2bf3d2e093246af0720c0759603bcb7ba73874263396a5322dba35601e02",
-    "schema/task/Task/v1.0.0.json": "c3c19c43b71017dc180de5205722804b1711eea6a523c2a530617104213b47ce",
-    "schema/transportation/RoadRestriction/v1.0.0.json": "f9851fce9dcf3b6460410b61487d60469d7cefc0fc0b04159b64e7eb17d8bf87",
+    "schema/task/Task/v1.0.0.json": "e19bef785a7810407c3eaa710ceb83731458aa3087a8874acca49b8f82f0c807",
+    "schema/transportation/RoadRestriction/v1.0.0.json": "8ac84e17744c4829f4d2f9d3237c8130663daf0d0d2198cbe7f409fc4e776703",
     "vocab/common/v1.0.0.jsonld": "fd930c3668bad353c6170c183234b5991b225ee4180583e91350e0d847aeaa0e",
-    "vocab/disaster/v1.0.0.jsonld": "a8a05a7b845d18a325d45857280bfbeccc449c5e0ea853849693d427afd21b75",
-    "vocab/task/v1.0.0.jsonld": "87b00eab2ee56806f0183986bcd44dee161250c5fe57d09e1345aa6f260d89d9",
-    "vocab/transportation/v1.0.0.jsonld": "b052f8e50c7b2f52fae3e97ea40a558e6ba6a302410a1d0417d65a60bbc06407"
+    "vocab/disaster/v1.0.0.jsonld": "15146de18262e19293bd47e982f41b022339ab4a9f9ceeb4de0ca9034bb688af",
+    "vocab/task/v1.0.0.jsonld": "ad02a0147aa0b7477dbe65cca433684e36be3b00546ce0ad2ea33e6f6007738a",
+    "vocab/transportation/v1.0.0.jsonld": "a8eaf5aca0e5a463cf8ed5e609e3e115841e8c6168617ca6257dfe41341f7988"
   }
 }

@@ -46,7 +46,7 @@
       "x-iri": "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld#location"
     },
     "restrictionStatus": {
-      "description": "Normalised restriction state, the value space of Smart Data Models RoadSegment.status: closed (no traffic), limited (traffic possible but not in full capacity), open (restriction lifted or not yet in place). The local wording goes in statusLabel; regulationCategory gives the finer public-sector category",
+      "description": "Normalised restriction state, the value space of Smart Data Models RoadSegment.status: closed (no traffic), limited (traffic possible but not in full capacity), open (restriction lifted or not yet in place). The local wording goes in statusLabel; regulationCategory gives the finer public-sector category. When no value fits, leave it out and give the local wording in statusLabel",
       "type": "string",
       "enum": [
         "closed",
@@ -80,7 +80,7 @@
     },
     "statusLabel": {
       "type": "string",
-      "description": "The restriction status as the headquarters names it (依頼中, 通行止め中, 解除済み)",
+      "description": "The restriction status in the local or source system's wording (依頼中, 通行止め中, 解除済み). Required when restrictionStatus is left out",
       "x-ngsi": {
         "type": "Property"
       },
@@ -116,8 +116,19 @@
   "required": [
     "id",
     "type",
-    "restrictionStatus",
     "location"
+  ],
+  "anyOf": [
+    {
+      "required": [
+        "restrictionStatus"
+      ]
+    },
+    {
+      "required": [
+        "statusLabel"
+      ]
+    }
   ],
   "additionalProperties": false
 }

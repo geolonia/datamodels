@@ -20,14 +20,14 @@ attributes:
     ja: 規制区間。点（単独地点）・線（区間）・面（区域）の GeoJSON ジオメトリ。警察庁「交通規制情報（拡張版標準フォーマット）」の点規制・線規制・面規制に対応
     en: The regulated section, as a GeoJSON geometry (point, line or area), matching the point/line/area regulation forms of the NPA's traffic regulation data format
   restrictionStatus:
-    ja: "正規化した状態。Smart Data Models RoadSegment.status の値域: closed（通行不可）、limited（片側通行など）、open（解除済み、または未実施）。現場の呼び方は statusLabel に。より細かい区分は regulationCategory に"
-    en: "Normalised restriction state, the value space of Smart Data Models RoadSegment.status: closed (no traffic), limited (traffic possible but not in full capacity), open (restriction lifted or not yet in place). The local wording goes in statusLabel; a finer public-sector category goes in regulationCategory"
+    ja: "正規化した状態。Smart Data Models RoadSegment.status の値域: closed（通行不可）、limited（片側通行など）、open（解除済み、または未実施）。現場の呼び方は statusLabel に。より細かい区分は regulationCategory に。値域に合う値がないときは省き、statusLabel だけを送る"
+    en: "Normalised restriction state, the value space of Smart Data Models RoadSegment.status: closed (no traffic), limited (traffic possible but not in full capacity), open (restriction lifted or not yet in place). The local wording goes in statusLabel; a finer public-sector category goes in regulationCategory. When no value fits, leave it out and send only statusLabel"
   regulationCategory:
     ja: "規制区分。国土交通省 道路情報提供システムの凡例（表記はサイトの凡例に合わせた）: closedWeather（通行止(異常気象等)）、closedConstruction（通行止(工事)）、closedHeavyVehicle（大型通行止）、closedWinter（冬期通行止）、laneRestriction（車線規制）、alternatingOneWay（片側交互通行）、mobileRestriction（移動規制）、chainRestriction（チェーン規制）、chainGuidance（チェーン指導）、other（その他規制）。任意項目"
     en: "Regulation category, from the legend of MLIT's Road Information Provision System: closedWeather, closedConstruction, closedHeavyVehicle, closedWinter, laneRestriction, alternatingOneWay, mobileRestriction, chainRestriction, chainGuidance, other. Optional"
   statusLabel:
-    ja: 本部での状態の呼び方（依頼中、通行止め中、解除済み）
-    en: The restriction status as the headquarters names it (依頼中, 通行止め中, 解除済み)
+    ja: 状態の現場や元のシステムでの呼び方（例 依頼中、通行止め中、解除済み）。restrictionStatus を省いたときは必須
+    en: The restriction status in the local or source system's wording (e.g. 依頼中, 通行止め中, 解除済み). Required when restrictionStatus is left out
   validFrom:
     ja: 規制開始
     en: When the restriction takes effect

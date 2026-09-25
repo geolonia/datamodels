@@ -165,8 +165,8 @@
         "en": "openingStatus"
       },
       "comment": {
-        "ja": "正規化した開設状況: open（開設中）、closed（未開設・閉鎖）、full（満員）、requested（開設を依頼・指示されたが開設未確認。公的な統制語彙は見つからなかった区分）。現場の呼び方は必ず statusLabel にも記載する",
-        "en": "Normalised opening state: open, closed, full (open but at capacity), requested (opening has been requested/instructed but not yet confirmed open; no public controlled vocabulary defines this state). The local wording always also goes in statusLabel"
+        "ja": "正規化した開設状況: open（開設中）、closed（未開設・閉鎖）、full（満員）、requested（開設を依頼・指示されたが開設未確認。公的な統制語彙は見つからなかった区分）。現場の呼び方は必ず statusLabel にも記載する。値域に合う値がないときは省き、statusLabel だけを送る",
+        "en": "Normalised opening state: open, closed, full (open but at capacity), requested (opening has been requested/instructed but not yet confirmed open; no public controlled vocabulary defines this state). The local wording always also goes in statusLabel. When no value fits, leave it out and send only statusLabel"
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
       "seeAlso": "https://datamodels.jp/models/disaster/EvacuationShelter/#openingStatus"

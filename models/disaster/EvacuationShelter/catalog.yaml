@@ -19,11 +19,11 @@ attributes:
     ja: 一覧を公開する自治体の全国地方公共団体コード（総務省「全国地方公共団体コード仕様」（平成19年4月1日）に基づく、検査数字を含む6桁）
     en: Local government code of the municipality that publishes the shelter list (全国地方公共団体コード per MIC's "全国地方公共団体コード仕様", 2007-04-01; 6 digits including the check digit)
   openingStatus:
-    ja: "正規化した開設状況: open（開設中）、closed（未開設・閉鎖）、full（満員）、requested（開設を依頼・指示されたが開設未確認。公的な統制語彙は見つからなかった区分）。現場の呼び方は必ず statusLabel にも記載する"
-    en: "Normalised opening state: open, closed, full (open but at capacity), requested (opening has been requested/instructed but not yet confirmed open; no public controlled vocabulary defines this state). The local wording always also goes in statusLabel"
+    ja: "正規化した開設状況: open（開設中）、closed（未開設・閉鎖）、full（満員）、requested（開設を依頼・指示されたが開設未確認。公的な統制語彙は見つからなかった区分）。現場の呼び方は必ず statusLabel にも記載する。値域に合う値がないときは省き、statusLabel だけを送る"
+    en: "Normalised opening state: open, closed, full (open but at capacity), requested (opening has been requested/instructed but not yet confirmed open; no public controlled vocabulary defines this state). The local wording always also goes in statusLabel. When no value fits, leave it out and send only statusLabel"
   statusLabel:
-    ja: 本部での開設状況の呼び方（例 未開設、開設中、満員、依頼中）。openingStatus の列挙値に対応が無い現場語彙はここで必ず受ける
-    en: The opening status as the headquarters names it (e.g. 未開設, 開設中, 満員, 依頼中). Any local wording without a matching openingStatus value must still be captured here
+    ja: 開設状況の現場や元のシステムでの呼び方（例 未開設、開設中、満員、依頼中）。openingStatus を省いたときは必須
+    en: The opening status in the local or source system's wording (e.g. 未開設, 開設中, 満員, 依頼中). Required when openingStatus is left out
   evacueeHouseholds:
     ja: 避難世帯数
     en: Number of evacuated households
