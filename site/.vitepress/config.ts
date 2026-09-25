@@ -23,29 +23,38 @@ const guides = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.SidebarItem
   { text: 'Tips & Tricks', link: `${prefix}/guide/tips` },
 ]
 
+// One sidebar per section, so it stays short as the catalog grows: guide pages
+// list the guides, model pages list the subjects. Subjects start collapsed; the
+// one containing the current page opens by itself.
 function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
-  return [
-    {
-      text: lang === 'ja' ? 'カタログ' : 'Catalog',
-      items: [
-        { text: lang === 'ja' ? 'データモデル一覧' : 'All data models', link: `${prefix}/models/` },
-        { text: 'catalog.json', link: '/catalog.json' },
-      ],
-    },
-    { text: lang === 'ja' ? 'ガイド' : 'Guides', items: guides(prefix, lang) },
-    {
-      text: lang === 'ja' ? 'アダプター' : 'Adapters',
-      items: [{ text: lang === 'ja' ? 'GeonicDB で使う' : 'Use with GeonicDB', link: `${prefix}/guide/geonicdb` }],
-    },
-    ...subjects.map((s) => ({
-      text: s.title[lang],
-      collapsed: false,
-      items: [
-        { text: lang === 'ja' ? '概要' : 'Overview', link: `${prefix}${rel(subjectUrls(s).page)}` },
-        ...s.models.map((m) => ({ text: m.type, link: `${prefix}${rel(modelUrls(s, m).page)}` })),
-      ],
-    })),
-  ]
+  const catalog: DefaultTheme.SidebarItem = {
+    text: lang === 'ja' ? 'カタログ' : 'Catalog',
+    items: [
+      { text: lang === 'ja' ? 'データモデル一覧' : 'All data models', link: `${prefix}/models/` },
+      { text: 'catalog.json', link: '/catalog.json' },
+    ],
+  }
+  return {
+    [`${prefix}/guide/`]: [
+      { text: lang === 'ja' ? 'ガイド' : 'Guides', items: guides(prefix, lang) },
+      {
+        text: lang === 'ja' ? 'アダプター' : 'Adapters',
+        items: [{ text: lang === 'ja' ? 'GeonicDB で使う' : 'Use with GeonicDB', link: `${prefix}/guide/geonicdb` }],
+      },
+      catalog,
+    ],
+    [`${prefix}/models/`]: [
+      catalog,
+      ...subjects.map((s) => ({
+        text: s.title[lang],
+        collapsed: true,
+        items: [
+          { text: lang === 'ja' ? '概要' : 'Overview', link: `${prefix}${rel(subjectUrls(s).page)}` },
+          ...s.models.map((m) => ({ text: m.type, link: `${prefix}${rel(modelUrls(s, m).page)}` })),
+        ],
+      })),
+    ],
+  }
 }
 
 const nav = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.NavItem[] => [
