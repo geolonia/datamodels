@@ -25,10 +25,10 @@ features:
     details: 公開したバージョン付きの @context と JSON Schema は変更も削除もされません。どの URL を使うべきかはガイドへ。
     link: /guide/urls
     linkText: URL の約束
-  - title: 検証済みの例とアダプター
-    details: すべての例は CI で検証されます。ブローカー向けのアダプター（現在は GeonicDB）が、登録用の定義をモデルごとに生成します。
-    link: /guide/geonicdb
-    linkText: GeonicDB で使う
+  - title: 検証済みの例、どのブローカーでも
+    details: すべての例は CI で検証されます。標準の NGSI-LD API で送れるので、特定の製品は要りません。検証と送信の手順はガイドへ。
+    link: /guide/use
+    linkText: 使い方
   - title: 他のカタログとの関係
     details: Smart Data Models、デジタル庁の GIF や自治体標準オープンデータセットなど、世界と日本のデータモデルの一覧と、このカタログとの関係。
     link: /guide/catalogs

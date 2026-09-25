@@ -40,7 +40,7 @@ for (const d of (await readdir(join(root, 'adapters'), { withFileTypes: true }))
 }
 
 const subjects = await loadSubjects();
-await generateSitePages(subjects, adapters);
+await generateSitePages(subjects);
 
 await rm(out, { recursive: true, force: true });
 await vitepressBuild(site, { outDir: out });

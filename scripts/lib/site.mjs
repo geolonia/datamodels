@@ -19,8 +19,8 @@ const fence = (obj) => '```json\n' + JSON.stringify(obj, null, 2) + '\n```';
 const T = {
   ja: {
     models: 'データモデル', overview: '概要', subjects: 'サブジェクト', attributes: '属性', example: '例（key-values）', normalized: '例（normalized）',
-    linkHeader: 'Link ヘッダー', notes: '注記', shared: '複数のモデルで共有する属性', usedBy: '使用モデル', typeIri: '型 IRI', otherName: '英語名', context: '@context',
-    contextExact: '（このバージョン、不変）', contextAlias: '（エイリアス、互換性のある最新版）', schema: 'JSON Schema', examples: '例', adapters: 'アダプター',
+    linkHeader: 'Link ヘッダー', notes: '注記', shared: '複数のモデルで共有する属性', usedBy: '使用モデル', typeIri: '型 IRI', otherName: '英語名', useGuide: (href) => `データの検証とブローカーへの送り方は[使い方](${href})を参照。`, context: '@context',
+    contextExact: '（このバージョン、不変）', contextAlias: '（エイリアス、互換性のある最新版）', schema: 'JSON Schema', examples: '例',
     source: 'ソース', namespace: '名前空間', version: 'バージョン', vocabulary: '語彙', vocabularyNote: '（RDFS: クラス、サブクラス関係、日英ラベル）',
     required: '必須', pii: '個人情報', deprecated: '非推奨', value: '値', relationshipTo: '→', license: 'このページのモデル内容は CC BY 4.0 で提供されています。',
     valueType: '値型', valueTypeNote: 'これはエンティティ型ではなく、属性の値として使う構造です。', fields: 'フィールド', versions: 'バージョン', current: '現行', usage: '使い方',
@@ -33,8 +33,8 @@ const T = {
   },
   en: {
     models: 'Data models', overview: 'Overview', subjects: 'Subjects', attributes: 'Attributes', example: 'Example (key-values)', normalized: 'Example (normalized)',
-    linkHeader: 'Link header', notes: 'Notes', shared: 'Attributes shared by several models', usedBy: 'Used by', typeIri: 'Type IRI', otherName: 'Japanese name', context: '@context',
-    contextExact: '(this version, immutable)', contextAlias: '(alias, latest compatible version)', schema: 'JSON Schema', examples: 'Examples', adapters: 'Adapters',
+    linkHeader: 'Link header', notes: 'Notes', shared: 'Attributes shared by several models', usedBy: 'Used by', typeIri: 'Type IRI', otherName: 'Japanese name', useGuide: (href) => `How to validate data and send it to a broker: [Using the models](${href}).`, context: '@context',
+    contextExact: '(this version, immutable)', contextAlias: '(alias, latest compatible version)', schema: 'JSON Schema', examples: 'Examples',
     source: 'Source', namespace: 'Namespace', version: 'Version', vocabulary: 'Vocabulary', vocabularyNote: '(RDFS: classes, subclass relations, ja/en labels)',
     required: 'required', pii: 'personal data', deprecated: 'deprecated', value: 'Value', relationshipTo: '→', license: 'Model content on this page is licensed under CC BY 4.0.',
     valueType: 'value type', valueTypeNote: 'This is not an entity type but a structure used as the value of an attribute.', fields: 'Fields', versions: 'Versions', current: 'current', usage: 'Usage',
@@ -52,7 +52,6 @@ const statusBadge = (lang, status) => badge(status === 'stable' ? 'tip' : status
 const front = (title, description) => `---\ntitle: ${JSON.stringify(title)}\ndescription: ${JSON.stringify(description ?? '')}\n---\n\n`;
 
 let allSubjects = [];
-let allAdapters = [];
 /** The model documenting a type IRI: an alias in the same subject first, then the owner anywhere. */
 function modelForIri(subject, iri, { ownerOnly = false } = {}) {
   const here = ownerOnly ? null : subject.models.find((m) => modelUrls(subject, m).typeIri === iri);
@@ -113,8 +112,6 @@ function modelPage(lang, prefix, subject, model) {
   md += `| ${t.schema} | [${code(rel(mu.schemaAlias))}](${rel(mu.schemaAlias)})<br>[${code(rel(mu.schemaExact))}](${rel(mu.schemaExact)}) |\n`;
   md += isValue ? `| ${t.examples} | [example.json](${rel(mu.examples)}example.json) |\n`
     : `| ${t.examples} | [key-values](${rel(mu.examples)}example.json) · [normalized](${rel(mu.examples)}example-normalized.jsonld) |\n`;
-  const adapterLinks = allAdapters.map((a) => [a, a.urlFor(subject, model)]).filter(([, url]) => url);
-  if (adapterLinks.length) md += `| ${t.adapters} | ${adapterLinks.map(([a, url]) => `${a.guide ? `[${a.label[lang]}](${prefix}${a.guide})` : a.label[lang]}: [${code(rel(url))}](${rel(url)})${a.note ? ` ${a.note[lang]}` : ''}`).join('<br>')} |\n`;
   md += `| ${t.source} | [github.com/geolonia/datamodels](https://github.com/geolonia/datamodels/tree/main/models/${subject.name}/${model.type}) |\n\n`;
   if (attributesOf(model).length) md += `## ${isValue ? t.fields : t.attributes} {#attributes}\n\n`;
   for (const [name, prop] of attributesOf(model)) {
@@ -136,6 +133,7 @@ function modelPage(lang, prefix, subject, model) {
   if (model.examples['example.json']) md += `## ${t.example} {#example}\n\n${fence(model.examples['example.json'])}\n\n`;
   if (model.examples['example-normalized.jsonld']) md += `## ${t.normalized} {#example-normalized}\n\n${fence(model.examples['example-normalized.jsonld'])}\n\n`;
   if (!isValue) md += `## ${t.linkHeader} {#link-header}\n\n\`\`\`http\nLink: <${u.contextAlias}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"\n\`\`\`\n\n`;
+  if (!isValue) md += `${t.useGuide(`${prefix}/guide/use`)}\n\n`;
   for (const map of model.mappings ?? []) {
     md += `## ${t.mappings}: ${map.standard?.name?.[lang] ?? map.name} {#mapping-${map.name}}\n\n`;
     if (map.standard?.url) md += `[${map.standard.name?.[lang] ?? map.name}](${map.standard.url})${map.standard.license ? ` · ${map.standard.license}` : ''}\n\n`;
@@ -190,9 +188,8 @@ function indexPage(lang, prefix, subjects) {
 
 async function put(path, content) { await mkdir(join(path, '..'), { recursive: true }); await writeFile(path, content); }
 
-export async function generateSitePages(subjects, adapters = []) {
+export async function generateSitePages(subjects) {
   allSubjects = subjects;
-  allAdapters = adapters;
   for (const [lang, prefix] of [['ja', ''], ['en', '/en']]) {
     const base = join(SITE, prefix.replace(/^\//, ''), 'models');
     await rm(base, { recursive: true, force: true });

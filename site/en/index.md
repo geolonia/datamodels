@@ -25,10 +25,10 @@ features:
     details: Published versioned @context files and JSON Schemas are never modified or removed. The guide says which URL to use when.
     link: /en/guide/urls
     linkText: The URL contract
-  - title: Validated examples and adapters
-    details: Every example is validated in CI. Broker adapters (GeonicDB today) generate a ready-made definition per model.
-    link: /en/guide/geonicdb
-    linkText: Use with GeonicDB
+  - title: Validated examples, any broker
+    details: Every example is validated in CI. The data goes through the standard NGSI-LD API, so no particular product is needed. The guide shows how to validate and send it.
+    link: /en/guide/use
+    linkText: Using the models
   - title: Other catalogs
     details: Smart Data Models, the Digital Agency's GIF and municipal standard open datasets, and more, and how this catalog relates to them.
     link: /en/guide/catalogs
