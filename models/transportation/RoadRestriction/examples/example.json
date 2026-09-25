@@ -1,32 +1,31 @@
 {
-  "id": "urn:ngsi-ld:RoadRestriction:2026-typhoon-10-001",
+  "id": "urn:ngsi-ld:RoadRestriction:0001",
   "type": "RoadRestriction",
-  "roadName": "県道14号",
+  "roadName": "靖国通り",
   "address": {
-    "addressRegion": "香川県",
-    "addressLocality": "高松市",
-    "machiaza": "西宝町",
-    "banchi": "2",
-    "go": "3",
-    "jisMunicipalityCode": "37201",
-    "addressText": "香川県高松市西宝町2-3"
+    "addressRegion": "東京都",
+    "addressLocality": "千代田区",
+    "machiaza": "九段南",
+    "chome": "1",
+    "jisMunicipalityCode": "13101",
+    "addressText": "東京都千代田区九段南1丁目"
   },
   "location": {
     "type": "LineString",
     "coordinates": [
       [
-        134.04,
-        34.34
+        139.7505,
+        35.695
       ],
       [
-        134.05,
-        34.35
+        139.752,
+        35.6956
       ]
     ]
   },
   "restrictionStatus": "closed",
   "regulationCategory": "closedWeather",
   "statusLabel": "通行止め中",
-  "validFrom": "2026-08-21T11:00:00Z",
-  "description": "冠水のため通行止め"
+  "validFrom": "2026-07-08T10:45:00+09:00",
+  "description": "アンダーパス冠水のため通行止め"
 }

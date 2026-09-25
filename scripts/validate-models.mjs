@@ -73,6 +73,23 @@ for (const subject of subjects) for (const model of subject.models) {
   if (model.kind === 'value') { try { ajv.addSchema(model.schema, model.schema.$id); } catch (e) { fail(`models/${subject.name}/${model.type}/schema.json`, `cannot register: ${e.message}`); } }
 }
 
+// Examples form one scenario: an entity id is urn:ngsi-ld:<Type>:<local id> (an
+// organisation segment may precede the local id), and a reference to another
+// catalog type points at that type's example. References to the same type
+// (parent, relatedTo) and to types the catalog does not define (Person, Team)
+// are free.
+const EXAMPLE_ID = /^urn:ngsi-ld:([A-Za-z][A-Za-z0-9]*):[A-Za-z0-9][A-Za-z0-9._-]*(:[A-Za-z0-9][A-Za-z0-9._-]*)*$/;
+const exampleIdOf = new Map();
+// Type names per type IRI (an alias shares its target's IRI), to compare a
+// reference with the target its schema declares.
+const typeNamesOfIri = new Map();
+for (const subject of subjects) for (const model of subject.models) {
+  if (model.kind !== 'entity') continue;
+  if (model.examples['example.json']?.id) exampleIdOf.set(model.type, model.examples['example.json'].id);
+  const iri = modelUrls(subject, model).typeIri;
+  typeNamesOfIri.set(iri, [...(typeNamesOfIri.get(iri) ?? []), model.type]);
+}
+
 /** Every key at any depth of a plain object tree, as "a.b.c" paths. */
 function keyPaths(obj, prefix = '') {
   const out = [];
@@ -180,6 +197,28 @@ for (const subject of subjects) {
     if (!kv) fail(mwhere, 'examples/example.json is required');
     else if (!validate(kv)) fail(`${mwhere}/examples/example.json`, ajv.errorsText(validate.errors));
     if (kv) for (const p of findUnclosedRings(kv)) fail(`${mwhere}/examples/example.json`, `${p}: polygon ring does not close (first and last position must be identical, RFC 7946 §3.1.6)`);
+    if (kv && model.kind === 'entity') {
+      const idType = EXAMPLE_ID.exec(kv.id ?? '')?.[1];
+      if (idType !== model.type) fail(`${mwhere}/examples/example.json`, `id must be urn:ngsi-ld:${model.type}:<local id>, got ${kv.id}`);
+      if (model.examples['example-normalized.jsonld'] && model.examples['example-normalized.jsonld'].id !== kv.id) fail(`${mwhere}/examples/example-normalized.jsonld`, `id must equal example.json's id ${kv.id}`);
+      const norm = model.examples['example-normalized.jsonld'];
+      for (const [name, prop] of attributesOf(model)) {
+        if (prop['x-ngsi']?.type !== 'Relationship') continue;
+        const targets = kv[name] === undefined ? [] : [kv[name]].flat();
+        // Both examples describe the same entity, so they reference the same targets.
+        const normTargets = norm?.[name] === undefined ? [] : [norm[name]].flat().map((i) => i?.object);
+        if (norm && !sameSet(targets, normTargets)) fail(`${mwhere}/examples/example-normalized.jsonld`, `${name}: references ${normTargets.join(', ') || 'nothing'}, but example.json references ${targets.join(', ') || 'nothing'}`);
+        // A declared catalog target (not "any" or "agent") fixes the type of the reference.
+        const declared = typeNamesOfIri.get(prop['x-ngsi'].target);
+        for (const target of targets) {
+          const targetType = EXAMPLE_ID.exec(target ?? '')?.[1];
+          if (!targetType) { fail(`${mwhere}/examples/example.json`, `${name}: ${target} is not urn:ngsi-ld:<Type>:<local id>`); continue; }
+          if (declared && !declared.includes(targetType)) { fail(`${mwhere}/examples/example.json`, `${name}: ${target} is a ${targetType}, but schema.json declares a ${declared.join(' or ')} target`); continue; }
+          const expected = targetType !== model.type ? exampleIdOf.get(targetType) : undefined;
+          if (expected && target !== expected) fail(`${mwhere}/examples/example.json`, `${name}: ${target} should reference the ${targetType} example ${expected}`);
+        }
+      }
+    }
 
     // notes.yaml renders as a bullet list; an entry with an unquoted ": " parses as an object.
     if (model.notes != null && (typeof model.notes !== 'object' || Array.isArray(model.notes))) fail(`${mwhere}/notes.yaml`, 'root value must be a mapping with notes and license');

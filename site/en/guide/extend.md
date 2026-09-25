@@ -56,6 +56,17 @@ The first subject, [disaster response](/en/models/disaster/), is based on the da
 - Use the value types of the [common](/en/models/common/) subject for shared structures: [JapaneseAddress](/en/models/common/JapaneseAddress/) for addresses, [Geometry](/en/models/common/Geometry/) for `location` and other GeoProperties. Narrow a geometry next to the `$ref` when a model allows fewer types (Attachment allows only a Point).
 - To give an existing type another name, use an alias (`x-alias-of`: same attributes, same required fields). To add attributes or separate the type, use a subclass (`x-subclass-of`: attributes of the same name keep the parent's IRIs, the parent's required attributes stay required). CI checks both.
 
+## Writing examples {#examples}
+
+Every model has two examples (key-values and normalized). They appear on the model page, CI validates them, and people copy them when they write a client, so all subjects share one scenario.
+
+- **Scenario**: a fictional heavy-rain response in Chiyoda, Tokyo (July 2026). The ward sets up a disaster-response project, a task checks a flooded underpass on Yasukuni-dōri, the road is closed and a shelter opens.
+- **Real and fictional**: place names, addresses, codes (local government code, Address Base Registry town id and others) and coordinates are real. Events, people, teams and system numbers are invented. No personal names; use identifiers such as `staff-0012` or `field-team-a`.
+- **Identifiers**: `urn:ngsi-ld:<Type>:<local id>`. Use the source system's number as the local id where there is one (`urn:ngsi-ld:Task:1234`). When several organisations share one broker, add the organisation: `urn:ngsi-ld:<Type>:<org>:<local id>`.
+- **References**: a reference to another catalog type points at that type's example (Task's `project` is the Project example). References to the same type (`parent`, `relatedTo`) and to types the catalog does not define (`Person`, `Team`) are free. CI checks this.
+- **URLs**: source-system URLs use an example domain such as `tracker.example.jp`.
+- **Times**: local Japanese times carry `+09:00`.
+
 ## Contributing
 
 The catalog lives in the public repository [geolonia/datamodels](https://github.com/geolonia/datamodels). Japanese and English are both welcome.

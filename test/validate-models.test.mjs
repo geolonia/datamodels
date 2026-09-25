@@ -155,6 +155,24 @@ test('a model title that is not a string fails', () =>
     await writeFile(f, s.replace(/^title:\n  ja: .*$/m, 'title:\n  ja: [コメント]'));
   }, /Comment\/catalog\.yaml: title\.ja must be a non-empty string/));
 
+test('an example referencing a catalog type other than its example fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'task', 'Comment', 'examples', 'example.json'), (e) => { e.task = 'urn:ngsi-ld:Task:9999'; }),
+    /Comment\/examples\/example\.json: task: urn:ngsi-ld:Task:9999 should reference the Task example urn:ngsi-ld:Task:1234/));
+
+test('a normalized example referencing a different target than example.json fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'task', 'Comment', 'examples', 'example-normalized.jsonld'), (e) => { e.task.object = 'urn:ngsi-ld:Task:9999'; }),
+    /Comment\/examples\/example-normalized\.jsonld: task: references urn:ngsi-ld:Task:9999, but example\.json references urn:ngsi-ld:Task:1234/));
+
+test('a reference of another type than the schema declares fails', () =>
+  withMutatedModels(async (d) => {
+    await editJson(join(d, 'task', 'Comment', 'examples', 'example.json'), (e) => { e.task = 'urn:ngsi-ld:Project:heavy-rain-2026-07'; });
+    await editJson(join(d, 'task', 'Comment', 'examples', 'example-normalized.jsonld'), (e) => { e.task.object = 'urn:ngsi-ld:Project:heavy-rain-2026-07'; });
+  }, /Comment\/examples\/example\.json: task: urn:ngsi-ld:Project:heavy-rain-2026-07 is a Project, but schema\.json declares a Task target/));
+
+test('an example id not in the urn:ngsi-ld:<Type>:<local id> form fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'task', 'Project', 'examples', 'example.json'), (e) => { e.id = 'urn:ngsi-ld:Proj:heavy-rain-2026-07'; }),
+    /Project\/examples\/example\.json: id must be urn:ngsi-ld:Project:<local id>/));
+
 test('a normalized attribute without value fails', () =>
   withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example-normalized.jsonld'), (e) => { e.description = { type: 'Property' }; }),
     /Property needs a value/));
