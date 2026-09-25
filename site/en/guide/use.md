@@ -114,6 +114,6 @@ Brokers with several tenants take the tenant in the standard `NGSILD-Tenant` hea
 
 The steps above use only the standard NGSI-LD API, so they are the same for any NGSI-LD compliant broker. Some products add features on top, such as registering a model so the server validates entities.
 
-- [GeonicDB](/en/guide/geonicdb): register a model and the server validates every create and update. A ready-made definition is published for each model.
+- [GeonicDB](/en/guide/geonicdb): register a model and the server validates creates and updates. A ready-made definition is published for each model. For now, requests that carry the catalog `@context` (as in the example above) do not find the registered model and are accepted without validation; a fix is in progress on the GeonicDB side (see the warning on the GeonicDB page). Validating before sending (step 2) works regardless.
 
 If you have tried another product, add its steps with an [issue or pull request](https://github.com/geolonia/datamodels).

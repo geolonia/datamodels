@@ -114,6 +114,6 @@ curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionS
 
 上の手順は標準の NGSI-LD API だけを使うので、NGSI-LD に準拠したブローカーならどれでも同じです。製品ごとに、モデルをサーバー側に登録して検証させるなどの追加機能があります。
 
-- [GeonicDB](/guide/geonicdb): モデルを登録すると、作成・更新のたびにサーバーがエンティティを検証します。登録用の定義はモデルごとに用意しています。
+- [GeonicDB](/guide/geonicdb): モデルを登録すると、作成・更新時にサーバーがエンティティを検証します。登録用の定義はモデルごとに用意しています。ただし現在は、カタログの `@context` を付けたリクエスト（上の例のような送り方）では登録したモデルが見つからず、検証されずに受け付けられます。修正は GeonicDB 側で進んでいます（詳しくは GeonicDB のページの注意書き）。送る前の検証（手順 2）はこの制限と関係なく使えます。
 
 他の製品で試した手順は、[Issue か Pull Request](https://github.com/geolonia/datamodels) で追加してください。
