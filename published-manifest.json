@@ -1,18 +1,18 @@
 {
-  "comment": "SHA-256 of every immutable published file (exact versions under context/ and schema/, and context/mirror/). Entries are appended by `npm run manifest:record` and never edited or removed, except for the one-off disaster v1.0.0 re-baseline recorded in docs/design.md (2026-09-24): the subject had zero external adopters and datamodels.jp had been live for hours, so the commander chose to rewrite v1.0.0 rather than mint a v2 that would keep serving five tenant-specific models forever. See scripts/check-immutability.mjs.",
+  "comment": "SHA-256 of every immutable published file (exact versions under context/, schema/ and vocab/, and context/mirror/). Entries are appended by `npm run manifest:record`. After the official launch they are never edited or removed. During the pre-release, the current version of a subject may still be corrected in place: delete its snapshot and manifest entries and record again, as the README describes. See docs/design.md and scripts/check-immutability.mjs.",
   "files": {
-    "context/common/v1.0.0.jsonld": "c1cc76d2f6ce922995762bc4aa22a0871bc6b5c8edfa426d80a2230f58b960a5",
+    "context/common/v1.0.0.jsonld": "59fe038a9d8c1f459a86940f17371f1b5842942940afa68da4f21502e07b453d",
     "context/disaster/v1.0.0.jsonld": "b35ed0adf9797c0426a5a3be2b43ee48a373095f11a1bcfd30eb688ca0a187ac",
     "context/task/v1.0.0.jsonld": "7c542815fe5f9982372b8587c1a55f869b9a830ed6c7a5f3b3eddbb0e10d5d4c",
-    "schema/common/Geometry/v1.0.0.json": "8f04032ba49c1311a40a869a5480a55e630c9083fe3a938d4699ab6310dcb66b",
+    "schema/common/Geometry/v1.0.0.json": "370263be66dbaf5bec92ef1017a6cff8c3183373679a6d63e993fd055777a295",
     "schema/common/JapaneseAddress/v1.0.0.json": "1edbf84226b4280b880cd58e749dc77e3eae05641d4efbff11d79e5d3af1c46b",
     "schema/disaster/EvacuationShelter/v1.0.0.json": "00f8ce15049226fd42eedcadff32a9db628fdbbefe96d545e9a373df39f29db9",
-    "schema/disaster/RoadClosure/v1.0.0.json": "b95ac525996515a42a11c565dea6201b12e1a0d489ba0ce539409aada821ce98",
+    "schema/disaster/RoadClosure/v1.0.0.json": "4a25fe86eba47257c722e42d2104656c23fc9f9a907be9a343d2b7c02fef4775",
     "schema/task/Attachment/v1.0.0.json": "7765aa01dd3d03c801f76d88b7d85b2583323decefce7495f77dacb97b47ef02",
     "schema/task/Comment/v1.0.0.json": "4f5f36d2c17adfa9c3847469b65171f3190b1bacbb60aaf44e6169527f90f8e9",
-    "schema/task/Project/v1.0.0.json": "e5840073deef62a1fab3bb8723502f9d4d1835b21bd4a8c3fc1a51b7f18c286e",
-    "schema/task/Task/v1.0.0.json": "988f695068730017a64b3522d5f5d73a528c60bb8ae4f76c5b59c1744dfba866",
-    "vocab/common/v1.0.0.jsonld": "4b7c3b0f205ffa1e39cf143c7837a13717df0cd20be256cbe992b387425b4bc3",
+    "schema/task/Project/v1.0.0.json": "089d2bf3d2e093246af0720c0759603bcb7ba73874263396a5322dba35601e02",
+    "schema/task/Task/v1.0.0.json": "c3c19c43b71017dc180de5205722804b1711eea6a523c2a530617104213b47ce",
+    "vocab/common/v1.0.0.jsonld": "fd930c3668bad353c6170c183234b5991b225ee4180583e91350e0d847aeaa0e",
     "vocab/disaster/v1.0.0.jsonld": "e651fe7552a1558b78dba2a0f6ced7a4175264d6c7689b714958428f4af9b740",
     "vocab/task/v1.0.0.jsonld": "87b00eab2ee56806f0183986bcd44dee161250c5fe57d09e1345aa6f260d89d9"
   }

@@ -3,7 +3,6 @@
   "$id": "https://datamodels.jp/schema/common/Geometry/v1.0.0.json",
   "title": "Geometry",
   "x-kind": "value",
-  "x-iri": "https://purl.org/geojson/vocab#Geometry",
   "x-ngsi": {
     "type": "GeoProperty"
   },

@@ -51,7 +51,7 @@
       "description": "The regulated section, as a GeoJSON geometry. A point for a single-spot closure, a LineString for a section, a polygon for an area, matching the point/line/area regulation forms (点規制・線規制・面規制) of the NPA's traffic regulation data format (交通規制情報（拡張版標準フォーマット）説明書 Ver: k_2.1, JARTIC, 2025-01-20)",
       "x-ngsi": {
         "type": "GeoProperty",
-        "model": "https://purl.org/geojson/vocab#Geometry"
+        "model": "https://datamodels.jp/ns/common/Geometry"
       },
       "x-iri": "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld#location"
     },

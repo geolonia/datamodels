@@ -124,15 +124,6 @@ for (const subject of subjects) {
     if (schema.$id !== murls.schemaExact) fail(`${mwhere}/schema.json`, `$id must be ${murls.schemaExact}`);
     if (schema['x-version'] !== subject.version) fail(`${mwhere}/schema.json`, `x-version must be ${subject.version} (subject version)`);
     if (!ctxTerms[model.type]) fail(`${where}/context.jsonld`, `does not define type "${model.type}"`);
-    if (schema['x-iri'] !== undefined) {
-      // A root x-iri names an external class a value type describes (GeoJSON-LD Geometry).
-      if (model.kind !== 'value') fail(`${mwhere}/schema.json`, 'a root x-iri is only for value types; an entity type is minted or declares x-alias-of');
-      if (schema['x-alias-of']) fail(`${mwhere}/schema.json`, 'x-iri and x-alias-of are exclusive');
-      const def = ctxTerms[model.type];
-      const iri = typeof def === 'string' ? def : def?.['@id'];
-      const full = iri && !/^https?:/.test(iri) ? iri.replace(/^([^:]+):/, (_, p) => ctxTerms[p] ?? core['@context'][p] ?? `${p}:`) : iri;
-      if (full && full !== schema['x-iri']) fail(`${where}/context.jsonld`, `type "${model.type}" maps to ${full}, but schema.json x-iri is ${schema['x-iri']}`);
-    }
     const aliasOf = schema['x-alias-of'];
     const subclassOf = schema['x-subclass-of'];
     if (aliasOf) {

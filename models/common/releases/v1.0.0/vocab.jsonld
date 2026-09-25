@@ -41,6 +41,20 @@
       "seeAlso": "https://datamodels.jp/context/common/v1.0.0.jsonld"
     },
     {
+      "@id": "https://datamodels.jp/ns/common/Geometry",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "ジオメトリ",
+        "en": "Geometry"
+      },
+      "comment": {
+        "ja": "location などの GeoProperty の値として使う GeoJSON ジオメトリ（RFC 7946）。点（Point）、線（LineString）、面（Polygon）、それぞれの複数形（MultiPoint、MultiLineString、MultiPolygon）、およびそれらをまとめた GeometryCollection。座標は経度・緯度（・高さ）の順で WGS 84。モデルごとに種類を絞ってよい（例 点だけ）。",
+        "en": "A GeoJSON geometry (RFC 7946) as the value of a GeoProperty such as location: Point, LineString, Polygon, their multi forms (MultiPoint, MultiLineString, MultiPolygon), or a GeometryCollection of these. Positions are longitude, latitude and optional altitude, in WGS 84. A model may narrow the allowed types, for example to Point only."
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/common/",
+      "seeAlso": "https://datamodels.jp/models/common/Geometry/"
+    },
+    {
       "@id": "https://datamodels.jp/ns/common/JapaneseAddress",
       "@type": "rdfs:Class",
       "label": {

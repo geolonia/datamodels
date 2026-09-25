@@ -208,7 +208,7 @@
       "description": "Location as any GeoJSON geometry: point, line, polygon or a collection",
       "x-ngsi": {
         "type": "GeoProperty",
-        "model": "https://purl.org/geojson/vocab#Geometry"
+        "model": "https://datamodels.jp/ns/common/Geometry"
       },
       "x-iri": "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld#location"
     },
