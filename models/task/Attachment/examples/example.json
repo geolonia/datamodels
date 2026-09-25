@@ -1,22 +1,22 @@
 {
-  "id": "urn:ngsi-ld:Attachment:takamatsu:77",
+  "id": "urn:ngsi-ld:Attachment:77",
   "type": "Attachment",
-  "task": "urn:ngsi-ld:Task:takamatsu:1234",
-  "author": "urn:ngsi-ld:Team:takamatsu:genchi-1",
+  "task": "urn:ngsi-ld:Task:1234",
+  "author": "urn:ngsi-ld:Team:field-team-a",
   "contentUrl": "https://tracker.example.jp/attachments/download/77/IMG_0012.jpg",
   "filename": "IMG_0012.jpg",
   "encodingFormat": "image/jpeg",
   "contentSize": 2483011,
   "digest": "sha256:9f2c1e5a7b3d4f60a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718",
-  "description": "西宝町1-1 交差点、南向き",
+  "description": "アンダーパス東側の入口、西向き",
   "location": {
     "type": "Point",
     "coordinates": [
-      134.0439,
-      34.3401
+      139.7514,
+      35.6952
     ]
   },
   "source": "https://tracker.example.jp/attachments/77",
   "externalId": "77",
-  "dateCreated": "2026-08-21T10:58:00+09:00"
+  "dateCreated": "2026-07-08T10:58:00+09:00"
 }

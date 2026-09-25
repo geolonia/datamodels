@@ -3,19 +3,19 @@
     "https://datamodels.jp/context/disaster/v1.0.0.jsonld",
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
   ],
-  "id": "urn:ngsi-ld:EvacuationShelter:2026-typhoon-10-001",
+  "id": "urn:ngsi-ld:EvacuationShelter:0012",
   "type": "EvacuationShelter",
   "externalShelterId": {
     "type": "Property",
-    "value": "CC3720130001"
+    "value": "13101-0012"
   },
   "nationalShelterId": {
     "type": "Property",
-    "value": "E3720130001111"
+    "value": "E1310100012111"
   },
   "localGovernmentCode": {
     "type": "Property",
-    "value": "372013"
+    "value": "131016"
   },
   "openingStatus": {
     "type": "Property",
@@ -49,7 +49,7 @@
     "type": "Property",
     "value": {
       "@type": "DateTime",
-      "@value": "2026-08-26T10:00:00Z"
+      "@value": "2026-07-08T09:00:00+09:00"
     }
   }
 }

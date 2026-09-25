@@ -3,15 +3,15 @@
     "https://datamodels.jp/context/task/v1.0.0.jsonld",
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
   ],
-  "id": "urn:ngsi-ld:Attachment:takamatsu:77",
+  "id": "urn:ngsi-ld:Attachment:77",
   "type": "Attachment",
   "task": {
     "type": "Relationship",
-    "object": "urn:ngsi-ld:Task:takamatsu:1234"
+    "object": "urn:ngsi-ld:Task:1234"
   },
   "author": {
     "type": "Relationship",
-    "object": "urn:ngsi-ld:Team:takamatsu:genchi-1"
+    "object": "urn:ngsi-ld:Team:field-team-a"
   },
   "contentUrl": {
     "type": "Property",
@@ -35,15 +35,15 @@
   },
   "description": {
     "type": "Property",
-    "value": "西宝町1-1 交差点、南向き"
+    "value": "アンダーパス東側の入口、西向き"
   },
   "location": {
     "type": "GeoProperty",
     "value": {
       "type": "Point",
       "coordinates": [
-        134.0439,
-        34.3401
+        139.7514,
+        35.6952
       ]
     }
   },
@@ -59,7 +59,7 @@
     "type": "Property",
     "value": {
       "@type": "DateTime",
-      "@value": "2026-08-21T10:58:00+09:00"
+      "@value": "2026-07-08T10:58:00+09:00"
     }
   }
 }

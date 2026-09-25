@@ -3,19 +3,19 @@
     "https://datamodels.jp/context/task/v1.0.0.jsonld",
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
   ],
-  "id": "urn:ngsi-ld:Comment:takamatsu:1234:3",
+  "id": "urn:ngsi-ld:Comment:1234-3",
   "type": "Comment",
   "task": {
     "type": "Relationship",
-    "object": "urn:ngsi-ld:Task:takamatsu:1234"
+    "object": "urn:ngsi-ld:Task:1234"
   },
   "author": {
     "type": "Relationship",
-    "object": "urn:ngsi-ld:Team:takamatsu:genchi-1"
+    "object": "urn:ngsi-ld:Team:field-team-a"
   },
   "text": {
     "type": "Property",
-    "value": "水位上昇中、注視継続。対策本部へ申し送り。"
+    "value": "水位上昇中、注視継続。災害対策本部へ申し送り。"
   },
   "textFormat": {
     "type": "Property",
@@ -29,7 +29,7 @@
     "type": "Property",
     "value": {
       "@type": "DateTime",
-      "@value": "2026-08-21T11:05:00+09:00"
+      "@value": "2026-07-08T11:05:00+09:00"
     }
   },
   "source": {

@@ -3,34 +3,34 @@
     "https://datamodels.jp/context/task/v1.0.0.jsonld",
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
   ],
-  "id": "urn:ngsi-ld:Task:takamatsu:1234",
+  "id": "urn:ngsi-ld:Task:1234",
   "type": "Task",
   "name": {
     "type": "Property",
-    "value": "西宝町1-1 の冠水を確認する"
+    "value": "靖国通りのアンダーパスの冠水を確認する"
   },
   "description": {
     "type": "Property",
-    "value": "通報 #12 の現地確認。水位と通行可否を報告すること。"
+    "value": "住民からの通報の現地確認。水位と通行可否を報告すること。"
   },
   "project": {
     "type": "Relationship",
-    "object": "urn:ngsi-ld:Project:takamatsu-flood-2026-typhoon-10"
+    "object": "urn:ngsi-ld:Project:heavy-rain-2026-07"
   },
   "parent": {
     "type": "Relationship",
-    "object": "urn:ngsi-ld:Task:takamatsu:1200"
+    "object": "urn:ngsi-ld:Task:1200"
   },
   "relatedTo": [
     {
       "type": "Relationship",
-      "object": "urn:ngsi-ld:Task:takamatsu:1198",
+      "object": "urn:ngsi-ld:Task:1198",
       "datasetId": "urn:ngsi-ld:dataset:relatedTo:1"
     }
   ],
   "refersTo": {
     "type": "Relationship",
-    "object": "urn:ngsi-ld:RoadRestriction:2026-typhoon-10-003"
+    "object": "urn:ngsi-ld:RoadRestriction:0001"
   },
   "progress": {
     "type": "Property",
@@ -51,26 +51,26 @@
   "assignee": [
     {
       "type": "Relationship",
-      "object": "urn:ngsi-ld:Team:takamatsu:genchi-1",
+      "object": "urn:ngsi-ld:Team:field-team-a",
       "datasetId": "urn:ngsi-ld:dataset:assignee:1"
     }
   ],
   "author": {
     "type": "Relationship",
-    "object": "urn:ngsi-ld:Person:takamatsu:yamada"
+    "object": "urn:ngsi-ld:Person:staff-0012"
   },
   "start": {
     "type": "Property",
     "value": {
       "@type": "DateTime",
-      "@value": "2026-08-21T10:30:00+09:00"
+      "@value": "2026-07-08T10:30:00+09:00"
     }
   },
   "due": {
     "type": "Property",
     "value": {
       "@type": "DateTime",
-      "@value": "2026-08-21T12:00:00+09:00"
+      "@value": "2026-07-08T12:00:00+09:00"
     }
   },
   "estimatedDuration": {
@@ -85,7 +85,7 @@
     "type": "Property",
     "value": [
       "冠水",
-      "巡回"
+      "現地確認"
     ]
   },
   "location": {
@@ -93,15 +93,15 @@
     "value": {
       "type": "Point",
       "coordinates": [
-        134.0437,
-        34.3403
+        139.7512,
+        35.6953
       ]
     }
   },
   "spatialId": {
     "type": "Property",
     "value": [
-      "/25/0/29803543/13212179"
+      "/25/0/29802971/13211383"
     ]
   },
   "isPrivate": {
@@ -120,14 +120,14 @@
     "type": "Property",
     "value": {
       "@type": "DateTime",
-      "@value": "2026-08-21T10:20:00+09:00"
+      "@value": "2026-07-08T10:20:00+09:00"
     }
   },
   "dateModified": {
     "type": "Property",
     "value": {
       "@type": "DateTime",
-      "@value": "2026-08-21T11:05:00+09:00"
+      "@value": "2026-07-08T11:05:00+09:00"
     }
   }
 }

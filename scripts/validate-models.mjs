@@ -73,6 +73,17 @@ for (const subject of subjects) for (const model of subject.models) {
   if (model.kind === 'value') { try { ajv.addSchema(model.schema, model.schema.$id); } catch (e) { fail(`models/${subject.name}/${model.type}/schema.json`, `cannot register: ${e.message}`); } }
 }
 
+// Examples form one scenario: an entity id is urn:ngsi-ld:<Type>:<local id> (an
+// organisation segment may precede the local id), and a reference to another
+// catalog type points at that type's example. References to the same type
+// (parent, relatedTo) and to types the catalog does not define (Person, Team)
+// are free.
+const EXAMPLE_ID = /^urn:ngsi-ld:([A-Za-z][A-Za-z0-9]*):[A-Za-z0-9][A-Za-z0-9._-]*(:[A-Za-z0-9][A-Za-z0-9._-]*)*$/;
+const exampleIdOf = new Map();
+for (const subject of subjects) for (const model of subject.models) {
+  if (model.kind === 'entity' && model.examples['example.json']?.id) exampleIdOf.set(model.type, model.examples['example.json'].id);
+}
+
 /** Every key at any depth of a plain object tree, as "a.b.c" paths. */
 function keyPaths(obj, prefix = '') {
   const out = [];
@@ -180,6 +191,20 @@ for (const subject of subjects) {
     if (!kv) fail(mwhere, 'examples/example.json is required');
     else if (!validate(kv)) fail(`${mwhere}/examples/example.json`, ajv.errorsText(validate.errors));
     if (kv) for (const p of findUnclosedRings(kv)) fail(`${mwhere}/examples/example.json`, `${p}: polygon ring does not close (first and last position must be identical, RFC 7946 §3.1.6)`);
+    if (kv && model.kind === 'entity') {
+      const idType = EXAMPLE_ID.exec(kv.id ?? '')?.[1];
+      if (idType !== model.type) fail(`${mwhere}/examples/example.json`, `id must be urn:ngsi-ld:${model.type}:<local id>, got ${kv.id}`);
+      if (model.examples['example-normalized.jsonld'] && model.examples['example-normalized.jsonld'].id !== kv.id) fail(`${mwhere}/examples/example-normalized.jsonld`, `id must equal example.json's id ${kv.id}`);
+      for (const [name, prop] of attributesOf(model)) {
+        if (prop['x-ngsi']?.type !== 'Relationship' || kv[name] === undefined) continue;
+        for (const target of [kv[name]].flat()) {
+          const targetType = EXAMPLE_ID.exec(target ?? '')?.[1];
+          if (!targetType) { fail(`${mwhere}/examples/example.json`, `${name}: ${target} is not urn:ngsi-ld:<Type>:<local id>`); continue; }
+          const expected = targetType !== model.type ? exampleIdOf.get(targetType) : undefined;
+          if (expected && target !== expected) fail(`${mwhere}/examples/example.json`, `${name}: ${target} should reference the ${targetType} example ${expected}`);
+        }
+      }
+    }
 
     // notes.yaml renders as a bullet list; an entry with an unquoted ": " parses as an object.
     if (model.notes != null && (typeof model.notes !== 'object' || Array.isArray(model.notes))) fail(`${mwhere}/notes.yaml`, 'root value must be a mapping with notes and license');

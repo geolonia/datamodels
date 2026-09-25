@@ -1,46 +1,46 @@
 {
-  "id": "urn:ngsi-ld:Project:takamatsu-flood-2026-typhoon-10",
+  "id": "urn:ngsi-ld:Project:heavy-rain-2026-07",
   "type": "Project",
-  "name": "令和8年台風第10号 水防対応",
-  "description": "8/21〜 高松市水防本部のオペレーション",
-  "identifier": "takamatsu-flood-2026-t10",
+  "name": "令和8年7月大雨 災害対応",
+  "description": "7/8〜 大雨に伴う区の災害対応オペレーション",
+  "identifier": "heavy-rain-2026-07",
   "projectStatus": "active",
   "isPublic": false,
-  "homepage": "https://tracker.example.jp/projects/takamatsu-flood-2026-t10",
-  "start": "2026-08-21T00:00:00+09:00",
+  "homepage": "https://tracker.example.jp/projects/heavy-rain-2026-07",
+  "start": "2026-07-08T07:00:00+09:00",
   "location": {
     "type": "Polygon",
     "coordinates": [
       [
         [
-          134,
-          34.3
+          139.73,
+          35.67
         ],
         [
-          134.1,
-          34.3
+          139.78,
+          35.67
         ],
         [
-          134.1,
-          34.4
+          139.78,
+          35.705
         ],
         [
-          134,
-          34.4
+          139.73,
+          35.705
         ],
         [
-          134,
-          34.3
+          139.73,
+          35.67
         ]
       ]
     ]
   },
   "keywords": [
-    "水防",
-    "台風"
+    "大雨",
+    "災害対応"
   ],
-  "source": "https://tracker.example.jp/projects/takamatsu-flood-2026-t10",
+  "source": "https://tracker.example.jp/projects/heavy-rain-2026-07",
   "externalId": "42",
-  "dateCreated": "2026-08-20T18:00:00+09:00",
-  "dateModified": "2026-08-21T11:05:00+09:00"
+  "dateCreated": "2026-07-08T06:00:00+09:00",
+  "dateModified": "2026-07-08T11:05:00+09:00"
 }
