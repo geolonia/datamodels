@@ -16,7 +16,7 @@ The site is run by [Geolonia Inc.](https://www.geolonia.com/company/) (株式会
 
 ## Licences
 
-- **Models** (JSON Schemas, JSON-LD `@context` files, vocabularies, examples, attribute descriptions, notes): [CC BY 4.0](/LICENSE-CONTENT). When you use them, give credit, for example "Source: datamodels.jp (Geolonia Inc.), CC BY 4.0", with a link to this site.
+- **Models** (JSON Schemas, JSON-LD `@context` files, vocabularies, examples, attribute descriptions, notes): [CC BY 4.0](/LICENSE-CONTENT). When you use them, give credit, for example "Source: datamodels.jp (Geolonia Inc.), CC BY 4.0", with a link to this site. Parts based on other standards (GIF, the municipal standard open dataset, Smart Data Models and others) name their source in the model's mappings and notes; when you use those parts, credit that source too, and say so if you changed them.
 - **Tooling** (site, scripts, adapters): [Apache-2.0](https://github.com/geolonia/datamodels/blob/main/LICENSE)
 - IRIs from other vocabularies (Smart Data Models, schema.org, NGSI-LD and others) are only referenced here and belong to their publishers. Where a model derives from upstream material, its notes name the source.
 

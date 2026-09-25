@@ -16,7 +16,7 @@ datamodels.jp は、日本で使える NGSI-LD データモデルのカタログ
 
 ## ライセンス
 
-- **モデル**（JSON Schema、JSON-LD の `@context`、語彙、例、属性の説明、注記）: [CC BY 4.0](/LICENSE-CONTENT)。利用するときは、たとえば「出典: datamodels.jp（株式会社Geolonia）、CC BY 4.0」のように表示し、このサイトへのリンクを付けてください。
+- **モデル**（JSON Schema、JSON-LD の `@context`、語彙、例、属性の説明、注記）: [CC BY 4.0](/LICENSE-CONTENT)。利用するときは、たとえば「出典: datamodels.jp（株式会社Geolonia）、CC BY 4.0」のように表示し、このサイトへのリンクを付けてください。他の標準（GIF、自治体標準オープンデータセット、Smart Data Models など）に基づく部分は、各モデルの対応表と注記にその出典を記載しています。その部分を使うときは、その出典も表示してください（編集・加工した場合はその旨も）。
 - **ツール**（サイト、スクリプト、アダプター）: [Apache-2.0](https://github.com/geolonia/datamodels/blob/main/LICENSE)
 - 他の語彙の IRI（Smart Data Models、schema.org、NGSI-LD など）は参照しているだけで、それぞれの提供元のものです。上流から派生した部分の出典は、各モデルの注記に記載しています。
 
