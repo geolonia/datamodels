@@ -1,11 +1,15 @@
 ---
 title: Using the models
-description: From a catalog model to validated data in an NGSI-LD broker
+description: Validate JSON with the catalog models, send it to an NGSI-LD broker, and use it as linked data
 ---
 
 # Using the models
 
-Every model page lists its `@context`, JSON Schema and example URLs. They are plain URLs, so no particular product is needed: any broker that speaks the standard NGSI-LD API works.
+Every model page lists its `@context`, JSON Schema and example URLs. They are plain URLs, so no particular product is needed. There are three ways to use them:
+
+- **As JSON**: validate API requests, form input or data converted from CSV with the JSON Schema (step 2).
+- **With NGSI-LD**: send the data as it is to any broker that speaks the standard NGSI-LD API (step 3). The models' shape (`id` and `type`, the kinds of attributes, the normalized examples) follows NGSI-LD conventions.
+- **As linked data**: add the `@context` and the data becomes RDF, with every attribute's meaning identified by an IRI (step 4).
 
 Copy a code block with the button at its top right.
 
@@ -109,6 +113,55 @@ curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionS
 :::
 
 Brokers with several tenants take the tenant in the standard `NGSILD-Tenant` header. Authentication differs from broker to broker.
+
+## 4. Use as linked data
+
+Adding the `@context` turns JSON into JSON-LD, which converts to RDF. Attributes become the catalog's IRIs (`https://datamodels.jp/ns/...`) or those of the standards it borrows from (schema.org, Smart Data Models). The NGSI-LD core context is listed too, so that `id` and `type` become JSON-LD's `@id` and `@type`.
+
+::: code-group
+
+```js [Node.js]
+// npm install jsonld
+import jsonld from 'jsonld';
+
+const entity = await (await fetch('https://datamodels.jp/examples/transportation/RoadRestriction/example.json')).json();
+// Plain JSON becomes linked data by adding the catalog context.
+entity['@context'] = [
+  'https://datamodels.jp/context/transportation/v1.0.0.jsonld',
+  'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld', // maps id and type
+];
+
+// fetch replaces the default document loader, so this runs anywhere.
+const documentLoader = async (url) => ({ documentUrl: url, document: await (await fetch(url)).json() });
+console.log(await jsonld.toRDF(entity, { format: 'application/n-quads', documentLoader }));
+```
+
+```python [Python]
+# pip install pyld requests
+import requests
+from pyld import jsonld
+
+entity = requests.get("https://datamodels.jp/examples/transportation/RoadRestriction/example.json", timeout=30).json()
+# Plain JSON becomes linked data by adding the catalog context.
+entity["@context"] = [
+    "https://datamodels.jp/context/transportation/v1.0.0.jsonld",
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",  # maps id and type
+]
+
+print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))
+```
+
+:::
+
+Part of the output:
+
+```text
+<urn:ngsi-ld:RoadRestriction:0001> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://datamodels.jp/ns/transportation/RoadRestriction> .
+<urn:ngsi-ld:RoadRestriction:0001> <https://datamodels.jp/ns/transportation/restrictionStatus> "closed" .
+<urn:ngsi-ld:RoadRestriction:0001> <https://smartdatamodels.org/dataModel.Transportation/roadName> "靖国通り" .
+```
+
+Each subject's vocabulary (`/vocab/<subject>/v1.0.0.jsonld`) carries Japanese and English labels and descriptions for its types and attributes. The mapping tables to other standards, such as GIF and the municipal standard open datasets, are on each model page and help with converting data.
 
 ## Works with
 

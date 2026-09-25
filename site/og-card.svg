@@ -2,6 +2,6 @@
   <rect width="1200" height="630" fill="#ffffff"/>
   <rect x="0" y="0" width="1200" height="14" fill="#0d5b4e"/>
   <text x="600" y="290" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="118" font-weight="700" fill="#16211d">datamodels.jp</text>
-  <text x="600" y="380" text-anchor="middle" font-family="Hiragino Sans, Helvetica Neue, Helvetica, Arial, sans-serif" font-size="36" fill="#3c4a45">NGSI-LD データモデルカタログ · NGSI-LD data models catalog</text>
-  <text x="600" y="540" text-anchor="middle" font-family="Menlo, ui-monospace, monospace" font-size="26" fill="#0d5b4e">@context · JSON Schema · RDFS vocabularies · stable URLs</text>
+  <text x="600" y="380" text-anchor="middle" font-family="Hiragino Sans, Helvetica Neue, Helvetica, Arial, sans-serif" font-size="36" fill="#3c4a45">日本で使えるデータモデル · Data models that work in Japan</text>
+  <text x="600" y="540" text-anchor="middle" font-family="Menlo, ui-monospace, monospace" font-size="26" fill="#0d5b4e">JSON Schema · JSON-LD · RDFS · NGSI-LD · stable URLs</text>
 </svg>
