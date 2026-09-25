@@ -40,9 +40,12 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
       {
         text: lang === 'ja' ? 'ガイド' : 'Guides',
         // Product-specific pages sit under "Using the models", after the steps that work with any broker.
-        items: guides(prefix, lang).map((g) => g.link === `${prefix}/guide/use`
-          ? { ...g, items: [{ text: 'GeonicDB', link: `${prefix}/guide/geonicdb` }] }
-          : g),
+        items: [
+          { text: lang === 'ja' ? 'ガイド一覧' : 'All guides', link: `${prefix}/guide/` },
+          ...guides(prefix, lang).map((g) => g.link === `${prefix}/guide/use`
+            ? { ...g, items: [{ text: 'GeonicDB', link: `${prefix}/guide/geonicdb` }] }
+            : g),
+        ],
       },
       catalog,
     ],
@@ -61,8 +64,9 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
 }
 
 const nav = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.NavItem[] => [
-  { text: lang === 'ja' ? 'データモデル' : 'Data models', link: `${prefix}/models/` },
-  { text: lang === 'ja' ? 'ガイド' : 'Guides', items: guides(prefix, lang) },
+  // Both sections are links to a landing page; the sidebar lists their pages.
+  { text: lang === 'ja' ? 'データモデル' : 'Data models', link: `${prefix}/models/`, activeMatch: `^${prefix}/models/` },
+  { text: lang === 'ja' ? 'ガイド' : 'Guides', link: `${prefix}/guide/`, activeMatch: `^${prefix}/guide/` },
 ]
 
 const SITE_URL = 'https://datamodels.jp';
