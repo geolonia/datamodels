@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://datamodels.jp/schema/disaster/RoadClosure/v1.0.0.json",
-  "title": "RoadClosure",
-  "description": "One road closure or traffic regulation: road name, regulated section as a point, line or area, status and category.",
+  "$id": "https://datamodels.jp/schema/transportation/RoadRestriction/v1.0.0.json",
+  "title": "RoadRestriction",
+  "description": "One road restriction, including closures: road name, regulated section as a point, line or area, status and category.",
   "x-version": "1.0.0",
   "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
-  "x-model-tags": "disaster-response, Japan",
+  "x-model-tags": "road, transportation, Japan",
   "x-derived-from": "https://github.com/geolonia/geonicdb-datamodels",
   "type": "object",
   "properties": {
@@ -16,7 +16,7 @@
     },
     "type": {
       "type": "string",
-      "const": "RoadClosure",
+      "const": "RoadRestriction",
       "description": "Entity type"
     },
     "project": {
@@ -48,15 +48,15 @@
     },
     "location": {
       "$ref": "https://datamodels.jp/schema/common/Geometry/v1.0.0.json",
-      "description": "The regulated section, as a GeoJSON geometry. A point for a single-spot closure, a LineString for a section, a polygon for an area, matching the point/line/area regulation forms (点規制・線規制・面規制) of the NPA's traffic regulation data format (交通規制情報（拡張版標準フォーマット）説明書 Ver: k_2.1, JARTIC, 2025-01-20)",
+      "description": "The regulated section, as a GeoJSON geometry. A point for a single-spot restriction, a LineString for a section, a polygon for an area, matching the point/line/area regulation forms (点規制・線規制・面規制) of the NPA's traffic regulation data format (交通規制情報（拡張版標準フォーマット）説明書 Ver: k_2.1, JARTIC, 2025-01-20)",
       "x-ngsi": {
         "type": "GeoProperty",
         "model": "https://datamodels.jp/ns/common/Geometry"
       },
       "x-iri": "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld#location"
     },
-    "closureStatus": {
-      "description": "Normalised closure state, the value space of Smart Data Models RoadSegment.status: closed (no traffic), limited (traffic possible but not in full capacity), open (closure lifted or not yet in place). The local wording goes in statusLabel; regulationCategory gives the finer public-sector category",
+    "restrictionStatus": {
+      "description": "Normalised restriction state, the value space of Smart Data Models RoadSegment.status: closed (no traffic), limited (traffic possible but not in full capacity), open (restriction lifted or not yet in place). The local wording goes in statusLabel; regulationCategory gives the finer public-sector category",
       "type": "string",
       "enum": [
         "closed",
@@ -66,10 +66,10 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://datamodels.jp/ns/disaster/closureStatus"
+      "x-iri": "https://datamodels.jp/ns/transportation/restrictionStatus"
     },
     "regulationCategory": {
-      "description": "Regulation category, from the legend of MLIT's Road Information Provision System (道路情報提供システム 通行規制情報, road-info-prvs.mlit.go.jp, accessed 2026-09-24): the categories a road administrator uses for a driver-facing closure or restriction. Optional and independent of closureStatus",
+      "description": "Regulation category, from the legend of MLIT's Road Information Provision System (道路情報提供システム 通行規制情報, road-info-prvs.mlit.go.jp, accessed 2026-09-24): the categories a road administrator uses for a driver-facing closure or restriction. Optional and independent of restrictionStatus",
       "type": "string",
       "enum": [
         "closedWeather",
@@ -86,18 +86,18 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://datamodels.jp/ns/disaster/regulationCategory"
+      "x-iri": "https://datamodels.jp/ns/transportation/regulationCategory"
     },
     "statusLabel": {
       "type": "string",
-      "description": "The closure status as the headquarters names it (依頼中, 通行止め中, 解除済み)",
+      "description": "The restriction status as the headquarters names it (依頼中, 通行止め中, 解除済み)",
       "x-ngsi": {
         "type": "Property"
       },
       "x-iri": "https://datamodels.jp/ns/task/statusLabel"
     },
     "validFrom": {
-      "description": "When the closure takes effect",
+      "description": "When the restriction takes effect",
       "type": "string",
       "format": "date-time",
       "x-ngsi": {
@@ -106,7 +106,7 @@
       "x-iri": "https://smartdatamodels.org/validFrom"
     },
     "validTo": {
-      "description": "When the closure is lifted",
+      "description": "When the restriction is lifted",
       "type": "string",
       "format": "date-time",
       "x-ngsi": {
@@ -127,7 +127,7 @@
     "id",
     "type",
     "project",
-    "closureStatus",
+    "restrictionStatus",
     "location"
   ],
   "additionalProperties": false

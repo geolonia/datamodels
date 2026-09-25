@@ -1,12 +1,13 @@
 title:
-  ja: 通行止め
-  en: Road closure
+  ja: 通行規制
+  en: Road restriction
 description:
-  ja: 通行止め・通行規制 1 件。路線名、規制区間（点・線・面）、状態、区分、期間を持つ。
-  en: "One road closure or traffic regulation: road name, regulated section (point, line or area), status, category and period."
+  ja: 通行規制（通行止めを含む）1 件。路線名、規制区間（点・線・面）、状態、区分、期間を持つ。
+  en: "One road restriction, including closures: road name, regulated section (point, line or area), status, category and period."
 status: draft
 tags:
-  - disaster-response
+  - road
+  - traffic-restriction
   - municipality
 attributes:
   project:
@@ -21,21 +22,21 @@ attributes:
   location:
     ja: 規制区間。点（単独地点）・線（区間）・面（区域）の GeoJSON ジオメトリ。警察庁「交通規制情報（拡張版標準フォーマット）」の点規制・線規制・面規制に対応
     en: The regulated section, as a GeoJSON geometry (point, line or area), matching the point/line/area regulation forms of the NPA's traffic regulation data format
-  closureStatus:
+  restrictionStatus:
     ja: "正規化した状態。Smart Data Models RoadSegment.status の値域: closed（通行不可）、limited（片側通行など）、open（解除済み、または未実施）。現場の呼び方は statusLabel に。より細かい区分は regulationCategory に"
-    en: "Normalised closure state, the value space of Smart Data Models RoadSegment.status: closed (no traffic), limited (traffic possible but not in full capacity), open (closure lifted or not yet in place). The local wording goes in statusLabel; a finer public-sector category goes in regulationCategory"
+    en: "Normalised restriction state, the value space of Smart Data Models RoadSegment.status: closed (no traffic), limited (traffic possible but not in full capacity), open (restriction lifted or not yet in place). The local wording goes in statusLabel; a finer public-sector category goes in regulationCategory"
   regulationCategory:
     ja: "規制区分。国土交通省 道路情報提供システムの凡例（表記はサイトの凡例に合わせた）: closedWeather（通行止(異常気象等)）、closedConstruction（通行止(工事)）、closedHeavyVehicle（大型通行止）、closedWinter（冬期通行止）、laneRestriction（車線規制）、alternatingOneWay（片側交互通行）、mobileRestriction（移動規制）、chainRestriction（チェーン規制）、chainGuidance（チェーン指導）、other（その他規制）。任意項目"
     en: "Regulation category, from the legend of MLIT's Road Information Provision System: closedWeather, closedConstruction, closedHeavyVehicle, closedWinter, laneRestriction, alternatingOneWay, mobileRestriction, chainRestriction, chainGuidance, other. Optional"
   statusLabel:
     ja: 本部での状態の呼び方（依頼中、通行止め中、解除済み）
-    en: The closure status as the headquarters names it (依頼中, 通行止め中, 解除済み)
+    en: The restriction status as the headquarters names it (依頼中, 通行止め中, 解除済み)
   validFrom:
-    ja: 通行止め開始
-    en: When the closure takes effect
+    ja: 規制開始
+    en: When the restriction takes effect
   validTo:
     ja: 解除
-    en: When the closure is lifted
+    en: When the restriction is lifted
   description:
     ja: メモ
     en: Free-text memo

@@ -32,16 +32,16 @@ description: カタログのデータモデルを GeonicDB に登録し、エン
 ## 1. Custom Data Model を登録する
 
 ```bash
-curl -sSf https://datamodels.jp/adapters/geonicdb/disaster/RoadClosure.json -o RoadClosure.json
+curl -sSf https://datamodels.jp/adapters/geonicdb/transportation/RoadRestriction.json -o RoadRestriction.json
 
 curl -X POST "$GEONICDB_BASE_URL/custom-data-models" \
   -H "Content-Type: application/json" \
   -H "x-api-key: $GEONICDB_API_KEY" \
   -H "Fiware-Service: $GEONICDB_TENANT" \
-  --data @RoadClosure.json
+  --data @RoadRestriction.json
 ```
 
-`201 Created` が返れば登録完了です。同じ型名が既にあると `409` になります。`geonic` CLI なら `geonic models create RoadClosure.json` です。
+`201 Created` が返れば登録完了です。同じ型名が既にあると `409` になります。`geonic` CLI なら `geonic models create RoadRestriction.json` です。
 
 登録された定義は属性の型・必須・enum を検証し（`additionalProperties: false` のモデルでは未定義の属性を拒否）、`contextUrl` の context をこの型の語彙として使います。
 
@@ -50,7 +50,7 @@ curl -X POST "$GEONICDB_BASE_URL/custom-data-models" \
 各モデルページの「例（normalized）」は `@context` を含む JSON-LD なので、`Content-Type: application/ld+json` でそのまま POST できます。
 
 ```bash
-curl -sSf https://datamodels.jp/examples/disaster/RoadClosure/example-normalized.jsonld -o entity.jsonld
+curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example-normalized.jsonld -o entity.jsonld
 
 curl -X POST "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
   -H "Content-Type: application/ld+json" \
@@ -64,9 +64,9 @@ curl -X POST "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
 ## 3. 検索する
 
 ```bash
-curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadClosure&q=closureStatus==%22closed%22" \
+curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionStatus==%22closed%22" \
   -H "Accept: application/ld+json" \
-  -H 'Link: <https://datamodels.jp/context/disaster/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -H 'Link: <https://datamodels.jp/context/transportation/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -H "x-api-key: $GEONICDB_API_KEY" \
   -H "NGSILD-Tenant: $GEONICDB_TENANT"
 ```
@@ -81,7 +81,7 @@ curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadClosure&q=closureStatus==%
    ```json
    {
      "@context": [
-       "https://datamodels.jp/context/disaster/v1.jsonld",
+       "https://datamodels.jp/context/transportation/v1.jsonld",
        { "acme": "https://example.com/ns/acme/", "patrolRoute": "acme:patrolRoute" }
      ]
    }
@@ -91,8 +91,8 @@ curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadClosure&q=closureStatus==%
 
    ```json
    {
-     "RoadClosure": {
-       "contextUrl": "https://example.com/context/acme-disaster.jsonld",
+     "RoadRestriction": {
+       "contextUrl": "https://example.com/context/acme-transportation.jsonld",
        "propertyDetails": {
          "patrolRoute": { "ngsiType": "Property", "valueType": "string", "example": "A-3", "description": "巡回ルート", "@context": "https://example.com/ns/acme/patrolRoute" }
        }
@@ -101,7 +101,7 @@ curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadClosure&q=closureStatus==%
    ```
 
    ```bash
-   node adapters/geonicdb/export.mjs disaster --type RoadClosure --extend ./acme.json --out ./out
+   node adapters/geonicdb/export.mjs transportation --type RoadRestriction --extend ./acme.json --out ./out
    ```
 
 3. **カタログに提案する。** 自分の案件以外でも役に立つ属性なら、[Issue](https://github.com/geolonia/datamodels/issues) か Pull Request で提案してください。次のマイナーバージョンで追加されれば、拡張は不要になります。
@@ -112,7 +112,7 @@ curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadClosure&q=closureStatus==%
 
 ```bash
 git clone https://github.com/geolonia/datamodels && cd datamodels && npm ci
-node adapters/geonicdb/export.mjs disaster --type-prefix Acme --out ./out
+node adapters/geonicdb/export.mjs transportation --type-prefix Acme --out ./out
 ```
 
 ## 補足

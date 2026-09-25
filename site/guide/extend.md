@@ -46,7 +46,7 @@ description: 既存のデータモデルを日本向けに拡張する方法、�
 
 ### 現状について
 
-最初のサブジェクト [災害対応](/models/disaster/) は、高松市の水防アプリのデータモデルを基にしたもので、[タスク管理](/models/task/)の上に組み立てています（共通の属性はタスク管理の IRI を使う）。当初あった `DisasterEvent`（`Project` の**エイリアス**）と通報・対応業務・申し送り・現地写真（`Task`・`Comment`・`Attachment` の**サブクラス**）は、外部の基準・仕様に基づかないテナント固有の型だったため 2026-09-24 に廃止しました（詳細は [docs/design.md](https://github.com/geolonia/datamodels/blob/main/docs/design.md) の「Versioning and lifecycle」）。通行止めと避難所は上流（Smart Data Models の `RoadSegment`・`Alert`、デジタル庁の自治体標準オープンデータセット）と比較した結果、型としては合うものがなく独自のままですが、属性の IRI と状態の値域は借りています。検討の経過は各モデルの注記と [Issue #16](https://github.com/geolonia/datamodels/issues/16) にあります。エイリアス・サブクラスの書き方自体は [Tips & Tricks](/guide/tips) を参照してください。
+最初のサブジェクト [災害対応](/models/disaster/) は、高松市の水防アプリのデータモデルを基にしたもので、[タスク管理](/models/task/)の上に組み立てています（共通の属性はタスク管理の IRI を使う）。当初あった `DisasterEvent`（`Project` の**エイリアス**）と通報・対応業務・申し送り・現地写真（`Task`・`Comment`・`Attachment` の**サブクラス**）は、外部の基準・仕様に基づかないテナント固有の型だったため 2026-09-24 に廃止しました（詳細は [docs/design.md](https://github.com/geolonia/datamodels/blob/main/docs/design.md) の「Versioning and lifecycle」）。通行止めと避難所は上流（Smart Data Models の `RoadSegment`・`Alert`、デジタル庁の自治体標準オープンデータセット）と比較した結果、型としては合うものがなく独自のままですが、属性の IRI と状態の値域は借りています。通行止めはその後、国の基準（警察庁・国土交通省）に基づく通行規制として作り直し、災害に限らないため[交通](/models/transportation/)サブジェクトの `RoadRestriction` に移しました（2026-09-25）。検討の経過は各モデルの注記と [Issue #16](https://github.com/geolonia/datamodels/issues/16) にあります。エイリアス・サブクラスの書き方自体は [Tips & Tricks](/guide/tips) を参照してください。
 
 ### 守ること
 

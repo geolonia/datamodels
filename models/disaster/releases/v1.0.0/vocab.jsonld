@@ -34,8 +34,8 @@
         "en": "Disaster response"
       },
       "comment": {
-        "ja": "自治体の災害対応を表すデータモデル。通行止め（RoadClosure）と避難所運用状況（EvacuationShelter）は、どちらもタスク管理サブジェクトのエイリアス・サブクラスではない独自の型で、共通の属性はタスク管理の IRI を持ちます（`project` はタスク管理の `Project` を指す関係属性ですが、災害事象そのものを表す型はこのカタログでは定義していません）。高松市の水防アプリのデータモデルを基に汎用化したもの。",
-        "en": "Data models for municipal disaster response. Road closures (RoadClosure) and shelter operation (EvacuationShelter) are each their own type, neither an alias nor a subclass of the task subject; shared attributes carry the task subject's IRIs (`project` is a relationship to the task subject's `Project`, though this catalog does not itself define a type for the disaster event). Generalised from the data models of Takamatsu City's flood-response application."
+        "ja": "自治体の災害対応を表すデータモデル。避難所運用状況（EvacuationShelter）は、タスク管理サブジェクトのエイリアス・サブクラスではない独自の型で、共通の属性はタスク管理の IRI を持ちます（`project` はタスク管理の `Project` を指す関係属性ですが、災害事象そのものを表す型はこのカタログでは定義していません）。通行止めなどの通行規制は交通（transportation）サブジェクトの RoadRestriction です。高松市の水防アプリのデータモデルを基に汎用化したもの。",
+        "en": "Data models for municipal disaster response. Shelter operation (EvacuationShelter) is its own type, neither an alias nor a subclass of the task subject; shared attributes carry the task subject's IRIs (`project` is a relationship to the task subject's `Project`, though this catalog does not itself define a type for the disaster event). Road closures and other road restrictions are RoadRestriction in the transportation subject. Generalised from the data models of Takamatsu City's flood-response application."
       },
       "versionInfo": "1.0.0",
       "seeAlso": "https://datamodels.jp/context/disaster/v1.0.0.jsonld"
@@ -55,20 +55,6 @@
       "seeAlso": "https://datamodels.jp/models/disaster/EvacuationShelter/"
     },
     {
-      "@id": "https://datamodels.jp/ns/disaster/RoadClosure",
-      "@type": "rdfs:Class",
-      "label": {
-        "ja": "通行止め",
-        "en": "Road closure"
-      },
-      "comment": {
-        "ja": "通行止め・通行規制 1 件。路線名、規制区間（点・線・面）、状態、区分、期間を持つ。",
-        "en": "One road closure or traffic regulation: road name, regulated section (point, line or area), status, category and period."
-      },
-      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
-      "seeAlso": "https://datamodels.jp/models/disaster/RoadClosure/"
-    },
-    {
       "@id": "https://datamodels.jp/ns/disaster/closedAt",
       "@type": "rdf:Property",
       "label": {
@@ -80,19 +66,6 @@
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
       "seeAlso": "https://datamodels.jp/models/disaster/EvacuationShelter/#closedAt"
-    },
-    {
-      "@id": "https://datamodels.jp/ns/disaster/closureStatus",
-      "@type": "rdf:Property",
-      "label": {
-        "en": "closureStatus"
-      },
-      "comment": {
-        "ja": "正規化した状態。Smart Data Models RoadSegment.status の値域: closed（通行不可）、limited（片側通行など）、open（解除済み、または未実施）。現場の呼び方は statusLabel に。より細かい区分は regulationCategory に",
-        "en": "Normalised closure state, the value space of Smart Data Models RoadSegment.status: closed (no traffic), limited (traffic possible but not in full capacity), open (closure lifted or not yet in place). The local wording goes in statusLabel; a finer public-sector category goes in regulationCategory"
-      },
-      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
-      "seeAlso": "https://datamodels.jp/models/disaster/RoadClosure/#closureStatus"
     },
     {
       "@id": "https://datamodels.jp/ns/disaster/evacueeFemale",
@@ -197,19 +170,6 @@
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
       "seeAlso": "https://datamodels.jp/models/disaster/EvacuationShelter/#openingStatus"
-    },
-    {
-      "@id": "https://datamodels.jp/ns/disaster/regulationCategory",
-      "@type": "rdf:Property",
-      "label": {
-        "en": "regulationCategory"
-      },
-      "comment": {
-        "ja": "規制区分。国土交通省 道路情報提供システムの凡例（表記はサイトの凡例に合わせた）: closedWeather（通行止(異常気象等)）、closedConstruction（通行止(工事)）、closedHeavyVehicle（大型通行止）、closedWinter（冬期通行止）、laneRestriction（車線規制）、alternatingOneWay（片側交互通行）、mobileRestriction（移動規制）、chainRestriction（チェーン規制）、chainGuidance（チェーン指導）、other（その他規制）。任意項目",
-        "en": "Regulation category, from the legend of MLIT's Road Information Provision System: closedWeather, closedConstruction, closedHeavyVehicle, closedWinter, laneRestriction, alternatingOneWay, mobileRestriction, chainRestriction, chainGuidance, other. Optional"
-      },
-      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
-      "seeAlso": "https://datamodels.jp/models/disaster/RoadClosure/#regulationCategory"
     }
   ]
 }

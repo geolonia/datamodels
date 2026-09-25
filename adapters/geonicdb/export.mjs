@@ -1,18 +1,18 @@
 // Write GeonicDB Custom Data Model bodies for one subject, adapted to a tenant.
 //
-//   node adapters/geonicdb/export.mjs disaster --out ./out
-//   node adapters/geonicdb/export.mjs disaster --type RoadClosure --allow-additional --out ./out
-//   node adapters/geonicdb/export.mjs disaster --type-prefix Acme --alias-context --out ./out
-//   node adapters/geonicdb/export.mjs disaster --extend ./my-extensions.json --out ./out
+//   node adapters/geonicdb/export.mjs transportation --out ./out
+//   node adapters/geonicdb/export.mjs transportation --type RoadRestriction --allow-additional --out ./out
+//   node adapters/geonicdb/export.mjs transportation --type-prefix Acme --alias-context --out ./out
+//   node adapters/geonicdb/export.mjs transportation --extend ./my-extensions.json --out ./out
 //
 //   --type T           only this model
-//   --type-prefix P    tenant-specific type names (AcmeRoadClosure), catalog vocabulary unchanged
+//   --type-prefix P    tenant-specific type names (AcmeRoadRestriction), catalog vocabulary unchanged
 //   --alias-context    declare the vN.jsonld alias instead of the exact version
 //   --allow-additional additionalProperties: true (unknown attributes accepted, not validated)
 //   --type-name N      replace the type name (needs --type); an alias for the same IRI
 //   --rename a=b,c=d   attribute aliases (needs --type); the contextUrl must map them
 //   --context-url URL  declare this context instead of the catalog's
-//   --extend FILE      JSON keyed by type: { "RoadClosure": { "contextUrl": "...",
+//   --extend FILE      JSON keyed by type: { "RoadRestriction": { "contextUrl": "...",
 //                      "propertyDetails": { "patrolRoute": { "ngsiType": "Property",
 //                      "valueType": "string", "example": "A-3" } } } }
 //                      The contextUrl should import the catalog context and define the added terms.

@@ -1,0 +1,20 @@
+{
+  "@context": [
+    "https://datamodels.jp/context/common/v1.0.0.jsonld",
+    {
+      "transportation": "https://datamodels.jp/ns/transportation/",
+      "tm": "https://datamodels.jp/ns/task/",
+      "RoadRestriction": "transportation:RoadRestriction",
+      "project": {
+        "@id": "tm:project",
+        "@type": "@id"
+      },
+      "regulationCategory": "transportation:regulationCategory",
+      "restrictionStatus": "transportation:restrictionStatus",
+      "roadName": "https://smartdatamodels.org/dataModel.Transportation/roadName",
+      "statusLabel": "tm:statusLabel",
+      "validFrom": "https://smartdatamodels.org/validFrom",
+      "validTo": "https://smartdatamodels.org/dataModel.Alert/validTo"
+    }
+  ]
+}

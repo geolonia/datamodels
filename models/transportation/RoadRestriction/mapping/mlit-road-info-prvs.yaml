@@ -12,7 +12,7 @@ fields:
     note:
       ja: "1:1 対応。通行止(異常気象等)→closedWeather、通行止(工事)→closedConstruction、大型通行止→closedHeavyVehicle、冬期通行止→closedWinter、車線規制→laneRestriction、片側交互通行→alternatingOneWay、移動規制→mobileRestriction、チェーン規制→chainRestriction、チェーン指導→chainGuidance、その他規制→other"
       en: "1:1 mapping: 通行止(異常気象等)→closedWeather, 通行止(工事)→closedConstruction, 大型通行止→closedHeavyVehicle, 冬期通行止→closedWinter, 車線規制→laneRestriction, 片側交互通行→alternatingOneWay, 移動規制→mobileRestriction, チェーン規制→chainRestriction, チェーン指導→chainGuidance, その他規制→other"
-  closureStatus:
+  restrictionStatus:
     to: null
   location:
     to: null

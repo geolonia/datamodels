@@ -6,9 +6,9 @@ title:
   ja: 災害対応
   en: Disaster response
 description:
-  ja: 自治体の災害対応を表すデータモデル。通行止め（RoadClosure）と避難所運用状況（EvacuationShelter）は、どちらもタスク管理サブジェクトのエイリアス・サブクラスではない独自の型で、共通の属性はタスク管理の IRI を持ちます（`project` はタスク管理の `Project` を指す関係属性ですが、災害事象そのものを表す型はこのカタログでは定義していません）。高松市の水防アプリのデータモデルを基に汎用化したもの。
-  en: Data models for municipal disaster response. Road closures (RoadClosure) and shelter operation (EvacuationShelter) are each their own type, neither an alias nor a subclass of the task subject; shared attributes carry the task subject's IRIs (`project` is a relationship to the task subject's `Project`, though this catalog does not itself define a type for the disaster event). Generalised from the data models of Takamatsu City's flood-response application.
+  ja: 自治体の災害対応を表すデータモデル。避難所運用状況（EvacuationShelter）は、タスク管理サブジェクトのエイリアス・サブクラスではない独自の型で、共通の属性はタスク管理の IRI を持ちます（`project` はタスク管理の `Project` を指す関係属性ですが、災害事象そのものを表す型はこのカタログでは定義していません）。通行止めなどの通行規制は交通（transportation）サブジェクトの RoadRestriction です。高松市の水防アプリのデータモデルを基に汎用化したもの。
+  en: Data models for municipal disaster response. Shelter operation (EvacuationShelter) is its own type, neither an alias nor a subclass of the task subject; shared attributes carry the task subject's IRIs (`project` is a relationship to the task subject's `Project`, though this catalog does not itself define a type for the disaster event). Road closures and other road restrictions are RoadRestriction in the transportation subject. Generalised from the data models of Takamatsu City's flood-response application.
 source: minted            # minted | profile | global
 origin:
   repository: https://github.com/geolonia/geonicdb-datamodels
-  note: Seeded from two of the seven Custom Data Models of the Takamatsu City flood-prevention headquarters application; the other five (DisasterEvent, IncidentReport, IncidentResponseAction, IncidentHandoverNote, IncidentPhoto) were removed 2026-09-24 as tenant-specific types with no external standard behind them (see docs/design.md, "Versioning and lifecycle").
+  note: Seeded from two of the seven Custom Data Models of the Takamatsu City flood-prevention headquarters application; the road closure model is RoadRestriction in the transportation subject since 2026-09-25 (#55); the other five (DisasterEvent, IncidentReport, IncidentResponseAction, IncidentHandoverNote, IncidentPhoto) were removed 2026-09-24 as tenant-specific types with no external standard behind them (see docs/design.md, "Versioning and lifecycle").

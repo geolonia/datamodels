@@ -110,32 +110,32 @@ test('redefining a protected core term fails', () =>
     /redefines core context term "status"/));
 
 test('an attribute missing from the context fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'context.jsonld'), (c) => { delete inlineTerms(c).roadName; }),
+  withMutatedModels((d) => editJson(join(d, 'transportation', 'context.jsonld'), (c) => { delete inlineTerms(c).roadName; }),
     /does not define attribute "roadName"/));
 
 test('a key-values example violating the schema fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { e.closureStatus = '不明'; }),
+  withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => { e.restrictionStatus = '不明'; }),
     /example\.json: .*(enum|allowed values)/));
 
 test('an out-of-vocabulary regulationCategory fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { e.regulationCategory = '全面通行止め'; }),
+  withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => { e.regulationCategory = '全面通行止め'; }),
     /example\.json: .*(enum|allowed values)/));
 
-test('a RoadClosure example missing location fails now that it is required', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { delete e.location; }),
+test('a RoadRestriction example missing location fails now that it is required', () =>
+  withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => { delete e.location; }),
     /example\.json: .*required.*location/));
 
-test('a RoadClosure location as a bare polygon (no line/point alternative) still needs coordinates', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { e.location = { type: 'Polygon' }; }),
+test('a RoadRestriction location as a bare polygon (no line/point alternative) still needs coordinates', () =>
+  withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => { e.location = { type: 'Polygon' }; }),
     /example\.json: .*location/));
 
-test('a RoadClosure polygon whose ring does not close fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => {
+test('a RoadRestriction polygon whose ring does not close fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => {
     e.location = { type: 'Polygon', coordinates: [[[134.04, 34.34], [134.05, 34.34], [134.05, 34.35], [134.04, 34.36]]] };
   }), /example\.json: .*polygon ring does not close/));
 
-test('a RoadClosure MultiLineString with no lines fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => {
+test('a RoadRestriction MultiLineString with no lines fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => {
     e.location = { type: 'MultiLineString', coordinates: [] };
   }), /example\.json: .*location/));
 
@@ -156,30 +156,30 @@ test('a model title that is not a string fails', () =>
   }, /Comment\/catalog\.yaml: title\.ja must be a non-empty string/));
 
 test('a normalized attribute without value fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example-normalized.jsonld'), (e) => { e.description = { type: 'Property' }; }),
+  withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example-normalized.jsonld'), (e) => { e.description = { type: 'Property' }; }),
     /Property needs a value/));
 
 test('an attribute whose context mapping is not an IRI fails', () =>
   withMutatedModels(async (d) => {
     // Declared everywhere, but the context maps it to a bare word, not an IRI.
-    await editJson(join(d, 'disaster', 'RoadClosure', 'schema.json'), (s) => { s.properties.weird = { type: 'integer', 'x-ngsi': { type: 'Property' }, 'x-iri': 'weird' }; });
-    await editJson(join(d, 'disaster', 'context.jsonld'), (c) => { inlineTerms(c).weird = 'weird'; });
-    const cat = join(d, 'disaster', 'RoadClosure', 'catalog.yaml');
+    await editJson(join(d, 'transportation', 'RoadRestriction', 'schema.json'), (s) => { s.properties.weird = { type: 'integer', 'x-ngsi': { type: 'Property' }, 'x-iri': 'weird' }; });
+    await editJson(join(d, 'transportation', 'context.jsonld'), (c) => { inlineTerms(c).weird = 'weird'; });
+    const cat = join(d, 'transportation', 'RoadRestriction', 'catalog.yaml');
     await writeFile(cat, (await readFile(cat, 'utf8')) + '  weird:\n    ja: "x"\n    en: "x"\n');
-    await editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example-normalized.jsonld'), (e) => { e.weird = { type: 'Property', value: 1 }; });
-    await editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { e.weird = 1; });
+    await editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example-normalized.jsonld'), (e) => { e.weird = { type: 'Property', value: 1 }; });
+    await editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => { e.weird = 1; });
   }, /(did not expand|lost in expand\/compact round-trip|JSON-LD processing failed)/));
 
 test('a type name not matching its folder fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'schema.json'), (s) => { s.properties.type.const = 'RoadClosur'; }),
-    /properties\.type\.const must be "RoadClosure"/));
+  withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'schema.json'), (s) => { s.properties.type.const = 'RoadRestrictio'; }),
+    /properties\.type\.const must be "RoadRestriction"/));
 
 test('a schema version diverging from the subject version fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'schema.json'), (s) => { s['x-version'] = '9.9.9'; }),
+  withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'schema.json'), (s) => { s['x-version'] = '9.9.9'; }),
     /x-version must be 1\.0\.0/));
 
 test('a normalized attribute whose wrapper type contradicts x-ngsi.type fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example-normalized.jsonld'), (e) => { e.project = { type: 'Property', value: e.project.object }; }),
+  withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example-normalized.jsonld'), (e) => { e.project = { type: 'Property', value: e.project.object }; }),
     /"project" is a Property but schema.json declares Relationship/));
 
 test('a subject without an English title fails at load time', () =>
@@ -193,8 +193,8 @@ test('a nested address field the context does not define fails', () =>
     await editJson(join(d, 'common', 'JapaneseAddress', 'schema.json'), (s) => { s.properties.wardName = { type: 'string', 'x-iri': 'https://datamodels.jp/ns/common/wardName' }; });
     const cat = join(d, 'common', 'JapaneseAddress', 'catalog.yaml');
     await writeFile(cat, (await readFile(cat, 'utf8')) + '  wardName:\n    ja: "x"\n    en: "x"\n');
-    await editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example-normalized.jsonld'), (e) => { e.address.value.wardName = '中区'; });
-    await editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { e.address.wardName = '中区'; });
+    await editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example-normalized.jsonld'), (e) => { e.address.value.wardName = '中区'; });
+    await editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => { e.address.wardName = '中区'; });
   }, /(does not define attribute "wardName"|address\.value\.wardName" lost)/));
 
 test('a value-type example violating a code pattern fails', () =>
@@ -202,8 +202,8 @@ test('a value-type example violating a code pattern fails', () =>
     /JapaneseAddress\/examples\/example\.json: .*pattern/));
 
 test('an entity example whose address violates the referenced value schema fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example.json'), (e) => { e.address.postalCode = 'ABC'; }),
-    /RoadClosure\/examples\/example\.json: .*pattern/));
+  withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => { e.address.postalCode = 'ABC'; }),
+    /RoadRestriction\/examples\/example\.json: .*pattern/));
 
 test('a context importing a version that is neither published nor current fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'context.jsonld'), (c) => { c['@context'][0] = 'https://datamodels.jp/context/common/v0.9.0.jsonld'; }),
@@ -280,5 +280,5 @@ test('an alias survives a different key and required order', () =>
   }, /x-version must be 1\.0\.0(?![\s\S]*alias of Project)/));
 
 test('a product-specific annotation in a schema fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'schema.json'), (s) => { s.properties.roadName['x-geonicdb'] = { indexed: true }; }),
+  withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'schema.json'), (s) => { s.properties.roadName['x-geonicdb'] = { indexed: true }; }),
     /roadName: product-specific key x-geonicdb; move it into an adapter/));

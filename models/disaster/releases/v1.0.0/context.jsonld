@@ -4,10 +4,8 @@
     {
       "disaster": "https://datamodels.jp/ns/disaster/",
       "tm": "https://datamodels.jp/ns/task/",
-      "RoadClosure": "disaster:RoadClosure",
       "EvacuationShelter": "disaster:EvacuationShelter",
       "closedAt": "disaster:closedAt",
-      "closureStatus": "disaster:closureStatus",
       "evacueeFemale": "disaster:evacueeFemale",
       "evacueeHouseholds": "disaster:evacueeHouseholds",
       "evacueeMale": "disaster:evacueeMale",
@@ -20,11 +18,7 @@
         "@id": "tm:project",
         "@type": "@id"
       },
-      "regulationCategory": "disaster:regulationCategory",
-      "roadName": "https://smartdatamodels.org/dataModel.Transportation/roadName",
-      "statusLabel": "tm:statusLabel",
-      "validFrom": "https://smartdatamodels.org/validFrom",
-      "validTo": "https://smartdatamodels.org/dataModel.Alert/validTo"
+      "statusLabel": "tm:statusLabel"
     }
   ]
 }

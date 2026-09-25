@@ -2,18 +2,20 @@
   "comment": "SHA-256 of every immutable published file (exact versions under context/, schema/ and vocab/, and context/mirror/). Entries are appended by `npm run manifest:record`. After the official launch they are never edited or removed. During the pre-release, the current version of a subject may still be corrected in place: delete its snapshot and manifest entries and record again, as the README describes. See docs/design.md and scripts/check-immutability.mjs.",
   "files": {
     "context/common/v1.0.0.jsonld": "59fe038a9d8c1f459a86940f17371f1b5842942940afa68da4f21502e07b453d",
-    "context/disaster/v1.0.0.jsonld": "b35ed0adf9797c0426a5a3be2b43ee48a373095f11a1bcfd30eb688ca0a187ac",
+    "context/disaster/v1.0.0.jsonld": "40870e48ef477e76f029290171f23d6e771550fa211493715990a68fd8d0103f",
     "context/task/v1.0.0.jsonld": "7c542815fe5f9982372b8587c1a55f869b9a830ed6c7a5f3b3eddbb0e10d5d4c",
+    "context/transportation/v1.0.0.jsonld": "1000abffa48f68a40b30b74594c7c98985c816daf8018612a9a81361265c56fd",
     "schema/common/Geometry/v1.0.0.json": "370263be66dbaf5bec92ef1017a6cff8c3183373679a6d63e993fd055777a295",
     "schema/common/JapaneseAddress/v1.0.0.json": "1edbf84226b4280b880cd58e749dc77e3eae05641d4efbff11d79e5d3af1c46b",
     "schema/disaster/EvacuationShelter/v1.0.0.json": "00f8ce15049226fd42eedcadff32a9db628fdbbefe96d545e9a373df39f29db9",
-    "schema/disaster/RoadClosure/v1.0.0.json": "4a25fe86eba47257c722e42d2104656c23fc9f9a907be9a343d2b7c02fef4775",
     "schema/task/Attachment/v1.0.0.json": "7765aa01dd3d03c801f76d88b7d85b2583323decefce7495f77dacb97b47ef02",
     "schema/task/Comment/v1.0.0.json": "4f5f36d2c17adfa9c3847469b65171f3190b1bacbb60aaf44e6169527f90f8e9",
     "schema/task/Project/v1.0.0.json": "089d2bf3d2e093246af0720c0759603bcb7ba73874263396a5322dba35601e02",
     "schema/task/Task/v1.0.0.json": "c3c19c43b71017dc180de5205722804b1711eea6a523c2a530617104213b47ce",
+    "schema/transportation/RoadRestriction/v1.0.0.json": "9e7b26cd26a99007895b134bf1ee2627a56f991cda9a55eb8ee79fc05a7cf095",
     "vocab/common/v1.0.0.jsonld": "fd930c3668bad353c6170c183234b5991b225ee4180583e91350e0d847aeaa0e",
-    "vocab/disaster/v1.0.0.jsonld": "e651fe7552a1558b78dba2a0f6ced7a4175264d6c7689b714958428f4af9b740",
-    "vocab/task/v1.0.0.jsonld": "87b00eab2ee56806f0183986bcd44dee161250c5fe57d09e1345aa6f260d89d9"
+    "vocab/disaster/v1.0.0.jsonld": "f64909701a3b710d3cad9eeafdf516a3056402d4883c2e5c32934357ccaa44d1",
+    "vocab/task/v1.0.0.jsonld": "87b00eab2ee56806f0183986bcd44dee161250c5fe57d09e1345aa6f260d89d9",
+    "vocab/transportation/v1.0.0.jsonld": "21d0cfd2b80bbad80d288910659b1459c1fa9e141b86a7ca4577b582a0a23d43"
   }
 }

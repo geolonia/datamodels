@@ -21,7 +21,7 @@ fields:
     note:
       ja: RoadSegment は区間（LineString）全体、ここでは点・線・面いずれもとりうる規制区間
       en: RoadSegment's location is a LineString for the whole segment; here it can be a point, line or area regulated section
-  closureStatus:
+  restrictionStatus:
     to: status
     note:
       ja: 同じ値域 closed / limited / open
