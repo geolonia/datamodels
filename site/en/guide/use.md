@@ -38,7 +38,7 @@ console.log(validate(entity) ? 'valid' : validate.errors);
 ```
 
 ```python [Python]
-# pip install jsonschema requests
+# pip install "jsonschema[format]" requests  ([format] is needed to check URIs and dates)
 import requests
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
