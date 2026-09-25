@@ -19,16 +19,6 @@
       "const": "EvacuationShelter",
       "description": "Entity type"
     },
-    "project": {
-      "type": "string",
-      "format": "uri",
-      "description": "The task subject's Project this entity belongs to, for example one disaster-response operation",
-      "x-ngsi": {
-        "type": "Relationship",
-        "target": "https://datamodels.jp/ns/task/Project"
-      },
-      "x-iri": "https://datamodels.jp/ns/task/project"
-    },
     "externalShelterId": {
       "description": "The shelter's ID in the municipality's 指定緊急避難場所一覧 (自治体標準オープンデータセット; unique within the municipality, e.g. CC0100022200). Together with localGovernmentCode it identifies the shelter nationwide",
       "type": "string",
@@ -143,7 +133,6 @@
   "required": [
     "id",
     "type",
-    "project",
     "externalShelterId",
     "localGovernmentCode",
     "openingStatus"

@@ -5,10 +5,6 @@
       "transportation": "https://datamodels.jp/ns/transportation/",
       "tm": "https://datamodels.jp/ns/task/",
       "RoadRestriction": "transportation:RoadRestriction",
-      "project": {
-        "@id": "tm:project",
-        "@type": "@id"
-      },
       "regulationCategory": "transportation:regulationCategory",
       "restrictionStatus": "transportation:restrictionStatus",
       "roadName": "https://smartdatamodels.org/dataModel.Transportation/roadName",

@@ -6,8 +6,8 @@ title:
   ja: 交通
   en: Transportation
 description:
-  ja: 道路と交通のデータモデル。国の基準（警察庁「交通規制情報（拡張版標準フォーマット）」、国土交通省の道路情報提供システム）に基づく。現在は通行規制（RoadRestriction）。共通の属性はタスク管理の IRI を持ち、災害対応の 1 オペレーションなど、タスク管理の `Project` に属させることができる。
-  en: "Data models for roads and traffic, based on national standards (the National Police Agency's traffic regulation data format and MLIT's Road Information Provision System). Currently road restrictions (RoadRestriction). Shared attributes carry the task subject's IRIs, and an entity can belong to a task subject Project, for example one disaster-response operation."
+  ja: 道路と交通のデータモデル。国の基準（警察庁「交通規制情報（拡張版標準フォーマット）」、国土交通省の道路情報提供システム）に基づく。現在は通行規制（RoadRestriction）。状態の呼び方（statusLabel）はタスク管理の IRI を使う。
+  en: "Data models for roads and traffic, based on national standards (the National Police Agency's traffic regulation data format and MLIT's Road Information Provision System). Currently road restrictions (RoadRestriction). The local status wording (statusLabel) uses the task subject's IRI."
 source: minted            # minted | profile | global
 origin:
   repository: https://github.com/geolonia/geonicdb-datamodels

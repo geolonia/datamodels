@@ -5,10 +5,6 @@
   ],
   "id": "urn:ngsi-ld:RoadRestriction:2026-typhoon-10-001",
   "type": "RoadRestriction",
-  "project": {
-    "type": "Relationship",
-    "object": "urn:ngsi-ld:Project:takamatsu:2026-typhoon-10"
-  },
   "roadName": {
     "type": "Property",
     "value": "県道14号"

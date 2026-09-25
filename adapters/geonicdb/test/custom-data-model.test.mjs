@@ -52,14 +52,14 @@ test('typeName and rename produce aliases that keep the catalog IRIs', () => {
   const b = toCustomDataModel(transportation, roadRestriction, { typeName: 'Saigai', contextUrl: 'https://example.com/context/city.jsonld' });
   assert.equal(b.type, 'Saigai');
   assert.equal(b.contextUrl, 'https://example.com/context/city.jsonld');
-  const a = toCustomDataModel(transportation, roadRestriction, { rename: { project: 'incidentRef' } });
-  assert.ok(a.propertyDetails.incidentRef && !a.propertyDetails.project);
-  assert.equal(a.propertyDetails.incidentRef['@context'], 'https://datamodels.jp/ns/task/project');
+  const a = toCustomDataModel(transportation, roadRestriction, { rename: { statusLabel: 'localStatus' } });
+  assert.ok(a.propertyDetails.localStatus && !a.propertyDetails.statusLabel);
+  assert.equal(a.propertyDetails.localStatus['@context'], 'https://datamodels.jp/ns/task/statusLabel');
 });
 
 test('rename rejects unknown attributes, non-ASCII aliases and collisions', () => {
   assert.throws(() => toCustomDataModel(transportation, roadRestriction, { rename: { nope: 'x' } }), /not an attribute/);
-  assert.throws(() => toCustomDataModel(transportation, roadRestriction, { rename: { project: '担当班' } }), /must match/);
-  assert.throws(() => toCustomDataModel(transportation, roadRestriction, { rename: { project: 'roadName' } }), /collides/);
-  assert.throws(() => toCustomDataModel(transportation, roadRestriction, { rename: { project: 'x', roadName: 'x' } }), /same alias/);
+  assert.throws(() => toCustomDataModel(transportation, roadRestriction, { rename: { statusLabel: '状態' } }), /must match/);
+  assert.throws(() => toCustomDataModel(transportation, roadRestriction, { rename: { statusLabel: 'roadName' } }), /collides/);
+  assert.throws(() => toCustomDataModel(transportation, roadRestriction, { rename: { statusLabel: 'x', roadName: 'x' } }), /same alias/);
 });

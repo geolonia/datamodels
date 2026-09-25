@@ -14,10 +14,6 @@
       "nationalShelterId": "disaster:nationalShelterId",
       "openedAt": "disaster:openedAt",
       "openingStatus": "disaster:openingStatus",
-      "project": {
-        "@id": "tm:project",
-        "@type": "@id"
-      },
       "statusLabel": "tm:statusLabel"
     }
   ]

@@ -7,8 +7,6 @@ standard:
     ja: RoadSegment は道路網の区間マスタ。通行止めはその区間の状態（status）に相当し、値域と roadName の IRI を借りている。区間マスタを持たない自治体向けに、ここでは通行止めそのものをエンティティにしている。
     en: RoadSegment is a road-network master; a closure corresponds to the status of a segment. This type borrows the status value space and the roadName IRI, and models the closure itself for municipalities that have no segment master.
 fields:
-  project:
-    to: null
   roadName:
     to: roadName
     note:

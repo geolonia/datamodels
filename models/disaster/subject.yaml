@@ -6,8 +6,8 @@ title:
   ja: 災害対応
   en: Disaster response
 description:
-  ja: 自治体の災害対応を表すデータモデル。避難所運用状況（EvacuationShelter）は、タスク管理サブジェクトのエイリアス・サブクラスではない独自の型で、共通の属性はタスク管理の IRI を持ちます（`project` はタスク管理の `Project` を指す関係属性ですが、災害事象そのものを表す型はこのカタログでは定義していません）。通行止めなどの通行規制は交通（transportation）サブジェクトの RoadRestriction です。高松市の水防アプリのデータモデルを基に汎用化したもの。
-  en: Data models for municipal disaster response. Shelter operation (EvacuationShelter) is its own type, neither an alias nor a subclass of the task subject; shared attributes carry the task subject's IRIs (`project` is a relationship to the task subject's `Project`, though this catalog does not itself define a type for the disaster event). Road closures and other road restrictions are RoadRestriction in the transportation subject. Generalised from the data models of Takamatsu City's flood-response application.
+  ja: 自治体の災害対応を表すデータモデル。現在は避難所運用状況（EvacuationShelter）。独自の型で、状態の呼び方（statusLabel）はタスク管理の IRI を使います。災害対応のオペレーションとのひも付けはアプリケーション側で行います（タスク管理の Task の refersTo など）。通行止めなどの通行規制は交通（transportation）サブジェクトの RoadRestriction です。高松市の水防アプリのデータモデルを基に汎用化したもの。
+  en: Data models for municipal disaster response. Currently shelter operation (EvacuationShelter), its own type; the local status wording (statusLabel) uses the task subject's IRI. Linking entities to a disaster-response operation is left to the application (for example refersTo from a task subject Task). Road closures and other road restrictions are RoadRestriction in the transportation subject. Generalised from the data models of Takamatsu City's flood-response application.
 source: minted            # minted | profile | global
 origin:
   repository: https://github.com/geolonia/geonicdb-datamodels

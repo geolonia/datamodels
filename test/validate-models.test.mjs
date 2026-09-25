@@ -179,7 +179,7 @@ test('a schema version diverging from the subject version fails', () =>
     /x-version must be 1\.0\.0/));
 
 test('a normalized attribute whose wrapper type contradicts x-ngsi.type fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example-normalized.jsonld'), (e) => { e.project = { type: 'Property', value: e.project.object }; }),
+  withMutatedModels((d) => editJson(join(d, 'task', 'Task', 'examples', 'example-normalized.jsonld'), (e) => { e.project = { type: 'Property', value: e.project.object }; }),
     /"project" is a Property but schema.json declares Relationship/));
 
 test('a subject without an English title fails at load time', () =>

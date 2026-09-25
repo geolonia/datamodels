@@ -19,16 +19,6 @@
       "const": "RoadRestriction",
       "description": "Entity type"
     },
-    "project": {
-      "type": "string",
-      "format": "uri",
-      "description": "The task subject's Project this entity belongs to, for example one disaster-response operation",
-      "x-ngsi": {
-        "type": "Relationship",
-        "target": "https://datamodels.jp/ns/task/Project"
-      },
-      "x-iri": "https://datamodels.jp/ns/task/project"
-    },
     "roadName": {
       "description": "Road name",
       "type": "string",

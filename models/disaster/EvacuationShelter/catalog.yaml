@@ -9,9 +9,6 @@ tags:
   - disaster-response
   - municipality
 attributes:
-  project:
-    ja: 所属するプロジェクト（タスク管理の Project。災害対応の 1 オペレーションなど）
-    en: The task subject's Project this entity belongs to, for example one disaster-response operation
   externalShelterId:
     ja: 自治体の指定緊急避難場所一覧（自治体標準オープンデータセット、デジタル庁）における ID（自治体内で一意。例 CC0100022200）。localGovernmentCode と合わせて全国で一意になる。デジタル庁の同データセットは「指定避難所」の一覧を項目定義していないため、この ID は「指定緊急避難場所」側の採番を借用している（下の nationalShelterId を参照）
     en: The shelter's ID in the municipality's 指定緊急避難場所一覧 (自治体標準オープンデータセット, the Digital Agency's municipal standard open dataset; unique within the municipality, e.g. CC0100022200). Together with localGovernmentCode it identifies the shelter nationwide. That dataset has no item definition for 指定避難所 itself, so this ID borrows the emergency-evacuation-site list's numbering (see nationalShelterId below)
