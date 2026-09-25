@@ -5,7 +5,7 @@ description: Operator, licences, disclaimer and privacy of datamodels.jp
 
 # About this site
 
-datamodels.jp is a catalog of NGSI-LD data models that work in practice in Japan. It is published as a product-neutral digital commons.
+datamodels.jp is a catalog of data models that work in practice in Japan, published as JSON Schema and JSON-LD and ready to use with NGSI-LD. It is published as a product-neutral digital commons.
 
 ## Operator
 

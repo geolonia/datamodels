@@ -1,11 +1,15 @@
 ---
 title: 使い方
-description: カタログのモデルでデータを検証し、NGSI-LD ブローカーに送るまで
+description: カタログのモデルで JSON を検証し、NGSI-LD ブローカーに送り、Linked Data として使う
 ---
 
 # 使い方
 
-各モデルのページには、`@context`、JSON Schema、例の URL があります。どれも普通の URL なので、特定の製品は要りません。標準の NGSI-LD API を話すブローカーなら、どれでも使えます。
+各モデルのページには、`@context`、JSON Schema、例の URL があります。どれも普通の URL なので、特定の製品は要りません。使い方は 3 通りあります。
+
+- **JSON として**: JSON Schema で、API のリクエスト、フォームの入力、CSV から変換したデータなどを検証する（手順 2）。
+- **NGSI-LD で**: 標準の NGSI-LD API を話すブローカーに、そのまま送る（手順 3）。モデルの形（`id`・`type`、属性の種類、normalized の例）は NGSI-LD の約束に従っています。
+- **Linked Data として**: `@context` を付けると RDF になり、各属性の意味を IRI で指せる（手順 4）。
 
 コードブロックは右上のボタンでコピーできます。
 
@@ -109,6 +113,55 @@ curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionS
 :::
 
 複数のテナントを持つブローカーでは、標準の `NGSILD-Tenant` ヘッダーでテナントを指定します。認証の方法はブローカーごとに違います。
+
+## 4. Linked Data として使う
+
+JSON に `@context` を付けると JSON-LD になり、RDF に変換できます。属性はカタログの IRI（`https://datamodels.jp/ns/...`）や、借りている標準の IRI（schema.org、Smart Data Models）になります。`id` と `type` を JSON-LD の `@id`・`@type` にするため、NGSI-LD の core context も並べます。
+
+::: code-group
+
+```js [Node.js]
+// npm install jsonld
+import jsonld from 'jsonld';
+
+const entity = await (await fetch('https://datamodels.jp/examples/transportation/RoadRestriction/example.json')).json();
+// 普通の JSON に context を付けると Linked Data になる。
+entity['@context'] = [
+  'https://datamodels.jp/context/transportation/v1.0.0.jsonld',
+  'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld', // id と type の対応
+];
+
+// 既定のローダーの代わりに fetch を使う（どの環境でも動く）。
+const documentLoader = async (url) => ({ documentUrl: url, document: await (await fetch(url)).json() });
+console.log(await jsonld.toRDF(entity, { format: 'application/n-quads', documentLoader }));
+```
+
+```python [Python]
+# pip install pyld requests
+import requests
+from pyld import jsonld
+
+entity = requests.get("https://datamodels.jp/examples/transportation/RoadRestriction/example.json", timeout=30).json()
+# 普通の JSON に context を付けると Linked Data になる。
+entity["@context"] = [
+    "https://datamodels.jp/context/transportation/v1.0.0.jsonld",
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",  # id と type の対応
+]
+
+print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))
+```
+
+:::
+
+結果の一部:
+
+```text
+<urn:ngsi-ld:RoadRestriction:0001> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://datamodels.jp/ns/transportation/RoadRestriction> .
+<urn:ngsi-ld:RoadRestriction:0001> <https://datamodels.jp/ns/transportation/restrictionStatus> "closed" .
+<urn:ngsi-ld:RoadRestriction:0001> <https://smartdatamodels.org/dataModel.Transportation/roadName> "靖国通り" .
+```
+
+各サブジェクトの語彙（`/vocab/<サブジェクト>/v1.0.0.jsonld`）には、型と属性の日本語・英語のラベルと説明があります。GIF や自治体標準オープンデータセットなど他の標準との対応表は、各モデルのページにあり、データの変換に使えます。
 
 ## 対応ブローカー
 

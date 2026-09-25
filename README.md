@@ -1,6 +1,6 @@
 # datamodels
 
-Bilingual catalog of NGSI-LD data models, published at **https://datamodels.jp**. It serves JSON-LD `@context` files, JSON Schemas and RDFS vocabularies at URLs that never change, for data models that work in practice in Japan. Existing standards such as [Smart Data Models](https://smartdatamodels.org/), the Digital Agency's GIF and [RFC 8984](https://www.rfc-editor.org/rfc/rfc8984.html) are extended and mapped, not copied.
+Bilingual catalog of data models that work in practice in Japan, published at **https://datamodels.jp**. It serves JSON Schemas, JSON-LD `@context` files and RDFS vocabularies at URLs that never change: usable as plain JSON, as linked data, and as they are with NGSI-LD brokers. Existing standards such as [Smart Data Models](https://smartdatamodels.org/), the Digital Agency's GIF and [RFC 8984](https://www.rfc-editor.org/rfc/rfc8984.html) are extended and mapped, not copied.
 
 The site explains how to use and extend the models: [拡張する・貢献する](https://datamodels.jp/guide/extend) · [URL の約束](https://datamodels.jp/guide/urls) · [English](https://datamodels.jp/en/). Design background: [docs/design.md](docs/design.md).
 
