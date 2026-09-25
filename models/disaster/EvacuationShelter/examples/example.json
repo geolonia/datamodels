@@ -1,7 +1,6 @@
 {
   "id": "urn:ngsi-ld:EvacuationShelter:2026-typhoon-10-001",
   "type": "EvacuationShelter",
-  "project": "urn:ngsi-ld:Project:takamatsu:2026-typhoon-10",
   "externalShelterId": "CC3720130001",
   "nationalShelterId": "E3720130001111",
   "localGovernmentCode": "372013",

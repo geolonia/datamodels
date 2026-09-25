@@ -32,16 +32,16 @@ When the request's `@context` (in the body or in a `Link` header) maps the type 
 ## 1. Register the Custom Data Model
 
 ```bash
-curl -sSf https://datamodels.jp/adapters/geonicdb/disaster/RoadClosure.json -o RoadClosure.json
+curl -sSf https://datamodels.jp/adapters/geonicdb/transportation/RoadRestriction.json -o RoadRestriction.json
 
 curl -X POST "$GEONICDB_BASE_URL/custom-data-models" \
   -H "Content-Type: application/json" \
   -H "x-api-key: $GEONICDB_API_KEY" \
   -H "Fiware-Service: $GEONICDB_TENANT" \
-  --data @RoadClosure.json
+  --data @RoadRestriction.json
 ```
 
-`201 Created` means it is registered; `409` means a model of that type already exists. With the `geonic` CLI: `geonic models create RoadClosure.json`.
+`201 Created` means it is registered; `409` means a model of that type already exists. With the `geonic` CLI: `geonic models create RoadRestriction.json`.
 
 The registered definition validates attribute types, required attributes and enums (models with `additionalProperties: false` reject undefined attributes) and uses the context at `contextUrl` as the vocabulary of the type.
 
@@ -50,7 +50,7 @@ The registered definition validates attribute types, required attributes and enu
 The "Example (normalized)" on each model page is JSON-LD with its `@context` inside, so it can be posted as it is with `Content-Type: application/ld+json`.
 
 ```bash
-curl -sSf https://datamodels.jp/examples/disaster/RoadClosure/example-normalized.jsonld -o entity.jsonld
+curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example-normalized.jsonld -o entity.jsonld
 
 curl -X POST "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
   -H "Content-Type: application/ld+json" \
@@ -64,9 +64,9 @@ For your own data, either put `@context` in the body and send `application/ld+js
 ## 3. Query
 
 ```bash
-curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadClosure&q=closureStatus==%22closed%22" \
+curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionStatus==%22closed%22" \
   -H "Accept: application/ld+json" \
-  -H 'Link: <https://datamodels.jp/context/disaster/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
+  -H 'Link: <https://datamodels.jp/context/transportation/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
   -H "x-api-key: $GEONICDB_API_KEY" \
   -H "NGSILD-Tenant: $GEONICDB_TENANT"
 ```
@@ -81,7 +81,7 @@ Three ways, in increasing order of rigour.
    ```json
    {
      "@context": [
-       "https://datamodels.jp/context/disaster/v1.jsonld",
+       "https://datamodels.jp/context/transportation/v1.jsonld",
        { "acme": "https://example.com/ns/acme/", "patrolRoute": "acme:patrolRoute" }
      ]
    }
@@ -91,8 +91,8 @@ Three ways, in increasing order of rigour.
 
    ```json
    {
-     "RoadClosure": {
-       "contextUrl": "https://example.com/context/acme-disaster.jsonld",
+     "RoadRestriction": {
+       "contextUrl": "https://example.com/context/acme-transportation.jsonld",
        "propertyDetails": {
          "patrolRoute": { "ngsiType": "Property", "valueType": "string", "example": "A-3", "description": "Patrol route", "@context": "https://example.com/ns/acme/patrolRoute" }
        }
@@ -101,7 +101,7 @@ Three ways, in increasing order of rigour.
    ```
 
    ```bash
-   node adapters/geonicdb/export.mjs disaster --type RoadClosure --extend ./acme.json --out ./out
+   node adapters/geonicdb/export.mjs transportation --type RoadRestriction --extend ./acme.json --out ./out
    ```
 
 3. **Propose it to the catalog.** If the attribute is useful beyond your project, open an [issue](https://github.com/geolonia/datamodels/issues) or a pull request. Once it lands in the next minor version, the extension is no longer needed.
@@ -112,7 +112,7 @@ A tenant that needs a prefix on its type names, for example because several proj
 
 ```bash
 git clone https://github.com/geolonia/datamodels && cd datamodels && npm ci
-node adapters/geonicdb/export.mjs disaster --type-prefix Acme --out ./out
+node adapters/geonicdb/export.mjs transportation --type-prefix Acme --out ./out
 ```
 
 ## Notes

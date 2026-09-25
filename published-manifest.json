@@ -2,18 +2,20 @@
   "comment": "SHA-256 of every immutable published file (exact versions under context/, schema/ and vocab/, and context/mirror/). Entries are appended by `npm run manifest:record`. After the official launch they are never edited or removed. During the pre-release, the current version of a subject may still be corrected in place: delete its snapshot and manifest entries and record again, as the README describes. See docs/design.md and scripts/check-immutability.mjs.",
   "files": {
     "context/common/v1.0.0.jsonld": "59fe038a9d8c1f459a86940f17371f1b5842942940afa68da4f21502e07b453d",
-    "context/disaster/v1.0.0.jsonld": "b35ed0adf9797c0426a5a3be2b43ee48a373095f11a1bcfd30eb688ca0a187ac",
+    "context/disaster/v1.0.0.jsonld": "977db8c8fca0b692e527f4b27f0ab5316829ef3bd275cecf6621378f210dfd9b",
     "context/task/v1.0.0.jsonld": "7c542815fe5f9982372b8587c1a55f869b9a830ed6c7a5f3b3eddbb0e10d5d4c",
+    "context/transportation/v1.0.0.jsonld": "b905627971574e6cacd2621d78198bb4c7f36a2358329fc3b588cba53048fa01",
     "schema/common/Geometry/v1.0.0.json": "370263be66dbaf5bec92ef1017a6cff8c3183373679a6d63e993fd055777a295",
     "schema/common/JapaneseAddress/v1.0.0.json": "1edbf84226b4280b880cd58e749dc77e3eae05641d4efbff11d79e5d3af1c46b",
-    "schema/disaster/EvacuationShelter/v1.0.0.json": "00f8ce15049226fd42eedcadff32a9db628fdbbefe96d545e9a373df39f29db9",
-    "schema/disaster/RoadClosure/v1.0.0.json": "4a25fe86eba47257c722e42d2104656c23fc9f9a907be9a343d2b7c02fef4775",
+    "schema/disaster/EvacuationShelter/v1.0.0.json": "7e98eb496b276ba365dcef772586a2e13ff64ae9a05bd93cb6022506576bf7df",
     "schema/task/Attachment/v1.0.0.json": "7765aa01dd3d03c801f76d88b7d85b2583323decefce7495f77dacb97b47ef02",
     "schema/task/Comment/v1.0.0.json": "4f5f36d2c17adfa9c3847469b65171f3190b1bacbb60aaf44e6169527f90f8e9",
     "schema/task/Project/v1.0.0.json": "089d2bf3d2e093246af0720c0759603bcb7ba73874263396a5322dba35601e02",
     "schema/task/Task/v1.0.0.json": "c3c19c43b71017dc180de5205722804b1711eea6a523c2a530617104213b47ce",
+    "schema/transportation/RoadRestriction/v1.0.0.json": "f9851fce9dcf3b6460410b61487d60469d7cefc0fc0b04159b64e7eb17d8bf87",
     "vocab/common/v1.0.0.jsonld": "fd930c3668bad353c6170c183234b5991b225ee4180583e91350e0d847aeaa0e",
-    "vocab/disaster/v1.0.0.jsonld": "e651fe7552a1558b78dba2a0f6ced7a4175264d6c7689b714958428f4af9b740",
-    "vocab/task/v1.0.0.jsonld": "87b00eab2ee56806f0183986bcd44dee161250c5fe57d09e1345aa6f260d89d9"
+    "vocab/disaster/v1.0.0.jsonld": "a8a05a7b845d18a325d45857280bfbeccc449c5e0ea853849693d427afd21b75",
+    "vocab/task/v1.0.0.jsonld": "87b00eab2ee56806f0183986bcd44dee161250c5fe57d09e1345aa6f260d89d9",
+    "vocab/transportation/v1.0.0.jsonld": "b052f8e50c7b2f52fae3e97ea40a558e6ba6a302410a1d0417d65a60bbc06407"
   }
 }

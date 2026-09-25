@@ -36,6 +36,6 @@ test('only properties minted in the namespace are listed, with ja and en comment
   const props = v['@graph'].filter((n) => n['@type'] === 'rdf:Property');
   assert.ok(props.length > 0);
   for (const p of props) assert.ok(p['@id'].startsWith('https://datamodels.jp/ns/disaster/'), p['@id']);
-  const closureStatus = node(v, 'https://datamodels.jp/ns/disaster/closureStatus');
-  assert.ok(closureStatus.comment.ja && closureStatus.comment.en);
+  const openingStatus = node(v, 'https://datamodels.jp/ns/disaster/openingStatus');
+  assert.ok(openingStatus.comment.ja && openingStatus.comment.en);
 });

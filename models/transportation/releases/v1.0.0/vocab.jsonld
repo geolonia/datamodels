@@ -1,0 +1,84 @@
+{
+  "@context": {
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "label": {
+      "@id": "rdfs:label",
+      "@container": "@language"
+    },
+    "comment": {
+      "@id": "rdfs:comment",
+      "@container": "@language"
+    },
+    "subClassOf": {
+      "@id": "rdfs:subClassOf",
+      "@type": "@id"
+    },
+    "isDefinedBy": {
+      "@id": "rdfs:isDefinedBy",
+      "@type": "@id"
+    },
+    "seeAlso": {
+      "@id": "rdfs:seeAlso",
+      "@type": "@id"
+    },
+    "versionInfo": "owl:versionInfo"
+  },
+  "@graph": [
+    {
+      "@id": "https://datamodels.jp/ns/transportation/",
+      "@type": "owl:Ontology",
+      "label": {
+        "ja": "交通",
+        "en": "Transportation"
+      },
+      "comment": {
+        "ja": "道路と交通のデータモデル。国の基準（警察庁「交通規制情報（拡張版標準フォーマット）」、国土交通省の道路情報提供システム）に基づく。現在は通行規制（RoadRestriction）。状態の呼び方（statusLabel）はタスク管理の IRI を使う。",
+        "en": "Data models for roads and traffic, based on national standards (the National Police Agency's traffic regulation data format and MLIT's Road Information Provision System). Currently road restrictions (RoadRestriction). The local status wording (statusLabel) uses the task subject's IRI."
+      },
+      "versionInfo": "1.0.0",
+      "seeAlso": "https://datamodels.jp/context/transportation/v1.0.0.jsonld"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/transportation/RoadRestriction",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "通行規制",
+        "en": "Road restriction"
+      },
+      "comment": {
+        "ja": "通行規制（通行止めを含む）1 件。路線名、規制区間（点・線・面）、状態、区分、期間を持つ。",
+        "en": "One road restriction, including closures: road name, regulated section (point, line or area), status, category and period."
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/transportation/",
+      "seeAlso": "https://datamodels.jp/models/transportation/RoadRestriction/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/transportation/regulationCategory",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "regulationCategory"
+      },
+      "comment": {
+        "ja": "規制区分。国土交通省 道路情報提供システムの凡例（表記はサイトの凡例に合わせた）: closedWeather（通行止(異常気象等)）、closedConstruction（通行止(工事)）、closedHeavyVehicle（大型通行止）、closedWinter（冬期通行止）、laneRestriction（車線規制）、alternatingOneWay（片側交互通行）、mobileRestriction（移動規制）、chainRestriction（チェーン規制）、chainGuidance（チェーン指導）、other（その他規制）。任意項目",
+        "en": "Regulation category, from the legend of MLIT's Road Information Provision System: closedWeather, closedConstruction, closedHeavyVehicle, closedWinter, laneRestriction, alternatingOneWay, mobileRestriction, chainRestriction, chainGuidance, other. Optional"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/transportation/",
+      "seeAlso": "https://datamodels.jp/models/transportation/RoadRestriction/#regulationCategory"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/transportation/restrictionStatus",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "restrictionStatus"
+      },
+      "comment": {
+        "ja": "正規化した状態。Smart Data Models RoadSegment.status の値域: closed（通行不可）、limited（片側通行など）、open（解除済み、または未実施）。現場の呼び方は statusLabel に。より細かい区分は regulationCategory に",
+        "en": "Normalised restriction state, the value space of Smart Data Models RoadSegment.status: closed (no traffic), limited (traffic possible but not in full capacity), open (restriction lifted or not yet in place). The local wording goes in statusLabel; a finer public-sector category goes in regulationCategory"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/transportation/",
+      "seeAlso": "https://datamodels.jp/models/transportation/RoadRestriction/#restrictionStatus"
+    }
+  ]
+}

@@ -1,14 +1,10 @@
 {
   "@context": [
-    "https://datamodels.jp/context/disaster/v1.0.0.jsonld",
+    "https://datamodels.jp/context/transportation/v1.0.0.jsonld",
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
   ],
-  "id": "urn:ngsi-ld:RoadClosure:2026-typhoon-10-001",
-  "type": "RoadClosure",
-  "project": {
-    "type": "Relationship",
-    "object": "urn:ngsi-ld:Project:takamatsu:2026-typhoon-10"
-  },
+  "id": "urn:ngsi-ld:RoadRestriction:2026-typhoon-10-001",
+  "type": "RoadRestriction",
   "roadName": {
     "type": "Property",
     "value": "県道14号"
@@ -41,7 +37,7 @@
       ]
     }
   },
-  "closureStatus": {
+  "restrictionStatus": {
     "type": "Property",
     "value": "closed"
   },

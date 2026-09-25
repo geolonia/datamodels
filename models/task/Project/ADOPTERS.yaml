@@ -6,4 +6,4 @@ adopters:
   - name: Takamatsu City flood-response application (through the disaster subject)
     organization: Geolonia Inc. for Takamatsu City
     since: 2026
-    note: Planned; the disaster subject's road closures and shelter operation refer to a Project (one disaster-response operation) through project. Counts once the application runs on the catalog names.
+    note: Planned; a Project stands for one disaster-response operation, and its Tasks point at road restrictions and shelters through refersTo. Counts once the application runs on the catalog names.
