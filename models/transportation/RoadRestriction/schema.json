@@ -80,6 +80,7 @@
     },
     "statusLabel": {
       "type": "string",
+      "minLength": 1,
       "description": "The restriction status in the local or source system's wording (依頼中, 通行止め中, 解除済み). Required when restrictionStatus is left out",
       "x-ngsi": {
         "type": "Property"

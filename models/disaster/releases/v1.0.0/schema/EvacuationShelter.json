@@ -61,6 +61,7 @@
     },
     "statusLabel": {
       "type": "string",
+      "minLength": 1,
       "description": "The opening status in the local or source system's wording (e.g. 未開設, 開設中, 満員, 依頼中). Use this whenever the local wording has no exact match in openingStatus's enum. Required when openingStatus is left out",
       "x-ngsi": {
         "type": "Property"

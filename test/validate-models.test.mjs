@@ -179,6 +179,16 @@ test('a status example with neither the status nor statusLabel fails', () =>
     await editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example-normalized.jsonld'), (e) => { delete e.restrictionStatus; delete e.statusLabel; });
   }, /RoadRestriction\/examples\/example\.json: .*(required|anyOf)/));
 
+test('a Task subclass that drops the status-or-label requirement fails', () =>
+  withMutatedModels(async (d) => { await addSubclassProbe(d); await editJson(join(d, 'disaster', 'SubclassProbe', 'schema.json'), (s) => { s.required = s.required.filter((r) => r !== 'progress'); }); },
+    /subclass of Task: must keep its anyOf \(progress or statusLabel\) or require one alternative/));
+
+test('an empty statusLabel does not satisfy the status requirement', () =>
+  withMutatedModels(async (d) => {
+    await editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => { delete e.restrictionStatus; e.statusLabel = ''; });
+    await editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example-normalized.jsonld'), (e) => { delete e.restrictionStatus; e.statusLabel.value = ''; });
+  }, /RoadRestriction\/examples\/example\.json: .*(fewer than 1|minLength)/));
+
 test('a status example with only statusLabel validates', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'geonicdb-models-'));
   try {

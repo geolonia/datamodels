@@ -151,6 +151,7 @@ for (const subject of subjects) {
         const differing = [...new Set([...Object.keys(stripType(schema.properties)), ...Object.keys(stripType(target.model.schema.properties))])].filter((k) => !same(schema.properties[k], target.model.schema.properties[k]));
         if (differing.length) fail(`${mwhere}/schema.json`, `alias of ${target.model.type}: properties differ (${differing.join(', ')}); an alias has the same attributes, a subclass declares x-subclass-of`);
         if (!sameSet(schema.required, target.model.schema.required)) fail(`${mwhere}/schema.json`, `alias of ${target.model.type}: required differs`);
+        if (!same(schema.anyOf ?? null, target.model.schema.anyOf ?? null)) fail(`${mwhere}/schema.json`, `alias of ${target.model.type}: anyOf differs`);
         if (model.kind !== target.model.kind) fail(`${mwhere}/schema.json`, `alias of ${target.model.type}: kind differs (${model.kind} vs ${target.model.kind})`);
         if ((schema.additionalProperties ?? true) !== (target.model.schema.additionalProperties ?? true)) fail(`${mwhere}/schema.json`, `alias of ${target.model.type}: additionalProperties differs`);
       }
@@ -170,6 +171,11 @@ for (const subject of subjects) {
           if (pp['x-ngsi']?.type !== prop['x-ngsi']?.type) fail(`${mwhere}/schema.json`, `${name}: subclass of ${target.model.type} must keep the NGSI type ${pp['x-ngsi']?.type}`);
         }
         for (const r of target.model.schema.required ?? []) if (!(schema.required ?? []).includes(r)) fail(`${mwhere}/schema.json`, `subclass of ${target.model.type}: "${r}" must stay required`);
+        // An either/or requirement (the status or statusLabel) stays too: the same
+        // anyOf, or stricter by requiring one alternative outright.
+        const own = schema.required ?? [];
+        const keeps = (alts) => same(schema.anyOf ?? null, alts) || alts.some((a) => (a.required ?? []).every((r) => own.includes(r)));
+        if (target.model.schema.anyOf && !keeps(target.model.schema.anyOf)) fail(`${mwhere}/schema.json`, `subclass of ${target.model.type}: must keep its anyOf (${target.model.schema.anyOf.map((a) => (a.required ?? []).join('+')).join(' or ')}) or require one alternative`);
       }
     }
 

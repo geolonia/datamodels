@@ -97,6 +97,7 @@
     },
     "statusLabel": {
       "type": "string",
+      "minLength": 1,
       "description": "The source system's own status name, unchanged (for example \"In progress\", \"Resolved\"). Required when progress is left out",
       "x-ngsi": {
         "type": "Property"
