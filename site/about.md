@@ -1,0 +1,36 @@
+---
+title: このサイトについて
+description: datamodels.jp の運営者、ライセンス、免責、プライバシー
+---
+
+# このサイトについて
+
+datamodels.jp は、日本で使える NGSI-LD データモデルのカタログです。特定の製品に依存しない共有の資産（デジタルコモンズ）として公開しています。
+
+## 運営者
+
+[株式会社Geolonia](https://www.geolonia.com/company/) が運営しています。
+
+- モデルへの質問・提案・不具合の報告: [GitHub の Issue](https://github.com/geolonia/datamodels/issues)（日本語・英語どちらでも）
+- その他のお問い合わせ: [Geolonia のお問い合わせフォーム](https://www.geolonia.com/contact/)
+
+## ライセンス
+
+- **モデル**（JSON Schema、JSON-LD の `@context`、語彙、例、属性の説明、注記）: [CC BY 4.0](/LICENSE-CONTENT)。利用するときは、たとえば「出典: datamodels.jp（株式会社Geolonia）、CC BY 4.0」のように表示し、このサイトへのリンクを付けてください。
+- **ツール**（サイト、スクリプト、アダプター）: [Apache-2.0](https://github.com/geolonia/datamodels/blob/main/LICENSE)
+- 他の語彙の IRI（Smart Data Models、schema.org、NGSI-LD など）は参照しているだけで、それぞれの提供元のものです。上流から派生した部分の出典は、各モデルの注記に記載しています。
+
+## 免責
+
+- モデルは現状のまま提供し、正確性・完全性・特定の目的への適合性を保証しません。
+- 政府や自治体の標準との対応表は、このカタログによる解釈です。各機関が承認したものではありません。
+- 現在はプレリリース版です。正式公開までは、公開済みのバージョンも直接修正することがあります。正式公開後は[変わらない URL](/guide/urls)の約束が適用されます。
+
+## プライバシー
+
+- Cookie、アクセス解析、外部のスクリプトは使っていません。フォームもありません。
+- サイト内検索はブラウザの中で動き、検索語は送信されません。外観（ライト・ダーク）の設定はブラウザにだけ保存されます。
+- ホスティング事業者（Cloudflare）が、サービスの提供に必要な範囲で通常のアクセスログ（IP アドレス、ブラウザの種類など）を処理します。
+- Geolonia の[プライバシーポリシー](https://www.geolonia.com/privacy/)も参照してください。
+
+アクセス解析などを導入する場合は、先にこのページで知らせます。

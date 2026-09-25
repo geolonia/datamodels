@@ -128,7 +128,7 @@ export default defineConfig({
       description: 'NGSI-LD データモデルカタログ',
       themeConfig: {
         nav: nav('', 'ja'),
-        footer: { message: '運営: <a href="https://geolonia.com/">Geolonia</a> · モデル CC BY 4.0 · コード Apache-2.0' },
+        footer: { message: '運営: <a href="https://geolonia.com/">Geolonia</a> · モデル CC BY 4.0 · コード Apache-2.0 · <a href="/about">このサイトについて</a>' },
         sidebar: sidebar('', 'ja'),
         outline: { label: '目次', level: [2, 3] },
         docFooter: { prev: '前のページ', next: '次のページ' },
@@ -144,7 +144,7 @@ export default defineConfig({
       link: '/en/',
       themeConfig: {
         nav: nav('/en', 'en'),
-        footer: { message: 'Operated by <a href="https://geolonia.com/">Geolonia</a> · Models CC BY 4.0 · Code Apache-2.0' },
+        footer: { message: 'Operated by <a href="https://geolonia.com/">Geolonia</a> · Models CC BY 4.0 · Code Apache-2.0 · <a href="/en/about">About this site</a>' },
         sidebar: sidebar('/en', 'en'),
         outline: { level: [2, 3] },
       },
