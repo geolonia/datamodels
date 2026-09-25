@@ -19,7 +19,7 @@ const fence = (obj) => '```json\n' + JSON.stringify(obj, null, 2) + '\n```';
 const T = {
   ja: {
     models: 'データモデル', overview: '概要', subjects: 'サブジェクト', attributes: '属性', example: '例（key-values）', normalized: '例（normalized）',
-    linkHeader: 'Link ヘッダー', notes: '注記', shared: '複数のモデルで共有する属性', usedBy: '使用モデル', typeIri: '型 IRI', context: '@context',
+    linkHeader: 'Link ヘッダー', notes: '注記', shared: '複数のモデルで共有する属性', usedBy: '使用モデル', typeIri: '型 IRI', otherName: '英語名', context: '@context',
     contextExact: '（このバージョン、不変）', contextAlias: '（エイリアス、互換性のある最新版）', schema: 'JSON Schema', examples: '例', adapters: 'アダプター',
     source: 'ソース', namespace: '名前空間', version: 'バージョン', vocabulary: '語彙', vocabularyNote: '（RDFS: クラス、サブクラス関係、日英ラベル）',
     required: '必須', pii: '個人情報', deprecated: '非推奨', value: '値', relationshipTo: '→', license: 'このページのモデル内容は CC BY 4.0 で提供されています。',
@@ -33,7 +33,7 @@ const T = {
   },
   en: {
     models: 'Data models', overview: 'Overview', subjects: 'Subjects', attributes: 'Attributes', example: 'Example (key-values)', normalized: 'Example (normalized)',
-    linkHeader: 'Link header', notes: 'Notes', shared: 'Attributes shared by several models', usedBy: 'Used by', typeIri: 'Type IRI', context: '@context',
+    linkHeader: 'Link header', notes: 'Notes', shared: 'Attributes shared by several models', usedBy: 'Used by', typeIri: 'Type IRI', otherName: 'Japanese name', context: '@context',
     contextExact: '(this version, immutable)', contextAlias: '(alias, latest compatible version)', schema: 'JSON Schema', examples: 'Examples', adapters: 'Adapters',
     source: 'Source', namespace: 'Namespace', version: 'Version', vocabulary: 'Vocabulary', vocabularyNote: '(RDFS: classes, subclass relations, ja/en labels)',
     required: 'required', pii: 'personal data', deprecated: 'deprecated', value: 'Value', relationshipTo: '→', license: 'Model content on this page is licensed under CC BY 4.0.',
@@ -100,8 +100,14 @@ function modelPage(lang, prefix, subject, model) {
   if (isValue) md += `> ${t.valueTypeNote}\n\n`;
   if (aliasOf) md += `> ${t.aliasNote(modelLink(prefix, aliasOf))}\n\n`;
   if (subclassOf) md += `> ${t.subclassNote(modelLink(prefix, subclassOf))}\n\n`;
-  md += `**${title}** <span style="color:var(--vp-c-text-2)">/ ${model.catalog.title?.[other] ?? ''}</span>\n\n${desc}\n\n`;
+  // One language per page (the switcher gives the other); the localised title
+  // only when it says more than the type name, the other language's in the table.
+  const sameName = (a) => a.replace(/\s+/g, '').toLowerCase() === model.type.toLowerCase();
+  if (!sameName(title)) md += `**${title}**\n\n`;
+  md += `${desc}\n\n`;
   md += `| | |\n|---|---|\n`;
+  const otherTitle = model.catalog.title?.[other];
+  if (otherTitle && !sameName(otherTitle)) md += `| ${t.otherName} | ${otherTitle} |\n`;
   md += `| ${isValue ? 'IRI' : t.typeIri} | ${code(mu.typeIri)} |\n`;
   md += `| ${t.context} | ${code(u.contextAlias)} ${t.contextAlias}<br>${code(u.contextExact)} ${t.contextExact} |\n`;
   md += `| ${t.schema} | [${code(rel(mu.schemaAlias))}](${rel(mu.schemaAlias)})<br>[${code(rel(mu.schemaExact))}](${rel(mu.schemaExact)}) |\n`;
@@ -146,9 +152,8 @@ function modelPage(lang, prefix, subject, model) {
 
 async function subjectPage(lang, prefix, subject) {
   const t = T[lang]; const u = subjectUrls(subject);
-  const other = lang === 'ja' ? 'en' : 'ja';
   let md = front(subject.title[lang], subject.description[lang]);
-  md += `# ${subject.title[lang]} <span style="color:var(--vp-c-text-2);font-weight:normal">/ ${subject.title[other]}</span>\n\n${subject.description[lang]}\n\n`;
+  md += `# ${subject.title[lang]}\n\n${subject.description[lang]}\n\n`;
   md += `| | |\n|---|---|\n| ${t.subject} | ${code(subject.name)} ${badge('info', t.sourceLabel[subject.source] ?? subject.source)} |\n| ${t.version} | ${code(subject.version)} |\n`;
   md += `| ${t.context} | ${code(u.contextAlias)} ${t.contextAlias}<br>${code(u.contextExact)} ${t.contextExact} |\n| ${t.namespace} | ${code(u.namespace)} |\n| ${t.vocabulary} | [${code(rel(u.vocabExact))}](${rel(u.vocabExact)}) ${t.vocabularyNote} |\n\n`;
   md += `## ${t.models} {#models}\n\n| Type | | |\n|---|---|---|\n`;

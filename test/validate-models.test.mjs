@@ -148,6 +148,13 @@ test('a Geometry value with an unknown geometry type fails', () =>
   withMutatedModels((d) => editJson(join(d, 'common', 'Geometry', 'examples', 'example.json'), (e) => { e.type = 'Circle'; }),
     /Geometry\/examples\/example\.json/));
 
+test('a model title that is not a string fails', () =>
+  withMutatedModels(async (d) => {
+    const f = join(d, 'task', 'Comment', 'catalog.yaml');
+    const s = await readFile(f, 'utf8');
+    await writeFile(f, s.replace(/^title:\n  ja: .*$/m, 'title:\n  ja: [コメント]'));
+  }, /Comment\/catalog\.yaml: title\.ja must be a non-empty string/));
+
 test('a normalized attribute without value fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'RoadClosure', 'examples', 'example-normalized.jsonld'), (e) => { e.description = { type: 'Property' }; }),
     /Property needs a value/));
