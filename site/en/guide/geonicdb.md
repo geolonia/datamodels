@@ -5,7 +5,7 @@ description: Register a catalog data model in GeonicDB, then create and query en
 
 # Use with GeonicDB
 
-Every model page links to a GeonicDB Custom Data Model definition, the request body for `POST /custom-data-models`. It already contains `contextUrl`, so registering it is enough to make GeonicDB use the catalog vocabulary.
+The steps that work with any broker (validate, create, query) are in [Using the models](/en/guide/use); this page covers what is specific to GeonicDB. For every model, a GeonicDB Custom Data Model definition, the request body for `POST /custom-data-models`, is published at `https://datamodels.jp/adapters/geonicdb/<subject>/<Type>.json` (listed in `catalog.json` under `adapters.geonicdb`). It already contains `contextUrl`, so registering it is enough to make GeonicDB use the catalog vocabulary.
 
 ## Prerequisites
 

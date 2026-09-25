@@ -17,6 +17,7 @@ function addVPreToInlineCode(md: MarkdownIt) {
 }
 
 const guides = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.SidebarItem[] => [
+  { text: lang === 'ja' ? '使い方' : 'Using the models', link: `${prefix}/guide/use` },
   { text: lang === 'ja' ? '拡張する・貢献する' : 'Extend and contribute', link: `${prefix}/guide/extend` },
   { text: lang === 'ja' ? '変わらない URL' : 'URLs that never change', link: `${prefix}/guide/urls` },
   { text: lang === 'ja' ? '他のデータモデルカタログ' : 'Other data model catalogs', link: `${prefix}/guide/catalogs` },
@@ -36,10 +37,12 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
   }
   return {
     [`${prefix}/guide/`]: [
-      { text: lang === 'ja' ? 'ガイド' : 'Guides', items: guides(prefix, lang) },
       {
-        text: lang === 'ja' ? 'アダプター' : 'Adapters',
-        items: [{ text: lang === 'ja' ? 'GeonicDB で使う' : 'Use with GeonicDB', link: `${prefix}/guide/geonicdb` }],
+        text: lang === 'ja' ? 'ガイド' : 'Guides',
+        // Product-specific pages sit under "Using the models", after the steps that work with any broker.
+        items: guides(prefix, lang).map((g) => g.link === `${prefix}/guide/use`
+          ? { ...g, items: [{ text: 'GeonicDB', link: `${prefix}/guide/geonicdb` }] }
+          : g),
       },
       catalog,
     ],

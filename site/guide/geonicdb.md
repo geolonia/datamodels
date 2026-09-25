@@ -5,7 +5,7 @@ description: カタログのデータモデルを GeonicDB に登録し、エン
 
 # GeonicDB で使う
 
-各モデルのページには GeonicDB の Custom Data Model 定義（`POST /custom-data-models` の request body）へのリンクがあります。定義には `contextUrl` が入っているので、登録するだけでカタログの語彙が使われます。
+どのブローカーにも共通の手順（検証、作成、検索）は[使い方](/guide/use)にあります。このページは GeonicDB に固有の部分です。モデルごとに GeonicDB の Custom Data Model 定義（`POST /custom-data-models` の request body）を `https://datamodels.jp/adapters/geonicdb/<サブジェクト>/<型>.json` で公開しています（一覧は `catalog.json` の `adapters.geonicdb`）。定義には `contextUrl` が入っているので、登録するだけでカタログの語彙が使われます。
 
 ## 前提
 
