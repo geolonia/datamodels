@@ -73,7 +73,7 @@ Researched 2026-09-17 and 2026-09-18.
 - **Smart Data Models**: per-model folder (`schema.json`, `examples/`, `notes.yaml`, `ADOPTERS.yaml`, `README.md`, `LICENSE.md`), one context per subject, key-values schemas with `x-ngsi` annotations, and promotion by real adoption. Adopted verbatim so a folder can move upstream unchanged.
 - **ETSI NGSI-LD core context**: versioned, immutable file names with an alias for the latest.
 - **schema.org**: every term IRI resolves to a human page; pinnable releases.
-- **Digital Agency GIF** (CC0 1.0) and **自治体標準オープンデータセット** (CC0 1.0, the successor of the 推奨データセット since 2023-03-31): the Japanese source of truth for addresses and municipal datasets. Mapped field by field, never copied as a competing model. The IMI 共通語彙基盤, which GIF succeeded, is not a mapping target.
+- **Digital Agency GIF** (repository CC0 1.0; core data model schema CC BY 4.0) and **自治体標準オープンデータセット** (公共データ利用規約 PDL1.0, the successor of the 推奨データセット since 2023-03-31): the Japanese source of truth for addresses and municipal datasets. Mapped field by field, never copied as a competing model. The IMI 共通語彙基盤, which GIF succeeded, is not a mapping target.
 
 ## URL scheme and hosting contract
 
@@ -165,7 +165,7 @@ Cloudflare Workers static assets, deployed by Cloudflare Workers Builds from `ma
 
 ## Licensing and contribution
 
-- Code: Apache-2.0. Model content: CC BY 4.0, which anything derived from Smart Data Models requires. GIF and 自治体標準オープンデータセット content (CC0 1.0) is re-licensed under CC BY 4.0.
+- Code: Apache-2.0. Model content: CC BY 4.0. Smart Data Models are mostly CC BY 4.0 themselves; content derived from them keeps their attribution in the model's notes. GIF content (repository CC0 1.0; the core data model schema declares CC BY 4.0) is licensed under CC BY 4.0 and credits GIF; 自治体標準オープンデータセット material is used under the 公共データ利用規約 (PDL1.0, compatible with CC BY 4.0) and credited to its source.
 - Under review (Hal): CC0 for schemas and contexts so governments can reuse them without an attribution obligation, keeping CC BY 4.0 for prose. Anything copied from CC BY sources cannot become CC0; reused IRIs are unaffected.
 - Planned (launch plan Phase 2): a contributing guide in both languages, a schema proposal form asking what real data exists, which standard it extends and who the second implementer is, DCO sign-off instead of a contributor agreement, per-subject editors in CODEOWNERS and a small steering group for new subjects and major versions.
 
