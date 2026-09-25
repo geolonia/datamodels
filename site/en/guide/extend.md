@@ -51,6 +51,7 @@ The first subject, [disaster response](/en/models/disaster/), is based on the da
 ### Rules
 
 - Never change the meaning or type of an upstream attribute. Add a new one instead.
+- Status attributes (`progress`, `openingStatus`, `restrictionStatus` and others) have closed value lists. When no value fits, leave the status out and give the local wording in `statusLabel` (then required). Do not force the nearest value.
 - Never redefine a protected term of the NGSI-LD core context (`status`, `description`, `location`, `createdAt`, `modifiedAt`, `observedAt` and others). The catalog CI rejects it. When you need a status, name it like `incidentStatus`.
 - Namespaces are organised by subject, never by region, customer or project.
 - Use the value types of the [common](/en/models/common/) subject for shared structures: [JapaneseAddress](/en/models/common/JapaneseAddress/) for addresses, [Geometry](/en/models/common/Geometry/) for `location` and other GeoProperties. Narrow a geometry next to the `$ref` when a model allows fewer types (Attachment allows only a Point).

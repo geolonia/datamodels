@@ -173,6 +173,35 @@ test('an example id not in the urn:ngsi-ld:<Type>:<local id> form fails', () =>
   withMutatedModels((d) => editJson(join(d, 'task', 'Project', 'examples', 'example.json'), (e) => { e.id = 'urn:ngsi-ld:Proj:heavy-rain-2026-07'; }),
     /Project\/examples\/example\.json: id must be urn:ngsi-ld:Project:<local id>/));
 
+test('a status example with neither the status nor statusLabel fails', () =>
+  withMutatedModels(async (d) => {
+    await editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => { delete e.restrictionStatus; delete e.statusLabel; });
+    await editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example-normalized.jsonld'), (e) => { delete e.restrictionStatus; delete e.statusLabel; });
+  }, /RoadRestriction\/examples\/example\.json: .*(required|anyOf)/));
+
+test('a Task subclass that drops the status-or-label requirement fails', () =>
+  withMutatedModels(async (d) => { await addSubclassProbe(d); await editJson(join(d, 'disaster', 'SubclassProbe', 'schema.json'), (s) => { s.required = s.required.filter((r) => r !== 'progress'); }); },
+    /subclass of Task: must keep its anyOf \(progress or statusLabel\) or require one alternative/));
+
+test('an empty statusLabel does not satisfy the status requirement', () =>
+  withMutatedModels(async (d) => {
+    await editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => { delete e.restrictionStatus; e.statusLabel = ''; });
+    await editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example-normalized.jsonld'), (e) => { delete e.restrictionStatus; e.statusLabel.value = ''; });
+  }, /RoadRestriction\/examples\/example\.json: .*(fewer than 1|minLength)/));
+
+test('a status example with only statusLabel validates', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'geonicdb-models-'));
+  try {
+    await cp(join(root, 'models'), dir, { recursive: true });
+    await editJson(join(dir, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => { delete e.restrictionStatus; });
+    await editJson(join(dir, 'transportation', 'RoadRestriction', 'examples', 'example-normalized.jsonld'), (e) => { delete e.restrictionStatus; });
+    const r = spawnSync(process.execPath, [join(root, 'scripts', 'validate-models.mjs')], { env: { ...process.env, DATAMODELS_MODELS_DIR: dir }, encoding: 'utf8' });
+    assert.equal(r.status, 0, r.stderr);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
 test('a normalized attribute without value fails', () =>
   withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example-normalized.jsonld'), (e) => { e.description = { type: 'Property' }; }),
     /Property needs a value/));
@@ -279,8 +308,8 @@ test('a subclass attribute under a different IRI than the parent fails', () =>
     /progress: subclass of Task must use its IRI/));
 
 test('a subclass that drops a parent-required attribute fails', () =>
-  withMutatedModels(async (d) => { await addSubclassProbe(d); await editJson(join(d, 'disaster', 'SubclassProbe', 'schema.json'), (s) => { s.required = s.required.filter((r) => r !== 'progress'); }); },
-    /subclass of Task: "progress" must stay required/));
+  withMutatedModels(async (d) => { await addSubclassProbe(d); await editJson(join(d, 'disaster', 'SubclassProbe', 'schema.json'), (s) => { s.required = s.required.filter((r) => r !== 'name'); }); },
+    /subclass of Task: "name" must stay required/));
 
 test('an alias with a different unknown-attribute policy fails', () =>
   withMutatedModels(async (d) => { await addAliasProbe(d); await editJson(join(d, 'disaster', 'AliasProbe', 'schema.json'), (s) => { s.additionalProperties = true; }); },

@@ -26,11 +26,11 @@ attributes:
     ja: "このタスクが対象とするエンティティ（通報、設備、道路など）"
     en: "The entity this task is about (a report, an asset, a road)"
   progress:
-    ja: "正規化した進行状態（RFC 8984 progress）。needs-action=未着手、in-process=対応中、completed=完了、failed=失敗、cancelled=取消"
-    en: "Normalised state (RFC 8984 progress: needs-action, in-process, completed, failed, cancelled)"
+    ja: "正規化した進行状態（RFC 8984 progress）。needs-action=未着手、in-process=対応中、completed=完了、failed=失敗、cancelled=取消。値域に合う値がないときは省き、statusLabel に元の呼び方を書く。"
+    en: "Normalised state (RFC 8984 progress: needs-action, in-process, completed, failed, cancelled). When no value fits, leave it out and give the local wording in statusLabel."
   statusLabel:
-    ja: "元システムの状態名そのまま（「対応中」「解決」など）"
-    en: "The source system's own status name, unchanged (for example \"In progress\", \"Resolved\")"
+    ja: "元システムの状態名そのまま（「対応中」「解決」など）。progress を省いたときは必須"
+    en: "The source system's own status name, unchanged (for example \"In progress\", \"Resolved\"). Required when progress is left out"
   subtype:
     ja: "元システムの種別（トラッカー、Issue タイプ、カテゴリなど）"
     en: "The source system's kind: tracker, issue type, category"

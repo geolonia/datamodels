@@ -74,8 +74,8 @@
         "en": "restrictionStatus"
       },
       "comment": {
-        "ja": "正規化した状態。Smart Data Models RoadSegment.status の値域: closed（通行不可）、limited（片側通行など）、open（解除済み、または未実施）。現場の呼び方は statusLabel に。より細かい区分は regulationCategory に",
-        "en": "Normalised restriction state, the value space of Smart Data Models RoadSegment.status: closed (no traffic), limited (traffic possible but not in full capacity), open (restriction lifted or not yet in place). The local wording goes in statusLabel; a finer public-sector category goes in regulationCategory"
+        "ja": "正規化した状態。Smart Data Models RoadSegment.status の値域: closed（通行不可）、limited（片側通行など）、open（解除済み、または未実施）。現場の呼び方は statusLabel に。より細かい区分は regulationCategory に。値域に合う値がないときは省き、statusLabel だけを送る",
+        "en": "Normalised restriction state, the value space of Smart Data Models RoadSegment.status: closed (no traffic), limited (traffic possible but not in full capacity), open (restriction lifted or not yet in place). The local wording goes in statusLabel; a finer public-sector category goes in regulationCategory. When no value fits, leave it out and send only statusLabel"
       },
       "isDefinedBy": "https://datamodels.jp/ns/transportation/",
       "seeAlso": "https://datamodels.jp/models/transportation/RoadRestriction/#restrictionStatus"

@@ -89,7 +89,7 @@
         "failed",
         "cancelled"
       ],
-      "description": "Normalised state (RFC 8984 progress: needs-action, in-process, completed, failed, cancelled)",
+      "description": "Normalised state (RFC 8984 progress: needs-action, in-process, completed, failed, cancelled). When no value fits, leave it out and give the local wording in statusLabel",
       "x-ngsi": {
         "type": "Property"
       },
@@ -97,7 +97,8 @@
     },
     "statusLabel": {
       "type": "string",
-      "description": "The source system's own status name, unchanged (for example \"In progress\", \"Resolved\")",
+      "minLength": 1,
+      "description": "The source system's own status name, unchanged (for example \"In progress\", \"Resolved\"). Required when progress is left out",
       "x-ngsi": {
         "type": "Property"
       },
@@ -270,8 +271,19 @@
   "required": [
     "id",
     "type",
-    "name",
-    "progress"
+    "name"
+  ],
+  "anyOf": [
+    {
+      "required": [
+        "progress"
+      ]
+    },
+    {
+      "required": [
+        "statusLabel"
+      ]
+    }
   ],
   "additionalProperties": false
 }

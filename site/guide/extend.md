@@ -51,6 +51,7 @@ description: 既存のデータモデルを日本向けに拡張する方法、�
 ### 守ること
 
 - 上流の属性の意味や型を変えない。必要なら新しい属性を足す。
+- 状態の属性（`progress`、`openingStatus`、`restrictionStatus` など）の値域は閉じています。合う値がないときは状態の属性を省き、`statusLabel` に元の呼び方を書きます（そのとき `statusLabel` は必須）。近い値に無理に当てはめないでください。
 - NGSI-LD core context の予約語（`status`, `description`, `location`, `createdAt`, `modifiedAt`, `observedAt` など）を再定義しない。カタログの CI が弾きます。`status` が要るときは `incidentStatus` のように名前を変えます。
 - 名前空間はサブジェクト（分野）で分け、地域名・顧客名・案件名は入れない。
 - 共通の構造は [common](/models/common/) サブジェクトの値型を使う。住所は [JapaneseAddress](/models/common/JapaneseAddress/)、`location` などの GeoProperty は [Geometry](/models/common/Geometry/)。使えるジオメトリを絞るときは `$ref` の横で制約する（Attachment は点だけ）。
