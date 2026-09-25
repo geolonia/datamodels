@@ -7,8 +7,9 @@ specification documents) is licensed under the Creative Commons Attribution
 
 Models derived from Smart Data Models retain their upstream attribution, which
 is recorded in each model's `notes.yaml`. Models derived from the Digital
-Agency's GIF (CC0 1.0, https://github.com/JDA-DM/GIF) are re-licensed here
-under CC BY 4.0. Material from the Digital Agency's 自治体標準オープンデータセット
+Agency's GIF (https://github.com/JDA-DM/GIF: the repository is CC0 1.0, and
+the core data model schema GIF_Core_DataModel.xsd declares CC BY 4.0) are
+licensed here under CC BY 4.0 and credit GIF in their mapping files. Material from the Digital Agency's 自治体標準オープンデータセット
 (published on digital.go.jp under the 公共データ利用規約（第1.0版）, PDL1.0,
 which is compatible with CC BY 4.0) is credited to its source in the model's
 mapping files.
