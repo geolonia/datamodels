@@ -126,7 +126,6 @@
   "required": [
     "id",
     "type",
-    "project",
     "restrictionStatus",
     "location"
   ],

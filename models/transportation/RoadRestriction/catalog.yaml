@@ -11,8 +11,8 @@ tags:
   - municipality
 attributes:
   project:
-    ja: 所属するプロジェクト（タスク管理の Project。災害対応の 1 オペレーションなど）
-    en: The task subject's Project this entity belongs to, for example one disaster-response operation
+    ja: 所属するプロジェクト（タスク管理の Project。災害対応の 1 オペレーションなど）。任意。工事や冬期の規制など、プロジェクトに属さない規制では省く
+    en: The task subject's Project this entity belongs to, for example one disaster-response operation. Optional; omit it for restrictions outside any project, such as roadworks or winter closures
   roadName:
     ja: 路線名
     en: Road name
