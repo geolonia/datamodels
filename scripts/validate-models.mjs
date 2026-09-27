@@ -236,8 +236,9 @@ for (const subject of subjects) {
     }
 
     // `npm run new-model` leaves TODO markers; a model is not done while any remain.
-    for (const [file, value] of [['schema.json', model.schema], ['catalog.yaml', model.catalog], ['notes.yaml', model.notes], ['examples/example.json', model.examples['example.json']]]) {
-      if (value != null && /\bTODO\b/.test(JSON.stringify(value))) fail(`${mwhere}/${file}`, 'fill in the TODO markers');
+    const readme = await readFile(join(model.dir, 'README.md'), 'utf8').catch(() => null);
+    for (const [file, value] of [['schema.json', model.schema], ['catalog.yaml', model.catalog], ['notes.yaml', model.notes], ['README.md', readme], ['examples/example.json', model.examples['example.json']], ['examples/example-normalized.jsonld', model.examples['example-normalized.jsonld']]]) {
+      if (value != null && /\bTODO\b/.test(typeof value === 'string' ? value : JSON.stringify(value))) fail(`${mwhere}/${file}`, 'fill in the TODO markers');
     }
 
     // notes.yaml renders as a bullet list; an entry with an unquoted ": " parses as an object.

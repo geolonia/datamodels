@@ -23,6 +23,7 @@ test('new-model scaffolds a model the validator lists as unfinished', async () =
     const v = run('validate-models.mjs', [], dir);
     assert.equal(v.status, 1);
     assert.match(v.stderr, /TrafficFlow\/catalog\.yaml: fill in the TODO markers/);
+    assert.match(v.stderr, /TrafficFlow\/README\.md: fill in the TODO markers/);
     assert.match(v.stderr, /transportation\/context\.jsonld: differs from the recorded 1\.0\.0 snapshot/);
   } finally {
     await rm(dir, { recursive: true, force: true });

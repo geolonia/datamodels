@@ -19,9 +19,12 @@ const subjects = await loadSubjects();
 const manifestPath = join(ROOT, 'published-manifest.json');
 const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
 
+// Resolve every name before changing anything, so a typo leaves the tree as it was.
+const unknown = names.filter((n) => !subjects.some((s) => s.name === n));
+if (unknown.length) die(`no subject ${unknown.map((n) => `"${n}"`).join(', ')}; existing subjects: ${subjects.map((s) => s.name).join(', ')}`);
+
 for (const name of names) {
   const subject = subjects.find((s) => s.name === name);
-  if (!subject) die(`no subject "${name}"; existing subjects: ${subjects.map((s) => s.name).join(', ')}`);
   const v = `v${subject.version}`;
   // context/<s>/vX.Y.Z.jsonld, vocab/<s>/vX.Y.Z.jsonld and schema/<s>/<Type>/vX.Y.Z.json
   const ours = new RegExp(`^(context|vocab)/${name}/${v.replace(/\./g, '\\.')}\\.jsonld$|^schema/${name}/[^/]+/${v.replace(/\./g, '\\.')}\\.json$`);
