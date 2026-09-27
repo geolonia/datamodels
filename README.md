@@ -39,16 +39,18 @@ npm test                 # validator, vocabulary and adapter tests
 npm run site:dev         # local site with generated model pages
 npm run check:live       # verify the deployed site against the URL contract and the manifest
 npm run manifest:record  # snapshot the current version and record its hashes (last step of a PR)
+npm run new-model -- <subject> <Type> [--value]   # scaffold a model; the validator lists the TODOs left
+npm run rerecord -- <subject> [...]               # pre-release only: correct the current version in place
 node adapters/geonicdb/export.mjs <subject> [--type T] [--type-prefix P | --type-name N] [--rename a=b] [--context-url URL] [--alias-context] [--allow-additional] [--extend FILE] [--out DIR]
 ```
 
 ## Adding or changing a model
 
-1. Edit or add files under `models/<subject>/`. Every attribute needs a context term (or a core-context term) and ja/en descriptions; never redefine a core-context term such as `status`.
+1. Edit or add files under `models/<subject>/`. For a new model, start with `npm run new-model -- <subject> <Type>`: it creates every file with TODO markers and adds the type to the subject's context; `npm run validate:models` lists what is still missing. Every attribute needs a context term (or a core-context term) and ja/en descriptions; never redefine a core-context term such as `status`.
 2. `npm run check` and `npm test` must pass. CI runs both on every pull request.
 3. Bump the subject version for anything that changes a published file, mark superseded attributes `x-deprecated`, then run `npm run manifest:record` as the last step. It snapshots the new version into `releases/` and records its hashes in `published-manifest.json`; `npm run check` fails if a recorded file changed or disappeared.
 
-**Pre-release exception, until the official launch** (launch plan #30): the published files of a subject's **current** version, `v1.0.0` included, may be corrected in place. Change the source, delete that version's `releases/` snapshot and its entries in `published-manifest.json`, run `npm run manifest:record`, and say so in the pull request. Recording writes only the current version's snapshot, so an older release is never corrected this way: its snapshot is the only copy, and deleting it would drop the release from the site. `npm run check:live` then confirms the deployed bytes. The exception, and the pre-release banner on the site, end at the official launch; from then on published files are never corrected in place.
+**Pre-release exception, until the official launch** (launch plan #30): the published files of a subject's **current** version, `v1.0.0` included, may be corrected in place. Change the source, run `npm run rerecord -- <subject>` (it deletes that version's `releases/` snapshot and its entries in `published-manifest.json`, then records again), and say so in the pull request. Recording writes only the current version's snapshot, so an older release is never corrected this way: its snapshot is the only copy, and deleting it would drop the release from the site. `npm run check:live` then confirms the deployed bytes. The exception, and the pre-release banner on the site, end at the official launch; from then on published files are never corrected in place.
 
 Every model starts as `status: draft`. It becomes `stable` once two independent implementations are recorded in its `ADOPTERS.yaml`.
 

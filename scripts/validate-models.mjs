@@ -13,6 +13,7 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import jsonld from 'jsonld';
 import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { loadSubjects, attributesOf, toKeyValues, subjectUrls, modelUrls, resolveContextTerms, CORE_CONTEXT_URL, CORE_CONTEXT_FIXTURE } from './lib/models.mjs';
 import { resolveContextDocument } from './lib/releases.mjs';
 import { buildVocabulary } from './lib/vocab.mjs';
@@ -117,6 +118,14 @@ for (const subject of subjects) {
   for (const term of Object.keys(inlineTerms)) {
     if (coreTerms.has(term)) fail(`${where}/context.jsonld`, `redefines core context term "${term}" (protected)`);
   }
+
+  // Examples expand through the recorded snapshot of the current version, so a
+  // context change (a new model or attribute) is invisible until it is recorded.
+  // Say so once, instead of leaving only the resulting expansion errors.
+  try {
+    const snapshot = JSON.parse(await readFile(join(subject.dir, 'releases', `v${subject.version}`, 'context.jsonld'), 'utf8'));
+    if (!same(snapshot, subject.context)) fail(`${where}/context.jsonld`, `differs from the recorded ${subject.version} snapshot, so examples still expand with the old terms. During the pre-release a maintainer records it (npm run rerecord -- ${subject.name}); after the official launch, bump the subject version instead`);
+  } catch (e) { if (e.code !== 'ENOENT') throw e; }
 
   // The vocabulary must be valid JSON-LD and state every subclass relation, so
   // tools other than this validator see them.
@@ -224,6 +233,11 @@ for (const subject of subjects) {
           if (expected && target !== expected) fail(`${mwhere}/examples/example.json`, `${name}: ${target} should reference the ${targetType} example ${expected}`);
         }
       }
+    }
+
+    // `npm run new-model` leaves TODO markers; a model is not done while any remain.
+    for (const [file, value] of [['schema.json', model.schema], ['catalog.yaml', model.catalog], ['notes.yaml', model.notes], ['examples/example.json', model.examples['example.json']]]) {
+      if (value != null && /\bTODO\b/.test(JSON.stringify(value))) fail(`${mwhere}/${file}`, 'fill in the TODO markers');
     }
 
     // notes.yaml renders as a bullet list; an entry with an unquoted ": " parses as an object.
