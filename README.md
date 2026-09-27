@@ -58,7 +58,7 @@ Contributions in Japanese or English are welcome as issues or pull requests.
 
 ## Deployment
 
-Cloudflare Workers Builds watches this repository and deploys `main`; no credential lives in GitHub. Dashboard settings on the `datamodels` Worker, connected to `geolonia/datamodels`: build command `npm ci && npm run build:deploy`, deploy command `npx wrangler deploy`, root `/`, non-production builds off. The custom domain is declared in `wrangler.jsonc`. After a deploy, run `npm run check:live`.
+Cloudflare Workers Builds watches this repository and deploys `main`; no credential lives in GitHub. Dashboard settings on the `datamodels` Worker, connected to `geolonia/datamodels`: build command `npm ci && npm run build:deploy`, deploy command `npx wrangler deploy`, preview command `npx wrangler preview`, root `/`, preview builds on (Settings → Build → Branch control → Enable Preview Builds). Every pull request then gets a Preview URL on workers.dev in a comment; `preview_urls` in `wrangler.jsonc` must stay `true`. The Worker was switched to Worker Previews once (Settings → Builds → Set up Worker Previews), which cannot be undone. The custom domain is declared in `wrangler.jsonc`. After a deploy, run `npm run check:live`.
 
 `models.geonicdb.com`, the pre-launch preview, is retired and must not answer. `wrangler deploy` does not detach a custom domain that disappears from `wrangler.jsonc`, so if it still responds, remove it under the Worker's Settings → Domains & Routes; that also deletes its DNS record.
 

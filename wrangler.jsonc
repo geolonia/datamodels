@@ -7,6 +7,12 @@
   "compatibility_date": "2026-08-01",
   "observability": { "enabled": true },
 
+  // Worker Previews: Workers Builds builds every non-production branch with
+  // `npx wrangler preview` and posts the Preview URL (on workers.dev) to the
+  // pull request. Previews serve the same static tree; links to machine files
+  // point at datamodels.jp, which is where they are published.
+  "preview_urls": true,
+
   // Assets-only Worker: no script, Cloudflare serves the built tree directly.
   // `_headers` and `_redirects` inside the directory set the URL contract
   // (content types, CORS, caching, IRI redirects). See public/_headers.
