@@ -161,7 +161,7 @@ Part of the output:
 <urn:ngsi-ld:RoadRestriction:0001> <https://smartdatamodels.org/dataModel.Transportation/roadName> "靖国通り" .
 ```
 
-Each subject's vocabulary (`/vocab/<subject>/v1.0.0.jsonld`) carries Japanese and English labels and descriptions for its types and attributes. The mapping tables to other standards, such as GIF and the municipal standard open datasets, are on each model page and help with converting data.
+Each subject's vocabulary (`/vocab/<subject>/v1.0.0.jsonld`) is RDFS: its types have Japanese and English names and descriptions, and the attributes the catalog defines have their term name and Japanese and English descriptions. Attributes borrowed from other vocabularies (for example schema.org's `address`) are not included; their own publishers' vocabularies describe them. The mapping tables to other standards, such as GIF and the municipal standard open datasets, are on each model page and help with converting data.
 
 ## Works with
 
