@@ -15,6 +15,7 @@ import jsonld from 'jsonld';
 import { readFile } from 'node:fs/promises';
 import { loadSubjects, attributesOf, toKeyValues, subjectUrls, modelUrls, resolveContextTerms, CORE_CONTEXT_URL, CORE_CONTEXT_FIXTURE } from './lib/models.mjs';
 import { resolveContextDocument } from './lib/releases.mjs';
+import { reportFailures } from './lib/ci-summary.mjs';
 import { buildVocabulary } from './lib/vocab.mjs';
 
 const failures = [];
@@ -291,6 +292,7 @@ for (const subject of subjects) {
 if (failures.length) {
   console.error(`Model validation failed (${failures.length}):`);
   for (const f of failures) console.error(`  ${f}`);
+  await reportFailures('Model validation failed', failures, 'Run `npm run validate:models` locally to see the same list. The rules are in the extend guide: https://datamodels.jp/guide/extend');
   process.exit(1);
 }
 const n = subjects.reduce((a, s) => a + s.models.length, 0);

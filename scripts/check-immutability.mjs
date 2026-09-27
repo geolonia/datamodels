@@ -21,6 +21,7 @@
 import { createHash } from 'node:crypto';
 import { loadSubjects } from './lib/models.mjs';
 import { snapshotRelease, verifyRelease } from './lib/releases.mjs';
+import { reportFailures } from './lib/ci-summary.mjs';
 import { readFile, writeFile, readdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, relative, sep } from 'node:path';
@@ -91,6 +92,7 @@ if (!record) for (const subject of await loadSubjects()) {
 if (violations.length > 0) {
   console.error('Immutability check failed:');
   for (const v of violations) console.error(`  ${v}`);
+  await reportFailures('Immutability check failed', violations, 'A published version never changes. Bump the subject version for the change; during the pre-release, a maintainer can correct the current version in place (README, "Adding or changing a model").');
   process.exit(1);
 }
 
@@ -110,6 +112,7 @@ if (unrecorded.length > 0) {
     console.error('Immutability check failed: unrecorded immutable files in dist/:');
     for (const rel of unrecorded) console.error(`  ${rel}`);
     console.error('Run `npm run manifest:record` and commit published-manifest.json.');
+    await reportFailures('Unrecorded immutable files', unrecorded.map((rel) => `dist/${rel}: not in published-manifest.json`), 'Run `npm run manifest:record` and commit `published-manifest.json` (a maintainer step when a version is released).');
     process.exit(1);
   }
 }
