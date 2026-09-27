@@ -29,8 +29,11 @@ if (unknown.length) die(`no subject ${unknown.map((n) => `"${n}"`).join(', ')}; 
 // them, not only the named ones) and of the manifest, so any failure puts the
 // tree back as it was.
 const backup = await mkdtemp(join(tmpdir(), 'datamodels-rerecord-'));
+const manifestBackup = join(backup, 'published-manifest.json');
 const saved = [];
+// Nothing has changed yet: if the backup cannot be made, remove it and stop.
 try {
+  await writeFile(manifestBackup, manifestText);
   for (const subject of subjects) {
     const dir = join(subject.dir, 'releases', `v${subject.version}`);
     const copy = join(backup, subject.name);
@@ -39,8 +42,13 @@ try {
     saved.push({ dir, copy, existed });
   }
 } catch (e) {
-  await rm(backup, { recursive: true, force: true }).catch(() => {});
+  await removeBackup();
   throw e;
+}
+// The tree is already consistent when this runs, so a leftover temporary
+// directory is only worth a warning.
+async function removeBackup() {
+  await rm(backup, { recursive: true, force: true }).catch((e) => console.warn(`could not remove the temporary backup ${backup}: ${e.message}`));
 }
 async function restore() {
   await writeFile(manifestPath, manifestText);
@@ -67,7 +75,7 @@ try {
   console.log('pre-release correction in place; after the official launch, bump the version instead');
   for (const script of [['scripts/build.mjs'], ['scripts/check-immutability.mjs', '--record']]) {
     const r = spawnSync(process.execPath, script.map((s, i) => (i === 0 ? join(ROOT, s) : s)), { stdio: 'inherit' });
-    if (r.status !== 0) { failure = `${script[0]} failed`; break; }
+    if (r.status !== 0) { failure = `${script[0]} failed${r.error ? ` (${r.error.message})` : ''}`; break; }
   }
 } catch (e) {
   failure = e.message;
@@ -77,14 +85,14 @@ if (failure) {
   try {
     await restore();
   } catch (e) {
-    // Exact paths, and the manifest as it was before this run (not the committed one).
-    await writeFile(join(backup, 'published-manifest.json'), manifestText).catch(() => {});
+    // Keep the backup and name exact paths; the saved manifest is the one from
+    // before this run, not the committed one.
     const moves = saved.filter((s) => s.existed).map((s) => `  ${s.copy} -> ${s.dir}`).join('\n');
-    console.error(`${failure}, and restoring failed (${e.message}). The backup is kept in ${backup}. Copy each folder back to its original path:\n${moves}\nThen copy ${join(backup, 'published-manifest.json')} to ${manifestPath}.`);
+    console.error(`${failure}, and restoring failed (${e.message}). The backup is kept in ${backup}. Copy each folder back to its original path:\n${moves}\nThen copy ${manifestBackup} to ${manifestPath}.`);
     process.exit(1);
   }
-  await rm(backup, { recursive: true, force: true });
+  await removeBackup();
   console.error(`${failure}; the snapshots and published-manifest.json are restored. Fix the errors above and run rerecord again.`);
   process.exit(1);
 }
-await rm(backup, { recursive: true, force: true });
+await removeBackup();
