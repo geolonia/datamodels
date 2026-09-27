@@ -236,7 +236,8 @@ for (const subject of subjects) {
     }
 
     // `npm run new-model` leaves TODO markers; a model is not done while any remain.
-    const readme = await readFile(join(model.dir, 'README.md'), 'utf8').catch(() => null);
+    // A missing README is fine; an unreadable one must not skip the check.
+    const readme = await readFile(join(model.dir, 'README.md'), 'utf8').catch((e) => { if (e.code === 'ENOENT') return null; throw e; });
     for (const [file, value] of [['schema.json', model.schema], ['catalog.yaml', model.catalog], ['notes.yaml', model.notes], ['README.md', readme], ['examples/example.json', model.examples['example.json']], ['examples/example-normalized.jsonld', model.examples['example-normalized.jsonld']]]) {
       if (value != null && /\bTODO\b/.test(typeof value === 'string' ? value : JSON.stringify(value))) fail(`${mwhere}/${file}`, 'fill in the TODO markers');
     }
