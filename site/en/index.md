@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: datamodels.jp
-  text: NGSI-LD data models catalog
-  tagline: Data models that work in practice in Japan, as @context files, JSON Schemas and vocabularies at URLs that never change. Existing standards are extended, not copied
+  text: Data models that work in Japan
+  tagline: Data models that work in practice in Japan, as JSON Schemas, JSON-LD @context files and vocabularies at URLs that never change. Ready to use with NGSI-LD. Existing standards are extended, not copied
   actions:
     - theme: brand
       text: All data models
@@ -25,8 +25,8 @@ features:
     details: Published versioned @context files and JSON Schemas are never modified or removed. The guide says which URL to use when.
     link: /en/guide/urls
     linkText: The URL contract
-  - title: Validated examples, any broker
-    details: Every example is validated in CI. The data goes through the standard NGSI-LD API, so no particular product is needed. The guide shows how to validate and send it.
+  - title: Any system
+    details: Every example is validated in CI. The JSON Schemas validate plain JSON, the JSON-LD contexts turn it into linked data (RDF), and NGSI-LD brokers take it as it is. No particular product is needed.
     link: /en/guide/use
     linkText: Using the models
   - title: Other catalogs

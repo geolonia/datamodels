@@ -3,10 +3,10 @@ kind: Component
 metadata:
   namespace: geolonia
   name: datamodels
-  description: Bilingual catalog of NGSI-LD data models (contexts, JSON Schemas, RDFS vocabularies), served at datamodels.jp. Product-neutral; extends Smart Data Models, GIF and RFC 8984.
+  description: Bilingual catalog of data models that work in Japan (JSON Schemas, JSON-LD contexts, RDFS vocabularies; ready for NGSI-LD), served at datamodels.jp. Product-neutral; extends Smart Data Models, GIF and RFC 8984.
   annotations:
     github.com/project-slug: geolonia/datamodels
-  tags: ['website', 'ngsi-ld', 'fiware', 'data-models']
+  tags: ['website', 'data-models', 'json-schema', 'json-ld', 'linked-data', 'ngsi-ld', 'fiware']
   links:
     - url: https://datamodels.jp
       title: Data models catalog (public site)

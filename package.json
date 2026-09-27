@@ -2,7 +2,7 @@
   "name": "datamodels",
   "private": true,
   "version": "0.0.0",
-  "description": "Bilingual catalog of NGSI-LD data models, served at datamodels.jp.",
+  "description": "Bilingual catalog of data models that work in Japan (JSON Schema, JSON-LD, NGSI-LD), served at datamodels.jp.",
   "type": "module",
   "license": "Apache-2.0",
   "engines": {

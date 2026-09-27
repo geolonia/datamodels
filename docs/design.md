@@ -9,7 +9,7 @@
 
 ## Summary
 
-A public, versioned, bilingual catalog of NGSI-LD data models that work in practice in Japan, run as a digital commons rather than a product feature. Machine-readable files (JSON-LD `@context`, JSON Schema, RDFS vocabularies, examples) are served from URLs that never change, so anyone can reference them from stored entities. The catalog extends and maps existing standards (Smart Data Models, the Digital Agency's GIF and 自治体標準オープンデータセット, RFC 8984) instead of copying them. It is generated from a public repository that accepts contributions in Japanese and English. Broker-specific files, such as GeonicDB Custom Data Model definitions, are produced by adapters outside the catalog core.
+A public, versioned, bilingual catalog of data models that work in practice in Japan, usable as plain JSON (JSON Schema), as linked data (JSON-LD, RDFS) and as they are with NGSI-LD, which shapes their conventions, run as a digital commons rather than a product feature. Machine-readable files (JSON-LD `@context`, JSON Schema, RDFS vocabularies, examples) are served from URLs that never change, so anyone can reference them from stored entities. The catalog extends and maps existing standards (Smart Data Models, the Digital Agency's GIF and 自治体標準オープンデータセット, RFC 8984) instead of copying them. It is generated from a public repository that accepts contributions in Japanese and English. Broker-specific files, such as GeonicDB Custom Data Model definitions, are produced by adapters outside the catalog core.
 
 ## Problem
 

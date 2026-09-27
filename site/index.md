@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: datamodels.jp
-  text: NGSI-LD データモデルカタログ
-  tagline: 日本の現場で使えるデータモデルを、@context・JSON Schema・語彙として変わらない URL で提供します。既存の標準は複製せず拡張します
+  text: 日本で使えるデータモデルのカタログ
+  tagline: 日本の現場で使えるデータモデルを、JSON Schema・JSON-LD の @context・語彙として変わらない URL で提供します。NGSI-LD ならそのまま使えます。既存の標準は複製せず拡張します
   actions:
     - theme: brand
       text: データモデル一覧
@@ -25,8 +25,8 @@ features:
     details: 公開したバージョン付きの @context と JSON Schema は変更も削除もされません。どの URL を使うべきかはガイドへ。
     link: /guide/urls
     linkText: URL の約束
-  - title: 検証済みの例、どのブローカーでも
-    details: すべての例は CI で検証されます。標準の NGSI-LD API で送れるので、特定の製品は要りません。検証と送信の手順はガイドへ。
+  - title: どのシステムでも
+    details: すべての例は CI で検証されます。JSON Schema で JSON を検証でき、JSON-LD で Linked Data（RDF）になり、NGSI-LD ブローカーにはそのまま送れます。特定の製品は要りません。
     link: /guide/use
     linkText: 使い方
   - title: 他のカタログとの関係
