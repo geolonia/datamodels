@@ -77,7 +77,10 @@ if (failure) {
   try {
     await restore();
   } catch (e) {
-    console.error(`${failure}, and restoring failed (${e.message}). The backup is kept in ${backup}: copy its folders back to models/<subject>/releases/ and run git checkout published-manifest.json.`);
+    // Exact paths, and the manifest as it was before this run (not the committed one).
+    await writeFile(join(backup, 'published-manifest.json'), manifestText).catch(() => {});
+    const moves = saved.filter((s) => s.existed).map((s) => `  ${s.copy} -> ${s.dir}`).join('\n');
+    console.error(`${failure}, and restoring failed (${e.message}). The backup is kept in ${backup}. Copy each folder back to its original path:\n${moves}\nThen copy ${join(backup, 'published-manifest.json')} to ${manifestPath}.`);
     process.exit(1);
   }
   await rm(backup, { recursive: true, force: true });
