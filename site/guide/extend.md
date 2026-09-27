@@ -72,7 +72,7 @@ description: 既存のデータモデルを日本向けに拡張する方法、�
 
 このカタログは公開リポジトリ [geolonia/datamodels](https://github.com/geolonia/datamodels) で管理しています。日本語でも英語でも構いません。
 
-- **モデルの追加・修正**: [Smart Data Models と同じフォルダ構成](https://github.com/geolonia/datamodels#repository-layout)（`schema.json`, `catalog.yaml`, `examples/`, `notes.yaml`）で Pull Request を送ってください。CI がスキーマ、例、`@context` の展開、予約語、バージョンを検証します。
+- **モデルの追加・修正**: [Smart Data Models と同じフォルダ構成](https://github.com/geolonia/datamodels#repository-layout)（`schema.json`, `catalog.yaml`, `examples/`, `notes.yaml`）で Pull Request を送ってください。新しいモデルは `npm run new-model -- <サブジェクト> <型名>` でひな形を作れます。書き残した箇所（TODO）は `npm run validate:models` が一覧にします。CI がスキーマ、例、`@context` の展開、予約語、バージョンを検証します。
 - **質問・提案・報告**: [Issue](https://github.com/geolonia/datamodels/issues) を開いてください。「このモデルが欲しい」「この属性の意味が分からない」も歓迎です。
 - **上流への提案**: 日本以外でも使えるモデルになったら、Smart Data Models の [incubated](https://github.com/smart-data-models/incubated) に提案します。フォルダ構成を揃えているのはこのためです。
 

@@ -72,7 +72,7 @@ Every model has two examples (key-values and normalized). They appear on the mod
 
 The catalog lives in the public repository [geolonia/datamodels](https://github.com/geolonia/datamodels). Japanese and English are both welcome.
 
-- **Adding or changing a model**: open a pull request using the [Smart Data Models folder layout](https://github.com/geolonia/datamodels#repository-layout) (`schema.json`, `catalog.yaml`, `examples/`, `notes.yaml`). CI validates schemas, examples, `@context` expansion, protected terms and versions.
+- **Adding or changing a model**: open a pull request using the [Smart Data Models folder layout](https://github.com/geolonia/datamodels#repository-layout) (`schema.json`, `catalog.yaml`, `examples/`, `notes.yaml`). For a new model, `npm run new-model -- <subject> <Type>` creates the files; `npm run validate:models` lists the TODOs still open. CI validates schemas, examples, `@context` expansion, protected terms and versions.
 - **Questions, proposals, reports**: open an [issue](https://github.com/geolonia/datamodels/issues). "I need this model" and "I do not understand this attribute" are welcome too.
 - **Proposing upstream**: a model that turns out to be useful beyond Japan is proposed to Smart Data Models via [incubated](https://github.com/smart-data-models/incubated). The shared folder layout exists for exactly this.
 
