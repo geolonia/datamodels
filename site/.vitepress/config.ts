@@ -19,6 +19,7 @@ function addVPreToInlineCode(md: MarkdownIt) {
 const guides = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.SidebarItem[] => [
   { text: lang === 'ja' ? '使い方' : 'Using the models', link: `${prefix}/guide/use` },
   { text: lang === 'ja' ? '拡張する' : 'Extending models', link: `${prefix}/guide/extend` },
+  { text: lang === 'ja' ? '拡張ビルダー' : 'Extension builder', link: `${prefix}/guide/builder` },
   { text: lang === 'ja' ? '貢献する' : 'Contributing', link: `${prefix}/guide/contribute` },
   { text: lang === 'ja' ? '変わらない URL' : 'URLs that never change', link: `${prefix}/guide/urls` },
   { text: lang === 'ja' ? 'バージョンと非推奨' : 'Versions and deprecation', link: `${prefix}/guide/versioning` },

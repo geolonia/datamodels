@@ -1,9 +1,10 @@
 // The default VitePress theme with hero text sizing (custom.css), the
-// filterable model list (ModelIndex.vue, used on /models/) and a
+// filterable model list (ModelIndex.vue, used on /models/), the extension
+// builder (ExtensionBuilder.vue, on /guide/builder) and a
 // pre-release banner above the navigation on every page. Remove the banner
 // (and --vp-layout-top-height in custom.css) at the official launch.
 import DefaultTheme from 'vitepress/theme'
-import { defineComponent, h, onMounted, onBeforeUnmount, ref } from 'vue'
+import { defineAsyncComponent, defineComponent, h, onMounted, onBeforeUnmount, ref } from 'vue'
 import { useData } from 'vitepress'
 import './custom.css'
 import ModelIndex from './ModelIndex.vue'
@@ -30,6 +31,8 @@ export default {
   extends: DefaultTheme,
   enhanceApp({ app }) {
     app.component('ModelIndex', ModelIndex)
+    // Only /guide/builder uses it: its code and model data stay out of the chunk every page loads.
+    app.component('ExtensionBuilder', defineAsyncComponent(() => import('./ExtensionBuilder.vue')))
   },
   Layout() {
     return h(DefaultTheme.Layout, null, { 'layout-top': () => h(PrereleaseBanner) })
