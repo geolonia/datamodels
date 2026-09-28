@@ -52,7 +52,7 @@ node adapters/geonicdb/export.mjs <subject> [--type T] [--type-prefix P | --type
 
 **Pre-release exception, until the official launch** (launch plan #30): the published files of a subject's **current** version, `v1.0.0` included, may be corrected in place. Change the source, run `npm run rerecord -- <subject>` (it deletes that version's `releases/` snapshot and its entries in `published-manifest.json`, then records again), and say so in the pull request. Recording writes only the current version's snapshot, so an older release is never corrected this way: its snapshot is the only copy, and deleting it would drop the release from the site. `npm run check:live` then confirms the deployed bytes. CI lists such corrections in the job summary (`npm run check:manifest-base` compares the manifest with main's). The exception, and the pre-release banner on the site, end at the official launch: `"prerelease"` in `published-manifest.json` is set to `false`, after which the same check fails on any changed or removed entry and `rerecord` refuses to run.
 
-Every model starts as `status: draft`. It becomes `stable` once two independent implementations are recorded in its `ADOPTERS.yaml`.
+Every model starts as `status: draft`. It becomes `stable` once two independent implementations are recorded in its `ADOPTERS.yaml`: each entry gives `name`, `organization` and a `url` (public repository, documentation or a contact). CI checks that at least two different organisations with a url are listed; the reviewer of the pull request that sets `stable` checks that they are real and independent (#38).
 
 Contributions in Japanese or English are welcome as issues or pull requests.
 
