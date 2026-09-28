@@ -16,7 +16,7 @@ fields:
   addressRegion: { to: prefecture }
   addressLocality: { to: cityAndCounty, note: { ja: 郡名・政令市の区名を含む点は同じ, en: both include county and designated-city ward names } }
   machiaza: { to: streetAddress, note: { ja: GIF の町字は丁目を含む。machiaza + chome に対応, en: GIF streetAddress includes chome; corresponds to machiaza + chome } }
-  chome: { to: streetAddress, note: { ja: 上記のとおり町字に含まれる, en: included in streetAddress, see above } }
+  chome: { to: streetAddress, note: { ja: "上記のとおり町字に含まれる", en: "included in streetAddress, see above" } }
   banchi: { to: cityBlock, note: { ja: GIF は番地以下（街区符号・住居番号または地番）をひとつの項目にまとめる。banchi + go に対応, en: GIF folds everything below the town into one field; corresponds to banchi + go } }
   go: { to: cityBlock }
   buildingName: { to: buildingNameEtc }

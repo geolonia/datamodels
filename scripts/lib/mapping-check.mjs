@@ -1,0 +1,68 @@
+// Checks for a model's correspondence tables (mapping/*.yaml), run by the
+// validator. A mapping renders as a table on the model page: a field that is
+// not in the model links to nothing, and a missing name, note language or
+// target silently leaves a hole in the page.
+
+const FIELD = /^([A-Za-z][A-Za-z0-9]*)(\[\d+\])?$/;
+const TOP = new Set(['standard', 'fields', 'structure']);
+const STANDARD = new Set(['name', 'url', 'license', 'note']);
+// Exactly ja and en: in YAML's { … } form a comma inside the text starts a new
+// key, so an extra key means the text was cut there ("closed → completed, otherwise …").
+const bilingual = (v) => v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v).every((k) => k === 'ja' || k === 'en')
+  && typeof v.ja === 'string' && v.ja.trim() !== '' && typeof v.en === 'string' && v.en.trim() !== '';
+const isLink = (u) => { if (typeof u !== 'string') return false; try { const x = new URL(u); return (x.protocol === 'https:' || x.protocol === 'http:') && x.hostname !== ''; } catch { return false; } };
+
+/**
+ * Every property name anywhere in a schema: attributes, and the members of
+ * value types such as Geometry's type and coordinates. The value says whether
+ * the property is an array somewhere (its own type, or a $ref within the
+ * schema such as Geometry's #/$defs/position), so a mapping may name a position.
+ */
+export function fieldNames(schema) {
+  const names = new Map();
+  const local = (ref) => typeof ref === 'string' && ref.startsWith('#/')
+    ? ref.slice(2).split('/').reduce((n, k) => n?.[k.replaceAll('~1', '/').replaceAll('~0', '~')], schema) : undefined;
+  const isArray = (p) => p?.type === 'array' || (Array.isArray(p?.type) && p.type.includes('array')) || local(p?.$ref)?.type === 'array';
+  const walk = (node) => {
+    if (!node || typeof node !== 'object') return;
+    if (node.properties && typeof node.properties === 'object') for (const [k, p] of Object.entries(node.properties)) names.set(k, names.get(k) || isArray(p));
+    for (const v of Object.values(node)) walk(v);
+  };
+  walk(schema);
+  return names;
+}
+
+/**
+ * Problems of one mapping file, as messages. `map` is the parsed YAML (the
+ * loader adds `name`, the file name); `schema` is the model's JSON Schema.
+ * A value type's own members count, and an array position (`coordinates[2]`).
+ */
+export function mappingProblems(map, schema) {
+  const out = [];
+  const { name, ...doc } = map ?? {};
+  for (const k of Object.keys(doc)) if (!TOP.has(k)) out.push(`unknown key "${k}" (allowed: standard, fields, structure)`);
+  const std = doc.standard;
+  if (!std || typeof std !== 'object') out.push('standard is required');
+  else {
+    for (const k of Object.keys(std)) if (!STANDARD.has(k)) out.push(`unknown key "standard.${k}" (allowed: name, url, license, note)`);
+    if (!bilingual(std.name)) out.push('standard.name needs ja and en, and nothing else (quote a text that contains a comma)');
+    if (std.url !== undefined && !isLink(std.url)) out.push(`standard.url must be an http(s) URL with a host, got ${JSON.stringify(std.url)}`);
+    if (std.license !== undefined && (typeof std.license !== 'string' || !std.license.trim())) out.push('standard.license must be a non-empty string');
+    if (std.note !== undefined && !bilingual(std.note)) out.push('standard.note needs ja and en, and nothing else (quote a text that contains a comma)');
+  }
+  if (doc.structure !== undefined && !bilingual(doc.structure)) out.push('structure needs ja and en, and nothing else (quote a text that contains a comma)');
+  const fields = doc.fields;
+  if (!fields || typeof fields !== 'object' || Array.isArray(fields) || !Object.keys(fields).length) { out.push('fields must map at least one field'); return out; }
+  const known = fieldNames(schema);
+  for (const [field, m] of Object.entries(fields)) {
+    const f = FIELD.exec(field);
+    if (!f) out.push(`${field}: not a field name`);
+    else if (!known.has(f[1])) out.push(`${field}: not a field of this model`);
+    else if (f[2] && !known.get(f[1])) out.push(`${field}: ${f[1]} is not an array, so it has no positions`);
+    if (!m || typeof m !== 'object' || Array.isArray(m) || !('to' in m)) { out.push(`${field}: needs "to" (the corresponding item, or null when there is none)`); continue; }
+    if (m.to !== null && (typeof m.to !== 'string' || !m.to.trim())) out.push(`${field}: "to" must be a non-empty string or null`);
+    for (const k of Object.keys(m)) if (k !== 'to' && k !== 'note') out.push(`${field}: unknown key "${k}" (allowed: to, note)`);
+    if (m.note !== undefined && !bilingual(m.note)) out.push(`${field}: note needs ja and en, and nothing else (quote a text that contains a comma)`);
+  }
+  return out;
+}

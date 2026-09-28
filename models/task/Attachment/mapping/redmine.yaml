@@ -9,7 +9,7 @@ fields:
   filename: { to: "filename" }
   encodingFormat: { to: "content_type" }
   contentSize: { to: "filesize" }
-  digest: { to: "digest", note: { ja: Redmine は SHA-256（旧 MD5）の16進のみ。アルゴリズム名を前置する, en: Redmine stores the hex digest (SHA-256, formerly MD5); prefix the algorithm } }
+  digest: { to: "digest", note: { ja: "Redmine は SHA-256（旧 MD5）の16進のみ。アルゴリズム名を前置する", en: "Redmine stores the hex digest (SHA-256, formerly MD5); prefix the algorithm" } }
   description: { to: "description" }
   dateCreated: { to: "created_on" }
   externalId: { to: "id" }

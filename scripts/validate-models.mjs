@@ -16,6 +16,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { loadSubjects, attributesOf, toKeyValues, subjectUrls, modelUrls, resolveContextTerms, CORE_CONTEXT_URL, CORE_CONTEXT_FIXTURE } from './lib/models.mjs';
 import { resolveContextDocument } from './lib/releases.mjs';
+import { mappingProblems } from './lib/mapping-check.mjs';
 import { reportFailures } from './lib/ci-summary.mjs';
 import { buildVocabulary } from './lib/vocab.mjs';
 
@@ -248,6 +249,9 @@ for (const subject of subjects) {
     const notes = (model.notes && typeof model.notes === 'object' && !Array.isArray(model.notes)) ? model.notes : {};
     if (notes.notes !== undefined && (!Array.isArray(notes.notes) || notes.notes.some((n) => typeof n !== 'string'))) fail(`${mwhere}/notes.yaml`, 'notes must be a list of strings (quote an entry that contains ": ")');
     if (notes.license !== undefined && typeof notes.license !== 'string') fail(`${mwhere}/notes.yaml`, 'license must be a string');
+
+    // Correspondence tables render on the model page: every field must be one of the model's.
+    for (const map of model.mappings ?? []) for (const msg of mappingProblems(map, model.schema)) fail(`${mwhere}/mapping/${map.name}.yaml`, msg);
 
     // Status and adopters (decided in #38): stable needs two independent
     // implementations, self-reported with a link and checked by a reviewer in
