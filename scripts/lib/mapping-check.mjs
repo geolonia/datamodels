@@ -5,18 +5,27 @@
 
 const FIELD = /^([A-Za-z][A-Za-z0-9]*)(\[\d+\])?$/;
 const TOP = new Set(['standard', 'fields', 'structure']);
+const STANDARD = new Set(['name', 'url', 'license', 'note']);
 // Exactly ja and en: in YAML's { … } form a comma inside the text starts a new
 // key, so an extra key means the text was cut there ("closed → completed, otherwise …").
 const bilingual = (v) => v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v).every((k) => k === 'ja' || k === 'en')
   && typeof v.ja === 'string' && v.ja.trim() !== '' && typeof v.en === 'string' && v.en.trim() !== '';
 const isLink = (u) => { if (typeof u !== 'string') return false; try { const x = new URL(u); return (x.protocol === 'https:' || x.protocol === 'http:') && x.hostname !== ''; } catch { return false; } };
 
-/** Every property name anywhere in a schema: attributes, and the members of value types such as Geometry's type and coordinates. */
+/**
+ * Every property name anywhere in a schema: attributes, and the members of
+ * value types such as Geometry's type and coordinates. The value says whether
+ * the property is an array somewhere (its own type, or a $ref within the
+ * schema such as Geometry's #/$defs/position), so a mapping may name a position.
+ */
 export function fieldNames(schema) {
-  const names = new Set();
+  const names = new Map();
+  const local = (ref) => typeof ref === 'string' && ref.startsWith('#/')
+    ? ref.slice(2).split('/').reduce((n, k) => n?.[k.replaceAll('~1', '/').replaceAll('~0', '~')], schema) : undefined;
+  const isArray = (p) => p?.type === 'array' || (Array.isArray(p?.type) && p.type.includes('array')) || local(p?.$ref)?.type === 'array';
   const walk = (node) => {
     if (!node || typeof node !== 'object') return;
-    if (node.properties && typeof node.properties === 'object') for (const k of Object.keys(node.properties)) names.add(k);
+    if (node.properties && typeof node.properties === 'object') for (const [k, p] of Object.entries(node.properties)) names.set(k, names.get(k) || isArray(p));
     for (const v of Object.values(node)) walk(v);
   };
   walk(schema);
@@ -35,6 +44,7 @@ export function mappingProblems(map, schema) {
   const std = doc.standard;
   if (!std || typeof std !== 'object') out.push('standard is required');
   else {
+    for (const k of Object.keys(std)) if (!STANDARD.has(k)) out.push(`unknown key "standard.${k}" (allowed: name, url, license, note)`);
     if (!bilingual(std.name)) out.push('standard.name needs ja and en, and nothing else (quote a text that contains a comma)');
     if (std.url !== undefined && !isLink(std.url)) out.push(`standard.url must be an http(s) URL with a host, got ${JSON.stringify(std.url)}`);
     if (std.license !== undefined && (typeof std.license !== 'string' || !std.license.trim())) out.push('standard.license must be a non-empty string');
@@ -48,6 +58,7 @@ export function mappingProblems(map, schema) {
     const f = FIELD.exec(field);
     if (!f) out.push(`${field}: not a field name`);
     else if (!known.has(f[1])) out.push(`${field}: not a field of this model`);
+    else if (f[2] && !known.get(f[1])) out.push(`${field}: ${f[1]} is not an array, so it has no positions`);
     if (!m || typeof m !== 'object' || Array.isArray(m) || !('to' in m)) { out.push(`${field}: needs "to" (the corresponding item, or null when there is none)`); continue; }
     if (m.to !== null && (typeof m.to !== 'string' || !m.to.trim())) out.push(`${field}: "to" must be a non-empty string or null`);
     for (const k of Object.keys(m)) if (k !== 'to' && k !== 'note') out.push(`${field}: unknown key "${k}" (allowed: to, note)`);
