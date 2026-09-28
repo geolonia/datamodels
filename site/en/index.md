@@ -10,6 +10,9 @@ hero:
       text: All data models
       link: /en/models/
     - theme: alt
+      text: Propose a model
+      link: https://github.com/geolonia/datamodels/issues/new?template=model-proposal.yml
+    - theme: alt
       text: catalog.json
       link: /catalog.json
     - theme: alt
@@ -18,9 +21,9 @@ hero:
 
 features:
   - title: Extend, do not duplicate
-    details: Smart Data Models are used as they are; only what Japan needs is added. The guide shows how, and how to contribute.
+    details: Smart Data Models are used as they are; only what Japan needs is added. The guide shows how.
     link: /en/guide/extend
-    linkText: Extend and contribute
+    linkText: Extending models
   - title: URLs that never change
     details: Published versioned @context files and JSON Schemas are never modified or removed. The guide says which URL to use when.
     link: /en/guide/urls

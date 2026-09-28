@@ -47,5 +47,5 @@ Each property keeps the catalog IRI in its `@context`, so the vocabulary is unch
 
 ## Related
 
-- [Extend and contribute](/en/guide/extend): when you need to **add** attributes or types
+- [Extending models](/en/guide/extend): when you need to **add** attributes or types
 - [Use with GeonicDB](/en/guide/geonicdb): what registering does, adding your own attributes
