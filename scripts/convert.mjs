@@ -63,6 +63,7 @@ const json = `${JSON.stringify(entities, null, 2)}\n`;
 if (out) await writeFile(out, json); else process.stdout.write(json);
 
 console.error(`${file}: ${encoding}, ${rows.length} row(s), ${entities.length} valid ${type}, ${invalid.length} invalid`);
+if (rows.skipped.length) console.error(`  skipped ${rows.skipped.length} record(s) with only empty fields: line ${rows.skipped.slice(0, 10).join(', ')}${rows.skipped.length > 10 ? ', …' : ''}`);
 for (const [k, e] of repairs) console.error(`  repaired ${e.n}×: ${k} (e.g. ${e.example})`);
 for (const x of invalid.slice(0, 20)) console.error(`  line ${x.line}: ${x.problems.join('; ')}`);
 if (invalid.length > 20) console.error(`  … ${invalid.length - 20} more`);

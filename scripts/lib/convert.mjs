@@ -30,7 +30,9 @@ export const LINE = Symbol('line');
  * inside an unquoted field, a missing or repeated header name, and a record
  * whose field count differs from the header's; surplus empty fields at the
  * end of a record, as spreadsheets write them, are allowed. Each row carries
- * its source line under LINE.
+ * its source line under LINE. A blank line is ignored; a record of empty fields
+ * only (",,,", as spreadsheets write empty rows) is left out and its line listed
+ * in the result's `skipped`, so it does not vanish unseen.
  */
 export function parseCsv(text) {
   const rows = [];
@@ -54,7 +56,9 @@ export function parseCsv(text) {
   }
   if (quoted) throw new Error(`line ${start}: a quoted field is not closed`);
   if (field !== '' || row.length) end();
-  const [head, ...body] = rows.filter((r) => r.fields.some((v) => v.trim() !== ''));
+  const blank = (r) => r.fields.every((v) => v.trim() === '');
+  const skipped = rows.filter((r) => blank(r) && r.fields.length > 1).map((r) => r.line);
+  const [head, ...body] = rows.filter((r) => !blank(r));
   if (!head) throw new Error('no header row');
   const names = head.fields.map((h) => h.trim());
   const repeated = names.filter((h, i) => names.indexOf(h) !== i);
@@ -62,7 +66,8 @@ export function parseCsv(text) {
   const n = names.length;
   const bad = body.filter((r) => r.fields.length < n || r.fields.slice(n).some((v) => v.trim() !== ''));
   if (bad.length) throw new Error(`${bad.slice(0, 5).map((r) => `line ${r.line}: ${r.fields.length} fields`).join(', ')}${bad.length > 5 ? ` and ${bad.length - 5} more` : ''} (the header has ${n})`);
-  return body.map((r) => Object.defineProperty(Object.fromEntries(names.map((h, i) => [h, r.fields[i].trim()])), LINE, { value: r.line }));
+  const out = body.map((r) => Object.defineProperty(Object.fromEntries(names.map((h, i) => [h, r.fields[i].trim()])), LINE, { value: r.line }));
+  return Object.defineProperty(out, 'skipped', { value: skipped.filter((l) => l > head.line) });
 }
 
 // 全国地方公共団体コード: the 5-digit JIS X 0402 code plus a check digit (MIC,

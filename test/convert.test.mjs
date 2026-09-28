@@ -141,3 +141,10 @@ test('--set does not fill a flags field', () => {
   const [r] = convertRows([{ n: 'a', 洪水: '' }], map, { type: 'T', set: { h: 'flood' } });
   assert.equal(r.entity.h, undefined);
 });
+
+test('a record of empty fields is left out but listed; a blank line is just ignored', () => {
+  const rows = parseCsv('id,name\n1,a\n,\n\n2,b\n,\n');
+  assert.deepEqual(rows.map((r) => r.id), ['1', '2']);
+  assert.deepEqual(rows.skipped, [3, 6]);
+  assert.deepEqual(parseCsv('id,name\n1,a\n').skipped, []);
+});
