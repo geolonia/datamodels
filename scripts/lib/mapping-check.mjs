@@ -47,6 +47,7 @@ export function mappingProblems(map, schema, mappingNames = null) {
   const { name, ...doc } = map ?? {};
   for (const k of Object.keys(doc)) if (!TOP.has(k)) out.push(`unknown key "${k}" (allowed: standard, fields, structure, convert)`);
   if (doc.convert !== undefined && (!doc.convert || typeof doc.convert.id !== 'string' || !/\{\w+\}/.test(doc.convert.id))) out.push('convert.id must be a template such as "urn:ngsi-ld:Type:{attribute}"');
+  else if (doc.convert) for (const k of Object.keys(doc.convert)) if (k !== 'id') out.push(`unknown key "convert.${k}" (allowed: id)`);
   const std = doc.standard;
   if (!std || typeof std !== 'object') out.push('standard is required');
   else {

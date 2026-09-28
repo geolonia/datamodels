@@ -22,6 +22,7 @@ const sets = []; for (let i = args.indexOf('--set'); i !== -1; i = args.indexOf(
 const out = flag('--out');
 const normalized = args.includes('--normalized') && args.splice(args.indexOf('--normalized'), 1);
 const [target, mappingName, file] = args;
+if (sets.some((kv) => typeof kv !== 'string' || kv.indexOf('=') < 1)) { console.error('--set needs attribute=value'); process.exit(2); }
 if (!target || !mappingName || !file) { console.error('usage: npm run convert -- <subject>/<Type> <mapping> <file.csv> [--set attr=value] [--normalized] [--out file.json]'); process.exit(2); }
 
 const subjects = await loadSubjects();

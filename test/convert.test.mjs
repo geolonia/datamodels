@@ -78,3 +78,11 @@ test('a row without the values the id needs is reported, not guessed', () => {
   assert.match(r.problems.join(' '), /id: no localGovernmentCode, externalSiteId/);
   assert.equal(r.entity.id, undefined);
 });
+
+test('a flag is 1, 0 or empty; any other mark is reported instead of read as false', () => {
+  const map = { convert: { id: 'urn:ngsi-ld:T:{n}' }, fields: { n: { to: 'n', column: 'n' }, f: { to: 'f', column: 'f', transform: 'flag' } } };
+  const [one, empty, mark] = convertRows([{ n: 'a', f: '1' }, { n: 'b', f: '' }, { n: 'c', f: '○' }], map, { type: 'T' });
+  assert.equal(one.entity.f, true);
+  assert.equal(empty.entity.f, false);
+  assert.deepEqual(mark.problems, ['f: f: ○ is not 1, 0 or empty']);
+});

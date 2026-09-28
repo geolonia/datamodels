@@ -47,6 +47,7 @@ test('conversion rules are checked: columns, known transforms, flags values, via
   assert.deepEqual(rule({ column: 'a', value: 'b' }), ['progress: use one of column, value and via']);
   assert.deepEqual(mappingProblems({ ...ok, convert: { id: 'urn:ngsi-ld:Task:1' } }, task), ['convert.id must be a template such as "urn:ngsi-ld:Type:{attribute}"']);
   assert.deepEqual(mappingProblems({ ...ok, convert: { id: 'urn:ngsi-ld:Task:{externalId}' } }, task), []);
+  assert.deepEqual(mappingProblems({ ...ok, convert: { id: 'urn:ngsi-ld:Task:{externalId}', ids: 'x' } }, task), ['unknown key "convert.ids" (allowed: id)']);
 });
 
 test('a value type maps its own members, with array positions', () => {

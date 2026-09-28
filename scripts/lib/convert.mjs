@@ -80,7 +80,8 @@ function apply(rule, row, set) {
       const ns = raw.map(Number);
       return ns.every(Number.isFinite) && raw.every((x) => x) ? { value: ns } : { problem: `${cols.join(', ')}: not all numbers (${raw.join(', ')})` };
     }
-    case 'flag': return { value: one === '1' };
+    // Lists mark a flag with 1 and leave it empty (or 0) otherwise; anything else is reported, not read as false.
+    case 'flag': return one === '1' ? { value: true } : one === '' || one === '0' ? { value: false } : { problem: `${cols[0]}: ${one} is not 1, 0 or empty` };
     case 'flags': { const vs = Object.entries(rule.values ?? {}).filter(([c]) => row[c] === '1').map(([, v]) => v); return { value: vs.length ? vs : undefined }; }
     case 'split': { const vs = one.split(/[;；]/).map((x) => x.trim()).filter(Boolean); return { value: vs.length ? vs : undefined }; }
     // A municipality name ends in 市, 区, 町 or 村; a value that goes on (宇都宮市中央本町1-29) is the rest of the address.
