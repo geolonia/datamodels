@@ -18,6 +18,9 @@ attributes:
   localGovernmentCode:
     ja: 一覧を公開する自治体の全国地方公共団体コード（総務省「全国地方公共団体コード仕様」（平成19年4月1日）に基づく、検査数字を含む6桁）
     en: Local government code of the municipality that publishes the shelter list (全国地方公共団体コード per MIC's "全国地方公共団体コード仕様", 2007-04-01; 6 digits including the check digit)
+  shelter:
+    ja: この運用状況が対象とする指定避難所（DesignatedShelter）
+    en: The designated shelter (DesignatedShelter) this operation record is for
   site:
     ja: 同じ場所にある指定緊急避難場所（EvacuationSite）。避難所が指定緊急避難場所を兼ねるとき
     en: The designated emergency evacuation site (EvacuationSite) at the same place, when the shelter is also one

@@ -4,10 +4,13 @@
     {
       "disaster": "https://datamodels.jp/ns/disaster/",
       "tm": "https://datamodels.jp/ns/task/",
+      "DesignatedShelter": "disaster:DesignatedShelter",
       "EvacuationShelter": "disaster:EvacuationShelter",
       "EvacuationSite": "disaster:EvacuationSite",
       "alsoDesignatedShelter": "disaster:alsoDesignatedShelter",
+      "alsoEmergencyEvacuationSite": "disaster:alsoEmergencyEvacuationSite",
       "closedAt": "disaster:closedAt",
+      "designationNotes": "disaster:designationNotes",
       "elevation": "disaster:elevation",
       "evacueeFemale": "disaster:evacueeFemale",
       "evacueeHouseholds": "disaster:evacueeHouseholds",
@@ -23,9 +26,12 @@
       "nationalShelterId": "disaster:nationalShelterId",
       "openedAt": "disaster:openedAt",
       "openingStatus": "disaster:openingStatus",
+      "shelter": "disaster:shelter",
+      "shelterType": "disaster:shelterType",
       "site": "disaster:site",
       "statusLabel": "tm:statusLabel",
       "targetAreas": "disaster:targetAreas",
+      "targetEvacuees": "disaster:targetEvacuees",
       "telephone": "schema:telephone",
       "url": "schema:url"
     }

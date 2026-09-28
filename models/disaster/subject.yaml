@@ -6,8 +6,8 @@ title:
   ja: 災害対応
   en: Disaster response
 description:
-  ja: 自治体の災害対応を表すデータモデル。現在は指定緊急避難場所（EvacuationSite、自治体が公開する一覧のマスタ）と避難所運用状況（EvacuationShelter）。独自の型で、状態の呼び方（statusLabel）はタスク管理の IRI を使います。災害対応のオペレーションとのひも付けはアプリケーション側で行います（タスク管理の Task の refersTo など）。通行止めなどの通行規制は交通（transportation）サブジェクトの RoadRestriction です。高松市の水防アプリのデータモデルを基に汎用化したもの。
-  en: Data models for municipal disaster response. Currently designated emergency evacuation sites (EvacuationSite, the master of the lists municipalities publish) and shelter operation (EvacuationShelter), their own types; the local status wording (statusLabel) uses the task subject's IRI. Linking entities to a disaster-response operation is left to the application (for example refersTo from a task subject Task). Road closures and other road restrictions are RoadRestriction in the transportation subject. Generalised from the data models of Takamatsu City's flood-response application.
+  ja: 自治体の災害対応を表すデータモデル。現在は指定緊急避難場所（EvacuationSite、自治体が公開する一覧のマスタ）、指定避難所（DesignatedShelter、国土地理院が公開するマスタ）と避難所運用状況（EvacuationShelter）。独自の型で、状態の呼び方（statusLabel）はタスク管理の IRI を使います。災害対応のオペレーションとのひも付けはアプリケーション側で行います（タスク管理の Task の refersTo など）。通行止めなどの通行規制は交通（transportation）サブジェクトの RoadRestriction です。高松市の水防アプリのデータモデルを基に汎用化したもの。
+  en: Data models for municipal disaster response. Currently designated emergency evacuation sites (EvacuationSite, the master of the lists municipalities publish), designated shelters (DesignatedShelter, the master GSI publishes) and shelter operation (EvacuationShelter), their own types; the local status wording (statusLabel) uses the task subject's IRI. Linking entities to a disaster-response operation is left to the application (for example refersTo from a task subject Task). Road closures and other road restrictions are RoadRestriction in the transportation subject. Generalised from the data models of Takamatsu City's flood-response application.
 source: minted            # minted | profile | global
 origin:
   repository: https://github.com/geolonia/geonicdb-datamodels
