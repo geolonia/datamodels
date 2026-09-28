@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = join(fileURLToPath(import.meta.url), '..', '..');
 
-async function validateWith({ status, adopters }) {
+async function validateWith({ status, adopters, catalogExtra }) {
   const dir = await mkdtemp(join(tmpdir(), 'datamodels-stable-'));
   try {
     await cp(join(root, 'models'), dir, { recursive: true });
@@ -20,6 +20,7 @@ async function validateWith({ status, adopters }) {
       await writeFile(f, (await readFile(f, 'utf8')).replace(/^status: draft$/m, `status: ${status}`));
     }
     if (adopters !== undefined) await writeFile(join(m, 'ADOPTERS.yaml'), adopters);
+    if (catalogExtra !== undefined) { const f = join(m, 'catalog.yaml'); await writeFile(f, (await readFile(f, 'utf8')) + catalogExtra); }
     return spawnSync(process.execPath, [join(root, 'scripts', 'validate-models.mjs')], { env: { ...process.env, DATAMODELS_MODELS_DIR: dir }, encoding: 'utf8' });
   } finally {
     await rm(dir, { recursive: true, force: true });
@@ -77,6 +78,18 @@ test('an explicit null status fails', async () => {
   const r = await validateWith({ status: 'null' });
   assert.equal(r.status, 1);
   assert.match(r.stderr, /Comment\/catalog\.yaml: status must be draft, stable or deprecated, got null/);
+});
+
+test('a deprecated model may name its replacement', async () => {
+  const r = await validateWith({ status: 'deprecated', catalogExtra: 'supersededBy: https://datamodels.jp/ns/task/Task\n' });
+  assert.equal(r.status, 0, r.stderr);
+});
+
+test('supersededBy on a model that is not deprecated, or not a URL, fails', async () => {
+  let r = await validateWith({ catalogExtra: 'supersededBy: https://datamodels.jp/ns/task/Task\n' });
+  assert.match(r.stderr, /Comment\/catalog\.yaml: supersededBy is only for status deprecated, the status is draft/);
+  r = await validateWith({ status: 'deprecated', catalogExtra: 'supersededBy: Task\n' });
+  assert.match(r.stderr, /supersededBy must be an http\(s\) URL with a host/);
 });
 
 test('an unknown status fails', async () => {
