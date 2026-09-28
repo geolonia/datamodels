@@ -1,9 +1,9 @@
 ---
-title: Extend and contribute
-description: How to extend an existing data model for Japan, add your own, and contribute to the catalog
+title: Extending models
+description: How to extend an existing data model for Japan, add your own, the rules, and how to write examples
 ---
 
-# Extend and contribute
+# Extending models
 
 The rule of this catalog is "extend, do not duplicate". Types and attributes of the global [Smart Data Models](https://smartdatamodels.org/) are used as they are; only attributes needed in Japan and Japan-specific models are added. This page shows how that works in practice.
 
@@ -70,10 +70,4 @@ Every model has two examples (key-values and normalized). They appear on the mod
 
 ## Contributing
 
-The catalog lives in the public repository [geolonia/datamodels](https://github.com/geolonia/datamodels). Japanese and English are both welcome. The rules, stages and who decides, the steps and the sign-off (DCO) are in [CONTRIBUTING.md](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md).
-
-- **Adding or changing a model**: open a pull request using the [Smart Data Models folder layout](https://github.com/geolonia/datamodels#repository-layout) (`schema.json`, `catalog.yaml`, `examples/`, `notes.yaml`). For a new model, `npm run new-model -- <subject> <Type>` creates the files; `npm run validate:models` lists the TODOs still open. CI validates schemas, examples, `@context` expansion, protected terms and versions.
-- **Questions, proposals, reports**: open an [issue](https://github.com/geolonia/datamodels/issues). "I need this model" and "I do not understand this attribute" are welcome too.
-- **Proposing upstream**: a model that turns out to be useful beyond Japan is proposed to Smart Data Models via [incubated](https://github.com/smart-data-models/incubated). The shared folder layout exists for exactly this.
-
-Published model content is [CC BY 4.0](/LICENSE-CONTENT); the tooling is Apache-2.0.
+How to propose, the stages and who decides, the pull request steps and the sign-off (DCO) are in [Contributing](/en/guide/contribute).

@@ -10,6 +10,9 @@ hero:
       text: データモデル一覧
       link: /models/
     - theme: alt
+      text: モデルを提案する
+      link: https://github.com/geolonia/datamodels/issues/new?template=model-proposal.yml
+    - theme: alt
       text: catalog.json
       link: /catalog.json
     - theme: alt
@@ -20,7 +23,7 @@ features:
   - title: 拡張する、複製しない
     details: Smart Data Models の型と属性はそのまま使い、日本向けの属性や日本固有のモデルだけを追加します。やり方と貢献の仕方はガイドへ。
     link: /guide/extend
-    linkText: 拡張する・貢献する
+    linkText: 拡張する
   - title: 変わらない URL
     details: 公開したバージョン付きの @context と JSON Schema は変更も削除もされません。どの URL を使うべきかはガイドへ。
     link: /guide/urls

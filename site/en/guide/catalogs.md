@@ -30,4 +30,4 @@ This catalog references and extends what exists elsewhere instead of copying it.
 
 Use the [search](https://smartdatamodels.org/index.php/list-of-data-models-3/) on the Smart Data Models site or browse the `dataModel.<Subject>` repositories in the [smart-data-models](https://github.com/smart-data-models) GitHub organisation. GeonicDB's MCP tool `data_models` lists and searches them too.
 
-To extend a model you found for Japan, see [Extend and contribute](/en/guide/extend). To have it listed in this catalog, open an [issue](https://github.com/geolonia/datamodels/issues).
+To extend a model you found for Japan, see [Extending models](/en/guide/extend). To have it listed in this catalog, open an [issue](https://github.com/geolonia/datamodels/issues).

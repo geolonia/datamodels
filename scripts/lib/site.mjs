@@ -23,6 +23,7 @@ const T = {
     contextExact: '（このバージョン、不変）', contextAlias: '（エイリアス、互換性のある最新版）', schema: 'JSON Schema', examples: '例',
     source: 'ソース', namespace: '名前空間', version: 'バージョン', vocabulary: '語彙', vocabularyNote: '（RDFS: クラス、サブクラス関係、日英ラベル）',
     required: '必須', pii: '個人情報', deprecated: '非推奨', value: '値', relationshipTo: '→', license: 'このページのモデル内容は CC BY 4.0 で提供されています。',
+    improveTitle: '改善の提案', improve: (issue, form, guide) => `属性が足りない、説明がおかしいと思ったら、[Issue で知らせてください](${issue})。新しい属性やモデルは[提案フォーム](${form})から。進め方は[貢献する](${guide})にあります。`,
     valueType: '値型', valueTypeNote: 'これはエンティティ型ではなく、属性の値として使う構造です。', fields: 'フィールド', versions: 'バージョン', current: '現行', usage: '使い方',
     subjectsIntro: 'サブジェクトごとに 1 つの `@context` を公開しています。型と属性の IRI は `/ns/<subject>/<term>` で解決できます。',
     statusLabel: { draft: 'ドラフト', stable: '安定', deprecated: '非推奨' },
@@ -37,6 +38,7 @@ const T = {
     contextExact: '(this version, immutable)', contextAlias: '(alias, latest compatible version)', schema: 'JSON Schema', examples: 'Examples',
     source: 'Source', namespace: 'Namespace', version: 'Version', vocabulary: 'Vocabulary', vocabularyNote: '(RDFS: classes, subclass relations, ja/en labels)',
     required: 'required', pii: 'personal data', deprecated: 'deprecated', value: 'Value', relationshipTo: '→', license: 'Model content on this page is licensed under CC BY 4.0.',
+    improveTitle: 'Something missing or wrong?', improve: (issue, form, guide) => `[Open an issue](${issue}), or propose new attributes or models with the [proposal form](${form}). How it works: [Contributing](${guide}).`,
     valueType: 'value type', valueTypeNote: 'This is not an entity type but a structure used as the value of an attribute.', fields: 'Fields', versions: 'Versions', current: 'current', usage: 'Usage',
     subjectsIntro: 'One `@context` is published per subject. Type and attribute IRIs resolve at `/ns/<subject>/<term>`.',
     statusLabel: { draft: 'draft', stable: 'stable', deprecated: 'deprecated' },
@@ -144,6 +146,9 @@ function modelPage(lang, prefix, subject, model) {
   }
   const notes = model.notes?.notes ?? [];
   if (notes.length) md += `## ${t.notes} {#notes}\n\n${notes.map((n) => `- ${n}`).join('\n')}\n\n`;
+  // Invite corrections where readers notice them: an issue titled after the type, or the proposal form.
+  const repo = 'https://github.com/geolonia/datamodels';
+  md += `::: tip ${t.improveTitle}\n${t.improve(`${repo}/issues/new?title=${encodeURIComponent(`${model.type}: `)}`, `${repo}/issues/new?template=model-proposal.yml`, `${prefix}/guide/contribute`)}\n:::\n\n`;
   md += `<small>${t.license} [LICENSE-CONTENT](/LICENSE-CONTENT)</small>\n`;
   return md;
 }

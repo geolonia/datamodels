@@ -18,7 +18,8 @@ function addVPreToInlineCode(md: MarkdownIt) {
 
 const guides = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.SidebarItem[] => [
   { text: lang === 'ja' ? '使い方' : 'Using the models', link: `${prefix}/guide/use` },
-  { text: lang === 'ja' ? '拡張する・貢献する' : 'Extend and contribute', link: `${prefix}/guide/extend` },
+  { text: lang === 'ja' ? '拡張する' : 'Extending models', link: `${prefix}/guide/extend` },
+  { text: lang === 'ja' ? '貢献する' : 'Contributing', link: `${prefix}/guide/contribute` },
   { text: lang === 'ja' ? '変わらない URL' : 'URLs that never change', link: `${prefix}/guide/urls` },
   { text: lang === 'ja' ? '他のデータモデルカタログ' : 'Other data model catalogs', link: `${prefix}/guide/catalogs` },
   { text: 'Tips & Tricks', link: `${prefix}/guide/tips` },

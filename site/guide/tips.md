@@ -47,5 +47,5 @@ node adapters/geonicdb/export.mjs task --type Task --rename assignee=responsible
 
 ## 関連
 
-- [拡張する・貢献する](/guide/extend): 属性や型を**足す**とき
+- [拡張する](/guide/extend): 属性や型を**足す**とき
 - [GeonicDB で使う](/guide/geonicdb): 登録すると何が起きるか、独自の属性を足すとき

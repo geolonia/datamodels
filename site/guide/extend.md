@@ -1,9 +1,9 @@
 ---
-title: 拡張する・貢献する
-description: 既存のデータモデルを日本向けに拡張する方法、独自モデルを追加する方法、カタログへの貢献の仕方
+title: 拡張する
+description: 既存のデータモデルを日本向けに拡張する方法、独自モデルを追加する方法、守るルール、例の書き方
 ---
 
-# 拡張する・貢献する
+# 拡張する
 
 このカタログの方針は「拡張する、複製しない」です。世界で使われている [Smart Data Models](https://smartdatamodels.org/) の型と属性はそのまま使い、日本で必要な属性や日本固有のモデルだけを足します。このページでは、実際にどうやるかを説明します。
 
@@ -70,10 +70,4 @@ description: 既存のデータモデルを日本向けに拡張する方法、�
 
 ## 貢献する
 
-このカタログは公開リポジトリ [geolonia/datamodels](https://github.com/geolonia/datamodels) で管理しています。日本語でも英語でも構いません。ルール、段階と決め方、手順、署名（DCO）は [CONTRIBUTING.md](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md) にまとめています。
-
-- **モデルの追加・修正**: [Smart Data Models と同じフォルダ構成](https://github.com/geolonia/datamodels#repository-layout)（`schema.json`, `catalog.yaml`, `examples/`, `notes.yaml`）で Pull Request を送ってください。新しいモデルは `npm run new-model -- <サブジェクト> <型名>` でひな形を作れます。書き残した箇所（TODO）は `npm run validate:models` が一覧にします。CI がスキーマ、例、`@context` の展開、予約語、バージョンを検証します。
-- **質問・提案・報告**: [Issue](https://github.com/geolonia/datamodels/issues) を開いてください。「このモデルが欲しい」「この属性の意味が分からない」も歓迎です。
-- **上流への提案**: 日本以外でも使えるモデルになったら、Smart Data Models の [incubated](https://github.com/smart-data-models/incubated) に提案します。フォルダ構成を揃えているのはこのためです。
-
-公開したモデルの内容は [CC BY 4.0](/LICENSE-CONTENT)、ツールのコードは Apache-2.0 です。
+提案の仕方、段階と決め方、Pull Request の手順、署名（DCO）は[貢献する](/guide/contribute)にまとめています。
