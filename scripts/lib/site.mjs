@@ -101,7 +101,8 @@ function modelPage(lang, prefix, subject, model) {
     // supersededBy is a type IRI of this catalog (link its page) or any other URL.
     const next = model.catalog.supersededBy;
     const found = next ? modelForIri(subject, next) : null;
-    md += `> ${t.deprecatedNote(found ? modelLink(prefix, found) : next ? `[${next}](${next})` : null)}\n\n`;
+    // Serialise the URL for the link destination: a raw space would stop Markdown from parsing it as a link.
+    md += `> ${t.deprecatedNote(found ? modelLink(prefix, found) : next ? `[${next}](${new URL(next).href})` : null)}\n\n`;
   }
   if (aliasOf) md += `> ${t.aliasNote(modelLink(prefix, aliasOf))}\n\n`;
   if (subclassOf) md += `> ${t.subclassNote(modelLink(prefix, subclassOf))}\n\n`;
