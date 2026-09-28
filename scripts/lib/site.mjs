@@ -65,7 +65,8 @@ let allSubjects = [];
 // shows the IRI JSON-LD actually produces (description -> dcterms).
 const CORE_TERMS = (() => {
   const ctx = JSON.parse(readFileSync(join(ROOT, 'test', 'fixtures', 'ngsi-ld-core-context-v1.8.jsonld'), 'utf8'))['@context'];
-  const expand = (v) => { const [pre, rest] = v.split(':'); return rest !== undefined && typeof ctx[pre] === 'string' && !v.includes('//') ? ctx[pre] + rest : v; };
+  // A compact IRI (prefix:rest) expands through the prefix; full IRIs stay as they are.
+  const expand = (v) => { const i = v.indexOf(':'); const pre = v.slice(0, i); return i > 0 && !v.includes('//') && typeof ctx[pre] === 'string' ? ctx[pre] + v.slice(i + 1) : v; };
   return Object.fromEntries(Object.entries(ctx).map(([k, v]) => [k, typeof v === 'string' ? expand(v) : v?.['@id'] ? expand(v['@id']) : null]).filter(([, v]) => v));
 })();
 
