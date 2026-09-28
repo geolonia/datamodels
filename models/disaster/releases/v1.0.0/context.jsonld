@@ -5,16 +5,29 @@
       "disaster": "https://datamodels.jp/ns/disaster/",
       "tm": "https://datamodels.jp/ns/task/",
       "EvacuationShelter": "disaster:EvacuationShelter",
+      "EvacuationSite": "disaster:EvacuationSite",
+      "alsoDesignatedShelter": "disaster:alsoDesignatedShelter",
       "closedAt": "disaster:closedAt",
+      "elevation": "disaster:elevation",
       "evacueeFemale": "disaster:evacueeFemale",
       "evacueeHouseholds": "disaster:evacueeHouseholds",
       "evacueeMale": "disaster:evacueeMale",
       "evacueeTotal": "disaster:evacueeTotal",
       "externalShelterId": "disaster:externalShelterId",
+      "externalSiteId": "disaster:externalSiteId",
+      "hazardTypes": "disaster:hazardTypes",
+      "maxCapacity": "disaster:maxCapacity",
+      "name": "https://uri.etsi.org/ngsi-ld/name",
+      "nameEn": "disaster:nameEn",
+      "nameKana": "disaster:nameKana",
       "nationalShelterId": "disaster:nationalShelterId",
       "openedAt": "disaster:openedAt",
       "openingStatus": "disaster:openingStatus",
-      "statusLabel": "tm:statusLabel"
+      "site": "disaster:site",
+      "statusLabel": "tm:statusLabel",
+      "targetAreas": "disaster:targetAreas",
+      "telephone": "schema:telephone",
+      "url": "schema:url"
     }
   ]
 }

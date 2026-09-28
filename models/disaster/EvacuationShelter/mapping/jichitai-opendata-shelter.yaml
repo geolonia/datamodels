@@ -29,8 +29,8 @@ fields:
   evacueeTotal:
     to: null
     note:
-      ja: 想定収容人数（maxCapacity）はマスタ側
-      en: maxCapacity is on the master side
+      ja: 想定収容人数（maxCapacity）はマスタ側（EvacuationSite の maxCapacity）
+      en: maxCapacity is on the master side (EvacuationSite's maxCapacity)
   evacueeFemale:
     to: null
   evacueeMale:
