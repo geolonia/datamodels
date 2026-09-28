@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = join(fileURLToPath(import.meta.url), '..', '..');
 
-async function validateWith({ status, adopters }) {
+async function validateWith({ status, adopters, catalogExtra }) {
   const dir = await mkdtemp(join(tmpdir(), 'datamodels-stable-'));
   try {
     await cp(join(root, 'models'), dir, { recursive: true });
@@ -20,6 +20,7 @@ async function validateWith({ status, adopters }) {
       await writeFile(f, (await readFile(f, 'utf8')).replace(/^status: draft$/m, `status: ${status}`));
     }
     if (adopters !== undefined) await writeFile(join(m, 'ADOPTERS.yaml'), adopters);
+    if (catalogExtra !== undefined) { const f = join(m, 'catalog.yaml'); await writeFile(f, (await readFile(f, 'utf8')) + catalogExtra); }
     return spawnSync(process.execPath, [join(root, 'scripts', 'validate-models.mjs')], { env: { ...process.env, DATAMODELS_MODELS_DIR: dir }, encoding: 'utf8' });
   } finally {
     await rm(dir, { recursive: true, force: true });
@@ -79,8 +80,34 @@ test('an explicit null status fails', async () => {
   assert.match(r.stderr, /Comment\/catalog\.yaml: status must be draft, stable or deprecated, got null/);
 });
 
+test('a deprecated model may name its replacement', async () => {
+  const r = await validateWith({ status: 'deprecated', catalogExtra: 'supersededBy: https://datamodels.jp/ns/task/Task\n' });
+  assert.equal(r.status, 0, r.stderr);
+});
+
+test('supersededBy on a model that is not deprecated, or not a URL, fails', async () => {
+  let r = await validateWith({ catalogExtra: 'supersededBy: https://datamodels.jp/ns/task/Task\n' });
+  assert.match(r.stderr, /Comment\/catalog\.yaml: supersededBy is only for status deprecated, the status is draft/);
+  r = await validateWith({ status: 'deprecated', catalogExtra: 'supersededBy: Task\n' });
+  assert.match(r.stderr, /supersededBy must be an http\(s\) URL with a host/);
+});
+
 test('an unknown status fails', async () => {
   const r = await validateWith({ status: 'beta' });
   assert.equal(r.status, 1);
   assert.match(r.stderr, /Comment\/catalog\.yaml: status must be draft, stable or deprecated, got "beta"/);
+});
+
+test('an outside supersededBy URL renders as a link to exactly that URL', async () => {
+  const { createMarkdownRenderer } = await import('vitepress');
+  const { externalLink } = await import('../scripts/lib/site.mjs');
+  const md = await createMarkdownRenderer(join(root, 'site'));
+  for (const url of ['https://example.org/models/Next', 'https://example.org/a b', 'https://example.org/x_(y', 'https://example.org/p)q]r*s_t_', 'https://example.org/q?a=<b>#f']) {
+    const html = md.render(externalLink(url));
+    const a = html.match(/<a href="([^"]*)"[^>]*>(.*?)<\/a>/);
+    assert.ok(a, `${url}: no link in ${html}`);
+    // markdown-it percent-encodes some characters again (] -> %5D): the same URL.
+    assert.equal(decodeURI(a[1].replaceAll('&amp;', '&')), decodeURI(new URL(url).href), `${url}: href`);
+    assert.equal(a[2].replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&amp;', '&'), url, `${url}: text`);
+  }
 });
