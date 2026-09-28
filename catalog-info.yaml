@@ -16,7 +16,7 @@ metadata:
       icon: docs
 spec:
   type: 'website'
-  lifecycle: 'experimental'
+  lifecycle: 'production'
   owner: group:geolonia/geonicdb
   # accessGrants:
   #   - team: group:geolonia/team-name
