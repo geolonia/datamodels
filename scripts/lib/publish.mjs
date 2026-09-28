@@ -70,6 +70,7 @@ export async function publishModels(subjects, adapters = []) {
         ...(Object.keys(adapterUrls).length ? { adapters: adapterUrls } : {}),
         ...(model.schema['x-alias-of'] ? { aliasOf: model.schema['x-alias-of'] } : {}),
         ...(model.schema['x-subclass-of'] ? { subClassOf: model.schema['x-subclass-of'] } : {}),
+        ...(model.catalog.supersededBy ? { supersededBy: model.catalog.supersededBy } : {}),
       });
     }
   }

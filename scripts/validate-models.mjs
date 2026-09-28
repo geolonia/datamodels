@@ -257,6 +257,12 @@ for (const subject of subjects) {
     if (!['draft', 'stable', 'deprecated'].includes(status)) fail(`${mwhere}/catalog.yaml`, `status must be draft, stable or deprecated, got ${JSON.stringify(status)}`);
     // A link must name a host: "https://" alone identifies no implementation.
     const isLink = (u) => { if (typeof u !== 'string') return false; try { const x = new URL(u); return (x.protocol === 'https:' || x.protocol === 'http:') && x.hostname !== ''; } catch { return false; } };
+    // A deprecated model may name its replacement (catalog.json supersededBy).
+    const successor = model.catalog?.supersededBy;
+    if (successor !== undefined) {
+      if (status !== 'deprecated') fail(`${mwhere}/catalog.yaml`, `supersededBy is only for status deprecated, the status is ${status}`);
+      if (!isLink(successor)) fail(`${mwhere}/catalog.yaml`, `supersededBy must be an http(s) URL with a host (the replacement's type IRI or page), got ${JSON.stringify(successor)}`);
+    }
     const list = model.adopters?.adopters;
     if (model.adopters != null && (typeof model.adopters !== 'object' || Array.isArray(model.adopters) || !Array.isArray(list))) {
       fail(`${mwhere}/ADOPTERS.yaml`, 'root value must be a mapping with an adopters list');
