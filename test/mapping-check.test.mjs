@@ -19,9 +19,19 @@ test('a field that is not in the model, or a malformed row, is reported', () => 
   assert.deepEqual(mappingProblems({ ...ok, fields: { progres: { to: 'state' } } }, task), ['progres: not a field of this model']);
   assert.deepEqual(mappingProblems({ ...ok, fields: { progress: 'state' } }, task), ['progress: needs "to" (the corresponding item, or null when there is none)']);
   assert.deepEqual(mappingProblems({ ...ok, fields: { progress: { to: '' } } }, task), ['progress: "to" must be a non-empty string or null']);
-  assert.deepEqual(mappingProblems({ ...ok, fields: { progress: { to: null, note: { ja: 'なし' } } } }, task), ['progress: note needs ja and en']);
+  assert.deepEqual(mappingProblems({ ...ok, fields: { progress: { to: null, note: { ja: 'なし' } } } }, task), ['progress: note needs ja and en, and nothing else (quote a text that contains a comma)']);
   assert.deepEqual(mappingProblems({ ...ok, fields: { progress: { to: 'a', notes: 'x' } } }, task), ['progress: unknown key "notes" (allowed: to, note)']);
   assert.deepEqual(mappingProblems({ ...ok, fields: {} }, task), ['fields must map at least one field']);
+});
+
+test('a text cut at a comma by YAML is reported', async () => {
+  // { ja: …, en: closed → completed, otherwise … } parses as three keys.
+  const { parse } = await import('yaml');
+  const cut = parse('progress: { to: status, note: { ja: 完了, en: closed → completed, otherwise needs-action } }');
+  assert.deepEqual(Object.keys(cut.progress.note), ['ja', 'en', 'otherwise needs-action']);
+  assert.deepEqual(mappingProblems({ ...ok, fields: cut }, task), ['progress: note needs ja and en, and nothing else (quote a text that contains a comma)']);
+  const quoted = parse('progress: { to: status, note: { ja: 完了, en: "closed → completed, otherwise needs-action" } }');
+  assert.deepEqual(mappingProblems({ ...ok, fields: quoted }, task), []);
 });
 
 test('a value type maps its own members, with array positions', () => {
@@ -30,10 +40,10 @@ test('a value type maps its own members, with array positions', () => {
 });
 
 test('the standard needs a bilingual name; url, licence, note and structure are checked when present', () => {
-  assert.deepEqual(mappingProblems({ ...ok, standard: { name: { ja: '標準' } } }, task), ['standard.name needs ja and en']);
+  assert.deepEqual(mappingProblems({ ...ok, standard: { name: { ja: '標準' } } }, task), ['standard.name needs ja and en, and nothing else (quote a text that contains a comma)']);
   assert.deepEqual(mappingProblems({ ...ok, standard: { ...ok.standard, url: 'example.org' } }, task), ['standard.url must be an http(s) URL with a host, got "example.org"']);
-  assert.deepEqual(mappingProblems({ ...ok, standard: { ...ok.standard, note: { en: 'only English' } } }, task), ['standard.note needs ja and en']);
-  assert.deepEqual(mappingProblems({ ...ok, structure: { ja: '構造' } }, task), ['structure needs ja and en']);
+  assert.deepEqual(mappingProblems({ ...ok, standard: { ...ok.standard, note: { en: 'only English' } } }, task), ['standard.note needs ja and en, and nothing else (quote a text that contains a comma)']);
+  assert.deepEqual(mappingProblems({ ...ok, structure: { ja: '構造' } }, task), ['structure needs ja and en, and nothing else (quote a text that contains a comma)']);
   assert.deepEqual(mappingProblems({ ...ok, feilds: {} }, task), ['unknown key "feilds" (allowed: standard, fields, structure)']);
   const { standard, ...noStandard } = ok;
   assert.deepEqual(mappingProblems(noStandard, task), ['standard is required']);
