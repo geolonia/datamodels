@@ -3,19 +3,20 @@
   "prerelease": true,
   "files": {
     "context/common/v1.0.0.jsonld": "59fe038a9d8c1f459a86940f17371f1b5842942940afa68da4f21502e07b453d",
-    "context/disaster/v1.0.0.jsonld": "977db8c8fca0b692e527f4b27f0ab5316829ef3bd275cecf6621378f210dfd9b",
+    "context/disaster/v1.0.0.jsonld": "3553d30377a04257c18ce83e00a16313cdd03a93212dc7d5c275fc7d766378e7",
     "context/task/v1.0.0.jsonld": "7c542815fe5f9982372b8587c1a55f869b9a830ed6c7a5f3b3eddbb0e10d5d4c",
     "context/transportation/v1.0.0.jsonld": "b905627971574e6cacd2621d78198bb4c7f36a2358329fc3b588cba53048fa01",
     "schema/common/Geometry/v1.0.0.json": "370263be66dbaf5bec92ef1017a6cff8c3183373679a6d63e993fd055777a295",
     "schema/common/JapaneseAddress/v1.0.0.json": "1edbf84226b4280b880cd58e749dc77e3eae05641d4efbff11d79e5d3af1c46b",
-    "schema/disaster/EvacuationShelter/v1.0.0.json": "7dc508c4f7a330efd98215cb9049c79d89a20478131db9ac898cf48750f4d7d2",
+    "schema/disaster/EvacuationShelter/v1.0.0.json": "0b97d000b9cd481b4ab8ab1b555eb2c8c17ae44fae959179087e5e976b908093",
+    "schema/disaster/EvacuationSite/v1.0.0.json": "5c046471bb92a6a6ef23e33d9dfd3ac54c67b12256d43dea0e53c60ae35413ec",
     "schema/task/Attachment/v1.0.0.json": "7765aa01dd3d03c801f76d88b7d85b2583323decefce7495f77dacb97b47ef02",
     "schema/task/Comment/v1.0.0.json": "4f5f36d2c17adfa9c3847469b65171f3190b1bacbb60aaf44e6169527f90f8e9",
     "schema/task/Project/v1.0.0.json": "089d2bf3d2e093246af0720c0759603bcb7ba73874263396a5322dba35601e02",
     "schema/task/Task/v1.0.0.json": "3e674ba489a62d5908828567b4fd8e0ab690b3393d3ecaa3f60ac85aa70321d4",
     "schema/transportation/RoadRestriction/v1.0.0.json": "344f079c812b5ffbb0c50f100aff3c094853df8147950c7e3379df07506588f4",
     "vocab/common/v1.0.0.jsonld": "fd930c3668bad353c6170c183234b5991b225ee4180583e91350e0d847aeaa0e",
-    "vocab/disaster/v1.0.0.jsonld": "15146de18262e19293bd47e982f41b022339ab4a9f9ceeb4de0ca9034bb688af",
+    "vocab/disaster/v1.0.0.jsonld": "a3b5414dac43192f8f1d1357b53393917420a658fd9454eecb3e423777552496",
     "vocab/task/v1.0.0.jsonld": "ad02a0147aa0b7477dbe65cca433684e36be3b00546ce0ad2ea33e6f6007738a",
     "vocab/transportation/v1.0.0.jsonld": "a8eaf5aca0e5a463cf8ed5e609e3e115841e8c6168617ca6257dfe41341f7988"
   }

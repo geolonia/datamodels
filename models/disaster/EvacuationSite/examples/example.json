@@ -1,0 +1,31 @@
+{
+  "id": "urn:ngsi-ld:EvacuationSite:0012",
+  "type": "EvacuationSite",
+  "name": "都立一橋高校",
+  "nameKana": "トリツヒトツバシコウコウ",
+  "externalSiteId": "13101-0012",
+  "nationalShelterId": "E1310100012201",
+  "localGovernmentCode": "131016",
+  "address": {
+    "addressCountry": "JP",
+    "addressRegion": "東京都",
+    "addressLocality": "千代田区",
+    "machiaza": "東神田",
+    "chome": "1",
+    "localGovernmentCode": "131016",
+    "addressText": "東京都千代田区東神田1-12-13"
+  },
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      139.7810002,
+      35.6945488
+    ]
+  },
+  "hazardTypes": [
+    "stormSurge",
+    "earthquake",
+    "inlandFlood"
+  ],
+  "alsoDesignatedShelter": true
+}

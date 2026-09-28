@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://datamodels.jp/schema/disaster/EvacuationShelter/v1.0.0.json",
   "title": "EvacuationShelter",
-  "description": "Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included; it is referenced by externalShelterId. Only opening status and evacuee counts live here.",
+  "description": "Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included; it is referenced by externalShelterId. Only opening status and evacuee counts live here. When the shelter is also a designated emergency evacuation site, site links to its EvacuationSite.",
   "x-version": "1.0.0",
   "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
   "x-model-tags": "disaster-response, Japan",
@@ -44,6 +44,16 @@
         "type": "Property"
       },
       "x-iri": "https://datamodels.jp/ns/common/localGovernmentCode"
+    },
+    "site": {
+      "type": "string",
+      "format": "uri",
+      "description": "The designated emergency evacuation site (EvacuationSite) at the same place, when the shelter is also one",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "https://datamodels.jp/ns/disaster/EvacuationSite"
+      },
+      "x-iri": "https://datamodels.jp/ns/disaster/site"
     },
     "openingStatus": {
       "description": "Normalised opening state: open, closed, full (open but at capacity), requested (opening has been requested/instructed but is not yet confirmed open; no public code list defines this state, see statusLabel). The local wording always goes in statusLabel. When no value fits, leave it out and give the local wording in statusLabel",

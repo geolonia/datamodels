@@ -2,8 +2,8 @@ title:
   ja: 避難所運用状況
   en: Evacuation shelter operation
 description:
-  ja: 避難所の運用状況オーバーレイ1件。避難所そのもののマスタ（名称・位置）は含まず、外部の避難所データを externalShelterId / nationalShelterId で参照する。開設状況と避難者数だけを持つ。災害対策基本法第49条の7に基づき市町村長が指定する「指定避難所」（同法第49条の4の「指定緊急避難場所」とは別の概念）の運用を想定している。
-  en: Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included; it is referenced by externalShelterId / nationalShelterId. Only opening status and evacuee counts live here. Models the operation of a 指定避難所 (designated shelter, Basic Act on Disaster Management Art. 49-7), a distinct legal concept from the 指定緊急避難場所 (designated emergency evacuation site, Art. 49-4).
+  ja: 避難所の運用状況オーバーレイ1件。避難所そのもののマスタ（名称・位置）は含まず、外部の避難所データを externalShelterId / nationalShelterId で参照する。開設状況と避難者数だけを持つ。同じ場所の指定緊急避難場所は site で EvacuationSite を参照する。災害対策基本法第49条の7に基づき市町村長が指定する「指定避難所」（同法第49条の4の「指定緊急避難場所」とは別の概念）の運用を想定している。
+  en: Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included; it is referenced by externalShelterId / nationalShelterId. Only opening status and evacuee counts live here. When the shelter is also a designated emergency evacuation site, site links to its EvacuationSite. Models the operation of a 指定避難所 (designated shelter, Basic Act on Disaster Management Art. 49-7), a distinct legal concept from the 指定緊急避難場所 (designated emergency evacuation site, Art. 49-4).
 status: draft
 tags:
   - disaster-response
@@ -18,6 +18,9 @@ attributes:
   localGovernmentCode:
     ja: 一覧を公開する自治体の全国地方公共団体コード（総務省「全国地方公共団体コード仕様」（平成19年4月1日）に基づく、検査数字を含む6桁）
     en: Local government code of the municipality that publishes the shelter list (全国地方公共団体コード per MIC's "全国地方公共団体コード仕様", 2007-04-01; 6 digits including the check digit)
+  site:
+    ja: 同じ場所にある指定緊急避難場所（EvacuationSite）。避難所が指定緊急避難場所を兼ねるとき
+    en: The designated emergency evacuation site (EvacuationSite) at the same place, when the shelter is also one
   openingStatus:
     ja: "正規化した開設状況: open（開設中）、closed（未開設・閉鎖）、full（満員）、requested（開設を依頼・指示されたが開設未確認。公的な統制語彙は見つからなかった区分）。現場の呼び方は必ず statusLabel にも記載する。値域に合う値がないときは省き、statusLabel だけを送る"
     en: "Normalised opening state: open, closed, full (open but at capacity), requested (opening has been requested/instructed but not yet confirmed open; no public controlled vocabulary defines this state). The local wording always also goes in statusLabel. When no value fits, leave it out and send only statusLabel"

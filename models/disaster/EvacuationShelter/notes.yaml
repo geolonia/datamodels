@@ -7,4 +7,5 @@ notes:
   - "localGovernmentCode follows the MIC specification of the 全国地方公共団体コード (2007-04-01): 5-digit JIS X 0401/X 0402 code plus a check digit."
   - "Upstream considered: Smart Data Models has no shelter type. Deferred: a day and night split of evacuee counts (Cabinet Office daily shelter report form, 2020), the 一般避難所 / 福祉避難所 subtype and maxCapacity; the last two belong to the shelter master, not to this operational overlay."
   - "The project relationship (to a task subject Project) was removed on 2026-09-25 (#66): it came from the source application, where every entity belonged to one disaster event, and neither the shelter guidelines nor the municipal dataset has it. Grouping shelters by operation is left to the application: a task subject Task points at a shelter with refersTo, or an extended model adds its own relationship."
+  - "site (2026-09-28, #85): links to the EvacuationSite at the same place, now that the catalog has a type for the 指定緊急避難場所 a municipality publishes. The master of the 指定避難所 themselves (GSI's designated shelter data) still has no type of its own."
 license: CC0 1.0 (machine-readable files), CC BY 4.0 (prose); see /LICENSE-CONTENT.md
