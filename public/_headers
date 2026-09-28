@@ -14,6 +14,10 @@
   Access-Control-Allow-Origin: *
   X-Content-Type-Options: nosniff
 
+# The index for AI tools (scripts/lib/llms.mjs) has Japanese names in it.
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+
 # JSON-LD contexts. Aliases (vN.jsonld) advance to the latest compatible
 # version, so they get a short cache; exact versions get the generated
 # immutable rule. A 404 under this path is also labelled ld+json, since the

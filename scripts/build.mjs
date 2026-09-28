@@ -7,10 +7,11 @@
 //   4. publish the machine files from models/ (contexts, schemas, examples,
 //      vocabularies, catalog.json) plus each adapter's files (adapters/*), and
 //      append the generated redirects and immutable-cache header rules
+//   5. write /llms.txt (scripts/lib/llms.mjs); VitePress writes sitemap.xml
 //
 // A versioned file that has been published must never be rewritten with
 // different content. That check runs after this script (check-immutability).
-import { cp, rm, access, readdir } from 'node:fs/promises';
+import { cp, rm, access, readdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -18,6 +19,7 @@ import { build as vitepressBuild } from 'vitepress';
 import { loadSubjects } from './lib/models.mjs';
 import { generateSitePages } from './lib/site.mjs';
 import { publishModels } from './lib/publish.mjs';
+import { llmsTxt } from './lib/llms.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const site = join(root, 'site');
@@ -47,10 +49,11 @@ await vitepressBuild(site, { outDir: out });
 
 await cp(src, out, { recursive: true });
 const published = await publishModels(subjects, adapters);
+await writeFile(join(out, 'llms.txt'), await llmsTxt(subjects));
 
 // The hosting contract depends on these files being served. Fail loudly
 // rather than deploy a tree without them.
-for (const required of ['_headers', '_redirects', 'index.html', '404.html', 'en/index.html', 'models/index.html', 'catalog.json']) {
+for (const required of ['_headers', '_redirects', 'index.html', '404.html', 'en/index.html', 'models/index.html', 'catalog.json', 'llms.txt', 'sitemap.xml', 'robots.txt']) {
   await access(join(out, required));
 }
 console.log(`built ${out}: ${published.subjects} subject(s), ${published.models} model(s)`);
