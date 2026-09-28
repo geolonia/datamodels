@@ -1,5 +1,7 @@
-// The relationship graph on the subject pages and on /models/: models are
-// nodes; Relationship targets (x-ngsi.target), value types used through $ref,
+// The relationship graph on each model page: the model and its neighbours,
+// one step, each neighbour a link to its own page, so the graphs also work as
+// navigation (a graph of a whole subject or catalog outgrows the page). Models
+// are nodes; Relationship targets (x-ngsi.target), value types used through $ref,
 // aliases and subclasses are edges. Laid out at build time with dagre and
 // emitted as inline SVG, so the page needs no JavaScript and every node is a
 // link. Colours come from the theme (site/.vitepress/theme/custom.css).
@@ -8,12 +10,12 @@ import { modelUrls, BASE_URL } from './models.mjs';
 
 const L = {
   ja: {
-    agent: '人・組織・チーム', any: '任意のエンティティ', label: '型と関係の図',
-    legend: { rel: 'Relationship（属性名）', value: '値型として使う', alias: 'エイリアス', subclass: 'サブクラス', self: '↻ 同じ型への Relationship', other: '他のサブジェクト' },
+    agent: '人・組織・チーム', any: '任意のエンティティ', label: '型と関係の図', more: (n) => `ほか ${n} 件の関係`,
+    legend: { rel: 'Relationship（属性名）', value: '値型として使う', alias: 'エイリアス', subclass: 'サブクラス', self: '↻ 同じ型への Relationship', other: '他のサブジェクト', more: 'ほか N 件: その型のページに続きがある' },
   },
   en: {
-    agent: 'person, organisation or team', any: 'any entity', label: 'Types and their relationships',
-    legend: { rel: 'Relationship (attribute name)', value: 'used as a value type', alias: 'alias', subclass: 'subclass', self: '↻ Relationship to the same type', other: 'other subject' },
+    agent: 'person, organisation or team', any: 'any entity', label: 'Types and their relationships', more: (n) => `${n} more link${n === 1 ? '' : 's'}`,
+    legend: { rel: 'Relationship (attribute name)', value: 'used as a value type', alias: 'alias', subclass: 'subclass', self: '↻ Relationship to the same type', other: 'other subject', more: 'N more links: continued on that type\'s page' },
   },
 };
 
@@ -75,13 +77,15 @@ function smooth(pts) {
 
 /**
  * The graph for one subject (its models, and whatever they link to or are
- * linked from) or, with focus null, for the whole catalog. Returns '' when
- * there is no edge to show.
+ * linked from) or, with focus null, for the whole catalog. With `center`
+ * (subject/Type), the graph of one model: what it links to and what links to
+ * it, one step; each neighbour says how many more links its own page shows,
+ * so the graphs work as a way to navigate. Returns '' when there is no edge.
  */
-export function graphSvg(lang, prefix, subjects, focus = null, rankdir = 'LR') {
+export function graphSvg(lang, prefix, subjects, focus = null, rankdir = 'LR', { center = null } = {}) {
   const t = L[lang];
   const all = catalogEdges(subjects);
-  const inFocus = (nodeId) => !focus || nodeId.startsWith(`${focus.name}/`);
+  const inFocus = center ? (nodeId) => nodeId === center : (nodeId) => !focus || nodeId.startsWith(`${focus.name}/`);
   const shown = all.filter((e) => inFocus(e.from) || inFocus(e.to));
   if (!shown.length) return '';
   // A model's links to its own type (Task.parent) are listed inside its node:
@@ -92,22 +96,30 @@ export function graphSvg(lang, prefix, subjects, focus = null, rankdir = 'LR') {
   const nodes = new Map();
   for (const s of subjects) for (const m of s.models) {
     const nid = `${s.name}/${m.type}`;
-    if (focus && !inFocus(nid) && !edges.some((e) => e.from === nid || e.to === nid)) continue;
+    // In a subject or one-model graph, a model outside it appears only when an edge reaches it.
+    if ((focus || center) && !inFocus(nid) && !edges.some((e) => e.from === nid || e.to === nid)) continue;
+    // Around one model, a neighbour counts the links it has besides this one.
+    const more = center && nid !== center ? all.filter((e) => (e.from === nid || e.to === nid) && e.from !== center && e.to !== center).length : 0;
+    const otherSubject = center ? !nid.startsWith(`${center.split('/')[0]}/`) : focus && !inFocus(nid);
     nodes.set(nid, {
-      title: m.type, sub: m.catalog.title?.[lang] ?? '', self: selfLinks.get(nid)?.join(', ') ?? '', href: `${prefix}${modelUrls(s, m).page.slice(BASE_URL.length)}`,
-      cls: [m.kind === 'value' ? 'value' : 'entity', focus && !inFocus(nid) ? 'other' : ''].filter(Boolean).join(' '),
+      title: m.type, sub: m.catalog.title?.[lang] ?? '', self: selfLinks.get(nid)?.join(', ') ?? '', more,
+      href: nid === center ? null : `${prefix}${modelUrls(s, m).page.slice(BASE_URL.length)}`,
+      cls: [m.kind === 'value' ? 'value' : 'entity', otherSubject ? 'other' : '', nid === center ? 'center' : ''].filter(Boolean).join(' '),
     });
   }
-  for (const target of ['agent', 'any']) if (edges.some((e) => e.to === `@${target}`)) nodes.set(`@${target}`, { title: t[target], sub: '', cls: 'pseudo' });
+  // A long pseudo-node label (person, organisation or team) breaks after its first comma.
+  const wrap = (s) => { const i = s.indexOf(', '); return textWidth(s, 12) > 150 && i > 0 ? [s.slice(0, i + 1), s.slice(i + 2)] : [s]; };
+  for (const target of ['agent', 'any']) if (edges.some((e) => e.to === `@${target}`)) nodes.set(`@${target}`, { title: t[target], lines: wrap(t[target]), sub: '', cls: 'pseudo' });
 
   // A multigraph keyed by edge kind: a subclass may also have a Relationship to
   // its parent, and each edge needs its own route and label position.
   const g = new dagre.graphlib.Graph({ multigraph: true });
-  g.setGraph({ rankdir, nodesep: 28, ranksep: 70, edgesep: 14, marginx: 8, marginy: 8 });
+  // A one-model graph is read in the page column: keep it compact.
+  g.setGraph({ rankdir, nodesep: center ? 16 : 28, ranksep: center ? 44 : 70, edgesep: center ? 10 : 14, marginx: 8, marginy: 8 });
   g.setDefaultEdgeLabel(() => ({}));
   for (const [nid, n] of nodes) {
-    n.width = Math.ceil(Math.max(textWidth(n.title, 14), textWidth(n.sub, 12), n.self ? textWidth(`↻ ${n.self}`, 12) : 0) + 28);
-    n.height = (n.sub ? 46 : 32) + (n.self ? 16 : 0);
+    n.width = Math.ceil(Math.max(n.lines ? Math.max(...n.lines.map((l) => textWidth(l, 12))) : textWidth(n.title, 14), textWidth(n.sub, 12), n.self ? textWidth(`↻ ${n.self}`, 12) : 0, n.more ? textWidth(t.more(n.more), 11) : 0) + 28);
+    n.height = (n.sub ? 46 : 32) + (n.self ? 16 : 0) + (n.more ? 15 : 0) + (n.lines ? 15 * (n.lines.length - 1) : 0);
     g.setNode(nid, { width: n.width, height: n.height });
   }
   // Relationships show their attribute names, aliases and subclasses their kind;
@@ -125,7 +137,7 @@ export function graphSvg(lang, prefix, subjects, focus = null, rankdir = 'LR') {
   // string href) and the theme's link styles would underline SVG text.
   const links = [];
   // ids stay unique if a page ever shows two graphs, and only use safe characters.
-  const key = (focus?.name ?? 'all').replace(/[^A-Za-z0-9_-]/g, '_');
+  const key = (center ?? focus?.name ?? 'all').replace(/[^A-Za-z0-9_-]/g, '_');
   let svg = `<div class="model-graph"><div class="canvas" style="width:${W}px;height:${H}px"><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="graph-title-${key}" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`;
   svg += `<title id="graph-title-${key}">${esc(t.label)}</title>`;
   svg += `<defs><marker id="arrow-${key}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrowhead"/></marker>`;
@@ -146,15 +158,17 @@ export function graphSvg(lang, prefix, subjects, focus = null, rankdir = 'LR') {
     const top = y + 20; // baseline of the first line
     body += n.sub
       ? `<text class="type" x="${p.x.toFixed(1)}" y="${top.toFixed(1)}">${esc(n.title)}</text><text class="sub" x="${p.x.toFixed(1)}" y="${(top + 17).toFixed(1)}">${esc(n.sub)}</text>`
-      : `<text class="sub" x="${p.x.toFixed(1)}" y="${top.toFixed(1)}">${esc(n.title)}</text>`;
-    if (n.self) body += `<text class="self" x="${p.x.toFixed(1)}" y="${(top + (n.sub ? 33 : 16)).toFixed(1)}">↻ ${esc(n.self)}</text>`;
+      : (n.lines ?? [n.title]).map((l, i) => `<text class="sub" x="${p.x.toFixed(1)}" y="${(top + 15 * i).toFixed(1)}">${esc(l)}</text>`).join('');
+    const selfY = top + (n.sub ? 33 : 16);
+    if (n.self) body += `<text class="self" x="${p.x.toFixed(1)}" y="${selfY.toFixed(1)}">↻ ${esc(n.self)}</text>`;
+    if (n.more) body += `<text class="more" x="${p.x.toFixed(1)}" y="${(selfY + (n.self ? 15 : 0)).toFixed(1)}">${esc(t.more(n.more))} →</text>`;
     svg += `<g class="node ${n.cls}">${body}</g>`;
     if (n.href) links.push(`<a href="${esc(n.href)}" aria-label="${esc(n.sub ? `${n.title} (${n.sub})` : n.title)}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px;width:${n.width}px;height:${n.height}px"></a>`);
   }
   svg += `</svg>${links.join('')}</div></div>\n\n`;
   // The legend names only what this graph draws (self-links are text in the node).
   const kinds = new Set(edges.map((e) => e.kind));
-  const items = [...['rel', 'value', 'alias', 'subclass'].filter((k) => kinds.has(k)), ...(selfLinks.size ? ['self'] : []), ...([...nodes.values()].some((n) => n.cls.includes('other')) ? ['other'] : [])];
+  const items = [...['rel', 'value', 'alias', 'subclass'].filter((k) => kinds.has(k)), ...(selfLinks.size ? ['self'] : []), ...([...nodes.values()].some((n) => n.cls.includes('other')) ? ['other'] : []), ...([...nodes.values()].some((n) => n.more) ? ['more'] : [])];
   svg += `<p class="model-graph-legend">${items.map((k) => `<span class="${k}">${esc(t.legend[k])}</span>`).join('')}</p>\n\n`;
   return svg;
 }
