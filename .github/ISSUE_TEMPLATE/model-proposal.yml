@@ -1,0 +1,45 @@
+name: データモデルの提案 / Model proposal
+description: 新しいモデル、またはモデルへの属性の追加を提案する / Propose a new model or new attributes for a model
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        日本語でも英語でも構いません。モデルは既存の標準やガイドラインに基づくものだけを公開します（[拡張する・貢献する](https://datamodels.jp/guide/extend)）。
+        Japanese or English are both fine. The catalog publishes models that rest on an existing standard or guideline ([Extend and contribute](https://datamodels.jp/en/guide/extend)).
+  - type: textarea
+    id: what
+    attributes:
+      label: 何をモデルにするか / What to model
+      description: 1 件のデータが何を表すか。既存のモデルへの追加ならそのモデル名 / What one record represents; for an addition, the model concerned
+    validations:
+      required: true
+  - type: textarea
+    id: data
+    attributes:
+      label: 実際にあるデータ / Real data that exists today
+      description: 誰が、どんなシステムで、どのくらいのデータを持っているか。架空のユースケースではなく実例を / Who holds it, in which system, roughly how much. A real case, not a hypothetical one
+    validations:
+      required: true
+  - type: textarea
+    id: standard
+    attributes:
+      label: 基にする標準 / Standard it rests on
+      description: 国や自治体のガイドライン、Smart Data Models、GIF、RFC など（リンク付きで）。合うものがないならその理由 / Government or municipal guidelines, Smart Data Models, GIF, an RFC (with links); if none fits, why
+    validations:
+      required: true
+  - type: input
+    id: second
+    attributes:
+      label: 2 つ目の実装の候補 / A likely second implementer
+      description: stable になるには、別の組織による 2 つの実装が必要です / Becoming stable needs two implementations from different organisations
+  - type: textarea
+    id: sample
+    attributes:
+      label: データの例 / Sample record
+      description: JSON、CSV の 1 行など、形式は問いません / JSON, a CSV row or any other form
+      render: text
+  - type: textarea
+    id: notes
+    attributes:
+      label: その他 / Anything else

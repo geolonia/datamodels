@@ -1,0 +1,33 @@
+name: DCO
+
+# Every commit of a pull request must be signed off by its author
+# (git commit -s): the Developer Certificate of Origin, see CONTRIBUTING.md.
+# Merge commits and Dependabot are exempt (scripts/check-dco.mjs).
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  dco:
+    name: Sign-off (DCO)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+
+      - name: Check sign-off
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: node scripts/check-dco.mjs "origin/$BASE_REF" "$HEAD_SHA"
