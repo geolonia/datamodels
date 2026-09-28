@@ -17,6 +17,10 @@
     "type": "Property",
     "value": "131016"
   },
+  "shelter": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:DesignatedShelter:0012"
+  },
   "site": {
     "type": "Relationship",
     "object": "urn:ngsi-ld:EvacuationSite:0012"
