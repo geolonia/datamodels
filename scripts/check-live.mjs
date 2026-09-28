@@ -79,6 +79,7 @@ for (const [path, hash] of Object.entries(manifest.files)) {
   expect(served === hash, `${url}: served bytes differ from published-manifest.json (deploy not live yet, or a stale cache)`);
 }
 
+let firstAdapterUrl;
 const r = await fetch(swap(`${BASE_URL}/catalog.json`));
 expect(r.ok, `catalog.json: ${r.status}`);
 if (r.ok) {
@@ -86,8 +87,33 @@ if (r.ok) {
   expect(c.formatVersion === 1 && Array.isArray(c.models), 'catalog.json: unexpected shape');
   // Adapter files are listed per model in the catalog; each must be served as JSON.
   for (const m of c.models ?? []) for (const [name, url] of Object.entries(m.adapters ?? {})) {
+    firstAdapterUrl ??= url;
     const ar = await head(url);
     expect(ar.status === 200 && h(ar, 'content-type').startsWith('application/json'), `${name} adapter ${url}: ${ar.status} ${h(ar, 'content-type')}`);
+  }
+}
+
+// Machine clients: tools that fetch contexts with Python's urllib (rdflib and
+// others) send "Python-urllib/3.x", which Cloudflare's Browser Integrity Check
+// blocks by default (error 1010). A configuration rule on the datamodels.jp
+// zone turns the check off for the machine-readable paths; this catches it if
+// that rule goes missing. Other origins (workers.dev previews) keep Cloudflare's
+// default and are skipped unless CHECK_MACHINE_UA=1.
+if (origin === BASE_URL || process.env.CHECK_MACHINE_UA === '1') {
+  const first = subjects.find((s) => s.models.some((m) => m.kind === 'entity'));
+  const entity = first.models.find((m) => m.kind === 'entity');
+  const machinePaths = [
+    subjectUrls(first).contextExact, subjectUrls(first).contextAlias, subjectUrls(first).vocabExact,
+    modelUrls(first, entity).schemaExact, `${modelUrls(first, entity).examples}example.json`,
+    `${BASE_URL}/catalog.json`,
+    // One adapter file, as listed in the live catalog (the core does not name adapters).
+    ...(firstAdapterUrl ? [firstAdapterUrl] : []),
+  ];
+  for (const url of machinePaths) {
+    try {
+      const r = await fetch(swap(url), { headers: { 'user-agent': 'Python-urllib/3.13' }, redirect: 'manual' });
+      expect(r.status === 200, `${swap(url)}: ${r.status} for user agent Python-urllib (Browser Integrity Check rule for machine-readable paths missing?)`);
+    } catch (e) { failures.push(`${swap(url)}: ${e.message} for user agent Python-urllib`); }
   }
 }
 
