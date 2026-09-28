@@ -66,6 +66,13 @@ test('a url without a host does not count and fails', async () => {
   assert.match(r.stderr, /found 1/);
 });
 
+test('a url that is not a string does not count and fails', async () => {
+  const r = await validateWith({ status: 'stable', adopters: `adopters:\n${entry('Org A', 'https://a.example')}  - name: Org B system\n    organization: Org B\n    url: [https://b.example]\n` });
+  assert.equal(r.status, 1);
+  assert.match(r.stderr, /entry 2: url must be an http\(s\) URL with a host/);
+  assert.match(r.stderr, /found 1/);
+});
+
 test('an explicit null status fails', async () => {
   const r = await validateWith({ status: 'null' });
   assert.equal(r.status, 1);
