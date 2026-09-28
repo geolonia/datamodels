@@ -34,6 +34,16 @@ test('a shelter needs one of the two identifiers; a site ID or an unknown type i
   assert.ok(!validate({ ...hitotsubashi, shelterType: 'temporary' }));
 });
 
+test('shelterType agrees with the type digit of nationalShelterId', () => {
+  assert.ok(!validate({ ...hitotsubashi, shelterType: 'welfare' }), '…111 is a general shelter');
+  assert.ok(validate({ ...hitotsubashi, nationalShelterId: 'E1310100012121', shelterType: 'welfare' }), '…121 is a welfare shelter');
+  assert.ok(!validate({ ...hitotsubashi, nationalShelterId: 'E1310100012121' }), 'general with a welfare ID');
+  const { shelterType, ...noType } = hitotsubashi;
+  assert.ok(validate(noType), 'shelterType is optional');
+  const { nationalShelterId, ...municipalOnly } = { ...hitotsubashi, externalShelterId: '13101-0012', shelterType: 'welfare' };
+  assert.ok(validate(municipalOnly), 'no national ID: nothing to agree with');
+});
+
 test('the shelter and the site at the same school share the facility code, and the examples link them', () => {
   const ex = (t) => disaster.models.find((m) => m.type === t).examples['example.json'];
   const shelter = ex('DesignatedShelter'), site = ex('EvacuationSite'), operation = ex('EvacuationShelter');

@@ -158,5 +158,47 @@
       ]
     }
   ],
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "nationalShelterId",
+          "shelterType"
+        ],
+        "properties": {
+          "nationalShelterId": {
+            "pattern": "^E[0-9]{10}11"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "shelterType": {
+            "const": "general"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "nationalShelterId",
+          "shelterType"
+        ],
+        "properties": {
+          "nationalShelterId": {
+            "pattern": "^E[0-9]{10}12"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "shelterType": {
+            "const": "welfare"
+          }
+        }
+      }
+    }
+  ],
   "additionalProperties": false
 }
