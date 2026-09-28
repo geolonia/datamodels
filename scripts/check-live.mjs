@@ -67,6 +67,32 @@ for (const subject of subjects) {
     }
   }
 }
+// Served bytes of every recorded immutable file must match the manifest. This
+// is what makes an in-place correction of a published file verifiable: after a
+// deploy, the CDN and the origin serve exactly what the repository says.
+const manifest = JSON.parse(await readFile(join(ROOT, 'published-manifest.json'), 'utf8'));
+for (const [path, hash] of Object.entries(manifest.files)) {
+  const url = `${origin}/${path}`;
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) { failures.push(`${url}: ${res.status}`); continue; }
+  const served = createHash('sha256').update(Buffer.from(await res.arrayBuffer())).digest('hex');
+  expect(served === hash, `${url}: served bytes differ from published-manifest.json (deploy not live yet, or a stale cache)`);
+}
+
+let firstAdapterUrl;
+const r = await fetch(swap(`${BASE_URL}/catalog.json`));
+expect(r.ok, `catalog.json: ${r.status}`);
+if (r.ok) {
+  const c = await r.json();
+  expect(c.formatVersion === 1 && Array.isArray(c.models), 'catalog.json: unexpected shape');
+  // Adapter files are listed per model in the catalog; each must be served as JSON.
+  for (const m of c.models ?? []) for (const [name, url] of Object.entries(m.adapters ?? {})) {
+    firstAdapterUrl ??= url;
+    const ar = await head(url);
+    expect(ar.status === 200 && h(ar, 'content-type').startsWith('application/json'), `${name} adapter ${url}: ${ar.status} ${h(ar, 'content-type')}`);
+  }
+}
+
 // Machine clients: tools that fetch contexts with Python's urllib (rdflib and
 // others) send "Python-urllib/3.x", which Cloudflare's Browser Integrity Check
 // blocks by default (error 1010). A configuration rule on the datamodels.jp
@@ -80,36 +106,14 @@ if (origin === BASE_URL || process.env.CHECK_MACHINE_UA === '1') {
     subjectUrls(first).contextExact, subjectUrls(first).contextAlias, subjectUrls(first).vocabExact,
     modelUrls(first, entity).schemaExact, `${modelUrls(first, entity).examples}example.json`,
     `${BASE_URL}/catalog.json`,
+    // One adapter file, as listed in the live catalog (the core does not name adapters).
+    ...(firstAdapterUrl ? [firstAdapterUrl] : []),
   ];
   for (const url of machinePaths) {
     try {
       const r = await fetch(swap(url), { headers: { 'user-agent': 'Python-urllib/3.13' }, redirect: 'manual' });
       expect(r.status === 200, `${swap(url)}: ${r.status} for user agent Python-urllib (Browser Integrity Check rule for machine-readable paths missing?)`);
     } catch (e) { failures.push(`${swap(url)}: ${e.message} for user agent Python-urllib`); }
-  }
-}
-
-// Served bytes of every recorded immutable file must match the manifest. This
-// is what makes an in-place correction of a published file verifiable: after a
-// deploy, the CDN and the origin serve exactly what the repository says.
-const manifest = JSON.parse(await readFile(join(ROOT, 'published-manifest.json'), 'utf8'));
-for (const [path, hash] of Object.entries(manifest.files)) {
-  const url = `${origin}/${path}`;
-  const res = await fetch(url, { cache: 'no-store' });
-  if (!res.ok) { failures.push(`${url}: ${res.status}`); continue; }
-  const served = createHash('sha256').update(Buffer.from(await res.arrayBuffer())).digest('hex');
-  expect(served === hash, `${url}: served bytes differ from published-manifest.json (deploy not live yet, or a stale cache)`);
-}
-
-const r = await fetch(swap(`${BASE_URL}/catalog.json`));
-expect(r.ok, `catalog.json: ${r.status}`);
-if (r.ok) {
-  const c = await r.json();
-  expect(c.formatVersion === 1 && Array.isArray(c.models), 'catalog.json: unexpected shape');
-  // Adapter files are listed per model in the catalog; each must be served as JSON.
-  for (const m of c.models ?? []) for (const [name, url] of Object.entries(m.adapters ?? {})) {
-    const ar = await head(url);
-    expect(ar.status === 200 && h(ar, 'content-type').startsWith('application/json'), `${name} adapter ${url}: ${ar.status} ${h(ar, 'content-type')}`);
   }
 }
 
