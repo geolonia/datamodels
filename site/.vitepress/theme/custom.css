@@ -110,3 +110,8 @@
 .model-graph-legend .alias::before, .model-graph-legend .subclass::before { border-top-style: dotted; }
 .model-graph-legend .self::before { display: none; }
 .model-graph-legend .other::before { width: 14px; height: 10px; border: 1.5px dashed var(--vp-c-brand-1); border-radius: 3px; }
+
+/* Canonical URL and licence at the top of every doc page (theme/index.ts). */
+.source-line { margin: 0 0 12px; font-size: 12px; line-height: 1.5; color: var(--vp-c-text-3); overflow-wrap: anywhere; }
+.source-line a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.source-line a:hover { color: var(--vp-c-brand-1); }

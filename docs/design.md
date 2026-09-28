@@ -4,7 +4,7 @@
 |---|---|
 | Status | Pre-release on datamodels.jp since 2026-09-24; official launch pending ([launch plan #30](https://github.com/geolonia/datamodels/issues/30)) |
 | Author | Daniel Kastl |
-| Decisions | Domain `datamodels.jp` (2026-09-18); Cloudflare Workers static assets; repository `geolonia/datamodels`; Apache-2.0 code, CC BY 4.0 content (licence under review); every subject restarts at 1.0.0 at launch |
+| Decisions | Domain `datamodels.jp` (2026-09-18); Cloudflare Workers static assets; repository `geolonia/datamodels`; Apache-2.0 code, CC0 machine-readable model files and CC BY 4.0 prose (2026-09-28, #83); every subject restarts at 1.0.0 at launch |
 | History | Started 2026-09-17 as `geonicdb-docs/design/ngsi-ld-data-models-catalog.md` for a GeonicDB catalog at `models.geonicdb.com`; moved here and rewritten for the product-neutral catalog on 2026-09-24 |
 
 ## Summary
@@ -165,8 +165,8 @@ Cloudflare Workers static assets, deployed by Cloudflare Workers Builds from `ma
 
 ## Licensing and contribution
 
-- Code: Apache-2.0. Model content: CC BY 4.0. Smart Data Models are mostly CC BY 4.0 themselves; content derived from them keeps their attribution in the model's notes. GIF content (repository CC0 1.0; the core data model schema declares CC BY 4.0) is licensed under CC BY 4.0 and credits GIF; 自治体標準オープンデータセット material is used under the 公共データ利用規約 (PDL1.0, compatible with CC BY 4.0) and credited to its source.
-- Under review (Hal): CC0 for schemas and contexts so governments can reuse them without an attribution obligation, keeping CC BY 4.0 for prose. Anything copied from CC BY sources cannot become CC0; reused IRIs are unaffected.
+- Code: Apache-2.0. Machine-readable model files (schemas, contexts, vocabularies, examples, `catalog.yaml`, mappings, `catalog.json`, the published adapter files under `/adapters/`): CC0 1.0; the adapter code in `adapters/` is code. Prose (notes, READMEs, the site's pages): CC BY 4.0. Decided on 2026-09-28 (#83): attribution works where people read and does not survive a schema pasted into another repository, so credit is asked only for prose. The canonical URL inside each file (`$id`, the `@context` URL, the IRIs) gives the traceability neither licence does.
+- Content copied from a CC BY source (Smart Data Models, the GIF core schema) keeps CC BY 4.0 and is listed per file in the model folder's `LICENSE.md`; reused IRIs are unaffected. Today nothing is copied. 自治体標準オープンデータセット material (PDL1.0) is credited in the mapping files.
 - Planned (launch plan Phase 2): a contributing guide in both languages, a schema proposal form asking what real data exists, which standard it extends and who the second implementer is, DCO sign-off instead of a contributor agreement, per-subject editors in CODEOWNERS and a small steering group for new subjects and major versions.
 
 ## Internationalisation
@@ -175,10 +175,9 @@ Japanese is the default language, English the second; both are mandatory for eve
 
 ## Open questions
 
-1. Licence of schemas and contexts (CC0 or CC BY 4.0).
-2. Takamatsu application: running on these models or an experiment, and whether the city needs types of its own (launch plan #30).
-3. Which curated global models and profiles come first, and from which implementations.
-4. Whether the pinned mirror of upstream contexts is needed.
+1. Takamatsu application: running on these models or an experiment, and whether the city needs types of its own (launch plan #30).
+2. Which curated global models and profiles come first, and from which implementations.
+3. Whether the pinned mirror of upstream contexts is needed.
 
 ## References
 

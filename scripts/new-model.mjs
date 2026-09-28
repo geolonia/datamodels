@@ -80,7 +80,7 @@ tags: [${subjectName}]
 const notes = `notes:
   - "TODO Which external standard or guideline this model rests on, with a link. Models must be built on an existing standard."
   - "TODO Upstream considered (date): the Smart Data Models or other types checked, and why each was adopted or not."
-license: CC BY 4.0 (see /LICENSE-CONTENT.md)
+license: CC0 1.0 (machine-readable files), CC BY 4.0 (prose); see /LICENSE-CONTENT.md
 `;
 
 const adopters = `# Systems that use this model: name, organization, since, url, note.
@@ -106,7 +106,16 @@ await writeFile(join(dir, 'catalog.yaml'), catalog);
 await writeFile(join(dir, 'notes.yaml'), notes);
 await writeFile(join(dir, 'ADOPTERS.yaml'), adopters);
 await writeFile(join(dir, 'README.md'), readme);
-await writeFile(join(dir, 'LICENSE.md'), 'Model content in this folder is licensed under CC BY 4.0. See the repository root file LICENSE-CONTENT.md.\n');
+await writeFile(join(dir, 'LICENSE.md'), [
+  'Licences for this model folder (details: LICENSE-CONTENT.md at the repository root):',
+  '',
+  '- Machine-readable files (schema.json, catalog.yaml, examples/, mapping/): CC0 1.0 Universal.',
+  '- Prose (notes.yaml, README.md): CC BY 4.0.',
+  '- Copied from a CC BY source: none. A file that copies content from a CC BY',
+  '  source (Smart Data Models, the GIF core data model schema) keeps CC BY 4.0;',
+  '  list it here with its source.',
+  '',
+].join('\n'));
 if (isValue) {
   await writeFile(join(dir, 'examples', 'example.json'), json({}));
 } else {

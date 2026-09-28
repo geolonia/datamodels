@@ -1,9 +1,9 @@
-# Content signals (https://contentsignals.org): search engines and AI answers
-# may use the pages. ai-train is left out until the licence decision in
-# https://github.com/geolonia/datamodels/issues/83; leaving it out neither
-# grants nor restricts it.
+# Content signals (https://contentsignals.org): search, AI answers and AI
+# training may all use this site. The models are meant to be used the same way
+# everywhere, by people and by assistants (decided in
+# https://github.com/geolonia/datamodels/issues/83).
 User-agent: *
-Content-Signal: search=yes, ai-input=yes
+Content-Signal: search=yes, ai-input=yes, ai-train=yes
 Allow: /
 
 Sitemap: https://datamodels.jp/sitemap.xml
