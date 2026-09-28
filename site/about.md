@@ -16,10 +16,10 @@ datamodels.jp は、日本で使えるデータモデルのカタログです。
 
 ## ライセンス
 
-- **モデルのファイル**（JSON Schema、JSON-LD の `@context`、語彙、例、`catalog.json`、対応表）: [CC0 1.0](/LICENSE-CONTENT)。条件なしで使えます。ファイルの中の正規の URL（スキーマの `$id`、`@context` の URL、型と属性の IRI）は、コピーしても残してください（お願いであり、条件ではありません）。新しいバージョンがあることを、コピーを見た人が知る手がかりになります。
+- **モデルのファイル**（JSON Schema、JSON-LD の `@context`、語彙、例、`catalog.json`、対応表、公開しているアダプターのファイル `/adapters/…`）: [CC0 1.0](/LICENSE-CONTENT)。条件なしで使えます。ファイルの中の正規の URL（スキーマの `$id`、`@context` の URL、型と属性の IRI）は、コピーしても残してください（お願いであり、条件ではありません）。新しいバージョンがあることを、コピーを見た人が知る手がかりになります。
 - **文章**（注記、このサイトのページ）: [CC BY 4.0](/LICENSE-CONTENT)。利用するときは、たとえば「出典: datamodels.jp（株式会社Geolonia）、CC BY 4.0」のように表示し、使ったページへのリンクを付けてください（編集・加工した場合はその旨も）。各ページの上にそのページの URL があります。
 - CC BY の標準（Smart Data Models、GIF のコアスキーマなど）から内容を写したファイルは、ファイル全体が CC BY 4.0 のままで、各モデルの `LICENSE.md` にそのファイルと出典を書きます。現在、写した部分はありません（対応を記録し、IRI を再利用しているだけです）。
-- **ツール**（サイト、スクリプト、アダプター）: [Apache-2.0](https://github.com/geolonia/datamodels/blob/main/LICENSE)
+- **ツールのコード**（サイト、スクリプト、`adapters/` のアダプターのコード）: [Apache-2.0](https://github.com/geolonia/datamodels/blob/main/LICENSE)
 - 他の語彙の IRI（Smart Data Models、schema.org、NGSI-LD など）は参照しているだけで、それぞれの提供元のものです。上流から派生した部分の出典は、各モデルの注記に記載しています。
 
 ## 免責
