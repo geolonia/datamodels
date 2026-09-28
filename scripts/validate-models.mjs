@@ -16,7 +16,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { loadSubjects, attributesOf, toKeyValues, subjectUrls, modelUrls, resolveContextTerms, CORE_CONTEXT_URL, CORE_CONTEXT_FIXTURE } from './lib/models.mjs';
 import { resolveContextDocument } from './lib/releases.mjs';
-import { mappingProblems } from './lib/mapping-check.mjs';
+import { mappingProblems, viaCycles } from './lib/mapping-check.mjs';
 import { reportFailures } from './lib/ci-summary.mjs';
 import { buildVocabulary } from './lib/vocab.mjs';
 
@@ -30,8 +30,10 @@ const core = JSON.parse(await readFile(CORE_CONTEXT_FIXTURE, 'utf8'));
 const coreTerms = new Set(Object.keys(core['@context']).filter((k) => !k.startsWith('@')));
 
 const subjects = await loadSubjects();
-// subject/Type/name of every mapping file, for a conversion rule's via.
-const mappingNames = new Set(subjects.flatMap((s) => s.models.flatMap((m) => m.mappings.map((map) => `${s.name}/${m.type}/${map.name}`))));
+// Every mapping file by subject/Type/name, for a conversion rule's via; via must not loop.
+const mappingsByName = Object.fromEntries(subjects.flatMap((s) => s.models.flatMap((m) => m.mappings.map((map) => [`${s.name}/${m.type}/${map.name}`, map]))));
+const mappingNames = new Set(Object.keys(mappingsByName));
+for (const cycle of viaCycles(mappingsByName)) { const [sub, type, name] = cycle[0].split('/'); fail(`models/${sub}/${type}/mapping/${name}.yaml`, `via cycle: ${cycle.join(' → ')}`); }
 const seenTypeIris = new Map();
 // Every type that owns its IRI (not an alias), for alias and subclass targets.
 const ownersByIri = new Map();

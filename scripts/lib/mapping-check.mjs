@@ -37,6 +37,23 @@ export function fieldNames(schema) {
 }
 
 /**
+ * Cycles among `via` references, as lists of mapping names (subject/Type/name):
+ * the converter follows via recursively, so a mapping that reaches itself
+ * would never finish. `mappings` maps each name to its parsed file.
+ */
+export function viaCycles(mappings) {
+  const cycles = [], done = new Set();
+  const visit = (name, chain) => {
+    if (chain.includes(name)) { cycles.push([...chain.slice(chain.indexOf(name)), name]); return; }
+    if (done.has(name) || !mappings[name]) return;
+    for (const rule of Object.values(mappings[name].fields ?? {})) if (typeof rule?.via === 'string') visit(rule.via, [...chain, name]);
+    done.add(name);
+  };
+  for (const name of Object.keys(mappings)) visit(name, []);
+  return cycles;
+}
+
+/**
  * Problems of one mapping file, as messages. `map` is the parsed YAML (the
  * loader adds `name`, the file name); `schema` is the model's JSON Schema.
  * A value type's own members count, and an array position (`coordinates[2]`).
@@ -74,7 +91,7 @@ export function mappingProblems(map, schema, mappingNames = null) {
     const cols = m.column === undefined ? [] : [].concat(m.column);
     if (m.column !== undefined && (!cols.length || cols.some((c) => typeof c !== 'string' || !c.trim()))) out.push(`${field}: column must be a column name or a list of them`);
     if (m.transform !== undefined && !TRANSFORMS.includes(m.transform)) out.push(`${field}: unknown transform "${m.transform}" (known: ${TRANSFORMS.join(', ')})`);
-    if (m.transform === 'flags' && (!m.values || typeof m.values !== 'object' || !Object.keys(m.values).length)) out.push(`${field}: transform flags needs values (column: value)`);
+    if (m.transform === 'flags' && (!m.values || typeof m.values !== 'object' || Array.isArray(m.values) || !Object.keys(m.values).length || Object.values(m.values).some((v) => typeof v !== 'string' || !v.trim()))) out.push(`${field}: transform flags needs values as column: value`);
     if (m.values !== undefined && m.transform !== 'flags') out.push(`${field}: values is only for transform flags`);
     if (m.transform === 'numbers' && cols.length < 2) out.push(`${field}: transform numbers needs at least two columns`);
     if (m.via !== undefined && (typeof m.via !== 'string' || (mappingNames && !mappingNames.has(m.via)))) out.push(`${field}: via must name a mapping file as subject/Type/name, got ${JSON.stringify(m.via)}`);

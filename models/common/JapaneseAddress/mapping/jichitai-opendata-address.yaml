@@ -14,9 +14,8 @@ fields:
   postalCode:
     to: 郵便番号 (contactPointPostalCode)
     note:
-      ja: 定義上は連絡先の郵便番号で、所在地と異なることがある。12 イベント、13 公衆トイレ、14 消防水利施設には無い
-      en: by definition the contact point's postal code, which may differ from the location's; not in 12 events, 13 public toilets, 14 fire water supplies
-    column: 郵便番号
+      ja: 定義上は連絡先の郵便番号で、所在地と異なることがある。そのため変換では postalCode に入れない。12 イベント、13 公衆トイレ、14 消防水利施設には無い
+      en: by definition the contact point's postal code, which may differ from the location's, so the converter does not put it into postalCode; not in 12 events, 13 public toilets, 14 fire water supplies
   addressRegion: { to: 所在地_都道府県 (prefecture), column: 所在地_都道府県 }
   addressLocality: { to: 所在地_市区町村 (city), note: { ja: 郡名・政令市の区名を含む点は同じ, en: both include county and designated-city ward names }, column: 所在地_市区町村, transform: municipality }
   machiaza:

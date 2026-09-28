@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { loadSubjects } from '../scripts/lib/models.mjs';
-import { mappingProblems } from '../scripts/lib/mapping-check.mjs';
+import { mappingProblems, viaCycles } from '../scripts/lib/mapping-check.mjs';
 
 const subjects = await loadSubjects();
 const model = (sub, type) => subjects.find((s) => s.name === sub).models.find((m) => m.type === type);
@@ -40,7 +40,8 @@ test('conversion rules are checked: columns, known transforms, flags values, via
   assert.deepEqual(rule({ column: '状態' }), []);
   assert.deepEqual(rule({ column: [] }), ['progress: column must be a column name or a list of them']);
   assert.deepEqual(rule({ column: 'a', transform: 'upper' }), [`progress: unknown transform "upper" (known: text, code6, number, integer, numbers, flag, flags, split, municipality, machiazaId)`]);
-  assert.deepEqual(rule({ transform: 'flags' }), ['progress: transform flags needs values (column: value)']);
+  assert.deepEqual(rule({ transform: 'flags' }), ['progress: transform flags needs values as column: value']);
+  assert.deepEqual(rule({ transform: 'flags', values: ['flood'] }), ['progress: transform flags needs values as column: value']);
   assert.deepEqual(rule({ column: 'a', values: { a: 'b' } }), ['progress: values is only for transform flags']);
   assert.deepEqual(rule({ column: 'a', transform: 'numbers' }), ['progress: transform numbers needs at least two columns']);
   assert.deepEqual(rule({ via: 'common/Geometry/nothing' }), ['progress: via must name a mapping file as subject/Type/name, got "common/Geometry/nothing"']);
@@ -66,4 +67,11 @@ test('the standard needs a bilingual name; url, licence, note and structure are 
   assert.deepEqual(mappingProblems({ ...ok, feilds: {} }, task), ['unknown key "feilds" (allowed: standard, fields, structure, convert)']);
   const { standard, ...noStandard } = ok;
   assert.deepEqual(mappingProblems(noStandard, task), ['standard is required']);
+});
+
+test('a via cycle is found, whether a mapping names itself or two name each other', () => {
+  const m = (via) => ({ fields: { address: { to: 'x', via } } });
+  assert.deepEqual(viaCycles({ 'a/A/x': m('a/A/x') }), [['a/A/x', 'a/A/x']]);
+  assert.deepEqual(viaCycles({ 'a/A/x': m('b/B/y'), 'b/B/y': m('a/A/x') }), [['a/A/x', 'b/B/y', 'a/A/x']]);
+  assert.deepEqual(viaCycles(Object.fromEntries(subjects.flatMap((s) => s.models.flatMap((mo) => mo.mappings.map((map) => [`${s.name}/${mo.type}/${map.name}`, map]))))), []);
 });

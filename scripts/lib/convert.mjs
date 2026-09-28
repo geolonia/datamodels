@@ -7,20 +7,32 @@
 // in Excel (92011 for 092011) and put a whole address into one column (#85).
 // The converter repairs what it can prove and reports every repair.
 
-/** Text of a CSV file: UTF-8 (with or without BOM), else Shift_JIS. */
+/**
+ * Text of a CSV file: UTF-8 (with or without BOM), else Shift_JIS. A byte that
+ * is invalid in the detected encoding throws instead of becoming U+FFFD.
+ */
 export function decodeCsv(bytes) {
   const b = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
-  if (b[0] === 0xef && b[1] === 0xbb && b[2] === 0xbf) return { text: new TextDecoder('utf-8').decode(b.subarray(3)), encoding: 'utf-8 (BOM)' };
+  if (b[0] === 0xef && b[1] === 0xbb && b[2] === 0xbf) {
+    try { return { text: new TextDecoder('utf-8', { fatal: true }).decode(b.subarray(3)), encoding: 'utf-8 (BOM)' }; } catch { throw new Error('the file starts with a UTF-8 BOM but is not valid UTF-8'); }
+  }
   try { return { text: new TextDecoder('utf-8', { fatal: true }).decode(b), encoding: 'utf-8' }; } catch { /* not UTF-8 */ }
-  return { text: new TextDecoder('shift_jis').decode(b), encoding: 'shift_jis' };
+  try { return { text: new TextDecoder('shift_jis', { fatal: true }).decode(b), encoding: 'shift_jis' }; } catch { throw new Error('neither valid UTF-8 nor valid Shift_JIS'); }
 }
 
-/** RFC 4180 CSV: quoted fields, doubled quotes, commas and line breaks inside quotes. */
+/**
+ * RFC 4180 CSV: quoted fields, doubled quotes, commas and line breaks inside
+ * quotes. Throws on an unclosed quote (a truncated file) and on a record whose
+ * field count differs from the header's (a stray comma would shift the values);
+ * surplus empty fields at the end of a record, as spreadsheets write them, are allowed.
+ */
 export function parseCsv(text) {
   const rows = [];
-  let row = [], field = '', quoted = false;
+  let row = [], field = '', quoted = false, line = 1, start = 1;
+  const end = () => { row.push(field); rows.push({ fields: row, line: start }); row = []; field = ''; };
   for (let i = 0; i < text.length; i++) {
     const c = text[i];
+    if (c === '\n' || (c === '\r' && text[i + 1] !== '\n')) line++;
     if (quoted) {
       if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
       else if (c === '"') quoted = false;
@@ -28,13 +40,17 @@ export function parseCsv(text) {
     } else if (c === '"' && field === '') quoted = true;
     else if (c === ',') { row.push(field); field = ''; }
     else if (c === '\n' || c === '\r') {
-      if (c === '\r' && text[i + 1] === '\n') i++;
-      row.push(field); rows.push(row); row = []; field = '';
+      if (c === '\r' && text[i + 1] === '\n') { i++; line++; }
+      end(); start = line;
     } else field += c;
   }
-  if (field !== '' || row.length) { row.push(field); rows.push(row); }
-  const [head = [], ...body] = rows.filter((r) => r.some((v) => v.trim() !== ''));
-  return body.map((r) => Object.fromEntries(head.map((h, i) => [h.trim(), (r[i] ?? '').trim()])));
+  if (quoted) throw new Error(`line ${start}: a quoted field is not closed`);
+  if (field !== '' || row.length) end();
+  const [head = { fields: [] }, ...body] = rows.filter((r) => r.fields.some((v) => v.trim() !== ''));
+  const n = head.fields.length;
+  const bad = body.filter((r) => r.fields.length < n || r.fields.slice(n).some((v) => v.trim() !== ''));
+  if (bad.length) throw new Error(`${bad.slice(0, 5).map((r) => `line ${r.line}: ${r.fields.length} fields`).join(', ')}${bad.length > 5 ? ` and ${bad.length - 5} more` : ''} (the header has ${n})`);
+  return body.map((r) => Object.fromEntries(head.fields.map((h, i) => [h.trim(), r.fields[i].trim()])));
 }
 
 // 全国地方公共団体コード: the 5-digit JIS X 0402 code plus a check digit (MIC,
@@ -82,7 +98,12 @@ function apply(rule, row, set) {
     }
     // Lists mark a flag with 1 and leave it empty (or 0) otherwise; anything else is reported, not read as false.
     case 'flag': return one === '1' ? { value: true } : one === '' || one === '0' ? { value: false } : { problem: `${cols[0]}: ${one} is not 1, 0 or empty` };
-    case 'flags': { const vs = Object.entries(rule.values ?? {}).filter(([c]) => row[c] === '1').map(([, v]) => v); return { value: vs.length ? vs : undefined }; }
+    case 'flags': {
+      const marks = Object.keys(rule.values ?? {}).filter((c) => !['1', '0', ''].includes(row[c] ?? ''));
+      if (marks.length) return { problem: marks.map((c) => `${c}: ${row[c]} is not 1, 0 or empty`).join('; ') };
+      const vs = Object.entries(rule.values ?? {}).filter(([c]) => row[c] === '1').map(([, v]) => v);
+      return { value: vs.length ? vs : undefined };
+    }
     case 'split': { const vs = one.split(/[;；]/).map((x) => x.trim()).filter(Boolean); return { value: vs.length ? vs : undefined }; }
     // A municipality name ends in 市, 区, 町 or 村; a value that goes on (宇都宮市中央本町1-29) is the rest of the address.
     case 'municipality': return !one ? { value: undefined } : /[市区町村]$/.test(one) ? { value: one } : { value: undefined, fix: { repair: `left out ${cols[0]}: not a municipality name`, detail: one } };
@@ -100,21 +121,26 @@ function apply(rule, row, set) {
  * Returns one { entity, fixes, problems } per row; a fix is { field, repair, detail }.
  */
 export function convertRows(rows, mapping, { type, mappings = {}, set = {} } = {}) {
-  const build = (map, row, fixes, problems, top) => {
+  // chain: the via names being built, so a cycle is reported instead of recursing forever.
+  const build = (map, row, fixes, problems, top, chain = []) => {
     const out = {};
     for (const [field, rule] of Object.entries(map.fields ?? {})) {
       if (rule?.value !== undefined) { out[field] = rule.value; continue; }
       if (rule?.via) {
         const sub = mappings[rule.via];
         if (!sub) { problems.push(`${field}: no mapping ${rule.via}`); continue; }
-        const v = build(sub, row, fixes, problems, false);
+        if (chain.includes(rule.via)) { problems.push(`${field}: via cycle ${[...chain, rule.via].join(' → ')}`); continue; }
+        const v = build(sub, row, fixes, problems, false, [...chain, rule.via]);
         const meaningful = Object.entries(v).some(([k]) => sub.fields[k]?.value === undefined);
         if (meaningful) out[field] = v;
         continue;
       }
-      const given = top && set[field] !== undefined;
+      // --set fills what the list does not carry; a value the row has wins.
+      const fromRow = rule?.column !== undefined || rule?.transform === 'flags' ? apply(rule, row) : { value: undefined };
+      const given = top && set[field] !== undefined && fromRow.value === undefined && !fromRow.problem;
       if (rule?.column === undefined && rule?.transform !== 'flags' && !given) continue;
-      const r = given ? apply({ ...rule, column: '__set' }, { __set: String(set[field]) }) : apply(rule, row);
+      const r = given ? apply({ ...rule, column: '__set' }, { __set: String(set[field]) }) : fromRow;
+      if (top && set[field] !== undefined && fromRow.value !== undefined) fixes.push({ field, repair: 'kept the value in the list over --set', detail: `${fromRow.value} (not ${set[field]})` });
       if (r.problem) problems.push(`${field}: ${r.problem}`);
       if (r.fix) fixes.push({ field, ...r.fix });
       if (r.value !== undefined) out[field] = r.value;

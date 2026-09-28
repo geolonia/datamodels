@@ -86,3 +86,36 @@ test('a flag is 1, 0 or empty; any other mark is reported instead of read as fal
   assert.equal(empty.entity.f, false);
   assert.deepEqual(mark.problems, ['f: f: ○ is not 1, 0 or empty']);
 });
+
+test('an invalid byte, an unclosed quote or a record of the wrong length is an error, not data', () => {
+  assert.throws(() => decodeCsv(new Uint8Array([0xef, 0xbb, 0xbf, 0x61, 0xff])), /UTF-8 BOM but is not valid UTF-8/);
+  assert.throws(() => decodeCsv(new Uint8Array([0x61, 0x80, 0x80, 0x80])), /neither valid UTF-8 nor valid Shift_JIS/);
+  assert.throws(() => parseCsv('id,name\n1,"School'), /line 2: a quoted field is not closed/);
+  assert.throws(() => parseCsv('a,b,c\n1,2\n"x\ny",2,3\n1,2,3,4\n'), /line 2: 2 fields, line 5: 4 fields \(the header has 3\)/);
+  assert.deepEqual(parseCsv('a,b\n1,2,,\n'), [{ a: '1', b: '2' }], 'empty trailing fields, as spreadsheets write them');
+});
+
+test('flags report a mark other than 1, 0 or empty', () => {
+  const map = { convert: { id: 'urn:ngsi-ld:T:{n}' }, fields: { n: { to: 'n', column: 'n' }, h: { to: 'h', transform: 'flags', values: { 洪水: 'flood', 地震: 'earthquake' } } } };
+  const [ok1, bad] = convertRows([{ n: 'a', 洪水: '1', 地震: '' }, { n: 'b', 洪水: '1', 地震: '○' }], map, { type: 'T' });
+  assert.deepEqual(ok1.entity.h, ['flood']);
+  assert.deepEqual(bad.problems, ['h: 地震: ○ is not 1, 0 or empty']);
+});
+
+test('--set fills only what the row leaves empty; a value in the list wins and is reported', () => {
+  const map = { convert: { id: 'urn:ngsi-ld:T:{code}' }, fields: { code: { to: 'code', column: 'code', transform: 'code6' } } };
+  const [kept, filled] = convertRows([{ code: '92011' }, { code: '' }], map, { type: 'T', set: { code: '13101' } });
+  assert.equal(kept.entity.code, '092011');
+  assert.ok(kept.fixes.some((f) => f.repair === 'kept the value in the list over --set'));
+  assert.equal(filled.entity.code, '131016');
+});
+
+test('a via cycle stops with a problem instead of recursing forever', () => {
+  const loop = { fields: { address: { to: 'x', via: 'a/A/x' } } };
+  const [r] = convertRows([{}], { convert: { id: 'urn:ngsi-ld:T:1{address}' }, fields: loop.fields }, { type: 'T', mappings: { 'a/A/x': loop } });
+  assert.ok(r.problems.some((p) => p.startsWith('address: via cycle a/A/x → a/A/x')), r.problems.join('; '));
+});
+
+test('the contact postal code of sheet A is not taken as the address postal code', () => {
+  assert.equal(mappings['common/JapaneseAddress/jichitai-opendata-address'].fields.postalCode.column, undefined);
+});
