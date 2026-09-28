@@ -34,6 +34,8 @@ Nothing upstream is copied. The upstream context is listed by URL in the `@conte
 
 Use a commit-pinned upstream URL, not `master`, so the meaning of stored data cannot drift when upstream changes.
 
+Adding attributes to a catalog model works the same way. The [extension builder](/en/guide/builder) writes the @context and the JSON Schema for it in the browser.
+
 ### When not to adopt an upstream type
 
 "Extend, do not duplicate" means using an upstream model when one fits, not bending everything to fit. Upstream models are sometimes just what someone published first for their own use case without general value, sometimes shaped by North American assumptions that do not hold in Japan, and sometimes fixed before much thought or feedback went into them. Mint your own type when:
