@@ -252,18 +252,21 @@ for (const subject of subjects) {
     // Status and adopters (decided in #38): stable needs two independent
     // implementations, self-reported with a link and checked by a reviewer in
     // the pull request that sets it; CI checks the mechanics only.
-    const status = model.catalog?.status ?? 'draft';
+    // Only a missing status means draft; an explicit null is an error like any other value.
+    const status = model.catalog?.status === undefined ? 'draft' : model.catalog.status;
     if (!['draft', 'stable', 'deprecated'].includes(status)) fail(`${mwhere}/catalog.yaml`, `status must be draft, stable or deprecated, got ${JSON.stringify(status)}`);
+    // A link must name a host: "https://" alone identifies no implementation.
+    const isLink = (u) => { try { const x = new URL(String(u)); return (x.protocol === 'https:' || x.protocol === 'http:') && x.hostname !== ''; } catch { return false; } };
     const list = model.adopters?.adopters;
     if (model.adopters != null && (typeof model.adopters !== 'object' || Array.isArray(model.adopters) || !Array.isArray(list))) {
       fail(`${mwhere}/ADOPTERS.yaml`, 'root value must be a mapping with an adopters list');
     } else {
       (list ?? []).forEach((a, i) => {
         if (!a || typeof a !== 'object' || typeof a.name !== 'string' || !a.name.trim() || typeof a.organization !== 'string' || !a.organization.trim()) fail(`${mwhere}/ADOPTERS.yaml`, `entry ${i + 1}: needs name and organization`);
-        else if (a.url !== undefined && !/^https?:\/\//.test(String(a.url))) fail(`${mwhere}/ADOPTERS.yaml`, `entry ${i + 1}: url must start with http:// or https://`);
+        else if (a.url !== undefined && !isLink(a.url)) fail(`${mwhere}/ADOPTERS.yaml`, `entry ${i + 1}: url must be an http(s) URL with a host, got ${JSON.stringify(a.url)}`);
       });
       if (status === 'stable') {
-        const orgs = new Set((list ?? []).filter((a) => a && typeof a.organization === 'string' && /^https?:\/\//.test(String(a.url ?? ''))).map((a) => a.organization.trim().toLowerCase().replace(/\s+/g, ' ')));
+        const orgs = new Set((list ?? []).filter((a) => a && typeof a.organization === 'string' && isLink(a.url)).map((a) => a.organization.trim().toLowerCase().replace(/\s+/g, ' ')));
         if (orgs.size < 2) fail(`${mwhere}/ADOPTERS.yaml`, `status stable needs two implementations from different organisations, each with a url; found ${orgs.size}`);
       }
     }

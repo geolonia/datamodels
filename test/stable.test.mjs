@@ -54,9 +54,22 @@ test('an ADOPTERS entry without organization, a bad url or a wrong shape fails',
   let r = await validateWith({ adopters: 'adopters:\n  - name: Something\n' });
   assert.match(r.stderr, /Comment\/ADOPTERS\.yaml: entry 1: needs name and organization/);
   r = await validateWith({ adopters: `adopters:\n${entry('Org A', 'ftp://a.example')}` });
-  assert.match(r.stderr, /entry 1: url must start with http/);
+  assert.match(r.stderr, /entry 1: url must be an http\(s\) URL with a host/);
   r = await validateWith({ adopters: '- name: x\n' });
   assert.match(r.stderr, /Comment\/ADOPTERS\.yaml: root value must be a mapping with an adopters list/);
+});
+
+test('a url without a host does not count and fails', async () => {
+  const r = await validateWith({ status: 'stable', adopters: `adopters:\n${entry('Org A', 'https://a.example')}${entry('Org B', 'https://')}` });
+  assert.equal(r.status, 1);
+  assert.match(r.stderr, /entry 2: url must be an http\(s\) URL with a host, got "https:\/\/"/);
+  assert.match(r.stderr, /found 1/);
+});
+
+test('an explicit null status fails', async () => {
+  const r = await validateWith({ status: 'null' });
+  assert.equal(r.status, 1);
+  assert.match(r.stderr, /Comment\/catalog\.yaml: status must be draft, stable or deprecated, got null/);
 });
 
 test('an unknown status fails', async () => {
