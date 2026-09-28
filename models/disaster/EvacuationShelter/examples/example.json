@@ -4,6 +4,7 @@
   "externalShelterId": "13101-0012",
   "nationalShelterId": "E1310100012111",
   "localGovernmentCode": "131016",
+  "site": "urn:ngsi-ld:EvacuationSite:0002",
   "openingStatus": "open",
   "statusLabel": "開設中",
   "evacueeHouseholds": 12,

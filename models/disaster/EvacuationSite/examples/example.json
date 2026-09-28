@@ -1,0 +1,33 @@
+{
+  "id": "urn:ngsi-ld:EvacuationSite:0002",
+  "type": "EvacuationSite",
+  "name": "番町小学校",
+  "nameKana": "バンチョウショウガッコウ",
+  "nameEn": "Bancho Elementary School",
+  "externalSiteId": "13101-0002",
+  "nationalShelterId": "E1310100002201",
+  "localGovernmentCode": "131016",
+  "address": {
+    "addressCountry": "JP",
+    "addressRegion": "東京都",
+    "addressLocality": "千代田区",
+    "machiaza": "六番町",
+    "banchi": "8",
+    "localGovernmentCode": "131016",
+    "addressText": "東京都千代田区六番町8"
+  },
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      139.73407899331,
+      35.688111802263
+    ]
+  },
+  "hazardTypes": [
+    "flood",
+    "stormSurge",
+    "earthquake",
+    "inlandFlood"
+  ],
+  "alsoDesignatedShelter": true
+}

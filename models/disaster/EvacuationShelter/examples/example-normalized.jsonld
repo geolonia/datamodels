@@ -17,6 +17,10 @@
     "type": "Property",
     "value": "131016"
   },
+  "site": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:EvacuationSite:0002"
+  },
   "openingStatus": {
     "type": "Property",
     "value": "open"

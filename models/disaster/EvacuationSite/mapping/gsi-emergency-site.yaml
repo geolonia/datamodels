@@ -1,0 +1,21 @@
+# Correspondence between EvacuationSite and GSI's designated emergency
+# evacuation site data (one CSV per municipality).
+standard:
+  name:
+    ja: 国土地理院「指定緊急避難場所データ」（市町村別 CSV、避難所等データダウンロードサイト）
+    en: "GSI's designated emergency evacuation site data (one CSV per municipality, 避難所等データダウンロードサイト)"
+  url: https://hinanmap.gsi.go.jp/hinanjocp/hinanbasho/koukaidate.html
+  license: 国土地理院コンテンツ利用規約 and the site's ご利用上の注意 (the data may not be current; 指定緊急避難場所 and 指定避難所 differ; designation is per hazard; pass these notes on when sharing)
+  note:
+    ja: "市町村が登録した指定緊急避難場所を国土地理院が全国分公開するもの。自治体標準オープンデータセットの 03 はこの項目を参照して作られた。文字コードは UTF-8（BOM 付き）。自治体の ID は含まず、全国共通 ID を持つ。"
+    en: "GSI publishes the designated emergency evacuation sites every municipality registers, nationwide. Dataset 03 of the 自治体標準オープンデータセット was built from these columns. UTF-8 with a BOM. It carries the nationwide common ID but not the municipality's own ID."
+fields:
+  nationalShelterId: { to: 共通ID }
+  name: { to: 施設・場所名 }
+  address: { to: 住所, note: { ja: 連結表記。JapaneseAddress の addressText, en: one line; JapaneseAddress addressText } }
+  location: { to: 緯度, 経度, note: { ja: "[経度, 緯度] の点", en: "a point [longitude, latitude]" } }
+  hazardTypes: { to: 洪水 … 火山現象, note: { ja: 自治体標準オープンデータセットと同じ 8 列（1 が指定）, en: "the same eight columns as the municipal dataset (1 = designated)" } }
+  alsoDesignatedShelter: { to: 指定避難所との住所同一, note: { ja: 住所が同じ指定避難所があるときに 1, en: 1 when a designated shelter has the same address } }
+  description: { to: 備考 }
+  externalSiteId: { to: null, note: { ja: このデータには無い（NO は一覧の行番号）。代わりに nationalShelterId で識別する, en: "not in this data (NO is the row number of the list); nationalShelterId identifies the site instead" } }
+  localGovernmentCode: { to: null, note: { ja: ファイル名の市町村コード（5桁）から導く。検査数字を足して6桁にする, en: "derive from the 5-digit municipality code in the file name, adding the check digit for 6 digits" } }

@@ -1,0 +1,67 @@
+{
+  "@context": [
+    "https://datamodels.jp/context/disaster/v1.0.0.jsonld",
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
+  ],
+  "id": "urn:ngsi-ld:EvacuationSite:0002",
+  "type": "EvacuationSite",
+  "name": {
+    "type": "Property",
+    "value": "番町小学校"
+  },
+  "nameKana": {
+    "type": "Property",
+    "value": "バンチョウショウガッコウ"
+  },
+  "nameEn": {
+    "type": "Property",
+    "value": "Bancho Elementary School"
+  },
+  "externalSiteId": {
+    "type": "Property",
+    "value": "13101-0002"
+  },
+  "nationalShelterId": {
+    "type": "Property",
+    "value": "E1310100002201"
+  },
+  "localGovernmentCode": {
+    "type": "Property",
+    "value": "131016"
+  },
+  "address": {
+    "type": "Property",
+    "value": {
+      "addressCountry": "JP",
+      "addressRegion": "東京都",
+      "addressLocality": "千代田区",
+      "machiaza": "六番町",
+      "banchi": "8",
+      "localGovernmentCode": "131016",
+      "addressText": "東京都千代田区六番町8"
+    }
+  },
+  "location": {
+    "type": "GeoProperty",
+    "value": {
+      "type": "Point",
+      "coordinates": [
+        139.73407899331,
+        35.688111802263
+      ]
+    }
+  },
+  "hazardTypes": {
+    "type": "Property",
+    "value": [
+      "flood",
+      "stormSurge",
+      "earthquake",
+      "inlandFlood"
+    ]
+  },
+  "alsoDesignatedShelter": {
+    "type": "Property",
+    "value": true
+  }
+}
