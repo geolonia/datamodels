@@ -100,44 +100,9 @@ export function attributesOf(model) {
   return Object.entries(model.schema.properties ?? {}).filter(([k]) => k !== 'id' && k !== 'type');
 }
 
-/**
- * Key-values projection of an NGSI-LD normalized entity.
- *
- * `multi` names the attributes the schema declares `x-ngsi.multi`: their
- * key-values form is always an array, one element per instance, even when the
- * normalized entity carries a single instance. Instances are distinguished by
- * datasetId; at most one (the default instance) may omit it.
- */
-export function toKeyValues(normalized, { multi = new Set() } = {}) {
-  const out = {};
-  for (const [k, v] of Object.entries(normalized)) {
-    if (k === '@context') continue;
-    if (k === 'id' || k === 'type') { out[k] = v; continue; }
-    if (Array.isArray(v) || multi.has(k)) {
-      const instances = Array.isArray(v) ? v : [v];
-      if (instances.length === 0) throw new Error(`attribute ${k}: empty multi-valued attribute`);
-      const seen = new Set();
-      let defaults = 0;
-      out[k] = instances.map((inst) => {
-        const single = toKeyValues({ [k]: inst });
-        if (inst.datasetId === undefined) defaults += 1;
-        else if (seen.has(inst.datasetId)) throw new Error(`attribute ${k}: duplicate datasetId ${inst.datasetId}`);
-        else seen.add(inst.datasetId);
-        return single[k];
-      });
-      if (defaults > 1) throw new Error(`attribute ${k}: only one instance of a multi-valued attribute may omit datasetId`);
-      continue;
-    }
-    if (!v || typeof v !== 'object' || !('type' in v)) throw new Error(`attribute ${k}: not a normalized attribute object`);
-    if (v.type === 'Relationship') { if (typeof v.object !== 'string') throw new Error(`attribute ${k}: Relationship needs a string object`); out[k] = v.object; }
-    else if (v.type === 'GeoProperty') { if (!v.value || typeof v.value !== 'object' || typeof v.value.type !== 'string') throw new Error(`attribute ${k}: GeoProperty needs a GeoJSON value`); out[k] = v.value; }
-    else if (v.type === 'Property') {
-      if (!('value' in v)) throw new Error(`attribute ${k}: Property needs a value`);
-      out[k] = (v.value && typeof v.value === 'object' && '@type' in v.value && '@value' in v.value) ? v.value['@value'] : v.value;
-    } else throw new Error(`attribute ${k}: unknown attribute type "${v.type}"`);
-  }
-  return out;
-}
+// The projection between the two forms lives in ngsi.mjs, which has no Node
+// imports, so the site's example playground runs the same code in the browser.
+export { toKeyValues, toNormalized } from './ngsi.mjs';
 
 /** Imports (URLs) and merged inline terms of a context document. */
 export function splitContext(doc) {
