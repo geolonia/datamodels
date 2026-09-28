@@ -15,8 +15,8 @@ fields:
   name: { to: 名称 (name) }
   nameKana: { to: 名称_カナ (nameKana) }
   nameEn: { to: 名称_英字 (nameEn) }
-  address: { to: 所在地_* (fullAddress, prefecture, city, streetAddress, cityBlock), 建物名等(方書) (buildingNameEtc), 町字ID (streetAddressId), note: { ja: 詳細は JapaneseAddress の対応表, en: see the JapaneseAddress table } }
-  location: { to: 緯度 (latitude), 経度 (longitude), note: { ja: "[経度, 緯度] の点", en: "a point [longitude, latitude]" } }
+  address: { to: "所在地_* (fullAddress, prefecture, city, streetAddress, cityBlock), 建物名等(方書) (buildingNameEtc), 町字ID (streetAddressId)", note: { ja: 詳細は JapaneseAddress の対応表, en: see the JapaneseAddress table } }
+  location: { to: "緯度 (latitude), 経度 (longitude)", note: { ja: "[経度, 緯度] の点", en: "a point [longitude, latitude]" } }
   elevation: { to: 標高 (height), note: { ja: m 単位の数値にする, en: as a number in metres } }
   telephone: { to: 電話番号 (contactPointPhoneNumber) }
   hazardTypes:

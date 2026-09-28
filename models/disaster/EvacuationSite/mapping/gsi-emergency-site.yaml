@@ -13,7 +13,7 @@ fields:
   nationalShelterId: { to: 共通ID }
   name: { to: 施設・場所名 }
   address: { to: 住所, note: { ja: 連結表記。JapaneseAddress の addressText, en: one line; JapaneseAddress addressText } }
-  location: { to: 緯度, 経度, note: { ja: "[経度, 緯度] の点", en: "a point [longitude, latitude]" } }
+  location: { to: "緯度, 経度", note: { ja: "[経度, 緯度] の点", en: "a point [longitude, latitude]" } }
   hazardTypes: { to: 洪水 … 火山現象, note: { ja: 自治体標準オープンデータセットと同じ 8 列（1 が指定）, en: "the same eight columns as the municipal dataset (1 = designated)" } }
   alsoDesignatedShelter: { to: 指定避難所との住所同一, note: { ja: 住所が同じ指定避難所があるときに 1, en: 1 when a designated shelter has the same address } }
   description: { to: 備考 }
