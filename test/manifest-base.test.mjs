@@ -60,6 +60,23 @@ test('a missing prerelease field counts as launched', async () => {
   assert.equal(r.status, 1);
 });
 
+test('a launched base cannot be bypassed by setting prerelease in the pull request', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'datamodels-manifest-'));
+  try {
+    const baseFile = join(dir, 'base.json');
+    await writeFile(baseFile, JSON.stringify({ ...baseManifest, prerelease: false }));
+    const r = await runWith((m) => { m.prerelease = true; m.files[first] = 'changed'; }, ['--base-file', baseFile]);
+    assert.equal(r.status, 1);
+    assert.match(r.stderr, /a pull request cannot turn the pre-release exception back on/);
+    const missing = join(dir, 'base-missing-flag.json');
+    const { prerelease, ...withoutFlag } = baseManifest;
+    await writeFile(missing, JSON.stringify(withoutFlag));
+    assert.equal((await runWith((m) => { m.prerelease = true; m.files[first] = 'changed'; }, ['--base-file', missing])).status, 1);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
 test('an unknown base ref fails with a hint instead of passing', async () => {
   const r = await runWith(() => {}, ['--base', 'origin/no-such-branch']);
   assert.equal(r.status, 1);
