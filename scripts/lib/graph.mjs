@@ -138,7 +138,8 @@ export function graphSvg(lang, prefix, subjects, focus = null, rankdir = 'LR', {
   const links = [];
   // ids stay unique if a page ever shows two graphs, and only use safe characters.
   const key = (center ?? focus?.name ?? 'all').replace(/[^A-Za-z0-9_-]/g, '_');
-  let svg = `<div class="model-graph"><div class="canvas" style="width:${W}px;height:${H}px"><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="graph-title-${key}" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`;
+  // GraphViewer (site theme) adds pan and zoom; without JavaScript the graph scrolls sideways.
+  let svg = `<GraphViewer :width="${W}" :height="${H}">\n<div class="model-graph"><div class="canvas" style="width:${W}px;height:${H}px"><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="graph-title-${key}" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`;
   svg += `<title id="graph-title-${key}">${esc(t.label)}</title>`;
   svg += `<defs><marker id="arrow-${key}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrowhead"/></marker>`;
   svg += `<marker id="hollow-${key}" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M1,1 L11,6 L1,11 z" class="arrowhead hollow"/></marker></defs>`;
@@ -165,7 +166,7 @@ export function graphSvg(lang, prefix, subjects, focus = null, rankdir = 'LR', {
     svg += `<g class="node ${n.cls}">${body}</g>`;
     if (n.href) links.push(`<a href="${esc(n.href)}" aria-label="${esc(n.sub ? `${n.title} (${n.sub})` : n.title)}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px;width:${n.width}px;height:${n.height}px"></a>`);
   }
-  svg += `</svg>${links.join('')}</div></div>\n\n`;
+  svg += `</svg>${links.join('')}</div></div>\n</GraphViewer>\n\n`;
   // The legend names only what this graph draws (self-links are text in the node).
   const kinds = new Set(edges.map((e) => e.kind));
   const items = [...['rel', 'value', 'alias', 'subclass'].filter((k) => kinds.has(k)), ...(selfLinks.size ? ['self'] : []), ...([...nodes.values()].some((n) => n.cls.includes('other')) ? ['other'] : []), ...([...nodes.values()].some((n) => n.more) ? ['more'] : [])];

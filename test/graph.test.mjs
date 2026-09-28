@@ -124,3 +124,11 @@ test('a long grey-box label breaks after its first comma', () => {
   const svg = graphSvg('en', '/en', subjects, null, 'LR', { center: 'task/Task' });
   assert.match(svg, /<text class="sub"[^>]*>person,<\/text><text class="sub"[^>]*>organisation or team<\/text>/);
 });
+
+test('the graph sits in GraphViewer with its size, on lines of its own so the page keeps it as one HTML block', () => {
+  const svg = graphSvg('en', '/en', subjects, null, 'LR', { center: 'disaster/DesignatedShelter' });
+  const [, w, h] = svg.match(/^<GraphViewer :width="(\d+)" :height="(\d+)">\n<div class="model-graph"><div class="canvas" style="width:(?:\d+)px;height:(?:\d+)px">/) ?? [];
+  assert.ok(w && h, svg.slice(0, 120));
+  assert.match(svg, new RegExp(`style="width:${w}px;height:${h}px"`));
+  assert.match(svg, /<\/div><\/div>\n<\/GraphViewer>\n\n<p class="model-graph-legend">/);
+});
