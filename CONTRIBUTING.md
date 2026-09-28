@@ -38,9 +38,9 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 コミットの `Signed-off-by: 名前 <メールアドレス>` は、[Developer Certificate of Origin](https://developercertificate.org/) に同意することを表します。つまり、その変更を自分で作ったか、公開する権利があり、このリポジトリのライセンスで公開してよいことを示します。別の同意書はありません。
 
 - 付け方: `git commit -s`（名前とメールアドレスはコミットの作者と同じにします）
-- 付け忘れたとき: `git rebase --signoff origin/main` の後、`git push --force-with-lease`
+- 付け忘れたとき: `git rebase --signoff origin/main` の後、`git push --force-with-lease`。履歴を書き換えたくなければ、DCO チェックの詳細に表示される文面で、前のコミットに署名を追加するコミットを 1 つ足すこともできます。
 
-CI は、マージコミットを除くすべてのコミットに作者の署名があるかを検査します。
+[DCO アプリ](https://github.com/apps/dco)が、Pull Request のすべてのコミット（ボットとマージコミットを除く）に作者の署名があるかを検査します。
 
 ## ライセンス
 
@@ -86,9 +86,9 @@ Recording published versions (snapshots and the manifest) is a maintainer step. 
 `Signed-off-by: Name <email>` in a commit states that you agree to the [Developer Certificate of Origin](https://developercertificate.org/): you wrote the change or have the right to submit it, and it may be published under this repository's licences. There is no separate contributor agreement.
 
 - How: `git commit -s` (the name and email must match the commit's author).
-- Forgot it: `git rebase --signoff origin/main`, then `git push --force-with-lease`.
+- Forgot it: `git rebase --signoff origin/main`, then `git push --force-with-lease`. If you would rather not rewrite history, add one follow-up commit that signs off the earlier ones, with the text shown in the DCO check's details.
 
-CI checks that every commit except merge commits is signed off by its author.
+The [DCO app](https://github.com/apps/dco) checks that every commit of a pull request (except bots and merge commits) is signed off by its author.
 
 ## Licences
 
