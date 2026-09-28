@@ -97,3 +97,17 @@ test('an unknown status fails', async () => {
   assert.equal(r.status, 1);
   assert.match(r.stderr, /Comment\/catalog\.yaml: status must be draft, stable or deprecated, got "beta"/);
 });
+
+test('an outside supersededBy URL renders as a link to exactly that URL', async () => {
+  const { createMarkdownRenderer } = await import('vitepress');
+  const { externalLink } = await import('../scripts/lib/site.mjs');
+  const md = await createMarkdownRenderer(join(root, 'site'));
+  for (const url of ['https://example.org/models/Next', 'https://example.org/a b', 'https://example.org/x_(y', 'https://example.org/p)q]r*s_t_', 'https://example.org/q?a=<b>#f']) {
+    const html = md.render(externalLink(url));
+    const a = html.match(/<a href="([^"]*)"[^>]*>(.*?)<\/a>/);
+    assert.ok(a, `${url}: no link in ${html}`);
+    // markdown-it percent-encodes some characters again (] -> %5D): the same URL.
+    assert.equal(decodeURI(a[1].replaceAll('&amp;', '&')), decodeURI(new URL(url).href), `${url}: href`);
+    assert.equal(a[2].replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&amp;', '&'), url, `${url}: text`);
+  }
+});

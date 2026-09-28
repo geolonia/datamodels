@@ -14,6 +14,10 @@ import { listReleases } from './releases.mjs';
 const SITE = join(ROOT, 'site');
 const rel = (url) => url.slice(BASE_URL.length);
 const code = (s) => `\`${s}\``;
+// A Markdown link to any URL that renders as exactly that URL: the text is
+// escaped (brackets, emphasis), the destination is serialised (spaces) and
+// angle-bracketed (an unmatched parenthesis would end a bare destination).
+export const externalLink = (url) => `[${url.replace(/[\\`*_{}[\]()<>#!|~]/g, '\\$&')}](<${new URL(url).href}>)`;
 const fence = (obj) => '```json\n' + JSON.stringify(obj, null, 2) + '\n```';
 
 const T = {
@@ -101,8 +105,7 @@ function modelPage(lang, prefix, subject, model) {
     // supersededBy is a type IRI of this catalog (link its page) or any other URL.
     const next = model.catalog.supersededBy;
     const found = next ? modelForIri(subject, next) : null;
-    // Serialise the URL for the link destination: a raw space would stop Markdown from parsing it as a link.
-    md += `> ${t.deprecatedNote(found ? modelLink(prefix, found) : next ? `[${next}](${new URL(next).href})` : null)}\n\n`;
+    md += `> ${t.deprecatedNote(found ? modelLink(prefix, found) : next ? externalLink(next) : null)}\n\n`;
   }
   if (aliasOf) md += `> ${t.aliasNote(modelLink(prefix, aliasOf))}\n\n`;
   if (subclassOf) md += `> ${t.subclassNote(modelLink(prefix, subclassOf))}\n\n`;
