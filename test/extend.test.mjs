@@ -3,19 +3,21 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
-import { loadSubjects, subjectUrls, modelUrls, attributesOf, ROOT } from '../scripts/lib/models.mjs';
+import { loadSubjects, subjectUrls, modelUrls, attributesOf, resolveContextTerms, CORE_CONTEXT_FIXTURE } from '../scripts/lib/models.mjs';
+import { resolveContextDocument } from '../scripts/lib/releases.mjs';
 import { buildExtension, proposalUrl } from '../scripts/lib/extend.mjs';
 
 const subjects = await loadSubjects();
-const core = new Set(Object.keys(JSON.parse(readFileSync(join(ROOT, 'test', 'fixtures', 'ngsi-ld-core-context-v1.8.jsonld'), 'utf8'))['@context']).filter((k) => !k.startsWith('@')));
+const core = new Set(Object.keys(JSON.parse(readFileSync(CORE_CONTEXT_FIXTURE, 'utf8'))['@context']).filter((k) => !k.startsWith('@')));
+const contextTerms = new Map();
+for (const s of subjects) contextTerms.set(s.name, Object.keys(await resolveContextTerms(s.context, subjects, resolveContextDocument)));
 const common = subjects.find((s) => s.name === 'common');
 const geometry = common.models.find((m) => m.type === 'Geometry');
 const entities = subjects.flatMap((s) => s.models.filter((m) => m.kind === 'entity').map((m) => ({
   subject: s, raw: m,
-  model: { type: m.type, schema: m.schema, schemaExact: modelUrls(s, m).schemaExact, contextAlias: subjectUrls(s).contextAlias, geometrySchema: modelUrls(common, geometry).schemaExact, attributes: attributesOf(m).map(([n]) => n) },
+  model: { type: m.type, schema: m.schema, schemaExact: modelUrls(s, m).schemaExact, contextAlias: subjectUrls(s).contextAlias, geometrySchema: modelUrls(common, geometry).schemaExact, attributes: attributesOf(m).map(([n]) => n), contextTerms: contextTerms.get(s.name) },
 })));
 const input = (attributes) => ({ prefix: 'acme', base: 'https://example.com/ns/acme/', attributes });
 const attrs = [
@@ -59,6 +61,12 @@ test('problems: bad names, clashes with the model and the core, taken namespaces
   assert.deepEqual(codes({ ...input(attrs), base: 'https://datamodels.jp/ns/task/' }), ['baseTaken']);
   assert.deepEqual(codes({ ...input(attrs), base: 'https://example.com/ns/acme' }), ['base']);
   assert.deepEqual(codes({ ...input(attrs), prefix: 'Acme' }), ['prefix']);
+  // Terms of the subject context from other models (Comment's text in the task
+  // context) and imported ones (task's statusLabel in the transportation context).
+  assert.deepEqual(codes(input([{ name: 'text', ngsiType: 'Property', valueType: 'string' }])), ['inContext:text']);
+  assert.deepEqual(codes({ ...input(attrs), prefix: 'text' }), ['prefixInContext:text']);
+  const road = entities.find((e) => e.model.type === 'RoadRestriction').model;
+  assert.ok(road.contextTerms.includes('statusLabel'), 'transportation imports the task terms');
   // An empty row is ignored, not an error.
   assert.deepEqual(codes(input([...attrs, { name: '  ', ngsiType: 'Property', valueType: 'string' }])), []);
 });

@@ -15,7 +15,8 @@ const VALUE_TYPES = ['string', 'number', 'integer', 'boolean', 'object', 'array'
 const FORMATS = ['', 'date-time', 'date', 'uri'];
 
 /**
- * @param {object} model   { type, schema, schemaExact, contextAlias, geometrySchema, attributes: string[] }
+ * @param {object} model   { type, schema, schemaExact, contextAlias, geometrySchema, attributes: string[],
+ *                           contextTerms: string[] (every term the subject context defines, imports included) }
  * @param {object} input   { prefix, base, attributes: [{ name, ngsiType, valueType, format, required, description }] }
  * @param {Set<string>} coreTerms  terms of the NGSI-LD core context (protected)
  * @returns {{ problems: {code: string, name?: string}[], context: object|null, schema: object|null }}
@@ -26,6 +27,9 @@ export function buildExtension(model, input, coreTerms) {
   const base = (input.base ?? '').trim();
   if (!PREFIX.test(prefix)) problems.push({ code: 'prefix' });
   else if (coreTerms.has(prefix) || prefix === 'ngsi-ld') problems.push({ code: 'prefixReserved', name: prefix });
+  // The inline context sits after the catalog context, so any term it defines
+  // wins: a prefix or attribute named like a catalog term would redefine it.
+  else if ((model.contextTerms ?? []).includes(prefix)) problems.push({ code: 'prefixInContext', name: prefix });
   let baseOk = false;
   try {
     const u = new URL(base);
@@ -35,6 +39,7 @@ export function buildExtension(model, input, coreTerms) {
   else if (/^https?:\/\/(www\.)?datamodels\.jp\//.test(base) || /^https?:\/\/uri\.etsi\.org\//.test(base)) problems.push({ code: 'baseTaken' });
 
   const own = new Set(model.attributes);
+  const contextTerms = new Set(model.contextTerms ?? []);
   const seen = new Set();
   const attrs = (input.attributes ?? []).map((a) => ({ ...a, name: (a.name ?? '').trim() })).filter((a) => a.name !== '');
   if (!attrs.length) problems.push({ code: 'none' });
@@ -42,6 +47,7 @@ export function buildExtension(model, input, coreTerms) {
     if (!TERM.test(a.name)) problems.push({ code: 'name', name: a.name });
     else if (own.has(a.name)) problems.push({ code: 'inModel', name: a.name });
     else if (coreTerms.has(a.name) || a.name === prefix) problems.push({ code: 'reserved', name: a.name });
+    else if (contextTerms.has(a.name)) problems.push({ code: 'inContext', name: a.name });
     else if (seen.has(a.name)) problems.push({ code: 'duplicate', name: a.name });
     seen.add(a.name);
     if (a.ngsiType === 'Property' && !VALUE_TYPES.includes(a.valueType)) problems.push({ code: 'valueType', name: a.name });
