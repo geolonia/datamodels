@@ -6,6 +6,7 @@
 // (`### roadName {#roadName}`) so that the /ns/<subject>/<term> redirects,
 // which point at `#<term>`, keep working with case preserved.
 import { mkdir, writeFile, rm } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { attributesOf, subjectUrls, modelUrls, BASE_URL, ROOT, CORE_CONTEXT_URL } from './models.mjs';
 import { sharedTerms } from './shared-terms.mjs';
@@ -27,6 +28,7 @@ const T = {
     linkHeader: 'Link ヘッダー', notes: '注記', shared: '複数のモデルで共有する属性', usedBy: '使用モデル', typeIri: '型 IRI', otherName: '英語名', useGuide: (href) => `データの検証とブローカーへの送り方は[使い方](${href})を参照。`, context: '@context',
     contextExact: '（このバージョン、不変）', contextAlias: '（エイリアス、互換性のある最新版）', schema: 'JSON Schema', examples: '例',
     source: 'ソース', namespace: '名前空間', version: 'バージョン', vocabulary: '語彙', vocabularyNote: '（RDFS: クラス、サブクラス関係、日英ラベル）',
+    tryIt: '例を試す',
     required: '必須', pii: '個人情報', deprecated: '非推奨', value: '値', relationshipTo: '→', license: 'このページの文章は CC BY 4.0、モデルのファイル（JSON Schema、@context、例）は CC0 です。',
     playground: (href) => `[JSON-LD Playground で開く](${href})：属性ごとの IRI（展開形）が見られます。`,
     improveTitle: '改善の提案', improve: (issue, form, guide) => `属性が足りない、説明がおかしいと思ったら、[Issue で知らせてください](${issue})。新しい属性やモデルは[提案フォーム](${form})から。進め方は[貢献する](${guide})にあります。`,
@@ -43,6 +45,7 @@ const T = {
     linkHeader: 'Link header', notes: 'Notes', shared: 'Attributes shared by several models', usedBy: 'Used by', typeIri: 'Type IRI', otherName: 'Japanese name', useGuide: (href) => `How to validate data and send it to a broker: [Using the models](${href}).`, context: '@context',
     contextExact: '(this version, immutable)', contextAlias: '(alias, latest compatible version)', schema: 'JSON Schema', examples: 'Examples',
     source: 'Source', namespace: 'Namespace', version: 'Version', vocabulary: 'Vocabulary', vocabularyNote: '(RDFS: classes, subclass relations, ja/en labels)',
+    tryIt: 'Try the example',
     required: 'required', pii: 'personal data', deprecated: 'deprecated', value: 'Value', relationshipTo: '→', license: 'The text of this page is licensed under CC BY 4.0; the model files (JSON Schema, @context, examples) are CC0.',
     playground: (href) => `[Open in the JSON-LD Playground](${href}): see the full IRI behind every attribute (expanded form).`,
     improveTitle: 'Something missing or wrong?', improve: (issue, form, guide) => `[Open an issue](${issue}), or propose new attributes or models with the [proposal form](${form}). How it works: [Contributing](${guide}).`,
@@ -61,6 +64,44 @@ const statusBadge = (lang, status) => badge(status === 'stable' ? 'tip' : status
 const front = (title, description) => `---\ntitle: ${JSON.stringify(title)}\ndescription: ${JSON.stringify(description ?? '')}\n---\n\n`;
 
 let allSubjects = [];
+
+// Terms of the pinned NGSI-LD core context (v1.8, immutable), expanded to full
+// IRIs: schemas mark a core term as CORE_CONTEXT_URL#term, and the playground
+// shows the IRI JSON-LD actually produces (description -> dcterms).
+const CORE_TERMS = (() => {
+  const ctx = JSON.parse(readFileSync(join(ROOT, 'test', 'fixtures', 'ngsi-ld-core-context-v1.8.jsonld'), 'utf8'))['@context'];
+  // A compact IRI (prefix:rest) expands through the prefix; full IRIs stay as they are.
+  const expand = (v) => { const i = v.indexOf(':'); const pre = v.slice(0, i); return i > 0 && !v.includes('//') && typeof ctx[pre] === 'string' ? ctx[pre] + v.slice(i + 1) : v; };
+  return Object.fromEntries(Object.entries(ctx).map(([k, v]) => [k, typeof v === 'string' ? expand(v) : v?.['@id'] ? expand(v['@id']) : null]).filter(([, v]) => v));
+})();
+
+/** Everything the example playground (ExamplePlayground.vue) needs for one entity model. */
+function playgroundData(lang, subject, model) {
+  const norm = model.examples['example-normalized.jsonld'];
+  const refs = new Map();
+  const collect = (node) => {
+    if (!node || typeof node !== 'object') return;
+    if (typeof node.$ref === 'string' && node.$ref.startsWith(BASE_URL)) {
+      const url = node.$ref.split('#')[0];
+      for (const s of allSubjects) for (const m of s.models) if (m.kind === 'value' && m.schema.$id === url && !refs.has(url)) { refs.set(url, m.schema); collect(m.schema); }
+    }
+    for (const v of Object.values(node)) collect(v);
+  };
+  collect(model.schema);
+  const iris = {};
+  for (const [name, prop] of attributesOf(model)) {
+    let iri = prop['x-iri'];
+    if (!iri) continue;
+    // A core term keeps "NGSI-LD core" as its origin, whatever host its IRI is on.
+    const viaCore = iri.startsWith(`${CORE_CONTEXT_URL}#`);
+    if (viaCore) iri = CORE_TERMS[iri.slice(CORE_CONTEXT_URL.length + 1)] ?? iri;
+    const own = iri.startsWith(`${BASE_URL}/ns/`) ? iri.slice(BASE_URL.length + 4).split('/')[0] : null;
+    iris[name] = own
+      ? { iri, origin: own === subject.name ? 'subject' : 'other', label: own }
+      : viaCore || iri.startsWith('https://uri.etsi.org/ngsi-ld/') ? { iri, origin: 'core', label: 'NGSI-LD' } : { iri, origin: 'upstream', label: new URL(iri).host };
+  }
+  return { lang, type: model.type, kv: model.examples['example.json'], normalized: norm, context: norm['@context'], schema: model.schema, refs: [...refs.values()], iris };
+}
 /** The model documenting a type IRI: an alias in the same subject first, then the owner anywhere. */
 function modelForIri(subject, iri, { ownerOnly = false } = {}) {
   const here = ownerOnly ? null : subject.models.find((m) => modelUrls(subject, m).typeIri === iri);
@@ -106,6 +147,9 @@ function modelPage(lang, prefix, subject, model) {
   const aliasOf = model.schema['x-alias-of'] ? modelForIri(subject, model.schema['x-alias-of'], { ownerOnly: true }) : null;
   const subclassOf = model.schema['x-subclass-of'] ? modelForIri(subject, model.schema['x-subclass-of'], { ownerOnly: true }) : null;
   let md = front(`${model.type}`, desc);
+  const playground = !isValue && model.examples['example.json'] && model.examples['example-normalized.jsonld'];
+  // "<" escaped so no text can close the script block.
+  if (playground) md += `<script setup>\nconst playground = ${JSON.stringify(playgroundData(lang, subject, model)).replaceAll('<', '\\u003c')}\n</script>\n\n`;
   md += `# ${model.type} ${statusBadge(lang, model.catalog.status ?? 'draft')}${isValue ? ` ${badge('info', t.valueType)}` : ''}${aliasOf ? ` ${badge('info', t.alias)}` : ''}${subclassOf ? ` ${badge('info', t.subclass)}` : ''}\n\n`;
   if (isValue) md += `> ${t.valueTypeNote}\n\n`;
   if ((model.catalog.status ?? 'draft') === 'deprecated') {
@@ -150,9 +194,10 @@ function modelPage(lang, prefix, subject, model) {
   if (model.examples['example.json']) md += `## ${t.example} {#example}\n\n${t.exampleNote(`${prefix}/guide/extend#examples`)}\n\n${fence(model.examples['example.json'])}\n\n`;
   if (model.examples['example-normalized.jsonld']) {
     // The JSON-LD Playground fetches the published @context and shows every attribute as its full IRI.
-    const playground = playgroundUrl(model.examples['example-normalized.jsonld']);
-    md += `## ${t.normalized} {#example-normalized}\n\n${fence(model.examples['example-normalized.jsonld'])}\n\n${t.playground(playground)}\n\n`;
+    const playgroundLink = playgroundUrl(model.examples['example-normalized.jsonld']);
+    md += `## ${t.normalized} {#example-normalized}\n\n${fence(model.examples['example-normalized.jsonld'])}\n\n${t.playground(playgroundLink)}\n\n`;
   }
+  if (playground) md += `## ${t.tryIt} {#try}\n\n<ExamplePlayground v-bind="playground" />\n\n`;
   if (!isValue) md += `## ${t.linkHeader} {#link-header}\n\n\`\`\`http\nLink: <${u.contextAlias}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"\n\`\`\`\n\n`;
   if (!isValue) md += `${t.useGuide(`${prefix}/guide/use`)}\n\n`;
   for (const map of model.mappings ?? []) {
