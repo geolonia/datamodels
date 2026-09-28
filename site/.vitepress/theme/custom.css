@@ -91,6 +91,8 @@
 .model-graph .node.value rect { stroke: var(--vp-c-text-3); }
 .model-graph .node.other rect { stroke-dasharray: 4 3; }
 .model-graph .node.pseudo rect { fill: none; stroke: var(--vp-c-divider); }
+.model-graph .node.center rect { fill: var(--vp-c-brand-soft); stroke-width: 2.5; }
+.model-graph text.more { font-size: 11px; fill: var(--vp-c-brand-1); }
 .model-graph .canvas { position: relative; }
 .model-graph .canvas > a { position: absolute; border-radius: 8px; }
 .model-graph .canvas > a:hover, .model-graph .canvas > a:focus-visible { background: var(--vp-c-brand-soft); outline: 2px solid var(--vp-c-brand-1); outline-offset: 0; }
@@ -108,7 +110,7 @@
 .model-graph-legend span::before { content: ''; display: inline-block; width: 22px; margin-right: 6px; vertical-align: middle; border-top: 1.5px solid var(--vp-c-text-3); }
 .model-graph-legend .value::before { border-top-style: dashed; }
 .model-graph-legend .alias::before, .model-graph-legend .subclass::before { border-top-style: dotted; }
-.model-graph-legend .self::before { display: none; }
+.model-graph-legend .self::before, .model-graph-legend .more::before { display: none; }
 .model-graph-legend .other::before { width: 14px; height: 10px; border: 1.5px dashed var(--vp-c-brand-1); border-radius: 3px; }
 
 /* Canonical URL and licence at the top of every doc page (theme/index.ts). */

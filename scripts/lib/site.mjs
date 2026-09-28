@@ -29,6 +29,7 @@ const T = {
     contextExact: '（このバージョン、不変）', contextAlias: '（エイリアス、互換性のある最新版）', schema: 'JSON Schema', examples: '例',
     source: 'ソース', namespace: '名前空間', version: 'バージョン', vocabulary: '語彙', vocabularyNote: '（RDFS: クラス、サブクラス関係、日英ラベル）',
     tryIt: '例を試す',
+    extendThis: (href) => `このモデルに独自の属性を足すときは、[拡張ビルダー](${href})で @context と JSON Schema を作れます。`,
     required: '必須', pii: '個人情報', deprecated: '非推奨', value: '値', relationshipTo: '→', license: 'このページの文章は CC BY 4.0、モデルのファイル（JSON Schema、@context、例）は CC0 です。',
     playground: (href) => `[JSON-LD Playground で開く](${href})：属性ごとの IRI（展開形）が見られます。`,
     improveTitle: '改善の提案', improve: (issue, form, guide) => `属性が足りない、説明がおかしいと思ったら、[Issue で知らせてください](${issue})。新しい属性やモデルは[提案フォーム](${form})から。進め方は[貢献する](${guide})にあります。`,
@@ -46,6 +47,7 @@ const T = {
     contextExact: '(this version, immutable)', contextAlias: '(alias, latest compatible version)', schema: 'JSON Schema', examples: 'Examples',
     source: 'Source', namespace: 'Namespace', version: 'Version', vocabulary: 'Vocabulary', vocabularyNote: '(RDFS: classes, subclass relations, ja/en labels)',
     tryIt: 'Try the example',
+    extendThis: (href) => `To add attributes of your own to this model, the [extension builder](${href}) writes the @context and JSON Schema.`,
     required: 'required', pii: 'personal data', deprecated: 'deprecated', value: 'Value', relationshipTo: '→', license: 'The text of this page is licensed under CC BY 4.0; the model files (JSON Schema, @context, examples) are CC0.',
     playground: (href) => `[Open in the JSON-LD Playground](${href}): see the full IRI behind every attribute (expanded form).`,
     improveTitle: 'Something missing or wrong?', improve: (issue, form, guide) => `[Open an issue](${issue}), or propose new attributes or models with the [proposal form](${form}). How it works: [Contributing](${guide}).`,
@@ -174,6 +176,9 @@ function modelPage(lang, prefix, subject, model) {
   md += isValue ? `| ${t.examples} | [example.json](${rel(mu.examples)}example.json) |\n`
     : `| ${t.examples} | [key-values](${rel(mu.examples)}example.json) · [normalized](${rel(mu.examples)}example-normalized.jsonld) |\n`;
   md += `| ${t.source} | [github.com/geolonia/datamodels](https://github.com/geolonia/datamodels/tree/main/models/${subject.name}/${model.type}) |\n\n`;
+  // This model and its neighbours, one step; each neighbour links to its own page.
+  const neighbourhood = graphSvg(lang, prefix, allSubjects, null, 'LR', { center: `${subject.name}/${model.type}` });
+  if (neighbourhood) md += `## ${graphTitle[lang]} {#graph}\n\n${neighbourhood}`;
   if (attributesOf(model).length) md += `## ${isValue ? t.fields : t.attributes} {#attributes}\n\n`;
   for (const [name, prop] of attributesOf(model)) {
     const flags = [required.has(name) ? badge('warning', t.required) : '', prop['x-personal-data'] ? badge('danger', t.pii) : '', prop['x-deprecated'] ? badge('danger', t.deprecated) : ''].filter(Boolean).join(' ');
@@ -200,6 +205,7 @@ function modelPage(lang, prefix, subject, model) {
   if (playground) md += `## ${t.tryIt} {#try}\n\n<ExamplePlayground v-bind="playground" />\n\n`;
   if (!isValue) md += `## ${t.linkHeader} {#link-header}\n\n\`\`\`http\nLink: <${u.contextAlias}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"\n\`\`\`\n\n`;
   if (!isValue) md += `${t.useGuide(`${prefix}/guide/use`)}\n\n`;
+  if (!isValue) md += `${t.extendThis(`${prefix}/guide/builder?model=${subject.name}/${model.type}`)}\n\n`;
   for (const map of model.mappings ?? []) {
     md += `## ${t.mappings}: ${map.standard?.name?.[lang] ?? map.name} {#mapping-${map.name}}\n\n`;
     if (map.standard?.url) md += `[${map.standard.name?.[lang] ?? map.name}](${map.standard.url})${map.standard.license ? ` · ${map.standard.license}` : ''}\n\n`;
@@ -227,8 +233,6 @@ async function subjectPage(lang, prefix, subject) {
   md += `| ${t.context} | ${code(u.contextAlias)} ${t.contextAlias}<br>${code(u.contextExact)} ${t.contextExact} |\n| ${t.namespace} | ${code(u.namespace)} |\n| ${t.vocabulary} | [${code(rel(u.vocabExact))}](${rel(u.vocabExact)}) ${t.vocabularyNote} |\n\n`;
   md += `## ${t.models} {#models}\n\n| Type | | |\n|---|---|---|\n`;
   for (const m of subject.models) md += `| [${m.type}](${prefix}${rel(modelUrls(subject, m).page)}) | ${m.catalog.title?.[lang] ?? ''} | ${statusBadge(lang, m.catalog.status ?? 'draft')}${m.kind === 'value' ? ` ${badge('info', t.valueType)}` : ''}${m.schema['x-alias-of'] ? ` ${badge('info', t.alias)}` : ''}${m.schema['x-subclass-of'] ? ` ${badge('info', t.subclass)}` : ''} |\n`;
-  const graph = graphSvg(lang, prefix, allSubjects, subject);
-  if (graph) md += `\n## ${graphTitle[lang]} {#graph}\n\n${graph}`;
   const releases = await listReleases(subject);
   if (releases.length) {
     md += `\n## ${t.versions} {#versions}\n\n| | @context | JSON Schema |\n|---|---|---|\n`;
@@ -263,8 +267,6 @@ function indexPage(lang, prefix, subjects) {
   // "<" escaped so no text can close the script block.
   let md = front(t.models, t.subjectsIntro) + `<script setup>\nconst models = ${JSON.stringify(rows).replaceAll('<', '\\u003c')}\n</script>\n\n`;
   md += `# ${t.models}\n\n${t.subjectsIntro}\n\n<ModelIndex lang="${lang}" :models="models" />\n\n`;
-  const graph = graphSvg(lang, prefix, subjects);
-  if (graph) md += `## ${graphTitle[lang]} {#graph}\n\n${graph}`;
   md += `## ${t.subjects} {#subjects}\n\n`;
   for (const s of subjects) md += `### [${s.title[lang]}](${prefix}${rel(subjectUrls(s).page)}) {#${s.name}}\n\n${s.description[lang]}\n\n`;
   return md;
