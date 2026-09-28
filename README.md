@@ -54,7 +54,7 @@ node adapters/geonicdb/export.mjs <subject> [--type T] [--type-prefix P | --type
 
 Every model starts as `status: draft`. It becomes `stable` once two independent implementations are recorded in its `ADOPTERS.yaml`: each entry gives `name`, `organization` and a `url` (public repository, documentation or a contact). CI checks that at least two different organisations with a url are listed; the reviewer of the pull request that sets `stable` checks that they are real and independent (#38).
 
-Contributions in Japanese or English are welcome as issues or pull requests.
+Contributions in Japanese or English are welcome as issues or pull requests; see [CONTRIBUTING.md](CONTRIBUTING.md) for the rules, the steps and the sign-off (DCO).
 
 ## Deployment
 
