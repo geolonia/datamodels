@@ -1,21 +1,158 @@
-# Licence for model content
+# Licences for model content
 
-The model content in this repository (everything under `models/`: JSON Schemas,
-JSON-LD contexts, examples, attribute descriptions, notes and generated
-specification documents) is licensed under the Creative Commons Attribution
-4.0 International licence (CC BY 4.0), reproduced below.
+日本語まとめ: 機械が読むファイル（JSON Schema、`@context`、語彙、例、`catalog.json` など）は **CC0 1.0**（条件なし）、人が読む文章（注記、モデルの README、サイトのページ）は **CC BY 4.0**、コードは **Apache-2.0** です。CC BY の出典（Smart Data Models、GIF のコアスキーマなど）から写した部分は CC BY 4.0 のままで、各モデルの `LICENSE.md` に書きます。2026-09-28 に決定（[#83](https://github.com/geolonia/datamodels/issues/83)）。
 
-Models derived from Smart Data Models retain their upstream attribution, which
-is recorded in each model's `notes.yaml`. Models derived from the Digital
-Agency's GIF (https://github.com/JDA-DM/GIF: the repository is CC0 1.0, and
-the core data model schema GIF_Core_DataModel.xsd declares CC BY 4.0) are
-licensed here under CC BY 4.0 and credit GIF in their mapping files. Material from the Digital Agency's 自治体標準オープンデータセット
-(published on digital.go.jp under the 公共データ利用規約（第1.0版）, PDL1.0,
-which is compatible with CC BY 4.0) is credited to its source in the model's
-mapping files.
+## Which licence applies
 
-Source code (everything else, including `site/`, `scripts/` and CI) is licensed
-under Apache-2.0, see `LICENSE`.
+| What | Licence |
+|---|---|
+| **Machine-readable files**: JSON Schemas (`schema.json`, `/schema/…`), JSON-LD contexts (`context.jsonld`, `/context/…`), RDFS vocabularies (`/vocab/…`), examples (`examples/`, `/examples/…`), `catalog.yaml`, mapping files (`mapping/*.yaml`), `catalog.json` and the adapter files (`/adapters/…`) | [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/) |
+| **Prose**: `notes.yaml` and `README.md` in the model folders, and the pages of https://datamodels.jp (model pages, subject pages, guides) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
+| **Code**: everything outside `models/`, including `site/`, `scripts/`, the adapter code and CI | Apache-2.0, see `LICENSE` |
+
+A licence applies to a whole file. Text inside a machine-readable file, such as the titles and descriptions in a schema or the labels in a vocabulary, is CC0 there like the rest of the file.
+
+The reason for the split: attribution works where people read, and it does not survive a schema pasted into another repository. So credit is asked only for prose, where it can actually be given.
+
+## Credit and the canonical URL
+
+- **Prose (CC BY 4.0)**: credit "datamodels.jp" with a link to the page you used, and say whether you changed it. Every page shows its URL at the top.
+- **Machine-readable files (CC0)**: no conditions. Each file already names its canonical URL: `$id` in a schema, the `@context` URL, the type and attribute IRIs. Please keep them when you copy a file. This is a request, not a condition: it lets anyone who finds a copy see that a newer version exists.
+
+## Parts from other sources
+
+- **Copied from a CC BY source**: content copied from a source under CC BY, such as Smart Data Models or the Digital Agency's GIF core data model schema, keeps CC BY 4.0 with that source's attribution, also inside a machine-readable file. The `LICENSE.md` of the model folder names each such file and its source.
+- **Today no model contains copied upstream content.** Upstream standards are mapped, not copied: the `mapping/*.yaml` files record the correspondence, and IRIs are reused. A reused IRI is a name, not copied content.
+- **GIF**: the repository (https://github.com/JDA-DM/GIF) is CC0 1.0, and its core data model schema `GIF_Core_DataModel.xsd` declares CC BY 4.0. The mapping files name GIF fields to record the correspondence. [#65](https://github.com/geolonia/datamodels/issues/65) asks the Digital Agency which licence applies.
+- **自治体標準オープンデータセット**: material from the Digital Agency's municipal standard open datasets (公共データ利用規約（第1.0版）, PDL1.0, compatible with CC BY 4.0) is credited to its source in the model's mapping files.
+
+## Change
+
+Until 2026-09-28 all model content was licensed under CC BY 4.0. The split above applies to every published version, including files published before that date.
+
+-----------------------------------------------------------------------
+
+Creative Commons Legal Code
+
+CC0 1.0 Universal
+
+    CREATIVE COMMONS CORPORATION IS NOT A LAW FIRM AND DOES NOT PROVIDE
+    LEGAL SERVICES. DISTRIBUTION OF THIS DOCUMENT DOES NOT CREATE AN
+    ATTORNEY-CLIENT RELATIONSHIP. CREATIVE COMMONS PROVIDES THIS
+    INFORMATION ON AN "AS-IS" BASIS. CREATIVE COMMONS MAKES NO WARRANTIES
+    REGARDING THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS
+    PROVIDED HEREUNDER, AND DISCLAIMS LIABILITY FOR DAMAGES RESULTING FROM
+    THE USE OF THIS DOCUMENT OR THE INFORMATION OR WORKS PROVIDED
+    HEREUNDER.
+
+Statement of Purpose
+
+The laws of most jurisdictions throughout the world automatically confer
+exclusive Copyright and Related Rights (defined below) upon the creator
+and subsequent owner(s) (each and all, an "owner") of an original work of
+authorship and/or a database (each, a "Work").
+
+Certain owners wish to permanently relinquish those rights to a Work for
+the purpose of contributing to a commons of creative, cultural and
+scientific works ("Commons") that the public can reliably and without fear
+of later claims of infringement build upon, modify, incorporate in other
+works, reuse and redistribute as freely as possible in any form whatsoever
+and for any purposes, including without limitation commercial purposes.
+These owners may contribute to the Commons to promote the ideal of a free
+culture and the further production of creative, cultural and scientific
+works, or to gain reputation or greater distribution for their Work in
+part through the use and efforts of others.
+
+For these and/or other purposes and motivations, and without any
+expectation of additional consideration or compensation, the person
+associating CC0 with a Work (the "Affirmer"), to the extent that he or she
+is an owner of Copyright and Related Rights in the Work, voluntarily
+elects to apply CC0 to the Work and publicly distribute the Work under its
+terms, with knowledge of his or her Copyright and Related Rights in the
+Work and the meaning and intended legal effect of CC0 on those rights.
+
+1. Copyright and Related Rights. A Work made available under CC0 may be
+protected by copyright and related or neighboring rights ("Copyright and
+Related Rights"). Copyright and Related Rights include, but are not
+limited to, the following:
+
+  i. the right to reproduce, adapt, distribute, perform, display,
+     communicate, and translate a Work;
+ ii. moral rights retained by the original author(s) and/or performer(s);
+iii. publicity and privacy rights pertaining to a person's image or
+     likeness depicted in a Work;
+ iv. rights protecting against unfair competition in regards to a Work,
+     subject to the limitations in paragraph 4(a), below;
+  v. rights protecting the extraction, dissemination, use and reuse of data
+     in a Work;
+ vi. database rights (such as those arising under Directive 96/9/EC of the
+     European Parliament and of the Council of 11 March 1996 on the legal
+     protection of databases, and under any national implementation
+     thereof, including any amended or successor version of such
+     directive); and
+vii. other similar, equivalent or corresponding rights throughout the
+     world based on applicable law or treaty, and any national
+     implementations thereof.
+
+2. Waiver. To the greatest extent permitted by, but not in contravention
+of, applicable law, Affirmer hereby overtly, fully, permanently,
+irrevocably and unconditionally waives, abandons, and surrenders all of
+Affirmer's Copyright and Related Rights and associated claims and causes
+of action, whether now known or unknown (including existing as well as
+future claims and causes of action), in the Work (i) in all territories
+worldwide, (ii) for the maximum duration provided by applicable law or
+treaty (including future time extensions), (iii) in any current or future
+medium and for any number of copies, and (iv) for any purpose whatsoever,
+including without limitation commercial, advertising or promotional
+purposes (the "Waiver"). Affirmer makes the Waiver for the benefit of each
+member of the public at large and to the detriment of Affirmer's heirs and
+successors, fully intending that such Waiver shall not be subject to
+revocation, rescission, cancellation, termination, or any other legal or
+equitable action to disrupt the quiet enjoyment of the Work by the public
+as contemplated by Affirmer's express Statement of Purpose.
+
+3. Public License Fallback. Should any part of the Waiver for any reason
+be judged legally invalid or ineffective under applicable law, then the
+Waiver shall be preserved to the maximum extent permitted taking into
+account Affirmer's express Statement of Purpose. In addition, to the
+extent the Waiver is so judged Affirmer hereby grants to each affected
+person a royalty-free, non transferable, non sublicensable, non exclusive,
+irrevocable and unconditional license to exercise Affirmer's Copyright and
+Related Rights in the Work (i) in all territories worldwide, (ii) for the
+maximum duration provided by applicable law or treaty (including future
+time extensions), (iii) in any current or future medium and for any number
+of copies, and (iv) for any purpose whatsoever, including without
+limitation commercial, advertising or promotional purposes (the
+"License"). The License shall be deemed effective as of the date CC0 was
+applied by Affirmer to the Work. Should any part of the License for any
+reason be judged legally invalid or ineffective under applicable law, such
+partial invalidity or ineffectiveness shall not invalidate the remainder
+of the License, and in such case Affirmer hereby affirms that he or she
+will not (i) exercise any of his or her remaining Copyright and Related
+Rights in the Work or (ii) assert any associated claims and causes of
+action with respect to the Work, in either case contrary to Affirmer's
+express Statement of Purpose.
+
+4. Limitations and Disclaimers.
+
+ a. No trademark or patent rights held by Affirmer are waived, abandoned,
+    surrendered, licensed or otherwise affected by this document.
+ b. Affirmer offers the Work as-is and makes no representations or
+    warranties of any kind concerning the Work, express, implied,
+    statutory or otherwise, including without limitation warranties of
+    title, merchantability, fitness for a particular purpose, non
+    infringement, or the absence of latent or other defects, accuracy, or
+    the present or absence of errors, whether or not discoverable, all to
+    the greatest extent permissible under applicable law.
+ c. Affirmer disclaims responsibility for clearing rights of other persons
+    that may apply to the Work or any use thereof, including without
+    limitation any person's Copyright and Related Rights in the Work.
+    Further, Affirmer disclaims responsibility for obtaining any necessary
+    consents, permissions or other rights required for any use of the
+    Work.
+ d. Affirmer understands and acknowledges that Creative Commons is not a
+    party to this document and has no duty or obligation with respect to
+    this CC0 or use of the Work.
 
 -----------------------------------------------------------------------
 

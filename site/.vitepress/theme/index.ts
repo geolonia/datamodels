@@ -26,12 +26,30 @@ const PrereleaseBanner = defineComponent({
   },
 })
 
+// The canonical URL and licence at the top of every page with prose, so a
+// copied page still says where it came from (the licence decision in #83).
+const SourceLine = defineComponent({
+  setup() {
+    const { page, lang } = useData()
+    return () => {
+      const path = page.value.relativePath.replace(/(^|\/)index\.md$/, '$1').replace(/\.md$/, '')
+      const url = `https://datamodels.jp/${path}`
+      return h('p', { class: 'source-line' }, [
+        lang.value === 'ja' ? '出典: ' : 'Source: ',
+        h('a', { href: url }, url),
+        lang.value === 'ja' ? ' · 文章は ' : ' · Text ',
+        h('a', { href: lang.value === 'ja' ? '/about#ライセンス' : '/en/about#licences' }, 'CC BY 4.0'),
+      ])
+    }
+  },
+})
+
 export default {
   extends: DefaultTheme,
   enhanceApp({ app }) {
     app.component('ModelIndex', ModelIndex)
   },
   Layout() {
-    return h(DefaultTheme.Layout, null, { 'layout-top': () => h(PrereleaseBanner) })
+    return h(DefaultTheme.Layout, null, { 'layout-top': () => h(PrereleaseBanner), 'doc-before': () => h(SourceLine) })
   },
 }

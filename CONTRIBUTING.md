@@ -46,7 +46,7 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 
 ## ライセンス
 
-モデル（スキーマ、`@context`、語彙、例、説明、注記）は [CC BY 4.0](https://github.com/geolonia/datamodels/blob/main/LICENSE-CONTENT.md)、ツールのコードは [Apache-2.0](https://github.com/geolonia/datamodels/blob/main/LICENSE) です。他の標準に基づく部分の出典は、各モデルの対応表と注記に書きます。
+機械が読むファイル（スキーマ、`@context`、語彙、例、`catalog.yaml`、対応表）は [CC0 1.0](https://github.com/geolonia/datamodels/blob/main/LICENSE-CONTENT.md)、文章（注記、README、サイトのページ）は [CC BY 4.0](https://github.com/geolonia/datamodels/blob/main/LICENSE-CONTENT.md)、ツールのコードは [Apache-2.0](https://github.com/geolonia/datamodels/blob/main/LICENSE) です。CC BY の出典（Smart Data Models、GIF のコアスキーマなど）から内容を写したファイルは CC BY 4.0 のままです。そのファイルと出典を、モデルのフォルダの `LICENSE.md` に書いてください。
 
 <!-- #endregion ja -->
 
@@ -98,5 +98,5 @@ The [DCO app](https://github.com/apps/dco) checks that every commit of a pull re
 
 ## Licences
 
-Models (schemas, `@context` files, vocabularies, examples, descriptions, notes) are [CC BY 4.0](https://github.com/geolonia/datamodels/blob/main/LICENSE-CONTENT.md); the tooling is [Apache-2.0](https://github.com/geolonia/datamodels/blob/main/LICENSE). Parts based on other standards name their source in each model's mappings and notes.
+Machine-readable files (schemas, `@context` files, vocabularies, examples, `catalog.yaml`, mapping files) are [CC0 1.0](https://github.com/geolonia/datamodels/blob/main/LICENSE-CONTENT.md); prose (notes, READMEs, the site's pages) is [CC BY 4.0](https://github.com/geolonia/datamodels/blob/main/LICENSE-CONTENT.md); the tooling is [Apache-2.0](https://github.com/geolonia/datamodels/blob/main/LICENSE). A file that copies content from a CC BY source (Smart Data Models, the GIF core schema) stays CC BY 4.0: name the file and its source in the model folder's `LICENSE.md`.
 <!-- #endregion en -->
