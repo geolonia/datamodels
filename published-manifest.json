@@ -1,5 +1,6 @@
 {
-  "comment": "SHA-256 of every immutable published file (exact versions under context/, schema/ and vocab/, and context/mirror/). Entries are appended by `npm run manifest:record`. After the official launch they are never edited or removed. During the pre-release, the current version of a subject may still be corrected in place: delete its snapshot and manifest entries and record again, as the README describes. See docs/design.md and scripts/check-immutability.mjs.",
+  "comment": "SHA-256 of every immutable published file (exact versions under context/, schema/ and vocab/, and context/mirror/). Entries are appended by `npm run manifest:record`. After the official launch they are never edited or removed. During the pre-release (\"prerelease\": true, set to false at the official launch), the current version of a subject may still be corrected in place: delete its snapshot and manifest entries and record again, as the README describes. See docs/design.md and scripts/check-immutability.mjs.",
+  "prerelease": true,
   "files": {
     "context/common/v1.0.0.jsonld": "59fe038a9d8c1f459a86940f17371f1b5842942940afa68da4f21502e07b453d",
     "context/disaster/v1.0.0.jsonld": "977db8c8fca0b692e527f4b27f0ab5316829ef3bd275cecf6621378f210dfd9b",

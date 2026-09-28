@@ -45,3 +45,14 @@ jobs:
       # assets directory without touching Cloudflare.
       - name: Validate, build and dry-run deploy
         run: npm run check
+
+      # A pull request must not rewrite or drop a recorded (published) file.
+      # Before the official launch, in-place corrections are listed in the job
+      # summary instead of failing ("prerelease" in published-manifest.json).
+      - name: Compare the manifest with the base branch
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          git fetch --no-tags --depth=1 origin "+refs/heads/$BASE_REF:refs/remotes/origin/$BASE_REF"
+          node scripts/check-manifest-base.mjs --base "origin/$BASE_REF"

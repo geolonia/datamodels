@@ -11,6 +11,7 @@
   "scripts": {
     "build": "node scripts/build.mjs",
     "check:immutability": "node scripts/check-immutability.mjs",
+    "check:manifest-base": "node scripts/check-manifest-base.mjs",
     "manifest:record": "npm run build && node scripts/check-immutability.mjs --record",
     "new-model": "node scripts/new-model.mjs",
     "rerecord": "node scripts/rerecord.mjs",
