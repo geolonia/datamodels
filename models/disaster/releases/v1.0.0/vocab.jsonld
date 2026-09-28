@@ -34,8 +34,8 @@
         "en": "Disaster response"
       },
       "comment": {
-        "ja": "自治体の災害対応を表すデータモデル。現在は避難所運用状況（EvacuationShelter）。独自の型で、状態の呼び方（statusLabel）はタスク管理の IRI を使います。災害対応のオペレーションとのひも付けはアプリケーション側で行います（タスク管理の Task の refersTo など）。通行止めなどの通行規制は交通（transportation）サブジェクトの RoadRestriction です。高松市の水防アプリのデータモデルを基に汎用化したもの。",
-        "en": "Data models for municipal disaster response. Currently shelter operation (EvacuationShelter), its own type; the local status wording (statusLabel) uses the task subject's IRI. Linking entities to a disaster-response operation is left to the application (for example refersTo from a task subject Task). Road closures and other road restrictions are RoadRestriction in the transportation subject. Generalised from the data models of Takamatsu City's flood-response application."
+        "ja": "自治体の災害対応を表すデータモデル。現在は指定緊急避難場所（EvacuationSite、自治体が公開する一覧のマスタ）と避難所運用状況（EvacuationShelter）。独自の型で、状態の呼び方（statusLabel）はタスク管理の IRI を使います。災害対応のオペレーションとのひも付けはアプリケーション側で行います（タスク管理の Task の refersTo など）。通行止めなどの通行規制は交通（transportation）サブジェクトの RoadRestriction です。高松市の水防アプリのデータモデルを基に汎用化したもの。",
+        "en": "Data models for municipal disaster response. Currently designated emergency evacuation sites (EvacuationSite, the master of the lists municipalities publish) and shelter operation (EvacuationShelter), their own types; the local status wording (statusLabel) uses the task subject's IRI. Linking entities to a disaster-response operation is left to the application (for example refersTo from a task subject Task). Road closures and other road restrictions are RoadRestriction in the transportation subject. Generalised from the data models of Takamatsu City's flood-response application."
       },
       "versionInfo": "1.0.0",
       "seeAlso": "https://datamodels.jp/context/disaster/v1.0.0.jsonld"
@@ -48,11 +48,38 @@
         "en": "Evacuation shelter operation"
       },
       "comment": {
-        "ja": "避難所の運用状況オーバーレイ1件。避難所そのもののマスタ（名称・位置）は含まず、外部の避難所データを externalShelterId / nationalShelterId で参照する。開設状況と避難者数だけを持つ。災害対策基本法第49条の7に基づき市町村長が指定する「指定避難所」（同法第49条の4の「指定緊急避難場所」とは別の概念）の運用を想定している。",
-        "en": "Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included; it is referenced by externalShelterId / nationalShelterId. Only opening status and evacuee counts live here. Models the operation of a 指定避難所 (designated shelter, Basic Act on Disaster Management Art. 49-7), a distinct legal concept from the 指定緊急避難場所 (designated emergency evacuation site, Art. 49-4)."
+        "ja": "避難所の運用状況オーバーレイ1件。避難所そのもののマスタ（名称・位置）は含まず、外部の避難所データを externalShelterId / nationalShelterId で参照する。開設状況と避難者数だけを持つ。同じ場所の指定緊急避難場所は site で EvacuationSite を参照する。災害対策基本法第49条の7に基づき市町村長が指定する「指定避難所」（同法第49条の4の「指定緊急避難場所」とは別の概念）の運用を想定している。",
+        "en": "Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included; it is referenced by externalShelterId / nationalShelterId. Only opening status and evacuee counts live here. When the shelter is also a designated emergency evacuation site, site links to its EvacuationSite. Models the operation of a 指定避難所 (designated shelter, Basic Act on Disaster Management Art. 49-7), a distinct legal concept from the 指定緊急避難場所 (designated emergency evacuation site, Art. 49-4)."
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
       "seeAlso": "https://datamodels.jp/models/disaster/EvacuationShelter/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/EvacuationSite",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "指定緊急避難場所",
+        "en": "Designated emergency evacuation site"
+      },
+      "comment": {
+        "ja": "指定緊急避難場所（災害対策基本法第49条の4）1件。自治体が「指定緊急避難場所一覧」（自治体標準オープンデータセット 03）として公開するマスタの1行にあたる。災害種別ごとに指定される。開設状況や避難者数は持たない（それは EvacuationShelter）。",
+        "en": "One designated emergency evacuation site (指定緊急避難場所, Basic Act on Disaster Management Art. 49-4), one row of the list a municipality publishes as 自治体標準オープンデータセット dataset 03. Sites are designated per hazard. Opening status and evacuee counts are not here (that is EvacuationShelter)."
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/EvacuationSite/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/alsoDesignatedShelter",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "alsoDesignatedShelter"
+      },
+      "comment": {
+        "ja": "指定避難所を兼ねるとき true（指定避難所との重複）",
+        "en": "true when the site is also a designated shelter"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/EvacuationSite/#alsoDesignatedShelter"
     },
     {
       "@id": "https://datamodels.jp/ns/disaster/closedAt",
@@ -66,6 +93,19 @@
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
       "seeAlso": "https://datamodels.jp/models/disaster/EvacuationShelter/#closedAt"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/elevation",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "elevation"
+      },
+      "comment": {
+        "ja": "標高（m）",
+        "en": "Elevation in metres above mean sea level"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/EvacuationSite/#elevation"
     },
     {
       "@id": "https://datamodels.jp/ns/disaster/evacueeFemale",
@@ -133,6 +173,71 @@
       "seeAlso": "https://datamodels.jp/models/disaster/EvacuationShelter/#externalShelterId"
     },
     {
+      "@id": "https://datamodels.jp/ns/disaster/externalSiteId",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "externalSiteId"
+      },
+      "comment": {
+        "ja": "自治体の指定緊急避難場所一覧における ID（自治体内で一意）。localGovernmentCode と合わせて全国で一意になる。nationalShelterId が無いときは必須（国土地理院のデータには自治体の ID が無い）",
+        "en": "The site's ID in the municipality's list (unique within the municipality). Together with localGovernmentCode it is unique nationwide. Required when nationalShelterId is not given (GSI's data has no municipal ID)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/EvacuationSite/#externalSiteId"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/hazardTypes",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "hazardTypes"
+      },
+      "comment": {
+        "ja": "指定されている災害の種別。flood（洪水）、landslide（崖崩れ、土石流及び地滑り）、stormSurge（高潮）、earthquake（地震）、tsunami（津波）、greatFire（大規模な火事）、inlandFlood（内水氾濫）、eruption（火山現象）",
+        "en": "The hazards the site is designated for: flood, landslide (landslides, debris flows and slope failures), stormSurge, earthquake, tsunami, greatFire (large-scale fire), inlandFlood (inland flooding), eruption (volcanic phenomena)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/EvacuationSite/#hazardTypes"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/maxCapacity",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "maxCapacity"
+      },
+      "comment": {
+        "ja": "想定収容人数",
+        "en": "Number of people the site is planned to hold"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/EvacuationSite/#maxCapacity"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/nameEn",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "nameEn"
+      },
+      "comment": {
+        "ja": "名称の英語表記",
+        "en": "Name in English"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/EvacuationSite/#nameEn"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/nameKana",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "nameKana"
+      },
+      "comment": {
+        "ja": "名称のカナ表記（全角カタカナ）",
+        "en": "Name in full-width katakana"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/EvacuationSite/#nameKana"
+    },
+    {
       "@id": "https://datamodels.jp/ns/disaster/nationalShelterId",
       "@type": "rdf:Property",
       "label": {
@@ -170,6 +275,32 @@
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
       "seeAlso": "https://datamodels.jp/models/disaster/EvacuationShelter/#openingStatus"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/site",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "site"
+      },
+      "comment": {
+        "ja": "同じ場所にある指定緊急避難場所（EvacuationSite）。避難所が指定緊急避難場所を兼ねるとき",
+        "en": "The designated emergency evacuation site (EvacuationSite) at the same place, when the shelter is also one"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/EvacuationShelter/#site"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/disaster/targetAreas",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "targetAreas"
+      },
+      "comment": {
+        "ja": "この避難場所に避難する町会・自治会や地域",
+        "en": "Neighbourhood associations or areas that evacuate to this site"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/disaster/",
+      "seeAlso": "https://datamodels.jp/models/disaster/EvacuationSite/#targetAreas"
     }
   ]
 }

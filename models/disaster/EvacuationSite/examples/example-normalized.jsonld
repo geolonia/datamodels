@@ -1,0 +1,62 @@
+{
+  "@context": [
+    "https://datamodels.jp/context/disaster/v1.0.0.jsonld",
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
+  ],
+  "id": "urn:ngsi-ld:EvacuationSite:0012",
+  "type": "EvacuationSite",
+  "name": {
+    "type": "Property",
+    "value": "都立一橋高校"
+  },
+  "nameKana": {
+    "type": "Property",
+    "value": "トリツヒトツバシコウコウ"
+  },
+  "externalSiteId": {
+    "type": "Property",
+    "value": "13101-0012"
+  },
+  "nationalShelterId": {
+    "type": "Property",
+    "value": "E1310100012201"
+  },
+  "localGovernmentCode": {
+    "type": "Property",
+    "value": "131016"
+  },
+  "address": {
+    "type": "Property",
+    "value": {
+      "addressCountry": "JP",
+      "addressRegion": "東京都",
+      "addressLocality": "千代田区",
+      "machiaza": "東神田",
+      "chome": "1",
+      "localGovernmentCode": "131016",
+      "addressText": "東京都千代田区東神田1-12-13"
+    }
+  },
+  "location": {
+    "type": "GeoProperty",
+    "value": {
+      "type": "Point",
+      "coordinates": [
+        139.7810002,
+        35.6945488
+      ]
+    }
+  },
+  "hazardTypes": {
+    "type": "Property",
+    "value": [
+      "stormSurge",
+      "earthquake",
+      "inlandFlood"
+    ]
+  },
+  "alsoDesignatedShelter": {
+    "type": "Property",
+    "value": true
+  }
+}

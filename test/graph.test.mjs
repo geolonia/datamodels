@@ -24,9 +24,17 @@ test('every edge points at a node that exists', () => {
 });
 
 test('a subject with no links gets no graph; the others get one', () => {
-  assert.equal(graphSvg('ja', '', subjects, subject('disaster')), '');
-  for (const name of ['task', 'common', 'transportation']) assert.match(graphSvg('en', '/en', subjects, subject(name)), /<svg /, name);
+  const lone = { name: 'lone', version: '1.0.0', title: { ja: 'L', en: 'L' }, models: [
+    { type: 'Alone', kind: 'entity', catalog: { title: { ja: 'A', en: 'A' } }, examples: {}, schema: { properties: { note: { type: 'string', 'x-ngsi': { type: 'Property' } } } } },
+  ] };
+  assert.equal(graphSvg('ja', '', [lone], lone), '');
+  for (const s of subjects) assert.match(graphSvg('en', '/en', subjects, s), /<svg /, s.name);
   assert.match(graphSvg('ja', '', subjects), /<svg /);
+});
+
+test('an evacuation shelter links to the site at the same place', () => {
+  assert.deepEqual(edge('disaster/EvacuationShelter', 'disaster/EvacuationSite', 'rel')?.labels, ['site']);
+  assert.deepEqual(edge('disaster/EvacuationSite', 'common/JapaneseAddress', 'value')?.labels, ['address']);
 });
 
 test('the common graph shows who uses its value types, marked as other subjects', () => {
