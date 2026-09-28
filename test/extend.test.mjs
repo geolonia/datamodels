@@ -59,6 +59,11 @@ test('problems: bad names, clashes with the model and the core, taken namespaces
   assert.deepEqual(codes(input([{ name: 'a', ngsiType: 'Property', valueType: 'string' }, { name: 'a', ngsiType: 'Property', valueType: 'string' }])), ['duplicate:a']);
   assert.deepEqual(codes(input([])), ['none']);
   assert.deepEqual(codes({ ...input(attrs), base: 'https://datamodels.jp/ns/task/' }), ['baseTaken']);
+  assert.deepEqual(codes({ ...input(attrs), base: 'HTTPS://DataModels.JP/ns/task/' }), ['baseTaken'], 'hosts compare case-insensitively');
+  assert.deepEqual(codes({ ...input(attrs), base: 'https://www.datamodels.jp/ns/x/' }), ['baseTaken']);
+  assert.deepEqual(codes({ ...input(attrs), base: 'https://ns.datamodels.jp/x/' }), ['baseTaken'], 'subdomains too');
+  assert.deepEqual(codes({ ...input(attrs), base: 'https://URI.etsi.org/ngsi-ld/x/' }), ['baseTaken']);
+  assert.deepEqual(codes({ ...input(attrs), base: 'https://notdatamodels.jp/ns/x/' }), [], 'a different domain that merely ends the same way is fine');
   assert.deepEqual(codes({ ...input(attrs), base: 'https://example.com/ns/acme' }), ['base']);
   assert.deepEqual(codes({ ...input(attrs), prefix: 'Acme' }), ['prefix']);
   // Terms of the subject context from other models (Comment's text in the task
@@ -77,4 +82,9 @@ test('the proposal link opens the form with the attributes filled in', () => {
   assert.equal(url.searchParams.get('template'), 'model-proposal.yml');
   assert.equal(url.searchParams.get('title'), 'RoadRestriction: patrolRoute, checkedAt, patrolCar, patrolArea');
   assert.match(url.searchParams.get('what'), /- `patrolRoute`: Property \(string\), required — Patrol route/);
+  // A format left over from an earlier choice (the form hides it) is not proposed.
+  const stale = new URL(proposalUrl(model, [{ name: 'count', ngsiType: 'Property', valueType: 'integer', format: 'date-time' }]));
+  assert.match(stale.searchParams.get('what'), /- `count`: Property \(integer\)$/m);
+  const rel = new URL(proposalUrl(model, [{ name: 'car', ngsiType: 'Relationship', valueType: 'string', format: 'date-time' }]));
+  assert.match(rel.searchParams.get('what'), /- `car`: Relationship$/m);
 });

@@ -31,12 +31,16 @@ export function buildExtension(model, input, coreTerms) {
   // wins: a prefix or attribute named like a catalog term would redefine it.
   else if ((model.contextTerms ?? []).includes(prefix)) problems.push({ code: 'prefixInContext', name: prefix });
   let baseOk = false;
+  let host = '';
   try {
     const u = new URL(base);
-    baseOk = (u.protocol === 'https:' || u.protocol === 'http:') && u.hostname !== '' && /[/#]$/.test(base);
+    host = u.hostname; // the URL parser lower-cases it: DataModels.JP is datamodels.jp
+    baseOk = (u.protocol === 'https:' || u.protocol === 'http:') && host !== '' && /[/#]$/.test(base);
   } catch { /* reported below */ }
+  // datamodels.jp and its subdomains belong to the catalog, uri.etsi.org to NGSI-LD.
+  const taken = (h) => h === 'datamodels.jp' || h.endsWith('.datamodels.jp') || h === 'uri.etsi.org';
   if (!baseOk) problems.push({ code: 'base' });
-  else if (/^https?:\/\/(www\.)?datamodels\.jp\//.test(base) || /^https?:\/\/uri\.etsi\.org\//.test(base)) problems.push({ code: 'baseTaken' });
+  else if (taken(host)) problems.push({ code: 'baseTaken' });
 
   const own = new Set(model.attributes);
   const contextTerms = new Set(model.contextTerms ?? []);
@@ -80,7 +84,9 @@ export function buildExtension(model, input, coreTerms) {
 
 /** The model proposal form, pre-filled with the attributes (for attributes that may belong in the catalog). */
 export function proposalUrl(model, attributes) {
-  const list = attributes.filter((a) => a.name?.trim()).map((a) => `- \`${a.name.trim()}\`: ${a.ngsiType}${a.ngsiType === 'Property' ? ` (${a.valueType}${a.format ? `, ${a.format}` : ''})` : ''}${a.required ? ', required' : ''}${a.description?.trim() ? ` — ${a.description.trim()}` : ''}`).join('\n');
+  // Only what the schema uses: a format left over from an earlier value type is not part of it.
+  const shape = (a) => (a.ngsiType === 'Property' ? ` (${a.valueType}${a.valueType === 'string' && a.format ? `, ${a.format}` : ''})` : '');
+  const list = attributes.filter((a) => a.name?.trim()).map((a) => `- \`${a.name.trim()}\`: ${a.ngsiType}${shape(a)}${a.required ? ', required' : ''}${a.description?.trim() ? ` — ${a.description.trim()}` : ''}`).join('\n');
   const q = new URLSearchParams({ template: 'model-proposal.yml', title: `${model.type}: ${attributes.filter((a) => a.name?.trim()).map((a) => a.name.trim()).join(', ')}`, what: `Attributes for ${model.type}:\n\n${list}` });
   return `https://github.com/geolonia/datamodels/issues/new?${q}`;
 }
