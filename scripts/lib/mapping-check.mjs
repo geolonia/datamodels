@@ -5,7 +5,10 @@
 
 const FIELD = /^([A-Za-z][A-Za-z0-9]*)(\[\d+\])?$/;
 const TOP = new Set(['standard', 'fields', 'structure']);
-const bilingual = (v) => v && typeof v === 'object' && typeof v.ja === 'string' && v.ja.trim() !== '' && typeof v.en === 'string' && v.en.trim() !== '';
+// Exactly ja and en: in YAML's { … } form a comma inside the text starts a new
+// key, so an extra key means the text was cut there ("closed → completed, otherwise …").
+const bilingual = (v) => v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v).every((k) => k === 'ja' || k === 'en')
+  && typeof v.ja === 'string' && v.ja.trim() !== '' && typeof v.en === 'string' && v.en.trim() !== '';
 const isLink = (u) => { if (typeof u !== 'string') return false; try { const x = new URL(u); return (x.protocol === 'https:' || x.protocol === 'http:') && x.hostname !== ''; } catch { return false; } };
 
 /** Every property name anywhere in a schema: attributes, and the members of value types such as Geometry's type and coordinates. */
@@ -32,12 +35,12 @@ export function mappingProblems(map, schema) {
   const std = doc.standard;
   if (!std || typeof std !== 'object') out.push('standard is required');
   else {
-    if (!bilingual(std.name)) out.push('standard.name needs ja and en');
+    if (!bilingual(std.name)) out.push('standard.name needs ja and en, and nothing else (quote a text that contains a comma)');
     if (std.url !== undefined && !isLink(std.url)) out.push(`standard.url must be an http(s) URL with a host, got ${JSON.stringify(std.url)}`);
     if (std.license !== undefined && (typeof std.license !== 'string' || !std.license.trim())) out.push('standard.license must be a non-empty string');
-    if (std.note !== undefined && !bilingual(std.note)) out.push('standard.note needs ja and en');
+    if (std.note !== undefined && !bilingual(std.note)) out.push('standard.note needs ja and en, and nothing else (quote a text that contains a comma)');
   }
-  if (doc.structure !== undefined && !bilingual(doc.structure)) out.push('structure needs ja and en');
+  if (doc.structure !== undefined && !bilingual(doc.structure)) out.push('structure needs ja and en, and nothing else (quote a text that contains a comma)');
   const fields = doc.fields;
   if (!fields || typeof fields !== 'object' || Array.isArray(fields) || !Object.keys(fields).length) { out.push('fields must map at least one field'); return out; }
   const known = fieldNames(schema);
@@ -48,7 +51,7 @@ export function mappingProblems(map, schema) {
     if (!m || typeof m !== 'object' || Array.isArray(m) || !('to' in m)) { out.push(`${field}: needs "to" (the corresponding item, or null when there is none)`); continue; }
     if (m.to !== null && (typeof m.to !== 'string' || !m.to.trim())) out.push(`${field}: "to" must be a non-empty string or null`);
     for (const k of Object.keys(m)) if (k !== 'to' && k !== 'note') out.push(`${field}: unknown key "${k}" (allowed: to, note)`);
-    if (m.note !== undefined && !bilingual(m.note)) out.push(`${field}: note needs ja and en`);
+    if (m.note !== undefined && !bilingual(m.note)) out.push(`${field}: note needs ja and en, and nothing else (quote a text that contains a comma)`);
   }
   return out;
 }
