@@ -176,6 +176,9 @@ function modelPage(lang, prefix, subject, model) {
   md += isValue ? `| ${t.examples} | [example.json](${rel(mu.examples)}example.json) |\n`
     : `| ${t.examples} | [key-values](${rel(mu.examples)}example.json) · [normalized](${rel(mu.examples)}example-normalized.jsonld) |\n`;
   md += `| ${t.source} | [github.com/geolonia/datamodels](https://github.com/geolonia/datamodels/tree/main/models/${subject.name}/${model.type}) |\n\n`;
+  // This model and its neighbours, one step; each neighbour links to its own page.
+  const neighbourhood = graphSvg(lang, prefix, allSubjects, null, 'LR', { center: `${subject.name}/${model.type}` });
+  if (neighbourhood) md += `## ${graphTitle[lang]} {#graph}\n\n${neighbourhood}`;
   if (attributesOf(model).length) md += `## ${isValue ? t.fields : t.attributes} {#attributes}\n\n`;
   for (const [name, prop] of attributesOf(model)) {
     const flags = [required.has(name) ? badge('warning', t.required) : '', prop['x-personal-data'] ? badge('danger', t.pii) : '', prop['x-deprecated'] ? badge('danger', t.deprecated) : ''].filter(Boolean).join(' ');
@@ -229,8 +232,6 @@ async function subjectPage(lang, prefix, subject) {
   md += `| ${t.context} | ${code(u.contextAlias)} ${t.contextAlias}<br>${code(u.contextExact)} ${t.contextExact} |\n| ${t.namespace} | ${code(u.namespace)} |\n| ${t.vocabulary} | [${code(rel(u.vocabExact))}](${rel(u.vocabExact)}) ${t.vocabularyNote} |\n\n`;
   md += `## ${t.models} {#models}\n\n| Type | | |\n|---|---|---|\n`;
   for (const m of subject.models) md += `| [${m.type}](${prefix}${rel(modelUrls(subject, m).page)}) | ${m.catalog.title?.[lang] ?? ''} | ${statusBadge(lang, m.catalog.status ?? 'draft')}${m.kind === 'value' ? ` ${badge('info', t.valueType)}` : ''}${m.schema['x-alias-of'] ? ` ${badge('info', t.alias)}` : ''}${m.schema['x-subclass-of'] ? ` ${badge('info', t.subclass)}` : ''} |\n`;
-  const graph = graphSvg(lang, prefix, allSubjects, subject);
-  if (graph) md += `\n## ${graphTitle[lang]} {#graph}\n\n${graph}`;
   const releases = await listReleases(subject);
   if (releases.length) {
     md += `\n## ${t.versions} {#versions}\n\n| | @context | JSON Schema |\n|---|---|---|\n`;
@@ -265,8 +266,6 @@ function indexPage(lang, prefix, subjects) {
   // "<" escaped so no text can close the script block.
   let md = front(t.models, t.subjectsIntro) + `<script setup>\nconst models = ${JSON.stringify(rows).replaceAll('<', '\\u003c')}\n</script>\n\n`;
   md += `# ${t.models}\n\n${t.subjectsIntro}\n\n<ModelIndex lang="${lang}" :models="models" />\n\n`;
-  const graph = graphSvg(lang, prefix, subjects);
-  if (graph) md += `## ${graphTitle[lang]} {#graph}\n\n${graph}`;
   md += `## ${t.subjects} {#subjects}\n\n`;
   for (const s of subjects) md += `### [${s.title[lang]}](${prefix}${rel(subjectUrls(s).page)}) {#${s.name}}\n\n${s.description[lang]}\n\n`;
   return md;

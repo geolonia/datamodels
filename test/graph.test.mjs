@@ -99,3 +99,28 @@ test('ids in the SVG use only safe characters, whatever the subject is called', 
   for (const [, id] of svg.matchAll(/(?:id|aria-labelledby)="([^"]*)"/g)) assert.match(id, /^[A-Za-z0-9_-]+$/, id);
   assert.match(svg, /url\(#arrow-a_b_c\)/);
 });
+
+test('a model page graph shows the model and its neighbours only, each neighbour a link with its further links counted', () => {
+  const svg = graphSvg('en', '/en', subjects, null, 'LR', { center: 'task/Comment' });
+  const types = [...svg.matchAll(/<text class="type"[^>]*>([^<]*)</g)].map((m) => m[1]).sort();
+  assert.deepEqual(types, ['Comment', 'Task']);
+  assert.match(svg, /class="node entity center"/);
+  assert.doesNotMatch(svg, /href="\/en\/models\/task\/Comment\/"/, 'the model itself is not a link');
+  assert.match(svg, /<a href="\/en\/models\/task\/Task\/"/);
+  // Task's links besides Comment (project, parent/relatedTo, refersTo, assignee/author, location, Attachment.task).
+  assert.match(svg, /class="more"[^>]*>6 more links →</);
+  assert.match(svg, /↻ inReplyTo/);
+});
+
+test('a model page graph for a value type shows who uses it, from other subjects too', () => {
+  const svg = graphSvg('ja', '', subjects, null, 'LR', { center: 'common/JapaneseAddress' });
+  const types = [...svg.matchAll(/<text class="type"[^>]*>([^<]*)</g)].map((m) => m[1]).sort();
+  assert.ok(types.includes('JapaneseAddress') && types.includes('RoadRestriction'), types.join(','));
+  assert.match(svg, /class="node entity other"/);
+  assert.ok(!types.includes('Task'), 'no unrelated models');
+});
+
+test('a long grey-box label breaks after its first comma', () => {
+  const svg = graphSvg('en', '/en', subjects, null, 'LR', { center: 'task/Task' });
+  assert.match(svg, /<text class="sub"[^>]*>person,<\/text><text class="sub"[^>]*>organisation or team<\/text>/);
+});
