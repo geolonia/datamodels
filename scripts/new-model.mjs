@@ -83,7 +83,8 @@ const notes = `notes:
 license: CC BY 4.0 (see /LICENSE-CONTENT.md)
 `;
 
-const adopters = `# Systems that use this model. Two independent ones are needed for status: stable.
+const adopters = `# Systems that use this model: name, organization, since, url, note.
+# status: stable needs two from different organisations, each with a url.
 adopters: []
 `;
 

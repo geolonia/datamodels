@@ -73,6 +73,8 @@ export async function loadSubjects() {
       const schema = await readJson(join(mdir, 'schema.json'));
       const catalog = await readYaml(join(mdir, 'catalog.yaml'));
       const notes = (await exists(join(mdir, 'notes.yaml'))) ? await readYaml(join(mdir, 'notes.yaml')) : {};
+      // Systems that use the model; null when the file is missing.
+      const adopters = (await exists(join(mdir, 'ADOPTERS.yaml'))) ? await readYaml(join(mdir, 'ADOPTERS.yaml')) : null;
       // Correspondence tables to external standards (mapping/<name>.yaml).
       const mappings = [];
       const mdirMapping = join(mdir, 'mapping');
@@ -86,7 +88,7 @@ export async function loadSubjects() {
       // structure such as an address, referenced from entity schemas).
       const kind = schema['x-kind'] ?? 'entity';
       if (!['entity', 'value'].includes(kind)) throw new Error(`${name}/${type}/schema.json: x-kind must be entity or value`);
-      models.push({ type, kind, dir: mdir, schema, catalog, notes, examples, mappings });
+      models.push({ type, kind, dir: mdir, schema, catalog, notes, adopters, examples, mappings });
     }
     subjects.push({ name, dir, ...meta, context, imports, inlineTerms, models });
   }
