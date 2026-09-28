@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { loadSubjects } from '../scripts/lib/models.mjs';
-import { decodeCsv, parseCsv, code6, convertRows } from '../scripts/lib/convert.mjs';
+import { decodeCsv, parseCsv, code6, convertRows, LINE } from '../scripts/lib/convert.mjs';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 
@@ -89,7 +89,8 @@ test('a flag is 1, 0 or empty; any other mark is reported instead of read as fal
 
 test('an invalid byte, an unclosed quote or a record of the wrong length is an error, not data', () => {
   assert.throws(() => decodeCsv(new Uint8Array([0xef, 0xbb, 0xbf, 0x61, 0xff])), /UTF-8 BOM but is not valid UTF-8/);
-  assert.throws(() => decodeCsv(new Uint8Array([0x61, 0x80, 0x80, 0x80])), /neither valid UTF-8 nor valid Shift_JIS/);
+  // 0xFF is no byte of either (a lone 0x80 is U+0080 in Shift_JIS).
+  assert.throws(() => decodeCsv(new Uint8Array([0x61, 0xff])), /neither valid UTF-8 nor valid Shift_JIS/);
   assert.throws(() => parseCsv('id,name\n1,"School'), /line 2: a quoted field is not closed/);
   assert.throws(() => parseCsv('a,b,c\n1,2\n"x\ny",2,3\n1,2,3,4\n'), /line 2: 2 fields, line 5: 4 fields \(the header has 3\)/);
   assert.deepEqual(parseCsv('a,b\n1,2,,\n'), [{ a: '1', b: '2' }], 'empty trailing fields, as spreadsheets write them');
@@ -118,4 +119,25 @@ test('a via cycle stops with a problem instead of recursing forever', () => {
 
 test('the contact postal code of sheet A is not taken as the address postal code', () => {
   assert.equal(mappings['common/JapaneseAddress/jichitai-opendata-address'].fields.postalCode.column, undefined);
+});
+
+test('a closing quote must end the field, a quote may only open one, and the header must name every column once', () => {
+  assert.throws(() => parseCsv('id,name\n1,"School"extra\n'), /line 2: text after a closing quote/);
+  assert.throws(() => parseCsv('id,name\n1,Sch"ool\n'), /line 2: a quote inside an unquoted field/);
+  assert.throws(() => parseCsv(''), /no header row/);
+  assert.throws(() => parseCsv('id,name,id\n1,2,3\n'), /header names must be present and distinct \(repeated: id\)/);
+  assert.throws(() => parseCsv('id,,name\n1,2,3\n'), /header names must be present and distinct/);
+  assert.deepEqual(parseCsv('id,name\n1,"a, ""b"""\n'), [{ id: '1', name: 'a, "b"' }]);
+});
+
+test('each row keeps the source line it starts on, past blank lines and line breaks inside quotes', () => {
+  const rows = parseCsv('id,note\n1,"two\nlines"\n\n2,x\n');
+  assert.deepEqual(rows.map((r) => r[LINE]), [2, 5]);
+  assert.deepEqual(Object.keys(rows[0]), ['id', 'note'], 'the line is not a column');
+});
+
+test('--set does not fill a flags field', () => {
+  const map = { convert: { id: 'urn:ngsi-ld:T:{n}' }, fields: { n: { to: 'n', column: 'n' }, h: { to: 'h', transform: 'flags', values: { 洪水: 'flood' } } } };
+  const [r] = convertRows([{ n: 'a', 洪水: '' }], map, { type: 'T', set: { h: 'flood' } });
+  assert.equal(r.entity.h, undefined);
 });

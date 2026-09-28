@@ -20,37 +20,49 @@ export function decodeCsv(bytes) {
   try { return { text: new TextDecoder('shift_jis', { fatal: true }).decode(b), encoding: 'shift_jis' }; } catch { throw new Error('neither valid UTF-8 nor valid Shift_JIS'); }
 }
 
+/** The source line a parsed row starts on (a key that is not a column). */
+export const LINE = Symbol('line');
+
 /**
  * RFC 4180 CSV: quoted fields, doubled quotes, commas and line breaks inside
- * quotes. Throws on an unclosed quote (a truncated file) and on a record whose
- * field count differs from the header's (a stray comma would shift the values);
- * surplus empty fields at the end of a record, as spreadsheets write them, are allowed.
+ * quotes. Throws on what would otherwise shift or merge values silently: an
+ * unclosed quote (a truncated file), text after a closing quote or a quote
+ * inside an unquoted field, a missing or repeated header name, and a record
+ * whose field count differs from the header's; surplus empty fields at the
+ * end of a record, as spreadsheets write them, are allowed. Each row carries
+ * its source line under LINE.
  */
 export function parseCsv(text) {
   const rows = [];
-  let row = [], field = '', quoted = false, line = 1, start = 1;
-  const end = () => { row.push(field); rows.push({ fields: row, line: start }); row = []; field = ''; };
+  let row = [], field = '', quoted = false, closed = false, line = 1, start = 1;
+  const end = () => { row.push(field); rows.push({ fields: row, line: start }); row = []; field = ''; closed = false; };
   for (let i = 0; i < text.length; i++) {
     const c = text[i];
     if (c === '\n' || (c === '\r' && text[i + 1] !== '\n')) line++;
     if (quoted) {
       if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
-      else if (c === '"') quoted = false;
+      else if (c === '"') { quoted = false; closed = true; }
       else field += c;
-    } else if (c === '"' && field === '') quoted = true;
-    else if (c === ',') { row.push(field); field = ''; }
+    } else if (c === ',') { row.push(field); field = ''; closed = false; }
     else if (c === '\n' || c === '\r') {
       if (c === '\r' && text[i + 1] === '\n') { i++; line++; }
       end(); start = line;
-    } else field += c;
+    } else if (closed) throw new Error(`line ${line}: text after a closing quote`);
+    else if (c === '"' && field === '') quoted = true;
+    else if (c === '"') throw new Error(`line ${line}: a quote inside an unquoted field`);
+    else field += c;
   }
   if (quoted) throw new Error(`line ${start}: a quoted field is not closed`);
   if (field !== '' || row.length) end();
-  const [head = { fields: [] }, ...body] = rows.filter((r) => r.fields.some((v) => v.trim() !== ''));
-  const n = head.fields.length;
+  const [head, ...body] = rows.filter((r) => r.fields.some((v) => v.trim() !== ''));
+  if (!head) throw new Error('no header row');
+  const names = head.fields.map((h) => h.trim());
+  const repeated = names.filter((h, i) => names.indexOf(h) !== i);
+  if (names.some((h) => !h) || repeated.length) throw new Error(`line ${head.line}: header names must be present and distinct${repeated.length ? ` (repeated: ${[...new Set(repeated)].join(', ')})` : ''}`);
+  const n = names.length;
   const bad = body.filter((r) => r.fields.length < n || r.fields.slice(n).some((v) => v.trim() !== ''));
   if (bad.length) throw new Error(`${bad.slice(0, 5).map((r) => `line ${r.line}: ${r.fields.length} fields`).join(', ')}${bad.length > 5 ? ` and ${bad.length - 5} more` : ''} (the header has ${n})`);
-  return body.map((r) => Object.fromEntries(head.fields.map((h, i) => [h.trim(), r.fields[i].trim()])));
+  return body.map((r) => Object.defineProperty(Object.fromEntries(names.map((h, i) => [h, r.fields[i].trim()])), LINE, { value: r.line }));
 }
 
 // 全国地方公共団体コード: the 5-digit JIS X 0402 code plus a check digit (MIC,
@@ -137,7 +149,8 @@ export function convertRows(rows, mapping, { type, mappings = {}, set = {} } = {
       }
       // --set fills what the list does not carry; a value the row has wins.
       const fromRow = rule?.column !== undefined || rule?.transform === 'flags' ? apply(rule, row) : { value: undefined };
-      const given = top && set[field] !== undefined && fromRow.value === undefined && !fromRow.problem;
+      // flags come from several columns; --set has no form for them (the command line refuses it).
+      const given = top && set[field] !== undefined && rule?.transform !== 'flags' && fromRow.value === undefined && !fromRow.problem;
       if (rule?.column === undefined && rule?.transform !== 'flags' && !given) continue;
       const r = given ? apply({ ...rule, column: '__set' }, { __set: String(set[field]) }) : fromRow;
       if (top && set[field] !== undefined && fromRow.value !== undefined) fixes.push({ field, repair: 'kept the value in the list over --set', detail: `${fromRow.value} (not ${set[field]})` });

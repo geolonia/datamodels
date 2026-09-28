@@ -13,7 +13,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { loadSubjects, subjectUrls, CORE_CONTEXT_URL } from './lib/models.mjs';
-import { decodeCsv, parseCsv, convertRows } from './lib/convert.mjs';
+import { decodeCsv, parseCsv, convertRows, LINE } from './lib/convert.mjs';
 import { toNormalized } from './lib/ngsi.mjs';
 
 const args = process.argv.slice(2);
@@ -38,7 +38,7 @@ if (!mapping) { console.error(`${target} has no mapping ${mappingName} (has: ${m
 const mappings = Object.fromEntries(subjects.flatMap((s) => s.models.flatMap((m) => m.mappings.map((map) => [`${s.name}/${m.type}/${map.name}`, map]))));
 const set = Object.fromEntries(sets.map((kv) => { const i = kv.indexOf('='); return [kv.slice(0, i), kv.slice(i + 1)]; }));
 // A name the mapping converts nothing into would be ignored without a word.
-const settable = Object.keys(mapping.fields ?? {}).filter((k) => mapping.fields[k]?.via === undefined && mapping.fields[k]?.value === undefined);
+const settable = Object.keys(mapping.fields ?? {}).filter((k) => mapping.fields[k]?.via === undefined && mapping.fields[k]?.value === undefined && mapping.fields[k]?.transform !== 'flags');
 const unknown = Object.keys(set).filter((k) => !settable.includes(k));
 if (unknown.length) usage(`--set ${unknown.join(', ')}: not a field that ${mappingName} fills (${settable.join(', ')})`);
 
@@ -55,7 +55,7 @@ const invalidIndex = new Set();
 const repairs = new Map();
 for (const [i, r] of results.entries()) {
   for (const f of r.fixes) { const k = `${f.field}: ${f.repair}`; const e = repairs.get(k) ?? { n: 0, example: f.detail }; e.n++; repairs.set(k, e); }
-  if (r.problems.length || !validate(r.entity)) { invalidIndex.add(i); invalid.push({ row: i + 2, problems: [...r.problems, ...(r.problems.length ? [] : [ajv.errorsText(validate.errors)])] }); }
+  if (r.problems.length || !validate(r.entity)) { invalidIndex.add(i); invalid.push({ line: rows[i][LINE], problems: [...r.problems, ...(r.problems.length ? [] : [ajv.errorsText(validate.errors)])] }); }
 }
 const context = [subjectUrls(subject).contextAlias, CORE_CONTEXT_URL];
 const entities = results.filter((_, i) => !invalidIndex.has(i)).map((r) => (normalized ? toNormalized(r.entity, model.schema, context) : r.entity));
@@ -64,6 +64,6 @@ if (out) await writeFile(out, json); else process.stdout.write(json);
 
 console.error(`${file}: ${encoding}, ${rows.length} row(s), ${entities.length} valid ${type}, ${invalid.length} invalid`);
 for (const [k, e] of repairs) console.error(`  repaired ${e.n}×: ${k} (e.g. ${e.example})`);
-for (const x of invalid.slice(0, 20)) console.error(`  row ${x.row}: ${x.problems.join('; ')}`);
+for (const x of invalid.slice(0, 20)) console.error(`  line ${x.line}: ${x.problems.join('; ')}`);
 if (invalid.length > 20) console.error(`  … ${invalid.length - 20} more`);
 process.exit(invalid.length ? 1 : 0);
