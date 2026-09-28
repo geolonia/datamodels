@@ -75,8 +75,8 @@ starts_with(http.request.uri.path, "/context/") or starts_with(http.request.uri.
 
 | Path | Licence |
 |---|---|
-| `models/**` machine-readable files (schemas, `@context`, vocabularies, examples, `catalog.yaml`, mappings) | [CC0 1.0](LICENSE-CONTENT.md) |
+| `models/**` machine-readable files (schemas, `@context`, vocabularies, examples, `catalog.yaml`, mappings), and the published `catalog.json` and `/adapters/**` files | [CC0 1.0](LICENSE-CONTENT.md) |
 | `models/**` prose (`notes.yaml`, `README.md`) and the site's pages | [CC BY 4.0](LICENSE-CONTENT.md) |
-| everything else | [Apache-2.0](LICENSE) |
+| everything else, including the adapter code in `adapters/` | [Apache-2.0](LICENSE) |
 
 Content copied from a CC BY source (Smart Data Models, the GIF core data model schema) keeps CC BY 4.0 and is listed in the model folder's `LICENSE.md`; today nothing is copied, upstream standards are mapped and their IRIs reused. Material from the Digital Agency's 自治体標準オープンデータセット (公共データ利用規約 PDL1.0, compatible with CC BY 4.0) is credited to its source in the mapping files. Decided on 2026-09-28 ([#83](https://github.com/geolonia/datamodels/issues/83)).

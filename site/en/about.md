@@ -18,7 +18,7 @@ The site is run by [Geolonia Inc.](https://www.geolonia.com/company/) (株式会
 
 - **Model files** (JSON Schemas, JSON-LD `@context` files, vocabularies, examples, `catalog.json`, mapping files): [CC0 1.0](/LICENSE-CONTENT), no conditions. Please keep the canonical URLs inside them when you copy them (`$id` in a schema, the `@context` URL, the type and attribute IRIs): a request, not a condition. They tell anyone who finds a copy that a newer version may exist.
 - **Text** (notes and the pages of this site): [CC BY 4.0](/LICENSE-CONTENT). When you use it, give credit, for example "Source: datamodels.jp (Geolonia Inc.), CC BY 4.0", with a link to the page you used, and say so if you changed it. Every page shows its URL at the top.
-- Parts copied from other standards (GIF, the municipal standard open dataset, Smart Data Models and others) keep their licence and name their source in the model's `LICENSE.md` and mappings. Today nothing is copied: correspondences are recorded and IRIs reused.
+- A file that copies content from a CC BY standard (Smart Data Models, the GIF core schema and others) stays CC BY 4.0 as a whole; the model's `LICENSE.md` names the file and its source. Today nothing is copied: correspondences are recorded and IRIs reused.
 - **Tooling** (site, scripts, adapters): [Apache-2.0](https://github.com/geolonia/datamodels/blob/main/LICENSE)
 - IRIs from other vocabularies (Smart Data Models, schema.org, NGSI-LD and others) are only referenced here and belong to their publishers. Where a model derives from upstream material, its notes name the source.
 
