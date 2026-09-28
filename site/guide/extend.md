@@ -55,6 +55,7 @@ description: 既存のデータモデルを日本向けに拡張する方法、�
 - NGSI-LD core context の予約語（`status`, `description`, `location`, `createdAt`, `modifiedAt`, `observedAt` など）を再定義しない。カタログの CI が弾きます。`status` が要るときは `incidentStatus` のように名前を変えます。
 - 名前空間はサブジェクト（分野）で分け、地域名・顧客名・案件名は入れない。
 - 共通の構造は [common](/models/common/) サブジェクトの値型を使う。住所は [JapaneseAddress](/models/common/JapaneseAddress/)、`location` などの GeoProperty は [Geometry](/models/common/Geometry/)。使えるジオメトリを絞るときは `$ref` の横で制約する（Attachment は点だけ）。
+- モデルに当たるデータセットがデジタル庁の[自治体標準オープンデータセット](https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test)にあれば、対応表（`mapping/jichitai-opendata-*.yaml`）を書く。自治体が自分のデータをそのままモデルに当てはめられるようにするためです。例は [EvacuationShelter](/models/disaster/EvacuationShelter/#mapping-jichitai-opendata-shelter)、所在地の列は [JapaneseAddress](/models/common/JapaneseAddress/#mapping-jichitai-opendata-address) と [Geometry](/models/common/Geometry/#mapping-jichitai-opendata-location) が対応済みです。当たるデータセットがあるかはレビューで確認します（CI では検査しません）。
 - 既にある型に名前だけ合わせたいならエイリアス（`x-alias-of`、属性も必須項目も同じ）、属性を足す・型を分けたいならサブクラス（`x-subclass-of`、同名の属性は親の IRI、親の必須項目は維持）。CI が両方を検査します。
 
 ## 例の書き方 {#examples}

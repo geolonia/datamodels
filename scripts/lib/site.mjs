@@ -14,6 +14,10 @@ import { listReleases } from './releases.mjs';
 const SITE = join(ROOT, 'site');
 const rel = (url) => url.slice(BASE_URL.length);
 const code = (s) => `\`${s}\``;
+// A Markdown link to any URL that renders as exactly that URL: the text is
+// escaped (brackets, emphasis), the destination is serialised (spaces) and
+// angle-bracketed (an unmatched parenthesis would end a bare destination).
+export const externalLink = (url) => `[${url.replace(/[\\`*_{}[\]()<>#!|~]/g, '\\$&')}](<${new URL(url).href}>)`;
 const fence = (obj) => '```json\n' + JSON.stringify(obj, null, 2) + '\n```';
 
 const T = {
@@ -24,7 +28,7 @@ const T = {
     source: 'ソース', namespace: '名前空間', version: 'バージョン', vocabulary: '語彙', vocabularyNote: '（RDFS: クラス、サブクラス関係、日英ラベル）',
     required: '必須', pii: '個人情報', deprecated: '非推奨', value: '値', relationshipTo: '→', license: 'このページのモデル内容は CC BY 4.0 で提供されています。',
     improveTitle: '改善の提案', improve: (issue, form, guide) => `属性が足りない、説明がおかしいと思ったら、[Issue で知らせてください](${issue})。新しい属性やモデルは[提案フォーム](${form})から。進め方は[貢献する](${guide})にあります。`,
-    valueType: '値型', valueTypeNote: 'これはエンティティ型ではなく、属性の値として使う構造です。', fields: 'フィールド', versions: 'バージョン', current: '現行', usage: '使い方',
+    deprecatedNote: (link) => `このモデルは非推奨です。${link ? `代わりに ${link} を使ってください。` : ''}公開済みのファイルと URL はそのまま残ります。`, valueType: '値型', valueTypeNote: 'これはエンティティ型ではなく、属性の値として使う構造です。', fields: 'フィールド', versions: 'バージョン', current: '現行', usage: '使い方',
     subjectsIntro: 'サブジェクトごとに 1 つの `@context` を公開しています。型と属性の IRI は `/ns/<subject>/<term>` で解決できます。',
     statusLabel: { draft: 'ドラフト', stable: '安定', deprecated: '非推奨' },
     sourceLabel: { minted: 'このカタログで定義', profile: '上流モデルの日本向け拡張', global: '上流（Smart Data Models）' },
@@ -39,7 +43,7 @@ const T = {
     source: 'Source', namespace: 'Namespace', version: 'Version', vocabulary: 'Vocabulary', vocabularyNote: '(RDFS: classes, subclass relations, ja/en labels)',
     required: 'required', pii: 'personal data', deprecated: 'deprecated', value: 'Value', relationshipTo: '→', license: 'Model content on this page is licensed under CC BY 4.0.',
     improveTitle: 'Something missing or wrong?', improve: (issue, form, guide) => `[Open an issue](${issue}), or propose new attributes or models with the [proposal form](${form}). How it works: [Contributing](${guide}).`,
-    valueType: 'value type', valueTypeNote: 'This is not an entity type but a structure used as the value of an attribute.', fields: 'Fields', versions: 'Versions', current: 'current', usage: 'Usage',
+    deprecatedNote: (link) => `This model is deprecated.${link ? ` Use ${link} instead.` : ''} Its published files and URLs stay as they are.`, valueType: 'value type', valueTypeNote: 'This is not an entity type but a structure used as the value of an attribute.', fields: 'Fields', versions: 'Versions', current: 'current', usage: 'Usage',
     subjectsIntro: 'One `@context` is published per subject. Type and attribute IRIs resolve at `/ns/<subject>/<term>`.',
     statusLabel: { draft: 'draft', stable: 'stable', deprecated: 'deprecated' },
     sourceLabel: { minted: 'defined in this catalog', profile: 'Japanese profile of an upstream model', global: 'upstream (Smart Data Models)' },
@@ -99,6 +103,12 @@ function modelPage(lang, prefix, subject, model) {
   let md = front(`${model.type}`, desc);
   md += `# ${model.type} ${statusBadge(lang, model.catalog.status ?? 'draft')}${isValue ? ` ${badge('info', t.valueType)}` : ''}${aliasOf ? ` ${badge('info', t.alias)}` : ''}${subclassOf ? ` ${badge('info', t.subclass)}` : ''}\n\n`;
   if (isValue) md += `> ${t.valueTypeNote}\n\n`;
+  if ((model.catalog.status ?? 'draft') === 'deprecated') {
+    // supersededBy is a type IRI of this catalog (link its page) or any other URL.
+    const next = model.catalog.supersededBy;
+    const found = next ? modelForIri(subject, next) : null;
+    md += `> ${t.deprecatedNote(found ? modelLink(prefix, found) : next ? externalLink(next) : null)}\n\n`;
+  }
   if (aliasOf) md += `> ${t.aliasNote(modelLink(prefix, aliasOf))}\n\n`;
   if (subclassOf) md += `> ${t.subclassNote(modelLink(prefix, subclassOf))}\n\n`;
   // One language per page (the switcher gives the other); the localised title
@@ -141,7 +151,8 @@ function modelPage(lang, prefix, subject, model) {
     if (map.standard?.url) md += `[${map.standard.name?.[lang] ?? map.name}](${map.standard.url})${map.standard.license ? ` · ${map.standard.license}` : ''}\n\n`;
     if (map.standard?.note?.[lang]) md += `${map.standard.note[lang]}\n\n`;
     md += `| ${t.mappingField} | ${t.mappingTo} | ${t.mappingNote} |\n|---|---|---|\n`;
-    for (const [field, m] of Object.entries(map.fields ?? {})) md += `| [${code(field)}](#${field}) | ${m.to ? code(m.to) : `*${t.none}*`} | ${m.note?.[lang] ?? ''} |\n`;
+    // Link a field to its attribute row; a value type such as Geometry has no rows to link to.
+    for (const [field, m] of Object.entries(map.fields ?? {})) md += `| ${model.schema.properties?.[field] ? `[${code(field)}](#${field})` : code(field)} | ${m.to ? code(m.to) : `*${t.none}*`} | ${m.note?.[lang] ?? ''} |\n`;
     md += '\n';
   }
   const notes = model.notes?.notes ?? [];
