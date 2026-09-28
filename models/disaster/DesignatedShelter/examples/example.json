@@ -1,0 +1,27 @@
+{
+  "id": "urn:ngsi-ld:DesignatedShelter:0012",
+  "type": "DesignatedShelter",
+  "name": "都立一橋高校",
+  "externalShelterId": "13101-0012",
+  "nationalShelterId": "E1310100012111",
+  "localGovernmentCode": "131016",
+  "shelterType": "general",
+  "address": {
+    "addressCountry": "JP",
+    "addressRegion": "東京都",
+    "addressLocality": "千代田区",
+    "machiaza": "東神田",
+    "chome": "1",
+    "localGovernmentCode": "131016",
+    "addressText": "東京都千代田区東神田1-12-13"
+  },
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      139.7810002,
+      35.6945488
+    ]
+  },
+  "alsoEmergencyEvacuationSite": true,
+  "site": "urn:ngsi-ld:EvacuationSite:0012"
+}
