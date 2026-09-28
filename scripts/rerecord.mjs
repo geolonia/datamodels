@@ -17,9 +17,11 @@ const die = (msg) => { console.error(msg); process.exit(1); };
 if (!names.length) die('usage: npm run rerecord -- <subject> [<subject> ...]');
 
 const subjects = await loadSubjects();
-const manifestPath = join(ROOT, 'published-manifest.json');
+// Overridable like check-immutability.mjs (tests use a temporary manifest).
+const manifestPath = process.env.DATAMODELS_MANIFEST ?? join(ROOT, 'published-manifest.json');
 const manifestText = await readFile(manifestPath, 'utf8');
 const manifest = JSON.parse(manifestText);
+if (manifest.prerelease !== true) die('published-manifest.json says the catalog is launched ("prerelease" is not true): published versions never change. Bump the subject version instead.');
 
 // Resolve every name before changing anything, so a typo leaves the tree as it was.
 const unknown = names.filter((n) => !subjects.some((s) => s.name === n));
