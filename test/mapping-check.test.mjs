@@ -20,7 +20,7 @@ test('a field that is not in the model, or a malformed row, is reported', () => 
   assert.deepEqual(mappingProblems({ ...ok, fields: { progress: 'state' } }, task), ['progress: needs "to" (the corresponding item, or null when there is none)']);
   assert.deepEqual(mappingProblems({ ...ok, fields: { progress: { to: '' } } }, task), ['progress: "to" must be a non-empty string or null']);
   assert.deepEqual(mappingProblems({ ...ok, fields: { progress: { to: null, note: { ja: 'なし' } } } }, task), ['progress: note needs ja and en, and nothing else (quote a text that contains a comma)']);
-  assert.deepEqual(mappingProblems({ ...ok, fields: { progress: { to: 'a', notes: 'x' } } }, task), ['progress: unknown key "notes" (allowed: to, note)']);
+  assert.deepEqual(mappingProblems({ ...ok, fields: { progress: { to: 'a', notes: 'x' } } }, task), ['progress: unknown key "notes" (allowed: to, note, column, transform, values, value, via)']);
   assert.deepEqual(mappingProblems({ ...ok, fields: {} }, task), ['fields must map at least one field']);
 });
 
@@ -34,6 +34,21 @@ test('a text cut at a comma by YAML is reported', async () => {
   assert.deepEqual(mappingProblems({ ...ok, fields: quoted }, task), []);
 });
 
+test('conversion rules are checked: columns, known transforms, flags values, via targets, the id template', () => {
+  const names = new Set(['common/Geometry/jichitai-opendata-location']);
+  const rule = (r) => mappingProblems({ ...ok, fields: { progress: { to: 'x', ...r } } }, task, names);
+  assert.deepEqual(rule({ column: '状態' }), []);
+  assert.deepEqual(rule({ column: [] }), ['progress: column must be a column name or a list of them']);
+  assert.deepEqual(rule({ column: 'a', transform: 'upper' }), [`progress: unknown transform "upper" (known: text, code6, number, integer, numbers, flag, flags, split, municipality, machiazaId)`]);
+  assert.deepEqual(rule({ transform: 'flags' }), ['progress: transform flags needs values (column: value)']);
+  assert.deepEqual(rule({ column: 'a', values: { a: 'b' } }), ['progress: values is only for transform flags']);
+  assert.deepEqual(rule({ column: 'a', transform: 'numbers' }), ['progress: transform numbers needs at least two columns']);
+  assert.deepEqual(rule({ via: 'common/Geometry/nothing' }), ['progress: via must name a mapping file as subject/Type/name, got "common/Geometry/nothing"']);
+  assert.deepEqual(rule({ column: 'a', value: 'b' }), ['progress: use one of column, value and via']);
+  assert.deepEqual(mappingProblems({ ...ok, convert: { id: 'urn:ngsi-ld:Task:1' } }, task), ['convert.id must be a template such as "urn:ngsi-ld:Type:{attribute}"']);
+  assert.deepEqual(mappingProblems({ ...ok, convert: { id: 'urn:ngsi-ld:Task:{externalId}' } }, task), []);
+});
+
 test('a value type maps its own members, with array positions', () => {
   assert.deepEqual(mappingProblems({ ...ok, fields: { type: { to: null }, coordinates: { to: 'x' }, 'coordinates[2]': { to: null } } }, geometry), []);
   assert.deepEqual(mappingProblems({ ...ok, fields: { 'coordinates[x]': { to: null } } }, geometry), ['coordinates[x]: not a field name']);
@@ -44,7 +59,7 @@ test('the standard needs a bilingual name; url, licence, note and structure are 
   assert.deepEqual(mappingProblems({ ...ok, standard: { ...ok.standard, url: 'example.org' } }, task), ['standard.url must be an http(s) URL with a host, got "example.org"']);
   assert.deepEqual(mappingProblems({ ...ok, standard: { ...ok.standard, note: { en: 'only English' } } }, task), ['standard.note needs ja and en, and nothing else (quote a text that contains a comma)']);
   assert.deepEqual(mappingProblems({ ...ok, structure: { ja: '構造' } }, task), ['structure needs ja and en, and nothing else (quote a text that contains a comma)']);
-  assert.deepEqual(mappingProblems({ ...ok, feilds: {} }, task), ['unknown key "feilds" (allowed: standard, fields, structure)']);
+  assert.deepEqual(mappingProblems({ ...ok, feilds: {} }, task), ['unknown key "feilds" (allowed: standard, fields, structure, convert)']);
   const { standard, ...noStandard } = ok;
   assert.deepEqual(mappingProblems(noStandard, task), ['standard is required']);
 });

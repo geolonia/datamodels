@@ -10,12 +10,14 @@ standard:
     ja: "定義書Aの 01〜03、05、07〜15 のデータセットが、場所を「緯度」「経度」の 2 列で持つ。記載ルールは GIF コアデータパーツの「地理座標」に従い、値は10進数の度の文字列（例 43.064310）。これは type が Point の Geometry になる。座標の順は GeoJSON では経度が先。"
     en: "Datasets 01–03, 05 and 07–15 of definition sheet A give the location as two columns, 緯度 (latitude) and 経度 (longitude), written by the rules of GIF's core data part 地理座標 as decimal degrees in a string (e.g. 43.064310). This becomes a Geometry of type Point. GeoJSON puts longitude first."
 fields:
-  type: { to: null, note: { ja: 常に Point, en: always Point } }
+  type: { to: null, note: { ja: 常に Point, en: always Point }, value: Point }
   coordinates:
     to: 経度 (longitude), 緯度 (latitude)
     note:
       ja: "[経度, 緯度] の順の数値にする（文字列から変換）"
       en: "numbers in the order [longitude, latitude] (converted from the strings)"
+    column: [経度, 緯度]
+    transform: numbers
   "coordinates[2]":
     to: null
     note:

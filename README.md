@@ -41,6 +41,7 @@ npm run check:live       # verify the deployed site against the URL contract and
 npm run manifest:record  # snapshot the current version and record its hashes (last step of a PR)
 npm run new-model -- <subject> <Type> [--value]   # scaffold a model; the validator lists the TODOs left
 npm run rerecord -- <subject> [...]               # pre-release only: correct the current version in place
+npm run convert -- <subject>/<Type> <mapping> <file.csv> [--set attr=value] [--normalized] [--out FILE]   # a published list to entities
 node adapters/geonicdb/export.mjs <subject> [--type T] [--type-prefix P | --type-name N] [--rename a=b] [--context-url URL] [--alias-context] [--allow-additional] [--extend FILE] [--out DIR]
 ```
 
@@ -55,6 +56,23 @@ node adapters/geonicdb/export.mjs <subject> [--type T] [--type-prefix P | --type
 Every model starts as `status: draft`. It becomes `stable` once two independent implementations are recorded in its `ADOPTERS.yaml`: each entry gives `name`, `organization` and a `url` (public repository, documentation or a contact). CI checks that at least two different organisations with a url are listed; the reviewer of the pull request that sets `stable` checks that they are real and independent (#38).
 
 Contributions in Japanese or English are welcome as issues or pull requests; see [CONTRIBUTING.md](CONTRIBUTING.md) for the rules, the steps and the sign-off (DCO).
+
+## Converting a published list
+
+`npm run convert` turns a CSV list into entities of a catalog model and validates each one. For example, a municipality's 指定緊急避難場所一覧 (自治体標準オープンデータセット 03), or GSI's data, into EvacuationSite:
+
+```bash
+npm run convert -- disaster/EvacuationSite jichitai-opendata-site 092011_evacuation_space.csv --out sites.json
+npm run convert -- disaster/EvacuationSite gsi-emergency-site 13101_2.csv --set localGovernmentCode=13101
+```
+
+It reads the model's mapping file:
+- A row with `column` (one column or a list), an optional `transform`, a constant `value`, or `via` (build a nested value with another mapping, such as `common/JapaneseAddress/jichitai-opendata-address`) is converted.
+- The `convert.id` template names the entities.
+- Rows with only `to` stay documentation.
+- Transforms: `text`, `code6`, `number`, `integer`, `numbers`, `flag`, `flags` (with `values`), `split`, `municipality`, `machiazaId` (`scripts/lib/convert.mjs`).
+
+It detects UTF-8 and Shift_JIS. It repairs only what it can prove, such as a local government code that lost its leading zero or lacks its check digit (the check digit decides), and lists every repair. It exits with 1 when a row is invalid.
 
 ## Deployment
 

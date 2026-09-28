@@ -4,7 +4,11 @@
 // target silently leaves a hole in the page.
 
 const FIELD = /^([A-Za-z][A-Za-z0-9]*)(\[\d+\])?$/;
-const TOP = new Set(['standard', 'fields', 'structure']);
+import { TRANSFORMS } from './convert.mjs';
+
+const TOP = new Set(['standard', 'fields', 'structure', 'convert']);
+// Documentation keys, and the keys scripts/convert.mjs reads (lib/convert.mjs).
+const ROW = new Set(['to', 'note', 'column', 'transform', 'values', 'value', 'via']);
 // Exactly ja and en: in YAML's { … } form a comma inside the text starts a new
 // key, so an extra key means the text was cut there ("closed → completed, otherwise …").
 const bilingual = (v) => v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v).every((k) => k === 'ja' || k === 'en')
@@ -27,11 +31,13 @@ export function fieldNames(schema) {
  * Problems of one mapping file, as messages. `map` is the parsed YAML (the
  * loader adds `name`, the file name); `schema` is the model's JSON Schema.
  * A value type's own members count, and an array position (`coordinates[2]`).
+ * `mappingNames` (subject/Type/name of every mapping file) checks `via`.
  */
-export function mappingProblems(map, schema) {
+export function mappingProblems(map, schema, mappingNames = null) {
   const out = [];
   const { name, ...doc } = map ?? {};
-  for (const k of Object.keys(doc)) if (!TOP.has(k)) out.push(`unknown key "${k}" (allowed: standard, fields, structure)`);
+  for (const k of Object.keys(doc)) if (!TOP.has(k)) out.push(`unknown key "${k}" (allowed: standard, fields, structure, convert)`);
+  if (doc.convert !== undefined && (!doc.convert || typeof doc.convert.id !== 'string' || !/\{\w+\}/.test(doc.convert.id))) out.push('convert.id must be a template such as "urn:ngsi-ld:Type:{attribute}"');
   const std = doc.standard;
   if (!std || typeof std !== 'object') out.push('standard is required');
   else {
@@ -50,8 +56,17 @@ export function mappingProblems(map, schema) {
     else if (!known.has(f[1])) out.push(`${field}: not a field of this model`);
     if (!m || typeof m !== 'object' || Array.isArray(m) || !('to' in m)) { out.push(`${field}: needs "to" (the corresponding item, or null when there is none)`); continue; }
     if (m.to !== null && (typeof m.to !== 'string' || !m.to.trim())) out.push(`${field}: "to" must be a non-empty string or null`);
-    for (const k of Object.keys(m)) if (k !== 'to' && k !== 'note') out.push(`${field}: unknown key "${k}" (allowed: to, note)`);
+    for (const k of Object.keys(m)) if (!ROW.has(k)) out.push(`${field}: unknown key "${k}" (allowed: ${[...ROW].join(', ')})`);
     if (m.note !== undefined && !bilingual(m.note)) out.push(`${field}: note needs ja and en, and nothing else (quote a text that contains a comma)`);
+    // Conversion rules (scripts/convert.mjs).
+    const cols = m.column === undefined ? [] : [].concat(m.column);
+    if (m.column !== undefined && (!cols.length || cols.some((c) => typeof c !== 'string' || !c.trim()))) out.push(`${field}: column must be a column name or a list of them`);
+    if (m.transform !== undefined && !TRANSFORMS.includes(m.transform)) out.push(`${field}: unknown transform "${m.transform}" (known: ${TRANSFORMS.join(', ')})`);
+    if (m.transform === 'flags' && (!m.values || typeof m.values !== 'object' || !Object.keys(m.values).length)) out.push(`${field}: transform flags needs values (column: value)`);
+    if (m.values !== undefined && m.transform !== 'flags') out.push(`${field}: values is only for transform flags`);
+    if (m.transform === 'numbers' && cols.length < 2) out.push(`${field}: transform numbers needs at least two columns`);
+    if (m.via !== undefined && (typeof m.via !== 'string' || (mappingNames && !mappingNames.has(m.via)))) out.push(`${field}: via must name a mapping file as subject/Type/name, got ${JSON.stringify(m.via)}`);
+    if ([m.column !== undefined, m.value !== undefined, m.via !== undefined].filter(Boolean).length > 1) out.push(`${field}: use one of column, value and via`);
   }
   return out;
 }

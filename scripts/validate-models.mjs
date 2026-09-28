@@ -30,6 +30,8 @@ const core = JSON.parse(await readFile(CORE_CONTEXT_FIXTURE, 'utf8'));
 const coreTerms = new Set(Object.keys(core['@context']).filter((k) => !k.startsWith('@')));
 
 const subjects = await loadSubjects();
+// subject/Type/name of every mapping file, for a conversion rule's via.
+const mappingNames = new Set(subjects.flatMap((s) => s.models.flatMap((m) => m.mappings.map((map) => `${s.name}/${m.type}/${map.name}`))));
 const seenTypeIris = new Map();
 // Every type that owns its IRI (not an alias), for alias and subclass targets.
 const ownersByIri = new Map();
@@ -251,7 +253,7 @@ for (const subject of subjects) {
     if (notes.license !== undefined && typeof notes.license !== 'string') fail(`${mwhere}/notes.yaml`, 'license must be a string');
 
     // Correspondence tables render on the model page: every field must be one of the model's.
-    for (const map of model.mappings ?? []) for (const msg of mappingProblems(map, model.schema)) fail(`${mwhere}/mapping/${map.name}.yaml`, msg);
+    for (const map of model.mappings ?? []) for (const msg of mappingProblems(map, model.schema, mappingNames)) fail(`${mwhere}/mapping/${map.name}.yaml`, msg);
 
     // Status and adopters (decided in #38): stable needs two independent
     // implementations, self-reported with a link and checked by a reviewer in
