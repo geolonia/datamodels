@@ -52,6 +52,8 @@ test('conversion rules are checked: columns, known transforms, flags values, via
 test('a value type maps its own members, with array positions', () => {
   assert.deepEqual(mappingProblems({ ...ok, fields: { type: { to: null }, coordinates: { to: 'x' }, 'coordinates[2]': { to: null } } }, geometry), []);
   assert.deepEqual(mappingProblems({ ...ok, fields: { 'coordinates[x]': { to: null } } }, geometry), ['coordinates[x]: not a field name']);
+  assert.deepEqual(mappingProblems({ ...ok, fields: { 'type[0]': { to: null } } }, geometry), ['type[0]: type is not an array, so it has no positions']);
+  assert.deepEqual(mappingProblems({ ...ok, fields: { 'progress[1]': { to: null } } }, task), ['progress[1]: progress is not an array, so it has no positions']);
 });
 
 test('the standard needs a bilingual name; url, licence, note and structure are checked when present', () => {
@@ -59,6 +61,7 @@ test('the standard needs a bilingual name; url, licence, note and structure are 
   assert.deepEqual(mappingProblems({ ...ok, standard: { ...ok.standard, url: 'example.org' } }, task), ['standard.url must be an http(s) URL with a host, got "example.org"']);
   assert.deepEqual(mappingProblems({ ...ok, standard: { ...ok.standard, note: { en: 'only English' } } }, task), ['standard.note needs ja and en, and nothing else (quote a text that contains a comma)']);
   assert.deepEqual(mappingProblems({ ...ok, structure: { ja: '構造' } }, task), ['structure needs ja and en, and nothing else (quote a text that contains a comma)']);
+  assert.deepEqual(mappingProblems({ ...ok, standard: { ...ok.standard, urI: 'https://example.org/std' } }, task), ['unknown key "standard.urI" (allowed: name, url, license, note)']);
   assert.deepEqual(mappingProblems({ ...ok, feilds: {} }, task), ['unknown key "feilds" (allowed: standard, fields, structure, convert)']);
   const { standard, ...noStandard } = ok;
   assert.deepEqual(mappingProblems(noStandard, task), ['standard is required']);
