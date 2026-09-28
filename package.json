@@ -26,6 +26,7 @@
     "site:dev": "node -e \"import('./scripts/lib/models.mjs').then(async m=>{const s=await m.loadSubjects();const g=await import('./scripts/lib/site.mjs');await g.generateSitePages(s)})\" && vitepress dev site"
   },
   "devDependencies": {
+    "@dagrejs/dagre": "^3.1.1",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "jsonld": "^9.0.0",
