@@ -21,7 +21,7 @@ hero:
 
 features:
   - title: 拡張する、複製しない
-    details: Smart Data Models の型と属性はそのまま使い、日本向けの属性や日本固有のモデルだけを追加します。やり方と貢献の仕方はガイドへ。
+    details: Smart Data Models の型と属性はそのまま使い、日本向けの属性や日本固有のモデルだけを追加します。やり方はガイドへ。
     link: /guide/extend
     linkText: 拡張する
   - title: 変わらない URL

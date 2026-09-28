@@ -21,7 +21,7 @@ hero:
 
 features:
   - title: Extend, do not duplicate
-    details: Smart Data Models are used as they are; only what Japan needs is added. The guide shows how, and how to contribute.
+    details: Smart Data Models are used as they are; only what Japan needs is added. The guide shows how.
     link: /en/guide/extend
     linkText: Extending models
   - title: URLs that never change

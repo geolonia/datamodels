@@ -28,10 +28,10 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 ## Pull Request の手順
 
 1. リポジトリをフォークして、ブランチを作ります。
-2. `npm ci` の後、新しいモデルなら `npm run new-model -- <サブジェクト> <型名>` でひな形を作ります。TODO の箇所を埋めます。
+2. `npm ci` の後、新しいモデルなら `npm run new-model -- <サブジェクト> <型名>` でひな形を作ります（Smart Data Models と同じ構成: `schema.json`, `catalog.yaml`, `examples/`, `notes.yaml`）。TODO の箇所を埋めます。
 3. `npm run validate:models` が、足りない箇所を一覧にします。最後に `npm run check` と `npm test` が通ることを確認します。
 4. すべてのコミットに `git commit -s` で署名（Signed-off-by）を付けて、Pull Request を送ります。
-5. CI（検証と自動レビュー。このリポジトリ内のブランチならプレビュー URL も）の結果を見て、レビューに答えます。
+5. CI（スキーマ、例、`@context` の展開、予約語、バージョンの検証と自動レビュー。このリポジトリ内のブランチならプレビュー URL も）の結果を見て、レビューに答えます。
 
 公開済みのバージョンの記録（スナップショットとマニフェスト）はメンテナーが行います。正式公開前（プレリリース）は、現行バージョンをその場で修正できます。
 
@@ -80,10 +80,10 @@ datamodels.jp publishes data models that work in Japan as a shared, product-neut
 ## Pull request steps
 
 1. Fork the repository and create a branch.
-2. Run `npm ci`. For a new model, `npm run new-model -- <subject> <Type>` creates the files; fill in the TODO markers.
+2. Run `npm ci`. For a new model, `npm run new-model -- <subject> <Type>` creates the files in the Smart Data Models layout (`schema.json`, `catalog.yaml`, `examples/`, `notes.yaml`); fill in the TODO markers.
 3. `npm run validate:models` lists what is still missing. Before you push, `npm run check` and `npm test` must pass.
 4. Sign off every commit with `git commit -s` and open the pull request.
-5. Check the CI results (validation and an automated review; for branches in this repository also a preview URL) and answer the review.
+5. Check the CI results (validation of schemas, examples, `@context` expansion, protected terms and versions, and an automated review; for branches in this repository also a preview URL) and answer the review.
 
 Recording published versions (snapshots and the manifest) is a maintainer step. Until the official launch (pre-release), the current version may still be corrected in place.
 
