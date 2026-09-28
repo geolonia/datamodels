@@ -1,0 +1,40 @@
+// The validator's checks for mapping/*.yaml (scripts/lib/mapping-check.mjs).
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { loadSubjects } from '../scripts/lib/models.mjs';
+import { mappingProblems } from '../scripts/lib/mapping-check.mjs';
+
+const subjects = await loadSubjects();
+const model = (sub, type) => subjects.find((s) => s.name === sub).models.find((m) => m.type === type);
+const task = model('task', 'Task').schema;
+const geometry = model('common', 'Geometry').schema;
+const ok = { name: 'x', standard: { name: { ja: '標準', en: 'Standard' }, url: 'https://example.org/std' }, fields: { progress: { to: 'state' } } };
+
+test('every published mapping passes', () => {
+  for (const s of subjects) for (const m of s.models) for (const map of m.mappings) assert.deepEqual(mappingProblems(map, m.schema), [], `${m.type}/${map.name}`);
+});
+
+test('a field that is not in the model, or a malformed row, is reported', () => {
+  assert.deepEqual(mappingProblems(ok, task), []);
+  assert.deepEqual(mappingProblems({ ...ok, fields: { progres: { to: 'state' } } }, task), ['progres: not a field of this model']);
+  assert.deepEqual(mappingProblems({ ...ok, fields: { progress: 'state' } }, task), ['progress: needs "to" (the corresponding item, or null when there is none)']);
+  assert.deepEqual(mappingProblems({ ...ok, fields: { progress: { to: '' } } }, task), ['progress: "to" must be a non-empty string or null']);
+  assert.deepEqual(mappingProblems({ ...ok, fields: { progress: { to: null, note: { ja: 'なし' } } } }, task), ['progress: note needs ja and en']);
+  assert.deepEqual(mappingProblems({ ...ok, fields: { progress: { to: 'a', notes: 'x' } } }, task), ['progress: unknown key "notes" (allowed: to, note)']);
+  assert.deepEqual(mappingProblems({ ...ok, fields: {} }, task), ['fields must map at least one field']);
+});
+
+test('a value type maps its own members, with array positions', () => {
+  assert.deepEqual(mappingProblems({ ...ok, fields: { type: { to: null }, coordinates: { to: 'x' }, 'coordinates[2]': { to: null } } }, geometry), []);
+  assert.deepEqual(mappingProblems({ ...ok, fields: { 'coordinates[x]': { to: null } } }, geometry), ['coordinates[x]: not a field name']);
+});
+
+test('the standard needs a bilingual name; url, licence, note and structure are checked when present', () => {
+  assert.deepEqual(mappingProblems({ ...ok, standard: { name: { ja: '標準' } } }, task), ['standard.name needs ja and en']);
+  assert.deepEqual(mappingProblems({ ...ok, standard: { ...ok.standard, url: 'example.org' } }, task), ['standard.url must be an http(s) URL with a host, got "example.org"']);
+  assert.deepEqual(mappingProblems({ ...ok, standard: { ...ok.standard, note: { en: 'only English' } } }, task), ['standard.note needs ja and en']);
+  assert.deepEqual(mappingProblems({ ...ok, structure: { ja: '構造' } }, task), ['structure needs ja and en']);
+  assert.deepEqual(mappingProblems({ ...ok, feilds: {} }, task), ['unknown key "feilds" (allowed: standard, fields, structure)']);
+  const { standard, ...noStandard } = ok;
+  assert.deepEqual(mappingProblems(noStandard, task), ['standard is required']);
+});
