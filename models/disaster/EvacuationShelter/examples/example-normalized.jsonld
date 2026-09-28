@@ -19,7 +19,7 @@
   },
   "site": {
     "type": "Relationship",
-    "object": "urn:ngsi-ld:EvacuationSite:0002"
+    "object": "urn:ngsi-ld:EvacuationSite:0012"
   },
   "openingStatus": {
     "type": "Property",

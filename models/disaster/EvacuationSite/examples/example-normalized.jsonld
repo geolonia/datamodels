@@ -3,27 +3,23 @@
     "https://datamodels.jp/context/disaster/v1.0.0.jsonld",
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
   ],
-  "id": "urn:ngsi-ld:EvacuationSite:0002",
+  "id": "urn:ngsi-ld:EvacuationSite:0012",
   "type": "EvacuationSite",
   "name": {
     "type": "Property",
-    "value": "番町小学校"
+    "value": "都立一橋高校"
   },
   "nameKana": {
     "type": "Property",
-    "value": "バンチョウショウガッコウ"
-  },
-  "nameEn": {
-    "type": "Property",
-    "value": "Bancho Elementary School"
+    "value": "トリツヒトツバシコウコウ"
   },
   "externalSiteId": {
     "type": "Property",
-    "value": "13101-0002"
+    "value": "13101-0012"
   },
   "nationalShelterId": {
     "type": "Property",
-    "value": "E1310100002201"
+    "value": "E1310100012201"
   },
   "localGovernmentCode": {
     "type": "Property",
@@ -35,10 +31,10 @@
       "addressCountry": "JP",
       "addressRegion": "東京都",
       "addressLocality": "千代田区",
-      "machiaza": "六番町",
-      "banchi": "8",
+      "machiaza": "東神田",
+      "chome": "1",
       "localGovernmentCode": "131016",
-      "addressText": "東京都千代田区六番町8"
+      "addressText": "東京都千代田区東神田1-12-13"
     }
   },
   "location": {
@@ -46,15 +42,14 @@
     "value": {
       "type": "Point",
       "coordinates": [
-        139.73407899331,
-        35.688111802263
+        139.7810002,
+        35.6945488
       ]
     }
   },
   "hazardTypes": {
     "type": "Property",
     "value": [
-      "flood",
       "stormSurge",
       "earthquake",
       "inlandFlood"
