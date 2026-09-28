@@ -2,6 +2,7 @@
 
 [English below](#contributing)
 
+<!-- #region ja -->
 datamodels.jp は、日本で使えるデータモデルを共有の資産として公開するカタログです。企業、自治体、個人を問わず、誰でも提案・修正できます。ルールは全員同じです。日本語でも英語でも構いません。
 
 ## 参加の方法
@@ -9,13 +10,14 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 - **質問・不具合・アイデア**: [Issue](https://github.com/geolonia/datamodels/issues/new) を開いてください。「この属性の意味が分からない」も歓迎です。
 - **新しいモデルや属性の提案**: [モデルの提案フォーム](https://github.com/geolonia/datamodels/issues/new?template=model-proposal.yml)を使ってください。まだスキーマを書く必要はありません。
 - **モデルの追加・修正**: Pull Request を送ってください（下の手順）。
+- **上流への提案**: 日本以外でも使えるモデルになったら、Smart Data Models の [incubated](https://github.com/smart-data-models/incubated) に提案します。フォルダ構成を Smart Data Models と揃えているのはこのためです。
 
 ## モデルのルール
 
 - **既存の標準に基づく**: 国や自治体のガイドライン、Smart Data Models、GIF、RFC などに基づくモデルだけを公開します。検討した上流の型と、採用しなかった理由は `notes.yaml` に書きます。
 - **実際のデータがある**: 架空のユースケースではなく、いま存在するデータを表すこと。
 - **製品に依存しない**: 特定の製品向けの注釈や型名は入れません（製品向けのファイルは `adapters/` が作ります）。
-- 書き方の詳細は[拡張する・貢献する](https://datamodels.jp/guide/extend)にあります（名前空間、予約語、エイリアスとサブクラス、状態の属性、例の書き方）。
+- 書き方の詳細は[拡張する](https://datamodels.jp/guide/extend)にあります（名前空間、予約語、エイリアスとサブクラス、状態の属性、例の書き方）。
 
 ## 段階と決め方
 
@@ -26,10 +28,10 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 ## Pull Request の手順
 
 1. リポジトリをフォークして、ブランチを作ります。
-2. `npm ci` の後、新しいモデルなら `npm run new-model -- <サブジェクト> <型名>` でひな形を作ります。TODO の箇所を埋めます。
+2. `npm ci` の後、新しいモデルなら `npm run new-model -- <サブジェクト> <型名>` でひな形を作ります（Smart Data Models と同じ構成: `schema.json`, `catalog.yaml`, `examples/`, `notes.yaml`）。TODO の箇所を埋めます。
 3. `npm run validate:models` が、足りない箇所を一覧にします。最後に `npm run check` と `npm test` が通ることを確認します。
 4. すべてのコミットに `git commit -s` で署名（Signed-off-by）を付けて、Pull Request を送ります。
-5. CI（検証と自動レビュー。このリポジトリ内のブランチならプレビュー URL も）の結果を見て、レビューに答えます。
+5. CI（スキーマ、例、`@context` の展開、予約語、バージョンの検証と自動レビュー。このリポジトリ内のブランチならプレビュー URL も）の結果を見て、レビューに答えます。
 
 公開済みのバージョンの記録（スナップショットとマニフェスト）はメンテナーが行います。正式公開前（プレリリース）は、現行バージョンをその場で修正できます。
 
@@ -44,12 +46,15 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 
 ## ライセンス
 
-モデル（スキーマ、`@context`、語彙、例、説明、注記）は [CC BY 4.0](LICENSE-CONTENT.md)、ツールのコードは [Apache-2.0](LICENSE) です。他の標準に基づく部分の出典は、各モデルの対応表と注記に書きます。
+モデル（スキーマ、`@context`、語彙、例、説明、注記）は [CC BY 4.0](https://github.com/geolonia/datamodels/blob/main/LICENSE-CONTENT.md)、ツールのコードは [Apache-2.0](https://github.com/geolonia/datamodels/blob/main/LICENSE) です。他の標準に基づく部分の出典は、各モデルの対応表と注記に書きます。
+
+<!-- #endregion ja -->
 
 ---
 
 # Contributing
 
+<!-- #region en -->
 datamodels.jp publishes data models that work in Japan as a shared, product-neutral resource. Anyone can propose and change models, whether a company, a municipality or an individual, and the same rules apply to everyone. Japanese and English are both welcome.
 
 ## Ways to take part
@@ -57,13 +62,14 @@ datamodels.jp publishes data models that work in Japan as a shared, product-neut
 - **Questions, bugs, ideas**: open an [issue](https://github.com/geolonia/datamodels/issues/new). "I do not understand this attribute" is welcome too.
 - **Proposing a new model or new attributes**: use the [model proposal form](https://github.com/geolonia/datamodels/issues/new?template=model-proposal.yml). No schema is needed yet.
 - **Adding or changing a model**: open a pull request (steps below).
+- **Proposing upstream**: a model that turns out to be useful beyond Japan is proposed to Smart Data Models via [incubated](https://github.com/smart-data-models/incubated). The folder layout matches Smart Data Models for exactly this.
 
 ## Rules for models
 
 - **Built on an existing standard**: the catalog publishes models that rest on government or municipal guidelines, Smart Data Models, GIF, an RFC or similar. Record the upstream types you considered, and why they did not fit, in `notes.yaml`.
 - **Real data**: a model describes data that exists today, not a hypothetical use case.
 - **Product-neutral**: no product-specific annotations or type names (files for particular products come from `adapters/`).
-- The details are in [Extend and contribute](https://datamodels.jp/en/guide/extend): namespaces, protected terms, aliases and subclasses, status attributes, writing examples.
+- The details are in [Extending models](https://datamodels.jp/en/guide/extend): namespaces, protected terms, aliases and subclasses, status attributes, writing examples.
 
 ## Stages and who decides
 
@@ -74,10 +80,10 @@ datamodels.jp publishes data models that work in Japan as a shared, product-neut
 ## Pull request steps
 
 1. Fork the repository and create a branch.
-2. Run `npm ci`. For a new model, `npm run new-model -- <subject> <Type>` creates the files; fill in the TODO markers.
+2. Run `npm ci`. For a new model, `npm run new-model -- <subject> <Type>` creates the files in the Smart Data Models layout (`schema.json`, `catalog.yaml`, `examples/`, `notes.yaml`); fill in the TODO markers.
 3. `npm run validate:models` lists what is still missing. Before you push, `npm run check` and `npm test` must pass.
 4. Sign off every commit with `git commit -s` and open the pull request.
-5. Check the CI results (validation and an automated review; for branches in this repository also a preview URL) and answer the review.
+5. Check the CI results (validation of schemas, examples, `@context` expansion, protected terms and versions, and an automated review; for branches in this repository also a preview URL) and answer the review.
 
 Recording published versions (snapshots and the manifest) is a maintainer step. Until the official launch (pre-release), the current version may still be corrected in place.
 
@@ -92,4 +98,5 @@ The [DCO app](https://github.com/apps/dco) checks that every commit of a pull re
 
 ## Licences
 
-Models (schemas, `@context` files, vocabularies, examples, descriptions, notes) are [CC BY 4.0](LICENSE-CONTENT.md); the tooling is [Apache-2.0](LICENSE). Parts based on other standards name their source in each model's mappings and notes.
+Models (schemas, `@context` files, vocabularies, examples, descriptions, notes) are [CC BY 4.0](https://github.com/geolonia/datamodels/blob/main/LICENSE-CONTENT.md); the tooling is [Apache-2.0](https://github.com/geolonia/datamodels/blob/main/LICENSE). Parts based on other standards name their source in each model's mappings and notes.
+<!-- #endregion en -->

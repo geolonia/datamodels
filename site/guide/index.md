@@ -7,7 +7,8 @@ description: カタログのモデルの使い方、拡張の仕方、URL の約
 
 - [使い方](/guide/use): カタログのモデルで JSON を検証し、NGSI-LD ブローカーに送り、Linked Data として使う。
   - [GeonicDB](/guide/geonicdb): モデルを GeonicDB に登録し、エンティティを作成・検索する手順。
-- [拡張する・貢献する](/guide/extend): 既存のモデルを日本向けに拡張する方法、独自モデルを追加する方法、カタログへの貢献の仕方。
+- [拡張する](/guide/extend): 既存のモデルを日本向けに拡張する方法、独自モデルを追加する方法、守るルール、例の書き方。
+- [貢献する](/guide/contribute): 提案の仕方、段階と決め方、Pull Request の手順、署名（DCO）。
 - [変わらない URL](/guide/urls): このカタログが公開する URL の約束。バージョン、エイリアス、キャッシュ、IRI の解決。
 - [バージョンと非推奨](/guide/versioning): サブジェクトのバージョンの付け方、非推奨の扱い、モデルの段階（提案・draft・stable・deprecated）。
 - [他のデータモデルカタログ](/guide/catalogs): 世界と日本で使われているデータモデル・語彙のカタログと、このカタログとの関係。
