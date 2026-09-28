@@ -1,163 +1,194 @@
 <script setup lang="ts">
-// Pan and zoom for a relationship graph (scripts/lib/graph.mjs), which is
-// wider than the page column as soon as a model has a few neighbours. The
-// graph comes in the slot: an SVG with HTML anchors laid over it, so moving
-// and scaling one element keeps the links on their nodes. Without JavaScript
-// (and before hydration) the graph scrolls sideways as before.
+// The relationship graph of a model page (scripts/lib/graph.mjs) as a card
+// under the page's own heading: zoom on top, the graph, then the legend and a
+// download button. `title` (the model) names the download.
+// The graph comes in the slot: an SVG with HTML anchors laid over it, so moving
+// and scaling one element keeps the links on their nodes. Panning, pinching
+// and zooming at a point are @panzoom/panzoom's; this component fits the graph
+// to the column, adds the controls and keeps a drag from opening a node.
+// Without JavaScript (and before hydration) the graph scrolls sideways as before.
 //
-// Drag (mouse, pen, one finger sideways) pans; pinch, or Ctrl/⌘ + wheel,
-// zooms at the pointer; a trackpad's sideways swipe pans; a plain vertical
-// wheel still scrolls the page. The buttons zoom, fit the column and show
-// 100 %. A drag never counts as a click on a node.
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+// Drag, or one finger on the graph, pans; pinch, or Ctrl/⌘ + wheel, zooms at
+// the pointer; a trackpad's sideways swipe pans; a plain vertical wheel still
+// scrolls the page. A graph that fits the column gets no zoom.
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useData } from 'vitepress'
+import type { PanzoomObject } from '@panzoom/panzoom'
 
-const props = defineProps<{ width: number; height: number }>()
+const props = defineProps<{ width: number; height: number; title?: string }>()
 const { lang } = useData()
 const t = computed(() => lang.value === 'ja'
-  ? { label: '型と関係の図の表示', zoomIn: '拡大', zoomOut: '縮小', fit: '全体を表示', actual: '100%', hint: 'ドラッグで移動、ピンチまたは Ctrl/⌘ + スクロールで拡大・縮小' }
-  : { label: 'Graph view', zoomIn: 'Zoom in', zoomOut: 'Zoom out', fit: 'Fit to width', actual: '100%', hint: 'Drag to move; pinch or Ctrl/⌘ + scroll to zoom' })
+  ? { label: '型と関係の図', hint: 'ドラッグで移動、ピンチまたは Ctrl/⌘ + スクロールで拡大・縮小', zoomIn: '拡大', zoomOut: '縮小', fit: '全体を表示', actual: '100% で表示', download: 'SVG でダウンロード' }
+  : { label: 'Types and relationships', hint: 'Drag to move; pinch or Ctrl/⌘ + scroll to zoom', zoomIn: 'Zoom in', zoomOut: 'Zoom out', fit: 'Fit to width', actual: 'Show at 100%', download: 'Download as SVG' })
 
 const MAX = 2
 const viewport = ref<HTMLElement | null>(null)
+const stage = ref<HTMLElement | null>(null)
 const ready = ref(false)
 const vw = ref(0)
 const scale = ref(1)
-const tx = ref(0)
-const ty = ref(0)
-// Until the reader zooms or pans, the graph follows the column width.
-let touched = false
 
-const fitScale = computed(() => (vw.value ? Math.min(1, vw.value / props.width) : 1))
-const min = computed(() => Math.min(fitScale.value, 1))
+const zoomable = computed(() => ready.value && props.width > vw.value + 1)
+const fit = computed(() => (vw.value ? Math.min(1, vw.value / props.width) : 1))
 // The viewport is as tall as the graph at its fitted size, but not so flat that a very wide graph becomes a strip.
-const vh = computed(() => Math.round(Math.max(props.height * fitScale.value, Math.min(props.height, 200))))
-const zoomable = computed(() => props.width > vw.value + 1)
+const vh = computed(() => Math.round(Math.max(props.height * fit.value, Math.min(props.height, 200))))
+// The stage has the viewport's proportions at the fitted scale (the graph centred in it), so containment
+// ('outside': no gap at any edge) holds from the fitted view up to the largest zoom.
+const stageHeight = computed(() => vh.value / fit.value)
 const percent = computed(() => `${Math.round(scale.value * 100)}%`)
 
-// Keep the graph in view: at the left edge (as the page's text) or vertically centred where it is smaller than the viewport, else no gap at either edge.
-function clamp() {
-  const w = props.width * scale.value, h = props.height * scale.value
-  tx.value = w <= vw.value ? 0 : Math.min(0, Math.max(vw.value - w, tx.value))
-  ty.value = h <= vh.value ? (vh.value - h) / 2 : Math.min(0, Math.max(vh.value - h, ty.value))
-}
-function zoomAt(next: number, cx = vw.value / 2, cy = vh.value / 2) {
-  const s = Math.min(MAX, Math.max(min.value, next))
-  tx.value = cx - ((cx - tx.value) * s) / scale.value
-  ty.value = cy - ((cy - ty.value) * s) / scale.value
-  scale.value = s
-  clamp()
-}
-function fit() { touched = false; scale.value = fitScale.value; tx.value = 0; ty.value = 0; clamp() }
-function actual() { touched = true; zoomAt(1) }
-function step(f: number) { touched = true; zoomAt(scale.value * f) }
+let pz: PanzoomObject | null = null
+let touched = false
+const options = () => ({ minScale: fit.value, maxScale: MAX, contain: 'outside' as const, step: 0.25, cursor: 'grab' })
+// Panzoom measures the element to contain it and applies the transform on the next frame, so a second
+// zoom in the same frame measures the old transform with the new scale and misplaces the graph (as do
+// its startScale and reset(), which set the scale before measuring). Zooms made here wait for the
+// previous one to be applied. At the fitted scale the stage covers the viewport exactly, so
+// containment leaves one position: fitting is a zoom to that scale.
+// Panzoom applies it in a frame callback, so two frames later it is in place (in a background tab
+// frames wait until the tab is shown, and so does the queue).
+let queue: Promise<unknown> = Promise.resolve()
+const applied = (fn: () => void) => new Promise<void>((resolve) => {
+  fn()
+  requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+})
+const run = (fn: () => void) => { queue = queue.then(() => applied(fn)); return queue }
 
-// Pointers: one pans, two pinch. A pointer that moved more than a few pixels turns its click off.
-const pointers = new Map<number, { x: number; y: number }>()
-let dragged = false
-let pinch: { d: number; s: number } | null = null
-const local = (e: { clientX: number; clientY: number }) => { const r = viewport.value!.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top } }
-function down(e: PointerEvent) {
-  if (e.button !== 0 || !zoomable.value) return
-  pointers.set(e.pointerId, local(e))
-  if (pointers.size === 1) dragged = false
-  if (pointers.size === 2) { const [a, b] = [...pointers.values()]; pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), s: scale.value } }
-}
-function move(e: PointerEvent) {
-  const prev = pointers.get(e.pointerId)
-  if (!prev) return
-  const p = local(e)
-  pointers.set(e.pointerId, p)
-  if (pinch && pointers.size === 2) {
-    const [a, b] = [...pointers.values()]
-    touched = dragged = true
-    zoomAt(pinch.s * (Math.hypot(a.x - b.x, a.y - b.y) / pinch.d), (a.x + b.x) / 2, (a.y + b.y) / 2)
-    return
+async function setup() {
+  if (!zoomable.value) { pz?.destroy(); pz = null; stage.value?.style.removeProperty('transform'); scale.value = 1; return }
+  if (!pz) {
+    const { default: Panzoom } = await import('@panzoom/panzoom')
+    // The width may have changed while the library loaded: the latest call fits to it.
+    if (!stage.value || !zoomable.value) return
+    if (!pz) {
+      pz = Panzoom(stage.value, options())
+      stage.value.addEventListener('panzoomchange', (e) => { scale.value = (e as CustomEvent).detail.scale })
+      // Panzoom pans to its start position in a timeout after creation; the first fit comes after it.
+      queue = queue.then(() => applied(() => {})).then(() => new Promise((r) => setTimeout(r))).then(() => applied(() => {}))
+    }
   }
-  if (!dragged && Math.hypot(p.x - prev.x, p.y - prev.y) < 4 && pointers.size === 1) { pointers.set(e.pointerId, prev); return }
-  if (!dragged) { dragged = true; viewport.value?.setPointerCapture(e.pointerId) }
-  touched = true
-  tx.value += p.x - prev.x
-  ty.value += p.y - prev.y
-  clamp()
+  pz.setOptions(options())
+  await run(() => pz?.zoom(touched ? Math.max(pz.getScale(), fit.value) : fit.value, { animate: false }))
 }
-function up(e: PointerEvent) {
-  pointers.delete(e.pointerId)
-  if (pointers.size < 2) pinch = null
-}
-function click(e: MouseEvent) { if (dragged) { e.preventDefault(); e.stopPropagation(); dragged = false } }
+
+function zoomIn() { touched = true; run(() => pz?.zoomIn()) }
+function zoomOut() { touched = true; run(() => pz?.zoomOut()) }
+function toFit() { touched = false; run(() => pz?.zoom(fit.value, { animate: true })) }
+function actual() { touched = true; run(() => pz?.zoom(1, { animate: true })) }
 function wheel(e: WheelEvent) {
-  if (!zoomable.value) return
-  const p = local(e)
-  if (e.ctrlKey || e.metaKey) { e.preventDefault(); touched = true; zoomAt(scale.value * Math.exp(-e.deltaY * 0.01), p.x, p.y); return }
+  if (!pz) return
+  if (e.ctrlKey || e.metaKey) { touched = true; pz.zoomWithWheel(e); return }
   // A sideways swipe pans; a vertical wheel is left to the page.
-  if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) { e.preventDefault(); touched = true; tx.value -= e.deltaX; clamp() }
+  if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) { e.preventDefault(); touched = true; pz.pan(-e.deltaX / pz.getScale(), 0, { relative: true }) }
+}
+
+// A drag must not open the node it started on: a click after the pointer moved is dropped.
+let start: { x: number; y: number } | null = null
+function down(e: PointerEvent) { start = { x: e.clientX, y: e.clientY }; if (pz) touched = true }
+function click(e: MouseEvent) {
+  if (pz && start && Math.hypot(e.clientX - start.x, e.clientY - start.y) > 4) { e.preventDefault(); e.stopPropagation() }
+  start = null
 }
 // A node reached with Tab is brought into view (the viewport itself never scrolls).
 function focusin(e: FocusEvent) {
   const a = e.target as HTMLElement
   const v = viewport.value
-  if (!v || !a.style.left) return
+  if (!pz || !v || !(a instanceof HTMLAnchorElement)) return
   v.scrollLeft = 0; v.scrollTop = 0
-  const x = parseFloat(a.style.left) * scale.value + tx.value, y = parseFloat(a.style.top) * scale.value + ty.value
-  const w = a.offsetWidth * scale.value, h = a.offsetHeight * scale.value
-  if (x < 0) tx.value -= x - 8; else if (x + w > vw.value) tx.value -= x + w - vw.value + 8
-  if (y < 0) ty.value -= y - 8; else if (y + h > vh.value) ty.value -= y + h - vh.value + 8
-  clamp()
+  const r = a.getBoundingClientRect(), box = v.getBoundingClientRect()
+  let dx = 0, dy = 0
+  if (r.left < box.left) dx = box.left - r.left + 8; else if (r.right > box.right) dx = box.right - r.right - 8
+  if (r.top < box.top) dy = box.top - r.top + 8; else if (r.bottom > box.bottom) dy = box.bottom - r.bottom - 8
+  if (dx || dy) { touched = true; run(() => pz?.pan(dx / pz.getScale(), dy / pz.getScale(), { relative: true })) }
+}
+
+// The graph as a standalone SVG: the theme's colours and fonts written into each element (they come
+// from the site's CSS), on the page's background, named after the model.
+const STYLE = ['fill', 'stroke', 'stroke-width', 'stroke-dasharray', 'opacity', 'font-family', 'font-size', 'font-weight', 'text-anchor']
+function download() {
+  const svg = viewport.value?.querySelector('svg')
+  if (!svg) return
+  const copy = svg.cloneNode(true) as SVGSVGElement
+  const from = [svg, ...svg.querySelectorAll('*')], to = [copy, ...copy.querySelectorAll('*')]
+  from.forEach((el, i) => {
+    const cs = getComputedStyle(el), target = to[i] as SVGElement
+    target.removeAttribute('class')
+    target.setAttribute('style', STYLE.map((p) => `${p}:${cs.getPropertyValue(p)}`).join(';'))
+  })
+  const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+  bg.setAttribute('width', '100%'); bg.setAttribute('height', '100%'); bg.setAttribute('fill', getComputedStyle(document.body).backgroundColor)
+  copy.insertBefore(bg, copy.querySelector('defs')?.nextSibling ?? copy.firstChild)
+  const url = URL.createObjectURL(new Blob([`<?xml version="1.0" encoding="UTF-8"?>\n${new XMLSerializer().serializeToString(copy)}`], { type: 'image/svg+xml' }))
+  const a = Object.assign(document.createElement('a'), { href: url, download: `${props.title ?? 'graph'}-relationships.svg` })
+  document.body.append(a); a.click(); a.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 
 let observer: ResizeObserver | undefined
 onMounted(() => {
-  const measure = () => { vw.value = viewport.value?.clientWidth ?? 0; if (!touched) fit(); else { scale.value = Math.max(scale.value, min.value); clamp() } }
-  measure()
+  vw.value = viewport.value?.clientWidth ?? 0
   ready.value = true
-  observer = new ResizeObserver(measure)
+  observer = new ResizeObserver(() => { vw.value = viewport.value?.clientWidth ?? 0 })
   if (viewport.value) observer.observe(viewport.value)
 })
-onBeforeUnmount(() => observer?.disconnect())
+// After the stage has its size for the new width.
+watch([vw, ready], setup, { flush: 'post' })
+onBeforeUnmount(() => { observer?.disconnect(); pz?.destroy() })
 </script>
 
 <template>
-  <div class="graph-viewer" :class="{ ready, zoomable: ready && zoomable }" role="group" :aria-label="t.label">
+  <figure class="graph-viewer" :class="{ ready, zoomable }" :aria-label="t.label">
+    <div v-if="zoomable" class="head">
+      <div class="zoom" role="group" :title="t.hint">
+        <button type="button" class="icon" :aria-label="t.zoomOut" :title="t.zoomOut" :disabled="scale <= fit + 0.001" @click="zoomOut">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10" /></svg>
+        </button>
+        <button type="button" class="percent" :aria-label="t.actual" :title="t.actual" @click="actual">{{ percent }}</button>
+        <button type="button" class="icon" :aria-label="t.zoomIn" :title="t.zoomIn" :disabled="scale >= MAX - 0.001" @click="zoomIn">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M8 3v10" /></svg>
+        </button>
+        <button type="button" class="icon" :aria-label="t.fit" :title="t.fit" @click="toFit">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" /></svg>
+        </button>
+      </div>
+    </div>
     <div
       ref="viewport"
       class="viewport"
-      :style="ready ? { height: `${vh}px` } : undefined"
-      @pointerdown="down"
-      @pointermove="move"
-      @pointerup="up"
-      @pointercancel="up"
+      :style="zoomable ? { height: `${vh}px` } : undefined"
+      @pointerdown.capture="down"
       @click.capture="click"
       @wheel="wheel"
       @focusin="focusin"
     >
-      <div class="stage" :style="ready ? { transform: `translate(${tx}px, ${ty}px) scale(${scale})` } : undefined"><slot /></div>
+      <div ref="stage" class="stage" :style="zoomable ? { width: `${width}px`, height: `${stageHeight}px` } : undefined"><slot /></div>
     </div>
-    <div v-if="ready && zoomable" class="controls">
-      <button type="button" :aria-label="t.zoomOut" :title="t.zoomOut" :disabled="scale <= min + 0.001" @click="step(1 / 1.25)">−</button>
-      <span class="percent" aria-live="polite">{{ percent }}</span>
-      <button type="button" :aria-label="t.zoomIn" :title="t.zoomIn" :disabled="scale >= MAX - 0.001" @click="step(1.25)">+</button>
-      <button type="button" @click="fit">{{ t.fit }}</button>
-      <button type="button" @click="actual">{{ t.actual }}</button>
-      <span class="hint">{{ t.hint }}</span>
+    <div class="foot">
+      <slot name="legend" />
+      <button v-if="ready" type="button" class="icon download" :aria-label="t.download" :title="t.download" @click="download">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M2.5 11v2.5h11V11" /></svg>
+      </button>
     </div>
-  </div>
+  </figure>
 </template>
 
 <style scoped>
-.graph-viewer { margin: 16px 0 4px; }
+.graph-viewer { margin: 16px 0; padding: 14px 16px 12px; border: 1px solid var(--vp-c-divider); border-radius: 12px; background: var(--vp-c-bg); }
+.head { display: flex; justify-content: flex-end; margin: -6px -6px 6px 0; }
+.zoom { display: flex; align-items: center; gap: 2px; flex: none; }
+.foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-top: 10px; }
+.foot :deep(.model-graph-legend) { margin: 0; }
+button { display: inline-flex; align-items: center; justify-content: center; height: 30px; border: 0; border-radius: 6px; background: none; color: var(--vp-c-text-2); font-size: 13px; }
+button:hover:not(:disabled) { background: var(--vp-c-default-soft); color: var(--vp-c-text-1); }
+button:disabled { opacity: 0.35; cursor: default; }
+button:focus-visible { outline: 2px solid var(--vp-c-brand-1); outline-offset: 1px; }
+.icon { width: 30px; }
+.icon svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.percent { min-width: 3.6em; padding: 0 4px; font-variant-numeric: tabular-nums; color: var(--vp-c-text-1); }
+.download { flex: none; border: 1px solid var(--vp-c-divider); }
 .graph-viewer :deep(.model-graph) { margin: 0; }
-.graph-viewer.ready .viewport { overflow: hidden; position: relative; }
-.graph-viewer.zoomable .viewport { cursor: grab; touch-action: pan-y; border: 1px solid var(--vp-c-divider); border-radius: 8px; background: var(--vp-c-bg); }
-.graph-viewer.zoomable .viewport:active { cursor: grabbing; }
+.graph-viewer.zoomable .viewport { overflow: hidden; position: relative; border-radius: 6px; }
 /* The stage is moved, not the scroll position; the graph's own sideways scroll is off. */
-.graph-viewer.ready .stage { transform-origin: 0 0; width: max-content; will-change: transform; }
-.graph-viewer.ready :deep(.model-graph) { overflow: visible; }
-.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 6px; font-size: 13px; color: var(--vp-c-text-2); }
-.controls button { min-width: 28px; height: 28px; padding: 0 8px; border: 1px solid var(--vp-c-divider); border-radius: 6px; background: var(--vp-c-bg-soft); color: var(--vp-c-text-1); font-size: 13px; }
-.controls button:hover:not(:disabled) { border-color: var(--vp-c-brand-1); }
-.controls button:disabled { opacity: 0.4; cursor: default; }
-.controls button:focus-visible { outline: 2px solid var(--vp-c-brand-1); outline-offset: 1px; }
-.percent { min-width: 3.2em; text-align: center; font-variant-numeric: tabular-nums; }
-.hint { margin-left: 4px; color: var(--vp-c-text-3); }
+.graph-viewer.zoomable .stage { display: flex; align-items: center; }
+.graph-viewer.zoomable :deep(.model-graph) { overflow: visible; }
 </style>
