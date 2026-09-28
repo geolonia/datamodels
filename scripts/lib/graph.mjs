@@ -95,7 +95,9 @@ export function graphSvg(lang, prefix, subjects, focus = null, rankdir = 'LR') {
   }
   for (const target of ['agent', 'any']) if (edges.some((e) => e.to === `@${target}`)) nodes.set(`@${target}`, { title: t[target], sub: '', cls: 'pseudo' });
 
-  const g = new dagre.graphlib.Graph({ multigraph: false });
+  // A multigraph keyed by edge kind: a subclass may also have a Relationship to
+  // its parent, and each edge needs its own route and label position.
+  const g = new dagre.graphlib.Graph({ multigraph: true });
   g.setGraph({ rankdir, nodesep: 28, ranksep: 70, edgesep: 14, marginx: 8, marginy: 8 });
   g.setDefaultEdgeLabel(() => ({}));
   for (const [nid, n] of nodes) {
@@ -103,9 +105,12 @@ export function graphSvg(lang, prefix, subjects, focus = null, rankdir = 'LR') {
     n.height = (n.sub ? 46 : 32) + (n.self ? 16 : 0);
     g.setNode(nid, { width: n.width, height: n.height });
   }
+  // Relationships show their attribute names, aliases and subclasses their kind;
+  // a value-type edge without a name has no label (and no label position).
+  const edgeLabel = (e) => e.labels.join(', ') || (e.kind === 'alias' || e.kind === 'subclass' ? t.legend[e.kind] : '');
   for (const e of edges) {
-    const label = e.labels.join(', ');
-    g.setEdge(e.from, e.to, label ? { label, width: Math.ceil(textWidth(label, 12) + 10), height: 18, labelpos: 'c' } : {});
+    const label = edgeLabel(e);
+    g.setEdge(e.from, e.to, label ? { label, width: Math.ceil(textWidth(label, 12) + 10), height: 18, labelpos: 'c' } : {}, e.kind);
   }
   dagre.layout(g);
 
@@ -120,10 +125,10 @@ export function graphSvg(lang, prefix, subjects, focus = null, rankdir = 'LR') {
   svg += `<defs><marker id="arrow-${key}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrowhead"/></marker>`;
   svg += `<marker id="hollow-${key}" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M1,1 L11,6 L1,11 z" class="arrowhead hollow"/></marker></defs>`;
   for (const e of edges) {
-    const ge = g.edge(e.from, e.to);
+    const ge = g.edge(e.from, e.to, e.kind);
     svg += `<path class="edge ${e.kind}" d="${smooth(ge.points)}" marker-end="url(#${e.kind === 'alias' || e.kind === 'subclass' ? 'hollow' : 'arrow'}-${key})"/>`;
-    const label = e.labels.join(', ') || t.legend[e.kind];
-    if (e.labels.length || e.kind === 'alias' || e.kind === 'subclass') {
+    const label = edgeLabel(e);
+    if (label) {
       const w = Math.ceil(textWidth(label, 12) + 10);
       svg += `<g class="edge-label"><rect x="${(ge.x - w / 2).toFixed(1)}" y="${(ge.y - 9).toFixed(1)}" width="${w}" height="18" rx="4"/><text x="${ge.x.toFixed(1)}" y="${(ge.y + 4).toFixed(1)}">${esc(label)}</text></g>`;
     }

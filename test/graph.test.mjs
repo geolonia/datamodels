@@ -43,3 +43,31 @@ test('links are HTML anchors over the SVG, not SVG anchors; self-links sit insid
   assert.match(inner, /↻ parent, relatedTo/);
   assert.match(svg, /model-graph-legend/);
 });
+
+// No model in the catalog uses an alias or subclass today; a throwaway subject
+// covers those edges, including a subclass that also links to its parent.
+test('alias and subclass edges render, next to a Relationship between the same pair', () => {
+  const base = 'https://datamodels.jp';
+  const model = (type, schema) => ({ type, kind: 'entity', schema: { properties: {}, ...schema }, catalog: { title: { ja: type, en: type } }, examples: {} });
+  const probe = {
+    name: 'probe', version: '1.0.0', title: { ja: 'P', en: 'P' },
+    models: [
+      model('Parent'),
+      model('Child', { 'x-subclass-of': `${base}/ns/probe/Parent`, properties: { parent: { 'x-ngsi': { type: 'Relationship', target: `${base}/ns/probe/Parent` } } } }),
+      model('OtherName', { 'x-alias-of': `${base}/ns/probe/Parent` }),
+    ],
+  };
+  const e = catalogEdges([probe]);
+  assert.ok(e.find((x) => x.from === 'probe/Child' && x.to === 'probe/Parent' && x.kind === 'subclass'));
+  assert.ok(e.find((x) => x.from === 'probe/Child' && x.to === 'probe/Parent' && x.kind === 'rel'));
+  assert.ok(e.find((x) => x.from === 'probe/OtherName' && x.to === 'probe/Parent' && x.kind === 'alias'));
+  const svg = graphSvg('en', '/en', [probe], probe);
+  assert.equal((svg.match(/class="edge subclass"/g) ?? []).length, 1);
+  assert.equal((svg.match(/class="edge rel"/g) ?? []).length, 1);
+  assert.equal((svg.match(/class="edge alias"/g) ?? []).length, 1);
+  assert.match(svg, />subclass<\/text>/);
+  assert.match(svg, />alias<\/text>/);
+  // The two edges between Child and Parent keep their own routes.
+  const paths = [...svg.matchAll(/class="edge (subclass|rel)" d="([^"]+)"/g)].map((m) => m[2]);
+  assert.notEqual(paths[0], paths[1]);
+});
