@@ -68,6 +68,8 @@ function modelForIri(subject, iri, { ownerOnly = false } = {}) {
   for (const s of allSubjects) { const m = s.models.find((x) => !x.schema['x-alias-of'] && modelUrls(s, x).typeIri === iri); if (m) return { subject: s, model: m }; }
   return null;
 }
+// encodeURIComponent keeps ( and ), and a ) in an example would end the Markdown link early.
+export const playgroundUrl = (doc) => `https://json-ld.org/playground/#startTab=tab-expanded&json-ld=${encodeURIComponent(JSON.stringify(doc)).replace(/[()]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`)}`;
 const modelLink = (prefix, found) => `[${found.model.type}](${prefix}${rel(modelUrls(found.subject, found.model).page)})`;
 
 function valueText(lang, subject, prop, prefix) {
@@ -148,7 +150,7 @@ function modelPage(lang, prefix, subject, model) {
   if (model.examples['example.json']) md += `## ${t.example} {#example}\n\n${t.exampleNote(`${prefix}/guide/extend#examples`)}\n\n${fence(model.examples['example.json'])}\n\n`;
   if (model.examples['example-normalized.jsonld']) {
     // The JSON-LD Playground fetches the published @context and shows every attribute as its full IRI.
-    const playground = `https://json-ld.org/playground/#startTab=tab-expanded&json-ld=${encodeURIComponent(JSON.stringify(model.examples['example-normalized.jsonld']))}`;
+    const playground = playgroundUrl(model.examples['example-normalized.jsonld']);
     md += `## ${t.normalized} {#example-normalized}\n\n${fence(model.examples['example-normalized.jsonld'])}\n\n${t.playground(playground)}\n\n`;
   }
   if (!isValue) md += `## ${t.linkHeader} {#link-header}\n\n\`\`\`http\nLink: <${u.contextAlias}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"\n\`\`\`\n\n`;

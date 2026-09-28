@@ -111,3 +111,14 @@ test('an outside supersededBy URL renders as a link to exactly that URL', async 
     assert.equal(a[2].replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&amp;', '&'), url, `${url}: text`);
   }
 });
+
+test('the JSON-LD Playground link keeps parentheses inside the destination', async () => {
+  const { playgroundUrl } = await import('../scripts/lib/site.mjs');
+  const doc = { id: 'urn:x:1', type: 'X', note: { type: 'Property', value: 'a)b (c)' } };
+  const url = playgroundUrl(doc);
+  assert.doesNotMatch(url, /[()]/);
+  assert.deepEqual(JSON.parse(decodeURIComponent(url.split('json-ld=')[1])), doc);
+  const { createMarkdownRenderer } = await import('vitepress');
+  const html = (await createMarkdownRenderer(join(root, 'site'))).render(`[open](${url})`);
+  assert.equal(decodeURIComponent(html.match(/href="([^"]*)"/)[1].replaceAll('&amp;', '&').split('json-ld=')[1]), JSON.stringify(doc));
+});

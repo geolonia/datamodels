@@ -47,8 +47,13 @@ export function catalogEdges(subjects) {
         const target = x.target;
         add(from, target === 'agent' || target === 'any' ? `@${target}` : owner.get(target), 'rel', name);
       }
-      const ref = (prop.$ref ?? prop.items?.$ref)?.split('#')[0];
-      if (ref) add(from, bySchema.get(ref), 'value', name);
+      // Every reference shape the model page renders: direct, on array items, or
+      // inside allOf (no model uses allOf today; the page already reads it).
+      for (const node of [prop, prop.items]) {
+        for (const r of [node?.$ref, ...(node?.allOf ?? []).map((a) => a?.$ref)]) {
+          if (typeof r === 'string') add(from, bySchema.get(r.split('#')[0]), 'value', name);
+        }
+      }
     }
     if (m.schema['x-alias-of']) add(from, owner.get(m.schema['x-alias-of']), 'alias');
     if (m.schema['x-subclass-of']) add(from, owner.get(m.schema['x-subclass-of']), 'subclass');
@@ -119,7 +124,8 @@ export function graphSvg(lang, prefix, subjects, focus = null, rankdir = 'LR') {
   // site's router and link prefetching expect HTML anchors (an SVG <a> has no
   // string href) and the theme's link styles would underline SVG text.
   const links = [];
-  const key = focus?.name ?? 'all'; // ids stay unique if a page ever shows two graphs
+  // ids stay unique if a page ever shows two graphs, and only use safe characters.
+  const key = (focus?.name ?? 'all').replace(/[^A-Za-z0-9_-]/g, '_');
   let svg = `<div class="model-graph"><div class="canvas" style="width:${W}px;height:${H}px"><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="graph-title-${key}" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`;
   svg += `<title id="graph-title-${key}">${esc(t.label)}</title>`;
   svg += `<defs><marker id="arrow-${key}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrowhead"/></marker>`;

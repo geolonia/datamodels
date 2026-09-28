@@ -71,3 +71,23 @@ test('alias and subclass edges render, next to a Relationship between the same p
   const paths = [...svg.matchAll(/class="edge (subclass|rel)" d="([^"]+)"/g)].map((m) => m[2]);
   assert.notEqual(paths[0], paths[1]);
 });
+
+test('a value type referenced through allOf or on array items is an edge too', () => {
+  const base = 'https://datamodels.jp';
+  const value = { type: 'Spot', kind: 'value', schema: { $id: `${base}/schema/probe/Spot/v1.0.0.json`, properties: {} }, catalog: { title: { ja: 'S', en: 'S' } }, examples: {} };
+  const owner = { type: 'Owner', kind: 'entity', catalog: { title: { ja: 'O', en: 'O' } }, examples: {}, schema: { properties: {
+    here: { allOf: [{ $ref: `${base}/schema/probe/Spot/v1.0.0.json` }], 'x-ngsi': { type: 'GeoProperty' } },
+    many: { type: 'array', items: { $ref: `${base}/schema/probe/Spot/v1.json` } },
+  } } };
+  const probe = { name: 'probe', version: '1.0.0', title: { ja: 'P', en: 'P' }, models: [value, owner] };
+  assert.deepEqual(catalogEdges([probe]).find((e) => e.from === 'probe/Owner' && e.to === 'probe/Spot')?.labels, ['here', 'many']);
+});
+
+test('ids in the SVG use only safe characters, whatever the subject is called', () => {
+  const probe = { name: 'a"b c', version: '1.0.0', title: { ja: 'P', en: 'P' }, models: [
+    { type: 'X', kind: 'entity', catalog: { title: { ja: 'X', en: 'X' } }, examples: {}, schema: { properties: { who: { 'x-ngsi': { type: 'Relationship', target: 'agent' } } } } },
+  ] };
+  const svg = graphSvg('en', '/en', [probe], probe);
+  for (const [, id] of svg.matchAll(/(?:id|aria-labelledby)="([^"]*)"/g)) assert.match(id, /^[A-Za-z0-9_-]+$/, id);
+  assert.match(svg, /url\(#arrow-a_b_c\)/);
+});
