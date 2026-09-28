@@ -132,7 +132,7 @@ export function graphSvg(lang, prefix, subjects, focus = null, rankdir = 'LR') {
     const p = g.node(nid);
     const x = p.x - n.width / 2, y = p.y - n.height / 2;
     let body = `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${n.width}" height="${n.height}" rx="8"/>`;
-    const top = y + (n.sub ? 20 : 20);
+    const top = y + 20; // baseline of the first line
     body += n.sub
       ? `<text class="type" x="${p.x.toFixed(1)}" y="${top.toFixed(1)}">${esc(n.title)}</text><text class="sub" x="${p.x.toFixed(1)}" y="${(top + 17).toFixed(1)}">${esc(n.sub)}</text>`
       : `<text class="sub" x="${p.x.toFixed(1)}" y="${top.toFixed(1)}">${esc(n.title)}</text>`;
@@ -141,8 +141,8 @@ export function graphSvg(lang, prefix, subjects, focus = null, rankdir = 'LR') {
     if (n.href) links.push(`<a href="${esc(n.href)}" aria-label="${esc(n.sub ? `${n.title} (${n.sub})` : n.title)}" style="left:${x.toFixed(1)}px;top:${y.toFixed(1)}px;width:${n.width}px;height:${n.height}px"></a>`);
   }
   svg += `</svg>${links.join('')}</div></div>\n\n`;
-  // The legend names only what this graph shows.
-  const kinds = new Set(shown.map((e) => e.kind));
+  // The legend names only what this graph draws (self-links are text in the node).
+  const kinds = new Set(edges.map((e) => e.kind));
   const items = [...['rel', 'value', 'alias', 'subclass'].filter((k) => kinds.has(k)), ...(selfLinks.size ? ['self'] : []), ...([...nodes.values()].some((n) => n.cls.includes('other')) ? ['other'] : [])];
   svg += `<p class="model-graph-legend">${items.map((k) => `<span class="${k}">${esc(t.legend[k])}</span>`).join('')}</p>\n\n`;
   return svg;
