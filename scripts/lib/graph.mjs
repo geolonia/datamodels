@@ -114,13 +114,14 @@ export function graphSvg(lang, prefix, subjects, focus = null, rankdir = 'LR') {
   // site's router and link prefetching expect HTML anchors (an SVG <a> has no
   // string href) and the theme's link styles would underline SVG text.
   const links = [];
-  let svg = `<div class="model-graph"><div class="canvas" style="width:${W}px;height:${H}px"><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="graph-title-${focus?.name ?? 'all'}" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`;
-  svg += `<title id="graph-title-${focus?.name ?? 'all'}">${esc(t.label)}</title>`;
-  svg += `<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrowhead"/></marker>`;
-  svg += `<marker id="hollow" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M1,1 L11,6 L1,11 z" class="arrowhead hollow"/></marker></defs>`;
+  const key = focus?.name ?? 'all'; // ids stay unique if a page ever shows two graphs
+  let svg = `<div class="model-graph"><div class="canvas" style="width:${W}px;height:${H}px"><svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="graph-title-${key}" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`;
+  svg += `<title id="graph-title-${key}">${esc(t.label)}</title>`;
+  svg += `<defs><marker id="arrow-${key}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="arrowhead"/></marker>`;
+  svg += `<marker id="hollow-${key}" viewBox="0 0 12 12" refX="11" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M1,1 L11,6 L1,11 z" class="arrowhead hollow"/></marker></defs>`;
   for (const e of edges) {
     const ge = g.edge(e.from, e.to);
-    svg += `<path class="edge ${e.kind}" d="${smooth(ge.points)}" marker-end="url(#${e.kind === 'alias' || e.kind === 'subclass' ? 'hollow' : 'arrow'})"/>`;
+    svg += `<path class="edge ${e.kind}" d="${smooth(ge.points)}" marker-end="url(#${e.kind === 'alias' || e.kind === 'subclass' ? 'hollow' : 'arrow'}-${key})"/>`;
     const label = e.labels.join(', ') || t.legend[e.kind];
     if (e.labels.length || e.kind === 'alias' || e.kind === 'subclass') {
       const w = Math.ceil(textWidth(label, 12) + 10);

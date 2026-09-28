@@ -86,7 +86,7 @@
 
 /* Relationship graph (scripts/lib/graph.mjs): inline SVG, themed here. */
 .model-graph { overflow-x: auto; margin: 16px 0 4px; }
-.model-graph svg { display: block; max-width: none; font-family: var(--vp-font-family-base); }
+.model-graph svg { display: block; max-width: none; overflow: visible; font-family: var(--vp-font-family-base); }
 .model-graph .node rect { fill: var(--vp-c-bg-soft); stroke: var(--vp-c-brand-1); stroke-width: 1.5; }
 .model-graph .node.value rect { stroke: var(--vp-c-text-3); }
 .model-graph .node.other rect { stroke-dasharray: 4 3; }
