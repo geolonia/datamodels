@@ -189,11 +189,19 @@ async function subjectPage(lang, prefix, subject) {
 
 function indexPage(lang, prefix, subjects) {
   const t = T[lang];
-  let md = front(t.models, t.subjectsIntro) + `# ${t.models}\n\n${t.subjectsIntro}\n\n`;
-  for (const s of subjects) {
-    md += `## [${s.title[lang]}](${prefix}${rel(subjectUrls(s).page)}) {#${s.name}}\n\n${s.description[lang]}\n\n`;
-    md += s.models.map((m) => `- [${m.type}](${prefix}${rel(modelUrls(s, m).page)}) — ${m.catalog.title?.[lang] ?? ''}`).join('\n') + '\n\n';
-  }
+  const other = lang === 'ja' ? 'en' : 'ja';
+  // One row per model for the filterable list (site/.vitepress/theme/ModelIndex.vue).
+  const rows = subjects.flatMap((s) => s.models.map((m) => ({
+    type: m.type, href: `${prefix}${rel(modelUrls(s, m).page)}`, title: m.catalog.title?.[lang] ?? '', otherTitle: m.catalog.title?.[other] ?? '',
+    subject: s.name, subjectTitle: s.title[lang], subjectHref: `${prefix}${rel(subjectUrls(s).page)}`,
+    kind: m.kind, status: m.catalog.status ?? 'draft',
+    text: [m.type, s.name, s.title.ja, s.title.en, m.catalog.title?.ja, m.catalog.title?.en, m.catalog.description?.ja, m.catalog.description?.en, ...Object.keys(m.schema.properties ?? {})]
+      .filter(Boolean).join(' ').normalize('NFKC').toLowerCase(),
+  })));
+  // "<" escaped so no text can close the script block.
+  let md = front(t.models, t.subjectsIntro) + `<script setup>\nconst models = ${JSON.stringify(rows).replaceAll('<', '\\u003c')}\n</script>\n\n`;
+  md += `# ${t.models}\n\n${t.subjectsIntro}\n\n<ModelIndex lang="${lang}" :models="models" />\n\n## ${t.subjects} {#subjects}\n\n`;
+  for (const s of subjects) md += `### [${s.title[lang]}](${prefix}${rel(subjectUrls(s).page)}) {#${s.name}}\n\n${s.description[lang]}\n\n`;
   return md;
 }
 

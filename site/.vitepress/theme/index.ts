@@ -1,10 +1,12 @@
-// The default VitePress theme with hero text sizing (custom.css) and a
+// The default VitePress theme with hero text sizing (custom.css), the
+// filterable model list (ModelIndex.vue, used on /models/) and a
 // pre-release banner above the navigation on every page. Remove the banner
 // (and --vp-layout-top-height in custom.css) at the official launch.
 import DefaultTheme from 'vitepress/theme'
 import { defineComponent, h, onMounted, onBeforeUnmount, ref } from 'vue'
 import { useData } from 'vitepress'
 import './custom.css'
+import ModelIndex from './ModelIndex.vue'
 
 const PrereleaseBanner = defineComponent({
   setup() {
@@ -26,6 +28,9 @@ const PrereleaseBanner = defineComponent({
 
 export default {
   extends: DefaultTheme,
+  enhanceApp({ app }) {
+    app.component('ModelIndex', ModelIndex)
+  },
   Layout() {
     return h(DefaultTheme.Layout, null, { 'layout-top': () => h(PrereleaseBanner) })
   },
