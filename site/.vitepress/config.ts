@@ -78,6 +78,8 @@ export default defineConfig({
   description: 'Data models that work in Japan: JSON Schemas, JSON-LD contexts and vocabularies at stable URLs, ready for NGSI-LD',
   base: '/',
   cleanUrls: true,
+  // sitemap.xml for search engines; robots.txt (public/) points to it.
+  sitemap: { hostname: SITE_URL },
   lastUpdated: false,
   // Links to the machine files and IRIs are not pages; everything else must resolve.
   ignoreDeadLinks: [/^\/(context|schema|examples|adapters|vocab|catalog|ns|LICENSE-CONTENT)/],

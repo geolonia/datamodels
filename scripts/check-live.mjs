@@ -79,6 +79,15 @@ for (const [path, hash] of Object.entries(manifest.files)) {
   expect(served === hash, `${url}: served bytes differ from published-manifest.json (deploy not live yet, or a stale cache)`);
 }
 
+// Indexes for search engines and AI tools.
+for (const [path, type, marker] of [['/llms.txt', 'text/plain', '# datamodels.jp'], ['/sitemap.xml', 'application/xml', '<urlset'], ['/robots.txt', 'text/plain', 'Sitemap:']]) {
+  try {
+    const res = await fetch(`${origin}${path}`);
+    const body = res.ok ? await res.text() : '';
+    expect(res.ok && h(res, 'content-type').startsWith(type) && body.includes(marker), `${origin}${path}: ${res.status} ${h(res, 'content-type')}${res.ok ? `, or "${marker}" missing` : ''}`);
+  } catch (e) { failures.push(`${origin}${path}: ${e.message}`); }
+}
+
 let firstAdapterUrl;
 const r = await fetch(swap(`${BASE_URL}/catalog.json`));
 expect(r.ok, `catalog.json: ${r.status}`);
@@ -96,9 +105,9 @@ if (r.ok) {
 // Machine clients: tools that fetch contexts with Python's urllib (rdflib and
 // others) send "Python-urllib/3.x", which Cloudflare's Browser Integrity Check
 // blocks by default (error 1010). A configuration rule on the datamodels.jp
-// zone turns the check off for the machine-readable paths; this catches it if
-// that rule goes missing. Other origins (workers.dev previews) keep Cloudflare's
-// default and are skipped unless CHECK_MACHINE_UA=1.
+// zone turns the check off for the machine-readable paths and /llms.txt; this
+// catches it if that rule goes missing. Other origins (workers.dev previews)
+// keep Cloudflare's default and are skipped unless CHECK_MACHINE_UA=1.
 if (origin === BASE_URL || process.env.CHECK_MACHINE_UA === '1') {
   const first = subjects.find((s) => s.models.some((m) => m.kind === 'entity'));
   const entity = first.models.find((m) => m.kind === 'entity');
@@ -106,6 +115,7 @@ if (origin === BASE_URL || process.env.CHECK_MACHINE_UA === '1') {
     subjectUrls(first).contextExact, subjectUrls(first).contextAlias, subjectUrls(first).vocabExact,
     modelUrls(first, entity).schemaExact, `${modelUrls(first, entity).examples}example.json`,
     `${BASE_URL}/catalog.json`,
+    `${BASE_URL}/llms.txt`,
     // One adapter file, as listed in the live catalog (the core does not name adapters).
     ...(firstAdapterUrl ? [firstAdapterUrl] : []),
   ];
