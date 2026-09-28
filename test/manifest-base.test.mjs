@@ -55,23 +55,38 @@ test('a changed or removed entry after the launch fails', async () => {
   assert.match(r.summary, new RegExp(`${second.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\`? \\| removed`));
 });
 
-test('a missing prerelease field counts as launched', async () => {
+test('removing the flag fails, even together with changed entries', async () => {
   const r = await runWith((m) => { delete m.prerelease; m.files[first] = 'changed'; });
   assert.equal(r.status, 1);
+  assert.match(r.stderr, /removes "prerelease"/);
 });
 
-test('a launched base cannot be bypassed by setting prerelease in the pull request', async () => {
+test('the pre-release flag cannot be turned back on, removed, or used before the base has it', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'datamodels-manifest-'));
+  const { prerelease, ...withoutFlag } = baseManifest;
+  const launched = join(dir, 'launched.json');
+  const noFlag = join(dir, 'no-flag.json');
+  const pre = join(dir, 'pre.json');
   try {
-    const baseFile = join(dir, 'base.json');
-    await writeFile(baseFile, JSON.stringify({ ...baseManifest, prerelease: false }));
-    const r = await runWith((m) => { m.prerelease = true; m.files[first] = 'changed'; }, ['--base-file', baseFile]);
+    await writeFile(launched, JSON.stringify({ ...baseManifest, prerelease: false }));
+    await writeFile(noFlag, JSON.stringify(withoutFlag));
+    await writeFile(pre, JSON.stringify({ ...baseManifest, prerelease: true }));
+    // Launched base: turning the flag back on fails, with or without other changes.
+    let r = await runWith((m) => { m.prerelease = true; }, ['--base-file', launched]);
     assert.equal(r.status, 1);
-    assert.match(r.stderr, /a pull request cannot turn the pre-release exception back on/);
-    const missing = join(dir, 'base-missing-flag.json');
-    const { prerelease, ...withoutFlag } = baseManifest;
-    await writeFile(missing, JSON.stringify(withoutFlag));
-    assert.equal((await runWith((m) => { m.prerelease = true; m.files[first] = 'changed'; }, ['--base-file', missing])).status, 1);
+    assert.match(r.stderr, /sets "prerelease" back to true/);
+    r = await runWith((m) => { m.prerelease = true; m.files[first] = 'changed'; }, ['--base-file', launched]);
+    assert.equal(r.status, 1);
+    // A base with the flag: removing it fails.
+    r = await runWith((m) => { delete m.prerelease; }, ['--base-file', pre]);
+    assert.equal(r.status, 1);
+    assert.match(r.stderr, /removes "prerelease"/);
+    // A base without the flag: introducing it passes, corrections still fail.
+    r = await runWith((m) => { m.prerelease = true; }, ['--base-file', noFlag]);
+    assert.equal(r.status, 0, r.stderr);
+    r = await runWith((m) => { m.prerelease = true; m.files[first] = 'changed'; }, ['--base-file', noFlag]);
+    assert.equal(r.status, 1);
+    assert.match(r.stderr, /has no pre-release flag, so it counts as launched/);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }

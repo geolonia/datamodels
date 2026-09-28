@@ -7,8 +7,9 @@
 // New entries are always fine. A changed or removed entry means a published
 // file changed. While both the base and this manifest say "prerelease": true,
 // that is the README's in-place correction: it is listed in the job summary
-// and passes. The base decides: once the official launch has set it to false
-// (or the base has no flag), a pull request cannot turn it back on.
+// and passes. The base decides: once the official launch has set it to false,
+// a pull request can neither turn it back on nor remove it (a base without the
+// flag counts as launched for corrections; the flag may only be introduced).
 import { readFile } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
@@ -50,6 +51,19 @@ async function main() {
   const { changed, removed, added } = diffManifests(baseManifest, head);
   const touched = [...changed.map((k) => `${k}: changed`), ...removed.map((k) => `${k}: removed`)];
 
+  // The flag itself, whatever else changed: once the base has it, a pull
+  // request may not remove it or turn a launched base back into a pre-release.
+  const flagProblem = 'prerelease' in baseManifest && !('prerelease' in head)
+    ? `removes "prerelease" from the manifest; ${base} has it, so it stays`
+    : 'prerelease' in baseManifest && baseManifest.prerelease !== true && head.prerelease === true
+      ? `sets "prerelease" back to true; ${base} is launched, and a pull request cannot turn the pre-release exception back on`
+      : null;
+  if (flagProblem) {
+    console.error(`Manifest check failed: this pull request ${flagProblem}.`);
+    await reportFailures('Pre-release flag changed', [`published-manifest.json: ${flagProblem}`], 'The official launch sets "prerelease" to false once and for all (launch plan #30).');
+    process.exit(1);
+  }
+
   if (!touched.length) {
     console.log(`manifest ok against ${base}: ${added.length} new entr${added.length === 1 ? 'y' : 'ies'}, none changed or removed`);
     return;
@@ -61,7 +75,7 @@ async function main() {
     await reportFailures('Published files corrected in place (pre-release)', touched, 'Allowed until the official launch (README, "Adding or changing a model"). Say so in the pull request; after the launch this check fails instead.');
     return;
   }
-  if (head.prerelease === true) console.error(`${base} is launched ("prerelease" is not true there); a pull request cannot turn the pre-release exception back on.`);
+  if (head.prerelease === true) console.error(`${base} has no pre-release flag, so it counts as launched; corrections in place need "prerelease": true on ${base} first.`);
   console.error(`Manifest check failed: ${touched.length} published file(s) changed or removed against ${base}:`);
   for (const t of touched) console.error(`  ${t}`);
   await reportFailures('Published files changed or removed', touched, 'A published version never changes. Keep the recorded entries and publish the change as a new version.');
