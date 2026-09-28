@@ -1,6 +1,7 @@
 // The default VitePress theme with hero text sizing (custom.css), the
-// filterable model list (ModelIndex.vue, used on /models/), the extension
-// builder (ExtensionBuilder.vue, on /guide/builder) and a
+// filterable model list (ModelIndex.vue, used on /models/), the example
+// playground on model pages (ExamplePlayground.vue), the extension builder
+// (ExtensionBuilder.vue, on /guide/builder) and a
 // pre-release banner above the navigation on every page. Remove the banner
 // (and --vp-layout-top-height in custom.css) at the official launch.
 import DefaultTheme from 'vitepress/theme'
@@ -31,6 +32,8 @@ export default {
   extends: DefaultTheme,
   enhanceApp({ app }) {
     app.component('ModelIndex', ModelIndex)
+    // Only model pages use it: its code stays out of the chunk every page loads.
+    app.component('ExamplePlayground', defineAsyncComponent(() => import('./ExamplePlayground.vue')))
     // Only /guide/builder uses it: its code and model data stay out of the chunk every page loads.
     app.component('ExtensionBuilder', defineAsyncComponent(() => import('./ExtensionBuilder.vue')))
   },
