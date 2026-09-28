@@ -139,7 +139,8 @@ function modelPage(lang, prefix, subject, model) {
     if (map.standard?.url) md += `[${map.standard.name?.[lang] ?? map.name}](${map.standard.url})${map.standard.license ? ` · ${map.standard.license}` : ''}\n\n`;
     if (map.standard?.note?.[lang]) md += `${map.standard.note[lang]}\n\n`;
     md += `| ${t.mappingField} | ${t.mappingTo} | ${t.mappingNote} |\n|---|---|---|\n`;
-    for (const [field, m] of Object.entries(map.fields ?? {})) md += `| [${code(field)}](#${field}) | ${m.to ? code(m.to) : `*${t.none}*`} | ${m.note?.[lang] ?? ''} |\n`;
+    // Link a field to its attribute row; a value type such as Geometry has no rows to link to.
+    for (const [field, m] of Object.entries(map.fields ?? {})) md += `| ${model.schema.properties?.[field] ? `[${code(field)}](#${field})` : code(field)} | ${m.to ? code(m.to) : `*${t.none}*`} | ${m.note?.[lang] ?? ''} |\n`;
     md += '\n';
   }
   const notes = model.notes?.notes ?? [];
