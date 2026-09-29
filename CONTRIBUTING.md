@@ -21,9 +21,9 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 
 ## 段階と決め方
 
-- **提案**（Issue）→ **draft**（マージされたモデル）→ **stable** → **deprecated**。deprecated になったモデルも公開をやめず、URL は変わりません。
-- **stable** になるには、`ADOPTERS.yaml` に別々の組織による 2 つの実装が必要です。各項目に `name`、`organization`、`url`（公開リポジトリ、ドキュメント、連絡先）を書きます。CI は組織が 2 つあるかを検査し、stable にする Pull Request のレビュアーが、実在し独立しているかを確認します。
-- 通常の Pull Request はメンテナーがレビューしてマージします。新しいサブジェクト、メジャーバージョン、stable への昇格は、小さなグループ（Hal、宮内さん、大橋さん、Daniel）がその Pull Request や Issue の上で決めます。
+- **提案**（Issue）→ **ドラフト**（`draft`、マージされたモデル）→ **安定**（`stable`）→ **非推奨**（`deprecated`）。非推奨になったモデルも公開をやめず、URL は変わりません。
+- **安定**になるには、`ADOPTERS.yaml` に別々の組織による 2 つの実装が必要です。各項目に `name`、`organization`、`url`（公開リポジトリ、ドキュメント、連絡先）を書きます。CI は組織が 2 つあるかを検査し、安定にする Pull Request のレビュアーが、実在し独立しているかを確認します。
+- 通常の Pull Request はメンテナーがレビューしてマージします。新しいサブジェクト（分野ごとのモデルのまとまり）、メジャーバージョン、安定への昇格は、小さなグループ（Hal、宮内さん、大橋さん、Daniel）がその Pull Request や Issue の上で決めます。
 
 ## Pull Request の手順
 

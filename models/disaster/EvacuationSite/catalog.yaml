@@ -2,7 +2,7 @@ title:
   ja: 指定緊急避難場所
   en: Designated emergency evacuation site
 description:
-  ja: 指定緊急避難場所（災害対策基本法第49条の4）1件。自治体が「指定緊急避難場所一覧」（自治体標準オープンデータセット 03）として公開するマスタの1行にあたる。災害種別ごとに指定される。開設状況や避難者数は持たない（それは EvacuationShelter）。
+  ja: 指定緊急避難場所（災害対策基本法第49条の4）1か所を表す。自治体が「指定緊急避難場所一覧」（自治体標準オープンデータセット 03）として公開する、名称・所在地など施設の基本情報の一覧（マスタ）の1行にあたる。災害種別ごとに指定される。開設状況や避難者数は持たない（それは EvacuationShelter で表す）。
   en: One designated emergency evacuation site (指定緊急避難場所, Basic Act on Disaster Management Art. 49-4), one row of the list a municipality publishes as 自治体標準オープンデータセット dataset 03. Sites are designated per hazard. Opening status and evacuee counts are not here (that is EvacuationShelter).
 status: draft
 tags:

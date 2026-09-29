@@ -15,7 +15,7 @@ fields:
   statusLabel:
     to: null
     note:
-      ja: ガイドラインには対応項目なし。現場の呼び方を落とさないための本カタログ独自の逃げ道
+      ja: ガイドラインには対応項目なし。現場の呼び方を失わないよう、このカタログが独自に設けた属性
       en: no corresponding item in the guideline; this catalog's own escape hatch so local wording is never dropped
   evacueeHouseholds:
     to: null

@@ -9,7 +9,7 @@ description: サブジェクトのバージョンの付け方、非推奨の扱�
 
 ## サブジェクトに 1 つのバージョン
 
-バージョンはサブジェクト単位で、`@context`、語彙、そのサブジェクトのすべての JSON Schema が同じ番号を持ちます（例 `transportation` の 1.0.0）。番号は [Semantic Versioning](https://semver.org/lang/ja/) の考え方で上げます。
+バージョンはサブジェクト（分野ごとのモデルのまとまり）単位で、`@context`、語彙、そのサブジェクトのすべての JSON Schema が同じ番号を持ちます（例 `transportation` の 1.0.0）。番号は [Semantic Versioning](https://semver.org/lang/ja/) の考え方で上げます。
 
 | 変更 | 上げる番号 | 例 |
 |---|---|---|
@@ -32,11 +32,11 @@ description: サブジェクトのバージョンの付け方、非推奨の扱�
 | 段階 | 意味 |
 |---|---|
 | 提案 | [Issue](https://github.com/geolonia/datamodels/issues/new?template=model-proposal.yml)。まだカタログにはない |
-| draft | カタログにあり、検証されるが、まだ変わる可能性がある |
-| stable | 別々の組織による 2 つの実装が `ADOPTERS.yaml` にある（CI とレビュアーが確認） |
-| deprecated | 使わないでほしいモデル。公開は続け、URL は変わらない。後継があれば `catalog.yaml` の `supersededBy` に書き、ページと `catalog.json` に表示される |
+| ドラフト（`draft`） | カタログにあり、検証されるが、まだ変わる可能性がある |
+| 安定（`stable`） | 別々の組織による 2 つの実装が `ADOPTERS.yaml` にある（CI とレビュアーが確認） |
+| 非推奨（`deprecated`） | 使わないでほしいモデル。公開は続け、URL は変わらない。後継があれば `catalog.yaml` の `supersededBy` に書き、ページと `catalog.json` に表示される |
 
-新しいサブジェクト、メジャーバージョン、stable への昇格は小さなグループが決めます。詳しくは [CONTRIBUTING.md](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md)。
+新しいサブジェクト、メジャーバージョン、安定への昇格は小さなグループが決めます。詳しくは [CONTRIBUTING.md](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md) にあります。
 
 ## いまはプレリリース
 

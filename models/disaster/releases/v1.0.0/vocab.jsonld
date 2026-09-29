@@ -34,7 +34,7 @@
         "en": "Disaster response"
       },
       "comment": {
-        "ja": "自治体の災害対応を表すデータモデル。現在は指定緊急避難場所（EvacuationSite、自治体が公開する一覧のマスタ）、指定避難所（DesignatedShelter、国土地理院が公開するマスタ）と避難所運用状況（EvacuationShelter）。独自の型で、状態の呼び方（statusLabel）はタスク管理の IRI を使います。災害対応のオペレーションとのひも付けはアプリケーション側で行います（タスク管理の Task の refersTo など）。通行止めなどの通行規制は交通（transportation）サブジェクトの RoadRestriction です。高松市の水防アプリのデータモデルを基に汎用化したもの。",
+        "ja": "自治体の災害対応を表すデータモデル。現在は指定緊急避難場所（EvacuationSite。自治体が公開する一覧で、名称・所在地など施設の基本情報をまとめたマスタ）、指定避難所（DesignatedShelter。国土地理院が公開するマスタ）と避難所運用状況（EvacuationShelter）。独自の型で、状態の呼び方（statusLabel）はタスク管理の IRI を使う。災害対応の業務とのひも付けはアプリケーション側で行う（タスク管理の Task の refersTo など）。通行止めなどの通行規制は交通（transportation）サブジェクトの RoadRestriction で表す。高松市の水防アプリのデータモデルを基に汎用化した。",
         "en": "Data models for municipal disaster response. Currently designated emergency evacuation sites (EvacuationSite, the master of the lists municipalities publish), designated shelters (DesignatedShelter, the master GSI publishes) and shelter operation (EvacuationShelter), their own types; the local status wording (statusLabel) uses the task subject's IRI. Linking entities to a disaster-response operation is left to the application (for example refersTo from a task subject Task). Road closures and other road restrictions are RoadRestriction in the transportation subject. Generalised from the data models of Takamatsu City's flood-response application."
       },
       "versionInfo": "1.0.0",
@@ -48,7 +48,7 @@
         "en": "Designated shelter"
       },
       "comment": {
-        "ja": "指定避難所（災害対策基本法第49条の7）1件。避難した人が一定期間滞在する施設のマスタで、市町村が登録し国土地理院が公開する。開設状況や避難者数は持たない（それは EvacuationShelter で、shelter でここを参照する）。",
+        "ja": "指定避難所（災害対策基本法第49条の7）1か所を表す。避難した人が一定期間滞在する施設の基本情報（名称・所在地などをまとめたマスタ）で、市町村が登録し国土地理院が公開する。開設状況や避難者数は持たない（それは EvacuationShelter で表し、shelter でここを参照する）。",
         "en": "One designated shelter (指定避難所, Basic Act on Disaster Management Art. 49-7), the master record of a facility where evacuees stay for a while, as municipalities register it and GSI publishes it. Opening status and evacuee counts are not here (that is EvacuationShelter, which links here with shelter)."
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
@@ -62,7 +62,7 @@
         "en": "Evacuation shelter operation"
       },
       "comment": {
-        "ja": "避難所の運用状況オーバーレイ1件。避難所そのもののマスタ（名称・位置）は含まず、外部の避難所データを externalShelterId / nationalShelterId で参照する。開設状況と避難者数だけを持つ。同じ場所の指定緊急避難場所は site で EvacuationSite を参照する。災害対策基本法第49条の7に基づき市町村長が指定する「指定避難所」（同法第49条の4の「指定緊急避難場所」とは別の概念）の運用を想定している。",
+        "ja": "避難所1か所の運用状況を表す。避難所そのものの基本情報（名称・位置などのマスタ）は含まず、外部の避難所データを externalShelterId / nationalShelterId で参照して、その上に開設状況と避難者数だけを重ねる。同じ場所の指定緊急避難場所は site で EvacuationSite を参照する。災害対策基本法第49条の7に基づき市町村長が指定する「指定避難所」（同法第49条の4の「指定緊急避難場所」とは別の概念）の運用を想定している。",
         "en": "Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included; it is referenced by externalShelterId / nationalShelterId. Only opening status and evacuee counts live here. When the shelter is also a designated emergency evacuation site, site links to its EvacuationSite. Models the operation of a 指定避難所 (designated shelter, Basic Act on Disaster Management Art. 49-7), a distinct legal concept from the 指定緊急避難場所 (designated emergency evacuation site, Art. 49-4)."
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
@@ -76,7 +76,7 @@
         "en": "Designated emergency evacuation site"
       },
       "comment": {
-        "ja": "指定緊急避難場所（災害対策基本法第49条の4）1件。自治体が「指定緊急避難場所一覧」（自治体標準オープンデータセット 03）として公開するマスタの1行にあたる。災害種別ごとに指定される。開設状況や避難者数は持たない（それは EvacuationShelter）。",
+        "ja": "指定緊急避難場所（災害対策基本法第49条の4）1か所を表す。自治体が「指定緊急避難場所一覧」（自治体標準オープンデータセット 03）として公開する、名称・所在地など施設の基本情報の一覧（マスタ）の1行にあたる。災害種別ごとに指定される。開設状況や避難者数は持たない（それは EvacuationShelter で表す）。",
         "en": "One designated emergency evacuation site (指定緊急避難場所, Basic Act on Disaster Management Art. 49-4), one row of the list a municipality publishes as 自治体標準オープンデータセット dataset 03. Sites are designated per hazard. Opening status and evacuee counts are not here (that is EvacuationShelter)."
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
@@ -323,7 +323,7 @@
         "en": "openingStatus"
       },
       "comment": {
-        "ja": "正規化した開設状況: open（開設中）、closed（未開設・閉鎖）、full（満員）、requested（開設を依頼・指示されたが開設未確認。公的な統制語彙は見つからなかった区分）。現場の呼び方は必ず statusLabel にも記載する。値域に合う値がないときは省き、statusLabel だけを送る",
+        "ja": "正規化した開設状況: open（開設中）、closed（未開設・閉鎖）、full（満員）、requested（開設を依頼・指示されたが、開設はまだ確認できていない。公的なコード表や用語集には見当たらない区分）。現場の呼び方は必ず statusLabel にも記載する。値域に合う値がないときは省き、statusLabel だけを送る",
         "en": "Normalised opening state: open, closed, full (open but at capacity), requested (opening has been requested/instructed but not yet confirmed open; no public controlled vocabulary defines this state). The local wording always also goes in statusLabel. When no value fits, leave it out and send only statusLabel"
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",

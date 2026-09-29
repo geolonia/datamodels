@@ -25,17 +25,17 @@ const fence = (obj) => '```json\n' + JSON.stringify(obj, null, 2) + '\n```';
 
 const T = {
   ja: {
-    models: 'データモデル', overview: '概要', subjects: 'サブジェクト', attributes: '属性', example: '例（key-values）', normalized: '例（normalized）', exampleNote: (href) => `例は架空のシナリオ（東京都千代田区の大雨対応）です。地名とコードは実在のものですが、出来事・人・チームは架空です。書き方は[例の書き方](${href})。`,
-    linkHeader: 'Link ヘッダー', notes: '注記', shared: '複数のモデルで共有する属性', usedBy: '使用モデル', typeIri: '型 IRI', otherName: '英語名', useGuide: (href) => `データの検証とブローカーへの送り方は[使い方](${href})を参照。`, context: '@context',
+    models: 'データモデル', overview: '概要', subjects: 'サブジェクト', attributes: '属性', example: '例（key-values）', normalized: '例（normalized）', exampleNote: (href) => `例は架空のシナリオ（東京都千代田区の大雨対応）です。地名とコードは実在のものですが、出来事・人・チームは架空です。書き方は[例の書き方](${href})にあります。`,
+    linkHeader: 'Link ヘッダー', notes: '注記', shared: '複数のモデルで共有する属性', usedBy: '使用モデル', typeIri: '型 IRI', otherName: '英語名', useGuide: (href) => `データの検証とブローカーへの送り方は[使い方](${href})にあります。`, context: '@context',
     contextExact: '（このバージョン、不変）', contextAlias: '（エイリアス、互換性のある最新版）', schema: 'JSON Schema', examples: '例',
     source: 'ソース', namespace: '名前空間', version: 'バージョン', vocabulary: '語彙', vocabularyNote: '（RDFS: クラス、サブクラス関係、日英ラベル）',
     tryIt: '例を試す',
     extendThis: (href) => `このモデルに独自の属性を足すときは、[拡張ビルダー](${href})で @context と JSON Schema を作れます。`,
     required: '必須', pii: '個人情報', deprecated: '非推奨', value: '値', relationshipTo: '→', license: 'このページの文章は CC BY 4.0、モデルのファイル（JSON Schema、@context、例）は CC0 です。',
     playground: (href) => `[JSON-LD Playground で開く](${href})：属性ごとの IRI（展開形）が見られます。`,
-    improveTitle: '改善の提案', improve: (issue, form, guide) => `属性が足りない、説明がおかしいと思ったら、[Issue で知らせてください](${issue})。新しい属性やモデルは[提案フォーム](${form})から。進め方は[貢献する](${guide})にあります。`,
+    improveTitle: '改善の提案', improve: (issue, form, guide) => `属性が足りない、説明がおかしいと思ったら、[Issue で知らせてください](${issue})。新しい属性やモデルは[提案フォーム](${form})から提案できます。進め方は[貢献する](${guide})にあります。`,
     deprecatedNote: (link) => `このモデルは非推奨です。${link ? `代わりに ${link} を使ってください。` : ''}公開済みのファイルと URL はそのまま残ります。`, valueType: '値型', valueTypeNote: 'これはエンティティ型ではなく、属性の値として使う構造です。', fields: 'フィールド', versions: 'バージョン', current: '現行', usage: '使い方',
-    subjectsIntro: 'サブジェクトごとに 1 つの `@context` を公開しています。型と属性の IRI は `/ns/<subject>/<term>` で解決できます。',
+    subjectsIntro: 'モデルは分野ごとの「サブジェクト」（災害対応、交通など）にまとめ、サブジェクトごとに 1 つの `@context` を公開しています。型と属性の IRI は `/ns/<subject>/<term>` で解決できます。',
     statusLabel: { draft: 'ドラフト', stable: '安定', deprecated: '非推奨' },
     sourceLabel: { minted: 'このカタログで定義', profile: '上流モデルの日本向け拡張', global: '上流（Smart Data Models）' },
     subject: 'サブジェクト', mappings: '対応する標準', mappingField: 'このモデル', mappingTo: '対応先', mappingNote: '備考', none: '対応なし',

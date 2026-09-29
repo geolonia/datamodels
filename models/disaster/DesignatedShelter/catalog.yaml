@@ -2,7 +2,7 @@ title:
   ja: 指定避難所
   en: Designated shelter
 description:
-  ja: 指定避難所（災害対策基本法第49条の7）1件。避難した人が一定期間滞在する施設のマスタで、市町村が登録し国土地理院が公開する。開設状況や避難者数は持たない（それは EvacuationShelter で、shelter でここを参照する）。
+  ja: 指定避難所（災害対策基本法第49条の7）1か所を表す。避難した人が一定期間滞在する施設の基本情報（名称・所在地などをまとめたマスタ）で、市町村が登録し国土地理院が公開する。開設状況や避難者数は持たない（それは EvacuationShelter で表し、shelter でここを参照する）。
   en: One designated shelter (指定避難所, Basic Act on Disaster Management Art. 49-7), the master record of a facility where evacuees stay for a while, as municipalities register it and GSI publishes it. Opening status and evacuee counts are not here (that is EvacuationShelter, which links here with shelter).
 status: draft
 tags:
