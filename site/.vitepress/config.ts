@@ -5,6 +5,7 @@
 import type MarkdownIt from 'markdown-it'
 import { defineConfig, type DefaultTheme } from 'vitepress'
 import { loadSubjects, subjectUrls, modelUrls, BASE_URL } from '../../scripts/lib/models.mjs'
+import { tokenize } from './search-tokenize.mjs'
 
 const subjects = await loadSubjects()
 const rel = (url: string) => url.slice(BASE_URL.length)
@@ -118,6 +119,9 @@ export default defineConfig({
     search: {
       provider: 'local',
       options: {
+        // Japanese has no spaces: split it into words (search-tokenize.mjs), for the index and the queries.
+        // A query of several words (福祉避難所 → 福祉, 避難所) finds pages that have all of them.
+        miniSearch: { options: { tokenize }, searchOptions: { combineWith: 'AND' } },
         locales: {
           root: {
             translations: {
