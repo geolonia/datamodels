@@ -28,10 +28,10 @@ This catalog references and extends what exists elsewhere instead of copying it.
 | [Nationwide common shelter and evacuation site ID (全国共通避難所・避難場所ID)](https://www.bousai.go.jp/taisaku/hinanjo/r6_setsumeikai/pdf/shiryo10.pdf) | A 14-character ID assigned through the Cabinet Office's new comprehensive disaster information system and GSI's shelter data maintenance system; the 共通ID column of GSI's data | `nationalShelterId` in the shelter and evacuation site models |
 | [Traffic regulation information, extended standard format (交通規制情報 拡張版標準フォーマット)](https://www.jartic.or.jp/d/opendata/typeD_kisei_73_k_2.1.pdf) | Defined by the National Police Agency and published by the Japan Road Traffic Information Center (JARTIC): the nationwide format for the traffic regulation data of the prefectural police. A regulation is located as a point, line or area | Needs mapping; mapped in this catalog. [RoadRestriction](/en/models/transportation/RoadRestriction/) |
 | [Address Base Registry](https://www.digital.go.jp/policies/base_registry_address) | Base data for addresses including the town id (町字ID) | Referenced by `abrMachiazaId` in JapaneseAddress |
-| [Spatial ID (guideline)](https://www.ipa.go.jp/digital/architecture/guidelines/4dspatio-temporal-guideline.html) | METI, MLIT, GSI, NEDO and IPA. A common identifier for 3D space and the guideline for using it with time as 4D spatiotemporal information | Native in GeonicDB |
+| [Spatial ID (guideline)](https://www.ipa.go.jp/digital/architecture/guidelines/4dspatio-temporal-guideline.html) | METI, MLIT, GSI, NEDO and IPA. A common identifier for 3D space and the guideline for using it with time as 4D spatiotemporal information | Not part of the NGSI-LD standard; some brokers support it as their own extension |
 
 ## Finding a model in Smart Data Models
 
-Use the [search](https://smartdatamodels.org/index.php/list-of-data-models-3/) on the Smart Data Models site or browse the `dataModel.<Subject>` repositories in the [smart-data-models](https://github.com/smart-data-models) GitHub organisation. GeonicDB's MCP tool `data_models` lists and searches them too.
+Use the [search](https://smartdatamodels.org/index.php/list-of-data-models-3/) on the Smart Data Models site or browse the `dataModel.<Subject>` repositories in the [smart-data-models](https://github.com/smart-data-models) GitHub organisation.
 
 To extend a model you found for Japan, see [Extending models](/en/guide/extend). To have it listed in this catalog, open an [issue](https://github.com/geolonia/datamodels/issues).
