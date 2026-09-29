@@ -43,7 +43,7 @@ curl -X POST "$GEONICDB_BASE_URL/custom-data-models" \
 
 `Fiware-Service` and `NGSILD-Tenant` both name the tenant, and GeonicDB treats them as equivalent ([multi-tenancy](https://docs.geonicdb.com/en/core-concepts/multi-tenancy)). `NGSILD-Tenant` is the NGSI-LD name, so the entity steps (`/ngsi-ld/v1/...`) use it; registration (`/custom-data-models`) is not part of the NGSI-LD API and uses `Fiware-Service`.
 
-`201 Created` means it is registered; `409` means a model of that type already exists. With the `geonic` CLI: `geonic models create RoadRestriction.json`.
+`201 Created` means it is registered; `409` means a model of that type already exists. With the `geonic` CLI: `geonic models create @RoadRestriction.json`.
 
 The registered definition validates attribute types, required attributes and enums (models with `additionalProperties: false` reject undefined attributes) and uses the context at `contextUrl` as the vocabulary of the type.
 
