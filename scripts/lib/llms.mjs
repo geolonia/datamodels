@@ -16,7 +16,6 @@ const GUIDES = [
   ['urls', 'URLs that never change', 'which URL to use, versions, aliases, caching, IRI resolution'],
   ['versioning', 'Versions and deprecation', 'how subjects are versioned, how deprecation works, the stages of a model'],
   ['catalogs', 'Other data model catalogs', 'catalogs and standards used globally and in Japan, and how this catalog relates to them'],
-  ['procurement', 'One line in the procurement specification', 'sample wording for requiring standards compliance, interoperability and data portability, and how to check a proposal'],
   ['tips', 'Tips & Tricks', 'match attribute names to your own terms with JSON-LD aliases'],
 ];
 

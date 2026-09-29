@@ -95,7 +95,7 @@ https://datamodels.jp/adapters/<name>/<subject>/<Type>.json  adapter output
 Contract:
 
 1. **Immutability.** A published exact-version file never changes and is never removed. `published-manifest.json` records its SHA-256; CI fails on any change, and `npm run check:live` compares the served bytes after every deploy.
-2. **Headers.** `.jsonld` as `application/ld+json`, schemas as `application/schema+json`, CORS open, `Cache-Control: public, max-age=31536000, immutable` for exact versions and a short max-age for aliases.
+2. **Headers.** `.jsonld` as `application/ld+json`, schemas as `application/schema+json`, CORS open, `Cache-Control: public, max-age=31536000, immutable` for exact versions and a short max-age for aliases. During the pre-release, when exact versions may still be corrected in place, the build gives them the aliases' short max-age instead (`"prerelease"` in `published-manifest.json`, `scripts/lib/cache.mjs`).
 3. **Term IRIs resolve** to the documenting page, and the namespace IRI to the subject page. No content negotiation in 1.0.0.
 4. **Term IRIs never change meaning.** A breaking change mints a new IRI; the old one stays published and documented.
 5. **Upstream IRIs are never re-minted.**
@@ -162,7 +162,7 @@ Brokers integrate from the other side: GeonicDB, for example, can read `catalog.
 
 ## Hosting
 
-Cloudflare Workers static assets, deployed by Cloudflare Workers Builds from `main`; no deploy credential is stored in GitHub, and CI only runs a dry-run deploy. `_headers` and `_redirects` carry the URL contract: one `*` per rule, headers from several matching rules are joined unless detached with `! Header`, so the immutable cache rules are generated per file. A Worker script would stop `_headers` and `_redirects` from applying, so any host-level redirect belongs in a Redirect Rule on the zone instead. Cloudflare Pages was not chosen because Cloudflare directs new projects to Workers; GitHub Pages cannot set response headers.
+Cloudflare Workers static assets, deployed by Cloudflare Workers Builds from `main`; no deploy credential is stored in GitHub, and CI only runs a dry-run deploy. `_headers` and `_redirects` carry the URL contract: one `*` per rule, headers from several matching rules are joined unless detached with `! Header`, so the exact-version cache rules are generated per file. A Worker script would stop `_headers` and `_redirects` from applying, so any host-level redirect belongs in a Redirect Rule on the zone instead. Cloudflare Pages was not chosen because Cloudflare directs new projects to Workers; GitHub Pages cannot set response headers.
 
 ## Licensing and contribution
 

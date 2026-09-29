@@ -6,7 +6,7 @@
 //   3. copy public/ on top    (_headers, _redirects header)
 //   4. publish the machine files from models/ (contexts, schemas, examples,
 //      vocabularies, catalog.json) plus each adapter's files (adapters/*), and
-//      append the generated redirects and immutable-cache header rules
+//      append the generated redirects and exact-version cache header rules
 //   5. write /llms.txt (scripts/lib/llms.mjs); VitePress writes sitemap.xml
 //
 // A versioned file that has been published must never be rewritten with

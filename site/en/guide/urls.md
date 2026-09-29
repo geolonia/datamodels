@@ -8,7 +8,7 @@ description: The URL contract of this catalog. Versions, aliases, caching and IR
 A `@context` URL is stored with every entity and referenced years later. This catalog makes the following promises about the URLs it publishes.
 
 ::: warning Pre-release
-These promises apply **from the official launch**. Until then, published files, `v1.0.0` included, may still be corrected in place. Do not reference them from production data before the launch.
+These promises apply **from the official launch**. Until then, published files, `v1.0.0` included, may still be corrected in place. Do not reference them from production data before the launch. So that corrections reach you quickly, exact versions are cached for 5 minutes until the launch, not for a year as immutable.
 :::
 
 ## The contract
