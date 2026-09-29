@@ -12,6 +12,7 @@ import { attributesOf, subjectUrls, modelUrls, BASE_URL, ROOT, CORE_CONTEXT_URL 
 import { sharedTerms } from './shared-terms.mjs';
 import { graphSvg, graphTitle } from './graph.mjs';
 import { listReleases } from './releases.mjs';
+import { standardsPage } from './standards.mjs';
 
 const SITE = join(ROOT, 'site');
 const rel = (url) => url.slice(BASE_URL.length);
@@ -280,6 +281,9 @@ export async function generateSitePages(subjects) {
     const base = join(SITE, prefix.replace(/^\//, ''), 'models');
     await rm(base, { recursive: true, force: true });
     await put(join(base, 'index.md'), indexPage(lang, prefix, subjects));
+    // /models/standards/ sits next to the subjects, so no subject may take that name.
+    if (subjects.some((s) => s.name === 'standards')) throw new Error('a subject named "standards" would replace /models/standards/');
+    await put(join(base, 'standards', 'index.md'), standardsPage(lang, prefix, subjects));
     for (const s of subjects) {
       await put(join(base, s.name, 'index.md'), await subjectPage(lang, prefix, s));
       for (const m of s.models) await put(join(base, s.name, m.type, 'index.md'), modelPage(lang, prefix, s, m));

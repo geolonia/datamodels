@@ -42,6 +42,7 @@ export async function llmsTxt(subjects) {
   }
   txt += `## Optional\n\n`;
   txt += `- [catalog.json](${BASE_URL}/catalog.json): every model with its type IRI, context, schema, vocabulary, examples and adapter URLs\n`;
+  txt += `- [Standards mapped](${BASE_URL}/en/models/standards/): every external standard a model is mapped to (EEI, the municipal standard open datasets, GSI, GIF and more), with a link to each field-by-field table\n`;
   txt += `- [Source repository](https://github.com/geolonia/datamodels): schemas, mappings to other standards, notes\n`;
   txt += `- [Licences](${BASE_URL}/LICENSE-CONTENT): machine-readable files CC0 1.0, prose CC BY 4.0, code Apache-2.0\n`;
   return txt;
