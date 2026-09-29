@@ -5,7 +5,9 @@ standard:
     ja: 国土地理院「指定避難所データ」（市町村別 CSV、避難所等データダウンロードサイト）
     en: "GSI's designated shelter data (one CSV per municipality, 避難所等データダウンロードサイト)"
   url: https://hinanmap.gsi.go.jp/hinanjocp/hinanbasho/koukaidate.html
-  license: 国土地理院コンテンツ利用規約 and the site's ご利用上の注意 (the data may not be current; 指定緊急避難場所 and 指定避難所 differ; designation is per hazard for sites; pass these notes on when sharing)
+  license:
+    ja: "国土地理院コンテンツ利用規約と、同サイトの「ご利用上の注意」（データは最新とは限らない。指定緊急避難場所と指定避難所は別のもの。指定緊急避難場所は災害の種別ごとに指定される。データを他に提供するときはこの注意も伝える）"
+    en: "GSI's terms of use for its content (国土地理院コンテンツ利用規約) and the site's notes on use (ご利用上の注意): the data may not be current; 指定緊急避難場所 and 指定避難所 differ; designation is per hazard for sites; pass these notes on when sharing"
   note:
     ja: "市町村が登録した指定避難所を国土地理院が全国分公開するもの。文字コードは UTF-8（BOM 付き）。市町村の ID と収容人数は含まない。"
     en: "GSI publishes the designated shelters every municipality registers, nationwide. UTF-8 with a BOM. It has no municipal ID and no capacity."

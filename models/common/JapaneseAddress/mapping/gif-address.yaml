@@ -6,7 +6,9 @@ standard:
     ja: デジタル庁 GIF コアデータモデル「住所」
     en: Digital Agency GIF core data model "Address"
   url: https://github.com/JDA-DM/GIF/tree/main/430_%E3%82%B3%E3%82%A2%E3%83%87%E3%83%BC%E3%82%BF%E3%83%A2%E3%83%87%E3%83%AB
-  license: CC BY 4.0 (schema), CC0 1.0 (repository)
+  license:
+    ja: "スキーマは CC BY 4.0、リポジトリは CC0 1.0"
+    en: "CC BY 4.0 (schema), CC0 1.0 (repository)"
   note:
     ja: GIF の住所は町字（streetAddress）に丁目を含め、番地以下を cityBlock ひとつにまとめる。JapaneseAddress は丁目・番地・号を分けて持つため、GIF へ変換するときは連結する。
     en: GIF keeps chome inside streetAddress (町字) and folds everything below into a single cityBlock. JapaneseAddress keeps chome, banchi and go apart, so a conversion to GIF concatenates them.

@@ -49,17 +49,17 @@ Smart Data Models のモデルを元にするときも書き方は同じです�
 
 今のところ、カタログのモデルはすべてカタログ独自の型です。上流の IRI を使っているのは一部の属性だけです。通行規制の `roadName`・`validFrom`・`validTo`（Smart Data Models）、`name`（NGSI-LD）、住所や添付ファイルなどに使う schema.org の語彙がこれに当たります。
 
-最初のサブジェクト [災害対応](/models/disaster/) は、高松市の水防アプリのデータモデルを基にしたもので、[タスク管理](/models/task/)の上に組み立てています（共通の属性はタスク管理の IRI を使う）。当初あった `DisasterEvent`（`Project` の**エイリアス**）と通報・対応業務・申し送り・現地写真（`Task`・`Comment`・`Attachment` の**サブクラス**）は、外部の基準・仕様に基づかないテナント固有の型だったため 2026-09-24 に廃止しました（詳細は [docs/design.md](https://github.com/geolonia/datamodels/blob/main/docs/design.md) の「Versioning and lifecycle」）。通行止めと避難所は上流（Smart Data Models の `RoadSegment`・`Alert`、デジタル庁の自治体標準オープンデータセット）と比較した結果、型としては合うものがなく独自のままですが、属性の IRI と状態の値域は借りています。通行止めはその後、国の基準（警察庁・国土交通省）に基づく通行規制として作り直し、災害に限らないため[交通](/models/transportation/)サブジェクトの `RoadRestriction` に移しました（2026-09-25）。検討の経過は各モデルの注記と [Issue #16](https://github.com/geolonia/datamodels/issues/16) にあります。エイリアス・サブクラスの書き方自体は [Tips & Tricks](/guide/tips) を参照してください。
+最初のサブジェクト（分野ごとのモデルのまとまり）である[災害対応](/models/disaster/)は、高松市の水防アプリのデータモデルを基にしたもので、[タスク管理](/models/task/)の上に組み立てています（共通の属性はタスク管理の IRI を使う）。当初あった `DisasterEvent`（`Project` の**エイリアス**）と通報・対応業務・申し送り・現地写真（`Task`・`Comment`・`Attachment` の**サブクラス**）は、外部の基準・仕様に基づかないテナント固有の型だったため 2026-09-24 に廃止しました（詳細は [docs/design.md](https://github.com/geolonia/datamodels/blob/main/docs/design.md) の「Versioning and lifecycle」）。通行止めと避難所は上流（Smart Data Models の `RoadSegment`・`Alert`、デジタル庁の自治体標準オープンデータセット）と比較した結果、型としては合うものがなく独自のままですが、属性の IRI と状態の値域は借りています。通行止めはその後、国の基準（警察庁・国土交通省）に基づく通行規制として作り直し、災害に限らないため[交通](/models/transportation/)サブジェクトの `RoadRestriction` に移しました（2026-09-25）。検討の経過は各モデルの注記と [Issue #16](https://github.com/geolonia/datamodels/issues/16) にあります。エイリアス・サブクラスの書き方自体は [Tips & Tricks](/guide/tips) を参照してください。
 
 ### 守ること
 
-- 上流の属性の意味や型を変えない。必要なら新しい属性を足す。
+- 上流の属性の意味や型は変えません。必要なら新しい属性を足します。
 - 状態の属性（`progress`、`openingStatus`、`restrictionStatus` など）の値域は閉じています。合う値がないときは状態の属性を省き、`statusLabel` に元の呼び方を書きます（そのとき `statusLabel` は必須）。近い値に無理に当てはめないでください。
-- NGSI-LD core context の予約語（`status`, `description`, `location`, `createdAt`, `modifiedAt`, `observedAt` など）を再定義しない。カタログの CI が弾きます。`status` が要るときは `incidentStatus` のように名前を変えます。
-- 名前空間はサブジェクト（分野）で分け、地域名・顧客名・案件名は入れない。
-- 共通の構造は [common](/models/common/) サブジェクトの値型を使う。住所は [JapaneseAddress](/models/common/JapaneseAddress/)、`location` などの GeoProperty は [Geometry](/models/common/Geometry/)。使えるジオメトリを絞るときは `$ref` の横で制約する（Attachment は点だけ）。
-- モデルに当たるデータセットがデジタル庁の[自治体標準オープンデータセット](https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test)にあれば、対応表（`mapping/jichitai-opendata-*.yaml`）を書く。自治体が自分のデータをそのままモデルに当てはめられるようにするためです。例は [EvacuationSite](/models/disaster/EvacuationSite/#mapping-jichitai-opendata-site)、所在地の列は [JapaneseAddress](/models/common/JapaneseAddress/#mapping-jichitai-opendata-address) と [Geometry](/models/common/Geometry/#mapping-jichitai-opendata-location) が対応済みです。当たるデータセットがあるかはレビューで確認します（CI では検査しません）。
-- 既にある型に名前だけ合わせたいならエイリアス（`x-alias-of`、属性も必須項目も同じ）、属性を足す・型を分けたいならサブクラス（`x-subclass-of`、同名の属性は親の IRI、親の必須項目は維持）。CI が両方を検査します。
+- NGSI-LD core context の予約語（`status`, `description`, `location`, `createdAt`, `modifiedAt`, `observedAt` など）は再定義しません。カタログの CI が弾きます。`status` が要るときは `incidentStatus` のように名前を変えます。
+- 名前空間はサブジェクト（分野）で分け、地域名・顧客名・案件名は入れません。
+- 共通の構造は [common](/models/common/) サブジェクトの値型を使います。住所は [JapaneseAddress](/models/common/JapaneseAddress/)、`location` などの GeoProperty は [Geometry](/models/common/Geometry/)。使えるジオメトリを絞るときは `$ref` の横で制約します（Attachment は点だけ）。
+- モデルに当たるデータセットがデジタル庁の[自治体標準オープンデータセット](https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test)にあれば、対応表（`mapping/jichitai-opendata-*.yaml`）を書きます。自治体が自分のデータをそのままモデルに当てはめられるようにするためです。例は [EvacuationSite](/models/disaster/EvacuationSite/#mapping-jichitai-opendata-site)、所在地の列は [JapaneseAddress](/models/common/JapaneseAddress/#mapping-jichitai-opendata-address) と [Geometry](/models/common/Geometry/#mapping-jichitai-opendata-location) が対応済みです。当たるデータセットがあるかはレビューで確認します（CI では検査しません）。
+- 既にある型に名前だけ合わせたいならエイリアス（`x-alias-of`、属性も必須項目も同じ）、属性を足す・型を分けたいならサブクラス（`x-subclass-of`、同名の属性は親の IRI、親の必須項目は維持）を使います。CI が両方を検査します。
 
 ## 例の書き方 {#examples}
 

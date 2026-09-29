@@ -52,3 +52,14 @@ test('a standard\'s files sit together, and a pipe in a name cannot break the ta
   assert.match(page, /\| \[A \\\| B\]\(<https:\/\/www\.rfc-editor\.org\/rfc\/rfc0000>\) \| \[`X`\]/);
   assert.match(page, /\| 0 of 1 \| — \|/);
 });
+
+test('a licence is shown in the page\'s language, with no English on the Japanese page', () => {
+  const english = /\b(and|under|the|compatible|schema|repository)\b/;
+  for (const r of standardRows('ja', subjects)) assert.doesNotMatch(r.license, english, `${r.type} ${r.anchor}`);
+  const en = standardRows('en', subjects);
+  assert.ok(en.some((r) => r.license.startsWith('Public Data License (Version 1.0)')));
+  const one = (license) => standardRows('en', [{ name: 'x', version: '1.0.0', title: { en: 'X' }, models: [{ type: 'X', catalog: {}, mappings: [{ name: 'x', standard: { name: { en: 'X' }, url: 'https://www.rfc-editor.org/rfc/rfc0000', license }, fields: {} }] }] }])[0].license;
+  assert.equal(one('CC BY 4.0'), 'CC BY 4.0', 'a plain string reads the same in both languages');
+  assert.equal(one({ ja: 'スキーマは CC BY 4.0', en: 'CC BY 4.0 (schema)' }), 'CC BY 4.0 (schema)');
+  assert.equal(one(undefined), '');
+});

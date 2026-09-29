@@ -4,7 +4,7 @@
 
 Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included; it is referenced by externalShelterId. Only opening status and evacuee counts live here. When the shelter is also a designated emergency evacuation site, `site` links to its EvacuationSite.
 
-避難所の運用状況オーバーレイ1件。避難所そのもののマスタ（名称・位置）は含まず、外部の避難所データを externalShelterId で参照する。開設状況と避難者数だけを持つ。同じ場所の指定緊急避難場所は `site` で EvacuationSite を参照する。
+避難所1か所の運用状況を表す。避難所そのものの基本情報（名称・位置などのマスタ）は含まず、外部の避難所データを externalShelterId で参照して、その上に開設状況と避難者数だけを重ねる。同じ場所の指定緊急避難場所は `site` で EvacuationSite を参照する。
 
 - Type IRI: `https://datamodels.jp/ns/disaster/EvacuationShelter`
 - Context: `https://datamodels.jp/context/disaster/v1.jsonld` (alias), `https://datamodels.jp/context/disaster/v1.0.0.jsonld` (exact)

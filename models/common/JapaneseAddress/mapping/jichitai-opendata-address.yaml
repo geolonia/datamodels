@@ -5,7 +5,9 @@ standard:
     ja: 自治体標準オープンデータセット・データ項目定義書A（20260801版）の所在地の項目（デジタル庁）
     en: "Municipal standard open dataset, data item definition sheet A (2026-08-01), location columns (Digital Agency)"
   url: https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test
-  license: 公共データ利用規約（第1.0版）(PDL1.0), compatible with CC BY 4.0
+  license:
+    ja: "公共データ利用規約（第1.0版）（PDL1.0、CC BY 4.0 と互換）"
+    en: "Public Data License (Version 1.0) (PDL1.0), compatible with CC BY 4.0"
   note:
     ja: "定義書Aのうち、01 公共施設、02 文化財、03 指定緊急避難場所、05 子育て施設、07 公衆無線LAN、08 AED、09 介護サービス事業所、10 医療機関、11 観光施設、12 イベント、13 公衆トイレ、14 消防水利施設の 12 のデータセットが同じ所在地の項目を持つ（15 食品等営業許可は連結表記・所在地の全国地方公共団体コード・町字ID のみ）。項目名は日本語名（英語名）で示す。項目番号はデータセットごとに異なる。"
     en: "Of definition sheet A, 12 datasets share the same location columns: 01 public facilities, 02 cultural properties, 03 designated emergency evacuation sites, 05 childcare facilities, 07 public Wi-Fi, 08 AEDs, 09 care service providers, 10 medical institutions, 11 tourist facilities, 12 events, 13 public toilets, 14 fire water supplies (15 food business permits has only the full address, the location's local government code and the town id). Columns are given as the Japanese name (English item name); item numbers differ per dataset."

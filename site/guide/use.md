@@ -7,16 +7,16 @@ description: カタログのモデルで JSON を検証し、NGSI-LD ブロー�
 
 各モデルのページには、`@context`、JSON Schema、例の URL があります。どれも普通の URL なので、特定の製品は要りません。使い方は 3 通りあります。
 
-- **JSON として**: JSON Schema で、API のリクエスト、フォームの入力、CSV から変換したデータなどを検証する（手順 2）。
-- **NGSI-LD で**: 標準の NGSI-LD API を話すブローカーに、そのまま送る（手順 3）。モデルの形（`id`・`type`、属性の種類、normalized の例）は NGSI-LD の約束に従っています。
-- **Linked Data として**: `@context` を付けると RDF になり、各属性の意味を IRI で指せる（手順 4）。
+- **JSON として**: JSON Schema で、API のリクエスト、フォームの入力、CSV から変換したデータなどを検証します（手順 2）。
+- **NGSI-LD で**: 標準の NGSI-LD API を話すブローカーに、そのまま送ります（手順 3）。モデルの形（`id`・`type`、属性の種類、normalized の例）は NGSI-LD の約束に従っています。
+- **Linked Data として**: `@context` を付けると RDF になり、各属性の意味を IRI で指せます（手順 4）。
 
 コードブロックは右上のボタンでコピーできます。
 
 ## 1. URL を決める
 
-- `@context` は**バージョン付きの URL**（例 `https://datamodels.jp/context/transportation/v1.0.0.jsonld`）を使うと、中身が変わりません。互換性のある最新版に追従したいときは `v1.jsonld` を使います。詳しくは[変わらない URL](/guide/urls)。
-- JSON Schema も同じで、`/schema/<サブジェクト>/<型>/v1.0.0.json` です。
+- `@context` は**バージョン付きの URL**（例 `https://datamodels.jp/context/transportation/v1.0.0.jsonld`）を使うと、中身が変わりません。互換性のある最新版に追従したいときは `v1.jsonld` を使います。詳しくは[変わらない URL](/guide/urls)にあります。
+- JSON Schema も同じで、`/schema/<サブジェクト>/<型>/v1.0.0.json` です。サブジェクトは分野ごとのモデルのまとまり（`transportation` など）です。
 
 以下の例は[通行規制（RoadRestriction）](/models/transportation/RoadRestriction/)で書いていますが、URL を替えればどのモデルでも同じです。
 

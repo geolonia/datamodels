@@ -63,6 +63,13 @@ test('the standard needs a bilingual name; url, licence, note and structure are 
   assert.deepEqual(mappingProblems({ ...ok, standard: { name: { ja: '標準' } } }, task), ['standard.name needs ja and en, and nothing else (quote a text that contains a comma)']);
   assert.deepEqual(mappingProblems({ ...ok, standard: { ...ok.standard, url: 'example.org' } }, task), ['standard.url must be an http(s) URL with a host, got "example.org"']);
   assert.deepEqual(mappingProblems({ ...ok, standard: { ...ok.standard, note: { en: 'only English' } } }, task), ['standard.note needs ja and en, and nothing else (quote a text that contains a comma)']);
+  const licence = (license) => mappingProblems({ ...ok, standard: { ...ok.standard, license } }, task);
+  const licenceProblem = ['standard.license must be a non-empty string, or ja and en and nothing else (quote a text that contains a comma)'];
+  assert.deepEqual(licence('CC BY 4.0'), []);
+  assert.deepEqual(licence({ ja: 'スキーマは CC BY 4.0', en: 'CC BY 4.0 (schema)' }), []);
+  assert.deepEqual(licence(' '), licenceProblem);
+  assert.deepEqual(licence({ en: 'only English' }), licenceProblem);
+  assert.deepEqual(licence(['CC BY 4.0']), licenceProblem);
   assert.deepEqual(mappingProblems({ ...ok, structure: { ja: '構造' } }, task), ['structure needs ja and en, and nothing else (quote a text that contains a comma)']);
   assert.deepEqual(mappingProblems({ ...ok, standard: { ...ok.standard, urI: 'https://example.org/std' } }, task), ['unknown key "standard.urI" (allowed: name, url, license, note)']);
   assert.deepEqual(mappingProblems({ ...ok, feilds: {} }, task), ['unknown key "feilds" (allowed: standard, fields, structure, convert)']);
