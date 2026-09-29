@@ -175,7 +175,7 @@ Brokers integrate from the other side: GeonicDB, for example, can read `catalog.
 Decided 2026-09-29 (#121). The site credits Geolonia, which runs the catalog, and GeonicDB, Geolonia's broker, as facts and as a contribution, not as promotion:
 
 - `/about` and the footer name Geolonia as the operator.
-- A page for one product sits under "Using the models", after the steps that work with any broker, and says who makes the product. Other products get a page on the same terms when someone contributes one.
+- A page about a single product sits under "Using the models", after the steps that work with any broker, and says who makes the product. Other products get a page on the same terms when someone contributes one.
 - General pages (the start page, `/guide/use`, `/guide/extend`, `/guide/catalogs` and the others) describe NGSI-LD and brokers in general terms. Where they name a product, they say what was tried with it and what was not tried, and they do not present one product as the only choice.
 - No sales wording, rankings or comparisons between products.
 

@@ -165,10 +165,10 @@ Each subject's vocabulary (`/vocab/<subject>/v1.0.0.jsonld`) is RDFS: its types 
 
 ## Brokers tried
 
-The steps above use only the standard NGSI-LD API, so they should work the same with any NGSI-LD compliant broker. So far, though, they have been tried with GeonicDB only. Orion-LD, Scorpio, Stellio and others have not been tried yet.
+The steps above use only the standard NGSI-LD API, so they should work the same with any NGSI-LD compliant broker. So far, though, they have been tried with GeonicDB only. Other brokers, such as Orion-LD, Scorpio and Stellio, have not been tried yet.
 
 Some products add features on top, such as registering a model so the server validates entities.
 
 - [GeonicDB](/en/guide/geonicdb) (Geolonia's product): register a model and the server validates creates and updates. A ready-made definition is published for each model. For now, requests that carry the catalog `@context` (as in the example above) do not find the registered model and are accepted without validation; a fix is in progress on the GeonicDB side (see the warning on the GeonicDB page). Validating before sending (step 2) works regardless.
 
-If you have tried another broker, tell us the result with an [issue or pull request](https://github.com/geolonia/datamodels), including when something did not work.
+If you have tried another broker, please tell us the result in an [issue or pull request](https://github.com/geolonia/datamodels), including when something did not work.
