@@ -1,4 +1,5 @@
 // Load the model repository: models/<subject>/{subject.yaml, context.jsonld, <Type>/...}
+import { readFileSync } from 'node:fs';
 import { readFile, readdir, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -11,6 +12,8 @@ export const DIST = join(ROOT, 'dist');
 export const BASE_URL = 'https://datamodels.jp';
 export const CORE_CONTEXT_URL = 'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld';
 export const CORE_CONTEXT_FIXTURE = join(ROOT, 'test', 'fixtures', 'ngsi-ld-core-context-v1.8.jsonld');
+/** Terms the pinned core context defines (location, description, ...): protected, and left to the broker. */
+export const CORE_TERMS = new Set(Object.keys(JSON.parse(readFileSync(CORE_CONTEXT_FIXTURE, 'utf8'))['@context']).filter((k) => !k.startsWith('@')));
 
 const SEMVER = /^\d+\.\d+\.\d+$/;
 
@@ -95,9 +98,9 @@ export async function loadSubjects() {
   return subjects;
 }
 
-/** Attributes of a model: every schema property except id and type. */
+/** Attributes of a model: every schema property except id, type and @context. */
 export function attributesOf(model) {
-  return Object.entries(model.schema.properties ?? {}).filter(([k]) => k !== 'id' && k !== 'type');
+  return Object.entries(model.schema.properties ?? {}).filter(([k]) => k !== 'id' && k !== 'type' && k !== '@context');
 }
 
 // The projection between the two forms lives in ngsi.mjs, which has no Node

@@ -57,6 +57,7 @@ const schema = {
   properties: isValue ? {} : {
     id: { type: 'string', format: 'uri', description: 'Entity id (URN)' },
     type: { type: 'string', const: type, description: 'Entity type' },
+    '@context': { description: 'JSON-LD context of the entity, optional: a context URL or a list of context URLs', oneOf: [{ type: 'string', format: 'uri' }, { type: 'array', items: { type: 'string', format: 'uri' }, minItems: 1 }] },
   },
   required: isValue ? [] : ['id', 'type'],
   additionalProperties: false,

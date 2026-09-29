@@ -329,3 +329,19 @@ test('an alias survives a different key and required order', () =>
 test('a product-specific annotation in a schema fails', () =>
   withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'schema.json'), (s) => { s.properties.roadName['x-geonicdb'] = { indexed: true }; }),
     /roadName: product-specific key x-geonicdb; move it into an adapter/));
+
+// x-iri must be what a JSON-LD processor makes of the attribute name (#115):
+// the core context maps location to ngsi-ld:location, not to a fragment of the
+// context file's URL.
+test('an x-iri that differs from the core context expansion fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'schema.json'), (s) => { s.properties.location['x-iri'] = 'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld#location'; }),
+    /RoadRestriction\/schema\.json: location: x-iri is https:\/\/uri\.etsi\.org\/ngsi-ld\/v1\/ngsi-ld-core-context-v1\.8\.jsonld#location, but the context expands "location" to https:\/\/uri\.etsi\.org\/ngsi-ld\/location/));
+
+test('an x-iri that differs from the subject context expansion fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'task', 'Task', 'schema.json'), (s) => { s.properties.progress['x-iri'] = 'https://datamodels.jp/ns/disaster/progress'; }),
+    /Task\/schema\.json: progress: x-iri is https:\/\/datamodels\.jp\/ns\/disaster\/progress, but the context expands "progress" to https:\/\/datamodels\.jp\/ns\/task\/progress/));
+
+// /guide/use adds @context to key-values data; the closed entity schemas must accept it.
+test('an entity schema that rejects @context in key-values data fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'task', 'Task', 'schema.json'), (s) => { delete s.properties['@context']; }),
+    /Task\/schema\.json: rejects example\.json with "@context"/));

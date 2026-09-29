@@ -1,6 +1,7 @@
 // Validate every subject and model in models/. Runs in CI via `npm run check`.
 //
-//   1. key-values example validates against schema.json
+//   1. key-values example validates against schema.json, also with the
+//      @context the use guide tells readers to add
 //   2. normalized example follows the NGSI-LD representation rules and its
 //      key-values projection validates against schema.json
 //   3. the normalized example expands with a JSON-LD processor using the
@@ -9,6 +10,8 @@
 //   4. the context defines every attribute the schemas use (unless the core
 //      context defines it), defines every type, and redefines no core term
 //   5. type IRIs are unique across subjects; the type name matches the folder
+//   6. every attribute's x-iri is what its name expands to through the
+//      subject context and the core context
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import jsonld from 'jsonld';
@@ -125,6 +128,18 @@ for (const subject of subjects) {
     if (coreTerms.has(term)) fail(`${where}/context.jsonld`, `redefines core context term "${term}" (protected)`);
   }
 
+  // The IRI a term expands to through the subject's own context (the source,
+  // not the recorded snapshot) followed by the core context, as in the examples.
+  const termContext = [...[subject.context['@context']].flat(), CORE_CONTEXT_URL];
+  const expandedIris = new Map();
+  const expandTerm = async (name) => {
+    if (!expandedIris.has(name)) {
+      const [node = {}] = await jsonld.expand({ '@context': termContext, '@id': 'urn:ngsi-ld:Probe:1', [name]: 'x' }, { documentLoader: loader });
+      expandedIris.set(name, Object.keys(node).find((k) => !k.startsWith('@')) ?? null);
+    }
+    return expandedIris.get(name);
+  };
+
   // Examples expand through the recorded snapshot of the current version, so a
   // context change (a new model or attribute) is invisible until it is recorded.
   // Say so once, instead of leaving only the resulting expansion errors.
@@ -201,6 +216,10 @@ for (const subject of subjects) {
       for (const k of Object.keys(prop)) if (/^x-(geonicdb|orion|scorpio|stellio)/i.test(k)) fail(`${mwhere}/schema.json`, `${name}: product-specific key ${k}; move it into an adapter`);
       if (!ctxTerms[name] && !coreTerms.has(name)) fail(`${where}/context.jsonld`, `does not define attribute "${name}" used by ${model.type}`);
       if (!model.catalog?.attributes?.[name]?.ja || !model.catalog?.attributes?.[name]?.en) fail(`${mwhere}/catalog.yaml`, `${name}: needs ja and en descriptions`);
+      // x-iri is what a JSON-LD processor makes of the name, core terms included.
+      let expanded;
+      try { expanded = await expandTerm(name); } catch (e) { fail(`${where}/context.jsonld`, `cannot expand "${name}": ${e.message}`); continue; }
+      if (expanded && prop['x-iri'] !== expanded) fail(`${mwhere}/schema.json`, `${name}: x-iri is ${prop['x-iri'] ?? '(missing)'}, but the context expands "${name}" to ${expanded}`);
     }
     // Title and description render every page heading and the catalog entry.
     for (const field of ['title', 'description']) for (const l of ['ja', 'en']) {
@@ -217,6 +236,12 @@ for (const subject of subjects) {
     const kv = model.examples['example.json'];
     if (!kv) fail(mwhere, 'examples/example.json is required');
     else if (!validate(kv)) fail(`${mwhere}/examples/example.json`, ajv.errorsText(validate.errors));
+    // Key-values data may carry its @context (/guide/use, Linked Data), as one URL or a list.
+    else if (model.kind === 'entity') {
+      for (const context of [urls.contextAlias, [urls.contextExact, CORE_CONTEXT_URL]]) {
+        if (!validate({ '@context': context, ...kv })) fail(`${mwhere}/schema.json`, `rejects example.json with "@context": ${JSON.stringify(context)} (${ajv.errorsText(validate.errors)}); entity schemas accept @context as a string or an array of strings`);
+      }
+    }
     if (kv) for (const p of findUnclosedRings(kv)) fail(`${mwhere}/examples/example.json`, `${p}: polygon ring does not close (first and last position must be identical, RFC 7946 §3.1.6)`);
     if (kv && model.kind === 'entity') {
       const idType = EXAMPLE_ID.exec(kv.id ?? '')?.[1];

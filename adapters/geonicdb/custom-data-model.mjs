@@ -1,7 +1,7 @@
 // Build a GeonicDB Custom Data Model request body from a catalog model.
 // The body is what POST /custom-data-models accepts; contextUrl points at the
 // exact catalog context so the broker uses the catalog vocabulary.
-import { attributesOf, subjectUrls, CORE_CONTEXT_URL } from '../../scripts/lib/models.mjs';
+import { attributesOf, subjectUrls, CORE_TERMS } from '../../scripts/lib/models.mjs';
 
 function valueTypeOf(prop) {
   const ngsi = prop['x-ngsi']?.type;
@@ -55,7 +55,7 @@ export function toCustomDataModel(subject, model, { typePrefix = '', typeName, c
     // body self-describing if contextUrl is ever dropped. Core-context terms
     // are left to the broker.
     const iri = prop['x-iri'];
-    if (typeof iri === 'string' && /^https?:\/\//.test(iri) && !iri.startsWith(CORE_CONTEXT_URL)) d['@context'] = iri;
+    if (typeof iri === 'string' && /^https?:\/\//.test(iri) && !CORE_TERMS.has(name)) d['@context'] = iri;
     const validation = {};
     for (const k of ['minLength', 'maxLength', 'minimum', 'maximum', 'pattern', 'enum']) if (prop[k] !== undefined) validation[k] = prop[k];
     if (Object.keys(validation).length) d.validation = validation;
