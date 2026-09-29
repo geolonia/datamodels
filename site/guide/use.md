@@ -165,10 +165,10 @@ print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))
 
 ## 試したブローカー
 
-上の手順は標準の NGSI-LD API だけを使うので、NGSI-LD に準拠したブローカーならどれでも同じように動くはずです。ただし、これまでに試したのは GeonicDB だけです。Orion-LD、Scorpio、Stellio などでは、まだ試していません。
+上の手順は標準の NGSI-LD API だけを使うので、NGSI-LD に準拠したブローカーならどれでも同じように動くはずです。ただし、これまでに試したのは GeonicDB だけです。Orion-LD、Scorpio、Stellio など他のブローカーでは、まだ試していません。
 
 製品によっては、モデルをサーバー側に登録して検証させるなどの追加機能があります。
 
 - [GeonicDB](/guide/geonicdb)（Geolonia の製品）: モデルを登録すると、作成・更新時にサーバーがエンティティを検証します。登録用の定義はモデルごとに用意しています。ただし現在は、カタログの `@context` を付けたリクエスト（上の例のような送り方）では登録したモデルが見つからず、検証されずに受け付けられます。修正は GeonicDB 側で進んでいます（詳しくは GeonicDB のページの注意書き）。送る前の検証（手順 2）はこの制限と関係なく使えます。
 
-他のブローカーで試した結果は、[Issue か Pull Request](https://github.com/geolonia/datamodels) で知らせてください。うまく動かなかった場合の報告も歓迎します。
+他のブローカーで試した結果は、うまく動かなかった場合も含めて、[Issue か Pull Request](https://github.com/geolonia/datamodels) でお知らせください。
