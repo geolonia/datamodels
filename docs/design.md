@@ -52,9 +52,13 @@ Three kinds of entries, in decreasing order of preference:
 
 | Kind | Type IRI | Example | What the catalog adds |
 |---|---|---|---|
-| **Curated global model** | upstream (`https://smartdatamodels.org/dataModel.X/Type`) | `WeatherObserved` | Japanese description, Japanese example values, guidance. No copy. *Planned.* |
-| **Profile of a global model** | upstream for the base type; `https://datamodels.jp/ns/<subject>/...` for added attributes | `Building` with 住居表示 | A context that imports the upstream context by commit-pinned URL and adds terms. *Planned.* |
-| **Model minted here** | `https://datamodels.jp/ns/<subject>/Type` | `task`, `disaster`, `common` | The full model, with mapping tables to every standard it corresponds to. |
+| **Curated global model** | upstream (`https://smartdatamodels.org/dataModel.X/Type`) | none yet | Japanese description, Japanese example values, guidance. No copy. *Planned.* |
+| **Profile of a global model** | upstream for the base type; `https://datamodels.jp/ns/<subject>/...` for added attributes | none yet | A context that imports the upstream context by commit-pinned URL and adds terms. *Planned.* |
+| **Model minted here** | `https://datamodels.jp/ns/<subject>/Type` | `common`, `task`, `disaster`, `transportation` | The full model, with mapping tables to every standard it corresponds to. |
+
+So far every model is minted here (`"source": "minted"` in `catalog.json`). Upstream IRIs are reused at the attribute level where the meaning matches: `roadName`, `validFrom` and `validTo` from Smart Data Models, `name` from NGSI-LD, and schema.org terms for addresses, attachments and others.
+
+Anyone can also extend a catalog model outside the catalog, with the same profile pattern (`/guide/extend`, the extension builder). The added terms then get IRIs under a domain the extender controls; the `datamodels.jp` namespaces belong to the catalog, and the builder rejects them.
 
 Rules:
 
@@ -101,18 +105,25 @@ Contract:
 
 ## External definitions: reference, do not copy
 
-A profile context is an array that mixes a commit-pinned upstream context URL, the `common` context and inline terms, so nothing upstream is copied and the referenced meaning cannot drift:
+A context is an array that lists other contexts by URL and adds inline terms, so nothing is copied and the referenced meaning cannot drift. The `transportation` context (shortened) imports `common` and maps attributes whose meaning matches upstream to the upstream IRIs:
 
 ```json
 {
   "@context": [
-    "https://raw.githubusercontent.com/smart-data-models/dataModel.Building/<commit>/context.jsonld",
     "https://datamodels.jp/context/common/v1.0.0.jsonld",
-    { "bldg": "https://datamodels.jp/ns/building/", "residentialIndication": "bldg:residentialIndication" },
-    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
+    {
+      "transportation": "https://datamodels.jp/ns/transportation/",
+      "RoadRestriction": "transportation:RoadRestriction",
+      "restrictionStatus": "transportation:restrictionStatus",
+      "roadName": "https://smartdatamodels.org/dataModel.Transportation/roadName",
+      "validFrom": "https://smartdatamodels.org/validFrom",
+      "validTo": "https://smartdatamodels.org/dataModel.Alert/validTo"
+    }
   ]
 }
 ```
+
+A profile of an upstream model does the same with the upstream context, by a commit-pinned URL (`https://raw.githubusercontent.com/smart-data-models/dataModel.<Domain>/<commit>/context.jsonld`), never `master`.
 
 A byte-identical pinned mirror under `/context/mirror/<subject>/<commit>.jsonld` is possible for users who cannot depend on GitHub availability; it is covered by the immutability manifest but not needed for 1.0.0.
 
