@@ -9,6 +9,7 @@
       "EvacuationSite": "disaster:EvacuationSite",
       "alsoDesignatedShelter": "disaster:alsoDesignatedShelter",
       "alsoEmergencyEvacuationSite": "disaster:alsoEmergencyEvacuationSite",
+      "alsoWelfareShelter": "disaster:alsoWelfareShelter",
       "closedAt": "disaster:closedAt",
       "designationNotes": "disaster:designationNotes",
       "elevation": "disaster:elevation",

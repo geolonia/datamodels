@@ -12,6 +12,9 @@ attributes:
   name:
     ja: 指定避難所の名称（施設の名前）
     en: Name of the shelter (the facility's name)
+  nameKana:
+    ja: 施設名の読み（全角カタカナ）
+    en: Name in full-width katakana
   externalShelterId:
     ja: 市町村の避難所一覧における ID（市町村内で一意）。nationalShelterId が無いときは必須
     en: The shelter's ID in the municipality's own list (unique within it). Required when nationalShelterId is not given

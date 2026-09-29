@@ -42,6 +42,9 @@ attributes:
   alsoDesignatedShelter:
     ja: 指定避難所を兼ねるとき true（指定避難所との重複）
     en: true when the site is also a designated shelter
+  alsoWelfareShelter:
+    ja: 指定福祉避難所を兼ねるとき true（指定福祉避難所との重複）
+    en: true when the site is also a designated welfare shelter
   maxCapacity:
     ja: 想定収容人数
     en: Number of people the site is planned to hold

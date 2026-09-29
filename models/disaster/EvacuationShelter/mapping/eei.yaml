@@ -1,0 +1,38 @@
+# Correspondence between EvacuationShelter and the Cabinet Office's EEI
+# (災害対応基本共有情報) version 1.1, item 21 避難所等: 避難所 (災害時取得).
+standard:
+  name:
+    ja: 災害対応基本共有情報（EEI）第1.1版（内閣府（防災担当）、2025年6月）「21 避難所等：避難所」の災害時取得の属性
+    en: "Essential Elements of Information (EEI, 災害対応基本共有情報) version 1.1 (Cabinet Office, June 2025), item 21 避難所等: 避難所 (shelters), the attributes collected during a disaster (災害時取得)"
+  url: https://www.bousai.go.jp/kaigirep/kentokai/dataplatform/pdf/jitsumu/r7/dai2kai/siryo1.pdf
+  license: 公共データ利用規約（第1.0版）(PDL1.0) under the 内閣府ホームページ利用規約, compatible with CC BY 4.0
+  note:
+    ja: "EEI の説明と「基本」「特定」の区分は EvacuationSite の対応表を参照。平時整備の属性（施設名、所在地、避難所タイプなど）は DesignatedShelter にあり、shelter でたどる。基本共有データ属性の開設状況と避難者数（総数）は本モデルにある。特定データ属性のうち、定員状況、必要な人的支援、飲料水、トイレの数、支援が必要な物資、感染症対策の物資の不足と必要数、居住環境（スペース、ベッド、入浴、洗濯、毛布）などは本モデルに無い。避難所開設情報（都道府県別集計）は集計値で、個々の避難所から数える。"
+    en: "For what EEI is and its 基本 (basic) and 特定 (specific) classes, see the EvacuationSite table. The attributes kept in normal times (name, address, shelter type) are in DesignatedShelter, reached through shelter. The basic attributes 開設状況 and 避難者数（総数） have fields here. Specific attributes with no field: occupancy against capacity, needed staff support, drinking water, toilet counts, needed supplies, infection-control supplies (shortage and number needed) and living conditions (space, beds, bathing, laundry, blankets). 避難所開設情報（都道府県別集計） is a total, counted from the individual shelters."
+fields:
+  nationalShelterId: { to: 全国共通避難所・避難場所ID（基本） }
+  localGovernmentCode: { to: 地方公共団体コード（基本） }
+  openingStatus:
+    to: 開設状況（基本）
+    note:
+      ja: "open → 開設、closed → 閉鎖、full → 受入不可（受入不可には満員以外の理由も含まれる）、requested → 閉鎖（まだ開いていない）。不明は openingStatus を省き、statusLabel に「不明」"
+      en: "open → 開設, closed → 閉鎖, full → 受入不可 (受入不可 also covers other reasons than being full), requested → 閉鎖 (not open yet). For 不明 (unknown), leave openingStatus out and put 不明 in statusLabel"
+  statusLabel:
+    to: 開設状況（基本）
+    note:
+      ja: 現場の呼び方。EEI の値に当たらないときはこちらを送る
+      en: the local wording; send it when no EEI value fits
+  evacueeTotal: { to: 避難者数（総数）（基本） }
+  evacueeMale: { to: 避難者数（男）（特定） }
+  evacueeFemale: { to: 避難者数（女）（特定） }
+  shelter:
+    to: null
+    note:
+      ja: EEI では平時整備と災害時取得を同じ全国共通避難所・避難場所ID で結ぶ
+      en: EEI joins the two sets of attributes by the same 全国共通避難所・避難場所ID
+  site: { to: null }
+  externalShelterId: { to: null }
+  evacueeHouseholds: { to: null }
+  openedAt: { to: null }
+  closedAt: { to: null }
+  description: { to: null }

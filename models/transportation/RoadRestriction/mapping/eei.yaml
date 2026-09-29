@@ -1,0 +1,42 @@
+# Correspondence between RoadRestriction and the Cabinet Office's EEI
+# (災害対応基本共有情報) version 1.1, item 05 道路関連: 通行止め情報（規制情報）.
+standard:
+  name:
+    ja: 災害対応基本共有情報（EEI）第1.1版（内閣府（防災担当）、2025年6月）「05 道路関連：通行止め情報（規制情報）」
+    en: "Essential Elements of Information (EEI, 災害対応基本共有情報) version 1.1 (Cabinet Office, June 2025), item 05 道路関連: 通行止め情報（規制情報） (road closures and restrictions)"
+  url: https://www.bousai.go.jp/kaigirep/kentokai/dataplatform/pdf/jitsumu/r7/dai2kai/siryo1.pdf
+  license: 公共データ利用規約（第1.0版）(PDL1.0) under the 内閣府ホームページ利用規約, compatible with CC BY 4.0
+  note:
+    ja: "EEI は新総合防災情報システム（SOBO-WEB）で災害対応機関が共有する災害情報の一覧で、データ属性の名前と、基本共有データ属性（連携時に必須、空欄可）か特定データ属性（推奨）かの区分だけを定める（型やコード表は無い）。通行止め情報の属性はすべて基本共有データ属性。日付と時刻を別の属性に分けるので、validFrom と validTo はそれぞれ二つに当たる。"
+    en: "EEI lists the disaster information that response bodies share through the Cabinet Office's disaster information system (SOBO-WEB). It names the data attributes and marks each as 基本共有データ属性 (basic: required when exchanging, may be empty) or 特定データ属性 (specific: recommended), with no data types or code lists. All attributes of 通行止め情報 are basic. EEI splits date and time into separate attributes, so validFrom and validTo each correspond to two."
+fields:
+  roadType:
+    to: 道路種別（基本）
+    note:
+      ja: EEI は値を定めない（例として「高速自動車国道、自動車専用道路等」）
+      en: "EEI defines no values (its examples: 高速自動車国道, 自動車専用道路)"
+  roadName: { to: 路線名（基本） }
+  location:
+    to: 規制場所始点、規制場所終点、距離・延長（基本）
+    note:
+      ja: 線（LineString）の始点・終点と長さ（m）。点のときは始点だけで延長は無い。面のときは当たるものが無い
+      en: "the first and last points of the line (LineString) and its length in metres; a point gives only the start and no length; an area has no counterpart"
+  regulationCategory:
+    to: 規制種別（基本）
+    note:
+      ja: EEI は値を定めない（「道路規制の内容」）
+      en: EEI defines no values (the content of the regulation)
+  description:
+    to: 規制理由（基本）
+    note:
+      ja: どちらも自由記述
+      en: both are free text
+  validFrom: { to: 規制開始日、規制開始時間（基本） }
+  validTo: { to: 規制終了日、規制終了時間（基本） }
+  restrictionStatus:
+    to: null
+    note:
+      ja: EEI に状態の属性は無い。解除は規制終了日時で表す
+      en: EEI has no status attribute; a lifted restriction has its end date and time
+  statusLabel: { to: null }
+  address: { to: null }

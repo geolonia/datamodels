@@ -27,6 +27,21 @@
       },
       "x-iri": "https://smartdatamodels.org/dataModel.Transportation/roadName"
     },
+    "roadType": {
+      "description": "Road class by the Road Act (道路法第3条): expressway (高速自動車国道), nationalRoad (一般国道), prefecturalRoad (都道府県道), municipalRoad (市町村道), or other for a road outside the Act (農道, 林道, private road). A motorway designation (自動車専用道路) is not a class of its own: give the class of the road it is on",
+      "type": "string",
+      "enum": [
+        "expressway",
+        "nationalRoad",
+        "prefecturalRoad",
+        "municipalRoad",
+        "other"
+      ],
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/transportation/roadType"
+    },
     "address": {
       "$ref": "https://datamodels.jp/schema/common/JapaneseAddress/v1.0.0.json",
       "description": "Address of the location, as a JapaneseAddress value (common subject)",
