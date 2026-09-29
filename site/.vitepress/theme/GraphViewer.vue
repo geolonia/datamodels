@@ -55,7 +55,8 @@ const applied = (fn: () => void) => new Promise<void>((resolve) => {
 const run = (fn: () => void) => { queue = queue.then(() => applied(fn)); return queue }
 
 async function setup() {
-  if (!zoomable.value) { pz?.destroy(); pz = null; stage.value?.style.removeProperty('transform'); scale.value = 1; return }
+  // resetStyle() gives the viewport and stage back their styles, touch-action among them, so the page scrolls again.
+  if (!zoomable.value) { pz?.resetStyle(); pz?.destroy(); pz = null; stage.value?.style.removeProperty('transform'); scale.value = 1; return }
   if (!pz) {
     const { default: Panzoom } = await import('@panzoom/panzoom')
     // The width may have changed while the library loaded: the latest call fits to it.
@@ -75,9 +76,24 @@ function zoomIn() { touched = true; run(() => pz?.zoomIn()) }
 function zoomOut() { touched = true; run(() => pz?.zoomOut()) }
 function toFit() { touched = false; run(() => pz?.zoom(fit.value, { animate: true })) }
 function actual() { touched = true; run(() => pz?.zoom(1, { animate: true })) }
+// Wheel zooms go through the queue too. A trackpad pinch sends many events a frame, so they add up
+// while a zoom is pending and are applied as one, at the latest pointer position.
+let wheelZoom: { dy: number; clientX: number; clientY: number } | null = null
 function wheel(e: WheelEvent) {
   if (!pz) return
-  if (e.ctrlKey || e.metaKey) { touched = true; pz.zoomWithWheel(e); return }
+  if (e.ctrlKey || e.metaKey) {
+    e.preventDefault()
+    touched = true
+    const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY
+    if (wheelZoom) { wheelZoom.dy += dy; wheelZoom.clientX = e.clientX; wheelZoom.clientY = e.clientY; return }
+    wheelZoom = { dy, clientX: e.clientX, clientY: e.clientY }
+    run(() => {
+      const w = wheelZoom!
+      wheelZoom = null
+      pz?.zoomToPoint(Math.min(MAX, Math.max(fit.value, pz.getScale() * Math.exp(-w.dy * 0.01))), w, { animate: false })
+    })
+    return
+  }
   // A sideways swipe pans; a vertical wheel is left to the page.
   if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) { e.preventDefault(); touched = true; pz.pan(-e.deltaX / pz.getScale(), 0, { relative: true }) }
 }
