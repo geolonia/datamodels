@@ -8,6 +8,7 @@ import { loadSubjects, attributesOf, subjectUrls, modelUrls, DIST, ROOT, BASE_UR
 import { listReleases } from './releases.mjs';
 import { sharedTerms } from './shared-terms.mjs';
 import { buildVocabulary } from './vocab.mjs';
+import { exactVersionHeaderRules, readManifest } from './cache.mjs';
 
 const rel = (url) => url.slice(BASE_URL.length).replace(/^\//, '');
 async function write(url, content) {
@@ -24,21 +25,21 @@ const json = (o) => JSON.stringify(o, null, 2) + '\n';
 export async function publishModels(subjects, adapters = []) {
   const catalog = { formatVersion: 1, generatedAt: new Date().toISOString(), models: [] };
   const redirects = ['', '# Generated: type and attribute IRIs resolve to their documentation.'];
-  const headers = ['', '# Generated: exact versions are immutable. `! Cache-Control` detaches the short cache inherited from the glob rule above.'];
-  const immutableDone = new Set();
-  const immutable = (url) => { if (immutableDone.has(url)) return; immutableDone.add(url); headers.push(rel(url).replace(/^/, '/'), '  ! Cache-Control', '  Cache-Control: public, max-age=31536000, immutable'); };
+  // Exact versions get their own Cache-Control rule (scripts/lib/cache.mjs).
+  const exactPaths = [];
+  const exact = (url) => exactPaths.push(`/${rel(url)}`);
 
   for (const subject of subjects) {
     const u = subjectUrls(subject);
     // Every published version first, then the current one on top (identical
     // bytes when it has been snapshotted; the immutability check confirms).
     for (const release of await listReleases(subject)) {
-      for (const f of release.files) { await write(f.url, await readFile(f.path)); immutable(f.url); }
+      for (const f of release.files) { await write(f.url, await readFile(f.path)); exact(f.url); }
     }
-    await write(u.contextExact, json(subject.context)); immutable(u.contextExact);
+    await write(u.contextExact, json(subject.context)); exact(u.contextExact);
     await write(u.contextAlias, json(subject.context));
     const vocab = json(buildVocabulary(subject));
-    await write(u.vocabExact, vocab); immutable(u.vocabExact);
+    await write(u.vocabExact, vocab); exact(u.vocabExact);
     await write(u.vocabAlias, vocab);
     // The namespace IRI itself resolves to the subject page.
     redirects.push(`/ns/${subject.name}/  /models/${subject.name}/  302`);
@@ -51,7 +52,7 @@ export async function publishModels(subjects, adapters = []) {
 
     for (const model of subject.models) {
       const mu = modelUrls(subject, model);
-      await write(mu.schemaExact, json(model.schema)); immutable(mu.schemaExact);
+      await write(mu.schemaExact, json(model.schema)); exact(mu.schemaExact);
       await write(mu.schemaAlias, json(model.schema));
       for (const [f, content] of Object.entries(model.examples)) await write(`${mu.examples}${f}`, json(content));
       const adapterUrls = {};
@@ -83,6 +84,6 @@ export async function publishModels(subjects, adapters = []) {
   await write(`${BASE_URL}/catalog.schema.json`, json(schema));
   await write(`${BASE_URL}/LICENSE-CONTENT`, await readFile(join(ROOT, 'LICENSE-CONTENT.md')));
   await appendFile(join(DIST, '_redirects'), redirects.join('\n') + '\n');
-  await appendFile(join(DIST, '_headers'), headers.join('\n') + '\n');
+  await appendFile(join(DIST, '_headers'), exactVersionHeaderRules(exactPaths, await readManifest()).join('\n') + '\n');
   return { subjects: subjects.length, models: catalog.models.length };
 }
