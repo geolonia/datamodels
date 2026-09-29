@@ -11,7 +11,7 @@ GeonicDB は、このカタログを運営している Geolonia の NGSI-LD ブ�
 
 ## 前提
 
-- GeonicDB のテナントと API キー（[GeonicDB ドキュメント](https://docs.geonicdb.com/ja/saas/api-key)）
+- GeonicDB のテナントと API キー（[GeonicDB ドキュメント](https://docs.geonicdb.com/ja/saas/api-key)）。API キーには、このページの操作（`/custom-data-models` への `POST`、`/ngsi-ld/v1/entities` での作成と検索）を許可するポリシーを付けてください（[ポリシーバインディング](https://docs.geonicdb.com/ja/reference/auth#ポリシーバインディング-policyid)）。ポリシーの無い API キーは、どの API でも拒否されます。
 - 環境変数: `GEONICDB_BASE_URL`（例: `https://<your-deployment>.geonicdb.jp`）、`GEONICDB_TENANT`、`GEONICDB_API_KEY`
 
 ## 登録すると何が起きるか
@@ -39,13 +39,12 @@ curl -sSf https://datamodels.jp/adapters/geonicdb/transportation/RoadRestriction
 curl -X POST "$GEONICDB_BASE_URL/custom-data-models" \
   -H "Content-Type: application/json" \
   -H "x-api-key: $GEONICDB_API_KEY" \
-  -H "Fiware-Service: $GEONICDB_TENANT" \
   --data @RoadRestriction.json
 ```
 
-`Fiware-Service` と `NGSILD-Tenant` は同じテナントを指定するヘッダーで、GeonicDB ではどちらも同じに扱われます（[マルチテナンシー](https://docs.geonicdb.com/ja/core-concepts/multi-tenancy)）。`NGSILD-Tenant` は NGSI-LD の API（`/ngsi-ld/v1/...`）での名前なのでエンティティの手順ではこちらを使い、NGSI-LD の API ではない登録（`/custom-data-models`）では `Fiware-Service` を使っています。
+登録（`/custom-data-models`）では、テナントはヘッダーではなく API キー（またはトークン）の持つテナントで決まるので、テナントのヘッダーは要りません。エンティティの手順（`/ngsi-ld/v1/...`）では、NGSI-LD の `NGSILD-Tenant` ヘッダーでテナントを指定します（[マルチテナンシー](https://docs.geonicdb.com/ja/core-concepts/multi-tenancy)）。
 
-`201 Created` が返れば登録完了です。同じ型名が既にあると `409` になります。`geonic` CLI なら `geonic models create @RoadRestriction.json` です。
+`201 Created` が返れば登録完了です。同じ型名が既にあると `409` になります。テナント管理者（`tenant_admin`）としてログインした `geonic` CLI なら、ポリシーを用意しなくても `geonic models create @RoadRestriction.json` で登録できます。
 
 登録された定義は属性の型・必須・enum を検証し（`additionalProperties: false` のモデルでは未定義の属性を拒否）、`contextUrl` の context をこの型の語彙として使います。
 

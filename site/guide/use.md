@@ -92,7 +92,7 @@ curl "$BROKER/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionStatus==%22c
 ```
 
 ```bash [GeonicDB]
-# GEONICDB_BASE_URL, GEONICDB_TENANT, GEONICDB_API_KEY は GeonicDB のテナントの値
+# GEONICDB_BASE_URL, GEONICDB_TENANT, GEONICDB_API_KEY は GeonicDB のテナントの値（API キーにはポリシーが要る。GeonicDB のページを参照）
 curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example-normalized.jsonld -o entity.jsonld
 
 # 作成
