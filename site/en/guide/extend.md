@@ -12,8 +12,8 @@ The rule of this catalog is "extend, do not duplicate". Types and attributes fro
 | Goal | Method | Example |
 |---|---|---|
 | Use an upstream model as it is | Use the upstream `@context` and type. The catalog adds Japanese descriptions and examples | None in the catalog yet |
-| Add attributes to an existing model | **Profile**: import the original context by URL and publish a context that defines only the added attributes | The output of the [extension builder](/en/guide/builder) |
-| Model something no existing type fits | **Own type**: mint type and attribute IRIs; catalog types live under `https://datamodels.jp/ns/<subject>/`. Upstream attributes that fit keep their IRIs | [RoadRestriction](/en/models/transportation/RoadRestriction/) (`roadName`, `validFrom` and `validTo` are Smart Data Models IRIs) |
+| Add attributes to an existing model | **Profile**: import the original context by URL and publish a context that defines only the added attributes | The @context that the [extension builder](/en/guide/builder) makes |
+| Model something that no existing type fits | **Own type**: mint new type and attribute IRIs (catalog types under `https://datamodels.jp/ns/<subject>/`). Where an upstream attribute fits, use its IRI | [RoadRestriction](/en/models/transportation/RoadRestriction/) (`roadName`, `validFrom` and `validTo` are Smart Data Models IRIs) |
 
 ### Writing a profile
 
@@ -31,9 +31,9 @@ Nothing is copied. The original context is listed by URL in the `@context` array
 }
 ```
 
-Mint the IRIs of added attributes under a domain you control (`example.com` in the example). The `datamodels.jp` namespaces belong to the catalog; do not use them. The [extension builder](/en/guide/builder) writes this @context and the JSON Schema in the browser.
+Mint the IRIs of added attributes under a domain you control (`example.com` in this example). The `datamodels.jp` namespaces belong to the catalog; do not use them. The [extension builder](/en/guide/builder) writes this @context and the JSON Schema in the browser.
 
-A profile of a Smart Data Models model is written the same way. Import the upstream context by a commit-pinned URL (`https://raw.githubusercontent.com/smart-data-models/dataModel.<Domain>/<commit>/context.jsonld`), not `master`, so the meaning of stored data cannot drift when upstream changes.
+Building on a Smart Data Models model works the same way. Import the upstream context by a commit-pinned URL (`https://raw.githubusercontent.com/smart-data-models/dataModel.<Domain>/<commit>/context.jsonld`), not `master`, so the meaning of stored data cannot drift when upstream changes.
 
 ### When not to adopt an upstream type
 
@@ -47,7 +47,7 @@ Do record the upstream types you considered and why they did not fit in the mode
 
 ### Where we stand
 
-So far, every model in the catalog is a type defined by the catalog. Upstream IRIs are reused for some attributes only: `roadName`, `validFrom` and `validTo` of road restrictions (Smart Data Models), `name` (NGSI-LD), and schema.org terms for addresses, attachments and others.
+So far, every model in the catalog is the catalog's own type. Upstream IRIs are reused for some attributes only: `roadName`, `validFrom` and `validTo` of road restrictions (Smart Data Models), `name` (NGSI-LD), and schema.org terms for addresses, attachments and others.
 
 The first subject, [disaster response](/en/models/disaster/), is based on the data models of Takamatsu City's flood-response application and built on [task management](/en/models/task/) (shared attributes carry the task subject's IRIs). It originally also had `DisasterEvent` (an **alias** of `Project`) and reports, actions, handover notes and photos (**subclasses** of `Task`, `Comment` and `Attachment`); these were removed on 2026-09-24 as tenant-specific types with no external standard behind them (see "Versioning and lifecycle" in [docs/design.md](https://github.com/geolonia/datamodels/blob/main/docs/design.md)). Road closures and shelters were compared against upstream (Smart Data Models `RoadSegment` and `Alert`, the Digital Agency's municipal standard open datasets): no type fits, so both stay minted, but attribute IRIs and status value spaces are borrowed. Road closures were then rebuilt on national guidelines (National Police Agency, MLIT) as road restrictions in general and, no longer specific to disasters, moved to the [transportation](/en/models/transportation/) subject as `RoadRestriction` (2026-09-25). The notes of each model and [issue #16](https://github.com/geolonia/datamodels/issues/16) record the analysis. For how aliases and subclasses are written, see [Tips & Tricks](/en/guide/tips).
 

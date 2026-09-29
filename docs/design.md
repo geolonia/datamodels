@@ -123,7 +123,7 @@ A context is an array that lists other contexts by URL and adds inline terms, so
 }
 ```
 
-A profile of an upstream model does the same with the upstream context, by a commit-pinned URL (`https://raw.githubusercontent.com/smart-data-models/dataModel.<Domain>/<commit>/context.jsonld`), never `master`.
+A profile of an upstream model imports the upstream context the same way, by a commit-pinned URL (`https://raw.githubusercontent.com/smart-data-models/dataModel.<Domain>/<commit>/context.jsonld`), never `master`.
 
 A byte-identical pinned mirror under `/context/mirror/<subject>/<commit>.jsonld` is possible for users who cannot depend on GitHub availability; it is covered by the immutability manifest but not needed for 1.0.0.
 
