@@ -170,6 +170,15 @@ An adapter turns catalog models into files a particular broker or tool consumes,
 
 Brokers integrate from the other side: GeonicDB, for example, can read `catalog.json` at startup with a bundled fallback, pre-warm its context cache from the listed URLs and offer the models in its console and CLI. That work belongs to each broker's roadmap, not to the catalog.
 
+## Products in the site text
+
+Decided 2026-09-29 (#121). The site credits Geolonia, which runs the catalog, and GeonicDB, Geolonia's broker, as facts and as a contribution, not as promotion:
+
+- `/about` and the footer name Geolonia as the operator.
+- A page for one product sits under "Using the models", after the steps that work with any broker, and says who makes the product. Other products get a page on the same terms when someone contributes one.
+- General pages (the start page, `/guide/use`, `/guide/extend`, `/guide/catalogs` and the others) describe NGSI-LD and brokers in general terms. Where they name a product, they say what was tried with it and what was not tried, and they do not present one product as the only choice.
+- No sales wording, rankings or comparisons between products.
+
 ## Hosting
 
 Cloudflare Workers static assets, deployed by Cloudflare Workers Builds from `main`; no deploy credential is stored in GitHub, and CI only runs a dry-run deploy. `_headers` and `_redirects` carry the URL contract: one `*` per rule, headers from several matching rules are joined unless detached with `! Header`, so the exact-version cache rules are generated per file. A Worker script would stop `_headers` and `_redirects` from applying, so any host-level redirect belongs in a Redirect Rule on the zone instead. Cloudflare Pages was not chosen because Cloudflare directs new projects to Workers; GitHub Pages cannot set response headers.

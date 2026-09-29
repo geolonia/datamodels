@@ -163,10 +163,12 @@ Part of the output:
 
 Each subject's vocabulary (`/vocab/<subject>/v1.0.0.jsonld`) is RDFS: its types have Japanese and English names and descriptions, and the attributes the catalog defines have their term name and Japanese and English descriptions. Attributes borrowed from other vocabularies (for example schema.org's `address`) are not included; their own publishers' vocabularies describe them. The mapping tables to other standards, such as GIF and the municipal standard open datasets, are on each model page and help with converting data.
 
-## Works with
+## Brokers tried
 
-The steps above use only the standard NGSI-LD API, so they are the same for any NGSI-LD compliant broker. Some products add features on top, such as registering a model so the server validates entities.
+The steps above use only the standard NGSI-LD API, so they should work the same with any NGSI-LD compliant broker. So far, though, they have been tried with GeonicDB only. Orion-LD, Scorpio, Stellio and others have not been tried yet.
 
-- [GeonicDB](/en/guide/geonicdb): register a model and the server validates creates and updates. A ready-made definition is published for each model. For now, requests that carry the catalog `@context` (as in the example above) do not find the registered model and are accepted without validation; a fix is in progress on the GeonicDB side (see the warning on the GeonicDB page). Validating before sending (step 2) works regardless.
+Some products add features on top, such as registering a model so the server validates entities.
 
-If you have tried another product, add its steps with an [issue or pull request](https://github.com/geolonia/datamodels).
+- [GeonicDB](/en/guide/geonicdb) (Geolonia's product): register a model and the server validates creates and updates. A ready-made definition is published for each model. For now, requests that carry the catalog `@context` (as in the example above) do not find the registered model and are accepted without validation; a fix is in progress on the GeonicDB side (see the warning on the GeonicDB page). Validating before sending (step 2) works regardless.
+
+If you have tried another broker, tell us the result with an [issue or pull request](https://github.com/geolonia/datamodels), including when something did not work.
