@@ -14,6 +14,11 @@ const ROW = new Set(['to', 'note', 'column', 'transform', 'values', 'value', 'vi
 // key, so an extra key means the text was cut there ("closed → completed, otherwise …").
 const bilingual = (v) => v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v).every((k) => k === 'ja' || k === 'en')
   && typeof v.ja === 'string' && v.ja.trim() !== '' && typeof v.en === 'string' && v.en.trim() !== '';
+/**
+ * The licence of a standard in one language. A plain string (a name such as
+ * "CC BY 4.0") reads the same on both pages; anything longer is { ja, en }.
+ */
+export const standardLicense = (std, lang) => typeof std?.license === 'string' ? std.license : std?.license?.[lang] ?? '';
 const isLink = (u) => { if (typeof u !== 'string') return false; try { const x = new URL(u); return (x.protocol === 'https:' || x.protocol === 'http:') && x.hostname !== ''; } catch { return false; } };
 
 /**
@@ -71,7 +76,7 @@ export function mappingProblems(map, schema, mappingNames = null) {
     for (const k of Object.keys(std)) if (!STANDARD.has(k)) out.push(`unknown key "standard.${k}" (allowed: name, url, license, note)`);
     if (!bilingual(std.name)) out.push('standard.name needs ja and en, and nothing else (quote a text that contains a comma)');
     if (std.url !== undefined && !isLink(std.url)) out.push(`standard.url must be an http(s) URL with a host, got ${JSON.stringify(std.url)}`);
-    if (std.license !== undefined && (typeof std.license !== 'string' || !std.license.trim())) out.push('standard.license must be a non-empty string');
+    if (std.license !== undefined && !(typeof std.license === 'string' ? std.license.trim() : bilingual(std.license))) out.push('standard.license must be a non-empty string, or ja and en and nothing else (quote a text that contains a comma)');
     if (std.note !== undefined && !bilingual(std.note)) out.push('standard.note needs ja and en, and nothing else (quote a text that contains a comma)');
   }
   if (doc.structure !== undefined && !bilingual(doc.structure)) out.push('structure needs ja and en, and nothing else (quote a text that contains a comma)');

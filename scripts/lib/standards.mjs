@@ -3,6 +3,7 @@
 // standard its data follows (a 自治体標準オープンデータセット sheet, GSI's lists,
 // EEI) finds the matching model from here.
 import { modelUrls, BASE_URL } from './models.mjs';
+import { standardLicense } from './mapping-check.mjs';
 
 const T = {
   ja: {
@@ -48,7 +49,7 @@ export function standardRows(lang, subjects) {
       name: map.standard?.name?.[lang] ?? map.name,
       url: map.standard?.url ?? null,
       group: standardGroup(map.standard?.url),
-      license: map.standard?.license ?? '',
+      license: standardLicense(map.standard, lang),
       type: m.type,
       subject: s.name,
       subjectTitle: s.title[lang],

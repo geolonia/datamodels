@@ -12,6 +12,7 @@ import { sharedTerms } from './shared-terms.mjs';
 import { graphSvg, graphTitle } from './graph.mjs';
 import { listReleases } from './releases.mjs';
 import { standardsPage } from './standards.mjs';
+import { standardLicense } from './mapping-check.mjs';
 
 const SITE = join(ROOT, 'site');
 const rel = (url) => url.slice(BASE_URL.length);
@@ -206,7 +207,7 @@ function modelPage(lang, prefix, subject, model) {
   if (!isValue) md += `${t.extendThis(`${prefix}/guide/builder?model=${subject.name}/${model.type}`)}\n\n`;
   for (const map of model.mappings ?? []) {
     md += `## ${t.mappings}: ${map.standard?.name?.[lang] ?? map.name} {#mapping-${map.name}}\n\n`;
-    if (map.standard?.url) md += `[${map.standard.name?.[lang] ?? map.name}](${map.standard.url})${map.standard.license ? ` · ${map.standard.license}` : ''}\n\n`;
+    if (map.standard?.url) md += `[${map.standard.name?.[lang] ?? map.name}](${map.standard.url})${standardLicense(map.standard, lang) ? ` · ${standardLicense(map.standard, lang)}` : ''}\n\n`;
     if (map.standard?.note?.[lang]) md += `${map.standard.note[lang]}\n\n`;
     if (map.structure?.[lang]) md += `${map.structure[lang]}\n\n`;
     md += `| ${t.mappingField} | ${t.mappingTo} | ${t.mappingNote} |\n|---|---|---|\n`;
