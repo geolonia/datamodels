@@ -11,7 +11,6 @@ const GUIDES = [
   ['urls', 'URLs that never change', 'which URL to use, versions, aliases, caching, IRI resolution'],
   ['extend', 'Extending models', 'add attributes or models for Japan, the rules, examples'],
   ['contribute', 'Contributing', 'propose or change models, stages and who decides'],
-  ['procurement', 'One line in the procurement specification', 'sample wording for requiring standards compliance, interoperability and data portability, and how to check a proposal'],
   ['tips', 'Tips & Tricks', 'match attribute names to your own terms with JSON-LD aliases'],
 ];
 

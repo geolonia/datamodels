@@ -3,3 +3,7 @@
 # Type and attribute IRIs under /ns/<subject>/ resolve to the page that
 # documents them, schema.org style. The entries are generated at build time
 # from models/ and appended below this header.
+
+# /guide/procurement (sample procurement wording) was published and removed on 2026-09-29: no reader had asked for it.
+/guide/procurement /guide/ 301
+/en/guide/procurement /en/guide/ 301
