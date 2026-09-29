@@ -16,6 +16,9 @@ test('default body: exact context, additionalProperties from the schema, catalog
   assert.equal(b.additionalProperties, false);
   assert.equal(b.propertyDetails.restrictionStatus['@context'], 'https://datamodels.jp/ns/transportation/restrictionStatus');
   assert.equal(b.propertyDetails.address.valueType, 'object');
+  // Core-context terms are left to the broker; @context is not an attribute.
+  assert.ok(!('@context' in b.propertyDetails.location) && !('@context' in b.propertyDetails.description));
+  assert.ok(!('@context' in b.propertyDetails));
 });
 
 test('type prefix changes the type name only', () => {

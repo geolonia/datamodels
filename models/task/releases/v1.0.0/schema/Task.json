@@ -19,6 +19,23 @@
       "const": "Task",
       "description": "Entity type"
     },
+    "@context": {
+      "description": "JSON-LD context of the entity, optional: a context URL or a list of context URLs",
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "minItems": 1
+        }
+      ]
+    },
     "name": {
       "type": "string",
       "description": "Name or subject",
@@ -33,7 +50,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld#description"
+      "x-iri": "http://purl.org/dc/terms/description"
     },
     "project": {
       "type": "string",
@@ -211,7 +228,7 @@
         "type": "GeoProperty",
         "model": "https://datamodels.jp/ns/common/Geometry"
       },
-      "x-iri": "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld#location"
+      "x-iri": "https://uri.etsi.org/ngsi-ld/location"
     },
     "spatialId": {
       "type": "array",

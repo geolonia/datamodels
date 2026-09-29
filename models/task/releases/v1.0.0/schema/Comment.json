@@ -19,6 +19,23 @@
       "const": "Comment",
       "description": "Entity type"
     },
+    "@context": {
+      "description": "JSON-LD context of the entity, optional: a context URL or a list of context URLs",
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "minItems": 1
+        }
+      ]
+    },
     "task": {
       "type": "string",
       "format": "uri",

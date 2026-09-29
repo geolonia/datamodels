@@ -88,7 +88,7 @@ const result = computed<{ errors: string[]; pending?: boolean }>(() => {
   if (form.value === 'norm') {
     // The same check as CI: each attribute is the NGSI-LD type the model declares.
     for (const [name, prop] of Object.entries<any>(props.schema.properties ?? {})) {
-      if (name === 'id' || name === 'type' || !(name in p.value)) continue
+      if (name === 'id' || name === 'type' || name === '@context' || !(name in p.value)) continue
       const want = prop['x-ngsi']?.type
       for (const inst of Array.isArray(p.value[name]) ? p.value[name] : [p.value[name]]) {
         if (want && inst?.type !== want) errors.push(L.typeMismatch(name, String(inst?.type ?? typeof inst), want))

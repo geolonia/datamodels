@@ -19,6 +19,23 @@
       "const": "Attachment",
       "description": "Entity type"
     },
+    "@context": {
+      "description": "JSON-LD context of the entity, optional: a context URL or a list of context URLs",
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "minItems": 1
+        }
+      ]
+    },
     "task": {
       "type": "string",
       "format": "uri",
@@ -98,7 +115,7 @@
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld#description"
+      "x-iri": "http://purl.org/dc/terms/description"
     },
     "location": {
       "$ref": "https://datamodels.jp/schema/common/Geometry/v1.0.0.json",
@@ -112,7 +129,7 @@
         "type": "GeoProperty",
         "model": "https://purl.org/geojson/vocab#Point"
       },
-      "x-iri": "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld#location"
+      "x-iri": "https://uri.etsi.org/ngsi-ld/location"
     },
     "source": {
       "type": "string",

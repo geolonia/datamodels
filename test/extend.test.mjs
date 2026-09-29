@@ -42,6 +42,7 @@ test('for every entity model: a context with only the new terms, and a schema th
     const validate = ajv.compile(out.schema);
     const ok = { ...raw.examples['example.json'], patrolRoute: 'A-3', checkedAt: '2026-07-08T10:00:00+09:00', patrolCar: 'urn:ngsi-ld:Vehicle:7', patrolArea: { type: 'Point', coordinates: [139.75, 35.69] } };
     assert.ok(validate(ok), `${model.type}: ${ajv.errorsText(validate.errors)}`);
+    assert.ok(validate({ '@context': ['https://example.com/context/acme.jsonld', 'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld'], ...ok }), `${model.type}: key-values data may carry @context`);
     const { patrolRoute, ...missing } = ok;
     assert.ok(!validate(missing), `${model.type}: a required added attribute is enforced`);
     assert.ok(!validate({ ...ok, checkedAt: 'yesterday' }), `${model.type}: the added format is enforced`);

@@ -6,9 +6,8 @@
 // (`### roadName {#roadName}`) so that the /ns/<subject>/<term> redirects,
 // which point at `#<term>`, keep working with case preserved.
 import { mkdir, writeFile, rm } from 'node:fs/promises';
-import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { attributesOf, subjectUrls, modelUrls, BASE_URL, ROOT, CORE_CONTEXT_URL } from './models.mjs';
+import { attributesOf, subjectUrls, modelUrls, BASE_URL, ROOT, CORE_TERMS } from './models.mjs';
 import { sharedTerms } from './shared-terms.mjs';
 import { graphSvg, graphTitle } from './graph.mjs';
 import { listReleases } from './releases.mjs';
@@ -74,16 +73,6 @@ export const issueLinks = (s) => s.replace(/(^|[\s(（])#(\d+)\b/g, '$1[#$2](htt
 
 let allSubjects = [];
 
-// Terms of the pinned NGSI-LD core context (v1.8, immutable), expanded to full
-// IRIs: schemas mark a core term as CORE_CONTEXT_URL#term, and the playground
-// shows the IRI JSON-LD actually produces (description -> dcterms).
-const CORE_TERMS = (() => {
-  const ctx = JSON.parse(readFileSync(join(ROOT, 'test', 'fixtures', 'ngsi-ld-core-context-v1.8.jsonld'), 'utf8'))['@context'];
-  // A compact IRI (prefix:rest) expands through the prefix; full IRIs stay as they are.
-  const expand = (v) => { const i = v.indexOf(':'); const pre = v.slice(0, i); return i > 0 && !v.includes('//') && typeof ctx[pre] === 'string' ? ctx[pre] + v.slice(i + 1) : v; };
-  return Object.fromEntries(Object.entries(ctx).map(([k, v]) => [k, typeof v === 'string' ? expand(v) : v?.['@id'] ? expand(v['@id']) : null]).filter(([, v]) => v));
-})();
-
 /** Everything the example playground (ExamplePlayground.vue) needs for one entity model. */
 function playgroundData(lang, subject, model) {
   const norm = model.examples['example-normalized.jsonld'];
@@ -99,11 +88,10 @@ function playgroundData(lang, subject, model) {
   collect(model.schema);
   const iris = {};
   for (const [name, prop] of attributesOf(model)) {
-    let iri = prop['x-iri'];
+    const iri = prop['x-iri'];
     if (!iri) continue;
-    // A core term keeps "NGSI-LD core" as its origin, whatever host its IRI is on.
-    const viaCore = iri.startsWith(`${CORE_CONTEXT_URL}#`);
-    if (viaCore) iri = CORE_TERMS[iri.slice(CORE_CONTEXT_URL.length + 1)] ?? iri;
+    // A core term keeps "NGSI-LD core" as its origin, whatever host its IRI is on (description -> dcterms).
+    const viaCore = CORE_TERMS.has(name);
     const own = iri.startsWith(`${BASE_URL}/ns/`) ? iri.slice(BASE_URL.length + 4).split('/')[0] : null;
     iris[name] = own
       ? { iri, origin: own === subject.name ? 'subject' : 'other', label: own }
@@ -202,7 +190,7 @@ function modelPage(lang, prefix, subject, model) {
     const u2 = subjectUrls(subject);
     // Geometries are the value of the core location GeoProperty; other value types of a Property.
     const geo = model.schema['x-ngsi']?.type === 'GeoProperty';
-    const [attr, ngsiType, attrIri] = geo ? ['location', 'GeoProperty', `${CORE_CONTEXT_URL}#location`] : ['address', 'Property', 'https://schema.org/address'];
+    const [attr, ngsiType, attrIri] = geo ? ['location', 'GeoProperty', 'https://uri.etsi.org/ngsi-ld/location'] : ['address', 'Property', 'https://schema.org/address'];
     md += `## ${t.usage} {#usage}\n\n\`\`\`json\n"${attr}": {\n  "$ref": "${mu.schemaExact}",\n  "x-ngsi": { "type": "${ngsiType}", "model": "${mu.typeIri}" },\n  "x-iri": "${attrIri}"\n}\n\`\`\`\n\n`;
     if (!geo) md += `\`\`\`json\n{ "@context": ["${u2.contextExact}", { ... }] }\n\`\`\`\n\n`;
   }
@@ -271,7 +259,7 @@ export function indexPage(lang, prefix, subjects) {
     type: m.type, href: `${prefix}${rel(modelUrls(s, m).page)}`, title: m.catalog.title?.[lang] ?? '', otherTitle: m.catalog.title?.[other] ?? '',
     subject: s.name, subjectTitle: s.title[lang], subjectHref: `${prefix}${rel(subjectUrls(s).page)}`,
     kind: m.kind, status: m.catalog.status ?? 'draft',
-    text: [m.type, s.name, s.title.ja, s.title.en, m.catalog.title?.ja, m.catalog.title?.en, m.catalog.description?.ja, m.catalog.description?.en, ...Object.keys(m.schema.properties ?? {})]
+    text: [m.type, s.name, s.title.ja, s.title.en, m.catalog.title?.ja, m.catalog.title?.en, m.catalog.description?.ja, m.catalog.description?.en, ...attributesOf(m).map(([n]) => n)]
       .filter(Boolean).join(' ').normalize('NFKC').toLowerCase(),
   })));
   // "<" escaped so no text can close the script block.

@@ -10,5 +10,4 @@ description:
   en: "Data models for roads and traffic, based on national standards (the National Police Agency's traffic regulation data format and MLIT's Road Information Provision System). Currently road restrictions (RoadRestriction). The local status wording (statusLabel) uses the task subject's IRI."
 source: minted            # minted | profile | global
 origin:
-  repository: https://github.com/geolonia/geonicdb-datamodels
   note: RoadRestriction was seeded from the road closure model of the Takamatsu City flood-prevention headquarters application and moved here from the disaster subject on 2026-09-25 (#55).
