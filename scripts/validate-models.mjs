@@ -16,7 +16,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { loadSubjects, attributesOf, toKeyValues, subjectUrls, modelUrls, resolveContextTerms, CORE_CONTEXT_URL, CORE_CONTEXT_FIXTURE } from './lib/models.mjs';
 import { resolveContextDocument } from './lib/releases.mjs';
-import { mappingProblems } from './lib/mapping-check.mjs';
+import { mappingProblems, viaCycles } from './lib/mapping-check.mjs';
 import { reportFailures } from './lib/ci-summary.mjs';
 import { buildVocabulary } from './lib/vocab.mjs';
 
@@ -30,6 +30,10 @@ const core = JSON.parse(await readFile(CORE_CONTEXT_FIXTURE, 'utf8'));
 const coreTerms = new Set(Object.keys(core['@context']).filter((k) => !k.startsWith('@')));
 
 const subjects = await loadSubjects();
+// Every mapping file by subject/Type/name, for a conversion rule's via; via must not loop.
+const mappingsByName = Object.fromEntries(subjects.flatMap((s) => s.models.flatMap((m) => m.mappings.map((map) => [`${s.name}/${m.type}/${map.name}`, map]))));
+const mappingNames = new Set(Object.keys(mappingsByName));
+for (const cycle of viaCycles(mappingsByName)) { const [sub, type, name] = cycle[0].split('/'); fail(`models/${sub}/${type}/mapping/${name}.yaml`, `via cycle: ${cycle.join(' → ')}`); }
 const seenTypeIris = new Map();
 // Every type that owns its IRI (not an alias), for alias and subclass targets.
 const ownersByIri = new Map();
@@ -251,7 +255,7 @@ for (const subject of subjects) {
     if (notes.license !== undefined && typeof notes.license !== 'string') fail(`${mwhere}/notes.yaml`, 'license must be a string');
 
     // Correspondence tables render on the model page: every field must be one of the model's.
-    for (const map of model.mappings ?? []) for (const msg of mappingProblems(map, model.schema)) fail(`${mwhere}/mapping/${map.name}.yaml`, msg);
+    for (const map of model.mappings ?? []) for (const msg of mappingProblems(map, model.schema, mappingNames)) fail(`${mwhere}/mapping/${map.name}.yaml`, msg);
 
     // Status and adopters (decided in #38): stable needs two independent
     // implementations, self-reported with a link and checked by a reviewer in
