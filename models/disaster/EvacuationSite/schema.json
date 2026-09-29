@@ -131,6 +131,14 @@
       },
       "x-iri": "https://datamodels.jp/ns/disaster/alsoDesignatedShelter"
     },
+    "alsoWelfareShelter": {
+      "type": "boolean",
+      "description": "true when the site is also a designated welfare shelter (指定福祉避難所との重複)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/disaster/alsoWelfareShelter"
+    },
     "maxCapacity": {
       "type": "integer",
       "minimum": 0,

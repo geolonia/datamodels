@@ -27,6 +27,14 @@
       },
       "x-iri": "https://uri.etsi.org/ngsi-ld/name"
     },
+    "nameKana": {
+      "type": "string",
+      "description": "Name in full-width katakana (施設名（かな）)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/disaster/nameKana"
+    },
     "externalShelterId": {
       "type": "string",
       "description": "The shelter's ID in the municipality's own shelter list (unique within the municipality). Required unless nationalShelterId is given",

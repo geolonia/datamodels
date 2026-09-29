@@ -13,6 +13,9 @@ attributes:
   roadName:
     ja: 路線名
     en: Road name
+  roadType:
+    ja: "道路法第3条の道路の種類: expressway（高速自動車国道）、nationalRoad（一般国道）、prefecturalRoad（都道府県道）、municipalRoad（市町村道）、other（農道・林道・私道など道路法の道路でないもの）。自動車専用道路は種類ではなく指定なので、その道路の種類を入れる"
+    en: "Road class by the Road Act (Art. 3): expressway, nationalRoad, prefecturalRoad, municipalRoad, or other for a road outside the Act (farm, forest or private road). A motorway designation (自動車専用道路) is not a class: give the class of the road it is on"
   address:
     ja: 住所（common サブジェクトの JapaneseAddress 値）
     en: Address, as a JapaneseAddress value from the common subject
