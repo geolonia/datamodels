@@ -5,15 +5,15 @@ description: 既存のデータモデルを日本向けに拡張する方法、�
 
 # 拡張する
 
-このカタログの方針は「拡張する、複製しない」です。[Smart Data Models](https://smartdatamodels.org/)、NGSI-LD、[schema.org](https://schema.org/) に合う型や属性があれば、複製せずにそれを使います。合うものがなければ独自の型を公開し、その理由を記録します。このページでは、実際にどうやるかを説明します。
+このカタログの方針は「拡張する、複製しない」です。[Smart Data Models](https://smartdatamodels.org/)、NGSI-LD、[schema.org](https://schema.org/) の型や属性で合うものがあれば、複製せずにそれを使います。合うものがなければ独自の型を公開し、その理由を記録します。このページでは、実際にどうやるかを説明します。
 
 ## 3 つのやり方
 
 | やりたいこと | 方法 | 例 |
 |---|---|---|
 | 上流のモデルをそのまま使う | 上流の `@context` と型をそのまま使う。カタログは日本語の説明と例を提供する | カタログにはまだありません |
-| 既存のモデルに属性を足す | **プロファイル**: 元のモデルの context を URL で取り込み、足した属性だけを定義した context を公開する | [拡張ビルダー](/guide/builder)の出力 |
-| 合う型がないモデルを作る | **独自の型**: 型と属性の IRI を発行する。カタログの型は `https://datamodels.jp/ns/<subject>/` 配下。合う上流の属性は、その IRI をそのまま使う | [RoadRestriction](/models/transportation/RoadRestriction/)（`roadName`・`validFrom`・`validTo` は Smart Data Models の IRI） |
+| 既存のモデルに属性を足す | **プロファイル**: 元のモデルの context を URL で取り込み、足した属性だけを定義した context を公開する | [拡張ビルダー](/guide/builder)で作る @context |
+| 合う型がないモデルを作る | **独自の型**: 型と属性の IRI を新しく発行する（カタログの型は `https://datamodels.jp/ns/<subject>/` 配下）。合う上流の属性があれば、その IRI を使う | [RoadRestriction](/models/transportation/RoadRestriction/)（`roadName`・`validFrom`・`validTo` は Smart Data Models の IRI） |
 
 ### プロファイルの書き方
 
@@ -31,7 +31,7 @@ description: 既存のデータモデルを日本向けに拡張する方法、�
 }
 ```
 
-足した属性の IRI は、あなたが管理するドメインの下に発行します（例の `example.com` の部分）。`datamodels.jp` の名前空間はカタログのものなので使わないでください。[拡張ビルダー](/guide/builder)で、この @context と JSON Schema をブラウザで作れます。
+足した属性の IRI は、あなたが管理するドメインの下に発行します（この例では `example.com`）。`datamodels.jp` の名前空間はカタログのものなので使わないでください。[拡張ビルダー](/guide/builder)で、この @context と JSON Schema をブラウザで作れます。
 
 Smart Data Models のモデルを元にするときも書き方は同じです。上流の context は `master` ではなく、コミットを固定した URL（`https://raw.githubusercontent.com/smart-data-models/dataModel.<分野>/<commit>/context.jsonld`）で読み込みます。上流が変わっても、保存済みデータの意味が変わらないようにするためです。
 
@@ -47,7 +47,7 @@ Smart Data Models のモデルを元にするときも書き方は同じです�
 
 ### 現状について
 
-今のところ、カタログのモデルはすべてこのカタログで定義した型です。上流の IRI を使っているのは一部の属性だけで、通行規制の `roadName`・`validFrom`・`validTo`（Smart Data Models）、`name`（NGSI-LD）、住所や添付ファイルなどに使う schema.org の語彙がそれに当たります。
+今のところ、カタログのモデルはすべてカタログ独自の型です。上流の IRI を使っているのは一部の属性だけです。通行規制の `roadName`・`validFrom`・`validTo`（Smart Data Models）、`name`（NGSI-LD）、住所や添付ファイルなどに使う schema.org の語彙がこれに当たります。
 
 最初のサブジェクト [災害対応](/models/disaster/) は、高松市の水防アプリのデータモデルを基にしたもので、[タスク管理](/models/task/)の上に組み立てています（共通の属性はタスク管理の IRI を使う）。当初あった `DisasterEvent`（`Project` の**エイリアス**）と通報・対応業務・申し送り・現地写真（`Task`・`Comment`・`Attachment` の**サブクラス**）は、外部の基準・仕様に基づかないテナント固有の型だったため 2026-09-24 に廃止しました（詳細は [docs/design.md](https://github.com/geolonia/datamodels/blob/main/docs/design.md) の「Versioning and lifecycle」）。通行止めと避難所は上流（Smart Data Models の `RoadSegment`・`Alert`、デジタル庁の自治体標準オープンデータセット）と比較した結果、型としては合うものがなく独自のままですが、属性の IRI と状態の値域は借りています。通行止めはその後、国の基準（警察庁・国土交通省）に基づく通行規制として作り直し、災害に限らないため[交通](/models/transportation/)サブジェクトの `RoadRestriction` に移しました（2026-09-25）。検討の経過は各モデルの注記と [Issue #16](https://github.com/geolonia/datamodels/issues/16) にあります。エイリアス・サブクラスの書き方自体は [Tips & Tricks](/guide/tips) を参照してください。
 
