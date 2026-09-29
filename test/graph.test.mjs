@@ -124,3 +124,13 @@ test('a long grey-box label breaks after its first comma', () => {
   const svg = graphSvg('en', '/en', subjects, null, 'LR', { center: 'task/Task' });
   assert.match(svg, /<text class="sub"[^>]*>person,<\/text><text class="sub"[^>]*>organisation or team<\/text>/);
 });
+
+test('the graph and its legend sit in GraphViewer with the size and the model name, as one HTML block', () => {
+  const svg = graphSvg('en', '/en', subjects, null, 'LR', { center: 'disaster/DesignatedShelter' });
+  const [, w, h] = svg.match(/^<GraphViewer :width="(\d+)" :height="(\d+)" title="DesignatedShelter">\n<div class="model-graph"><div class="canvas" style="width:(?:\d+)px;height:(?:\d+)px">/) ?? [];
+  assert.ok(w && h, svg.slice(0, 120));
+  assert.match(svg, new RegExp(`style="width:${w}px;height:${h}px"`));
+  assert.match(svg, /<\/div><\/div>\n<template #legend><p class="model-graph-legend">.*<\/p><\/template>\n<\/GraphViewer>\n\n$/);
+  assert.doesNotMatch(svg, /\n\n(?!$)/, 'no blank line inside: it would end the HTML block');
+  assert.match(graphSvg('en', '/en', subjects, subject('task')), /^<GraphViewer :width="\d+" :height="\d+">\n/, 'no title without a centre model');
+});

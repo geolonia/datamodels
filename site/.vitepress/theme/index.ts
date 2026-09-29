@@ -1,6 +1,7 @@
 // The default VitePress theme with hero text sizing (custom.css), the
 // filterable model list (ModelIndex.vue, used on /models/), the example
-// playground on model pages (ExamplePlayground.vue), the extension builder
+// playground on model pages (ExamplePlayground.vue), pan and zoom for the
+// relationship graphs (GraphViewer.vue), the extension builder
 // (ExtensionBuilder.vue, on /guide/builder) and a
 // pre-release banner above the navigation on every page. Remove the banner
 // (and --vp-layout-top-height in custom.css) at the official launch.
@@ -9,6 +10,7 @@ import { defineAsyncComponent, defineComponent, h, onMounted, onBeforeUnmount, r
 import { useData } from 'vitepress'
 import './custom.css'
 import ModelIndex from './ModelIndex.vue'
+import GraphViewer from './GraphViewer.vue'
 
 const PrereleaseBanner = defineComponent({
   setup() {
@@ -50,6 +52,8 @@ export default {
   extends: DefaultTheme,
   enhanceApp({ app }) {
     app.component('ModelIndex', ModelIndex)
+    // Pan and zoom for the relationship graph on every model page.
+    app.component('GraphViewer', GraphViewer)
     // Only model pages use it: its code stays out of the chunk every page loads.
     app.component('ExamplePlayground', defineAsyncComponent(() => import('./ExamplePlayground.vue')))
     // Only /guide/builder uses it: its code and model data stay out of the chunk every page loads.
