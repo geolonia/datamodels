@@ -21,7 +21,7 @@ hero:
 
 features:
   - title: Extend, do not duplicate
-    details: Smart Data Models are used as they are; only what Japan needs is added. The guide shows how.
+    details: Types and attributes from Smart Data Models, NGSI-LD and schema.org are reused where they fit. Where nothing fits, the catalog publishes its own type and records why. The guide shows how.
     link: /en/guide/extend
     linkText: Extending models
   - title: URLs that never change
