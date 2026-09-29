@@ -85,7 +85,8 @@ https://datamodels.jp/context/<subject>/vX.jsonld         alias: latest X.y.z
 https://datamodels.jp/schema/<subject>/<Type>/vX.Y.Z.json JSON Schema, exact version, immutable
 https://datamodels.jp/schema/<subject>/<Type>/vX.json     alias
 https://datamodels.jp/vocab/<subject>/vX.Y.Z.jsonld       RDFS vocabulary, exact version, immutable
-https://datamodels.jp/examples/<subject>/<Type>/          examples
+https://datamodels.jp/examples/<subject>/<Type>/example.json                examples: key-values
+https://datamodels.jp/examples/<subject>/<Type>/example-normalized.jsonld  and NGSI-LD normalized (entity types)
 https://datamodels.jp/ns/<subject>/<Term>                 type and attribute IRIs, redirect to the page
 https://datamodels.jp/catalog.json                        machine-readable index (catalog.schema.json)
 https://datamodels.jp/adapters/<name>/<subject>/<Type>.json  adapter output

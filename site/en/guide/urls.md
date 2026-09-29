@@ -36,7 +36,8 @@ The alias only advances within compatible changes, so it is the right default. U
 /schema/<subject>/<Type>/vX.Y.Z.json    JSON Schema (immutable)
 /schema/<subject>/<Type>/vX.json        alias
 /vocab/<subject>/vX.Y.Z.jsonld          vocabulary (RDFS: classes, subclass relations, ja/en labels; immutable)
-/examples/<subject>/<Type>/             examples
+/examples/<subject>/<Type>/example.json               example (key-values)
+/examples/<subject>/<Type>/example-normalized.jsonld  example (NGSI-LD normalized; not for value types)
 /ns/<subject>/<Term>                    type and attribute IRIs (redirect to the page)
 /adapters/<name>/<subject>/<Type>.json  adapter output (for example a GeonicDB Custom Data Model definition)
 /catalog.json                           machine-readable index (conforms to /catalog.schema.json)

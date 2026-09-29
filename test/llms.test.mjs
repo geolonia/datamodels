@@ -1,7 +1,7 @@
 // /llms.txt lists every published model with URLs the build publishes.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { access } from 'node:fs/promises';
+import { access, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { loadSubjects, subjectUrls, modelUrls, BASE_URL, ROOT } from '../scripts/lib/models.mjs';
 import { llmsTxt } from '../scripts/lib/llms.mjs';
@@ -27,5 +27,12 @@ test('every subject and model is listed with its context, English page and schem
 test('only guides whose English page exists are linked', async () => {
   for (const [, slug] of txt.matchAll(/\]\(https:\/\/datamodels\.jp\/en\/guide\/([a-z-]+)\)/g)) {
     await access(join(ROOT, 'site', 'en', 'guide', `${slug}.md`));
+  }
+});
+
+test('every English guide is listed', async () => {
+  for (const f of await readdir(join(ROOT, 'site', 'en', 'guide'))) {
+    if (!f.endsWith('.md') || f === 'index.md') continue;
+    assert.ok(txt.includes(`(${BASE_URL}/en/guide/${f.slice(0, -3)})`), f);
   }
 });

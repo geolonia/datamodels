@@ -64,7 +64,13 @@ const T = {
 
 const badge = (type, text) => `<Badge type="${type}" text="${text}" />`;
 const statusBadge = (lang, status) => badge(status === 'stable' ? 'tip' : status === 'deprecated' ? 'danger' : 'info', T[lang].statusLabel[status] ?? status);
-const front = (title, description) => `---\ntitle: ${JSON.stringify(title)}\ndescription: ${JSON.stringify(description ?? '')}\n---\n\n`;
+// The description is the page's meta and share-preview text, which shows no Markdown.
+export const plainText = (s) => String(s ?? '')
+  .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/`([^`]*)`/g, '$1').replace(/\*\*([^*]+)\*\*/g, '$1')
+  .replace(/\s+/g, ' ').trim();
+const front = (title, description) => `---\ntitle: ${JSON.stringify(title)}\ndescription: ${JSON.stringify(plainText(description))}\n---\n\n`;
+// "#85" in a note is an issue of this repository, as on GitHub.
+export const issueLinks = (s) => s.replace(/(^|[\s(（])#(\d+)\b/g, '$1[#$2](https://github.com/geolonia/datamodels/issues/$2)');
 
 let allSubjects = [];
 
@@ -116,7 +122,7 @@ function modelForIri(subject, iri, { ownerOnly = false } = {}) {
 export const playgroundUrl = (doc) => `https://json-ld.org/playground/#startTab=tab-expanded&json-ld=${encodeURIComponent(JSON.stringify(doc)).replace(/[()]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`)}`;
 const modelLink = (prefix, found) => `[${found.model.type}](${prefix}${rel(modelUrls(found.subject, found.model).page)})`;
 
-function valueText(lang, subject, prop, prefix) {
+export function valueText(lang, subject, prop, prefix) {
   const ngsi = prop['x-ngsi']?.type;
   if (ngsi === 'Relationship') {
     const targetIri = prop['x-ngsi'].target;
@@ -137,6 +143,9 @@ function valueText(lang, subject, prop, prefix) {
   if (prop.format) t += ` (${prop.format})`;
   if (prop.enum) t += `: ${prop.enum.map(code).join(' \\| ')}`;
   if (prop.minimum !== undefined) t += `, ≥ ${prop.minimum}`;
+  if (prop.exclusiveMinimum !== undefined) t += `, > ${prop.exclusiveMinimum}`;
+  if (prop.maximum !== undefined) t += `, ≤ ${prop.maximum}`;
+  if (prop.exclusiveMaximum !== undefined) t += `, < ${prop.exclusiveMaximum}`;
   return `Property, ${t}`;
 }
 
@@ -218,7 +227,7 @@ function modelPage(lang, prefix, subject, model) {
     md += '\n';
   }
   const notes = model.notes?.notes ?? [];
-  if (notes.length) md += `## ${t.notes} {#notes}\n\n${notes.map((n) => `- ${n}`).join('\n')}\n\n`;
+  if (notes.length) md += `## ${t.notes} {#notes}\n\n${notes.map((n) => `- ${issueLinks(n)}`).join('\n')}\n\n`;
   // Invite corrections where readers notice them: an issue titled after the type, or the proposal form.
   const repo = 'https://github.com/geolonia/datamodels';
   md += `::: tip ${t.improveTitle}\n${t.improve(`${repo}/issues/new?title=${encodeURIComponent(`${model.type}: `)}`, `${repo}/issues/new?template=model-proposal.yml`, `${prefix}/guide/contribute`)}\n:::\n\n`;
@@ -254,7 +263,7 @@ async function subjectPage(lang, prefix, subject) {
   return md;
 }
 
-function indexPage(lang, prefix, subjects) {
+export function indexPage(lang, prefix, subjects) {
   const t = T[lang];
   const other = lang === 'ja' ? 'en' : 'ja';
   // One row per model for the filterable list (site/.vitepress/theme/ModelIndex.vue).
