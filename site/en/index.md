@@ -37,3 +37,5 @@ features:
     link: /en/guide/catalogs
     linkText: Other data model catalogs
 ---
+
+If you know the standard your data follows (the municipal standard open datasets, EEI, GSI's shelter data and more), [Standards mapped](/en/models/standards/) leads to the matching model.

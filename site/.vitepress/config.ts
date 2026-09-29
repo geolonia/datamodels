@@ -75,10 +75,15 @@ const nav = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.NavItem[] => [
 ]
 
 const SITE_URL = 'https://datamodels.jp';
+// The fallback description of a page without its own, in the page's language (share previews).
+const DESCRIPTION = {
+  ja: '日本で使えるデータモデルのカタログ。JSON Schema、JSON-LD の @context、語彙を変わらない URL で公開し、NGSI-LD にそのまま使えます',
+  en: 'Data models that work in Japan: JSON Schemas, JSON-LD contexts and vocabularies at stable URLs, ready for NGSI-LD',
+};
 
 export default defineConfig({
   title: 'datamodels.jp',
-  description: 'Data models that work in Japan: JSON Schemas, JSON-LD contexts and vocabularies at stable URLs, ready for NGSI-LD',
+  description: DESCRIPTION.en,
   base: '/',
   cleanUrls: true,
   // sitemap.xml for search engines; robots.txt (public/) points to it.
@@ -102,7 +107,8 @@ export default defineConfig({
   transformPageData(pageData) {
     const path = pageData.relativePath.replace(/(^|\/)index\.md$/, '$1').replace(/\.md$/, '');
     const title = pageData.title && pageData.title !== 'datamodels.jp' ? `${pageData.title} | datamodels.jp` : 'datamodels.jp';
-    const description = pageData.description || pageData.frontmatter.description || 'Data models that work in Japan: JSON Schemas, JSON-LD contexts and vocabularies at stable URLs, ready for NGSI-LD';
+    const lang = pageData.relativePath.startsWith('en/') ? 'en' : 'ja';
+    const description = pageData.description || pageData.frontmatter.description || DESCRIPTION[lang];
     pageData.frontmatter.head ??= [];
     pageData.frontmatter.head.push(
       ['meta', { property: 'og:title', content: title }],
@@ -142,7 +148,7 @@ export default defineConfig({
     root: {
       label: '日本語',
       lang: 'ja',
-      description: '日本で使えるデータモデルのカタログ',
+      description: DESCRIPTION.ja,
       themeConfig: {
         nav: nav('', 'ja'),
         footer: { message: '運営: <a href="https://geolonia.com/">Geolonia</a> · モデルのファイル CC0 · 文章 CC BY 4.0 · コード Apache-2.0 · <a href="/about">このサイトについて</a>' },

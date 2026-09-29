@@ -5,8 +5,8 @@ body:
   - type: markdown
     attributes:
       value: |
-        日本語でも英語でも構いません。モデルは既存の標準やガイドラインに基づくものだけを公開します（[拡張する・貢献する](https://datamodels.jp/guide/extend)）。
-        Japanese or English are both fine. The catalog publishes models that rest on an existing standard or guideline ([Extend and contribute](https://datamodels.jp/en/guide/extend)).
+        日本語でも英語でも構いません。モデルは既存の標準やガイドラインに基づくものだけを公開します（[貢献する](https://datamodels.jp/guide/contribute)）。
+        Japanese or English are both fine. The catalog publishes models that rest on an existing standard or guideline ([Contributing](https://datamodels.jp/en/guide/contribute)).
   - type: textarea
     id: what
     attributes:

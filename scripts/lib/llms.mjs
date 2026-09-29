@@ -5,12 +5,17 @@ import { access } from 'node:fs/promises';
 import { join } from 'node:path';
 import { subjectUrls, modelUrls, BASE_URL, ROOT } from './models.mjs';
 
-// Guides in reading order; one whose English page does not exist is left out.
+// Guides in the order of the sidebar (site/.vitepress/config.ts); one whose
+// English page does not exist is left out.
 const GUIDES = [
   ['use', 'Using the models', 'validate JSON, send it to an NGSI-LD broker, use it as linked data'],
-  ['urls', 'URLs that never change', 'which URL to use, versions, aliases, caching, IRI resolution'],
+  ['geonicdb', 'Use with GeonicDB', 'register a catalog model in GeonicDB, then create and query entities'],
   ['extend', 'Extending models', 'add attributes or models for Japan, the rules, examples'],
+  ['builder', 'Extension builder', 'build the @context and JSON Schema for your own attributes on a catalog model, in the browser'],
   ['contribute', 'Contributing', 'propose or change models, stages and who decides'],
+  ['urls', 'URLs that never change', 'which URL to use, versions, aliases, caching, IRI resolution'],
+  ['versioning', 'Versions and deprecation', 'how subjects are versioned, how deprecation works, the stages of a model'],
+  ['catalogs', 'Other data model catalogs', 'catalogs and standards used globally and in Japan, and how this catalog relates to them'],
   ['tips', 'Tips & Tricks', 'match attribute names to your own terms with JSON-LD aliases'],
 ];
 
@@ -41,7 +46,7 @@ export async function llmsTxt(subjects) {
     txt += `\n`;
   }
   txt += `## Optional\n\n`;
-  txt += `- [catalog.json](${BASE_URL}/catalog.json): every model with its type IRI, context, schema, vocabulary, examples and adapter URLs\n`;
+  txt += `- [catalog.json](${BASE_URL}/catalog.json): every model with its type IRI, context, schema, vocabulary, example, page (Japanese and English) and adapter URLs, and the licence (CC0-1.0)\n`;
   txt += `- [Standards mapped](${BASE_URL}/en/models/standards/): every external standard a model is mapped to (EEI, the municipal standard open datasets, GSI, GIF and more), with a link to each field-by-field table\n`;
   txt += `- [Source repository](https://github.com/geolonia/datamodels): schemas, mappings to other standards, notes\n`;
   txt += `- [Licences](${BASE_URL}/LICENSE-CONTENT): machine-readable files CC0 1.0, prose CC BY 4.0, code Apache-2.0\n`;

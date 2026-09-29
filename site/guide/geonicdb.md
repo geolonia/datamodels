@@ -41,6 +41,8 @@ curl -X POST "$GEONICDB_BASE_URL/custom-data-models" \
   --data @RoadRestriction.json
 ```
 
+`Fiware-Service` と `NGSILD-Tenant` は同じテナントを指定するヘッダーで、GeonicDB ではどちらも同じに扱われます（[マルチテナンシー](https://docs.geonicdb.com/ja/core-concepts/multi-tenancy)）。`NGSILD-Tenant` は NGSI-LD の API（`/ngsi-ld/v1/...`）での名前なのでエンティティの手順ではこちらを使い、NGSI-LD の API ではない登録（`/custom-data-models`）では `Fiware-Service` を使っています。
+
 `201 Created` が返れば登録完了です。同じ型名が既にあると `409` になります。`geonic` CLI なら `geonic models create RoadRestriction.json` です。
 
 登録された定義は属性の型・必須・enum を検証し（`additionalProperties: false` のモデルでは未定義の属性を拒否）、`contextUrl` の context をこの型の語彙として使います。

@@ -18,6 +18,15 @@
       "type": "string",
       "format": "date-time"
     },
+    "license": {
+      "type": "string",
+      "description": "SPDX identifier of the licence of catalog.json and of every file it lists (schemas, contexts, vocabularies, examples, adapter files): CC0-1.0. The prose of the pages is CC BY 4.0; see licenseUrl."
+    },
+    "licenseUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "The licence terms of the catalog files and pages."
+    },
     "models": {
       "type": "array",
       "items": {
@@ -100,7 +109,21 @@
           },
           "pageUrl": {
             "type": "string",
-            "format": "uri"
+            "format": "uri",
+            "description": "The model page in Japanese, the root locale of the site."
+          },
+          "pageUrlEn": {
+            "type": "string",
+            "format": "uri",
+            "description": "The same model page in English."
+          },
+          "exampleUrls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "The example files of the model: example.json (key-values) and, for an entity type, example-normalized.jsonld (NGSI-LD normalized, with @context)."
           },
           "upstream": {
             "type": "object",

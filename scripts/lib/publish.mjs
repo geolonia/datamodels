@@ -18,12 +18,31 @@ async function write(url, content) {
 }
 const json = (o) => JSON.stringify(o, null, 2) + '\n';
 
+// catalog.json and every file it lists are CC0; the prose of the pages is CC BY 4.0 (LICENSE-CONTENT).
+export const CATALOG_LICENSE = { license: 'CC0-1.0', licenseUrl: `${BASE_URL}/LICENSE-CONTENT` };
+
+/** One model in catalog.json (catalog.schema.json). adapterUrls: adapter name to URL. */
+export function catalogEntry(subject, model, adapterUrls = {}) {
+  const u = subjectUrls(subject); const mu = modelUrls(subject, model);
+  return {
+    type: model.type, kind: model.kind, typeIri: mu.typeIri, subject: subject.name, domain: subject.name, source: subject.source,
+    contextUrl: u.contextExact, contextAliasUrl: u.contextAlias, schemaUrl: mu.schemaExact, vocabularyUrl: u.vocabExact, version: subject.version,
+    status: model.catalog.status ?? 'draft', title: model.catalog.title, description: model.catalog.description,
+    sampleProperties: attributesOf(model).map(([n]) => n), pageUrl: mu.page, pageUrlEn: mu.page.replace(BASE_URL, `${BASE_URL}/en`),
+    exampleUrls: Object.keys(model.examples).sort().map((f) => `${mu.examples}${f}`),
+    ...(Object.keys(adapterUrls).length ? { adapters: adapterUrls } : {}),
+    ...(model.schema['x-alias-of'] ? { aliasOf: model.schema['x-alias-of'] } : {}),
+    ...(model.schema['x-subclass-of'] ? { subClassOf: model.schema['x-subclass-of'] } : {}),
+    ...(model.catalog.supersededBy ? { supersededBy: model.catalog.supersededBy } : {}),
+  };
+}
+
 /**
  * adapters: modules discovered under adapters/ by build.mjs (the core never
  * imports them). Each may add one file per model, listed in catalog.json.
  */
 export async function publishModels(subjects, adapters = []) {
-  const catalog = { formatVersion: 1, generatedAt: new Date().toISOString(), models: [] };
+  const catalog = { formatVersion: 1, generatedAt: new Date().toISOString(), ...CATALOG_LICENSE, models: [] };
   const redirects = ['', '# Generated: type and attribute IRIs resolve to their documentation.'];
   // Exact versions get their own Cache-Control rule (scripts/lib/cache.mjs).
   const exactPaths = [];
@@ -63,16 +82,7 @@ export async function publishModels(subjects, adapters = []) {
         const iri = model.schema.properties[name]['x-iri'] ?? '';
         if (iri.startsWith(u.namespace)) redirects.push(`/ns/${subject.name}/${name}  /models/${subject.name}/${model.type}/#${name}  302`);
       }
-      catalog.models.push({
-        type: model.type, kind: model.kind, typeIri: mu.typeIri, subject: subject.name, domain: subject.name, source: subject.source,
-        contextUrl: u.contextExact, contextAliasUrl: u.contextAlias, schemaUrl: mu.schemaExact, vocabularyUrl: u.vocabExact, version: subject.version,
-        status: model.catalog.status ?? 'draft', title: model.catalog.title, description: model.catalog.description,
-        sampleProperties: attributesOf(model).map(([n]) => n), pageUrl: mu.page,
-        ...(Object.keys(adapterUrls).length ? { adapters: adapterUrls } : {}),
-        ...(model.schema['x-alias-of'] ? { aliasOf: model.schema['x-alias-of'] } : {}),
-        ...(model.schema['x-subclass-of'] ? { subClassOf: model.schema['x-subclass-of'] } : {}),
-        ...(model.catalog.supersededBy ? { supersededBy: model.catalog.supersededBy } : {}),
-      });
+      catalog.models.push(catalogEntry(subject, model, adapterUrls));
     }
   }
 
