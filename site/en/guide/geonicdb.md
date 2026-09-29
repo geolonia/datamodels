@@ -11,7 +11,7 @@ The steps that work with any broker (validate, create, query) are in [Using the 
 
 ## Prerequisites
 
-- A GeonicDB tenant and API key ([GeonicDB documentation](https://docs.geonicdb.com/en/saas/api-key)). Bind the key to a policy that permits the requests on this page (`POST` to `/custom-data-models`, creating and querying at `/ngsi-ld/v1/entities`); see [policy binding](https://docs.geonicdb.com/en/reference/auth#policy-binding-policyid). A key without a policy is denied on every API.
+- A GeonicDB tenant and API key ([GeonicDB documentation](https://docs.geonicdb.com/en/saas/api-key)). Bind the key to a policy that permits the requests on this page (`POST` to `/custom-data-models`, creating and querying at `/ngsi-ld/v1/entities`); see [policy binding](https://docs.geonicdb.com/en/reference/auth#policy-binding-policyid). Unless a policy permits it (bound to the key, or one of the tenant's policies), a key is denied on every API.
 - Environment variables: `GEONICDB_BASE_URL` (for example `https://<your-deployment>.geonicdb.jp`), `GEONICDB_TENANT`, `GEONICDB_API_KEY`
 
 ## What registering does

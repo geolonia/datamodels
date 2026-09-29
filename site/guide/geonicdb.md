@@ -11,7 +11,7 @@ GeonicDB は、このカタログを運営している Geolonia の NGSI-LD ブ�
 
 ## 前提
 
-- GeonicDB のテナントと API キー（[GeonicDB ドキュメント](https://docs.geonicdb.com/ja/saas/api-key)）。API キーには、このページの操作（`/custom-data-models` への `POST`、`/ngsi-ld/v1/entities` での作成と検索）を許可するポリシーを付けてください（[ポリシーバインディング](https://docs.geonicdb.com/ja/reference/auth#ポリシーバインディング-policyid)）。ポリシーの無い API キーは、どの API でも拒否されます。
+- GeonicDB のテナントと API キー（[GeonicDB ドキュメント](https://docs.geonicdb.com/ja/saas/api-key)）。API キーには、このページの操作（`/custom-data-models` への `POST`、`/ngsi-ld/v1/entities` での作成と検索）を許可するポリシーを付けてください（[ポリシーバインディング](https://docs.geonicdb.com/ja/reference/auth#ポリシーバインディング-policyid)）。許可するポリシー（キーに付けたもの、またはテナントのポリシー）が無ければ、API キーはどの API でも拒否されます。
 - 環境変数: `GEONICDB_BASE_URL`（例: `https://<your-deployment>.geonicdb.jp`）、`GEONICDB_TENANT`、`GEONICDB_API_KEY`
 
 ## 登録すると何が起きるか
