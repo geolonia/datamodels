@@ -4,10 +4,9 @@
 // Fails on the first contract violation. Needs network access only.
 import jsonld from 'jsonld';
 import { createHash } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
-import { loadSubjects, subjectUrls, modelUrls, BASE_URL, ROOT } from './lib/models.mjs';
+import { loadSubjects, subjectUrls, modelUrls, BASE_URL } from './lib/models.mjs';
 import { listReleases } from './lib/releases.mjs';
+import { exactCacheControl, isPrerelease, readManifest } from './lib/cache.mjs';
 
 const origin = (process.argv[2] ?? BASE_URL).replace(/\/$/, '');
 const swap = (url) => url.replace(BASE_URL, origin);
@@ -17,9 +16,14 @@ const head = async (url) => fetch(swap(url), { method: 'HEAD', redirect: 'manual
 const h = (r, name) => r.headers.get(name) ?? '';
 // Exact versions must carry exactly this value: a joined value such as
 // "public, max-age=300, public, max-age=31536000, immutable" means the
-// inherited short cache was not detached.
-const IMMUTABLE = 'public, max-age=31536000, immutable';
-const isImmutable = (r) => h(r, 'cache-control').trim() === IMMUTABLE;
+// inherited short cache was not detached. Which value applies follows
+// "prerelease" in published-manifest.json (scripts/lib/cache.mjs), so run this
+// from a checkout of the deployed commit.
+const manifest = await readManifest();
+const EXACT = exactCacheControl(manifest);
+const RULE = `${isPrerelease(manifest) ? 'pre-release' : 'launched'} rule`;
+const isExactCache = (r) => h(r, 'cache-control').trim() === EXACT;
+const exactCacheMessage = (url, r) => `${url}: cache-control "${h(r, 'cache-control')}" must be exactly "${EXACT}" (${RULE})`;
 
 const loader = async (url) => {
   const r = await fetch(swap(url), { headers: { accept: 'application/ld+json, application/json' } });
@@ -33,13 +37,14 @@ for (const subject of subjects) {
   let r = await head(u.contextExact);
   expect(r.status === 200, `${u.contextExact}: ${r.status}`);
   expect(h(r, 'content-type').startsWith('application/ld+json'), `${u.contextExact}: content-type ${h(r, 'content-type')}`);
-  expect(isImmutable(r), `${u.contextExact}: cache-control "${h(r, 'cache-control')}" must be exactly "${IMMUTABLE}"`);
+  expect(isExactCache(r), exactCacheMessage(u.contextExact, r));
   expect(h(r, 'access-control-allow-origin') === '*', `${u.contextExact}: missing CORS`);
   for (const release of await listReleases(subject)) {
-    for (const f of release.files) { const rr = await head(f.url); expect(rr.status === 200 && isImmutable(rr), `${f.url}: released file ${rr.status} ${h(rr, 'cache-control')}`); }
+    for (const f of release.files) { const rr = await head(f.url); expect(rr.status === 200, `${f.url}: released file ${rr.status}`); expect(isExactCache(rr), exactCacheMessage(f.url, rr)); }
   }
   r = await head(u.vocabExact);
-  expect(r.status === 200 && h(r, 'content-type').startsWith('application/ld+json') && isImmutable(r), `${u.vocabExact}: ${r.status} ${h(r, 'content-type')} ${h(r, 'cache-control')}`);
+  expect(r.status === 200 && h(r, 'content-type').startsWith('application/ld+json'), `${u.vocabExact}: ${r.status} ${h(r, 'content-type')}`);
+  expect(isExactCache(r), exactCacheMessage(u.vocabExact, r));
   r = await head(u.contextAlias);
   expect(r.status === 200 && !/immutable/.test(h(r, 'cache-control')), `${u.contextAlias}: alias must not be immutable (${r.status}, ${h(r, 'cache-control')})`);
   r = await head(u.page); expect(r.status === 200, `${u.page}: ${r.status}`);
@@ -48,7 +53,7 @@ for (const subject of subjects) {
     const mu = modelUrls(subject, model);
     r = await head(mu.schemaExact);
     expect(r.status === 200 && h(r, 'content-type').startsWith('application/schema+json'), `${mu.schemaExact}: ${r.status} ${h(r, 'content-type')}`);
-    expect(isImmutable(r), `${mu.schemaExact}: cache-control "${h(r, 'cache-control')}" must be exactly "${IMMUTABLE}"`);
+    expect(isExactCache(r), exactCacheMessage(mu.schemaExact, r));
     // An alias (x-alias-of) shares the aliased type's IRI, which redirects to the owner's page; its own name has no IRI.
     if (mu.typeIri === `${BASE_URL}/ns/${subject.name}/${model.type}`) {
       r = await head(mu.typeIri);
@@ -67,10 +72,9 @@ for (const subject of subjects) {
     }
   }
 }
-// Served bytes of every recorded immutable file must match the manifest. This
+// Served bytes of every recorded file must match the manifest. This
 // is what makes an in-place correction of a published file verifiable: after a
 // deploy, the CDN and the origin serve exactly what the repository says.
-const manifest = JSON.parse(await readFile(join(ROOT, 'published-manifest.json'), 'utf8'));
 for (const [path, hash] of Object.entries(manifest.files)) {
   const url = `${origin}/${path}`;
   const res = await fetch(url, { cache: 'no-store' });
@@ -127,5 +131,7 @@ if (origin === BASE_URL || process.env.CHECK_MACHINE_UA === '1') {
   }
 }
 
-if (failures.length) { console.error(`Live check failed (${failures.length}) against ${origin}:`); for (const f of failures) console.error(`  ${f}`); process.exit(1); }
-console.log(`live ok: ${origin}, ${subjects.reduce((a, s) => a + s.models.length, 0)} model(s), ${Object.keys(manifest.files).length} immutable file(s) match the manifest`);
+// A current release's files are also the exact versions checked above, so a failure can repeat.
+const unique = [...new Set(failures)];
+if (unique.length) { console.error(`Live check failed (${unique.length}) against ${origin}:`); for (const f of unique) console.error(`  ${f}`); process.exit(1); }
+console.log(`live ok: ${origin}, ${subjects.reduce((a, s) => a + s.models.length, 0)} model(s), ${Object.keys(manifest.files).length} recorded file(s) match the manifest, exact versions cached as "${EXACT}" (${RULE})`);

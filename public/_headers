@@ -3,9 +3,11 @@
 # Matching rules (Cloudflare): one `*` splat per rule at most; a request
 # inherits the headers of every matching rule; the same header set by several
 # rules is joined with commas unless a later rule detaches it first with
-# `! Header-Name`. The immutable Cache-Control for exact versions is therefore
-# generated per file at build time (scripts/lib/publish.mjs) and appended
-# below, each with `! Cache-Control` before the new value.
+# `! Header-Name`. The Cache-Control for exact versions is therefore
+# generated per file at build time (scripts/lib/cache.mjs) and appended
+# below, each with `! Cache-Control` before the new value: immutable for a
+# year after the launch, 5 minutes while published-manifest.json says
+# "prerelease": true.
 # Verify live after a change: `npm run check:live`.
 #
 # Contexts and schemas are fetched cross-origin by brokers, JSON-LD processors
@@ -20,7 +22,7 @@
 
 # JSON-LD contexts. Aliases (vN.jsonld) advance to the latest compatible
 # version, so they get a short cache; exact versions get the generated
-# immutable rule. A 404 under this path is also labelled ld+json, since the
+# rule. A 404 under this path is also labelled ld+json, since the
 # request asked for a .jsonld file.
 /context/*.jsonld
   Content-Type: application/ld+json; charset=utf-8
