@@ -1,5 +1,7 @@
 # datamodels
 
+Models: CC0 1.0 · Text: CC BY 4.0 · Code: Apache-2.0 ([Licences](#licences))
+
 Bilingual catalog of data models that work in practice in Japan, published at **https://datamodels.jp**. It serves JSON Schemas, JSON-LD `@context` files and RDFS vocabularies at URLs that never change: usable as plain JSON, as linked data, and as they are with NGSI-LD brokers. Existing standards such as [Smart Data Models](https://smartdatamodels.org/), the Digital Agency's GIF and [RFC 8984](https://www.rfc-editor.org/rfc/rfc8984.html) are extended and mapped, not copied.
 
 The site explains how to use and extend the models: [拡張する](https://datamodels.jp/guide/extend) · [URL の約束](https://datamodels.jp/guide/urls) · [English](https://datamodels.jp/en/). Design background: [docs/design.md](docs/design.md).
@@ -26,6 +28,7 @@ public/                   _headers and _redirects (the build appends the generat
 catalog.schema.json       wire format of /catalog.json
 published-manifest.json   SHA-256 of every published immutable file
 docs/design.md            design decisions
+docs/deployment.md        how the site is built and served (Cloudflare)
 ```
 
 Model folders follow the Smart Data Models layout so a model can be proposed upstream unchanged. Schemas carry no product-specific keys; the validator rejects them.
@@ -76,18 +79,7 @@ It detects UTF-8 and Shift_JIS. It repairs only what it can prove, such as a loc
 
 ## Deployment
 
-Cloudflare Workers Builds watches this repository and deploys `main`; no credential lives in GitHub. Dashboard settings on the `datamodels` Worker, connected to `geolonia/datamodels`: build command `npm ci && npm run build:deploy`, deploy command `npx wrangler deploy`, preview command `npx wrangler preview`, root `/`, preview builds on (Settings → Build → Branch control → Enable Preview Builds). Every pull request then gets a Preview URL on workers.dev in a comment; `preview_urls` in `wrangler.jsonc` must stay `true`. The Worker was switched to Worker Previews once (Settings → Builds → Set up Worker Previews), which cannot be undone. The custom domain is declared in `wrangler.jsonc`. After a deploy, run `npm run check:live`.
-
-Cloudflare's Browser Integrity Check, on by default, blocks Python's built-in HTTP client (user agent `Python-urllib`, error 1010), which tools such as rdflib use to fetch contexts. A configuration rule on the `datamodels.jp` zone (Rules → Configuration Rules, "Machine-readable files: no Browser Integrity Check") turns it off for these requests; human-readable pages keep it:
-
-```
-starts_with(http.request.uri.path, "/context/") or starts_with(http.request.uri.path, "/schema/") or starts_with(http.request.uri.path, "/vocab/") or starts_with(http.request.uri.path, "/examples/") or starts_with(http.request.uri.path, "/adapters/") or http.request.uri.path eq "/catalog.json"
-```
-
-`npm run check:live` fetches those paths with that user agent and fails if the rule goes missing. Previews on workers.dev keep Cloudflare's default and are skipped.
-
-`models.geonicdb.com`, the pre-launch preview, is retired and must not answer. `wrangler deploy` does not detach a custom domain that disappears from `wrangler.jsonc`, so if it still responds, remove it under the Worker's Settings → Domains & Routes; that also deletes its DNS record.
-
+Cloudflare Workers Builds deploys `main`; the dashboard settings, the Browser Integrity Check rule and the retired `models.geonicdb.com` are in [docs/deployment.md](docs/deployment.md).
 
 ## Licences
 

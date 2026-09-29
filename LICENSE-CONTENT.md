@@ -1,6 +1,52 @@
+# モデルのライセンス / Licences for model content
+
+[English below](#licences-for-model-content)
+
+<!-- The site renders the two regions as /LICENSE-CONTENT and /en/LICENSE-CONTENT; the whole file, with the legal texts, is served as /LICENSE-CONTENT.md. -->
+<!-- #region ja -->
+機械が読むファイルは **CC0 1.0**（条件なし）、人が読む文章は **CC BY 4.0**、コードは **Apache-2.0** です。2026-09-28 に決定しました（[#83](https://github.com/geolonia/datamodels/issues/83)）。
+
+## どのライセンスが適用されるか
+
+| 対象 | ライセンス |
+|---|---|
+| **機械が読むファイル**: JSON Schema（`schema.json`、`/schema/…`）、JSON-LD の context（`context.jsonld`、`/context/…`）、RDFS の語彙（`/vocab/…`）、例（`examples/`、`/examples/…`）、`catalog.yaml`、対応表（`mapping/*.yaml`）、`catalog.json`、アダプターのファイル（`/adapters/…`） | [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/deed.ja) |
+| **文章**: モデルのフォルダの `notes.yaml` と `README.md`、https://datamodels.jp のページ（モデルのページ、サブジェクトのページ、ガイド） | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.ja) |
+| **コード**: `models/` 以外のすべて（`site/`、`scripts/`、アダプターのコード、CI を含む） | Apache-2.0（リポジトリの `LICENSE`） |
+
+ライセンスはファイル単位で適用されます。機械が読むファイルの中の文章（スキーマのタイトルや説明、語彙のラベルなど）も、そのファイルの一部として CC0 です。
+
+分ける理由: 出典の表示は人が読む場所では機能しますが、別のリポジトリに貼り付けられたスキーマには残りません。そのため、出典の表示を求めるのは、実際に表示できる文章だけにしています。
+
+## 出典の表示と正規の URL
+
+- **文章（CC BY 4.0）**: 「datamodels.jp」と、使ったページへのリンクを表示し、変更した場合はその旨も書いてください。各ページの上にそのページの URL があります。
+- **機械が読むファイル（CC0）**: 条件はありません。各ファイルは正規の URL を持っています（スキーマの `$id`、`@context` の URL、型と属性の IRI）。ファイルをコピーするときも残してください。これはお願いであり、条件ではありません。コピーを見つけた人が、新しいバージョンがあることを知る手がかりになります。
+
+## 他の出典に由来する部分
+
+- **CC BY の出典から写した部分**: Smart Data Models やデジタル庁の GIF コアデータモデルのスキーマなど、CC BY の出典から内容を写したファイルは、ファイル全体が CC BY 4.0 のままで、その出典の表示が付きます。機械が読むファイルでも同じです。該当するファイルと出典は、モデルのフォルダの `LICENSE.md` に書きます。
+- **現在、上流から内容を写したモデルはありません。** 上流の標準は写さずに対応付けています。対応は `mapping/*.yaml` に記録し、IRI を再利用しています。再利用した IRI は名前であり、写した内容ではありません。
+- **GIF**: リポジトリ（https://github.com/JDA-DM/GIF）は CC0 1.0 で、コアデータモデルのスキーマ `GIF_Core_DataModel.xsd` は CC BY 4.0 と宣言しています。対応表は、対応を記録するために GIF の項目名を挙げています。どちらのライセンスが適用されるかは [#65](https://github.com/geolonia/datamodels/issues/65) でデジタル庁に問い合わせています。
+- **自治体標準オープンデータセット**: デジタル庁の自治体標準オープンデータセット（公共データ利用規約（第1.0版）、PDL1.0、CC BY 4.0 と互換）に由来する部分は、モデルの対応表に出典を書いています。
+
+## 変更
+
+2026-09-28 までは、モデルの内容はすべて CC BY 4.0 でした。上の区分は、それ以前に公開したファイルを含め、公開済みのすべてのバージョンに適用されます。
+
+## ライセンスの全文
+
+- [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/legalcode.ja)（日本語訳）
+- [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/legalcode.ja)（日本語訳）
+- 英語の原文は [LICENSE-CONTENT.md](https://datamodels.jp/LICENSE-CONTENT.md) の末尾にあります。
+<!-- #endregion ja -->
+
+---
+
 # Licences for model content
 
-日本語まとめ: 機械が読むファイル（JSON Schema、`@context`、語彙、例、`catalog.json` など）は **CC0 1.0**（条件なし）、人が読む文章（注記、モデルの README、サイトのページ）は **CC BY 4.0**、コードは **Apache-2.0** です。CC BY の出典（Smart Data Models、GIF のコアスキーマなど）から写した部分は CC BY 4.0 のままで、各モデルの `LICENSE.md` に書きます。2026-09-28 に決定（[#83](https://github.com/geolonia/datamodels/issues/83)）。
+<!-- #region en -->
+Machine-readable files are **CC0 1.0** (no conditions), prose is **CC BY 4.0**, code is **Apache-2.0**. Decided on 2026-09-28 ([#83](https://github.com/geolonia/datamodels/issues/83)).
 
 ## Which licence applies
 
@@ -29,6 +75,13 @@ The reason for the split: attribution works where people read, and it does not s
 ## Change
 
 Until 2026-09-28 all model content was licensed under CC BY 4.0. The split above applies to every published version, including files published before that date.
+
+## Legal code
+
+- [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/legalcode.en)
+- [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/legalcode.en)
+- Both texts are also at the end of [LICENSE-CONTENT.md](https://datamodels.jp/LICENSE-CONTENT.md).
+<!-- #endregion en -->
 
 -----------------------------------------------------------------------
 

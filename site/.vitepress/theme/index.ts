@@ -42,7 +42,7 @@ const SourceLine = defineComponent({
         lang.value === 'ja' ? '出典: ' : 'Source: ',
         h('a', { href: url }, url),
         lang.value === 'ja' ? ' · 文章は ' : ' · Text ',
-        h('a', { href: lang.value === 'ja' ? '/about#ライセンス' : '/en/about#licences' }, 'CC BY 4.0'),
+        h('a', { href: lang.value === 'ja' ? '/LICENSE-CONTENT' : '/en/LICENSE-CONTENT' }, 'CC BY 4.0'),
       ])
     }
   },
