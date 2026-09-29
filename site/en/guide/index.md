@@ -12,4 +12,5 @@ description: How to use the catalog's models, extend them, the URL contract, and
 - [URLs that never change](/en/guide/urls): the URL contract of this catalog; versions, aliases, caching and IRI resolution.
 - [Versions and deprecation](/en/guide/versioning): how subjects are versioned, how deprecation works, and the stages of a model (proposal, draft, stable, deprecated).
 - [Other data model catalogs](/en/guide/catalogs): catalogs of data models and vocabularies used globally and in Japan, and how this catalog relates to them.
+- [One line in the procurement specification](/en/guide/procurement): sample wording for requiring standards compliance, interoperability and data portability in a procurement specification, and how to check a proposal.
 - [Tips & Tricks](/en/guide/tips): match attribute and type names to your own terminology without changing the model, with JSON-LD aliases.

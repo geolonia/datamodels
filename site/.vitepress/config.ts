@@ -24,6 +24,7 @@ const guides = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.SidebarItem
   { text: lang === 'ja' ? '変わらない URL' : 'URLs that never change', link: `${prefix}/guide/urls` },
   { text: lang === 'ja' ? 'バージョンと非推奨' : 'Versions and deprecation', link: `${prefix}/guide/versioning` },
   { text: lang === 'ja' ? '他のデータモデルカタログ' : 'Other data model catalogs', link: `${prefix}/guide/catalogs` },
+  { text: lang === 'ja' ? '調達仕様に書く一行' : 'Procurement specification', link: `${prefix}/guide/procurement` },
   { text: 'Tips & Tricks', link: `${prefix}/guide/tips` },
 ]
 
