@@ -70,7 +70,7 @@ It reads the model's mapping file:
 - A row with `column` (one column or a list), an optional `transform`, a constant `value`, or `via` (build a nested value with another mapping, such as `common/JapaneseAddress/jichitai-opendata-address`) is converted.
 - The `convert.id` template names the entities.
 - Rows with only `to` stay documentation.
-- Transforms: `text`, `code6`, `number`, `integer`, `numbers`, `flag`, `flags` (with `values`), `split`, `municipality`, `machiazaId` (`scripts/lib/convert.mjs`).
+- Transforms: `text`, `code6`, `number`, `integer`, `numbers`, `flag`, `flags` (with `values`), `split`, `municipality`, `machiazaId`, `nationalShelterType` (`scripts/lib/convert.mjs`).
 
 It detects UTF-8 and Shift_JIS. It repairs only what it can prove, such as a local government code that lost its leading zero or lacks its check digit (the check digit decides), and lists every repair. It exits with 1 when a row is invalid.
 

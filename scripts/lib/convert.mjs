@@ -96,7 +96,7 @@ export function code6(v) {
   return { problem: `${s}: not a local government code` };
 }
 
-export const TRANSFORMS = ['text', 'code6', 'number', 'integer', 'numbers', 'flag', 'flags', 'split', 'municipality', 'machiazaId'];
+export const TRANSFORMS = ['text', 'code6', 'number', 'integer', 'numbers', 'flag', 'flags', 'split', 'municipality', 'machiazaId', 'nationalShelterType'];
 
 // One attribute from one row. Returns { value } (undefined means leave it out), and optionally fix or problem.
 function apply(rule, row, set) {
@@ -126,6 +126,9 @@ function apply(rule, row, set) {
     case 'municipality': return !one ? { value: undefined } : /[市区町村]$/.test(one) ? { value: one } : { value: undefined, fix: { repair: `left out ${cols[0]}: not a municipality name`, detail: one } };
     // The Address Base Registry town id is 7 digits; lists write it as 0008-001.
     case 'machiazaId': { if (!one) return { value: undefined }; const d = one.replace(/-/g, ''); return /^\d{7}$/.test(d) ? { value: d, fix: d !== one ? { repair: 'removed the hyphen from the town id', detail: `${one} → ${d}` } : undefined } : { problem: `${cols[0]}: ${one} is not a 7-digit town id` }; }
+    // 全国共通避難所・避難場所ID: E, 5-digit municipality, 5-digit facility, type code, sequence. Type 11 is a
+    // general designated shelter, 12 a welfare one (Cabinet Office, 2024-11-07); anything else is no shelter ID.
+    case 'nationalShelterType': { if (!one) return { value: undefined }; const m = /^E\d{10}1([12])[1-9A-Za-z]$/.exec(one); return m ? { value: m[1] === '1' ? 'general' : 'welfare' } : { problem: `${cols[0]}: ${one} is not the ID of a designated shelter (type code 11 or 12)` }; }
     default: return { problem: `unknown transform ${rule.transform}` };
   }
 }

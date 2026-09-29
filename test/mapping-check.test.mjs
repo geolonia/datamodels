@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { loadSubjects } from '../scripts/lib/models.mjs';
 import { mappingProblems, viaCycles } from '../scripts/lib/mapping-check.mjs';
+import { TRANSFORMS } from '../scripts/lib/convert.mjs';
 
 const subjects = await loadSubjects();
 const model = (sub, type) => subjects.find((s) => s.name === sub).models.find((m) => m.type === type);
@@ -39,7 +40,7 @@ test('conversion rules are checked: columns, known transforms, flags values, via
   const rule = (r) => mappingProblems({ ...ok, fields: { progress: { to: 'x', ...r } } }, task, names);
   assert.deepEqual(rule({ column: '状態' }), []);
   assert.deepEqual(rule({ column: [] }), ['progress: column must be a column name or a list of them']);
-  assert.deepEqual(rule({ column: 'a', transform: 'upper' }), [`progress: unknown transform "upper" (known: text, code6, number, integer, numbers, flag, flags, split, municipality, machiazaId)`]);
+  assert.deepEqual(rule({ column: 'a', transform: 'upper' }), [`progress: unknown transform "upper" (known: ${TRANSFORMS.join(', ')})`]);
   assert.deepEqual(rule({ transform: 'flags' }), ['progress: transform flags needs values as column: value']);
   assert.deepEqual(rule({ transform: 'flags', values: ['flood'] }), ['progress: transform flags needs values as column: value']);
   assert.deepEqual(rule({ column: 'a', values: { a: 'b' } }), ['progress: values is only for transform flags']);

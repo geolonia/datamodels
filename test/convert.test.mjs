@@ -148,3 +148,18 @@ test('a record of empty fields is left out but listed; a blank line is just igno
   assert.deepEqual(rows.skipped, [3, 6]);
   assert.deepEqual(parseCsv('id,name\n1,a\n').skipped, []);
 });
+
+test('a GSI designated shelter row becomes a valid DesignatedShelter; its type comes from the common ID', () => {
+  const validShelter = ajv.compile(subjects.find((s) => s.name === 'disaster').models.find((m) => m.type === 'DesignatedShelter').schema);
+  const rows = parseCsv('NO,共通ID,施設・場所名,住所,指定緊急避難場所との住所同一,その他市町村長が必要と認める事項,受入対象者,緯度,経度,備考\n1,E1310100005112,神田一橋中学校,東京都千代田区一ツ橋2-6-14,1,,,35.694133,139.7567743,\n');
+  const map = mappings['disaster/DesignatedShelter/gsi-designated-shelter'];
+  const [r] = convertRows(rows, map, { type: 'DesignatedShelter', mappings, set: { localGovernmentCode: '13101' } });
+  assert.deepEqual(r.problems, []);
+  assert.ok(validShelter(r.entity), ajv.errorsText(validShelter.errors));
+  assert.equal(r.entity.id, 'urn:ngsi-ld:DesignatedShelter:E1310100005112');
+  assert.equal(r.entity.shelterType, 'general');
+  assert.equal(r.entity.alsoEmergencyEvacuationSite, true);
+  const type = (id) => convertRows([{ 共通ID: id }], map, { type: 'DesignatedShelter', mappings })[0];
+  assert.equal(type('E1310100012121').entity.shelterType, 'welfare');
+  assert.match(type('E1310100012201').problems.join(), /shelterType: 共通ID: E1310100012201 is not the ID of a designated shelter/, 'type 20 is an evacuation site');
+});
