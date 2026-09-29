@@ -21,7 +21,7 @@ hero:
 
 features:
   - title: 拡張する、複製しない
-    details: Smart Data Models の型と属性はそのまま使い、日本向けの属性や日本固有のモデルだけを追加します。やり方はガイドへ。
+    details: Smart Data Models、NGSI-LD、schema.org に合う型や属性があれば、それを使います。合うものがなければ独自の型を公開し、その理由を記録します。やり方はガイドへ。
     link: /guide/extend
     linkText: 拡張する
   - title: 変わらない URL

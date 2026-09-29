@@ -5,36 +5,35 @@ description: 既存のデータモデルを日本向けに拡張する方法、�
 
 # 拡張する
 
-このカタログの方針は「拡張する、複製しない」です。世界で使われている [Smart Data Models](https://smartdatamodels.org/) の型と属性はそのまま使い、日本で必要な属性や日本固有のモデルだけを足します。このページでは、実際にどうやるかを説明します。
+このカタログの方針は「拡張する、複製しない」です。[Smart Data Models](https://smartdatamodels.org/)、NGSI-LD、[schema.org](https://schema.org/) に合う型や属性があれば、複製せずにそれを使います。合うものがなければ独自の型を公開し、その理由を記録します。このページでは、実際にどうやるかを説明します。
 
 ## 3 つのやり方
 
 | やりたいこと | 方法 | 例 |
 |---|---|---|
-| 既存のグローバルモデルをそのまま使う | 上流の `@context` と型をそのまま使う。カタログは日本語の説明と例を提供する | `WeatherObserved` |
-| 既存モデルに日本向けの属性を足す | **プロファイル**: 上流の context を URL で取り込み、追加属性だけを定義した context を公開する | `Building` に住居表示を足す |
-| 日本にしかないモデルを作る | **独自サブジェクト**: 型と属性の IRI を `https://datamodels.jp/ns/<subject>/` 配下に発行する | [災害対応](/models/disaster/) |
+| 上流のモデルをそのまま使う | 上流の `@context` と型をそのまま使う。カタログは日本語の説明と例を提供する | カタログにはまだありません |
+| 既存のモデルに属性を足す | **プロファイル**: 元のモデルの context を URL で取り込み、足した属性だけを定義した context を公開する | [拡張ビルダー](/guide/builder)の出力 |
+| 合う型がないモデルを作る | **独自の型**: 型と属性の IRI を発行する。カタログの型は `https://datamodels.jp/ns/<subject>/` 配下。合う上流の属性は、その IRI をそのまま使う | [RoadRestriction](/models/transportation/RoadRestriction/)（`roadName`・`validFrom`・`validTo` は Smart Data Models の IRI） |
 
 ### プロファイルの書き方
 
-上流の context は複製せず、`@context` の配列に URL で並べます。上流の属性はそのままの IRI で展開され、追加した属性だけがカタログの IRI になります。
+元のモデルの context は複製せず、`@context` の配列に URL で並べます。元の属性はそのままの IRI で展開され、足した属性だけが新しい IRI になります。次の例は、カタログの [RoadRestriction](/models/transportation/RoadRestriction/) に巡回ルートの属性 `patrolRoute` を足すものです。
 
 ```json
 {
   "@context": [
-    "https://raw.githubusercontent.com/smart-data-models/dataModel.Building/<commit>/context.jsonld",
-    "https://datamodels.jp/context/common/v1.jsonld",
+    "https://datamodels.jp/context/transportation/v1.jsonld",
     {
-      "gb": "https://datamodels.jp/ns/Building/",
-      "residentialIndication": "gb:residentialIndication"
+      "acme": "https://example.com/ns/acme/",
+      "patrolRoute": "acme:patrolRoute"
     }
   ]
 }
 ```
 
-上流の URL は `master` ではなくコミット固定の URL を使います。上流が変わっても、保存済みデータの意味が変わらないようにするためです。
+足した属性の IRI は、あなたが管理するドメインの下に発行します（例の `example.com` の部分）。`datamodels.jp` の名前空間はカタログのものなので使わないでください。[拡張ビルダー](/guide/builder)で、この @context と JSON Schema をブラウザで作れます。
 
-カタログのモデルに属性を足すときも同じ書き方です。[拡張ビルダー](/guide/builder)で、その @context と JSON Schema をブラウザで作れます。
+Smart Data Models のモデルを元にするときも書き方は同じです。上流の context は `master` ではなく、コミットを固定した URL（`https://raw.githubusercontent.com/smart-data-models/dataModel.<分野>/<commit>/context.jsonld`）で読み込みます。上流が変わっても、保存済みデータの意味が変わらないようにするためです。
 
 ### 上流を採用しないと判断するとき
 
@@ -48,6 +47,8 @@ description: 既存のデータモデルを日本向けに拡張する方法、�
 
 ### 現状について
 
+今のところ、カタログのモデルはすべてこのカタログで定義した型です。上流の IRI を使っているのは一部の属性だけで、通行規制の `roadName`・`validFrom`・`validTo`（Smart Data Models）、`name`（NGSI-LD）、住所や添付ファイルなどに使う schema.org の語彙がそれに当たります。
+
 最初のサブジェクト [災害対応](/models/disaster/) は、高松市の水防アプリのデータモデルを基にしたもので、[タスク管理](/models/task/)の上に組み立てています（共通の属性はタスク管理の IRI を使う）。当初あった `DisasterEvent`（`Project` の**エイリアス**）と通報・対応業務・申し送り・現地写真（`Task`・`Comment`・`Attachment` の**サブクラス**）は、外部の基準・仕様に基づかないテナント固有の型だったため 2026-09-24 に廃止しました（詳細は [docs/design.md](https://github.com/geolonia/datamodels/blob/main/docs/design.md) の「Versioning and lifecycle」）。通行止めと避難所は上流（Smart Data Models の `RoadSegment`・`Alert`、デジタル庁の自治体標準オープンデータセット）と比較した結果、型としては合うものがなく独自のままですが、属性の IRI と状態の値域は借りています。通行止めはその後、国の基準（警察庁・国土交通省）に基づく通行規制として作り直し、災害に限らないため[交通](/models/transportation/)サブジェクトの `RoadRestriction` に移しました（2026-09-25）。検討の経過は各モデルの注記と [Issue #16](https://github.com/geolonia/datamodels/issues/16) にあります。エイリアス・サブクラスの書き方自体は [Tips & Tricks](/guide/tips) を参照してください。
 
 ### 守ること
@@ -57,7 +58,7 @@ description: 既存のデータモデルを日本向けに拡張する方法、�
 - NGSI-LD core context の予約語（`status`, `description`, `location`, `createdAt`, `modifiedAt`, `observedAt` など）を再定義しない。カタログの CI が弾きます。`status` が要るときは `incidentStatus` のように名前を変えます。
 - 名前空間はサブジェクト（分野）で分け、地域名・顧客名・案件名は入れない。
 - 共通の構造は [common](/models/common/) サブジェクトの値型を使う。住所は [JapaneseAddress](/models/common/JapaneseAddress/)、`location` などの GeoProperty は [Geometry](/models/common/Geometry/)。使えるジオメトリを絞るときは `$ref` の横で制約する（Attachment は点だけ）。
-- モデルに当たるデータセットがデジタル庁の[自治体標準オープンデータセット](https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test)にあれば、対応表（`mapping/jichitai-opendata-*.yaml`）を書く。自治体が自分のデータをそのままモデルに当てはめられるようにするためです。例は [EvacuationShelter](/models/disaster/EvacuationShelter/#mapping-jichitai-opendata-shelter)、所在地の列は [JapaneseAddress](/models/common/JapaneseAddress/#mapping-jichitai-opendata-address) と [Geometry](/models/common/Geometry/#mapping-jichitai-opendata-location) が対応済みです。当たるデータセットがあるかはレビューで確認します（CI では検査しません）。
+- モデルに当たるデータセットがデジタル庁の[自治体標準オープンデータセット](https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test)にあれば、対応表（`mapping/jichitai-opendata-*.yaml`）を書く。自治体が自分のデータをそのままモデルに当てはめられるようにするためです。例は [EvacuationSite](/models/disaster/EvacuationSite/#mapping-jichitai-opendata-site)、所在地の列は [JapaneseAddress](/models/common/JapaneseAddress/#mapping-jichitai-opendata-address) と [Geometry](/models/common/Geometry/#mapping-jichitai-opendata-location) が対応済みです。当たるデータセットがあるかはレビューで確認します（CI では検査しません）。
 - 既にある型に名前だけ合わせたいならエイリアス（`x-alias-of`、属性も必須項目も同じ）、属性を足す・型を分けたいならサブクラス（`x-subclass-of`、同名の属性は親の IRI、親の必須項目は維持）。CI が両方を検査します。
 
 ## 例の書き方 {#examples}
