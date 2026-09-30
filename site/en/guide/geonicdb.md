@@ -11,7 +11,7 @@ The steps that work with any broker (validate, create, query) are in [Using the 
 
 ## Prerequisites
 
-- A GeonicDB tenant and API key ([GeonicDB documentation](https://docs.geonicdb.com/en/saas/api-key))
+- A GeonicDB tenant and API key ([GeonicDB documentation](https://docs.geonicdb.com/en/saas/api-key)). Bind the key to a policy that permits the requests on this page (`POST` to `/custom-data-models`, creating and querying at `/ngsi-ld/v1/entities`); see [policy binding](https://docs.geonicdb.com/en/reference/auth#policy-binding-policyid). Unless a policy permits it (bound to the key, or one of the tenant's policies), a key is denied on every API.
 - Environment variables: `GEONICDB_BASE_URL` (for example `https://<your-deployment>.geonicdb.jp`), `GEONICDB_TENANT`, `GEONICDB_API_KEY`
 
 ## What registering does
@@ -39,13 +39,12 @@ curl -sSf https://datamodels.jp/adapters/geonicdb/transportation/RoadRestriction
 curl -X POST "$GEONICDB_BASE_URL/custom-data-models" \
   -H "Content-Type: application/json" \
   -H "x-api-key: $GEONICDB_API_KEY" \
-  -H "Fiware-Service: $GEONICDB_TENANT" \
   --data @RoadRestriction.json
 ```
 
-`Fiware-Service` and `NGSILD-Tenant` both name the tenant, and GeonicDB treats them as equivalent ([multi-tenancy](https://docs.geonicdb.com/en/core-concepts/multi-tenancy)). `NGSILD-Tenant` is the NGSI-LD name, so the entity steps (`/ngsi-ld/v1/...`) use it; registration (`/custom-data-models`) is not part of the NGSI-LD API and uses `Fiware-Service`.
+Registration (`/custom-data-models`) takes the tenant from the API key (or token), not from a header, so no tenant header is needed. The entity steps (`/ngsi-ld/v1/...`) name the tenant with the NGSI-LD header `NGSILD-Tenant` ([multi-tenancy](https://docs.geonicdb.com/en/core-concepts/multi-tenancy)).
 
-`201 Created` means it is registered; `409` means a model of that type already exists. With the `geonic` CLI: `geonic models create @RoadRestriction.json`.
+`201 Created` means it is registered; `409` means a model of that type already exists. With the `geonic` CLI logged in as a tenant admin (`tenant_admin`), no policy is needed: `geonic models create @RoadRestriction.json`.
 
 The registered definition validates attribute types, required attributes and enums (models with `additionalProperties: false` reject undefined attributes) and uses the context at `contextUrl` as the vocabulary of the type.
 
