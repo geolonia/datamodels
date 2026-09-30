@@ -74,6 +74,50 @@ check-jsonschema --schemafile https://datamodels.jp/schema/transportation/RoadRe
 
 各モデルの「例（normalized）」は `@context` を含む NGSI-LD の形なので、そのまま送れます。自分のデータを送るときは、body に `@context` を入れて `application/ld+json` で送るか、`@context` を入れずに `application/json` と `Link` ヘッダーで送ります。
 
+### key-values から normalized にする {#normalized}
+
+JSON Schema が検証するのは key-values 形式です。ブローカーが normalized 形式を求めるときは、次のように変換します。
+
+- `id` と `type` はそのまま。
+- 各属性は、モデルのページの属性の表にある NGSI-LD の型で包みます。Property は `{ "type": "Property", "value": … }`、Relationship は `{ "type": "Relationship", "object": … }`、GeoProperty は `{ "type": "GeoProperty", "value": … }` です。
+- 日時の Property（スキーマの `format: date-time`）の値は `{ "@type": "DateTime", "@value": … }` にします。
+- 複数の値を持つ属性（属性の表で「複数可」と示すもの。Task の `assignee` など）は、値ごとに 1 つのインスタンスを並べた配列にし、それぞれに `datasetId` を付けます。カタログの例は `urn:ngsi-ld:dataset:<属性名>:<番号>` の形を使っています。
+- `@context` にはサブジェクトのエイリアスと NGSI-LD のコアコンテキストを並べます。
+
+たとえば、この key-values の Task は
+
+```json
+{
+  "id": "urn:ngsi-ld:Task:1234",
+  "type": "Task",
+  "name": "靖国通りのアンダーパスの冠水を確認する",
+  "progress": "in-process",
+  "due": "2026-07-08T12:00:00+09:00",
+  "assignee": ["urn:ngsi-ld:Team:field-team-a"]
+}
+```
+
+normalized では次のようになります。
+
+```json
+{
+  "@context": [
+    "https://datamodels.jp/context/task/v1.jsonld",
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
+  ],
+  "id": "urn:ngsi-ld:Task:1234",
+  "type": "Task",
+  "name": { "type": "Property", "value": "靖国通りのアンダーパスの冠水を確認する" },
+  "progress": { "type": "Property", "value": "in-process" },
+  "due": { "type": "Property", "value": { "@type": "DateTime", "@value": "2026-07-08T12:00:00+09:00" } },
+  "assignee": [
+    { "type": "Relationship", "object": "urn:ngsi-ld:Team:field-team-a", "datasetId": "urn:ngsi-ld:dataset:assignee:1" }
+  ]
+}
+```
+
+モデルのページの「例を試す」では、書いた JSON を key-values と normalized の間で切り替えられます。公開されている一覧（CSV）なら、`npm run convert -- <サブジェクト>/<型> <対応表> <file.csv> --normalized` がこの変換まで行います（[README](https://github.com/geolonia/datamodels#converting-a-published-list)）。
+
 ::: code-group
 
 ```bash [NGSI-LD（標準 API）]
