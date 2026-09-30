@@ -75,7 +75,8 @@ export const plainText = (s) => String(s ?? '')
   .replace(/\s+/g, ' ').trim();
 const front = (title, description) => `---\ntitle: ${JSON.stringify(title)}\ndescription: ${JSON.stringify(plainText(description))}\n---\n\n`;
 // "#85" in a note is an issue of this repository, as on GitHub.
-export const issueLinks = (s) => s.replace(/(^|[\s(（])#(\d+)\b/g, '$1[#$2](https://github.com/geolonia/datamodels/issues/$2)');
+// After a space, a bracket or Japanese punctuation (「2026-09-30、#118」).
+export const issueLinks = (s) => s.replace(/(^|[\s(（、，。])#(\d+)\b/g, '$1[#$2](https://github.com/geolonia/datamodels/issues/$2)');
 
 let allSubjects = [];
 // Adapters discovered by build.mjs (the core never imports them): only whether one serves a model.
@@ -231,7 +232,7 @@ function modelPage(lang, prefix, subject, model) {
     md += '\n';
   }
   const notes = model.notes?.notes ?? [];
-  if (notes.length) md += `## ${t.notes} {#notes}\n\n${notes.map((n) => `- ${issueLinks(n)}`).join('\n')}\n\n`;
+  if (notes.length) md += `## ${t.notes} {#notes}\n\n${notes.map((n) => `- ${issueLinks(n[lang])}`).join('\n')}\n\n`;
   // Invite corrections where readers notice them: an issue titled after the type, or the proposal form.
   const repo = 'https://github.com/geolonia/datamodels';
   md += `::: tip ${t.improveTitle}\n${t.improve(`${repo}/issues/new?title=${encodeURIComponent(`${model.type}: `)}`, `${repo}/issues/new?template=model-proposal.yml`, `${prefix}/guide/contribute`)}\n:::\n\n`;

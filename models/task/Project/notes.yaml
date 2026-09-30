@@ -1,5 +1,8 @@
 notes:
-  - "Upstream considered (2026-09-18): Smart Data Models dataModel.IssueTracking (Open311 service_requests/services; IUDX IssueReporting), both citizen-complaint records shaped by one country's municipal process, not task models; dataModel.Transportation CityWork and dataModel.PredictiveMaintenance, domain-specific. RFC 8984 (JSCalendar Task) is the universal reference and supplies the value spaces used here. See issue #22."
-  - The core is deliberately small. System-specific data (time spent, milestones, watchers, custom fields, map rotation) belongs in extensions.
-  - status is a protected core-context term, hence projectStatus.
+  - ja: "検討した上流（2026-09-18）：Smart Data Models の dataModel.IssueTracking（Open311 の service_requests・services、IUDX の IssueReporting）は、どちらも 1 つの国の自治体の手続きに沿った住民からの通報の記録で、タスクのモデルではない。dataModel.Transportation の CityWork と dataModel.PredictiveMaintenance は分野に固有である。RFC 8984（JSCalendar Task）が汎用の参照先で、ここで使う値域もそこから取っている。Issue #22 を参照。"
+    en: "Upstream considered (2026-09-18): Smart Data Models dataModel.IssueTracking (Open311 service_requests/services; IUDX IssueReporting), both citizen-complaint records shaped by one country's municipal process, not task models; dataModel.Transportation CityWork and dataModel.PredictiveMaintenance, domain-specific. RFC 8984 (JSCalendar Task) is the universal reference and supplies the value spaces used here. See issue #22."
+  - ja: 核は意図して小さくしている。システム固有のデータ（作業時間、マイルストーン、ウォッチャー、カスタムフィールド、地図の回転など）は拡張に入れる。
+    en: The core is deliberately small. System-specific data (time spent, milestones, watchers, custom fields, map rotation) belongs in extensions.
+  - ja: status はコアコンテキストの予約語なので、projectStatus としている。
+    en: status is a protected core-context term, hence projectStatus.
 license: CC0 1.0 (machine-readable files), CC BY 4.0 (prose); see /LICENSE-CONTENT.md

@@ -19,6 +19,7 @@ test('"#85" in a note links the issue; anchors and other hashes stay as they are
   assert.equal(issueLinks('Added (#85): see issue #22.'), 'Added ([#85](https://github.com/geolonia/datamodels/issues/85)): see issue [#22](https://github.com/geolonia/datamodels/issues/22).');
   assert.equal(issueLinks('#7 first'), '[#7](https://github.com/geolonia/datamodels/issues/7) first');
   for (const s of ['core#location', 'see /models/task/#name', 'C#9', '`#abc`']) assert.equal(issueLinks(s), s);
+  assert.equal(issueLinks('（2026-09-30、#118。）'), '（2026-09-30、[#118](https://github.com/geolonia/datamodels/issues/118)。）', 'after Japanese punctuation');
 });
 
 test('page descriptions (meta and share previews) carry no Markdown', () => {

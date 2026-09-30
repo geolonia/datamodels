@@ -260,9 +260,14 @@ test('a multi-valued attribute the schema does not declare as multi fails', () =
   withMutatedModels((d) => editJson(join(d, 'task', 'Task', 'schema.json'), (s) => { delete s.properties.assignee['x-ngsi'].multi; }),
     /"assignee" is multi-valued in the example but schema.json does not declare x-ngsi.multi/));
 
-test('a notes.yaml entry that parses as an object fails', () =>
-  withMutatedModels((d) => writeFile(join(d, 'task', 'Task', 'notes.yaml'), 'notes:\n  - Upstream considered: none\nlicense: CC BY 4.0\n'),
-    /notes must be a list of strings/));
+const NOTES_PROBLEM = /notes must be a list of \{ ja, en \}/;
+test('a notes.yaml entry that is a plain string fails: notes are { ja, en } (#119)', () =>
+  withMutatedModels((d) => writeFile(join(d, 'task', 'Task', 'notes.yaml'), 'notes:\n  - Upstream considered none\nlicense: CC BY 4.0\n'), NOTES_PROBLEM));
+
+test('a note with one language, or cut at a comma, fails', async () => {
+  await withMutatedModels((d) => writeFile(join(d, 'task', 'Task', 'notes.yaml'), 'notes:\n  - en: Upstream considered none\nlicense: CC BY 4.0\n'), NOTES_PROBLEM);
+  await withMutatedModels((d) => writeFile(join(d, 'task', 'Task', 'notes.yaml'), 'notes:\n  - { ja: 上流なし, en: none, really }\nlicense: CC BY 4.0\n'), NOTES_PROBLEM);
+});
 
 test('two instances of a multi-valued attribute without datasetId fail', () =>
   withMutatedModels((d) => editJson(join(d, 'task', 'Task', 'examples', 'example-normalized.jsonld'), (e) => { e.assignee = [{ type: 'Relationship', object: 'urn:ngsi-ld:Team:a' }, { type: 'Relationship', object: 'urn:ngsi-ld:Team:b' }]; }),

@@ -79,8 +79,10 @@ tags: [${subjectName}]
 `;
 
 const notes = `notes:
-  - "TODO Which external standard or guideline this model rests on, with a link. Models must be built on an existing standard."
-  - "TODO Upstream considered (date): the Smart Data Models or other types checked, and why each was adopted or not."
+  - ja: "TODO このモデルが基づく外部の標準・ガイドライン（リンク付き）。モデルは既存の標準に基づくこと。"
+    en: "TODO Which external standard or guideline this model rests on, with a link. Models must be built on an existing standard."
+  - ja: "TODO 検討した上流（日付）：確認した Smart Data Models などの型と、それぞれ採用した・しなかった理由。"
+    en: "TODO Upstream considered (date): the Smart Data Models or other types checked, and why each was adopted or not."
 license: CC0 1.0 (machine-readable files), CC BY 4.0 (prose); see /LICENSE-CONTENT.md
 `;
 

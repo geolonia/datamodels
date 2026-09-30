@@ -12,7 +12,7 @@ const STANDARD = new Set(['name', 'url', 'license', 'note']);
 const ROW = new Set(['to', 'note', 'column', 'transform', 'values', 'value', 'via']);
 // Exactly ja and en: in YAML's { … } form a comma inside the text starts a new
 // key, so an extra key means the text was cut there ("closed → completed, otherwise …").
-const bilingual = (v) => v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v).every((k) => k === 'ja' || k === 'en')
+export const bilingual = (v) => v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v).every((k) => k === 'ja' || k === 'en')
   && typeof v.ja === 'string' && v.ja.trim() !== '' && typeof v.en === 'string' && v.en.trim() !== '';
 /**
  * The licence of a standard in one language. A plain string (a name such as

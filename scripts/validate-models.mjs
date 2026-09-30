@@ -19,7 +19,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { loadSubjects, attributesOf, toKeyValues, subjectUrls, modelUrls, resolveContextTerms, CORE_CONTEXT_URL, CORE_CONTEXT_FIXTURE } from './lib/models.mjs';
 import { resolveContextDocument } from './lib/releases.mjs';
-import { mappingProblems, viaCycles } from './lib/mapping-check.mjs';
+import { bilingual, mappingProblems, viaCycles } from './lib/mapping-check.mjs';
 import { reportFailures } from './lib/ci-summary.mjs';
 import { buildVocabulary } from './lib/vocab.mjs';
 
@@ -273,10 +273,10 @@ for (const subject of subjects) {
       if (value != null && /\bTODO\b/.test(typeof value === 'string' ? value : JSON.stringify(value))) fail(`${mwhere}/${file}`, 'fill in the TODO markers');
     }
 
-    // notes.yaml renders as a bullet list; an entry with an unquoted ": " parses as an object.
+    // notes.yaml renders as a bullet list, in the page's language (#119): each note is { ja, en }.
     if (model.notes != null && (typeof model.notes !== 'object' || Array.isArray(model.notes))) fail(`${mwhere}/notes.yaml`, 'root value must be a mapping with notes and license');
     const notes = (model.notes && typeof model.notes === 'object' && !Array.isArray(model.notes)) ? model.notes : {};
-    if (notes.notes !== undefined && (!Array.isArray(notes.notes) || notes.notes.some((n) => typeof n !== 'string'))) fail(`${mwhere}/notes.yaml`, 'notes must be a list of strings (quote an entry that contains ": ")');
+    if (notes.notes !== undefined && (!Array.isArray(notes.notes) || notes.notes.some((n) => !bilingual(n)))) fail(`${mwhere}/notes.yaml`, 'notes must be a list of { ja, en }, each non-empty and nothing else (quote a text that contains ": " or a comma)');
     if (notes.license !== undefined && typeof notes.license !== 'string') fail(`${mwhere}/notes.yaml`, 'license must be a string');
 
     // Correspondence tables render on the model page: every field must be one of the model's.
