@@ -48,10 +48,11 @@ test('a model page\'s "Adapters" row links its entry on /adapters/ without namin
     for (const s of subjects) for (const m of s.models) {
       const row = adapterRow(lang, prefix, s, m, adapters);
       if (m.kind === 'value') { assert.equal(row, '', `${m.type}: no row`); continue; }
-      const anchor = `${s.name}-${m.type}`;
+      const anchor = `${s.name}-${m.type}`.toLowerCase();
       assert.match(row, new RegExp(`^\\| ${label} \\| \\[[^\\]]+\\]\\(${prefix}/adapters/#${anchor}\\) \\|\\n$`), `${lang} ${m.type}`);
       assert.doesNotMatch(row, /GeonicDB|geonicdb/, `${lang} ${m.type}: no product in the row`);
       assert.ok(index.includes(`<span id="${anchor}"></span>`), `${lang} ${m.type}: the anchor exists on /adapters/`);
+      assert.equal(anchor, anchor.toLowerCase(), 'VitePress lowercases link hashes, so the id must be lower case');
     }
     assert.equal(adapterRow(lang, prefix, subjects[0], subjects[0].models[0], []), '', 'no adapters, no row');
   }

@@ -52,8 +52,12 @@ export function adapterFiles(adapter, subjects) {
   return out;
 }
 
-/** The anchor of a model's row on /adapters/, which its model page links. */
-export const modelAnchor = (subject, model) => `${subject.name}-${model.type}`;
+/**
+ * The anchor of a model's row on /adapters/, which its model page links. Lower
+ * case: VitePress lowercases the hash of a Markdown link, and an id is
+ * case-sensitive, so a mixed-case id would never be reached.
+ */
+export const modelAnchor = (subject, model) => `${subject.name}-${model.type}`.toLowerCase();
 
 export function adaptersIndexPage(lang, prefix, adapters, subjects = []) {
   const t = T[lang];
