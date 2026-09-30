@@ -103,6 +103,7 @@ Contract:
 3. **Term IRIs resolve** to the documenting page, and the namespace IRI to the subject page. No content negotiation in 1.0.0.
 4. **Term IRIs never change meaning.** A breaking change mints a new IRI; the old one stays published and documented.
 5. **Upstream IRIs are never re-minted.**
+6. **Data names the alias.** Stored data, `Link` headers, the examples and adapter output use the alias `vX.jsonld`: within a major version a term's meaning never changes, so data only gains new terms. The exact version is for audits and for reproducing a result (decided 2026-09-30, #117).
 
 ## External definitions: reference, do not copy
 

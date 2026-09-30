@@ -23,7 +23,7 @@ These promises apply **from the official launch**. Until then, published files, 
 | Purpose | URL | Cache |
 |---|---|---|
 | `@context` of stored data, `Link` header | alias `/context/<subject>/v1.jsonld` | 5 minutes |
-| Pin the meaning, reproduce on another broker | exact version `/context/<subject>/v1.0.0.jsonld` | 1 year, immutable |
+| Audits, reproducing a result on another broker | exact version `/context/<subject>/v1.0.0.jsonld` | 1 year, immutable |
 | Validation | `/schema/<subject>/<Type>/v1.json` (alias) or `v1.0.0.json` | same |
 
 The alias only advances within compatible changes, so it is the right default. Use the exact version when you need auditability or reproducibility.

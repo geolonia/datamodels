@@ -340,7 +340,8 @@ for (const subject of subjects) {
     try { projected = toKeyValues(norm, { multi }); } catch (e) { fail(`${mwhere}/examples/example-normalized.jsonld`, e.message); continue; }
     if (!validate(projected)) fail(`${mwhere}/examples/example-normalized.jsonld`, `key-values projection: ${ajv.errorsText(validate.errors)}`);
     for (const p of findUnclosedRings(projected)) fail(`${mwhere}/examples/example-normalized.jsonld`, `${p}: polygon ring does not close (first and last position must be identical, RFC 7946 §3.1.6)`);
-    if (!Array.isArray(norm['@context']) || !norm['@context'].includes(urls.contextExact)) fail(`${mwhere}/examples/example-normalized.jsonld`, `@context must include ${urls.contextExact}`);
+    // Data names the alias (#117), and examples are what clients copy.
+    if (!Array.isArray(norm['@context']) || !norm['@context'].includes(urls.contextAlias)) fail(`${mwhere}/examples/example-normalized.jsonld`, `@context must include ${urls.contextAlias}`);
 
     try {
       const expanded = await jsonld.expand(norm, { documentLoader: loader });

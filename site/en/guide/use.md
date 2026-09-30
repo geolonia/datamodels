@@ -15,7 +15,7 @@ Copy a code block with the button at its top right.
 
 ## 1. Choose the URLs
 
-- Use the **versioned** `@context` URL (for example `https://datamodels.jp/context/transportation/v1.0.0.jsonld`) so its content never changes. Use `v1.jsonld` to follow the latest compatible version instead. See [URLs that never change](/en/guide/urls).
+- Data and `Link` headers use the **alias** `@context` URL (for example `https://datamodels.jp/context/transportation/v1.jsonld`). Within a major version an attribute's meaning never changes, so data only gains new attributes. For audits and for reproducing a result, use the exact version (`v1.0.0.jsonld`), whose content never changes. See [URLs that never change](/en/guide/urls).
 - JSON Schemas work the same way: `/schema/<subject>/<Type>/v1.0.0.json`.
 
 The examples below use [road restriction (RoadRestriction)](/en/models/transportation/RoadRestriction/); swap the URLs for any other model.
@@ -127,7 +127,7 @@ import jsonld from 'jsonld';
 const entity = await (await fetch('https://datamodels.jp/examples/transportation/RoadRestriction/example.json')).json();
 // Plain JSON becomes linked data by adding the catalog context.
 entity['@context'] = [
-  'https://datamodels.jp/context/transportation/v1.0.0.jsonld',
+  'https://datamodels.jp/context/transportation/v1.jsonld',
   'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld', // maps id and type
 ];
 
@@ -144,7 +144,7 @@ from pyld import jsonld
 entity = requests.get("https://datamodels.jp/examples/transportation/RoadRestriction/example.json", timeout=30).json()
 # Plain JSON becomes linked data by adding the catalog context.
 entity["@context"] = [
-    "https://datamodels.jp/context/transportation/v1.0.0.jsonld",
+    "https://datamodels.jp/context/transportation/v1.jsonld",
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",  # maps id and type
 ]
 

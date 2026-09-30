@@ -12,7 +12,7 @@ const roadRestriction = transportation.models.find((m) => m.type === 'RoadRestri
 test('default body: exact context, additionalProperties from the schema, catalog IRIs per property', () => {
   const b = toCustomDataModel(transportation, roadRestriction);
   assert.equal(b.type, 'RoadRestriction');
-  assert.equal(b.contextUrl, 'https://datamodels.jp/context/transportation/v1.0.0.jsonld');
+  assert.equal(b.contextUrl, 'https://datamodels.jp/context/transportation/v1.jsonld', 'the alias, as data uses (#117)');
   assert.equal(b.additionalProperties, false);
   assert.equal(b.propertyDetails.restrictionStatus['@context'], 'https://datamodels.jp/ns/transportation/restrictionStatus');
   assert.equal(b.propertyDetails.address.valueType, 'object');

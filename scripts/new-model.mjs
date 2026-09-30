@@ -122,7 +122,7 @@ if (isValue) {
 } else {
   const id = `urn:ngsi-ld:${type}:0001`;
   await writeFile(join(dir, 'examples', 'example.json'), json({ id, type }));
-  await writeFile(join(dir, 'examples', 'example-normalized.jsonld'), json({ '@context': [u.contextExact, CORE_CONTEXT_URL], id, type }));
+  await writeFile(join(dir, 'examples', 'example-normalized.jsonld'), json({ '@context': [u.contextAlias, CORE_CONTEXT_URL], id, type }));
 }
 await writeFile(contextPath, json(context));
 

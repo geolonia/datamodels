@@ -1,6 +1,6 @@
 {
   "@context": [
-    "https://datamodels.jp/context/transportation/v1.0.0.jsonld",
+    "https://datamodels.jp/context/transportation/v1.jsonld",
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
   ],
   "id": "urn:ngsi-ld:RoadRestriction:0001",

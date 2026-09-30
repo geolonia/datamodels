@@ -2,12 +2,13 @@
 //
 //   node adapters/geonicdb/export.mjs transportation --out ./out
 //   node adapters/geonicdb/export.mjs transportation --type RoadRestriction --allow-additional --out ./out
-//   node adapters/geonicdb/export.mjs transportation --type-prefix Acme --alias-context --out ./out
+//   node adapters/geonicdb/export.mjs transportation --type-prefix Acme --out ./out
 //   node adapters/geonicdb/export.mjs transportation --extend ./my-extensions.json --out ./out
 //
 //   --type T           only this model
 //   --type-prefix P    tenant-specific type names (AcmeRoadRestriction), catalog vocabulary unchanged
-//   --alias-context    declare the vN.jsonld alias instead of the exact version
+//   --exact-context    declare the exact version (vX.Y.Z.jsonld) instead of the vN.jsonld alias;
+//                      the alias is the default (#117), --alias-context is still accepted
 //   --allow-additional additionalProperties: true (unknown attributes accepted, not validated)
 //   --type-name N      replace the type name (needs --type); an alias for the same IRI
 //   --rename a=b,c=d   attribute aliases (needs --type); the contextUrl must map them
@@ -27,7 +28,7 @@ const opt = (name) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1
 const typePrefix = opt('--type-prefix') ?? '';
 const onlyType = opt('--type');
 const out = opt('--out') ?? 'out';
-const aliasContext = args.includes('--alias-context');
+const exactContext = args.includes('--exact-context');
 const allowAdditional = args.includes('--allow-additional');
 const extendFile = opt('--extend');
 const typeName = opt('--type-name');
@@ -40,7 +41,7 @@ const rename = Object.fromEntries((renameArg ? renameArg.split(',') : []).map((p
 }));
 if ((typeName || renameArg) && !onlyType) { console.error('--type-name and --rename apply to one model; add --type T'); process.exit(2); }
 if ((typeName || renameArg) && !contextUrlOverride && !extendFile) console.error('warning: aliases need a context that maps them; pass --context-url (the body still declares the catalog context)');
-if (!subjectName) { console.error('usage: node adapters/geonicdb/export.mjs <subject> [--type T] [--type-prefix P] [--alias-context] [--allow-additional] [--extend FILE] [--out DIR]'); process.exit(2); }
+if (!subjectName) { console.error('usage: node adapters/geonicdb/export.mjs <subject> [--type T] [--type-prefix P] [--exact-context] [--allow-additional] [--extend FILE] [--out DIR]'); process.exit(2); }
 
 const subject = (await loadSubjects()).find((s) => s.name === subjectName);
 if (!subject) { console.error(`unknown subject "${subjectName}"`); process.exit(2); }
@@ -62,7 +63,7 @@ await mkdir(out, { recursive: true });
 for (const model of models) {
   const body = toCustomDataModel(subject, model, {
     typePrefix,
-    contextUrl: contextUrlOverride ?? (aliasContext ? urls.contextAlias : urls.contextExact),
+    contextUrl: contextUrlOverride ?? (exactContext ? urls.contextExact : urls.contextAlias),
     allowAdditional,
     extend: extensions[model.type],
     typeName,

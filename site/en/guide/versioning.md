@@ -21,7 +21,7 @@ A new allowed value is a minor version, but consumers that handle every value ne
 
 ## Old versions stay
 
-A new version does not replace the old files: `v1.0.0.jsonld` and `v1.0.0.json` stay published at the same URLs. An alias such as `v1.jsonld` points at the latest version of that major. Stored data should reference the exact version; clients that want to follow compatible updates use the alias.
+A new version does not replace the old files: `v1.0.0.jsonld` and `v1.0.0.json` stay published at the same URLs. An alias such as `v1.jsonld` points at the latest version of that major. Stored data references the alias ([URLs that never change](/en/guide/urls)): within a major version an attribute's meaning never changes, so data only gains new attributes. The exact version is for audits and for reproducing a result.
 
 ## Deprecating attributes
 

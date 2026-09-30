@@ -35,7 +35,7 @@ export async function llmsTxt(subjects) {
     const su = subjectUrls(subject);
     txt += `## Subject: ${subject.name} (${subject.title.en} / ${subject.title.ja}), version ${subject.version}\n\n`;
     txt += `${oneLine(subject.description.en)}\n\n`;
-    txt += `- [@context ${subject.version}](${su.contextExact}): pin this in data; alias ${su.contextAlias}\n`;
+    txt += `- [@context](${su.contextAlias}): use this alias in data and Link headers; exact version ${su.contextExact} for audits and reproducing results\n`;
     txt += `- [Vocabulary](${su.vocabExact}): RDFS classes, subclass relations, ja/en labels\n`;
     for (const model of subject.models) {
       const mu = modelUrls(subject, model);

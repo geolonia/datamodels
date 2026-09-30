@@ -1,6 +1,6 @@
 {
   "@context": [
-    "https://datamodels.jp/context/task/v1.0.0.jsonld",
+    "https://datamodels.jp/context/task/v1.jsonld",
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
   ],
   "id": "urn:ngsi-ld:Project:heavy-rain-2026-07",
