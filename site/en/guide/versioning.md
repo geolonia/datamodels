@@ -27,6 +27,10 @@ A new version does not replace the old files: `v1.0.0.jsonld` and `v1.0.0.json` 
 
 An attribute that is being replaced is marked `x-deprecated` in the schema and shown as deprecated on the model page. It stays at least until the next minor version and is removed only in the next major version.
 
+## Following new editions of a standard {#standard-revisions}
+
+A mapping file (`mapping/*.yaml`) names the edition of the standard it follows (for example the 20260801 edition of the 自治体標準オープンデータセット, or version 1.1 of EEI). When a standard publishes a new edition, maintainers update the mapping to it. Mapping files are not versioned published files, so that alone changes no version number. If the model itself has to change for the new edition, the table above applies: added attributes or values are a minor version, changed or removed ones a major version. There is no fixed deadline for following a new edition.
+
 ## Stages of a model
 
 | Stage | Meaning |

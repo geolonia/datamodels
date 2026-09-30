@@ -33,6 +33,8 @@ description: 既存のデータモデルを日本向けに拡張する方法、�
 
 足した属性の IRI は、あなたが管理するドメインの下に発行します（この例では `example.com`）。`datamodels.jp` の名前空間はカタログのものなので使わないでください。[拡張ビルダー](/guide/builder)で、この @context と JSON Schema をブラウザで作れます。
 
+@context と JSON Schema では、カタログの更新への追従の仕方が違います。@context はカタログの context をエイリアス（`v1.jsonld`）で取り込むので、1.x の新しい属性もそのまま使えます。JSON Schema はそうはいきません。カタログのエンティティのスキーマは閉じている（`additionalProperties: false`）ので、`$ref` で参照して属性を足すことができず、拡張したスキーマはカタログのスキーマを丸ごと写したものになります。写したのはその時点のバージョン（スキーマの `x-extends` に記録される）なので、カタログに新しいマイナーバージョンが出ても、拡張したスキーマには入りません。新しい属性を検証したくなったら、拡張ビルダーで作り直すか、自分の属性を新しいスキーマに足し直してください。
+
 Smart Data Models のモデルを元にするときも書き方は同じです。上流の context は `master` ではなく、コミットを固定した URL（`https://raw.githubusercontent.com/smart-data-models/dataModel.<分野>/<commit>/context.jsonld`）で読み込みます。上流が変わっても、保存済みデータの意味が変わらないようにするためです。
 
 ### 上流を採用しないと判断するとき

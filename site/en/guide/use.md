@@ -74,6 +74,50 @@ When a value is outside its allowed values, or similar, the output names the att
 
 Each model's normalized example is NGSI-LD with its `@context`, so it can be sent as it is. For your own data, either put the `@context` in the body and send `application/ld+json`, or leave it out and send `application/json` with a `Link` header.
 
+### From key-values to normalized {#normalized}
+
+The JSON Schemas validate the key-values form. When a broker expects the normalized form, convert like this:
+
+- `id` and `type` stay as they are.
+- Wrap each attribute in the NGSI-LD type that the attribute table on the model page gives: a Property is `{ "type": "Property", "value": … }`, a Relationship `{ "type": "Relationship", "object": … }`, a GeoProperty `{ "type": "GeoProperty", "value": … }`.
+- The value of a date-time Property (`format: date-time` in the schema) becomes `{ "@type": "DateTime", "@value": … }`.
+- A multi-valued attribute (marked "(multiple)" in the attribute table; for example `assignee` on Task) becomes an array with one instance per value, each with a `datasetId`. The catalog's examples use the form `urn:ngsi-ld:dataset:<attribute>:<n>`.
+- The `@context` lists the subject's alias and the NGSI-LD core context.
+
+For example, this key-values Task
+
+```json
+{
+  "id": "urn:ngsi-ld:Task:1234",
+  "type": "Task",
+  "name": "靖国通りのアンダーパスの冠水を確認する",
+  "progress": "in-process",
+  "due": "2026-07-08T12:00:00+09:00",
+  "assignee": ["urn:ngsi-ld:Team:field-team-a"]
+}
+```
+
+is, in normalized form:
+
+```json
+{
+  "@context": [
+    "https://datamodels.jp/context/task/v1.jsonld",
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
+  ],
+  "id": "urn:ngsi-ld:Task:1234",
+  "type": "Task",
+  "name": { "type": "Property", "value": "靖国通りのアンダーパスの冠水を確認する" },
+  "progress": { "type": "Property", "value": "in-process" },
+  "due": { "type": "Property", "value": { "@type": "DateTime", "@value": "2026-07-08T12:00:00+09:00" } },
+  "assignee": [
+    { "type": "Relationship", "object": "urn:ngsi-ld:Team:field-team-a", "datasetId": "urn:ngsi-ld:dataset:assignee:1" }
+  ]
+}
+```
+
+On a model page, "Try the example" switches the JSON you write between key-values and normalized. For a published list (CSV), `npm run convert -- <subject>/<Type> <mapping> <file.csv> --normalized` does this conversion too ([README](https://github.com/geolonia/datamodels#converting-a-published-list)).
+
 ::: code-group
 
 ```bash [NGSI-LD (standard API)]

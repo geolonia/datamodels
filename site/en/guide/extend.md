@@ -33,6 +33,8 @@ Nothing is copied. The original context is listed by URL in the `@context` array
 
 Mint the IRIs of added attributes under a domain you control (`example.com` in this example). The `datamodels.jp` namespaces belong to the catalog; do not use them. The [extension builder](/en/guide/builder) writes this @context and the JSON Schema in the browser.
 
+The @context and the JSON Schema follow catalog updates differently. The @context imports the catalog context by its alias (`v1.jsonld`), so new 1.x attributes work at once. The JSON Schema does not: the catalog's entity schemas are closed (`additionalProperties: false`), so an extension cannot `$ref` one and add attributes, and an extended schema is a copy of the whole catalog schema. It copies one version (recorded in the schema's `x-extends`), so a new minor version of the catalog does not reach it. When you want to validate the new attributes, rebuild it with the extension builder, or add your attributes to the new schema again.
+
 Building on a Smart Data Models model works the same way. Import the upstream context by a commit-pinned URL (`https://raw.githubusercontent.com/smart-data-models/dataModel.<Domain>/<commit>/context.jsonld`), not `master`, so the meaning of stored data cannot drift when upstream changes.
 
 ### When not to adopt an upstream type
