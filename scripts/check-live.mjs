@@ -104,6 +104,16 @@ if (r.ok) {
     const ar = await head(url);
     expect(ar.status === 200 && h(ar, 'content-type').startsWith('application/json'), `${name} adapter ${url}: ${ar.status} ${h(ar, 'content-type')}`);
   }
+  // A model page's Adapters row must land on its row on /adapters/ (the id exists there).
+  const withAdapter = (c.models ?? []).find((m) => Object.keys(m.adapters ?? {}).length);
+  expect(withAdapter?.pageUrl, 'catalog.json: no model lists an adapter, so the Adapters row cannot be checked');
+  if (withAdapter?.pageUrl) {
+    try {
+      const [page, index] = await Promise.all([withAdapter.pageUrl, `${BASE_URL}/adapters/`].map(async (u) => { const res = await fetch(swap(u)); return res.ok ? res.text() : ''; }));
+      const anchor = /href="\/adapters\/#([^"]+)"/.exec(page)?.[1];
+      expect(anchor && index.includes(`id="${anchor}"`), `${withAdapter.pageUrl}: the Adapters row links /adapters/#${anchor ?? '(none)'}, which /adapters/ does not have`);
+    } catch (e) { failures.push(`${withAdapter.pageUrl}: ${e.message}`); }
+  }
   // The index pages of the adapters named in the catalog, in both languages.
   const names = [...new Set((c.models ?? []).flatMap((m) => Object.keys(m.adapters ?? {})))];
   for (const prefix of ['', '/en']) for (const path of ['/adapters/', ...names.map((n) => `/adapters/${n}/`)]) {
