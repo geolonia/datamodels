@@ -13,7 +13,7 @@ attributes:
     ja: "市町村の避難所一覧における ID（市町村内で一意）。localGovernmentCode と合わせて全国で一意になる。DesignatedShelter の externalShelterId と同じ ID。shelter、externalShelterId、nationalShelterId のどれか 1 つは必須"
     en: "The shelter's ID in the municipality's own shelter list (unique within it). Together with localGovernmentCode it is unique nationwide; the same ID as DesignatedShelter's externalShelterId. One of shelter, externalShelterId and nationalShelterId is required"
   nationalShelterId:
-    ja: "全国共通避難所・避難場所ID（14桁、国土地理院のデータの「共通ID」）。このモデルでは種別コード 11（一般の指定避難所）か 12（福祉避難所）のものだけ有効。未採番なら、空文字ではなく属性ごと省く。構造と出典は、EvacuationShelter の対応表「全国共通避難所・避難場所ID」（gsi-national-shelter-id）にまとめている。shelter、externalShelterId、nationalShelterId のどれか 1 つは必須"
+    ja: "全国共通避難所・避難場所ID（14文字、国土地理院のデータの「共通ID」）。このモデルでは種別コード 11（一般の指定避難所）か 12（福祉避難所）のものだけ有効。未採番なら、空文字ではなく属性ごと省く。構造と出典は、EvacuationShelter の対応表「全国共通避難所・避難場所ID」（gsi-national-shelter-id）にまとめている。shelter、externalShelterId、nationalShelterId のどれか 1 つは必須"
     en: "The nationwide common shelter/evacuation-site ID (14 characters, the '共通ID' of GSI's data). Only type codes 11 (general designated shelter) and 12 (welfare shelter) are valid on this model. When none is assigned, leave the property out rather than send an empty string. Its structure and source are described once, in EvacuationShelter's mapping 'nationwide common shelter/evacuation-site ID' (gsi-national-shelter-id). One of shelter, externalShelterId and nationalShelterId is required"
   localGovernmentCode:
     ja: 一覧を公開する自治体の全国地方公共団体コード（総務省「全国地方公共団体コード仕様」（平成19年4月1日）に基づく、検査数字を含む6桁）
