@@ -53,3 +53,18 @@ test('the shelter and the site at the same school share the facility code, and t
   assert.equal(operation.site, site.id);
   assert.equal(operation.nationalShelterId, shelter.nationalShelterId);
 });
+
+test('an EvacuationShelter names its shelter by shelter, externalShelterId or nationalShelterId, and still needs a status (#118)', () => {
+  const validateOp = ajv.compile(disaster.models.find((m) => m.type === 'EvacuationShelter').schema);
+  const op = disaster.models.find((m) => m.type === 'EvacuationShelter').examples['example.json'];
+  const { shelter, externalShelterId, nationalShelterId, ...bare } = op;
+  assert.ok(validateOp(op), ajv.errorsText(validateOp.errors));
+  for (const [what, one] of [['shelter', { shelter }], ['externalShelterId', { externalShelterId }], ['nationalShelterId', { nationalShelterId }]]) {
+    assert.ok(validateOp({ ...bare, ...one }), `${what} alone is enough: ${ajv.errorsText(validateOp.errors)}`);
+  }
+  assert.ok(!validateOp(bare), 'none of the three');
+  const { openingStatus, statusLabel, ...noStatus } = op;
+  assert.ok(!validateOp(noStatus), 'no openingStatus and no statusLabel');
+  // externalShelterId means the same on both types: the example uses the DesignatedShelter's ID.
+  assert.equal(op.externalShelterId, disaster.models.find((m) => m.type === 'DesignatedShelter').examples['example.json'].externalShelterId);
+});
