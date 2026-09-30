@@ -104,6 +104,12 @@ if (r.ok) {
     const ar = await head(url);
     expect(ar.status === 200 && h(ar, 'content-type').startsWith('application/json'), `${name} adapter ${url}: ${ar.status} ${h(ar, 'content-type')}`);
   }
+  // The index pages of the adapters named in the catalog, in both languages.
+  const names = [...new Set((c.models ?? []).flatMap((m) => Object.keys(m.adapters ?? {})))];
+  for (const prefix of ['', '/en']) for (const path of ['/adapters/', ...names.map((n) => `/adapters/${n}/`)]) {
+    const pr = await head(`${BASE_URL}${prefix}${path}`);
+    expect(pr.status === 200 && h(pr, 'content-type').startsWith('text/html'), `${origin}${prefix}${path}: ${pr.status} ${h(pr, 'content-type')}`);
+  }
 }
 
 // Machine clients: tools that fetch contexts with Python's urllib (rdflib and

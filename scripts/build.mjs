@@ -1,7 +1,8 @@
 // Build the published tree in dist/.
 //
 //   0. validate models/ (scripts/validate-models.mjs); abort on any failure
-//   1. generate the VitePress pages for every subject and model into site/
+//   1. generate the VitePress pages for every subject and model into site/,
+//      and the /adapters/ index pages (scripts/lib/adapter-pages.mjs)
 //   2. vitepress build site  ->  dist/   (pages, search index, assets, 404)
 //   3. copy public/ on top    (_headers, _redirects header)
 //   4. publish the machine files from models/ (contexts, schemas, examples,
@@ -18,6 +19,7 @@ import { spawnSync } from 'node:child_process';
 import { build as vitepressBuild } from 'vitepress';
 import { loadSubjects } from './lib/models.mjs';
 import { generateSitePages } from './lib/site.mjs';
+import { generateAdapterPages } from './lib/adapter-pages.mjs';
 import { publishModels } from './lib/publish.mjs';
 import { llmsTxt } from './lib/llms.mjs';
 
@@ -42,7 +44,8 @@ for (const d of (await readdir(join(root, 'adapters'), { withFileTypes: true }))
 }
 
 const subjects = await loadSubjects();
-await generateSitePages(subjects);
+await generateSitePages(subjects, adapters);
+await generateAdapterPages(subjects, adapters);
 
 await rm(out, { recursive: true, force: true });
 await vitepressBuild(site, { outDir: out });
@@ -56,4 +59,6 @@ await writeFile(join(out, 'llms.txt'), await llmsTxt(subjects));
 for (const required of ['_headers', '_redirects', 'index.html', '404.html', 'en/index.html', 'models/index.html', 'catalog.json', 'llms.txt', 'sitemap.xml', 'robots.txt']) {
   await access(join(out, required));
 }
+// The adapter index that model pages link (scripts/lib/adapter-pages.mjs).
+for (const required of ['adapters/index.html', 'en/adapters/index.html']) await access(join(out, required));
 console.log(`built ${out}: ${published.subjects} subject(s), ${published.models} model(s)`);

@@ -9,7 +9,7 @@ import { toCustomDataModel } from './custom-data-model.mjs';
 export default {
   name: 'geonicdb',
   label: { ja: 'GeonicDB', en: 'GeonicDB' },
-  note: { ja: 'Custom Data Model の request body。`contextUrl` を含みます。', en: 'Custom Data Model request body, `contextUrl` included.' },
+  note: { ja: 'GeonicDB（Geolonia の NGSI-LD ブローカー）に登録する Custom Data Model の request body。`contextUrl` を含みます。', en: 'Custom Data Model request bodies for GeonicDB, Geolonia\'s NGSI-LD broker, with `contextUrl` included.' },
   guide: '/guide/geonicdb',
   /** URL of this adapter's file for a model, or null when the model has none. */
   urlFor(subject, model) {
