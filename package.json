@@ -24,7 +24,7 @@
     "export:geonicdb": "node adapters/geonicdb/export.mjs",
     "build:deploy": "npm run build && npm run check:immutability",
     "check:live": "node scripts/check-live.mjs",
-    "site:dev": "node -e \"import('./scripts/lib/models.mjs').then(async m=>{const s=await m.loadSubjects();const g=await import('./scripts/lib/site.mjs');await g.generateSitePages(s)})\" && vitepress dev site"
+    "site:dev": "node scripts/generate-pages.mjs && vitepress dev site"
   },
   "devDependencies": {
     "@dagrejs/dagre": "^3.1.1",
