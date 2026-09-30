@@ -7,10 +7,10 @@ Cloudflare Workers Builds watches this repository and deploys `main`; no credent
 Cloudflare's Browser Integrity Check, on by default, blocks Python's built-in HTTP client (user agent `Python-urllib`, error 1010), which tools such as rdflib use to fetch contexts. A configuration rule on the `datamodels.jp` zone (Rules → Configuration Rules, "Machine-readable files: no Browser Integrity Check") turns it off for these requests; human-readable pages keep it:
 
 ```
-starts_with(http.request.uri.path, "/context/") or starts_with(http.request.uri.path, "/schema/") or starts_with(http.request.uri.path, "/vocab/") or starts_with(http.request.uri.path, "/examples/") or starts_with(http.request.uri.path, "/adapters/") or http.request.uri.path eq "/catalog.json"
+starts_with(http.request.uri.path, "/context/") or starts_with(http.request.uri.path, "/schema/") or starts_with(http.request.uri.path, "/vocab/") or starts_with(http.request.uri.path, "/examples/") or starts_with(http.request.uri.path, "/adapters/") or http.request.uri.path eq "/catalog.json" or http.request.uri.path eq "/llms.txt"
 ```
 
-`npm run check:live` fetches those paths with that user agent and fails if the rule goes missing. Previews on workers.dev keep Cloudflare's default and are skipped.
+`npm run check:live` fetches those paths with that user agent and fails if the rule goes missing. Previews on workers.dev keep Cloudflare's default and are skipped unless `CHECK_MACHINE_UA=1` is set, which runs these checks there too (they can then fail with error 1010, since the rule is on the `datamodels.jp` zone only).
 
 `models.geonicdb.com`, the pre-launch preview, is retired and must not answer. `wrangler deploy` does not detach a custom domain that disappears from `wrangler.jsonc`, so if it still responds, remove it under the Worker's Settings → Domains & Routes; that also deletes its DNS record.
 
