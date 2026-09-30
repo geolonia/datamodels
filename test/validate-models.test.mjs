@@ -52,11 +52,11 @@ async function addAliasProbe(d) {
   const kv = JSON.parse(await readFile(join(root, 'models', 'task', 'Project', 'examples', 'example.json'), 'utf8'));
   await writeFile(join(dir, 'examples', 'example.json'), JSON.stringify({ ...kv, id: 'urn:ngsi-ld:AliasProbe:1', type: 'AliasProbe' }, null, 2));
   const norm = JSON.parse(await readFile(join(root, 'models', 'task', 'Project', 'examples', 'example-normalized.jsonld'), 'utf8'));
-  await writeFile(join(dir, 'examples', 'example-normalized.jsonld'), JSON.stringify({ ...norm, '@context': ['https://datamodels.jp/context/disaster/v1.0.0.jsonld', 'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld'], id: 'urn:ngsi-ld:AliasProbe:1', type: 'AliasProbe' }, null, 2));
+  await writeFile(join(dir, 'examples', 'example-normalized.jsonld'), JSON.stringify({ ...norm, '@context': ['https://datamodels.jp/context/disaster/v1.jsonld', 'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld'], id: 'urn:ngsi-ld:AliasProbe:1', type: 'AliasProbe' }, null, 2));
   // AliasProbe reuses every attribute of task/Project verbatim, so its context
   // terms are resolved by importing task's context rather than duplicating them.
   await editJson(join(d, 'disaster', 'context.jsonld'), (c) => {
-    if (!c['@context'].includes('https://datamodels.jp/context/task/v1.0.0.jsonld')) c['@context'].splice(1, 0, 'https://datamodels.jp/context/task/v1.0.0.jsonld');
+    if (!c['@context'].includes('https://datamodels.jp/context/task/v1.jsonld')) c['@context'].splice(1, 0, 'https://datamodels.jp/context/task/v1.jsonld');
     inlineTerms(c).AliasProbe = 'https://datamodels.jp/ns/task/Project';
   });
 }
@@ -86,7 +86,7 @@ async function addSubclassProbe(d) {
   await writeFile(join(dir, 'catalog.yaml'), 'title:\n  ja: "テスト"\n  en: "Probe"\ndescription:\n  ja: "テスト"\n  en: "Probe"\nstatus: draft\ntags: [probe]\nattributes:\n  name:\n    ja: "名前"\n    en: "Name"\n  progress:\n    ja: "状態"\n    en: "Progress"\n');
   await writeFile(join(dir, 'examples', 'example.json'), JSON.stringify({ id: 'urn:ngsi-ld:SubclassProbe:1', type: 'SubclassProbe', name: 'Probe', progress: 'in-process' }, null, 2));
   await writeFile(join(dir, 'examples', 'example-normalized.jsonld'), JSON.stringify({
-    '@context': ['https://datamodels.jp/context/disaster/v1.0.0.jsonld', 'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld'],
+    '@context': ['https://datamodels.jp/context/disaster/v1.jsonld', 'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld'],
     id: 'urn:ngsi-ld:SubclassProbe:1', type: 'SubclassProbe',
     name: { type: 'Property', value: 'Probe' },
     progress: { type: 'Property', value: 'in-process' },

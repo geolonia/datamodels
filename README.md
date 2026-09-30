@@ -45,7 +45,7 @@ npm run manifest:record  # snapshot the current version and record its hashes (m
 npm run new-model -- <subject> <Type> [--value]   # scaffold a model; the validator lists the TODOs left
 npm run rerecord -- <subject> [...]               # pre-release only, maintainers: correct the current version in place
 npm run convert -- <subject>/<Type> <mapping> <file.csv> [--set attr=value] [--normalized] [--out FILE]   # a published list to entities
-node adapters/geonicdb/export.mjs <subject> [--type T] [--type-prefix P | --type-name N] [--rename a=b] [--context-url URL] [--alias-context] [--allow-additional] [--extend FILE] [--out DIR]
+node adapters/geonicdb/export.mjs <subject> [--type T] [--type-prefix P | --type-name N] [--rename a=b] [--context-url URL] [--exact-context] [--allow-additional] [--extend FILE] [--out DIR]
 ```
 
 ## Adding or changing a model

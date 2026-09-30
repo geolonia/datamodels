@@ -16,7 +16,7 @@ function valueTypeOf(prop) {
 /**
  * Options:
  *   typePrefix       prefix for the type name (tenant-specific naming)
- *   contextUrl       context to declare instead of the exact catalog context
+ *   contextUrl       context to declare instead of the catalog alias (vN.jsonld, #117)
  *   allowAdditional  additionalProperties: true, so attributes the model does
  *                    not know are accepted (unvalidated)
  *   extend           { contextUrl?, description?, propertyDetails? }: a tenant's
@@ -72,7 +72,7 @@ export function toCustomDataModel(subject, model, { typePrefix = '', typeName, c
     type: typeName ?? `${typePrefix}${model.type}`,
     domain: subject.name,
     description: extend?.description ?? model.catalog?.description?.ja ?? model.schema.description,
-    contextUrl: extend?.contextUrl ?? contextUrl ?? urls.contextExact,
+    contextUrl: extend?.contextUrl ?? contextUrl ?? urls.contextAlias,
     propertyDetails,
     additionalProperties: allowAdditional ? true : (model.schema.additionalProperties === false ? false : true),
   };

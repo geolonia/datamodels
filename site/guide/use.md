@@ -15,7 +15,7 @@ description: カタログのモデルで JSON を検証し、NGSI-LD ブロー�
 
 ## 1. URL を決める
 
-- `@context` は**バージョン付きの URL**（例 `https://datamodels.jp/context/transportation/v1.0.0.jsonld`）を使うと、中身が変わりません。互換性のある最新版に追従したいときは `v1.jsonld` を使います。詳しくは[変わらない URL](/guide/urls)にあります。
+- データに書く `@context` と `Link` ヘッダーには**エイリアス**（例 `https://datamodels.jp/context/transportation/v1.jsonld`）を使います。同じメジャーバージョンの中では属性の意味が変わらないので、データは新しい属性を得るだけです。監査や結果の再現には、中身が変わらない正確なバージョン（`v1.0.0.jsonld`）を使います。詳しくは[変わらない URL](/guide/urls)にあります。
 - JSON Schema も同じで、`/schema/<サブジェクト>/<型>/v1.0.0.json` です。サブジェクトは分野ごとのモデルのまとまり（`transportation` など）です。
 
 以下の例は[通行規制（RoadRestriction）](/models/transportation/RoadRestriction/)で書いていますが、URL を替えればどのモデルでも同じです。
@@ -127,7 +127,7 @@ import jsonld from 'jsonld';
 const entity = await (await fetch('https://datamodels.jp/examples/transportation/RoadRestriction/example.json')).json();
 // 普通の JSON に context を付けると Linked Data になる。
 entity['@context'] = [
-  'https://datamodels.jp/context/transportation/v1.0.0.jsonld',
+  'https://datamodels.jp/context/transportation/v1.jsonld',
   'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld', // id と type の対応
 ];
 
@@ -144,7 +144,7 @@ from pyld import jsonld
 entity = requests.get("https://datamodels.jp/examples/transportation/RoadRestriction/example.json", timeout=30).json()
 # 普通の JSON に context を付けると Linked Data になる。
 entity["@context"] = [
-    "https://datamodels.jp/context/transportation/v1.0.0.jsonld",
+    "https://datamodels.jp/context/transportation/v1.jsonld",
     "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",  # id と type の対応
 ]
 
