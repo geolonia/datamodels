@@ -52,5 +52,5 @@
   Cache-Control: public, max-age=300
 /catalog.schema.json
   Content-Type: application/schema+json; charset=utf-8
-/LICENSE-CONTENT
+/LICENSE-CONTENT.md
   Content-Type: text/plain; charset=utf-8

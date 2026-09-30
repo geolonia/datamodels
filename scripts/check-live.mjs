@@ -7,6 +7,7 @@ import { createHash } from 'node:crypto';
 import { loadSubjects, subjectUrls, modelUrls, BASE_URL } from './lib/models.mjs';
 import { listReleases } from './lib/releases.mjs';
 import { exactCacheControl, isPrerelease, readManifest } from './lib/cache.mjs';
+import { CATALOG_LICENSE } from './lib/publish.mjs';
 
 const origin = (process.argv[2] ?? BASE_URL).replace(/\/$/, '');
 const swap = (url) => url.replace(BASE_URL, origin);
@@ -90,6 +91,18 @@ for (const [path, type, marker] of [['/llms.txt', 'text/plain', '# datamodels.jp
     const body = res.ok ? await res.text() : '';
     expect(res.ok && h(res, 'content-type').startsWith(type) && body.includes(marker), `${origin}${path}: ${res.status} ${h(res, 'content-type')}${res.ok ? `, or "${marker}" missing` : ''}`);
   } catch (e) { failures.push(`${origin}${path}: ${e.message}`); }
+}
+
+// The licence: x-license-url in every schema and licenseUrl in catalog.json name
+// this URL, so it must answer itself (no redirect) with the page, in both
+// languages; the raw file with the legal texts is /LICENSE-CONTENT.md.
+const licenceEn = CATALOG_LICENSE.licenseUrl.replace(BASE_URL, `${BASE_URL}/en`);
+for (const [url, type, marker] of [[CATALOG_LICENSE.licenseUrl, 'text/html', 'CC0 1.0'], [licenceEn, 'text/html', 'CC0 1.0'], [`${CATALOG_LICENSE.licenseUrl}.md`, 'text/plain', 'Creative Commons Attribution 4.0 International Public License']]) {
+  try {
+    const res = await fetch(swap(url), { redirect: 'manual' });
+    const body = res.status === 200 ? await res.text() : '';
+    expect(res.status === 200 && h(res, 'content-type').startsWith(type) && body.includes(marker), `${swap(url)}: ${res.status} ${h(res, 'content-type')}${res.status === 200 ? `, or "${marker}" missing` : ''}`);
+  } catch (e) { failures.push(`${swap(url)}: ${e.message}`); }
 }
 
 let firstAdapterUrl;

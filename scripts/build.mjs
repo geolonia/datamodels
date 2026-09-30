@@ -56,7 +56,7 @@ await writeFile(join(out, 'llms.txt'), await llmsTxt(subjects));
 
 // The hosting contract depends on these files being served. Fail loudly
 // rather than deploy a tree without them.
-for (const required of ['_headers', '_redirects', 'index.html', '404.html', 'en/index.html', 'models/index.html', 'catalog.json', 'llms.txt', 'sitemap.xml', 'robots.txt']) {
+for (const required of ['_headers', '_redirects', 'index.html', '404.html', 'en/index.html', 'models/index.html', 'catalog.json', 'LICENSE-CONTENT.html', 'en/LICENSE-CONTENT.html', 'LICENSE-CONTENT.md', 'llms.txt', 'sitemap.xml', 'robots.txt']) {
   await access(join(out, required));
 }
 // The adapter index that model pages link (scripts/lib/adapter-pages.mjs).

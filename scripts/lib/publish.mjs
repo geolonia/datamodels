@@ -92,7 +92,9 @@ export async function publishModels(subjects, adapters = []) {
   if (!validate(catalog)) throw new Error(`catalog.json does not validate: ${ajv.errorsText(validate.errors)}`);
   await write(`${BASE_URL}/catalog.json`, json(catalog));
   await write(`${BASE_URL}/catalog.schema.json`, json(schema));
-  await write(`${BASE_URL}/LICENSE-CONTENT`, await readFile(join(ROOT, 'LICENSE-CONTENT.md')));
+  // The raw file with the legal texts. /LICENSE-CONTENT itself is a page in each language (site/LICENSE-CONTENT.md),
+  // the URL that x-license-url in the schemas and licenseUrl in catalog.json name.
+  await write(`${BASE_URL}/LICENSE-CONTENT.md`, await readFile(join(ROOT, 'LICENSE-CONTENT.md')));
   await appendFile(join(DIST, '_redirects'), redirects.join('\n') + '\n');
   await appendFile(join(DIST, '_headers'), exactVersionHeaderRules(exactPaths, await readManifest()).join('\n') + '\n');
   return { subjects: subjects.length, models: catalog.models.length };

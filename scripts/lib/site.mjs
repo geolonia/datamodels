@@ -34,6 +34,7 @@ const T = {
     tryIt: '例を試す',
     extendThis: (href) => `このモデルに独自の属性を足すときは、[拡張ビルダー](${href})で @context と JSON Schema を作れます。`,
     required: '必須', pii: '個人情報', deprecated: '非推奨', value: '値', relationshipTo: '→', license: 'このページの文章は CC BY 4.0、モデルのファイル（JSON Schema、@context、例）は CC0 です。',
+    filesLicense: (href) => `この表のファイル（@context、JSON Schema、例など）は [CC0 1.0](${href}) で、条件なしで使えます。`,
     playground: (href) => `[JSON-LD Playground で開く](${href})：属性ごとの IRI（展開形）が見られます。`,
     improveTitle: '改善の提案', improve: (issue, form, guide) => `属性が足りない、説明がおかしいと思ったら、[Issue で知らせてください](${issue})。新しい属性やモデルは[提案フォーム](${form})から提案できます。進め方は[貢献する](${guide})にあります。`,
     deprecatedNote: (link) => `このモデルは非推奨です。${link ? `代わりに ${link} を使ってください。` : ''}公開済みのファイルと URL はそのまま残ります。`, valueType: '値型', valueTypeNote: 'これはエンティティ型ではなく、属性の値として使う構造です。', fields: 'フィールド', versions: 'バージョン', current: '現行', usage: '使い方',
@@ -53,6 +54,7 @@ const T = {
     tryIt: 'Try the example',
     extendThis: (href) => `To add attributes of your own to this model, the [extension builder](${href}) writes the @context and JSON Schema.`,
     required: 'required', pii: 'personal data', deprecated: 'deprecated', value: 'Value', relationshipTo: '→', license: 'The text of this page is licensed under CC BY 4.0; the model files (JSON Schema, @context, examples) are CC0.',
+    filesLicense: (href) => `The files in this table (@context, JSON Schema, examples and others) are [CC0 1.0](${href}): use them without conditions.`,
     playground: (href) => `[Open in the JSON-LD Playground](${href}): see the full IRI behind every attribute (expanded form).`,
     improveTitle: 'Something missing or wrong?', improve: (issue, form, guide) => `[Open an issue](${issue}), or propose new attributes or models with the [proposal form](${form}). How it works: [Contributing](${guide}).`,
     deprecatedNote: (link) => `This model is deprecated.${link ? ` Use ${link} instead.` : ''} Its published files and URLs stay as they are.`, valueType: 'value type', valueTypeNote: 'This is not an entity type but a structure used as the value of an attribute.', fields: 'Fields', versions: 'Versions', current: 'current', usage: 'Usage',
@@ -186,6 +188,8 @@ function modelPage(lang, prefix, subject, model) {
     : `| ${t.examples} | [key-values](${rel(mu.examples)}example.json) · [normalized](${rel(mu.examples)}example-normalized.jsonld) |\n`;
   md += adapterRow(lang, prefix, subject, model, allAdapters);
   md += `| ${t.source} | [github.com/geolonia/datamodels](https://github.com/geolonia/datamodels/tree/main/models/${subject.name}/${model.type}) |\n\n`;
+  // The source line above the page names the text's licence; the files have their own.
+  md += `${t.filesLicense(`${prefix}/LICENSE-CONTENT`)}\n\n`;
   // This model and its neighbours, one step; each neighbour links to its own page.
   const neighbourhood = graphSvg(lang, prefix, allSubjects, null, 'LR', { center: `${subject.name}/${model.type}` });
   if (neighbourhood) md += `## ${graphTitle[lang]} {#graph}\n\n${neighbourhood}`;
@@ -231,7 +235,7 @@ function modelPage(lang, prefix, subject, model) {
   // Invite corrections where readers notice them: an issue titled after the type, or the proposal form.
   const repo = 'https://github.com/geolonia/datamodels';
   md += `::: tip ${t.improveTitle}\n${t.improve(`${repo}/issues/new?title=${encodeURIComponent(`${model.type}: `)}`, `${repo}/issues/new?template=model-proposal.yml`, `${prefix}/guide/contribute`)}\n:::\n\n`;
-  md += `<small>${t.license} [LICENSE-CONTENT](/LICENSE-CONTENT)</small>\n`;
+  md += `<small>${t.license} [LICENSE-CONTENT](${prefix}/LICENSE-CONTENT)</small>\n`;
   return md;
 }
 
