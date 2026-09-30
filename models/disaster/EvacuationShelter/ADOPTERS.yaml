@@ -1,5 +1,6 @@
 adopters:
-  - name: Takamatsu City flood-prevention headquarters application
-    organization: Geolonia Inc. for Takamatsu City
+  - name: Takamatsu City flood-prevention headquarters application (built by Geolonia for Takamatsu City)
+    organization: Geolonia Inc.
+    url: https://www.geolonia.com/contact/
     since: 2026
     note: Original source of this model (tenant-specific type names).
