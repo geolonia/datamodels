@@ -297,7 +297,7 @@
         "en": "nationalShelterId"
       },
       "comment": {
-        "ja": "全国共通避難所・避難場所ID（14桁、国土地理院のデータの「共通ID」）。このモデルでは種別コード 11（一般の指定避難所）か 12（福祉避難所）のものだけ有効。構造と出典は、EvacuationShelter の対応表「全国共通避難所・避難場所ID」（gsi-national-shelter-id）にまとめている。externalShelterId が無いときは必須",
+        "ja": "全国共通避難所・避難場所ID（14文字、国土地理院のデータの「共通ID」）。このモデルでは種別コード 11（一般の指定避難所）か 12（福祉避難所）のものだけ有効。構造と出典は、EvacuationShelter の対応表「全国共通避難所・避難場所ID」（gsi-national-shelter-id）にまとめている。externalShelterId が無いときは必須",
         "en": "The nationwide common shelter/evacuation-site ID (14 characters, the '共通ID' of GSI's data). Only type codes 11 (general designated shelter) and 12 (welfare shelter) are valid on this model. Its structure and source are described once, in EvacuationShelter's mapping 'nationwide common shelter/evacuation-site ID' (gsi-national-shelter-id). Required when externalShelterId is not given"
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
