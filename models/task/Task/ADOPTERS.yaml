@@ -1,5 +1,6 @@
 adopters:
   - name: GTT project (redmine_gtt_fiware)
     organization: GTT project / Geolonia Inc.
+    url: https://github.com/gtt-project/redmine_gtt_fiware
     since: 2026
     note: Planned first implementation; validation against a live Redmine instance pending.

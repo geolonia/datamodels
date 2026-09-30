@@ -1,7 +1,9 @@
 adopters:
   - name: task subject (Task, Project, Attachment)
     organization: Geolonia Inc.
+    url: https://www.geolonia.com/contact/
     since: 2026
   - name: transportation subject (RoadRestriction)
     organization: Geolonia Inc.
+    url: https://www.geolonia.com/contact/
     since: 2026
