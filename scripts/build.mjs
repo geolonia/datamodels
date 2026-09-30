@@ -2,7 +2,8 @@
 //
 //   0. validate models/ (scripts/validate-models.mjs); abort on any failure
 //   1. generate the VitePress pages for every subject and model into site/,
-//      and the /adapters/ index pages (scripts/lib/adapter-pages.mjs)
+//      and the /adapters/ index pages (scripts/generate-pages.mjs, which
+//      npm run site:dev runs too)
 //   2. vitepress build site  ->  dist/   (pages, search index, assets, 404)
 //   3. copy public/ on top    (_headers, _redirects header)
 //   4. publish the machine files from models/ (contexts, schemas, examples,
@@ -12,14 +13,12 @@
 //
 // A versioned file that has been published must never be rewritten with
 // different content. That check runs after this script (check-immutability).
-import { cp, rm, access, readdir, writeFile } from 'node:fs/promises';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { cp, rm, access, writeFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { build as vitepressBuild } from 'vitepress';
-import { loadSubjects } from './lib/models.mjs';
-import { generateSitePages } from './lib/site.mjs';
-import { generateAdapterPages } from './lib/adapter-pages.mjs';
+import { generatePages } from './generate-pages.mjs';
 import { publishModels } from './lib/publish.mjs';
 import { llmsTxt } from './lib/llms.mjs';
 
@@ -35,17 +34,9 @@ const out = join(root, 'dist');
 const validation = spawnSync(process.execPath, [join(root, 'scripts', 'validate-models.mjs')], { stdio: 'inherit' });
 if (validation.status !== 0) process.exit(validation.status ?? 1);
 
-// Adapters live outside the core; discover them rather than import them.
-const adapters = [];
-for (const d of (await readdir(join(root, 'adapters'), { withFileTypes: true })).filter((e) => e.isDirectory()).sort((a, b) => a.name.localeCompare(b.name))) {
-  const entry = join(root, 'adapters', d.name, 'index.mjs');
-  try { await access(entry); } catch { continue; }
-  adapters.push((await import(pathToFileURL(entry).href)).default);
-}
-
-const subjects = await loadSubjects();
-await generateSitePages(subjects, adapters);
-await generateAdapterPages(subjects, adapters);
+// Pages for every subject and model, and /adapters/ (scripts/generate-pages.mjs);
+// adapters are discovered under adapters/, never imported by name.
+const { subjects, adapters } = await generatePages();
 
 await rm(out, { recursive: true, force: true });
 await vitepressBuild(site, { outDir: out });
