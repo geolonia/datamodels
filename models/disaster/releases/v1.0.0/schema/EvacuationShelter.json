@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://datamodels.jp/schema/disaster/EvacuationShelter/v1.0.0.json",
   "title": "EvacuationShelter",
-  "description": "Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included; shelter links to it (DesignatedShelter), and externalShelterId / nationalShelterId identify it. Only opening status and evacuee counts live here. When the shelter is also a designated emergency evacuation site, site links to its EvacuationSite.",
+  "description": "Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included: the designated shelter is referenced by shelter (DesignatedShelter) or by externalShelterId / nationalShelterId, and one of the three is required. Only opening status and evacuee counts live here. When the shelter is also a designated emergency evacuation site, site links to its EvacuationSite. Models the operation of a 指定避難所 (designated shelter, Basic Act on Disaster Management Art. 49-7), a distinct legal concept from the 指定緊急避難場所 (designated emergency evacuation site, Art. 49-4).",
   "x-version": "1.0.0",
   "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
   "x-model-tags": "disaster-response, Japan",
@@ -36,7 +36,7 @@
       ]
     },
     "externalShelterId": {
-      "description": "The shelter's ID in the municipality's 指定緊急避難場所一覧 (自治体標準オープンデータセット; unique within the municipality, e.g. CC0100022200). Together with localGovernmentCode it identifies the shelter nationwide",
+      "description": "The shelter's ID in the municipality's own shelter list (unique within it). Together with localGovernmentCode it is unique nationwide; the same ID as DesignatedShelter's externalShelterId. One of shelter, externalShelterId and nationalShelterId is required",
       "type": "string",
       "x-ngsi": {
         "type": "Property"
@@ -44,7 +44,7 @@
       "x-iri": "https://datamodels.jp/ns/disaster/externalShelterId"
     },
     "nationalShelterId": {
-      "description": "全国共通避難所・避難場所ID (Cabinet Office SOBO-WEB / GSI 避難所等データ整備ウェブシステム): 14 characters, fixed 'E' + 5-digit municipality code + 5-digit facility code + type code (major '1' = designated shelter, the only value valid here; minor '1' = general shelter or '2' = welfare shelter) + 1 alphanumeric sequence starting at 1 (never 0). Optional: not every shelter has one assigned yet; omit the property entirely rather than send an empty string",
+      "description": "The nationwide common shelter/evacuation-site ID (14 characters, the '共通ID' of GSI's data). Only type codes 11 (general designated shelter) and 12 (welfare shelter) are valid on this model. When none is assigned, leave the property out rather than send an empty string. Its structure and source are described once, in EvacuationShelter's mapping 'nationwide common shelter/evacuation-site ID' (gsi-national-shelter-id). One of shelter, externalShelterId and nationalShelterId is required",
       "type": "string",
       "pattern": "^E[0-9]{10}1[12][1-9A-Za-z]$",
       "x-ngsi": {
@@ -64,7 +64,7 @@
     "shelter": {
       "type": "string",
       "format": "uri",
-      "description": "The designated shelter (DesignatedShelter) this operation record is for",
+      "description": "The designated shelter (DesignatedShelter) this operation record is for. One of shelter, externalShelterId and nationalShelterId is required",
       "x-ngsi": {
         "type": "Relationship",
         "target": "https://datamodels.jp/ns/disaster/DesignatedShelter"
@@ -170,18 +170,40 @@
   "required": [
     "id",
     "type",
-    "externalShelterId",
     "localGovernmentCode"
   ],
-  "anyOf": [
+  "allOf": [
     {
-      "required": [
-        "openingStatus"
+      "anyOf": [
+        {
+          "required": [
+            "openingStatus"
+          ]
+        },
+        {
+          "required": [
+            "statusLabel"
+          ]
+        }
       ]
     },
     {
-      "required": [
-        "statusLabel"
+      "anyOf": [
+        {
+          "required": [
+            "shelter"
+          ]
+        },
+        {
+          "required": [
+            "externalShelterId"
+          ]
+        },
+        {
+          "required": [
+            "nationalShelterId"
+          ]
+        }
       ]
     }
   ],

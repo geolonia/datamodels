@@ -71,7 +71,7 @@
     "nationalShelterId": {
       "type": "string",
       "pattern": "^E[0-9]{10}20[1-9A-Za-z]$",
-      "description": "全国共通避難所・避難場所ID (GSI 共通ID): fixed 'E' + 5-digit municipality code + 5-digit facility code + type code '20' (designated emergency evacuation site) + 1 alphanumeric sequence starting at 1. Optional: omit it rather than send an empty string. Required unless externalSiteId is given",
+      "description": "The nationwide common shelter/evacuation-site ID (14 characters, the '共通ID' of GSI's designated emergency evacuation site data). Only type code 20 (designated emergency evacuation site) is valid on this model. Leave it out when none is assigned. Its structure and source are described once, in EvacuationShelter's mapping 'nationwide common shelter/evacuation-site ID' (gsi-national-shelter-id). Required when externalSiteId is not given",
       "x-ngsi": {
         "type": "Property"
       },
