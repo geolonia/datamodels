@@ -43,6 +43,8 @@ export function modelUrls(subject, model) {
     typeIri: model.schema?.['x-alias-of'] ?? `${BASE_URL}/ns/${subject.name}/${model.type}`,
     page: `${BASE_URL}/models/${subject.name}/${model.type}/`,
     examples: `${BASE_URL}/examples/${subject.name}/${model.type}/`,
+    // Correspondence tables with their conversion rules (mapping/<name>.yaml). Not versioned: they follow the current model.
+    mapping: `${BASE_URL}/mapping/${subject.name}/${model.type}/`,
   };
 }
 

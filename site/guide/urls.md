@@ -39,11 +39,12 @@ description: このカタログが公開する URL の約束。バージョン�
 /examples/<subject>/<Type>/example.json               例（key-values）
 /examples/<subject>/<Type>/example-normalized.jsonld  例（NGSI-LD normalized。値型には無い）
 /ns/<subject>/<Term>                    型・属性の IRI（ページにリダイレクト）
+/mapping/<subject>/<Type>/<name>.yaml   対応表（他の標準との対応と変換の規則。バージョンなし: URL は変わらず、内容は現在のモデルに合わせる）
 /adapters/<name>/<subject>/<Type>.json  アダプターの出力（例: GeonicDB の Custom Data Model 定義）
 /catalog.json                           機械可読な一覧（/catalog.schema.json に準拠）
 ```
 
-すべてのファイルは `Access-Control-Allow-Origin: *` で配信され、`.jsonld` は `application/ld+json`、スキーマは `application/schema+json` です。
+すべてのファイルは `Access-Control-Allow-Origin: *` で配信され、`.jsonld` は `application/ld+json`、スキーマは `application/schema+json`、対応表は `application/yaml` です。
 
 ## 上流のモデルについて
 

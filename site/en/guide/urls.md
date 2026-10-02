@@ -39,11 +39,12 @@ The alias only advances within compatible changes, so it is the right default. U
 /examples/<subject>/<Type>/example.json               example (key-values)
 /examples/<subject>/<Type>/example-normalized.jsonld  example (NGSI-LD normalized; not for value types)
 /ns/<subject>/<Term>                    type and attribute IRIs (redirect to the page)
+/mapping/<subject>/<Type>/<name>.yaml   mapping file (correspondence to another standard and conversion rules; not versioned: the URL stays, the content follows the current model)
 /adapters/<name>/<subject>/<Type>.json  adapter output (for example a GeonicDB Custom Data Model definition)
 /catalog.json                           machine-readable index (conforms to /catalog.schema.json)
 ```
 
-Everything is served with `Access-Control-Allow-Origin: *`; `.jsonld` files as `application/ld+json`, schemas as `application/schema+json`.
+Everything is served with `Access-Control-Allow-Origin: *`; `.jsonld` files as `application/ld+json`, schemas as `application/schema+json`, mapping files as `application/yaml`.
 
 ## About upstream models
 

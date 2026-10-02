@@ -138,7 +138,7 @@ models/<subject>/
   <Type>/
     schema.json  catalog.yaml  notes.yaml  ADOPTERS.yaml  README.md  LICENSE.md
     examples/               example.json (key-values), example-normalized.jsonld
-    mapping/*.yaml          correspondence to external standards, rendered on the page
+    mapping/*.yaml          correspondence to external standards, rendered on the page, published at /mapping/<subject>/<Type>/
 adapters/<name>/            broker- or tool-specific output; the core never imports it
 scripts/                    validate, build, publish, vocabulary, immutability, live check
 site/                       VitePress; model pages are generated
