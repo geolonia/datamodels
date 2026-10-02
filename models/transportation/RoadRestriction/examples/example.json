@@ -23,6 +23,7 @@
       ]
     ]
   },
+  "restrictionLength": 150,
   "restrictionStatus": "closed",
   "regulationCategory": "closedWeather",
   "statusLabel": "通行止め中",

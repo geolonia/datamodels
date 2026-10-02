@@ -76,6 +76,24 @@
       },
       "x-iri": "https://uri.etsi.org/ngsi-ld/location"
     },
+    "restrictionLength": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Length of the regulated section in metres, for a line. The NPA format (距離・延長, item 133) and EEI (距離・延長) carry it; the geometry alone may be simplified",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/transportation/restrictionLength"
+    },
+    "maximumAllowedWeight": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Weight limit in kilograms: vehicles heavier than this may not pass (for example 4000 for 4t車以上通行止). The same term as Smart Data Models RoadSegment; the NPA format gives it in tonnes (制限重量, item 135). Whether it is gross weight or payload follows the source; keep its wording in statusLabel",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://smartdatamodels.org/dataModel.Transportation/maximumAllowedWeight"
+    },
     "restrictionStatus": {
       "description": "Normalised restriction state, the value space of Smart Data Models RoadSegment.status: closed (no traffic), limited (traffic possible but not in full capacity), open (restriction lifted or not yet in place). The local wording goes in statusLabel; regulationCategory gives the finer public-sector category. When no value fits, leave it out and give the local wording in statusLabel",
       "type": "string",
@@ -90,7 +108,7 @@
       "x-iri": "https://datamodels.jp/ns/transportation/restrictionStatus"
     },
     "regulationCategory": {
-      "description": "Regulation category, from the legend of MLIT's Road Information Provision System (道路情報提供システム 通行規制情報, road-info-prvs.mlit.go.jp, accessed 2026-09-24): the categories a road administrator uses for a driver-facing closure or restriction. Optional and independent of restrictionStatus",
+      "description": "Regulation category, from the legend of MLIT's Road Information Provision System (道路情報提供システム 通行規制情報, road-info-prvs.mlit.go.jp, accessed 2026-09-24): the categories a road administrator uses for a driver-facing closure or restriction. closedWeather (通行止(異常気象等)) also covers closures after a disaster, such as a landslide or a collapsed road shoulder. Optional and independent of restrictionStatus",
       "type": "string",
       "enum": [
         "closedWeather",

@@ -17,6 +17,16 @@ fields:
     note:
       ja: この標準の規制種別コードは交通法規上の規制が中心で災害時の通行止めに対応する区分がないため不採用。regulationCategory は国土交通省の道路情報提供システムから採る（別紙 mlit-road-info-prvs.yaml 参照）
       en: not adopted; this standard's regulation-type codes are traffic-law codes with no disaster-closure category. regulationCategory instead comes from MLIT's Road Information Provision System (see mlit-road-info-prvs.yaml)
+  restrictionLength:
+    to: 距離・延長（項目133）
+    note:
+      ja: どちらも m。線規制の規制区間の延長
+      en: both in metres; the length of a line regulation's section
+  maximumAllowedWeight:
+    to: 制限重量（項目135）
+    note:
+      ja: この標準は t、このモデルは kg（1000 倍する）。最大積載量か車両総重量かは規制種別による
+      en: tonnes in this standard, kilograms here (multiply by 1000); whether it is payload or gross weight depends on the regulation type
   description:
     to: 規制理由
     note:

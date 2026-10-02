@@ -19,10 +19,15 @@ fields:
       en: "EEI defines no values (its examples: 高速自動車国道, 自動車専用道路)"
   roadName: { to: 路線名（基本） }
   location:
-    to: 規制場所始点、規制場所終点、距離・延長（基本）
+    to: 規制場所始点、規制場所終点（基本）
     note:
-      ja: 線（LineString）の始点・終点と長さ（m）。点のときは始点だけで延長は無い。面のときは当たるものが無い
-      en: "the first and last points of the line (LineString) and its length in metres; a point gives only the start and no length; an area has no counterpart"
+      ja: 線（LineString）の始点と終点。点のときは始点だけ。面のときは当たるものが無い
+      en: "the first and last points of the line (LineString); a point gives only the start; an area has no counterpart"
+  restrictionLength:
+    to: 距離・延長（基本）
+    note:
+      ja: どちらも m
+      en: both in metres
   regulationCategory:
     to: 規制種別（基本）
     note:
@@ -41,4 +46,5 @@ fields:
       ja: EEI に状態の属性は無い。解除は規制終了日時で表す
       en: EEI has no status attribute; a lifted restriction has its end date and time
   statusLabel: { to: null }
+  maximumAllowedWeight: { to: null }
   address: { to: null }

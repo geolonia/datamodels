@@ -61,11 +61,24 @@
         "en": "regulationCategory"
       },
       "comment": {
-        "ja": "規制区分。国土交通省 道路情報提供システムの凡例（表記はサイトの凡例に合わせた）: closedWeather（通行止(異常気象等)）、closedConstruction（通行止(工事)）、closedHeavyVehicle（大型通行止）、closedWinter（冬期通行止）、laneRestriction（車線規制）、alternatingOneWay（片側交互通行）、mobileRestriction（移動規制）、chainRestriction（チェーン規制）、chainGuidance（チェーン指導）、other（その他規制）。任意項目",
-        "en": "Regulation category, from the legend of MLIT's Road Information Provision System: closedWeather, closedConstruction, closedHeavyVehicle, closedWinter, laneRestriction, alternatingOneWay, mobileRestriction, chainRestriction, chainGuidance, other. Optional"
+        "ja": "規制区分。国土交通省 道路情報提供システムの凡例（表記はサイトの凡例に合わせた）: closedWeather（通行止(異常気象等)）、closedConstruction（通行止(工事)）、closedHeavyVehicle（大型通行止）、closedWinter（冬期通行止）、laneRestriction（車線規制）、alternatingOneWay（片側交互通行）、mobileRestriction（移動規制）、chainRestriction（チェーン規制）、chainGuidance（チェーン指導）、other（その他規制）。closedWeather は土砂崩落や路肩決壊など災害による通行止めも含む。任意項目",
+        "en": "Regulation category, from the legend of MLIT's Road Information Provision System: closedWeather, closedConstruction, closedHeavyVehicle, closedWinter, laneRestriction, alternatingOneWay, mobileRestriction, chainRestriction, chainGuidance, other. closedWeather also covers closures after a disaster, such as a landslide or a collapsed road shoulder. Optional"
       },
       "isDefinedBy": "https://datamodels.jp/ns/transportation/",
       "seeAlso": "https://datamodels.jp/models/transportation/RoadRestriction/#regulationCategory"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/transportation/restrictionLength",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "restrictionLength"
+      },
+      "comment": {
+        "ja": "線規制の規制区間の延長（m）。警察庁「交通規制情報（拡張版標準フォーマット）」の距離・延長（項目133）、EEI の距離・延長に当たる。ジオメトリが簡略化されていても延長が分かる",
+        "en": "Length of the regulated section in metres, for a line. The NPA format's 距離・延長 (item 133) and EEI's 距離・延長; known even when the geometry is simplified"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/transportation/",
+      "seeAlso": "https://datamodels.jp/models/transportation/RoadRestriction/#restrictionLength"
     },
     {
       "@id": "https://datamodels.jp/ns/transportation/restrictionStatus",

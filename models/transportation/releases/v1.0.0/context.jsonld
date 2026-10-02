@@ -9,6 +9,8 @@
       "restrictionStatus": "transportation:restrictionStatus",
       "roadName": "https://smartdatamodels.org/dataModel.Transportation/roadName",
       "roadType": "transportation:roadType",
+      "restrictionLength": "transportation:restrictionLength",
+      "maximumAllowedWeight": "https://smartdatamodels.org/dataModel.Transportation/maximumAllowedWeight",
       "statusLabel": "tm:statusLabel",
       "validFrom": "https://smartdatamodels.org/validFrom",
       "validTo": "https://smartdatamodels.org/dataModel.Alert/validTo"
