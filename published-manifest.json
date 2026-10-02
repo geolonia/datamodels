@@ -15,7 +15,7 @@
     "schema/task/Comment/v1.0.0.json": "603bf0658c235dd5c09bc68c0f515a36c0a5bf818480c33cd203781188c816dd",
     "schema/task/Project/v1.0.0.json": "b81cb2b6db1b7c999f0f3264b0e6465cdfdd553b8b01da9f737d89fbaea075c8",
     "schema/task/Task/v1.0.0.json": "0780188e4744f6b29a6e9cd3902201dac08fbead1b4abaff8d98efa9456663e1",
-    "schema/transportation/RoadRestriction/v1.0.0.json": "7853a40af57e9e3a0683f4ad39ad638ddcfb2b0bd6049138d34da261accb3e66",
+    "schema/transportation/RoadRestriction/v1.0.0.json": "3e56446b573899fe58b110e9f409c20232edb49d6e28a664fac559bae1d23e5a",
     "vocab/common/v1.0.0.jsonld": "fd930c3668bad353c6170c183234b5991b225ee4180583e91350e0d847aeaa0e",
     "vocab/disaster/v1.0.0.jsonld": "47ce5e96042d788c031612de1e33db6398f5b7aa6607dc0fc00e57ffae477e95",
     "vocab/task/v1.0.0.jsonld": "ad02a0147aa0b7477dbe65cca433684e36be3b00546ce0ad2ea33e6f6007738a",

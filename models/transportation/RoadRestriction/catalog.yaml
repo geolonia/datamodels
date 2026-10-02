@@ -26,8 +26,8 @@ attributes:
     ja: 線規制の規制区間の延長（m）。警察庁「交通規制情報（拡張版標準フォーマット）」の距離・延長（項目133）、EEI の距離・延長に当たる。ジオメトリが簡略化されていても延長が分かる
     en: Length of the regulated section in metres, for a line. The NPA format's 距離・延長 (item 133) and EEI's 距離・延長; known even when the geometry is simplified
   maximumAllowedWeight:
-    ja: 重量制限（kg）。これより重い車両は通れない（例 「4t車以上通行止」なら 4000）。Smart Data Models RoadSegment と同じ属性。警察庁フォーマットでは制限重量（項目135、単位 t）。車両総重量か最大積載量かは元データに従い、その呼び方は statusLabel に残す
-    en: "Weight limit in kilograms: vehicles heavier than this may not pass (for example 4000 for 4t車以上通行止). The same term as Smart Data Models RoadSegment; the NPA format gives it in tonnes (制限重量, item 135). Whether it is gross weight or payload follows the source; keep its wording in statusLabel"
+    ja: 重量制限（kg）。これより重い車両は通れない（例 制限重量 4t なら 4000）。Smart Data Models RoadSegment と同じ属性。警察庁フォーマットでは制限重量（項目135、単位 t）。車両総重量か最大積載量かは元データに従い、その呼び方は statusLabel に残す
+    en: "Weight limit in kilograms: vehicles heavier than this may not pass (for example 4000 when the source limit is 4 t). The same term as Smart Data Models RoadSegment; the NPA format gives it in tonnes (制限重量, item 135). Whether it is gross weight or payload follows the source; keep its wording in statusLabel"
   restrictionStatus:
     ja: "正規化した状態。Smart Data Models RoadSegment.status の値域: closed（通行不可）、limited（片側通行など）、open（解除済み、または未実施）。現場の呼び方は statusLabel に。より細かい区分は regulationCategory に。値域に合う値がないときは省き、statusLabel だけを送る"
     en: "Normalised restriction state, the value space of Smart Data Models RoadSegment.status: closed (no traffic), limited (traffic possible but not in full capacity), open (restriction lifted or not yet in place). The local wording goes in statusLabel; a finer public-sector category goes in regulationCategory. When no value fits, leave it out and send only statusLabel"

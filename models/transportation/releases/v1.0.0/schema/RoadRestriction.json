@@ -88,7 +88,7 @@
     "maximumAllowedWeight": {
       "type": "number",
       "minimum": 0,
-      "description": "Weight limit in kilograms: vehicles heavier than this may not pass (for example 4000 for 4t車以上通行止). The same term as Smart Data Models RoadSegment; the NPA format gives it in tonnes (制限重量, item 135). Whether it is gross weight or payload follows the source; keep its wording in statusLabel",
+      "description": "Weight limit in kilograms: vehicles heavier than this may not pass (for example 4000 when the source limit is 4 t). The same term as Smart Data Models RoadSegment; the NPA format gives it in tonnes (制限重量, item 135). Whether it is gross weight or payload follows the source; keep its wording in statusLabel",
       "x-ngsi": {
         "type": "Property"
       },
