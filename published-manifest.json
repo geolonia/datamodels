@@ -5,7 +5,7 @@
     "context/common/v1.0.0.jsonld": "59fe038a9d8c1f459a86940f17371f1b5842942940afa68da4f21502e07b453d",
     "context/disaster/v1.0.0.jsonld": "0caf637b212e6955f5eb1d6e231d2481e4e04eafe0c4d57d4d305e97880d9a86",
     "context/task/v1.0.0.jsonld": "7c542815fe5f9982372b8587c1a55f869b9a830ed6c7a5f3b3eddbb0e10d5d4c",
-    "context/transportation/v1.0.0.jsonld": "a8409e31ea010e1395f5456b1bd8fea3bf77f2d38474880e3b9152d02387561d",
+    "context/transportation/v1.0.0.jsonld": "f1a41df5c58b66e7afc55faf294e9b76f9ad4a786fa2922363a6870a1f4df8c4",
     "schema/common/Geometry/v1.0.0.json": "370263be66dbaf5bec92ef1017a6cff8c3183373679a6d63e993fd055777a295",
     "schema/common/JapaneseAddress/v1.0.0.json": "1edbf84226b4280b880cd58e749dc77e3eae05641d4efbff11d79e5d3af1c46b",
     "schema/disaster/DesignatedShelter/v1.0.0.json": "4353f41c9cdedc4ddf3667f1cf1c5b7e929efd20e9eb5b855fe1a402a8cda2f9",
@@ -15,10 +15,10 @@
     "schema/task/Comment/v1.0.0.json": "603bf0658c235dd5c09bc68c0f515a36c0a5bf818480c33cd203781188c816dd",
     "schema/task/Project/v1.0.0.json": "b81cb2b6db1b7c999f0f3264b0e6465cdfdd553b8b01da9f737d89fbaea075c8",
     "schema/task/Task/v1.0.0.json": "0780188e4744f6b29a6e9cd3902201dac08fbead1b4abaff8d98efa9456663e1",
-    "schema/transportation/RoadRestriction/v1.0.0.json": "1ca5c4e1845112b249e59915919626eaf0624167a86e6b2cda229ef05f0b6aea",
+    "schema/transportation/RoadRestriction/v1.0.0.json": "3e56446b573899fe58b110e9f409c20232edb49d6e28a664fac559bae1d23e5a",
     "vocab/common/v1.0.0.jsonld": "fd930c3668bad353c6170c183234b5991b225ee4180583e91350e0d847aeaa0e",
     "vocab/disaster/v1.0.0.jsonld": "47ce5e96042d788c031612de1e33db6398f5b7aa6607dc0fc00e57ffae477e95",
     "vocab/task/v1.0.0.jsonld": "ad02a0147aa0b7477dbe65cca433684e36be3b00546ce0ad2ea33e6f6007738a",
-    "vocab/transportation/v1.0.0.jsonld": "7e31ad45493dac2a7eaf274155a7464f8b52551cbf1b5ef7b3cbe0165f1df1b8"
+    "vocab/transportation/v1.0.0.jsonld": "cbec35789a033ff00c9805aaa4812bef74db9242b6f9702790c224a9a2ed8c89"
   }
 }

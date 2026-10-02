@@ -36,6 +36,10 @@
       ]
     }
   },
+  "restrictionLength": {
+    "type": "Property",
+    "value": 150
+  },
   "restrictionStatus": {
     "type": "Property",
     "value": "closed"

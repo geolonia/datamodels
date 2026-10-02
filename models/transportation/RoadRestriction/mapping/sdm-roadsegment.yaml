@@ -31,6 +31,16 @@ fields:
       en: not in RoadSegment; comes from MLIT's Road Information Provision System (see mlit-road-info-prvs.yaml)
   statusLabel:
     to: statusDescription
+  restrictionLength:
+    to: null
+    note:
+      ja: RoadSegment の length は区間全体の長さ（km）で、規制された部分の長さではない
+      en: RoadSegment's length is the whole segment's length in kilometres, not the length of the restricted part
+  maximumAllowedWeight:
+    to: maximumAllowedWeight
+    note:
+      ja: 同じ IRI、どちらも kg
+      en: same IRI, both in kilograms
   validFrom:
     to: null
   validTo:
