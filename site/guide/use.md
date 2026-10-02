@@ -205,7 +205,7 @@ print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))
 <urn:ngsi-ld:RoadRestriction:0001> <https://smartdatamodels.org/dataModel.Transportation/roadName> "靖国通り" .
 ```
 
-各サブジェクトの語彙（`/vocab/<サブジェクト>/v1.0.0.jsonld`）は RDFS で、型の名前と説明を日本語と英語で持ちます。このカタログが定める属性は、名前（属性名）と日本語・英語の説明を持ちます。他の語彙から借りた属性（schema.org の `address` など）は含まず、それぞれの提供元の語彙を参照します。GIF や自治体標準オープンデータセットなど他の標準との対応表は、各モデルのページにあり、データの変換に使えます。
+各サブジェクトの語彙（`/vocab/<サブジェクト>/v1.0.0.jsonld`）は RDFS で、型の名前と説明を日本語と英語で持ちます。このカタログが定める属性は、名前（属性名）と日本語・英語の説明を持ちます。他の語彙から借りた属性（schema.org の `address` など）は含まず、それぞれの提供元の語彙を参照します。GIF や自治体標準オープンデータセットなど他の標準との対応表は、各モデルのページにあり、データの変換に使えます。YAML のファイルとしても `/mapping/<サブジェクト>/<型>/<名前>.yaml` で公開しています（catalog.json の `mappingUrls`）。
 
 ## 試したブローカー
 

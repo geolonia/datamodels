@@ -52,4 +52,8 @@ for (const required of ['_headers', '_redirects', 'index.html', '404.html', 'en/
 }
 // The adapter index that model pages link (scripts/lib/adapter-pages.mjs).
 for (const required of ['adapters/index.html', 'en/adapters/index.html']) await access(join(out, required));
+// The mapping files that catalog.json lists and model pages link.
+for (const subject of subjects) for (const model of subject.models) for (const m of model.mappings ?? []) {
+  await access(join(out, 'mapping', subject.name, model.type, `${m.name}.yaml`));
+}
 console.log(`built ${out}: ${published.subjects} subject(s), ${published.models} model(s)`);

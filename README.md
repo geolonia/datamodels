@@ -19,7 +19,7 @@ models/<subject>/
                           or x-subclass-of (own type, parent attribute IRIs)
     catalog.yaml          ja/en title, description, attribute descriptions, status
     examples/             example.json (key-values), example-normalized.jsonld
-    mapping/*.yaml        optional correspondence to an external standard
+    mapping/*.yaml        optional correspondence to an external standard, published at /mapping/<subject>/<Type>/<name>.yaml
     notes.yaml  ADOPTERS.yaml  README.md  LICENSE.md
 adapters/<name>/          files for a particular broker or tool, published under /adapters/<name>/ (see adapters/README.md)
 site/                     VitePress site; site/models and site/en/models are generated
@@ -85,7 +85,7 @@ Cloudflare Workers Builds deploys `main`; the dashboard settings, the Browser In
 
 | Path | Licence |
 |---|---|
-| `models/**` machine-readable files (schemas, `@context`, vocabularies, examples, `catalog.yaml`, mappings), and the published `catalog.json` and `/adapters/**` files | [CC0 1.0](LICENSE-CONTENT.md) |
+| `models/**` machine-readable files (schemas, `@context`, vocabularies, examples, `catalog.yaml`, mappings), and the published `catalog.json`, `/mapping/**` and `/adapters/**` files | [CC0 1.0](LICENSE-CONTENT.md) |
 | `models/**` prose (`notes.yaml`, `README.md`) and the site's pages | [CC BY 4.0](LICENSE-CONTENT.md) |
 | everything else, including the adapter code in `adapters/` | [Apache-2.0](LICENSE) |
 

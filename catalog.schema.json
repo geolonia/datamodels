@@ -20,7 +20,7 @@
     },
     "license": {
       "type": "string",
-      "description": "SPDX identifier of the licence of catalog.json and of every file it lists (schemas, contexts, vocabularies, examples, adapter files): CC0-1.0. The prose of the pages is CC BY 4.0; see licenseUrl."
+      "description": "SPDX identifier of the licence of catalog.json and of every file it lists (schemas, contexts, vocabularies, examples, mapping files, adapter files): CC0-1.0. The prose of the pages is CC BY 4.0; see licenseUrl."
     },
     "licenseUrl": {
       "type": "string",
@@ -124,6 +124,14 @@
               "format": "uri"
             },
             "description": "The example files of the model: example.json (key-values) and, for an entity type, example-normalized.jsonld (NGSI-LD normalized, with @context)."
+          },
+          "mappingUrls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "The mapping files of the model (YAML): field-by-field correspondence to other standards and, where present, the rules a converter uses to turn a published list into this model. They are not versioned: the URL stays, the content follows the model's current version. Absent when the model has no mapping."
           },
           "upstream": {
             "type": "object",

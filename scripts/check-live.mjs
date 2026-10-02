@@ -105,7 +105,7 @@ for (const [url, type, marker] of [[CATALOG_LICENSE.licenseUrl, 'text/html', 'CC
   } catch (e) { failures.push(`${swap(url)}: ${e.message}`); }
 }
 
-let firstAdapterUrl;
+let firstAdapterUrl, firstMappingUrl;
 const r = await fetch(swap(`${BASE_URL}/catalog.json`));
 expect(r.ok, `catalog.json: ${r.status}`);
 if (r.ok) {
@@ -117,6 +117,13 @@ if (r.ok) {
     const ar = await head(url);
     expect(ar.status === 200 && h(ar, 'content-type').startsWith('application/json'), `${name} adapter ${url}: ${ar.status} ${h(ar, 'content-type')}`);
   }
+  // Mapping files are listed per model too; each must be served as YAML.
+  for (const m of c.models ?? []) for (const url of m.mappingUrls ?? []) {
+    firstMappingUrl ??= url;
+    const mr = await head(url);
+    expect(mr.status === 200 && h(mr, 'content-type').startsWith('application/yaml'), `mapping ${url}: ${mr.status} ${h(mr, 'content-type')}`);
+  }
+  expect(firstMappingUrl, 'catalog.json: no model lists a mapping file');
   // A model page's Adapters row must land on its row on /adapters/ (the id exists there).
   const withAdapter = (c.models ?? []).find((m) => Object.keys(m.adapters ?? {}).length);
   expect(withAdapter?.pageUrl, 'catalog.json: no model lists an adapter, so the Adapters row cannot be checked');
@@ -151,6 +158,8 @@ if (origin === BASE_URL || process.env.CHECK_MACHINE_UA === '1') {
     `${BASE_URL}/llms.txt`,
     // One adapter file, as listed in the live catalog (the core does not name adapters).
     ...(firstAdapterUrl ? [firstAdapterUrl] : []),
+    // One mapping file, as listed in the live catalog.
+    ...(firstMappingUrl ? [firstMappingUrl] : []),
   ];
   for (const url of machinePaths) {
     try {

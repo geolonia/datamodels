@@ -46,6 +46,11 @@
 /adapters/*.json
   Content-Type: application/json; charset=utf-8
 
+# Mapping files (YAML, RFC 9512). Not versioned, so a short cache.
+/mapping/*.yaml
+  Content-Type: application/yaml; charset=utf-8
+  Cache-Control: public, max-age=300
+
 # The machine-readable catalog index.
 /catalog.json
   Content-Type: application/json; charset=utf-8

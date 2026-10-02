@@ -30,6 +30,7 @@ export function catalogEntry(subject, model, adapterUrls = {}) {
     status: model.catalog.status ?? 'draft', title: model.catalog.title, description: model.catalog.description,
     sampleProperties: attributesOf(model).map(([n]) => n), pageUrl: mu.page, pageUrlEn: mu.page.replace(BASE_URL, `${BASE_URL}/en`),
     exampleUrls: Object.keys(model.examples).sort().map((f) => `${mu.examples}${f}`),
+    ...(model.mappings?.length ? { mappingUrls: model.mappings.map((m) => `${mu.mapping}${m.name}.yaml`) } : {}),
     ...(Object.keys(adapterUrls).length ? { adapters: adapterUrls } : {}),
     ...(model.schema['x-alias-of'] ? { aliasOf: model.schema['x-alias-of'] } : {}),
     ...(model.schema['x-subclass-of'] ? { subClassOf: model.schema['x-subclass-of'] } : {}),
@@ -74,6 +75,8 @@ export async function publishModels(subjects, adapters = []) {
       await write(mu.schemaExact, json(model.schema)); exact(mu.schemaExact);
       await write(mu.schemaAlias, json(model.schema));
       for (const [f, content] of Object.entries(model.examples)) await write(`${mu.examples}${f}`, json(content));
+      // The source bytes, comments included, so a converter reads exactly what the validator checked.
+      for (const m of model.mappings ?? []) await write(`${mu.mapping}${m.name}.yaml`, await readFile(join(model.dir, 'mapping', `${m.name}.yaml`)));
       const adapterUrls = {};
       for (const a of adapters) { const url = a.urlFor(subject, model); if (url) { await write(url, a.content(subject, model)); adapterUrls[a.name] = url; } }
       // An alias has no IRI of its own under this namespace.

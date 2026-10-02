@@ -20,7 +20,7 @@ test('the catalog validates, with its licence', () => {
   assert.equal(catalog.license, 'CC0-1.0');
   assert.equal(catalog.licenseUrl, `${BASE_URL}/LICENSE-CONTENT`);
   for (const field of ['license', 'licenseUrl']) assert.ok(schema.properties[field], `${field} is in catalog.schema.json`);
-  for (const field of ['pageUrlEn', 'exampleUrls']) assert.ok(schema.properties.models.items.properties[field], `${field} is in catalog.schema.json`);
+  for (const field of ['pageUrlEn', 'exampleUrls', 'mappingUrls']) assert.ok(schema.properties.models.items.properties[field], `${field} is in catalog.schema.json`);
 });
 
 test('every model lists its Japanese and English pages and its example files', () => {
@@ -32,4 +32,13 @@ test('every model lists its Japanese and English pages and its example files', (
     assert.ok(entry.exampleUrls.includes(`${base}example.json`), `${m.type} example.json`);
     if (m.kind !== 'value') assert.ok(entry.exampleUrls.includes(`${base}example-normalized.jsonld`), `${m.type} normalized`);
   }
+});
+
+test('a model with mapping files lists them at /mapping/, one per file; one without lists none', () => {
+  for (const { s, m, entry } of models) {
+    const names = (m.mappings ?? []).map((x) => x.name);
+    if (!names.length) { assert.equal(entry.mappingUrls, undefined, m.type); continue; }
+    assert.deepEqual(entry.mappingUrls, names.map((n) => `${BASE_URL}/mapping/${s.name}/${m.type}/${n}.yaml`), m.type);
+  }
+  assert.ok(models.some((x) => x.entry.mappingUrls?.length), 'at least one model has a mapping');
 });
