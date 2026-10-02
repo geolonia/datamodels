@@ -116,7 +116,7 @@ is, in normalized form:
 }
 ```
 
-On a model page, "Try the example" switches the JSON you write between key-values and normalized. For a published list (CSV), `npm run convert -- <subject>/<Type> <mapping> <file.csv> --normalized` does this conversion too ([README](https://github.com/geolonia/datamodels#converting-a-published-list)).
+On a model page, "Try the example" switches the JSON you write between key-values and normalized. For a published list (CSV), `datamodels convert <subject>/<Type> <mapping> <file.csv> --normalized` from [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) does this conversion too.
 
 ::: code-group
 
