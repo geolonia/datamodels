@@ -116,7 +116,7 @@ normalized では次のようになります。
 }
 ```
 
-モデルのページの「例を試す」では、書いた JSON を key-values と normalized の間で切り替えられます。公開されている一覧（CSV）なら、`npm run convert -- <サブジェクト>/<型> <対応表> <file.csv> --normalized` がこの変換まで行います（[README](https://github.com/geolonia/datamodels#converting-a-published-list)）。
+モデルのページの「例を試す」では、書いた JSON を key-values と normalized の間で切り替えられます。公開されている一覧（CSV）なら、[datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) の `datamodels convert <サブジェクト>/<型> <対応表> <file.csv> --normalized` がこの変換まで行います。
 
 ::: code-group
 

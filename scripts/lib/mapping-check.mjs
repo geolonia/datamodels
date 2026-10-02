@@ -3,12 +3,12 @@
 // not in the model links to nothing, and a missing name, note language or
 // target silently leaves a hole in the page.
 
-import { TRANSFORMS } from './convert.mjs';
-
 const FIELD = /^([A-Za-z][A-Za-z0-9]*)(\[\d+\])?$/;
 const TOP = new Set(['standard', 'fields', 'structure', 'convert']);
 const STANDARD = new Set(['name', 'url', 'license', 'note']);
-// Documentation keys, and the keys scripts/convert.mjs reads (lib/convert.mjs).
+// Documentation keys, and the conversion rules that `datamodels convert`
+// (geolonia/datamodels-toolkit) reads. Their structure is checked here; which
+// transform names exist is the converter's to check (#91).
 const ROW = new Set(['to', 'note', 'column', 'transform', 'values', 'value', 'via']);
 // Exactly ja and en: in YAML's { … } form a comma inside the text starts a new
 // key, so an extra key means the text was cut there ("closed → completed, otherwise …").
@@ -92,10 +92,10 @@ export function mappingProblems(map, schema, mappingNames = null) {
     if (m.to !== null && (typeof m.to !== 'string' || !m.to.trim())) out.push(`${field}: "to" must be a non-empty string or null`);
     for (const k of Object.keys(m)) if (!ROW.has(k)) out.push(`${field}: unknown key "${k}" (allowed: ${[...ROW].join(', ')})`);
     if (m.note !== undefined && !bilingual(m.note)) out.push(`${field}: note needs ja and en, and nothing else (quote a text that contains a comma)`);
-    // Conversion rules (scripts/convert.mjs).
+    // Conversion rules (datamodels convert in geolonia/datamodels-toolkit).
     const cols = m.column === undefined ? [] : [].concat(m.column);
     if (m.column !== undefined && (!cols.length || cols.some((c) => typeof c !== 'string' || !c.trim()))) out.push(`${field}: column must be a column name or a list of them`);
-    if (m.transform !== undefined && !TRANSFORMS.includes(m.transform)) out.push(`${field}: unknown transform "${m.transform}" (known: ${TRANSFORMS.join(', ')})`);
+    if (m.transform !== undefined && (typeof m.transform !== 'string' || !/^[a-z][A-Za-z0-9]*$/.test(m.transform))) out.push(`${field}: transform must be a transform name such as code6 (the converter checks which names exist)`);
     if (m.transform === 'flags' && (!m.values || typeof m.values !== 'object' || Array.isArray(m.values) || !Object.keys(m.values).length || Object.values(m.values).some((v) => typeof v !== 'string' || !v.trim()))) out.push(`${field}: transform flags needs values as column: value`);
     if (m.values !== undefined && m.transform !== 'flags') out.push(`${field}: values is only for transform flags`);
     if (m.transform === 'numbers' && cols.length < 2) out.push(`${field}: transform numbers needs at least two columns`);
