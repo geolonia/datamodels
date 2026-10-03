@@ -79,7 +79,7 @@ curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionS
 Three ways, in increasing order of rigour.
 
 1. **Allow unknown attributes.** Export with `--allow-additional` to get `additionalProperties: true`. Your attributes are accepted but not validated, and in JSON-LD they expand to whatever IRI your request context defines, or to GeonicDB's default vocabulary if none does.
-2. **Extend the definition.** Register the catalog attributes plus your own, and point `contextUrl` at a context of yours that imports the catalog context and defines only your terms. Your attributes are validated like the others and carry IRIs you control. It is the same profile pattern the catalog applies to Smart Data Models, one level down.
+2. **Extend the definition.** Register the catalog attributes plus your own, and point `contextUrl` at a context of yours that imports the catalog context and defines only your terms (where to host it: [Extend](/en/guide/extend#host-context)). Your attributes are validated like the others and carry IRIs you control. It is the same profile pattern the catalog applies to Smart Data Models, one level down.
 
    ```json
    {
