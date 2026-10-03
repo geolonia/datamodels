@@ -37,7 +37,7 @@ description: 既存のデータモデルを日本向けに拡張する方法、�
 
 ### 拡張した @context の置き場所 {#host-context}
 
-拡張した @context は、あなたが管理する、変わらない HTTPS の URL に置きます（自分のドメイン、GitHub Pages、アドレスが固定のオブジェクトストレージなど）。この URL はすべてのエンティティに記録され、ブローカーが読みに行きます（GeonicDB では `contextUrl`）。カタログの URL と同じように扱ってください。バージョンごとに別の URL で公開し、公開したファイルは変えず、消さないでください。`Content-Type: application/ld+json` と `Access-Control-Allow-Origin: *` で配信します。いまのカタログは拡張を預かりません。datamodels.jp に組織ごとの名前空間を設ける案は [#56](https://github.com/geolonia/datamodels/issues/56) で検討しています。
+拡張した @context は、あなたが管理する、変わらない HTTPS の URL に置きます（自分のドメイン、GitHub Pages、アドレスが固定のオブジェクトストレージなど）。データは `@context` か `Link` ヘッダーでこの URL を示し、ブローカーや JSON-LD のプロセッサーがそれを読みに行きます。GeonicDB の Custom Data Model では `contextUrl` に指定します。カタログの URL と同じように扱ってください。バージョンごとに別の URL で公開し、公開したファイルは変えず、消さないでください。`Content-Type: application/ld+json` と `Access-Control-Allow-Origin: *` で配信します。いまのカタログは拡張を預かりません。datamodels.jp に組織ごとの名前空間を設ける案は [#56](https://github.com/geolonia/datamodels/issues/56) で検討しています。
 
 Smart Data Models のモデルを元にするときも書き方は同じです。上流の context は `master` ではなく、コミットを固定した URL（`https://raw.githubusercontent.com/smart-data-models/dataModel.<分野>/<commit>/context.jsonld`）で読み込みます。上流が変わっても、保存済みデータの意味が変わらないようにするためです。
 

@@ -37,7 +37,7 @@ The @context and the JSON Schema follow catalog updates differently. The @contex
 
 ### Where to host your extended @context {#host-context}
 
-Put the extended @context at a stable HTTPS URL you control: your own domain, GitHub Pages, or object storage with a fixed address. Every entity records this URL, and brokers fetch it (GeonicDB through `contextUrl`). Treat it like the catalog's URLs: publish each version at its own URL, and never change or remove a published file. Serve it with `Content-Type: application/ld+json` and `Access-Control-Allow-Origin: *`. The catalog does not host extensions today; namespaces for organisations on datamodels.jp are discussed in [#56](https://github.com/geolonia/datamodels/issues/56).
+Put the extended @context at a stable HTTPS URL you control: your own domain, GitHub Pages, or object storage with a fixed address. Your data names this URL, in `@context` or in a `Link` header, and brokers and JSON-LD processors fetch it; a GeonicDB Custom Data Model gives it as `contextUrl`. Treat it like the catalog's URLs: publish each version at its own URL, and never change or remove a published file. Serve it with `Content-Type: application/ld+json` and `Access-Control-Allow-Origin: *`. The catalog does not host extensions today; namespaces for organisations on datamodels.jp are discussed in [#56](https://github.com/geolonia/datamodels/issues/56).
 
 Building on a Smart Data Models model works the same way. Import the upstream context by a commit-pinned URL (`https://raw.githubusercontent.com/smart-data-models/dataModel.<Domain>/<commit>/context.jsonld`), not `master`, so the meaning of stored data cannot drift when upstream changes.
 
