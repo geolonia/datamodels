@@ -26,11 +26,11 @@ attributes:
     ja: "丁目。数字のみ（「一丁目」→ \"1\"）"
     en: "Chome (丁目), digits only (\"一丁目\" → \"1\")"
   banchi:
-    ja: "番地または街区符号（住居表示実施区域では街区符号）"
-    en: "Banchi (番地) or, in residential-indication areas, the block number (街区符号)"
+    ja: "番地。住居表示実施区域では街区符号。それ以外では枝番を含む地番全体（例 4638-1）"
+    en: "Banchi (番地): in a residential-indication area the block number (街区符号); elsewhere the whole lot number (地番), branch number included, for example 4638-1"
   go:
-    ja: "号または住居番号（住居表示実施区域では住居番号）"
-    en: "Go (号) or, in residential-indication areas, the residence number (住居番号)"
+    ja: "号。住居表示実施区域では住居番号。地番の区域では空（枝番は banchi に含める）"
+    en: "Go (号): in a residential-indication area the residence number (住居番号). Empty for a lot number (地番): its branch number stays in banchi"
   buildingName:
     ja: "建物名・部屋番号など、号より下の表記"
     en: "Building name, room number and anything below go"
