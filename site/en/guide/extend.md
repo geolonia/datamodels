@@ -35,6 +35,10 @@ Mint the IRIs of added attributes under a domain you control (`example.com` in t
 
 The @context and the JSON Schema follow catalog updates differently. The @context imports the catalog context by its alias (`v1.jsonld`), so new 1.x attributes work at once. The JSON Schema does not: the catalog's entity schemas are closed (`additionalProperties: false`), so an extension cannot `$ref` one and add attributes, and an extended schema is a copy of the whole catalog schema. It copies one version (recorded in the schema's `x-extends`), so a new minor version of the catalog does not reach it. When you want to validate the new attributes, rebuild it with the extension builder, or add your attributes to the new schema again.
 
+### Where to host your extended @context {#host-context}
+
+Put the extended @context at a stable HTTPS URL you control: your own domain, GitHub Pages, or object storage with a fixed address. Your data names this URL, in `@context` or in a `Link` header, and brokers and JSON-LD processors fetch it; a GeonicDB Custom Data Model gives it as `contextUrl`. Treat it like the catalog's URLs: publish each version at its own URL, and never change or remove a published file. Serve it with `Content-Type: application/ld+json` and `Access-Control-Allow-Origin: *`. The catalog does not host extensions today; namespaces for organisations on datamodels.jp are discussed in [#56](https://github.com/geolonia/datamodels/issues/56).
+
 Building on a Smart Data Models model works the same way. Import the upstream context by a commit-pinned URL (`https://raw.githubusercontent.com/smart-data-models/dataModel.<Domain>/<commit>/context.jsonld`), not `master`, so the meaning of stored data cannot drift when upstream changes.
 
 ### When not to adopt an upstream type

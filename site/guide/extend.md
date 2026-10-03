@@ -35,6 +35,10 @@ description: 既存のデータモデルを日本向けに拡張する方法、�
 
 @context と JSON Schema では、カタログの更新への追従の仕方が違います。@context はカタログの context をエイリアス（`v1.jsonld`）で取り込むので、1.x の新しい属性もそのまま使えます。JSON Schema はそうはいきません。カタログのエンティティのスキーマは閉じている（`additionalProperties: false`）ので、`$ref` で参照して属性を足すことができず、拡張したスキーマはカタログのスキーマを丸ごと写したものになります。写したのはその時点のバージョン（スキーマの `x-extends` に記録される）なので、カタログに新しいマイナーバージョンが出ても、拡張したスキーマには入りません。新しい属性を検証したくなったら、拡張ビルダーで作り直すか、自分の属性を新しいスキーマに足し直してください。
 
+### 拡張した @context の置き場所 {#host-context}
+
+拡張した @context は、あなたが管理する、変わらない HTTPS の URL に置きます（自分のドメイン、GitHub Pages、アドレスが固定のオブジェクトストレージなど）。データは `@context` か `Link` ヘッダーでこの URL を示し、ブローカーや JSON-LD のプロセッサーがそれを読みに行きます。GeonicDB の Custom Data Model では `contextUrl` に指定します。カタログの URL と同じように扱ってください。バージョンごとに別の URL で公開し、公開したファイルは変えず、消さないでください。`Content-Type: application/ld+json` と `Access-Control-Allow-Origin: *` で配信します。いまのカタログは拡張を預かりません。datamodels.jp に組織ごとの名前空間を設ける案は [#56](https://github.com/geolonia/datamodels/issues/56) で検討しています。
+
 Smart Data Models のモデルを元にするときも書き方は同じです。上流の context は `master` ではなく、コミットを固定した URL（`https://raw.githubusercontent.com/smart-data-models/dataModel.<分野>/<commit>/context.jsonld`）で読み込みます。上流が変わっても、保存済みデータの意味が変わらないようにするためです。
 
 ### 上流を採用しないと判断するとき

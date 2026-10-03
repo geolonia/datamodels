@@ -10,7 +10,7 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 - **質問・不具合・アイデア**: [Issue](https://github.com/geolonia/datamodels/issues/new) を開いてください。「この属性の意味が分からない」も歓迎です。
 - **新しいモデルや属性の提案**: [モデルの提案フォーム](https://github.com/geolonia/datamodels/issues/new?template=model-proposal.yml)を使ってください。まだスキーマを書く必要はありません。
 - **モデルの追加・修正**: Pull Request を送ってください（下の手順）。
-- **上流への提案**: 日本以外でも使えるモデルになったら、Smart Data Models の [incubated](https://github.com/smart-data-models/incubated) に提案します。フォルダ構成を Smart Data Models と揃えているのはこのためです。
+- **上流への提案**: 日本以外でも使えるモデルは、Smart Data Models の [incubated](https://github.com/smart-data-models/incubated) に提案できます。フォルダ構成を Smart Data Models と揃えているのはこのためです。正式公開までは提案しません。モデルをまだその場で直すことがあるからです。公開の時に、候補を 1 つの Issue にまとめ、誰がいつ提案するかを決めます（2026-10-03 決定）。
 
 ## モデルのルール
 
@@ -62,7 +62,7 @@ datamodels.jp publishes data models that work in Japan as a shared, product-neut
 - **Questions, bugs, ideas**: open an [issue](https://github.com/geolonia/datamodels/issues/new). "I do not understand this attribute" is welcome too.
 - **Proposing a new model or new attributes**: use the [model proposal form](https://github.com/geolonia/datamodels/issues/new?template=model-proposal.yml). No schema is needed yet.
 - **Adding or changing a model**: open a pull request (steps below).
-- **Proposing upstream**: a model that turns out to be useful beyond Japan is proposed to Smart Data Models via [incubated](https://github.com/smart-data-models/incubated). The folder layout matches Smart Data Models for exactly this.
+- **Proposing upstream**: a model that is useful beyond Japan can be proposed to Smart Data Models via [incubated](https://github.com/smart-data-models/incubated). The folder layout matches Smart Data Models for exactly this. Nothing is proposed before the official launch, while models may still be corrected in place; at the launch, the candidates go into one issue that says who proposes them and when (decided 2026-10-03).
 
 ## Rules for models
 
