@@ -2,7 +2,8 @@
 // catalog vocabulary.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { loadSubjects } from '../../../scripts/lib/models.mjs';
+import { readFile } from 'node:fs/promises';
+import { loadSubjects, CORE_TERMS, CORE_CONTEXT_FIXTURE } from '../../../scripts/lib/models.mjs';
 import { toCustomDataModel } from '../custom-data-model.mjs';
 
 const subjects = await loadSubjects();
@@ -16,8 +17,9 @@ test('default body: exact context, additionalProperties from the schema, catalog
   assert.equal(b.additionalProperties, false);
   assert.equal(b.propertyDetails.restrictionStatus['@context'], 'https://datamodels.jp/ns/transportation/restrictionStatus');
   assert.equal(b.propertyDetails.address.valueType, 'object');
-  // Core-context terms are left to the broker; @context is not an attribute.
-  assert.ok(!('@context' in b.propertyDetails.location) && !('@context' in b.propertyDetails.description));
+  // Core terms carry the core context's own IRIs, so a context GeonicDB generates is right outside the broker too.
+  assert.equal(b.propertyDetails.location['@context'], 'https://uri.etsi.org/ngsi-ld/location');
+  assert.equal(b.propertyDetails.description['@context'], 'http://purl.org/dc/terms/description');
   assert.ok(!('@context' in b.propertyDetails));
 });
 
@@ -65,4 +67,28 @@ test('rename rejects unknown attributes, non-ASCII aliases and collisions', () =
   assert.throws(() => toCustomDataModel(transportation, roadRestriction, { rename: { statusLabel: '状態' } }), /must match/);
   assert.throws(() => toCustomDataModel(transportation, roadRestriction, { rename: { statusLabel: 'roadName' } }), /collides/);
   assert.throws(() => toCustomDataModel(transportation, roadRestriction, { rename: { statusLabel: 'x', roadName: 'x' } }), /same alias/);
+});
+
+test('every property has an example key, null when the catalog example has none (GeonicDB requires it)', () => {
+  for (const s of subjects) for (const m of s.models) {
+    if (m.kind === 'value') continue;
+    const body = JSON.parse(JSON.stringify(toCustomDataModel(s, m)));
+    for (const [name, d] of Object.entries(body.propertyDetails)) assert.ok('example' in d, `${m.type}.${name}`);
+  }
+  const b = JSON.parse(JSON.stringify(toCustomDataModel(transportation, roadRestriction)));
+  assert.equal(b.propertyDetails.validTo.example, null);
+  const e = toCustomDataModel(transportation, roadRestriction, { extend: { propertyDetails: { patrolRoute: { ngsiType: 'Property', valueType: 'string' } } } });
+  assert.equal(e.propertyDetails.patrolRoute.example, null);
+});
+
+test('every core-context term a model uses carries the core IRI', async () => {
+  const core = JSON.parse(await readFile(CORE_CONTEXT_FIXTURE, 'utf8'))['@context'];
+  const vocab = core['ngsi-ld'];
+  const coreIri = (term) => { const v = core[term]; const id = typeof v === 'string' ? v : v?.['@id']; return id?.startsWith('ngsi-ld:') ? vocab + id.slice(8) : id; };
+  for (const s of subjects) for (const m of s.models) {
+    if (m.kind === 'value') continue;
+    for (const [name, d] of Object.entries(toCustomDataModel(s, m).propertyDetails)) {
+      if (CORE_TERMS.has(name) && coreIri(name)) assert.equal(d['@context'], coreIri(name), `${m.type}.${name}`);
+    }
+  }
 });
