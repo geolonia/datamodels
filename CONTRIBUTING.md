@@ -35,6 +35,15 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 
 公開済みのバージョンの記録（スナップショットとマニフェスト）はメンテナーが行います。正式公開前（プレリリース）は、現行バージョンをその場で修正できます。
 
+### ツールが作ったモデルを提案する
+
+データを登録するツール（ブローカーの管理画面など）は、利用者のデータから新しいモデルを作ることがあります。それを提案として渡すときは、このリポジトリのモデルと同じ構成のフォルダ（**提案バンドル**）を書き出します。
+
+- `models/<サブジェクト>/<型名>/` に `catalog.yaml`、`schema.json`、`examples/`、あれば `mapping/`（元になった標準や公開データとの対応）、`notes.yaml`、`ADOPTERS.yaml`（使っている組織とおよそのデータ量）を置きます。`npm run validate:models` で足りない箇所が分かります。
+- **ツールは自分で投稿しません。** 人が自分の GitHub アカウントで Pull Request を開き、署名（DCO）を付けます。作者と責任は人に残ります。
+- レビューを経て、他のモデルと同じく `draft` で取り込みます。新しい段階はありません。
+- `ADOPTERS.yaml` の記載は、早めの根拠になります。1 つの組織は 1 回だけ数えるので、`stable` に 2 つの独立した組織が要るという規則は変わりません（2026-10-06 決定、#156）。
+
 ## 署名（DCO）
 
 コミットの `Signed-off-by: 名前 <メールアドレス>` は、[Developer Certificate of Origin](https://developercertificate.org/) に同意することを表します。つまり、その変更を自分で作ったか、公開する権利があり、このリポジトリのライセンスで公開してよいことを示します。別の同意書はありません。
@@ -86,6 +95,15 @@ datamodels.jp publishes data models that work in Japan as a shared, product-neut
 5. Check the CI results (validation of schemas, examples, `@context` expansion, protected terms and versions, and an automated review; for branches in this repository also a preview URL) and answer the review.
 
 Recording published versions (snapshots and the manifest) is a maintainer step. Until the official launch (pre-release), the current version may still be corrected in place.
+
+### Proposing a model that a tool made
+
+A tool that registers data (a broker console, for example) may build a new model from a user's data. To hand it in as a proposal, the tool writes out a folder in the same layout as the models in this repository: a **proposal bundle**.
+
+- In `models/<subject>/<Type>/`: `catalog.yaml`, `schema.json`, `examples/`, `mapping/` if the data follows a standard or a published dataset, `notes.yaml`, and `ADOPTERS.yaml` (who uses the model, and roughly how much data). `npm run validate:models` lists what is missing.
+- **Tools never post.** A person opens the pull request under their own GitHub account and signs off the commits (DCO), so authorship and responsibility stay with a person.
+- After review, the model is merged as `draft`, like any other. There is no extra stage.
+- The `ADOPTERS.yaml` entry gives reviewers evidence early. One organisation still counts once, so `stable` still needs two independent organisations (decided 2026-10-06, #156).
 
 ## Sign-off (DCO)
 

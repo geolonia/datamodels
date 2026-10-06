@@ -21,6 +21,48 @@ const json = (o) => JSON.stringify(o, null, 2) + '\n';
 // catalog.json and every file it lists are CC0; the prose of the pages is CC BY 4.0 (LICENSE-CONTENT).
 export const CATALOG_LICENSE = { license: 'CC0-1.0', licenseUrl: `${BASE_URL}/LICENSE-CONTENT` };
 
+/**
+ * The attributes of a model as catalog.json lists them, so a tool can list a
+ * model's attributes or match a CSV against several models without fetching
+ * every schema (#156). The schema stays the authority; this is a summary.
+ */
+// A catalog value type, from the URL of the schema an attribute references:
+// .../schema/<subject>/<Type>/vX.Y.Z.json is the type .../ns/<subject>/<Type>.
+const catalogValueModel = (ref) => {
+  const m = typeof ref === 'string' && ref.startsWith(`${BASE_URL}/schema/`) && /\/schema\/([^/]+)\/([^/]+)\/v[^/]+\.json$/.exec(ref);
+  return m ? `${BASE_URL}/ns/${m[1]}/${m[2]}` : undefined;
+};
+
+export function attributeEntries(model) {
+  const required = new Set(model.schema.required ?? []);
+  return attributesOf(model).map(([name, prop]) => {
+    const ngsi = prop['x-ngsi'] ?? {};
+    // A value type ($ref, e.g. JapaneseAddress or Geometry) is an object; its own schema is at valueModel's schema URL.
+    const type = prop.$ref || prop.allOf ? 'object' : prop.type;
+    const items = prop.items && { ...(prop.items.type ? { type: prop.items.type } : {}), ...(prop.items.format ? { format: prop.items.format } : {}), ...(prop.items.enum ? { enum: prop.items.enum } : {}) };
+    const description = model.catalog?.attributes?.[name];
+    // catalog.schema.json requires both; say which attribute lacks one instead of failing on the whole catalog.
+    if (!prop['x-iri']) throw new Error(`${model.type}.${name}: no x-iri, so catalog.json cannot list its IRI`);
+    if (!description?.ja || !description?.en) throw new Error(`${model.type}.${name}: catalog.yaml needs ja and en descriptions for catalog.json`);
+    return {
+      name,
+      iri: prop['x-iri'],
+      // Members of a value type (JapaneseAddress, Geometry) are plain fields inside an attribute's value, not NGSI-LD attributes.
+      ...(model.kind === 'value' ? {} : { ngsiType: ngsi.type ?? 'Property' }),
+      ...(type ? { type } : {}),
+      ...(prop.format ? { format: prop.format } : {}),
+      ...(prop.enum ? { enum: prop.enum } : {}),
+      ...(items && Object.keys(items).length ? { items } : {}),
+      // From the referenced catalog schema, not x-ngsi.model, which may name a narrower class (geojson Point).
+      ...(catalogValueModel(prop.$ref) ? { valueModel: catalogValueModel(prop.$ref) } : {}),
+      ...(ngsi.target ? { target: ngsi.target } : {}),
+      ...(ngsi.multi ? { multi: true } : {}),
+      required: required.has(name),
+      description: { ja: description.ja, en: description.en },
+    };
+  });
+}
+
 /** One model in catalog.json (catalog.schema.json). adapterUrls: adapter name to URL. */
 export function catalogEntry(subject, model, adapterUrls = {}) {
   const u = subjectUrls(subject); const mu = modelUrls(subject, model);
@@ -31,6 +73,9 @@ export function catalogEntry(subject, model, adapterUrls = {}) {
     sampleProperties: attributesOf(model).map(([n]) => n), pageUrl: mu.page, pageUrlEn: mu.page.replace(BASE_URL, `${BASE_URL}/en`),
     exampleUrls: Object.keys(model.examples).sort().map((f) => `${mu.examples}${f}`),
     ...(model.mappings?.length ? { mappingUrls: model.mappings.map((m) => `${mu.mapping}${m.name}.yaml`) } : {}),
+    // The same files with the standard each one maps, so a tool need not fetch them to show it (#156).
+    ...(model.mappings?.length ? { mappings: model.mappings.map((m) => ({ url: `${mu.mapping}${m.name}.yaml`, standard: { ja: m.standard?.name?.ja ?? m.name, en: m.standard?.name?.en ?? m.name } })) } : {}),
+    attributes: attributeEntries(model),
     ...(Object.keys(adapterUrls).length ? { adapters: adapterUrls } : {}),
     ...(model.schema['x-alias-of'] ? { aliasOf: model.schema['x-alias-of'] } : {}),
     ...(model.schema['x-subclass-of'] ? { subClassOf: model.schema['x-subclass-of'] } : {}),

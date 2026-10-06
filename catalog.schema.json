@@ -133,6 +133,103 @@
             },
             "description": "The mapping files of the model (YAML): field-by-field correspondence to other standards and, where present, the rules a converter uses to turn a published list into this model. They are not versioned: the URL stays, the content follows the model's current version. Absent when the model has no mapping."
           },
+          "mappings": {
+            "type": "array",
+            "description": "The mapping files of the model with the standard each one maps (its name in Japanese and English), so a tool can show them without fetching the files. Same files as mappingUrls. Absent when the model has no mapping.",
+            "items": {
+              "type": "object",
+              "required": [
+                "url",
+                "standard"
+              ],
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "standard": {
+                  "$ref": "#/$defs/i18n"
+                }
+              }
+            }
+          },
+          "attributes": {
+            "type": "array",
+            "description": "A summary of the model's attributes, so a tool can list them or match a CSV against several models without fetching every schema. The schema at schemaUrl stays the authority: conditional rules (anyOf, oneOf), lengths and ranges are only there. `required` is the schema's top-level required list. For a value type (kind value), the entries are the fields inside the value and have no ngsiType. A value type (JapaneseAddress, Geometry) has type object and its IRI in valueModel; a relationship names its target type in target.",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "iri",
+                "type",
+                "required",
+                "description"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "iri": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "ngsiType": {
+                  "type": "string",
+                  "enum": [
+                    "Property",
+                    "Relationship",
+                    "GeoProperty",
+                    "LanguageProperty"
+                  ],
+                  "description": "For an entity type: how the attribute is represented in NGSI-LD. Absent for the fields of a value type"
+                },
+                "type": {
+                  "type": "string",
+                  "description": "JSON Schema type of the key-values value"
+                },
+                "format": {
+                  "type": "string"
+                },
+                "enum": {
+                  "type": "array"
+                },
+                "items": {
+                  "type": "object",
+                  "description": "For an array: the type, format and allowed values of its items",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "format": {
+                      "type": "string"
+                    },
+                    "enum": {
+                      "type": "array"
+                    }
+                  }
+                },
+                "valueModel": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "The catalog value type of the attribute's value (for example https://datamodels.jp/ns/common/JapaneseAddress), taken from the schema it references; its schema is listed in this catalog"
+                },
+                "target": {
+                  "type": "string",
+                  "description": "For a relationship: the target type's IRI, or a word such as agent when several types are allowed"
+                },
+                "multi": {
+                  "type": "boolean",
+                  "description": "A multi-valued attribute: an array in key-values, one instance per value in normalized form"
+                },
+                "required": {
+                  "type": "boolean"
+                },
+                "description": {
+                  "$ref": "#/$defs/i18n"
+                }
+              }
+            }
+          },
           "upstream": {
             "type": "object",
             "properties": {

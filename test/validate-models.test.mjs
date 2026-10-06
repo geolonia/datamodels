@@ -350,3 +350,6 @@ test('an x-iri that differs from the subject context expansion fails', () =>
 test('an entity schema that rejects @context in key-values data fails', () =>
   withMutatedModels((d) => editJson(join(d, 'task', 'Task', 'schema.json'), (s) => { delete s.properties['@context']; }),
     /Task\/schema\.json: rejects example\.json with "@context"/));
+
+test('a model folder without ADOPTERS.yaml fails; an empty list is fine (#156)', () =>
+  withMutatedModels((d) => rm(join(d, 'disaster', 'EvacuationSite', 'ADOPTERS.yaml')), /EvacuationSite\/ADOPTERS\.yaml: file is required/));
