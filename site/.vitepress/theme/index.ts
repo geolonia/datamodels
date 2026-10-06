@@ -5,9 +5,18 @@
 // (ExtensionBuilder.vue, on /guide/builder) and a
 // pre-release banner above the navigation on every page. Remove the banner
 // (and --vp-layout-top-height in custom.css) at the official launch.
-import DefaultTheme from 'vitepress/theme'
+// Without VitePress' Inter: the site uses IBM Plex (below) and the system fonts for Japanese.
+import DefaultTheme from 'vitepress/theme-without-fonts'
 import { defineAsyncComponent, defineComponent, h, onMounted, onBeforeUnmount, ref } from 'vue'
 import { useData } from 'vitepress'
+// IBM Plex, self-hosted (latin subset only; Japanese uses the system fonts).
+import '@fontsource/ibm-plex-sans/latin-400.css'
+import '@fontsource/ibm-plex-sans/latin-500.css'
+import '@fontsource/ibm-plex-sans/latin-600.css'
+import '@fontsource/ibm-plex-sans/latin-700.css'
+import '@fontsource/ibm-plex-mono/latin-400.css'
+import '@fontsource/ibm-plex-mono/latin-500.css'
+import '@fontsource/ibm-plex-mono/latin-600.css'
 import './custom.css'
 import ModelIndex from './ModelIndex.vue'
 import GraphViewer from './GraphViewer.vue'

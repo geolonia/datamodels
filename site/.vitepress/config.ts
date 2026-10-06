@@ -94,6 +94,8 @@ export default defineConfig({
   markdown: { config: addVPreToInlineCode },
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
+    ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32.png' }],
+    ['link', { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' }],
     // Link previews (Slack, X, LINE): a PNG, absolute URL. Source: site/og-card.svg,
     // rendered with `rsvg-convert -w 1200 -h 630 -o site/public/og-image.png site/og-card.svg`.
     ['meta', { property: 'og:type', content: 'website' }],
@@ -119,7 +121,8 @@ export default defineConfig({
   },
 
   themeConfig: {
-    // No logo: the catalog is product-neutral; the domain is the wordmark.
+    // The catalog's own mark (docs/brand.md); no Geolonia branding, the catalog is product-neutral.
+    logo: { light: '/logo-mark.svg', dark: '/logo-mark-dark.svg', alt: '' },
     siteTitle: 'datamodels.jp',
     socialLinks: [{ icon: 'github', link: 'https://github.com/geolonia/datamodels' }],
     search: {

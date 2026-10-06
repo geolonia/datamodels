@@ -2,22 +2,20 @@
 layout: home
 
 hero:
-  name: datamodels.jp
-  text: Data models that work in Japan
-  tagline: Data models that work in practice in Japan, as JSON Schemas, JSON-LD @context files and vocabularies at URLs that never change. Ready to use with NGSI-LD. Existing standards are extended, not copied
+  # The headline carries the page; the mark and name are in the navigation (docs/brand.md).
+  name: ''
+  text: Data models that work in Japan, at URLs that never change.
+  tagline: Published as JSON Schemas, JSON-LD @context files and vocabularies. Ready to use with NGSI-LD. Existing standards are extended, not copied.
   actions:
     - theme: brand
       text: All data models
       link: /en/models/
     - theme: alt
-      text: Propose a model
-      link: https://github.com/geolonia/datamodels/issues/new?template=model-proposal.yml
+      text: Using the models
+      link: /en/guide/use
     - theme: alt
       text: catalog.json
       link: /catalog.json
-    - theme: alt
-      text: GitHub
-      link: https://github.com/geolonia/datamodels
 
 features:
   - title: Extend, do not duplicate
