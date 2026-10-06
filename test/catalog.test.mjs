@@ -50,7 +50,8 @@ test('every model lists its attributes with type, NGSI-LD type and required, as 
     assert.deepEqual(entry.attributes.map((a) => a.name), names, m.type);
     for (const a of entry.attributes) {
       const p = props[a.name];
-      assert.equal(a.ngsiType, p['x-ngsi']?.type ?? 'Property', `${m.type}.${a.name}`);
+      // A value type's fields are not NGSI-LD attributes.
+      assert.equal(a.ngsiType, m.kind === 'value' ? undefined : p['x-ngsi']?.type ?? 'Property', `${m.type}.${a.name}`);
       assert.equal(a.required, (m.schema.required ?? []).includes(a.name), `${m.type}.${a.name}`);
       assert.equal(a.type, p.$ref || p.allOf ? 'object' : p.type, `${m.type}.${a.name}`);
       if (p['x-iri']) assert.equal(a.iri, p['x-iri']);
@@ -61,6 +62,9 @@ test('every model lists its attributes with type, NGSI-LD type and required, as 
   assert.equal(address.valueModel, 'https://datamodels.jp/ns/common/JapaneseAddress');
   assert.ok(site.attributes.find((a) => a.name === 'hazardTypes').items.enum.includes('flood'));
   assert.ok(models.find((x) => x.m.type === 'Task').entry.attributes.find((a) => a.name === 'assignee').multi);
+  assert.ok(models.find((x) => x.m.type === 'JapaneseAddress').entry.attributes.every((a) => !('ngsiType' in a)), 'value type fields');
+  const items = schema.properties.models.items.properties.attributes.items.properties.items.properties;
+  assert.deepEqual(Object.keys(items), ['type', 'format', 'enum']);
 });
 
 test('mappings name the standard of each mapping file, for the same files as mappingUrls (#156)', () => {

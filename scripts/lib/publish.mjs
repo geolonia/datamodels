@@ -37,7 +37,8 @@ export function attributeEntries(model) {
     return {
       name,
       ...(prop['x-iri'] ? { iri: prop['x-iri'] } : {}),
-      ngsiType: ngsi.type ?? 'Property',
+      // Members of a value type (JapaneseAddress, Geometry) are plain fields inside an attribute's value, not NGSI-LD attributes.
+      ...(model.kind === 'value' ? {} : { ngsiType: ngsi.type ?? 'Property' }),
       ...(type ? { type } : {}),
       ...(prop.format ? { format: prop.format } : {}),
       ...(prop.enum ? { enum: prop.enum } : {}),

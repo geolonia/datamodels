@@ -155,12 +155,11 @@
           },
           "attributes": {
             "type": "array",
-            "description": "A summary of the model's attributes, so a tool can list them or match a CSV against several models without fetching every schema. The schema at schemaUrl stays the authority: conditional rules (anyOf, oneOf), lengths and ranges are only there. `required` is the schema's top-level required list. A value type (JapaneseAddress, Geometry) has type object and its IRI in valueModel; a relationship names its target type in target.",
+            "description": "A summary of the model's attributes, so a tool can list them or match a CSV against several models without fetching every schema. The schema at schemaUrl stays the authority: conditional rules (anyOf, oneOf), lengths and ranges are only there. `required` is the schema's top-level required list. For a value type (kind value), the entries are the fields inside the value and have no ngsiType. A value type (JapaneseAddress, Geometry) has type object and its IRI in valueModel; a relationship names its target type in target.",
             "items": {
               "type": "object",
               "required": [
                 "name",
-                "ngsiType",
                 "required"
               ],
               "properties": {
@@ -178,7 +177,8 @@
                     "Relationship",
                     "GeoProperty",
                     "LanguageProperty"
-                  ]
+                  ],
+                  "description": "For an entity type: how the attribute is represented in NGSI-LD. Absent for the fields of a value type"
                 },
                 "type": {
                   "type": "string",
@@ -192,7 +192,18 @@
                 },
                 "items": {
                   "type": "object",
-                  "description": "For an array: the type, format and allowed values of its items"
+                  "description": "For an array: the type, format and allowed values of its items",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "format": {
+                      "type": "string"
+                    },
+                    "enum": {
+                      "type": "array"
+                    }
+                  }
                 },
                 "valueModel": {
                   "type": "string",
