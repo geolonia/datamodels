@@ -4,8 +4,8 @@ layout: home
 hero:
   # The headline carries the page; the mark and name are in the navigation (docs/brand.md).
   name: ''
-  # HTML: the break and the unbreakable phrase keep 「変わらない URL で」 on one line; the red full stop is the mark's dot.
-  text: 日本で使える<br>データモデルを、<span class="nowrap">変わらない URL で<span class="dot">。</span></span>
+  # HTML: the break and the unbreakable phrase keep 「変わらない URL で」 on one line; 「データモデル」 and the full stop (the mark's dot) are red.
+  text: 日本で使える<br><span class="accent">データモデル</span>を、<span class="nowrap">変わらない URL で<span class="dot">。</span></span>
   tagline: JSON Schema・JSON-LD の @context・語彙として公開します。NGSI-LD ならそのまま使えます。既存の標準は複製せず拡張します。
   actions:
     - theme: brand
