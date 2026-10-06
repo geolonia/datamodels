@@ -42,3 +42,31 @@ test('a model with mapping files lists them at /mapping/, one per file; one with
   }
   assert.ok(models.some((x) => x.entry.mappingUrls?.length), 'at least one model has a mapping');
 });
+
+test('every model lists its attributes with type, NGSI-LD type and required, as in its schema (#156)', () => {
+  for (const { m, entry } of models) {
+    const props = m.schema.properties ?? {};
+    const names = Object.keys(props).filter((k) => !['id', 'type', '@context'].includes(k));
+    assert.deepEqual(entry.attributes.map((a) => a.name), names, m.type);
+    for (const a of entry.attributes) {
+      const p = props[a.name];
+      assert.equal(a.ngsiType, p['x-ngsi']?.type ?? 'Property', `${m.type}.${a.name}`);
+      assert.equal(a.required, (m.schema.required ?? []).includes(a.name), `${m.type}.${a.name}`);
+      assert.equal(a.type, p.$ref || p.allOf ? 'object' : p.type, `${m.type}.${a.name}`);
+      if (p['x-iri']) assert.equal(a.iri, p['x-iri']);
+    }
+  }
+  const site = models.find((x) => x.m.type === 'EvacuationSite').entry;
+  const address = site.attributes.find((a) => a.name === 'address');
+  assert.equal(address.valueModel, 'https://datamodels.jp/ns/common/JapaneseAddress');
+  assert.ok(site.attributes.find((a) => a.name === 'hazardTypes').items.enum.includes('flood'));
+  assert.ok(models.find((x) => x.m.type === 'Task').entry.attributes.find((a) => a.name === 'assignee').multi);
+});
+
+test('mappings name the standard of each mapping file, for the same files as mappingUrls (#156)', () => {
+  for (const { m, entry } of models) {
+    if (!entry.mappingUrls) { assert.equal(entry.mappings, undefined, m.type); continue; }
+    assert.deepEqual(entry.mappings.map((x) => x.url), entry.mappingUrls, m.type);
+    for (const x of entry.mappings) assert.ok(x.standard.ja && x.standard.en, x.url);
+  }
+});
