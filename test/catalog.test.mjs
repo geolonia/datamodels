@@ -65,6 +65,8 @@ test('every model lists its attributes with type, NGSI-LD type and required, as 
   assert.ok(models.find((x) => x.m.type === 'JapaneseAddress').entry.attributes.every((a) => !('ngsiType' in a)), 'value type fields');
   const items = schema.properties.models.items.properties.attributes.items.properties.items.properties;
   assert.deepEqual(Object.keys(items), ['type', 'format', 'enum']);
+  // The schema requires what every entry carries; ngsiType stays conditional (value-type fields have none).
+  assert.deepEqual(schema.properties.models.items.properties.attributes.items.required, ['name', 'iri', 'type', 'required', 'description']);
 });
 
 test('mappings name the standard of each mapping file, for the same files as mappingUrls (#156)', () => {
