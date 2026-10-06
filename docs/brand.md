@@ -64,6 +64,13 @@ Red is reserved. It appears on the dot, on links, on version strings, on section
 numerals and small badges. Buttons are ink. Never fill a surface larger than a
 badge with red; never set body text in red.
 
+On the site:
+- The home headline ends with the dot: its full stop (。 / .) is drawn as a red
+  circle (`.VPHero .text .dot`).
+- The main button is filled ink; the others are ink outlines (border) that turn
+  red on hover, like a link.
+- The pre-release banner is ink on paper-2 with a small red dot.
+
 Status badges keep VitePress semantics (draft = info, stable = tip, deprecated =
 danger); `tip` inherits the brand red.
 

@@ -4,7 +4,8 @@ layout: home
 hero:
   # The headline carries the page; the mark and name are in the navigation (docs/brand.md).
   name: ''
-  text: Data models that work in Japan, at URLs that never change.
+  # HTML: the red full stop is the mark's dot (docs/brand.md).
+  text: Data models that work in Japan, at URLs that never <span class="nowrap">change<span class="dot">.</span></span>
   tagline: Published as JSON Schemas, JSON-LD @context files and vocabularies. Ready to use with NGSI-LD. Existing standards are extended, not copied.
   actions:
     - theme: brand
