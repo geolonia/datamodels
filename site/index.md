@@ -2,22 +2,20 @@
 layout: home
 
 hero:
-  name: datamodels.jp
-  text: 日本で使えるデータモデルのカタログ
-  tagline: 日本の現場で使えるデータモデルを、JSON Schema・JSON-LD の @context・語彙として変わらない URL で提供します。NGSI-LD ならそのまま使えます。既存の標準は複製せず拡張します。
+  # The headline carries the page; the mark and name are in the navigation (docs/brand.md).
+  name: ''
+  text: 日本で使えるデータモデルを、変わらない URL で。
+  tagline: JSON Schema・JSON-LD の @context・語彙として公開します。NGSI-LD ならそのまま使えます。既存の標準は複製せず拡張します。
   actions:
     - theme: brand
       text: データモデル一覧
       link: /models/
     - theme: alt
-      text: モデルを提案する
-      link: https://github.com/geolonia/datamodels/issues/new?template=model-proposal.yml
+      text: 使い方ガイド
+      link: /guide/use
     - theme: alt
       text: catalog.json
       link: /catalog.json
-    - theme: alt
-      text: GitHub
-      link: https://github.com/geolonia/datamodels
 
 features:
   - title: 拡張する、複製しない
