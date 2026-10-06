@@ -33,6 +33,20 @@
   --vp-button-brand-hover-bg: #443d36;
   --vp-button-brand-active-bg: #1d1a17;
   --vp-button-brand-text: #faf7f1;
+  /* VitePress keeps hover and active text white; follow the text colour, or dark mode's light hover hides it. */
+  --vp-button-brand-hover-text: var(--vp-button-brand-text);
+  --vp-button-brand-active-text: var(--vp-button-brand-text);
+
+  /* Secondary buttons: ink outline on paper; red only on hover, like a link (buttons are ink). */
+  --vp-button-alt-border: var(--vp-c-border);
+  --vp-button-alt-bg: transparent;
+  --vp-button-alt-text: var(--vp-c-text-1);
+  --vp-button-alt-hover-border: var(--vp-c-brand-1);
+  --vp-button-alt-hover-bg: transparent;
+  --vp-button-alt-hover-text: var(--vp-c-brand-1);
+  --vp-button-alt-active-border: var(--vp-c-brand-2);
+  --vp-button-alt-active-bg: transparent;
+  --vp-button-alt-active-text: var(--vp-c-brand-2);
 
   --vp-nav-logo-height: 1.5rem;
   --vp-sidebar-bg-color: #f1ece2;
@@ -77,7 +91,8 @@
 :lang(ja) h1, :lang(ja) h2, :lang(ja) h3 { font-feature-settings: 'palt'; }
 
 .VPHero .main .text {
-  font-size: 36px !important;
+  /* Scales on narrow phones, so 「変わらない URL で。」 (never wrapped) fits at 320px. */
+  font-size: clamp(28px, 9vw, 36px) !important;
   line-height: 1.3 !important;
 }
 
@@ -90,7 +105,26 @@
 @media (min-width: 960px) {
   .VPHero .main .text {
     font-size: 46px !important;
+    /* The home page has no hero image: room for 「データモデルを、変わらない URL で。」 on one line. */
+    max-width: 800px;
   }
+}
+
+/* Hero headline (site/index.md): a phrase that never wraps, the key word in red,
+   and the full stop drawn as the mark's red dot. The character stays in the text
+   (copy, screen readers). */
+.VPHero .text .nowrap { white-space: nowrap; }
+.VPHero .text .accent { color: var(--vp-c-brand-1); }
+.VPHero .text .dot {
+  display: inline-block;
+  width: 0.26em;
+  height: 0.26em;
+  margin-left: 0.1em;
+  border-radius: 50%;
+  background: var(--vp-c-brand-1);
+  color: transparent;
+  overflow: hidden;
+  vertical-align: baseline;
 }
 
 /*
@@ -141,11 +175,21 @@
   font-size: 13px;
   line-height: 1.3;
   text-align: center;
-  color: var(--vp-c-warning-1);
-  /* The soft colour is translucent; layer it over the page background so
+  /* Theme colours: ink on paper-2, with a red dot like the mark's. Opaque, so
      content scrolling underneath the fixed banner does not show through. */
-  background: linear-gradient(var(--vp-c-warning-soft), var(--vp-c-warning-soft)), var(--vp-c-bg);
+  color: var(--vp-c-text-1);
+  background: var(--vp-c-bg-alt);
   border-bottom: 1px solid var(--vp-c-divider);
+}
+
+.prerelease-banner::before {
+  content: '';
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--vp-c-brand-1);
 }
 
 @media (max-width: 639px) {
