@@ -6,7 +6,7 @@ import { join } from 'node:path';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { loadSubjects, modelUrls, BASE_URL, ROOT } from '../scripts/lib/models.mjs';
-import { catalogEntry, CATALOG_LICENSE } from '../scripts/lib/publish.mjs';
+import { catalogEntry, attributeEntries, CATALOG_LICENSE } from '../scripts/lib/publish.mjs';
 
 const subjects = await loadSubjects();
 const schema = JSON.parse(await readFile(join(ROOT, 'catalog.schema.json'), 'utf8'));
@@ -79,4 +79,12 @@ test('mappings name the standard of each mapping file, for the same files as map
     assert.deepEqual(entry.mappings.map((x) => x.url), entry.mappingUrls, m.type);
     for (const x of entry.mappings) assert.ok(x.standard.ja && x.standard.en, x.url);
   }
+});
+
+test('an attribute without x-iri or descriptions is named in the error, not only by catalog validation', () => {
+  const model = { type: 'T', kind: 'entity', schema: { properties: { a: { type: 'string' } } }, catalog: { attributes: { a: { ja: 'あ', en: 'a' } } } };
+  assert.throws(() => attributeEntries(model), /T\.a: no x-iri/);
+  model.schema.properties.a['x-iri'] = 'https://example.com/a';
+  model.catalog.attributes.a = { ja: 'あ' };
+  assert.throws(() => attributeEntries(model), /T\.a: catalog\.yaml needs ja and en/);
 });

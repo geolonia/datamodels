@@ -41,9 +41,12 @@ export function attributeEntries(model) {
     const type = prop.$ref || prop.allOf ? 'object' : prop.type;
     const items = prop.items && { ...(prop.items.type ? { type: prop.items.type } : {}), ...(prop.items.format ? { format: prop.items.format } : {}), ...(prop.items.enum ? { enum: prop.items.enum } : {}) };
     const description = model.catalog?.attributes?.[name];
+    // catalog.schema.json requires both; say which attribute lacks one instead of failing on the whole catalog.
+    if (!prop['x-iri']) throw new Error(`${model.type}.${name}: no x-iri, so catalog.json cannot list its IRI`);
+    if (!description?.ja || !description?.en) throw new Error(`${model.type}.${name}: catalog.yaml needs ja and en descriptions for catalog.json`);
     return {
       name,
-      ...(prop['x-iri'] ? { iri: prop['x-iri'] } : {}),
+      iri: prop['x-iri'],
       // Members of a value type (JapaneseAddress, Geometry) are plain fields inside an attribute's value, not NGSI-LD attributes.
       ...(model.kind === 'value' ? {} : { ngsiType: ngsi.type ?? 'Property' }),
       ...(type ? { type } : {}),
@@ -55,7 +58,7 @@ export function attributeEntries(model) {
       ...(ngsi.target ? { target: ngsi.target } : {}),
       ...(ngsi.multi ? { multi: true } : {}),
       required: required.has(name),
-      ...(description?.ja && description?.en ? { description: { ja: description.ja, en: description.en } } : {}),
+      description: { ja: description.ja, en: description.en },
     };
   });
 }

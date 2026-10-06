@@ -297,7 +297,10 @@ for (const subject of subjects) {
       if (!isLink(successor)) fail(`${mwhere}/catalog.yaml`, `supersededBy must be an http(s) URL with a host (the replacement's type IRI or page), got ${JSON.stringify(successor)}`);
     }
     const list = model.adopters?.adopters;
-    if (model.adopters != null && (typeof model.adopters !== 'object' || Array.isArray(model.adopters) || !Array.isArray(list))) {
+    // Required in every model folder (and in a proposal bundle, CONTRIBUTING); an empty list is fine for a draft.
+    if (model.adopters == null) {
+      fail(`${mwhere}/ADOPTERS.yaml`, 'file is required (an empty "adopters: []" is fine for a draft)');
+    } else if (typeof model.adopters !== 'object' || Array.isArray(model.adopters) || !Array.isArray(list)) {
       fail(`${mwhere}/ADOPTERS.yaml`, 'root value must be a mapping with an adopters list');
     } else {
       (list ?? []).forEach((a, i) => {
