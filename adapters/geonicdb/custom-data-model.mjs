@@ -1,7 +1,7 @@
 // Build a GeonicDB Custom Data Model request body from a catalog model.
 // The body is what POST /custom-data-models accepts; contextUrl points at the
 // exact catalog context so the broker uses the catalog vocabulary.
-import { attributesOf, subjectUrls, CORE_TERMS } from '../../scripts/lib/models.mjs';
+import { attributesOf, subjectUrls } from '../../scripts/lib/models.mjs';
 
 function valueTypeOf(prop) {
   const ngsi = prop['x-ngsi']?.type;
@@ -45,17 +45,20 @@ export function toCustomDataModel(subject, model, { typePrefix = '', typeName, c
     const d = {
       ngsiType: prop['x-ngsi'].type,
       valueType: valueTypeOf(prop),
-      example: example[name],
+      // GeonicDB requires the key on every property; null when the catalog example has no value.
+      example: example[name] ?? null,
       required: (model.schema.required ?? []).includes(name),
       description: model.catalog?.attributes?.[name]?.ja ?? prop.description ?? '',
     };
     // GeonicDB reads a property-level `@context` as the term IRI when it
     // generates a context itself (custom-data-model.service.ts, terms.set).
     // With contextUrl set it is not needed, but carrying the IRI keeps the
-    // body self-describing if contextUrl is ever dropped. Core-context terms
-    // are left to the broker.
+    // body self-describing if contextUrl is ever dropped. Core terms
+    // (location, description) carry theirs too: a generated context would
+    // otherwise give them tenant IRIs, wrong for any processor outside the
+    // broker. Their x-iri is the core context's own IRI, so nothing conflicts.
     const iri = prop['x-iri'];
-    if (typeof iri === 'string' && /^https?:\/\//.test(iri) && !CORE_TERMS.has(name)) d['@context'] = iri;
+    if (typeof iri === 'string' && /^https?:\/\//.test(iri)) d['@context'] = iri;
     const validation = {};
     for (const k of ['minLength', 'maxLength', 'minimum', 'maximum', 'pattern', 'enum']) if (prop[k] !== undefined) validation[k] = prop[k];
     if (Object.keys(validation).length) d.validation = validation;
@@ -65,7 +68,7 @@ export function toCustomDataModel(subject, model, { typePrefix = '', typeName, c
     for (const [name, detail] of Object.entries(extend.propertyDetails)) {
       if (name in propertyDetails) throw new Error(`extension redefines catalog attribute "${name}" of ${model.type}; add a new attribute instead`);
       if (!detail || typeof detail !== 'object' || !detail.ngsiType || !detail.valueType) throw new Error(`extension attribute "${name}" needs ngsiType and valueType`);
-      propertyDetails[name] = detail;
+      propertyDetails[name] = { ...detail, example: detail.example ?? null };
     }
   }
   return {
