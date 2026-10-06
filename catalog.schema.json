@@ -211,7 +211,7 @@
                 "valueModel": {
                   "type": "string",
                   "format": "uri",
-                  "description": "IRI of the value type, for an attribute whose value is a catalog value type"
+                  "description": "The catalog value type of the attribute's value (for example https://datamodels.jp/ns/common/JapaneseAddress), taken from the schema it references; its schema is listed in this catalog"
                 },
                 "target": {
                   "type": "string",

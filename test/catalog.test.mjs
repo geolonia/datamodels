@@ -60,6 +60,10 @@ test('every model lists its attributes with type, NGSI-LD type and required, as 
   const site = models.find((x) => x.m.type === 'EvacuationSite').entry;
   const address = site.attributes.find((a) => a.name === 'address');
   assert.equal(address.valueModel, 'https://datamodels.jp/ns/common/JapaneseAddress');
+  // Every valueModel is a catalog value type; a point-restricted location still names Geometry.
+  const valueTypes = new Set(models.filter((x) => x.m.kind === 'value').map((x) => x.entry.typeIri));
+  for (const { entry } of models) for (const a of entry.attributes) if (a.valueModel) assert.ok(valueTypes.has(a.valueModel), `${entry.type}.${a.name}: ${a.valueModel}`);
+  assert.equal(models.find((x) => x.m.type === 'Attachment').entry.attributes.find((a) => a.name === 'location').valueModel, 'https://datamodels.jp/ns/common/Geometry');
   assert.ok(site.attributes.find((a) => a.name === 'hazardTypes').items.enum.includes('flood'));
   assert.ok(models.find((x) => x.m.type === 'Task').entry.attributes.find((a) => a.name === 'assignee').multi);
   assert.ok(models.find((x) => x.m.type === 'JapaneseAddress').entry.attributes.every((a) => !('ngsiType' in a)), 'value type fields');

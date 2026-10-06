@@ -26,6 +26,13 @@ export const CATALOG_LICENSE = { license: 'CC0-1.0', licenseUrl: `${BASE_URL}/LI
  * model's attributes or match a CSV against several models without fetching
  * every schema (#156). The schema stays the authority; this is a summary.
  */
+// A catalog value type, from the URL of the schema an attribute references:
+// .../schema/<subject>/<Type>/vX.Y.Z.json is the type .../ns/<subject>/<Type>.
+const catalogValueModel = (ref) => {
+  const m = typeof ref === 'string' && ref.startsWith(`${BASE_URL}/schema/`) && /\/schema\/([^/]+)\/([^/]+)\/v[^/]+\.json$/.exec(ref);
+  return m ? `${BASE_URL}/ns/${m[1]}/${m[2]}` : undefined;
+};
+
 export function attributeEntries(model) {
   const required = new Set(model.schema.required ?? []);
   return attributesOf(model).map(([name, prop]) => {
@@ -43,7 +50,8 @@ export function attributeEntries(model) {
       ...(prop.format ? { format: prop.format } : {}),
       ...(prop.enum ? { enum: prop.enum } : {}),
       ...(items && Object.keys(items).length ? { items } : {}),
-      ...(ngsi.model ? { valueModel: ngsi.model } : {}),
+      // From the referenced catalog schema, not x-ngsi.model, which may name a narrower class (geojson Point).
+      ...(catalogValueModel(prop.$ref) ? { valueModel: catalogValueModel(prop.$ref) } : {}),
       ...(ngsi.target ? { target: ngsi.target } : {}),
       ...(ngsi.multi ? { multi: true } : {}),
       required: required.has(name),
