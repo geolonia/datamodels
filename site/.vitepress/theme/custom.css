@@ -33,6 +33,9 @@
   --vp-button-brand-hover-bg: #443d36;
   --vp-button-brand-active-bg: #1d1a17;
   --vp-button-brand-text: #faf7f1;
+  /* VitePress keeps hover and active text white; follow the text colour, or dark mode's light hover hides it. */
+  --vp-button-brand-hover-text: var(--vp-button-brand-text);
+  --vp-button-brand-active-text: var(--vp-button-brand-text);
 
   /* Secondary buttons: ink outline on paper; red only on hover, like a link (buttons are ink). */
   --vp-button-alt-border: var(--vp-c-border);
