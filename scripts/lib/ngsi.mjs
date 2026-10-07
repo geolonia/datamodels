@@ -20,17 +20,21 @@ export const WRAPPED = { JsonProperty: 'json', VocabProperty: 'vocab' };
  * model's JSON Schema describes it (the schema describes the value, as for a
  * Property). Throws when an attribute of one of these types is not wrapped.
  */
+/** The content of a {"json": ...} / {"vocab": ...} wrapper; throws when it is not exactly that. */
+function unwrapOne(k, type, v) {
+  const member = WRAPPED[type];
+  if (!v || typeof v !== 'object' || Array.isArray(v) || Object.keys(v).length !== 1 || !(member in v)) {
+    throw new Error(`attribute ${k}: a ${type} is {"${member}": ...} in key-values form`);
+  }
+  return v[member];
+}
+
 export function unwrapKeyValues(keyValues, schema) {
   const out = { ...keyValues };
   for (const [k, prop] of Object.entries(schema.properties ?? {})) {
     const member = WRAPPED[prop['x-ngsi']?.type];
     if (!member || !(k in out)) continue;
-    const unwrap = (v) => {
-      if (!v || typeof v !== 'object' || Array.isArray(v) || Object.keys(v).length !== 1 || !(member in v)) {
-        throw new Error(`attribute ${k}: a ${prop['x-ngsi'].type} is {"${member}": ...} in key-values form`);
-      }
-      return v[member];
-    };
+    const unwrap = (v) => unwrapOne(k, prop['x-ngsi'].type, v);
     out[k] = prop['x-ngsi'].multi && Array.isArray(out[k]) ? out[k].map(unwrap) : unwrap(out[k]);
   }
   return out;
@@ -100,7 +104,7 @@ export function toNormalized(keyValues, schema, context) {
       if (ngsi.type === 'GeoProperty') return { type: 'GeoProperty', value };
       // Key-values carries the wrapper ({"json": ...}); take its content.
       const member = WRAPPED[ngsi.type];
-      if (member) return { type: ngsi.type, [member]: value && typeof value === 'object' && member in value ? value[member] : value };
+      if (member) return { type: ngsi.type, [member]: unwrapOne(k, ngsi.type, value) };
       const format = prop.format ?? prop.items?.format;
       return { type: 'Property', value: format === 'date-time' && typeof value === 'string' ? { '@type': 'DateTime', '@value': value } : value };
     };

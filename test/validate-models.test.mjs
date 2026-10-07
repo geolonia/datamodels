@@ -387,3 +387,9 @@ test('an unknown x-ngsi.type fails', () =>
 
 test('a VocabProperty value the contexts do not define fails', () =>
   withMutatedModels((d) => useJsonAndVocab(d, { vocab: 'closedAtNight' }), /attribute "statusLabel": vocab value expands to https:\/\/uri\.etsi\.org\/ngsi-ld\/default-context\/closedAtNight/));
+
+test('a key-values vocab that differs from the normalized example fails', () =>
+  withMutatedModels(async (d) => {
+    await useJsonAndVocab(d);
+    await editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => { e.statusLabel = { vocab: 'closedAtNight' }; });
+  }, /attribute "statusLabel": vocab \["closedAtNight"\] differs from example-normalized\.jsonld/));

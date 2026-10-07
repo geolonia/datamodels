@@ -59,4 +59,7 @@ test('JsonProperty and VocabProperty keep their json / vocab member in key-value
   assert.throws(() => unwrapKeyValues({ ...kv, answers }, schema), /answers: a JsonProperty is \{"json": \.\.\.\} in key-values form/);
   assert.throws(() => unwrapKeyValues({ ...kv, involvement: { vocab: 'a', extra: 1 } }, schema), /involvement: a VocabProperty/);
   assert.throws(() => toKeyValues({ ...norm, answers: { type: 'JsonProperty', value: answers } }), /JsonProperty needs a json member/);
+  // toNormalized is as strict about the wrapper as the validator.
+  assert.throws(() => toNormalized({ ...kv, answers }, schema), /answers: a JsonProperty is \{"json": \.\.\.\}/);
+  assert.throws(() => toNormalized({ ...kv, involvement: { vocab: 'a', extra: 1 } }, schema), /involvement: a VocabProperty/);
 });

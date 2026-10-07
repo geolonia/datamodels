@@ -348,6 +348,13 @@ for (const subject of subjects) {
     const multi = new Set(attributesOf(model).filter(([, p]) => p['x-ngsi']?.multi).map(([n]) => n));
     let projected;
     try { projected = toKeyValues(norm, { multi }); } catch (e) { fail(`${mwhere}/examples/example-normalized.jsonld`, e.message); continue; }
+    // The key-values example carries the same vocabulary as the normalized one,
+    // which is checked against the contexts below.
+    if (kv) for (const [name, prop] of attributesOf(model)) {
+      if (prop['x-ngsi']?.type !== 'VocabProperty' || !(name in kv) || !(name in norm)) continue;
+      const vocabs = (x) => JSON.stringify((Array.isArray(x) ? x : [x]).map((i) => i?.vocab));
+      if (vocabs(kv[name]) !== vocabs(norm[name])) fail(`${mwhere}/examples/example.json`, `attribute "${name}": vocab ${vocabs(kv[name])} differs from example-normalized.jsonld ${vocabs(norm[name])}`);
+    }
     let projectedPlain;
     try { projectedPlain = unwrapKeyValues(projected, schema); } catch (e) { fail(`${mwhere}/examples/example-normalized.jsonld`, e.message); continue; }
     if (!validate(projectedPlain)) fail(`${mwhere}/examples/example-normalized.jsonld`, `key-values projection: ${ajv.errorsText(validate.errors)}`);
