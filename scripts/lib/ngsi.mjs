@@ -1,7 +1,44 @@
 // NGSI-LD entity forms: normalized (every attribute an object with its type)
-// and key-values (plain values). Pure functions without Node imports: used by
-// the validator (validate-models.mjs) and by the example playground in the
-// browser (site/.vitepress/theme/ExamplePlayground.vue).
+// and key-values (plain values; JsonProperty and VocabProperty keep a
+// {"json": ...} or {"vocab": ...} wrapper). Pure functions without Node
+// imports: used by the validator (validate-models.mjs) and by the example
+// playground in the browser (site/.vitepress/theme/ExamplePlayground.vue).
+
+/** NGSI-LD attribute types a model may declare in x-ngsi.type. JsonProperty and VocabProperty are NGSI-LD 1.8. */
+export const NGSI_TYPES = ['Property', 'Relationship', 'GeoProperty', 'JsonProperty', 'VocabProperty'];
+
+/**
+ * The member that holds the value of a JsonProperty (json) or a VocabProperty
+ * (vocab). NGSI-LD keeps it in the key-values (simplified) form too:
+ * `"answers": {"json": [...]}`, so a broker knows the type (ETSI GS CIM 009
+ * clause 4.5.4, Simplified Representation).
+ */
+export const WRAPPED = { JsonProperty: 'json', VocabProperty: 'vocab' };
+
+/**
+ * The key-values entity with the json and vocab wrappers removed, as the
+ * model's JSON Schema describes it (the schema describes the value, as for a
+ * Property). Throws when an attribute of one of these types is not wrapped.
+ */
+/** The content of a {"json": ...} / {"vocab": ...} wrapper; throws when it is not exactly that. */
+function unwrapOne(k, type, v) {
+  const member = WRAPPED[type];
+  if (!v || typeof v !== 'object' || Array.isArray(v) || Object.keys(v).length !== 1 || !(member in v)) {
+    throw new Error(`attribute ${k}: a ${type} is {"${member}": ...} in key-values form`);
+  }
+  return v[member];
+}
+
+export function unwrapKeyValues(keyValues, schema) {
+  const out = { ...keyValues };
+  for (const [k, prop] of Object.entries(schema.properties ?? {})) {
+    const member = WRAPPED[prop['x-ngsi']?.type];
+    if (!member || !(k in out)) continue;
+    const unwrap = (v) => unwrapOne(k, prop['x-ngsi'].type, v);
+    out[k] = prop['x-ngsi'].multi && Array.isArray(out[k]) ? out[k].map(unwrap) : unwrap(out[k]);
+  }
+  return out;
+}
 
 /**
  * Key-values projection of an NGSI-LD normalized entity.
@@ -34,7 +71,11 @@ export function toKeyValues(normalized, { multi = new Set() } = {}) {
     if (!v || typeof v !== 'object' || !('type' in v)) throw new Error(`attribute ${k}: not a normalized attribute object`);
     if (v.type === 'Relationship') { if (typeof v.object !== 'string') throw new Error(`attribute ${k}: Relationship needs a string object`); out[k] = v.object; }
     else if (v.type === 'GeoProperty') { if (!v.value || typeof v.value !== 'object' || typeof v.value.type !== 'string') throw new Error(`attribute ${k}: GeoProperty needs a GeoJSON value`); out[k] = v.value; }
-    else if (v.type === 'Property') {
+    else if (v.type in WRAPPED) {
+      const member = WRAPPED[v.type];
+      if (!(member in v)) throw new Error(`attribute ${k}: ${v.type} needs a ${member} member`);
+      out[k] = { [member]: v[member] };
+    } else if (v.type === 'Property') {
       if (!('value' in v)) throw new Error(`attribute ${k}: Property needs a value`);
       out[k] = (v.value && typeof v.value === 'object' && '@type' in v.value && '@value' in v.value) ? v.value['@value'] : v.value;
     } else throw new Error(`attribute ${k}: unknown attribute type "${v.type}"`);
@@ -61,6 +102,9 @@ export function toNormalized(keyValues, schema, context) {
     const one = (value) => {
       if (ngsi.type === 'Relationship') return { type: 'Relationship', object: value };
       if (ngsi.type === 'GeoProperty') return { type: 'GeoProperty', value };
+      // Key-values carries the wrapper ({"json": ...}); take its content.
+      const member = WRAPPED[ngsi.type];
+      if (member) return { type: ngsi.type, [member]: unwrapOne(k, ngsi.type, value) };
       const format = prop.format ?? prop.items?.format;
       return { type: 'Property', value: format === 'date-time' && typeof value === 'string' ? { '@type': 'DateTime', '@value': value } : value };
     };

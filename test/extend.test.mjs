@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
-import { loadSubjects, subjectUrls, modelUrls, attributesOf, resolveContextTerms, CORE_CONTEXT_FIXTURE } from '../scripts/lib/models.mjs';
+import { loadSubjects, subjectUrls, modelUrls, attributesOf, resolveContextTerms, CORE_CONTEXT_FIXTURE, unwrapKeyValues } from '../scripts/lib/models.mjs';
 import { resolveContextDocument } from '../scripts/lib/releases.mjs';
 import { buildExtension, proposalUrl } from '../scripts/lib/extend.mjs';
 
@@ -40,7 +40,8 @@ test('for every entity model: a context with only the new terms, and a schema th
     assert.ok(out.schema.required.includes('patrolRoute'));
     assert.ok(!('x-version' in out.schema), 'the catalog version is not the extension\'s');
     const validate = ajv.compile(out.schema);
-    const ok = { ...raw.examples['example.json'], patrolRoute: 'A-3', checkedAt: '2026-07-08T10:00:00+09:00', patrolCar: 'urn:ngsi-ld:Vehicle:7', patrolArea: { type: 'Point', coordinates: [139.75, 35.69] } };
+    // The schema describes values: JsonProperty and VocabProperty lose their key-values wrapper first.
+    const ok = { ...unwrapKeyValues(raw.examples['example.json'], raw.schema), patrolRoute: 'A-3', checkedAt: '2026-07-08T10:00:00+09:00', patrolCar: 'urn:ngsi-ld:Vehicle:7', patrolArea: { type: 'Point', coordinates: [139.75, 35.69] } };
     assert.ok(validate(ok), `${model.type}: ${ajv.errorsText(validate.errors)}`);
     assert.ok(validate({ '@context': ['https://example.com/context/acme.jsonld', 'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld'], ...ok }), `${model.type}: key-values data may carry @context`);
     const { patrolRoute, ...missing } = ok;
@@ -88,4 +89,19 @@ test('the proposal link opens the form with the attributes filled in', () => {
   assert.match(stale.searchParams.get('what'), /- `count`: Property \(integer\)$/m);
   const rel = new URL(proposalUrl(model, [{ name: 'car', ngsiType: 'Relationship', valueType: 'string', format: 'date-time' }]));
   assert.match(rel.searchParams.get('what'), /- `car`: Relationship$/m);
+});
+
+test('JsonProperty and VocabProperty attributes (NGSI-LD 1.8)', () => {
+  const { model } = entities[0];
+  const out = buildExtension(model, input([
+    { name: 'readings', ngsiType: 'JsonProperty', valueType: 'array', required: false },
+    { name: 'settings', ngsiType: 'JsonProperty', valueType: 'object', required: false },
+    { name: 'level', ngsiType: 'VocabProperty', required: false },
+  ]), core);
+  assert.deepEqual(out.problems, []);
+  assert.deepEqual(out.schema.properties.readings, { type: 'array', items: { type: 'object' }, 'x-ngsi': { type: 'JsonProperty' }, 'x-iri': 'https://example.com/ns/acme/readings' });
+  assert.deepEqual(out.schema.properties.settings, { type: 'object', 'x-ngsi': { type: 'JsonProperty' }, 'x-iri': 'https://example.com/ns/acme/settings' });
+  assert.deepEqual(out.schema.properties.level, { type: 'string', 'x-ngsi': { type: 'VocabProperty' }, 'x-iri': 'https://example.com/ns/acme/level' });
+  // A JsonProperty holds an object or a list, not a plain value.
+  assert.deepEqual(buildExtension(model, input([{ name: 'readings', ngsiType: 'JsonProperty', valueType: 'string' }]), core).problems.map((p) => `${p.code}:${p.name}`), ['valueType:readings']);
 });

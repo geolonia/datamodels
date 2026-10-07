@@ -179,13 +179,15 @@
                     "Property",
                     "Relationship",
                     "GeoProperty",
-                    "LanguageProperty"
+                    "LanguageProperty",
+                    "JsonProperty",
+                    "VocabProperty"
                   ],
                   "description": "For an entity type: how the attribute is represented in NGSI-LD. Absent for the fields of a value type"
                 },
                 "type": {
                   "type": "string",
-                  "description": "JSON Schema type of the key-values value"
+                  "description": "JSON Schema type of the value (for a JsonProperty or VocabProperty, of its json or vocab member; key-values data keeps that member)"
                 },
                 "format": {
                   "type": "string"

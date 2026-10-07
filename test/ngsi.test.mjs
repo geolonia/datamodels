@@ -42,3 +42,24 @@ test('toNormalized: declared types, DateTime values, datasetIds, unknown attribu
   });
   assert.ok(!('@context' in out), 'no @context unless one is given');
 });
+
+test('JsonProperty and VocabProperty keep their json / vocab member in key-values form', async () => {
+  const { unwrapKeyValues } = await import('../scripts/lib/models.mjs');
+  const schema = { properties: {
+    answers: { type: 'array', 'x-ngsi': { type: 'JsonProperty' } },
+    involvement: { type: 'string', 'x-ngsi': { type: 'VocabProperty' } },
+  } };
+  const answers = [{ name: 'danger', value: false, probability: 0.58 }];
+  const kv = { id: 'urn:x:1', type: 'X', answers: { json: answers }, involvement: { vocab: 'dpv:HumanNotInvolved' } };
+  const norm = { id: 'urn:x:1', type: 'X', answers: { type: 'JsonProperty', json: answers }, involvement: { type: 'VocabProperty', vocab: 'dpv:HumanNotInvolved' } };
+  assert.deepEqual(toNormalized(kv, schema), norm);
+  assert.deepEqual(toKeyValues(norm), kv);
+  // The schema describes the value, so validation sees it without the wrapper.
+  assert.deepEqual(unwrapKeyValues(kv, schema), { id: 'urn:x:1', type: 'X', answers, involvement: 'dpv:HumanNotInvolved' });
+  assert.throws(() => unwrapKeyValues({ ...kv, answers }, schema), /answers: a JsonProperty is \{"json": \.\.\.\} in key-values form/);
+  assert.throws(() => unwrapKeyValues({ ...kv, involvement: { vocab: 'a', extra: 1 } }, schema), /involvement: a VocabProperty/);
+  assert.throws(() => toKeyValues({ ...norm, answers: { type: 'JsonProperty', value: answers } }), /JsonProperty needs a json member/);
+  // toNormalized is as strict about the wrapper as the validator.
+  assert.throws(() => toNormalized({ ...kv, answers }, schema), /answers: a JsonProperty is \{"json": \.\.\.\}/);
+  assert.throws(() => toNormalized({ ...kv, involvement: { vocab: 'a', extra: 1 } }, schema), /involvement: a VocabProperty/);
+});

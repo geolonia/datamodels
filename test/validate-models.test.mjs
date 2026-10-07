@@ -11,12 +11,13 @@ import { fileURLToPath } from 'node:url';
 
 const root = join(fileURLToPath(import.meta.url), '..', '..');
 
-async function withMutatedModels(mutate, expectMessage) {
+async function withMutatedModels(mutate, expectMessage, { pass = false } = {}) {
   const dir = await mkdtemp(join(tmpdir(), 'geonicdb-models-'));
   try {
     await cp(join(root, 'models'), dir, { recursive: true });
     await mutate(dir);
     const r = spawnSync(process.execPath, [join(root, 'scripts', 'validate-models.mjs')], { env: { ...process.env, DATAMODELS_MODELS_DIR: dir }, encoding: 'utf8' });
+    if (pass) { assert.equal(r.status, 0, r.stderr); return; }
     assert.equal(r.status, 1, `validator should fail\nstdout: ${r.stdout}\nstderr: ${r.stderr}`);
     assert.match(r.stderr, expectMessage);
   } finally {
@@ -353,3 +354,42 @@ test('an entity schema that rejects @context in key-values data fails', () =>
 
 test('a model folder without ADOPTERS.yaml fails; an empty list is fine (#156)', () =>
   withMutatedModels((d) => rm(join(d, 'disaster', 'EvacuationSite', 'ADOPTERS.yaml')), /EvacuationSite\/ADOPTERS\.yaml: file is required/));
+
+// NGSI-LD 1.8 JsonProperty and VocabProperty: the schema describes the value;
+// the examples carry the json / vocab member, also in key-values form.
+// (Subject contexts are frozen at their recorded version, so the vocab value
+// is a full IRI rather than a new context term.)
+async function useJsonAndVocab(d, { wrapKeyValues = true, vocab = 'https://example.org/road-status/closedAtNight' } = {}) {
+  const dir = join(d, 'transportation', 'RoadRestriction');
+  await editJson(join(dir, 'schema.json'), (s) => {
+    s.properties.address['x-ngsi'] = { type: 'JsonProperty' };
+    s.properties.statusLabel['x-ngsi'] = { type: 'VocabProperty' };
+  });
+  await editJson(join(dir, 'examples', 'example.json'), (e) => {
+    e.statusLabel = vocab;
+    if (wrapKeyValues) { e.address = { json: e.address }; e.statusLabel = { vocab }; }
+  });
+  await editJson(join(dir, 'examples', 'example-normalized.jsonld'), (e) => {
+    e.address = { type: 'JsonProperty', json: e.address.value };
+    e.statusLabel = { type: 'VocabProperty', vocab };
+  });
+}
+
+test('JsonProperty and VocabProperty attributes validate', () =>
+  withMutatedModels((d) => useJsonAndVocab(d), null, { pass: true }));
+
+test('a JsonProperty without its json member in key-values form fails', () =>
+  withMutatedModels((d) => useJsonAndVocab(d, { wrapKeyValues: false }), /example\.json: attribute address: a JsonProperty is \{"json": \.\.\.\} in key-values form/));
+
+test('an unknown x-ngsi.type fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'schema.json'), (s) => { s.properties.roadName['x-ngsi'] = { type: 'ListProperty' }; }),
+    /roadName: x-ngsi\.type must be one of Property, Relationship, GeoProperty, JsonProperty, VocabProperty/));
+
+test('a VocabProperty value the contexts do not define fails', () =>
+  withMutatedModels((d) => useJsonAndVocab(d, { vocab: 'closedAtNight' }), /attribute "statusLabel": vocab value expands to https:\/\/uri\.etsi\.org\/ngsi-ld\/default-context\/closedAtNight/));
+
+test('a key-values vocab that differs from the normalized example fails', () =>
+  withMutatedModels(async (d) => {
+    await useJsonAndVocab(d);
+    await editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => { e.statusLabel = { vocab: 'closedAtNight' }; });
+  }, /attribute "statusLabel": vocab \["closedAtNight"\] differs from example-normalized\.jsonld/));

@@ -67,6 +67,8 @@ const pretty = (v: unknown) => JSON.stringify(v, null, 2)
 const proposal = computed(() => proposalUrl(model.value, form.attributes))
 const subjects = computed(() => [...new Set(data.models.map((m: any) => m.subject))].map((s) => ({ s, title: data.models.find((m: any) => m.subject === s).subjectTitle[props.lang], models: data.models.filter((m: any) => m.subject === s) })))
 
+// A JsonProperty holds an object or a list: switching to it from a plain value type picks object.
+const fitValueType = (a: any) => { if (a.ngsiType === 'JsonProperty' && !['object', 'array'].includes(a.valueType)) a.valueType = 'object' }
 const add = () => form.attributes.push({ name: '', ngsiType: 'Property', valueType: 'string', format: '', required: false, description: '' })
 const copied = ref('')
 async function copy(which: 'context' | 'schema') {
@@ -94,10 +96,13 @@ async function copy(which: 'context' | 'schema') {
       <div v-for="(a, i) in form.attributes" :key="i" class="attr">
         <label>{{ L.name }}<input v-model="a.name" spellcheck="false" autocapitalize="off" /></label>
         <label>{{ L.ngsiType }}
-          <select v-model="a.ngsiType"><option>Property</option><option>Relationship</option><option>GeoProperty</option></select>
+          <select v-model="a.ngsiType" @change="fitValueType(a)"><option>Property</option><option>Relationship</option><option>GeoProperty</option><option>JsonProperty</option><option>VocabProperty</option></select>
         </label>
         <label v-if="a.ngsiType === 'Property'">{{ L.valueType }}
           <select v-model="a.valueType"><option v-for="v in ['string', 'number', 'integer', 'boolean', 'object', 'array']" :key="v">{{ v }}</option></select>
+        </label>
+        <label v-if="a.ngsiType === 'JsonProperty'">{{ L.valueType }}
+          <select v-model="a.valueType"><option v-for="v in ['object', 'array']" :key="v">{{ v }}</option></select>
         </label>
         <label v-if="a.ngsiType === 'Property' && a.valueType === 'string'">{{ L.format }}
           <select v-model="a.format"><option value="">{{ L.none }}</option><option>date-time</option><option>date</option><option>uri</option></select>
