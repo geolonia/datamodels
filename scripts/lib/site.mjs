@@ -140,7 +140,8 @@ export function valueText(lang, subject, prop, prefix) {
     const only = prop.properties?.type?.const;
     return `GeoProperty (${[refText, only].filter(Boolean).join(', ') || 'GeoJSON'})`;
   }
-  if (ref) return `Property, object: ${refText}`;
+  const kind = ngsi === 'JsonProperty' || ngsi === 'VocabProperty' ? ngsi : 'Property';
+  if (ref) return `${kind}, object: ${refText}`;
   let t = prop.type ?? '';
   if (prop.format) t += ` (${prop.format})`;
   if (prop.enum) t += `: ${prop.enum.map(code).join(' \\| ')}`;
@@ -148,7 +149,8 @@ export function valueText(lang, subject, prop, prefix) {
   if (prop.exclusiveMinimum !== undefined) t += `, > ${prop.exclusiveMinimum}`;
   if (prop.maximum !== undefined) t += `, ≤ ${prop.maximum}`;
   if (prop.exclusiveMaximum !== undefined) t += `, < ${prop.exclusiveMaximum}`;
-  return `Property, ${t}`;
+  // JsonProperty and VocabProperty (NGSI-LD 1.8) describe their value like a Property.
+  return `${kind}, ${t}`;
 }
 
 function modelPage(lang, prefix, subject, model) {

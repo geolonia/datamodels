@@ -9,10 +9,14 @@
 // (allOf + $ref) would reject every added attribute; the builder therefore
 // starts from the exact published version and says which one (x-extends).
 
+import { NGSI_TYPES } from './ngsi.mjs';
+
 const TERM = /^[a-z][A-Za-z0-9]*$/;
 const PREFIX = /^[a-z][a-z0-9-]*$/;
 const VALUE_TYPES = ['string', 'number', 'integer', 'boolean', 'object', 'array'];
 const FORMATS = ['', 'date-time', 'date', 'uri'];
+/** A JsonProperty holds a JSON object or a list of them (NGSI-LD 1.8). */
+const JSON_TYPES = ['object', 'array'];
 
 /**
  * @param {object} model   { type, schema, schemaExact, contextAlias, geometrySchema, attributes: string[],
@@ -56,7 +60,8 @@ export function buildExtension(model, input, coreTerms) {
     seen.add(a.name);
     if (a.ngsiType === 'Property' && !VALUE_TYPES.includes(a.valueType)) problems.push({ code: 'valueType', name: a.name });
     if (a.ngsiType === 'Property' && a.valueType === 'string' && !FORMATS.includes(a.format ?? '')) problems.push({ code: 'format', name: a.name });
-    if (!['Property', 'Relationship', 'GeoProperty'].includes(a.ngsiType)) problems.push({ code: 'ngsiType', name: a.name });
+    if (a.ngsiType === 'JsonProperty' && !JSON_TYPES.includes(a.valueType)) problems.push({ code: 'valueType', name: a.name });
+    if (!NGSI_TYPES.includes(a.ngsiType)) problems.push({ code: 'ngsiType', name: a.name });
   }
   if (problems.length) return { problems, context: null, schema: null };
 
@@ -73,6 +78,8 @@ export function buildExtension(model, input, coreTerms) {
     const ngsi = { type: a.ngsiType };
     const p = a.ngsiType === 'Relationship' ? { type: 'string', format: 'uri' }
       : a.ngsiType === 'GeoProperty' ? { $ref: model.geometrySchema }
+        : a.ngsiType === 'VocabProperty' ? { type: 'string' }
+        : a.ngsiType === 'JsonProperty' ? (a.valueType === 'array' ? { type: 'array', items: { type: 'object' } } : { type: 'object' })
         : { type: a.valueType, ...(a.valueType === 'string' && a.format ? { format: a.format } : {}) };
     if (a.description?.trim()) p.description = a.description.trim();
     schema.properties[a.name] = { ...p, 'x-ngsi': ngsi, 'x-iri': `${base}${a.name}` };
@@ -85,7 +92,8 @@ export function buildExtension(model, input, coreTerms) {
 /** The model proposal form, pre-filled with the attributes (for attributes that may belong in the catalog). */
 export function proposalUrl(model, attributes) {
   // Only what the schema uses: a format left over from an earlier value type is not part of it.
-  const shape = (a) => (a.ngsiType === 'Property' ? ` (${a.valueType}${a.valueType === 'string' && a.format ? `, ${a.format}` : ''})` : '');
+  const shape = (a) => (a.ngsiType === 'Property' ? ` (${a.valueType}${a.valueType === 'string' && a.format ? `, ${a.format}` : ''})`
+    : a.ngsiType === 'JsonProperty' ? ` (${a.valueType})` : '');
   const list = attributes.filter((a) => a.name?.trim()).map((a) => `- \`${a.name.trim()}\`: ${a.ngsiType}${shape(a)}${a.required ? ', required' : ''}${a.description?.trim() ? ` — ${a.description.trim()}` : ''}`).join('\n');
   const q = new URLSearchParams({ template: 'model-proposal.yml', title: `${model.type}: ${attributes.filter((a) => a.name?.trim()).map((a) => a.name.trim()).join(', ')}`, what: `Attributes for ${model.type}:\n\n${list}` });
   return `https://github.com/geolonia/datamodels/issues/new?${q}`;

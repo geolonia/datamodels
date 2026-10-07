@@ -79,7 +79,7 @@ Each model's normalized example is NGSI-LD with its `@context`, so it can be sen
 The JSON Schemas validate the key-values form. When a broker expects the normalized form, convert like this:
 
 - `id` and `type` stay as they are.
-- Wrap each attribute in the NGSI-LD type that the attribute table on the model page gives: a Property is `{ "type": "Property", "value": … }`, a Relationship `{ "type": "Relationship", "object": … }`, a GeoProperty `{ "type": "GeoProperty", "value": … }`.
+- Wrap each attribute in the NGSI-LD type that the attribute table on the model page gives: a Property is `{ "type": "Property", "value": … }`, a Relationship `{ "type": "Relationship", "object": … }`, a GeoProperty `{ "type": "GeoProperty", "value": … }`, a JsonProperty `{ "type": "JsonProperty", "json": … }`, a VocabProperty `{ "type": "VocabProperty", "vocab": … }`. In key-values form, a JsonProperty and a VocabProperty keep their member: `{ "json": … }`, `{ "vocab": … }`. Both are NGSI-LD 1.8 types: check that your broker supports them before you use a model that has them.
 - The value of a date-time Property (`format: date-time` in the schema) becomes `{ "@type": "DateTime", "@value": … }`.
 - A multi-valued attribute (marked "(multiple)" in the attribute table; for example `assignee` on Task) becomes an array with one instance per value, each with a `datasetId`. The catalog's examples use the form `urn:ngsi-ld:dataset:<attribute>:<n>`.
 - The `@context` lists the subject's alias and the NGSI-LD core context.

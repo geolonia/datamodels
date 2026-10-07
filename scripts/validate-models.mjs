@@ -17,7 +17,7 @@ import addFormats from 'ajv-formats';
 import jsonld from 'jsonld';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { loadSubjects, attributesOf, toKeyValues, subjectUrls, modelUrls, resolveContextTerms, CORE_CONTEXT_URL, CORE_CONTEXT_FIXTURE } from './lib/models.mjs';
+import { loadSubjects, attributesOf, toKeyValues, unwrapKeyValues, NGSI_TYPES, subjectUrls, modelUrls, resolveContextTerms, CORE_CONTEXT_URL, CORE_CONTEXT_FIXTURE } from './lib/models.mjs';
 import { resolveContextDocument } from './lib/releases.mjs';
 import { bilingual, mappingProblems, viaCycles } from './lib/mapping-check.mjs';
 import { reportFailures } from './lib/ci-summary.mjs';
@@ -211,6 +211,7 @@ for (const subject of subjects) {
 
     for (const [name, prop] of attributesOf(model)) {
       if (model.kind === 'entity' && !prop['x-ngsi']?.type) fail(`${mwhere}/schema.json`, `${name}: missing x-ngsi.type`);
+      else if (prop['x-ngsi']?.type && !NGSI_TYPES.includes(prop['x-ngsi'].type)) fail(`${mwhere}/schema.json`, `${name}: x-ngsi.type must be one of ${NGSI_TYPES.join(', ')}`);
       if ('x-personal-data' in prop && prop['x-personal-data'] !== true) fail(`${mwhere}/schema.json`, `${name}: x-personal-data must be true or absent`);
       // Schemas are product-neutral: broker-specific hints belong in adapters/.
       for (const k of Object.keys(prop)) if (/^x-(geonicdb|orion|scorpio|stellio)/i.test(k)) fail(`${mwhere}/schema.json`, `${name}: product-specific key ${k}; move it into an adapter`);
@@ -234,12 +235,18 @@ for (const subject of subjects) {
     try { validate = ajv.compile(schema); } catch (e) { fail(`${mwhere}/schema.json`, `does not compile: ${e.message}`); continue; }
 
     const kv = model.examples['example.json'];
+    // The schema describes values; JsonProperty and VocabProperty carry a
+    // wrapper in key-values form ({"json": ...}), removed before validation.
+    let plain = null;
+    if (kv) {
+      try { plain = unwrapKeyValues(kv, schema); } catch (e) { fail(`${mwhere}/examples/example.json`, e.message); }
+    }
     if (!kv) fail(mwhere, 'examples/example.json is required');
-    else if (!validate(kv)) fail(`${mwhere}/examples/example.json`, ajv.errorsText(validate.errors));
+    else if (!plain) { /* reported above */ } else if (!validate(plain)) fail(`${mwhere}/examples/example.json`, ajv.errorsText(validate.errors));
     // Key-values data may carry its @context (/guide/use, Linked Data), as one URL or a list.
     else if (model.kind === 'entity') {
       for (const context of [urls.contextAlias, [urls.contextExact, CORE_CONTEXT_URL]]) {
-        if (!validate({ '@context': context, ...kv })) fail(`${mwhere}/schema.json`, `rejects example.json with "@context": ${JSON.stringify(context)} (${ajv.errorsText(validate.errors)}); entity schemas accept @context as a string or an array of strings`);
+        if (!validate({ '@context': context, ...plain })) fail(`${mwhere}/schema.json`, `rejects example.json with "@context": ${JSON.stringify(context)} (${ajv.errorsText(validate.errors)}); entity schemas accept @context as a string or an array of strings`);
       }
     }
     if (kv) for (const p of findUnclosedRings(kv)) fail(`${mwhere}/examples/example.json`, `${p}: polygon ring does not close (first and last position must be identical, RFC 7946 §3.1.6)`);
@@ -341,7 +348,9 @@ for (const subject of subjects) {
     const multi = new Set(attributesOf(model).filter(([, p]) => p['x-ngsi']?.multi).map(([n]) => n));
     let projected;
     try { projected = toKeyValues(norm, { multi }); } catch (e) { fail(`${mwhere}/examples/example-normalized.jsonld`, e.message); continue; }
-    if (!validate(projected)) fail(`${mwhere}/examples/example-normalized.jsonld`, `key-values projection: ${ajv.errorsText(validate.errors)}`);
+    let projectedPlain;
+    try { projectedPlain = unwrapKeyValues(projected, schema); } catch (e) { fail(`${mwhere}/examples/example-normalized.jsonld`, e.message); continue; }
+    if (!validate(projectedPlain)) fail(`${mwhere}/examples/example-normalized.jsonld`, `key-values projection: ${ajv.errorsText(validate.errors)}`);
     for (const p of findUnclosedRings(projected)) fail(`${mwhere}/examples/example-normalized.jsonld`, `${p}: polygon ring does not close (first and last position must be identical, RFC 7946 §3.1.6)`);
     // Data names the alias (#117), and examples are what clients copy.
     if (!Array.isArray(norm['@context']) || !norm['@context'].includes(urls.contextAlias)) fail(`${mwhere}/examples/example-normalized.jsonld`, `@context must include ${urls.contextAlias}`);
@@ -350,12 +359,21 @@ for (const subject of subjects) {
       const expanded = await jsonld.expand(norm, { documentLoader: loader });
       const node = expanded[0] ?? {};
       const expandedKeys = new Set(Object.keys(node).filter((k) => !k.startsWith('@')));
-      for (const [name] of attributesOf(model)) {
+      for (const [name, prop] of attributesOf(model)) {
         if (!(name in norm)) continue;
         const def = ctxTerms[name] ?? core['@context'][name];
         const iri = typeof def === 'string' ? def : def?.['@id'];
         const full = iri && iri.includes(':') && !iri.startsWith('http') ? iri.replace(/^([^:]+):/, (_, p) => ctxTerms[p] ?? core['@context'][p] ?? `${p}:`) : iri;
         if (!full || !expandedKeys.has(full)) fail(`${mwhere}/examples/example-normalized.jsonld`, `attribute "${name}" did not expand to ${full ?? '(no IRI)'}`);
+        // A VocabProperty value is an IRI: a word the contexts do not define
+        // ends up in the NGSI-LD default context, which means nothing.
+        else if (prop['x-ngsi']?.type === 'VocabProperty') {
+          for (const inst of node[full]) {
+            for (const v of inst['https://uri.etsi.org/ngsi-ld/hasVocab'] ?? []) {
+              if (String(v['@id']).startsWith('https://uri.etsi.org/ngsi-ld/default-context/')) fail(`${mwhere}/examples/example-normalized.jsonld`, `attribute "${name}": vocab value expands to ${v['@id']}; define it in the context or use a full IRI`);
+            }
+          }
+        }
       }
       const typeIri = node['@type']?.[0];
       if (typeIri !== murls.typeIri) fail(`${mwhere}/examples/example-normalized.jsonld`, `type expands to ${typeIri}, expected ${murls.typeIri}`);
@@ -363,7 +381,7 @@ for (const subject of subjects) {
       // Every key at every depth must survive: a nested field the context does
       // not define is silently dropped by expansion, so compare key paths.
       const after = new Set(keyPaths(compacted));
-      for (const k of keyPaths(norm)) if (!after.has(k) && !/(^|\.)(type|value|object|datasetId)$/.test(k)) fail(`${mwhere}/examples/example-normalized.jsonld`, `"${k}" lost in expand/compact round-trip (not defined by the context?)`);
+      for (const k of keyPaths(norm)) if (!after.has(k) && !/(^|\.)(type|value|object|datasetId|json|vocab)$/.test(k)) fail(`${mwhere}/examples/example-normalized.jsonld`, `"${k}" lost in expand/compact round-trip (not defined by the context?)`);
     } catch (e) {
       fail(`${mwhere}/examples/example-normalized.jsonld`, `JSON-LD processing failed: ${e.message}`);
     }

@@ -89,3 +89,18 @@ test('the proposal link opens the form with the attributes filled in', () => {
   const rel = new URL(proposalUrl(model, [{ name: 'car', ngsiType: 'Relationship', valueType: 'string', format: 'date-time' }]));
   assert.match(rel.searchParams.get('what'), /- `car`: Relationship$/m);
 });
+
+test('JsonProperty and VocabProperty attributes (NGSI-LD 1.8)', () => {
+  const { model } = entities[0];
+  const out = buildExtension(model, input([
+    { name: 'readings', ngsiType: 'JsonProperty', valueType: 'array', required: false },
+    { name: 'settings', ngsiType: 'JsonProperty', valueType: 'object', required: false },
+    { name: 'level', ngsiType: 'VocabProperty', required: false },
+  ]), core);
+  assert.deepEqual(out.problems, []);
+  assert.deepEqual(out.schema.properties.readings, { type: 'array', items: { type: 'object' }, 'x-ngsi': { type: 'JsonProperty' }, 'x-iri': 'https://example.com/ns/acme/readings' });
+  assert.deepEqual(out.schema.properties.settings, { type: 'object', 'x-ngsi': { type: 'JsonProperty' }, 'x-iri': 'https://example.com/ns/acme/settings' });
+  assert.deepEqual(out.schema.properties.level, { type: 'string', 'x-ngsi': { type: 'VocabProperty' }, 'x-iri': 'https://example.com/ns/acme/level' });
+  // A JsonProperty holds an object or a list, not a plain value.
+  assert.deepEqual(buildExtension(model, input([{ name: 'readings', ngsiType: 'JsonProperty', valueType: 'string' }]), core).problems.map((p) => `${p.code}:${p.name}`), ['valueType:readings']);
+});
