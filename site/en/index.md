@@ -28,7 +28,7 @@ features:
     link: /en/guide/extend
     linkText: Adding attributes
   - title: URLs that never change
-    details: Published versioned @context files, JSON Schemas and vocabularies are never changed or removed, so links to them keep working.
+    details: After the official launch, published versioned @context files, JSON Schemas and vocabularies are never changed or removed, so links to them keep working.
     link: /en/guide/urls
     linkText: URLs and versions
   - title: Built together
