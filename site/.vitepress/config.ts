@@ -37,7 +37,7 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
     items: [
       { text: lang === 'ja' ? 'データモデル一覧' : 'All data models', link: `${prefix}/models/` },
       { text: lang === 'ja' ? '対応する標準' : 'Standards mapped', link: `${prefix}/models/standards/` },
-      { text: 'catalog.json', link: '/catalog.json' },
+      { text: lang === 'ja' ? 'catalog.json（プログラム向け）' : 'catalog.json (for programs)', link: '/catalog.json' },
     ],
   }
   return {
