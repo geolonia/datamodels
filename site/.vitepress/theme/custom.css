@@ -291,3 +291,11 @@
 .vp-doc table thead:not(:has(th:not(:empty))) { display: none; }
 /* In such a key/value table the keys stay on one line (サブジェクト, not サブジェクト|ト). */
 .vp-doc table:has(thead:not(:has(th:not(:empty)))) td:first-child { white-space: nowrap; }
+
+/* Tables span the content width, so the tables on a page line up. The default
+ * theme makes them blocks that shrink to their content; on phones they stay
+ * blocks that scroll sideways. Long URLs in cells may break. */
+@media (min-width: 768px) {
+  .vp-doc table { display: table; width: 100%; }
+  .vp-doc td code { overflow-wrap: anywhere; }
+}
