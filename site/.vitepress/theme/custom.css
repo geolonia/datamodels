@@ -289,3 +289,5 @@
 
 /* A table whose header row has no text (a key/value table) shows no empty header bar. */
 .vp-doc table thead:not(:has(th:not(:empty))) { display: none; }
+/* In such a key/value table the keys stay on one line (サブジェクト, not サブジェクト|ト). */
+.vp-doc table:has(thead:not(:has(th:not(:empty)))) td:first-child { white-space: nowrap; }
