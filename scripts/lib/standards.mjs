@@ -14,7 +14,7 @@ const T = {
   },
   en: {
     title: 'Find a model by standard',
-    intro: 'If you know the standard your data follows (the municipal standard open datasets, EEI, GSI\'s shelter data and more), find the matching model here, with a table of which field matches which. What each standard is: [Other data model catalogs](/en/guide/catalogs).',
+    intro: 'If you know the standard your data follows (the municipal standard open datasets, EEI, GSI\'s shelter data and more), find the matching model here, with a table of which field matches which. For a description of each standard, see [Other data model catalogs](/en/guide/catalogs).',
     standard: 'Standard', model: 'Model', fields: 'Fields with a counterpart', license: 'Licence', of: (n, total) => `${n} of ${total}`,
     groups: { government: 'National and local government', international: 'International standards and models', tool: 'Tools and services' },
   },
