@@ -9,7 +9,7 @@
 import { computed, ref } from 'vue'
 
 interface Row {
-  type: string; href: string; title: string; otherTitle: string
+  type: string; href: string; title: string
   subject: string; subjectTitle: string; subjectHref: string
   kind: 'entity' | 'value'; status: 'draft' | 'stable' | 'deprecated'
   text: string // lower-cased names, titles, descriptions and attribute names in both languages
@@ -84,7 +84,7 @@ const badgeType = (s: Row['status']) => (s === 'stable' ? 'tip' : s === 'depreca
         <tbody>
           <tr v-for="m in shown" :key="m.href">
             <td><a :href="m.href"><code>{{ m.type }}</code></a></td>
-            <td>{{ m.title }}<span v-if="m.otherTitle && m.otherTitle !== m.title" class="other">{{ m.otherTitle }}</span></td>
+            <td>{{ m.title }}</td>
             <td><a :href="m.subjectHref">{{ m.subjectTitle }}</a></td>
             <td>{{ L[m.kind] }}</td>
             <td><Badge :type="badgeType(m.status)" :text="L.statusLabel[m.status]" /></td>
@@ -118,5 +118,4 @@ const badgeType = (s: Row['status']) => (s === 'stable' ? 'tip' : s === 'depreca
 /* Short cells stay on one line; on a narrow screen the table scrolls inside .table, not the page. */
 .table th, .table td:not(:nth-child(2)) { white-space: nowrap; }
 .table td:nth-child(2) { min-width: 9em; }
-.other { display: block; font-size: 13px; color: var(--vp-c-text-2); }
 </style>

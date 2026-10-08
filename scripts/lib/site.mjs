@@ -276,11 +276,10 @@ async function subjectPage(lang, prefix, subject) {
 
 export function indexPage(lang, prefix, subjects) {
   const t = T[lang];
-  const other = lang === 'ja' ? 'en' : 'ja';
   // One card per subject, and one row per model for the search results
   // (site/.vitepress/theme/ModelIndex.vue).
   const rows = subjects.flatMap((s) => s.models.map((m) => ({
-    type: m.type, href: `${prefix}${rel(modelUrls(s, m).page)}`, title: m.catalog.title?.[lang] ?? '', otherTitle: m.catalog.title?.[other] ?? '',
+    type: m.type, href: `${prefix}${rel(modelUrls(s, m).page)}`, title: m.catalog.title?.[lang] ?? '',
     subject: s.name, subjectTitle: s.title[lang], subjectHref: `${prefix}${rel(subjectUrls(s).page)}`,
     kind: m.kind, status: m.catalog.status ?? 'draft',
     text: [m.type, s.name, s.title.ja, s.title.en, m.catalog.title?.ja, m.catalog.title?.en, m.catalog.description?.ja, m.catalog.description?.en, ...attributesOf(m).map(([n]) => n)]
