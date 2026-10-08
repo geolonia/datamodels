@@ -20,8 +20,8 @@
     "schema/transportation/RoadRestriction/v1.0.0.json": "3e56446b573899fe58b110e9f409c20232edb49d6e28a664fac559bae1d23e5a",
     "vocab/common/v1.0.0.jsonld": "ca9c28d8686baf70be72455e2f30e3d9ee6af7dc07f9853c4b5738e491dbb313",
     "vocab/decision/v1.0.0.jsonld": "947e6cada19cfea05b0ec77c52dcebdff91afbb3b389715bc1f1f7b781c648d1",
-    "vocab/disaster/v1.0.0.jsonld": "47ce5e96042d788c031612de1e33db6398f5b7aa6607dc0fc00e57ffae477e95",
-    "vocab/task/v1.0.0.jsonld": "ad02a0147aa0b7477dbe65cca433684e36be3b00546ce0ad2ea33e6f6007738a",
-    "vocab/transportation/v1.0.0.jsonld": "cbec35789a033ff00c9805aaa4812bef74db9242b6f9702790c224a9a2ed8c89"
+    "vocab/disaster/v1.0.0.jsonld": "c5d2e8a0941932f0f1f76937dfd94d351f040cd90559170869c9364d4093bdf4",
+    "vocab/task/v1.0.0.jsonld": "bc5be4ea6fd5e1483904d210286de4371522157bcfebef6ae2440844f36d8f8e",
+    "vocab/transportation/v1.0.0.jsonld": "c135027870eb300edb4fdeaa10bc55d207e3a3debbb9de9433b03175a7611b27"
   }
 }
