@@ -34,8 +34,8 @@
         "en": "Common"
       },
       "comment": {
-        "ja": "他のサブジェクトから参照する共通の値型。日本の住所（JapaneseAddress）と GeoJSON ジオメトリ（Geometry）。",
-        "en": "Shared value types referenced from other subjects: the Japanese address (JapaneseAddress) and the GeoJSON geometry (Geometry)."
+        "ja": "他のサブジェクトが属性の値として使う共通の部品（住所、ジオメトリなど）。単独のエンティティではなく、属性の値の中で使う値型です。",
+        "en": "Building blocks that other subjects use as attribute values, such as addresses and geometries. They are value types: used inside an attribute, not as entities of their own."
       },
       "versionInfo": "1.0.0",
       "seeAlso": "https://datamodels.jp/context/common/v1.0.0.jsonld"
