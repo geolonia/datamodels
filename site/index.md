@@ -28,7 +28,7 @@ features:
     link: /guide/extend
     linkText: 拡張する
   - title: 変わらない URL
-    details: バージョン付きで公開した @context・JSON Schema・語彙は変更も削除もしません。リンクはずっと使えます。
+    details: 正式公開後は、バージョン付きで公開した @context・JSON Schema・語彙を変更も削除もしません。リンクはずっと使えます。
     link: /guide/urls
     linkText: URL の約束
   - title: みんなで育てる
