@@ -11,4 +11,4 @@ One designated emergency evacuation site (指定緊急避難場所), one row of 
 - Schema: `https://datamodels.jp/schema/disaster/EvacuationSite/v1.json` (alias), `https://datamodels.jp/schema/disaster/EvacuationSite/v1.0.0.json` (exact)
 - Page: https://datamodels.jp/models/disaster/EvacuationSite/
 
-Files follow the Smart Data Models layout: `schema.json`, `catalog.yaml` (Japanese and English descriptions), `examples/`, `mapping/`, `notes.yaml`, `ADOPTERS.yaml`. Writing examples: https://datamodels.jp/guide/extend#examples
+Files follow the Smart Data Models layout: `schema.json`, `catalog.yaml` (Japanese and English descriptions), `examples/`, `mapping/`, `notes.yaml`, `ADOPTERS.yaml`. Writing examples: https://datamodels.jp/guide/rules#examples

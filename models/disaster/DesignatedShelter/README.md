@@ -11,4 +11,4 @@ One designated shelter (指定避難所), the master record of a facility where 
 - Schema: `https://datamodels.jp/schema/disaster/DesignatedShelter/v1.json` (alias), `https://datamodels.jp/schema/disaster/DesignatedShelter/v1.0.0.json` (exact)
 - Page: https://datamodels.jp/models/disaster/DesignatedShelter/
 
-Files follow the Smart Data Models layout: `schema.json`, `catalog.yaml` (Japanese and English descriptions), `examples/`, `mapping/`, `notes.yaml`, `ADOPTERS.yaml`. Writing examples: https://datamodels.jp/guide/extend#examples
+Files follow the Smart Data Models layout: `schema.json`, `catalog.yaml` (Japanese and English descriptions), `examples/`, `mapping/`, `notes.yaml`, `ADOPTERS.yaml`. Writing examples: https://datamodels.jp/guide/rules#examples

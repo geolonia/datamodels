@@ -30,7 +30,7 @@ features:
   - title: 変わらない URL
     details: 正式公開後は、バージョン付きで公開した @context・JSON Schema・語彙を変更も削除もしません。リンクはずっと使えます。
     link: /guide/urls
-    linkText: URL の約束
+    linkText: URL とバージョン
   - title: みんなで育てる
     details: よくある用途のモデルを、使う人と一緒に改善していきます。提案を歓迎します。
     link: /guide/contribute

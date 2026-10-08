@@ -100,7 +100,7 @@ TODO 日本語の名前 / TODO English name${isValue ? ' (value type)' : ''}
 - Schema: \`${mu.schemaAlias}\` (alias), \`${mu.schemaExact}\` (exact)
 - Page: ${mu.page}
 
-Files follow the Smart Data Models layout: \`schema.json\`, \`catalog.yaml\` (Japanese and English descriptions), \`examples/\`, \`notes.yaml\`, \`ADOPTERS.yaml\`. Writing examples: https://datamodels.jp/guide/extend#examples
+Files follow the Smart Data Models layout: \`schema.json\`, \`catalog.yaml\` (Japanese and English descriptions), \`examples/\`, \`notes.yaml\`, \`ADOPTERS.yaml\`. Writing examples: https://datamodels.jp/guide/rules#examples
 `;
 
 await mkdir(join(dir, 'examples'), { recursive: true });
@@ -133,6 +133,6 @@ console.log(`created models/${subjectName}/${type}/ and added "${type}": "${pref
 Next:
   1. Fill in the TODO markers (catalog.yaml, notes.yaml, schema.json, README.md).
   2. Add attributes to schema.json, their terms to the context, and ja/en descriptions to catalog.yaml.
-  3. Write the examples (one fictional scenario for all subjects: https://datamodels.jp/guide/extend#examples).
+  3. Write the examples (one fictional scenario for all subjects: https://datamodels.jp/guide/rules#examples).
   4. Run: npm run validate:models   (lists what is still missing)
 Recording the release snapshot is a maintainer step.`);

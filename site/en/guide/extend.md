@@ -1,23 +1,17 @@
 ---
-title: Extending models
-description: How to extend an existing data model for Japan, add your own, the rules, and how to write examples
+title: Adding attributes
+description: Add attributes of your own to a catalog model without copying it, and where to host the result
 ---
 
-# Extending models
+# Adding attributes
 
-The rule of this catalog is "extend, do not duplicate". Types and attributes from [Smart Data Models](https://smartdatamodels.org/), NGSI-LD and [schema.org](https://schema.org/) are reused where they fit, without copying them. Where nothing fits, the catalog publishes its own type and records why. This page shows how that works in practice.
+Often a catalog model fits, but your system needs a few more attributes. You do not need a new model, and you do not copy the catalog: you publish a small @context that adds only your attributes. This is called a **profile**.
 
-## Three ways
+If no catalog model fits at all, propose one: see [Contributing](/en/guide/contribute). If only the names do not match how you talk, see [Your own names](/en/guide/names).
 
-| Goal | Method | Example |
-|---|---|---|
-| Use an upstream model as it is | Use the upstream `@context` and type. The catalog adds Japanese descriptions and examples | None in the catalog yet |
-| Add attributes to an existing model | **Profile**: import the original context by URL and publish a context that defines only the added attributes | The @context that the [extension builder](/en/guide/builder) makes |
-| Model something that no existing type fits | **Own type**: mint new type and attribute IRIs (catalog types under `https://datamodels.jp/ns/<subject>/`). Where an upstream attribute fits, use its IRI | [RoadRestriction](/en/models/transportation/RoadRestriction/) (`roadName`, `validFrom` and `validTo` are Smart Data Models IRIs) |
+## Writing a profile
 
-### Writing a profile
-
-Nothing is copied. The original context is listed by URL in the `@context` array; its attributes keep their IRIs and only the added ones get new IRIs. This example adds a patrol route, `patrolRoute`, to the catalog's [RoadRestriction](/en/models/transportation/RoadRestriction/):
+List the catalog @context by URL, then define your attributes next to it. The catalog attributes keep their meaning (their IRIs); only yours are new. This example adds a patrol route, `patrolRoute`, to [RoadRestriction](/en/models/transportation/RoadRestriction/):
 
 ```json
 {
@@ -31,53 +25,23 @@ Nothing is copied. The original context is listed by URL in the `@context` array
 }
 ```
 
-Mint the IRIs of added attributes under a domain you control (`example.com` in this example). The `datamodels.jp` namespaces belong to the catalog; do not use them. The [extension builder](/en/guide/builder) writes this @context and the JSON Schema in the browser.
+Name your attributes under a domain you control (`example.com` here). The `datamodels.jp` names belong to the catalog; do not use them. The [extension builder](/en/guide/builder) writes this @context and a matching JSON Schema in the browser.
 
-The @context and the JSON Schema follow catalog updates differently. The @context imports the catalog context by its alias (`v1.jsonld`), so new 1.x attributes work at once. The JSON Schema does not: the catalog's entity schemas are closed (`additionalProperties: false`), so an extension cannot `$ref` one and add attributes, and an extended schema is a copy of the whole catalog schema. It copies one version (recorded in the schema's `x-extends`), so a new minor version of the catalog does not reach it. When you want to validate the new attributes, rebuild it with the extension builder, or add your attributes to the new schema again.
+**When the catalog gets new attributes.** The @context above imports the catalog by its alias (`v1.jsonld`), so new 1.x attributes work at once. The JSON Schema does not follow: it is a copy of the catalog schema at one version (recorded in `x-extends`), because catalog schemas do not allow extra attributes. To validate new catalog attributes, build the schema again with the extension builder.
 
-### Where to host your extended @context {#host-context}
+## Where to host it {#host-context}
 
-Put the extended @context at a stable HTTPS URL you control: your own domain, GitHub Pages, or object storage with a fixed address. Your data names this URL, in `@context` or in a `Link` header, and brokers and JSON-LD processors fetch it; a GeonicDB Custom Data Model gives it as `contextUrl`. Treat it like the catalog's URLs: publish each version at its own URL, and never change or remove a published file. Serve it with `Content-Type: application/ld+json` and `Access-Control-Allow-Origin: *`. The catalog does not host extensions today; namespaces for organisations on datamodels.jp are discussed in [#56](https://github.com/geolonia/datamodels/issues/56).
+Put your @context at an HTTPS URL that you control and that does not change: your own domain, GitHub Pages, or object storage with a fixed address. Your data points to this URL (in `@context` or a `Link` header), and brokers and JSON-LD tools fetch it. In GeonicDB, it is the `contextUrl` of a Custom Data Model.
 
-Building on a Smart Data Models model works the same way. Import the upstream context by a commit-pinned URL (`https://raw.githubusercontent.com/smart-data-models/dataModel.<Domain>/<commit>/context.jsonld`), not `master`, so the meaning of stored data cannot drift when upstream changes.
+- Publish each version at its own URL, and never change or remove a published file.
+- Serve it with `Content-Type: application/ld+json` and `Access-Control-Allow-Origin: *`.
 
-### When not to adopt an upstream type
+The catalog does not host extensions today; ideas for that are discussed in [#56](https://github.com/geolonia/datamodels/issues/56).
 
-"Extend, do not duplicate" means using an upstream model when one fits, not bending everything to fit. Upstream models are sometimes just what someone published first for their own use case without general value, sometimes shaped by North American assumptions that do not hold in Japan, and sometimes fixed before much thought or feedback went into them. Mint your own type when:
+## Starting from a Smart Data Models model
 
-- the meaning or the required attributes of the upstream type contradict how things work in Japan;
-- the upstream type depends on a specific product or region;
-- adding attributes is not enough and the meaning would have to change (changing meaning is forbidden, so a new type is the honest option).
+It works the same way. Import the upstream @context by a URL pinned to a commit (`https://raw.githubusercontent.com/smart-data-models/dataModel.<Domain>/<commit>/context.jsonld`), not `master`, so the meaning of stored data does not change when upstream changes.
 
-Do record the upstream types you considered and why they did not fit in the model's `notes.yaml`, so nobody repeats the same analysis later.
+## Useful beyond your project?
 
-### Where we stand
-
-So far, every model in the catalog is the catalog's own type. Upstream IRIs are reused for some attributes only: `roadName`, `validFrom` and `validTo` of road restrictions (Smart Data Models), `name` (NGSI-LD), and schema.org terms for addresses, attachments and others.
-
-The first subject, [disaster response](/en/models/disaster/), is based on the data models of Takamatsu City's flood-response application and built on [task management](/en/models/task/) (shared attributes carry the task subject's IRIs). It originally also had `DisasterEvent` (an **alias** of `Project`) and reports, actions, handover notes and photos (**subclasses** of `Task`, `Comment` and `Attachment`); these were removed on 2026-09-24 as tenant-specific types with no external standard behind them (see "Versioning and lifecycle" in [docs/design.md](https://github.com/geolonia/datamodels/blob/main/docs/design.md)). Road closures and shelters were compared against upstream (Smart Data Models `RoadSegment` and `Alert`, the Digital Agency's municipal standard open datasets): no type fits, so both stay minted, but attribute IRIs and status value spaces are borrowed. Road closures were then rebuilt on national guidelines (National Police Agency, MLIT) as road restrictions in general and, no longer specific to disasters, moved to the [transportation](/en/models/transportation/) subject as `RoadRestriction` (2026-09-25). The notes of each model and [issue #16](https://github.com/geolonia/datamodels/issues/16) record the analysis. For how aliases and subclasses are written, see [Tips & Tricks](/en/guide/tips).
-
-### Rules
-
-- Never change the meaning or type of an upstream attribute. Add a new one instead.
-- Status attributes (`progress`, `openingStatus`, `restrictionStatus` and others) have closed value lists. When no value fits, leave the status out and give the local wording in `statusLabel` (then required). Do not force the nearest value.
-- Never redefine a protected term of the NGSI-LD core context (`status`, `description`, `location`, `createdAt`, `modifiedAt`, `observedAt` and others). The catalog CI rejects it. When you need a status, name it like `incidentStatus`.
-- Namespaces are organised by subject, never by region, customer or project.
-- Use the value types of the [common](/en/models/common/) subject for shared structures: [JapaneseAddress](/en/models/common/JapaneseAddress/) for addresses, [Geometry](/en/models/common/Geometry/) for `location` and other GeoProperties. Narrow a geometry next to the `$ref` when a model allows fewer types (Attachment allows only a Point).
-- When the Digital Agency's [自治体標準オープンデータセット](https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test) has a dataset that matches the model, add a correspondence table (`mapping/jichitai-opendata-*.yaml`), so a municipality can fit its own data to the model directly. See [EvacuationSite](/en/models/disaster/EvacuationSite/#mapping-jichitai-opendata-site); the location columns are mapped in [JapaneseAddress](/en/models/common/JapaneseAddress/#mapping-jichitai-opendata-address) and [Geometry](/en/models/common/Geometry/#mapping-jichitai-opendata-location). The review checks whether a matching dataset exists (CI does not).
-- To give an existing type another name, use an alias (`x-alias-of`: same attributes, same required fields). To add attributes or separate the type, use a subclass (`x-subclass-of`: attributes of the same name keep the parent's IRIs, the parent's required attributes stay required). CI checks both.
-
-## Writing examples {#examples}
-
-Every model has two examples (key-values and normalized). They appear on the model page, CI validates them, and people copy them when they write a client, so all subjects share one scenario.
-
-- **Scenario**: a fictional heavy-rain response in Chiyoda, Tokyo (July 2026). The ward sets up a disaster-response project, a task checks a flooded underpass on Yasukuni-dōri, the road is closed and a shelter opens.
-- **Real and fictional**: place names, addresses, codes (local government code, Address Base Registry town id and others) and coordinates are real. Events, people, teams and system numbers are invented. No personal names; use identifiers such as `staff-0012` or `field-team-a`.
-- **Identifiers**: `urn:ngsi-ld:<Type>:<local id>`. Use the source system's number as the local id where there is one (`urn:ngsi-ld:Task:1234`). When several organisations share one broker, add the organisation: `urn:ngsi-ld:<Type>:<org>:<local id>`.
-- **References**: a reference to another catalog type points at that type's example (Task's `project` is the Project example). References to the same type (`parent`, `relatedTo`) and to types the catalog does not define (`Person`, `Team`) are free. CI checks this.
-- **URLs**: source-system URLs use an example domain such as `tracker.example.jp`.
-- **Times**: local Japanese times carry `+09:00`.
-
-## Contributing
-
-How to propose, the stages and who decides, the pull request steps and the sign-off (DCO) are in [Contributing](/en/guide/contribute).
+Propose the attribute to the catalog with an [issue](https://github.com/geolonia/datamodels/issues). Once it is in the next minor version, you no longer need your extension.

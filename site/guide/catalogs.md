@@ -34,4 +34,4 @@ description: 世界と日本で使われているデータモデル・語彙の�
 
 Smart Data Models のサイトの [検索](https://smartdatamodels.org/index.php/list-of-data-models-3/) か、GitHub の [smart-data-models](https://github.com/smart-data-models) 組織で `dataModel.<Subject>` リポジトリを探してください。
 
-見つかったモデルを日本向けに拡張したい場合は [拡張する](/guide/extend) を、このカタログに載せてほしい場合は [Issue](https://github.com/geolonia/datamodels/issues) を開いてください。
+見つかったモデルを日本向けに拡張したい場合は [属性を足す](/guide/extend) を、このカタログに載せてほしい場合は [Issue](https://github.com/geolonia/datamodels/issues) を開いてください。

@@ -26,11 +26,11 @@ features:
   - title: Extend, do not duplicate
     details: Reuses Smart Data Models, NGSI-LD and schema.org where they fit. Add your own attributes on top.
     link: /en/guide/extend
-    linkText: Extending models
+    linkText: Adding attributes
   - title: URLs that never change
     details: After the official launch, published versioned @context files, JSON Schemas and vocabularies are never changed or removed, so links to them keep working.
     link: /en/guide/urls
-    linkText: The URL contract
+    linkText: URLs and versions
   - title: Built together
     details: Models for common needs, improved by the people who use them. Proposals are welcome.
     link: /en/guide/contribute
