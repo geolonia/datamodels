@@ -27,7 +27,7 @@ const T = {
   ja: {
     models: 'データモデル', overview: '概要', subjects: 'サブジェクト', attributes: '属性', example: '例（key-values）', normalized: '例（normalized）', exampleNote: (href) => `例は架空のシナリオ（東京都千代田区の大雨対応）です。地名とコードは実在のものですが、出来事・人・チームは架空です。書き方は[例の書き方](${href})にあります。`,
     linkHeader: 'Link ヘッダー', notes: '注記', type: '型', name: '名前', stage: '段階', typeIri: '型 IRI', otherName: '英語名', useGuide: (href) => `データの検証とブローカーへの送り方は[使い方](${href})にあります。`, context: '@context',
-    urlNote: (versions, guide, withSchema) => `上の @context${withSchema ? ' と JSON Schema' : ''} の URL は、互換性のある新しいバージョンに追従します。バージョンごとの固定の URL は[バージョン](${versions})に、使い分けは[URL とバージョン](${guide})にあります。`, schema: 'JSON Schema', examples: '例',
+    urlNote: (versions, guide, withSchema) => `この @context${withSchema ? ' と JSON Schema' : ''} の URL は、常に互換性のある最新版を指します。内容が変わらない URL は[バージョン](${versions})にあります。詳しくは[URL とバージョン](${guide})を見てください。`, schema: 'JSON Schema', examples: '例',
     adapters: 'アダプター', adaptersRow: 'ブローカーやツール向けのファイル', mappingFiles: '対応表（YAML）',
     source: 'ソース', namespace: '名前空間', version: 'バージョン', vocabulary: '語彙',
     tryIt: '例を試す',
@@ -48,7 +48,7 @@ const T = {
   en: {
     models: 'Data models', overview: 'Overview', subjects: 'Subjects', attributes: 'Attributes', example: 'Example (key-values)', normalized: 'Example (normalized)', exampleNote: (href) => `The examples are a fictional scenario (heavy rain in Chiyoda, Tokyo). Place names and codes are real; the events, people and teams are invented. See [writing examples](${href}).`,
     linkHeader: 'Link header', notes: 'Notes', type: 'Type', name: 'Name', stage: 'Stage', typeIri: 'Type IRI', otherName: 'Japanese name', useGuide: (href) => `How to validate data and send it to a broker: [Using the models](${href}).`, context: '@context',
-    urlNote: (versions, guide, withSchema) => `The @context${withSchema ? ' and JSON Schema URLs' : ' URL'} above ${withSchema ? 'follow' : 'follows'} new compatible versions. The fixed URLs of each version are under [Versions](${versions}); which one to use when: [URLs and versions](${guide}).`, schema: 'JSON Schema', examples: 'Examples',
+    urlNote: (versions, guide, withSchema) => `${withSchema ? 'These @context and JSON Schema URLs always point' : 'This @context URL always points'} to the latest compatible version. For URLs that never change, see [Versions](${versions}). More in [URLs and versions](${guide}).`, schema: 'JSON Schema', examples: 'Examples',
     adapters: 'Adapters', adaptersRow: 'files for particular brokers and tools', mappingFiles: 'Mapping files (YAML)',
     source: 'Source', namespace: 'Namespace', version: 'Version', vocabulary: 'Vocabulary',
     tryIt: 'Try the example',
