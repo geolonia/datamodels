@@ -57,9 +57,27 @@ const SourceLine = defineComponent({
   },
 })
 
+// A link into a folded section (<details>, the background of a model page:
+// #mapping-<name>, #notes) opens it and scrolls to it. Browsers do not all open
+// a closed <details> for a fragment.
+function openTarget() {
+  if (!location.hash) return
+  const el = document.getElementById(decodeURIComponent(location.hash.slice(1)))
+  const details = el?.closest('details')
+  if (!el || !details || details.open) return
+  details.open = true
+  el.scrollIntoView()
+}
+
 export default {
   extends: DefaultTheme,
-  enhanceApp({ app }) {
+  enhanceApp({ app, router }) {
+    if (typeof window !== 'undefined') {
+      window.addEventListener('hashchange', openTarget)
+      const after = router.onAfterRouteChange
+      router.onAfterRouteChange = (to) => { after?.(to); setTimeout(openTarget) }
+      setTimeout(openTarget)
+    }
     app.component('ModelIndex', ModelIndex)
     // Pan and zoom for the relationship graph on every model page.
     app.component('GraphViewer', GraphViewer)

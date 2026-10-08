@@ -23,7 +23,7 @@ description: このカタログのモデルが守るルール、独自の型を�
 
 今のところ、カタログのモデルはすべて独自の型で、一部の属性に上流の名前を使っています。理由は各モデルの注記と [Issue #16](https://github.com/geolonia/datamodels/issues/16) にあります。
 
-## 守ること
+## 守ること {#rules}
 
 - 上流の属性の意味や型は変えません。必要なら新しい属性を足します。
 - 状態の属性（`progress`、`openingStatus`、`restrictionStatus` など）の値の一覧は決まっています。合う値がないときは状態の属性を省き、`statusLabel` に元の呼び方を書きます（そのとき `statusLabel` は必須）。近い値に無理に当てはめないでください。

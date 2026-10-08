@@ -25,44 +25,44 @@ const fence = (obj) => '```json\n' + JSON.stringify(obj, null, 2) + '\n```';
 
 const T = {
   ja: {
-    models: 'データモデル', overview: '概要', subjects: 'サブジェクト', attributes: '属性', example: '例（key-values）', normalized: '例（normalized）', exampleNote: (href) => `例は架空のシナリオ（東京都千代田区の大雨対応）です。地名とコードは実在のものですが、出来事・人・チームは架空です。書き方は[例の書き方](${href})にあります。`,
-    linkHeader: 'Link ヘッダー', notes: '注記', type: '型', name: '名前', stage: '段階', typeIri: '型 IRI', otherName: '英語名', useGuide: (href) => `データの検証とブローカーへの送り方は[使い方](${href})にあります。`, context: '@context',
-    urlNote: (versions, guide, withSchema) => `この @context${withSchema ? ' と JSON Schema' : ''} の URL は、常に互換性のある最新版を指します。<br>内容が変わらない URL は[バージョン](${versions})にあります。詳しくは[URL とバージョン](${guide})を見てください。`, schema: 'JSON Schema', examples: '例',
+    models: 'データモデル', overview: '概要', subjects: 'サブジェクト', attributes: '属性', exampleNote: (href) => `例は架空のシナリオ（東京都千代田区の大雨対応）です。地名とコードは実在のものですが、出来事・人・チームは架空です。書き方は[例の書き方](${href})にあります。`,
+    linkHeader: 'Link ヘッダー', type: '型', name: '名前', stage: '段階', typeIri: '型 IRI', useGuide: (href) => `データの検証とブローカーへの送り方は[使い方](${href})にあります。`, context: '@context',
+    urlNote: (versions, guide, withSchema) => `この @context${withSchema ? ' と JSON Schema' : ''} の URL は、常に互換性のある最新版を指します。<br>内容が変わらない URL は[バージョン](${versions})にあります。詳しくは[URL とバージョン](${guide})を見てください。`, schema: 'JSON Schema',
     adapters: 'アダプター', adaptersRow: 'ブローカーやツール向けのファイル', mappingFiles: '対応表（YAML）',
-    source: 'ソース', namespace: '名前空間', version: 'バージョン', vocabulary: '語彙',
+    namespace: '名前空間', version: 'バージョン', vocabulary: '語彙',
     tryIt: '例を試す',
     extendThis: (href) => `このモデルに独自の属性を足すときは、[拡張ビルダー](${href})で @context と JSON Schema を作れます。`,
-    required: '必須', pii: '個人情報', deprecated: '非推奨', value: '値', relationshipTo: '→', license: 'このページの文章は CC BY 4.0、モデルのファイル（JSON Schema、@context、例）は CC0 です。',
-    filesLicense: (href) => `この表のファイル（@context、JSON Schema、例など）は [CC0 1.0](${href}) で、条件なしで使えます。`,
+    required: '必須', pii: '個人情報', deprecated: '非推奨', value: '値', relationshipTo: '→',
+   
     playground: (href) => `[JSON-LD Playground で開く](${href})：属性ごとの IRI（展開形）が見られます。`,
     improveTitle: '改善の提案', improve: (issue, form, guide) => `属性が足りない、説明がおかしいと思ったら、[Issue で知らせてください](${issue})。新しい属性やモデルは[提案フォーム](${form})から提案できます。進め方は[貢献する](${guide})にあります。`,
-    deprecatedNote: (link) => `このモデルは非推奨です。${link ? `代わりに ${link} を使ってください。` : ''}公開済みのファイルと URL はそのまま残ります。`, valueType: '値型', valueTypeNote: 'これはエンティティ型ではなく、属性の値として使う構造です。', fields: 'フィールド', versions: 'バージョン', current: '現行', usage: '使い方',
+    deprecatedNote: (link) => `このモデルは非推奨です。${link ? `代わりに ${link} を使ってください。` : ''}公開済みのファイルと URL はそのまま残ります。`, valueType: '値型', fields: 'フィールド', versions: 'バージョン', current: '現行',
     forPrograms: 'プログラムからは、同じ一覧を [catalog.json](/catalog.json) で読めます。',
     intro: 'モデルは分野（サブジェクト）ごとにまとめています。分野を開くか、名前・属性・説明で探してください。',
     statusLabel: { draft: 'ドラフト', stable: '安定', deprecated: '非推奨' },
     sourceLabel: { minted: 'このカタログで定義', profile: '上流モデルの日本向け拡張', global: '上流（Smart Data Models）' },
-    subject: 'サブジェクト', mappings: '対応する標準', mappingField: 'このモデル', mappingTo: '対応先', mappingNote: '備考', none: '対応なし',
+    subject: 'サブジェクト', mappingField: 'このモデル', mappingTo: '対応先', mappingNote: '備考', none: '対応なし',
     alias: 'エイリアス', aliasNote: (link) => `${link} と同じ型です（IRI が同一）。名称だけがこのサブジェクトの言い方に合わせてあり、属性も必須項目も同じです。ブローカーでは同じ型として保存・照合されます。`,
     subclass: 'サブクラス', subclassNote: (link) => `${link} のサブクラスです。同名の属性は親と同じ IRI を持ち、親の必須項目はここでも必須なので、親の属性を読むコードはこの型もそのまま読めます。型そのものは別なので、親の型で検索するクライアントは語彙の rdfs:subClassOf をたどって初めてこの型を見つけます。`,
   },
   en: {
-    models: 'Data models', overview: 'Overview', subjects: 'Subjects', attributes: 'Attributes', example: 'Example (key-values)', normalized: 'Example (normalized)', exampleNote: (href) => `The examples are a fictional scenario (heavy rain in Chiyoda, Tokyo). Place names and codes are real; the events, people and teams are invented. See [writing examples](${href}).`,
-    linkHeader: 'Link header', notes: 'Notes', type: 'Type', name: 'Name', stage: 'Stage', typeIri: 'Type IRI', otherName: 'Japanese name', useGuide: (href) => `How to validate data and send it to a broker: [Using the models](${href}).`, context: '@context',
-    urlNote: (versions, guide, withSchema) => `${withSchema ? 'These @context and JSON Schema URLs always point' : 'This @context URL always points'} to the latest compatible version.<br>For URLs that never change, see [Versions](${versions}). More in [URLs and versions](${guide}).`, schema: 'JSON Schema', examples: 'Examples',
+    models: 'Data models', overview: 'Overview', subjects: 'Subjects', attributes: 'Attributes', exampleNote: (href) => `The examples are a fictional scenario (heavy rain in Chiyoda, Tokyo). Place names and codes are real; the events, people and teams are invented. See [writing examples](${href}).`,
+    linkHeader: 'Link header', type: 'Type', name: 'Name', stage: 'Stage', typeIri: 'Type IRI', useGuide: (href) => `How to validate data and send it to a broker: [Using the models](${href}).`, context: '@context',
+    urlNote: (versions, guide, withSchema) => `${withSchema ? 'These @context and JSON Schema URLs always point' : 'This @context URL always points'} to the latest compatible version.<br>For URLs that never change, see [Versions](${versions}). More in [URLs and versions](${guide}).`, schema: 'JSON Schema',
     adapters: 'Adapters', adaptersRow: 'files for particular brokers and tools', mappingFiles: 'Mapping files (YAML)',
-    source: 'Source', namespace: 'Namespace', version: 'Version', vocabulary: 'Vocabulary',
+    namespace: 'Namespace', version: 'Version', vocabulary: 'Vocabulary',
     tryIt: 'Try the example',
     extendThis: (href) => `To add attributes of your own to this model, the [extension builder](${href}) writes the @context and JSON Schema.`,
-    required: 'required', pii: 'personal data', deprecated: 'deprecated', value: 'Value', relationshipTo: '→', license: 'The text of this page is licensed under CC BY 4.0; the model files (JSON Schema, @context, examples) are CC0.',
-    filesLicense: (href) => `The files in this table (@context, JSON Schema, examples and others) are [CC0 1.0](${href}): use them without conditions.`,
+    required: 'required', pii: 'personal data', deprecated: 'deprecated', value: 'Value', relationshipTo: '→',
+   
     playground: (href) => `[Open in the JSON-LD Playground](${href}): see the full IRI behind every attribute (expanded form).`,
     improveTitle: 'Something missing or wrong?', improve: (issue, form, guide) => `[Open an issue](${issue}), or propose new attributes or models with the [proposal form](${form}). How it works: [Contributing](${guide}).`,
-    deprecatedNote: (link) => `This model is deprecated.${link ? ` Use ${link} instead.` : ''} Its published files and URLs stay as they are.`, valueType: 'value type', valueTypeNote: 'This is not an entity type but a structure used as the value of an attribute.', fields: 'Fields', versions: 'Versions', current: 'current', usage: 'Usage',
+    deprecatedNote: (link) => `This model is deprecated.${link ? ` Use ${link} instead.` : ''} Its published files and URLs stay as they are.`, valueType: 'value type', fields: 'Fields', versions: 'Versions', current: 'current',
     forPrograms: 'Programs can read the same list from [catalog.json](/catalog.json).',
     intro: 'Models are grouped by subject. Open a subject, or search by name, attribute or description.',
     statusLabel: { draft: 'draft', stable: 'stable', deprecated: 'deprecated' },
     sourceLabel: { minted: 'defined in this catalog', profile: 'Japanese profile of an upstream model', global: 'upstream (Smart Data Models)' },
-    subject: 'Subject', mappings: 'Corresponding standards', mappingField: 'This model', mappingTo: 'Maps to', mappingNote: 'Note', none: 'no counterpart',
+    subject: 'Subject', mappingField: 'This model', mappingTo: 'Maps to', mappingNote: 'Note', none: 'no counterpart',
     alias: 'alias', aliasNote: (link) => `The same type as ${link} (identical IRI). Only the name follows this subject's wording; attributes and required fields are the same. A broker stores and matches both names as one type.`,
     subclass: 'subclass', subclassNote: (link) => `A subclass of ${link}. Attributes with the same name carry the parent's IRIs and the parent's required attributes stay required, so code that reads the parent's attributes reads this type too. The type itself differs: a client that selects by the parent type finds this one only by following rdfs:subClassOf in the vocabulary.`,
   },
@@ -157,96 +157,124 @@ export function valueText(lang, subject, prop, prefix) {
   return `${kind}, ${t}`;
 }
 
+// Labels of the model page only (the shared ones are in T).
+const M = {
+  ja: {
+    kind: '種類', entity: 'エンティティ', valueKind: '値型：属性の値の中で使い、単独のエンティティにはならない',
+    sameAs: '同じ型', subclassOf: '親の型', licence: 'ライセンス',
+    licenceText: (href) => `[CC0 1.0](${href})：ファイル（@context、JSON Schema、例）は条件なしで使えます`,
+    attribute: '属性', field: 'フィールド', description: '説明', valueCol: '値',
+    example: '例', simple: 'シンプル（key-values）', ngsi: 'NGSI-LD（normalized）', files: 'ファイル',
+    use: 'このモデルを使う', useValue: (rules) => `他のモデルは、属性の値としてこの値型を参照します。書き方は[モデルのルール](${rules})にあります。`,
+    background: '背景', backgroundNote: 'このモデルの元になった標準との対応と、設計の注記です。',
+    mappingTitle: (name) => `対応する標準：${name}`, notesTitle: '注記',
+    sourceFiles: (href) => `ソースファイル（注記、対応表）は [GitHub](${href}) にあります。`,
+  },
+  en: {
+    kind: 'Kind', entity: 'entity', valueKind: 'value type: used inside an attribute, not as an entity of its own',
+    sameAs: 'Same type as', subclassOf: 'Subclass of', licence: 'Licence',
+    licenceText: (href) => `[CC0 1.0](${href}): the files (@context, JSON Schema, examples) can be used without conditions`,
+    attribute: 'Attribute', field: 'Field', description: 'Description', valueCol: 'Value',
+    example: 'Example', simple: 'Simple (key-values)', ngsi: 'NGSI-LD (normalized)', files: 'Files',
+    use: 'Using this model', useValue: (rules) => `Other models use this value type as the value of an attribute. How: [Rules for models](${rules}).`,
+    background: 'Background', backgroundNote: 'How this model corresponds to the standards it is based on, and design notes.',
+    mappingTitle: (name) => `Corresponding standard: ${name}`, notesTitle: 'Notes',
+    sourceFiles: (href) => `The source files (notes, mapping tables) are on [GitHub](${href}).`,
+  },
+};
+// A table cell: no line breaks, pipes escaped.
+const cellText = (s) => String(s ?? '').replace(/\r?\n/g, ' ').replace(/\|/g, '\\|');
+
 function modelPage(lang, prefix, subject, model) {
-  const t = T[lang]; const u = subjectUrls(subject); const mu = modelUrls(subject, model);
+  const t = T[lang]; const l = M[lang]; const u = subjectUrls(subject); const mu = modelUrls(subject, model);
   const required = new Set(model.schema.required ?? []);
   const title = model.catalog.title?.[lang] ?? model.type;
   const desc = model.catalog.description?.[lang] ?? '';
-  const other = lang === 'ja' ? 'en' : 'ja';
   const isValue = model.kind === 'value';
   const aliasOf = model.schema['x-alias-of'] ? modelForIri(subject, model.schema['x-alias-of'], { ownerOnly: true }) : null;
   const subclassOf = model.schema['x-subclass-of'] ? modelForIri(subject, model.schema['x-subclass-of'], { ownerOnly: true }) : null;
+  const repo = 'https://github.com/geolonia/datamodels';
   let md = front(`${model.type}`, desc);
   const playground = !isValue && model.examples['example.json'] && model.examples['example-normalized.jsonld'];
   // "<" escaped so no text can close the script block.
   if (playground) md += `<script setup>\nconst playground = ${JSON.stringify(playgroundData(lang, subject, model)).replaceAll('<', '\\u003c')}\n</script>\n\n`;
   md += `# ${model.type} ${statusBadge(lang, model.catalog.status ?? 'draft')}${isValue ? ` ${badge('info', t.valueType)}` : ''}${aliasOf ? ` ${badge('info', t.alias)}` : ''}${subclassOf ? ` ${badge('info', t.subclass)}` : ''}\n\n`;
-  if (isValue) md += `> ${t.valueTypeNote}\n\n`;
+  // Deprecation is the one notice nobody may miss; everything else is in the table.
   if ((model.catalog.status ?? 'draft') === 'deprecated') {
     // supersededBy is a type IRI of this catalog (link its page) or any other URL.
     const next = model.catalog.supersededBy;
     const found = next ? modelForIri(subject, next) : null;
-    md += `> ${t.deprecatedNote(found ? modelLink(prefix, found) : next ? externalLink(next) : null)}\n\n`;
+    md += `::: warning ${t.deprecated}\n${t.deprecatedNote(found ? modelLink(prefix, found) : next ? externalLink(next) : null)}\n:::\n\n`;
   }
-  if (aliasOf) md += `> ${t.aliasNote(modelLink(prefix, aliasOf))}\n\n`;
-  if (subclassOf) md += `> ${t.subclassNote(modelLink(prefix, subclassOf))}\n\n`;
   // One language per page (the switcher gives the other); the localised title
-  // only when it says more than the type name, the other language's in the table.
+  // only when it says more than the type name.
   const sameName = (a) => a.replace(/\s+/g, '').toLowerCase() === model.type.toLowerCase();
   if (!sameName(title)) md += `**${title}**\n\n`;
   md += `${desc}\n\n`;
   md += `| | |\n|---|---|\n`;
-  const otherTitle = model.catalog.title?.[other];
-  if (otherTitle && !sameName(otherTitle)) md += `| ${t.otherName} | ${otherTitle} |\n`;
+  md += `| ${l.kind} | ${isValue ? l.valueKind : l.entity} |\n`;
+  if (aliasOf) md += `| ${l.sameAs} | ${cellText(t.aliasNote(modelLink(prefix, aliasOf)))} |\n`;
+  if (subclassOf) md += `| ${l.subclassOf} | ${cellText(t.subclassNote(modelLink(prefix, subclassOf)))} |\n`;
   md += `| ${isValue ? 'IRI' : t.typeIri} | ${code(mu.typeIri)} |\n`;
   // The aliases only; the fixed URLs of each version are on the subject page (urlNote below the table).
   md += `| ${t.context} | [${code(u.contextAlias)}](${rel(u.contextAlias)}) |\n`;
   md += `| ${t.schema} | [${code(rel(mu.schemaAlias))}](${rel(mu.schemaAlias)}) |\n`;
-  md += isValue ? `| ${t.examples} | [example.json](${rel(mu.examples)}example.json) |\n`
-    : `| ${t.examples} | [key-values](${rel(mu.examples)}example.json) · [normalized](${rel(mu.examples)}example-normalized.jsonld) |\n`;
   // The correspondence tables below, as files a converter reads.
   if (model.mappings?.length) md += `| ${t.mappingFiles} | ${model.mappings.map((m) => `[${m.name}.yaml](${rel(mu.mapping)}${m.name}.yaml)`).join(' · ')} |\n`;
   md += adapterRow(lang, prefix, subject, model, allAdapters);
-  md += `| ${t.source} | [github.com/geolonia/datamodels](https://github.com/geolonia/datamodels/tree/main/models/${subject.name}/${model.type}) |\n\n`;
+  md += `| ${l.licence} | ${l.licenceText(`${prefix}/LICENSE-CONTENT`)} |\n\n`;
   md += `<small>${t.urlNote(`${prefix}${rel(subjectUrls(subject).page)}#versions`, `${prefix}/guide/urls`, true)}</small>\n\n`;
-  // The source line above the page names the text's licence; the files have their own.
-  md += `${t.filesLicense(`${prefix}/LICENSE-CONTENT`)}\n\n`;
   // This model and its neighbours, one step; each neighbour links to its own page.
   const neighbourhood = graphSvg(lang, prefix, allSubjects, null, 'LR', { center: `${subject.name}/${model.type}` });
   if (neighbourhood) md += `## ${graphTitle[lang]} {#graph}\n\n${neighbourhood}`;
-  if (attributesOf(model).length) md += `## ${isValue ? t.fields : t.attributes} {#attributes}\n\n`;
-  for (const [name, prop] of attributesOf(model)) {
-    const flags = [required.has(name) ? badge('info', t.required) : '', prop['x-personal-data'] ? badge('danger', t.pii) : '', prop['x-deprecated'] ? badge('danger', t.deprecated) : ''].filter(Boolean).join(' ');
-    md += `### ${name} {#${name}}\n\n`;
-    if (flags) md += `${flags}\n\n`;
-    md += `${model.catalog.attributes?.[name]?.[lang] ?? prop.description ?? ''}\n\n`;
-    md += isValue ? `- ${t.value}: ${prop.type}${prop.const ? ` = ${code(prop.const)}` : ''}${prop.pattern ? `, pattern ${code(prop.pattern)}` : ''}\n- IRI: ${code(prop['x-iri'] ?? '')}\n\n`
-      : `- ${t.value}: ${valueText(lang, subject, prop, prefix)}\n- IRI: ${code(prop['x-iri'] ?? '')}\n\n`;
+  // One row per attribute. Each row keeps its anchor (#name): the /ns/ IRI
+  // redirects, the standards page and the mapping tables link to it.
+  if (attributesOf(model).length) {
+    md += `## ${isValue ? t.fields : t.attributes} {#attributes}\n\n<div class="attributes">\n\n| ${isValue ? l.field : l.attribute} | ${l.description} | ${l.valueCol} |\n|---|---|---|\n`;
+    for (const [name, prop] of attributesOf(model)) {
+      const flags = [required.has(name) ? badge('info', t.required) : '', prop['x-personal-data'] ? badge('danger', t.pii) : '', prop['x-deprecated'] ? badge('danger', t.deprecated) : ''].filter(Boolean).join(' ');
+      const value = isValue ? `${prop.type}${prop.const ? ` = ${code(prop.const)}` : ''}${prop.pattern ? `, pattern ${code(prop.pattern)}` : ''}` : valueText(lang, subject, prop, prefix);
+      const text = model.catalog.attributes?.[name]?.[lang] ?? prop.description ?? '';
+      md += `| <a id="${name}" href="#${name}">${code(name)}</a>${flags ? `<br>${flags}` : ''} | ${cellText(text)}<br><span class="iri">${code(prop['x-iri'] ?? '')}</span> | ${cellText(value)} |\n`;
+    }
+    md += `\n</div>\n\n`;
   }
-  if (isValue) {
-    const u2 = subjectUrls(subject);
-    // Geometries are the value of the core location GeoProperty; other value types of a Property.
-    const geo = model.schema['x-ngsi']?.type === 'GeoProperty';
-    const [attr, ngsiType, attrIri] = geo ? ['location', 'GeoProperty', 'https://uri.etsi.org/ngsi-ld/location'] : ['address', 'Property', 'https://schema.org/address'];
-    md += `## ${t.usage} {#usage}\n\n\`\`\`json\n"${attr}": {\n  "$ref": "${mu.schemaExact}",\n  "x-ngsi": { "type": "${ngsiType}", "model": "${mu.typeIri}" },\n  "x-iri": "${attrIri}"\n}\n\`\`\`\n\n`;
-    if (!geo) md += `\`\`\`json\n{ "@context": ["${u2.contextAlias}", { ... }] }\n\`\`\`\n\n`;
-  }
-  if (model.examples['example.json']) md += `## ${t.example} {#example}\n\n${t.exampleNote(`${prefix}/guide/rules#examples`)}\n\n${fence(model.examples['example.json'])}\n\n`;
-  if (model.examples['example-normalized.jsonld']) {
-    // The JSON-LD Playground fetches the published @context and shows every attribute as its full IRI.
-    const playgroundLink = playgroundUrl(model.examples['example-normalized.jsonld']);
-    md += `## ${t.normalized} {#example-normalized}\n\n${fence(model.examples['example-normalized.jsonld'])}\n\n${t.playground(playgroundLink)}\n\n`;
+  if (model.examples['example.json']) {
+    // Both forms of one example in tabs; the files below for download.
+    const norm = model.examples['example-normalized.jsonld'];
+    const files = [`[example.json](${rel(mu.examples)}example.json)`, ...(norm ? [`[example-normalized.jsonld](${rel(mu.examples)}example-normalized.jsonld)`] : [])].join(' · ');
+    md += `## ${l.example} {#example}\n\n${t.exampleNote(`${prefix}/guide/rules#examples`)}\n\n`;
+    md += norm
+      ? `::: code-group\n\n\`\`\`json [${l.simple}]\n${JSON.stringify(model.examples['example.json'], null, 2)}\n\`\`\`\n\n\`\`\`json [${l.ngsi}]\n${JSON.stringify(norm, null, 2)}\n\`\`\`\n\n:::\n\n`
+      : `${fence(model.examples['example.json'])}\n\n`;
+    md += `${l.files}: ${files}${norm ? ` · ${t.playground(playgroundUrl(norm))}` : ''}\n\n`;
   }
   if (playground) md += `## ${t.tryIt} {#try}\n\n<ExamplePlayground v-bind="playground" />\n\n`;
-  if (!isValue) md += `## ${t.linkHeader} {#link-header}\n\n\`\`\`http\nLink: <${u.contextAlias}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"\n\`\`\`\n\n`;
-  if (!isValue) md += `${t.useGuide(`${prefix}/guide/use`)}\n\n`;
-  if (!isValue) md += `${t.extendThis(`${prefix}/guide/builder?model=${subject.name}/${model.type}`)}\n\n`;
-  for (const map of model.mappings ?? []) {
-    md += `## ${t.mappings}: ${map.standard?.name?.[lang] ?? map.name} {#mapping-${map.name}}\n\n`;
-    if (map.standard?.url) md += `[${map.standard.name?.[lang] ?? map.name}](${map.standard.url})${standardLicense(map.standard, lang) ? ` · ${standardLicense(map.standard, lang)}` : ''}\n\n`;
-    if (map.standard?.note?.[lang]) md += `${map.standard.note[lang]}\n\n`;
-    if (map.structure?.[lang]) md += `${map.structure[lang]}\n\n`;
-    md += `| ${t.mappingField} | ${t.mappingTo} | ${t.mappingNote} |\n|---|---|---|\n`;
-    // Link a field to its attribute row; a value type such as Geometry has no rows to link to.
-    for (const [field, m] of Object.entries(map.fields ?? {})) md += `| ${model.schema.properties?.[field] ? `[${code(field)}](#${field})` : code(field)} | ${m.to ? code(m.to) : `*${t.none}*`} | ${m.note?.[lang] ?? ''} |\n`;
-    md += '\n';
+  md += `## ${l.use} {#use}\n\n`;
+  if (isValue) md += `${l.useValue(`${prefix}/guide/rules#rules`)}\n\n`;
+  else {
+    md += `${t.useGuide(`${prefix}/guide/use`)}\n\n${t.extendThis(`${prefix}/guide/builder?model=${subject.name}/${model.type}`)}\n\n`;
+    md += `### ${t.linkHeader} {#link-header}\n\n\`\`\`http\nLink: <${u.contextAlias}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"\n\`\`\`\n\n`;
   }
+  // The standards behind the model and the design notes: folded, for readers
+  // who want to know why. A link to #mapping-<name> or #notes opens its section (theme/index.ts).
   const notes = model.notes?.notes ?? [];
-  if (notes.length) md += `## ${t.notes} {#notes}\n\n${notes.map((n) => `- ${issueLinks(n[lang])}`).join('\n')}\n\n`;
+  if (model.mappings?.length || notes.length) {
+    md += `## ${l.background} {#background}\n\n${l.backgroundNote}\n\n`;
+    for (const map of model.mappings ?? []) {
+      md += `<details id="mapping-${map.name}" class="background"><summary>${l.mappingTitle(map.standard?.name?.[lang] ?? map.name)}</summary>\n\n`;
+      if (map.standard?.url) md += `[${map.standard.name?.[lang] ?? map.name}](${map.standard.url})${standardLicense(map.standard, lang) ? ` · ${standardLicense(map.standard, lang)}` : ''}\n\n`;
+      if (map.standard?.note?.[lang]) md += `${map.standard.note[lang]}\n\n`;
+      if (map.structure?.[lang]) md += `${map.structure[lang]}\n\n`;
+      md += `| ${t.mappingField} | ${t.mappingTo} | ${t.mappingNote} |\n|---|---|---|\n`;
+      // Link a field to its attribute row; a value type such as Geometry has no rows to link to.
+      for (const [field, m] of Object.entries(map.fields ?? {})) md += `| ${model.schema.properties?.[field] ? `[${code(field)}](#${field})` : code(field)} | ${m.to ? code(m.to) : `*${t.none}*`} | ${cellText(m.note?.[lang] ?? '')} |\n`;
+      md += '\n</details>\n\n';
+    }
+    if (notes.length) md += `<details id="notes" class="background"><summary>${l.notesTitle}</summary>\n\n${notes.map((n) => `- ${issueLinks(n[lang])}`).join('\n')}\n\n</details>\n\n`;
+  }
   // Invite corrections where readers notice them: an issue titled after the type, or the proposal form.
-  const repo = 'https://github.com/geolonia/datamodels';
-  md += `::: tip ${t.improveTitle}\n${t.improve(`${repo}/issues/new?title=${encodeURIComponent(`${model.type}: `)}`, `${repo}/issues/new?template=model-proposal.yml`, `${prefix}/guide/contribute`)}\n:::\n\n`;
-  md += `<small>${t.license} [LICENSE-CONTENT](${prefix}/LICENSE-CONTENT)</small>\n`;
+  md += `::: tip ${t.improveTitle}\n${t.improve(`${repo}/issues/new?title=${encodeURIComponent(`${model.type}: `)}`, `${repo}/issues/new?template=model-proposal.yml`, `${prefix}/guide/contribute`)} ${l.sourceFiles(`${repo}/tree/main/models/${subject.name}/${model.type}`)}\n:::\n`;
   return md;
 }
 

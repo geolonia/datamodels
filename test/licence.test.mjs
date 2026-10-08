@@ -1,5 +1,5 @@
 // The licence page (/LICENSE-CONTENT in both languages, from LICENSE-CONTENT.md)
-// and the CC0 line on model pages.
+// and the CC0 row on model pages.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -33,16 +33,17 @@ test('each language has a licence page at the URL the schemas and catalog.json n
   assert.match(await readFile(join(ROOT, 'site', 'en', 'LICENSE-CONTENT.md'), 'utf8'), /<!--@include: \.\.\/\.\.\/LICENSE-CONTENT\.md#en-->/);
 });
 
-test('a model page says the files in its URL table are CC0, before the graph and the attributes, and links the page in its language', async () => {
+test('a model page names the CC0 licence of its files in the info table, before the first section, linking the page in its language', async () => {
   await generateSitePages(subjects);
   for (const [lang, prefix] of [['ja', ''], ['en', '/en']]) {
     for (const s of subjects) for (const m of s.models) {
       const page = await readFile(join(ROOT, 'site', prefix.slice(1), 'models', s.name, m.type, 'index.md'), 'utf8');
-      const cc0 = page.indexOf(`[CC0 1.0](${prefix}/LICENSE-CONTENT)`);
-      assert.ok(cc0 > page.indexOf('| JSON Schema |'), `${lang} ${m.type}: CC0 line after the URL table`);
+      const row = page.match(/^\| (ライセンス|Licence) \| (.*) \|$/m);
+      assert.ok(row, `${lang} ${m.type}: licence row`);
+      assert.ok(row[2].includes(`[CC0 1.0](${prefix}/LICENSE-CONTENT)`), `${lang} ${m.type}: CC0, linking the page in its language`);
+      assert.ok(page.indexOf(row[0]) > page.indexOf('| JSON Schema |'), `${lang} ${m.type}: in the URL table`);
       const next = page.search(/^## /m);
-      assert.ok(next === -1 || cc0 < next, `${lang} ${m.type}: CC0 line before the first section`);
-      assert.ok(page.includes(`(${prefix}/LICENSE-CONTENT)</small>`), `${lang} ${m.type}: footer links the page in its language`);
+      assert.ok(next === -1 || page.indexOf(row[0]) < next, `${lang} ${m.type}: before the first section`);
     }
   }
 });

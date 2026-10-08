@@ -308,3 +308,16 @@
 .vp-doc .versions td:nth-child(-n+2) { white-space: nowrap; }
 .vp-doc .versions td code { overflow-wrap: normal; }
 .vp-doc .versions td:last-child { width: 100%; }
+
+/* Model page (scripts/lib/site.mjs, modelPage). Attributes: one row each; the
+ * name links to its own row, the IRI sits small under the description, and the
+ * row a link points to is highlighted. */
+.vp-doc .attributes td:first-child { white-space: nowrap; }
+.vp-doc .attributes td:first-child a[id] { text-decoration: none; scroll-margin-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 24px); }
+.vp-doc .attributes .iri { display: inline-block; margin-top: 4px; font-size: 12px; }
+.vp-doc .attributes .iri code { font-size: 12px; color: var(--vp-c-text-2); background: none; padding: 0; overflow-wrap: anywhere; }
+.vp-doc .attributes tr:has(a[id]:target) td { background: var(--vp-c-brand-soft); }
+/* The folded background sections. */
+.vp-doc details.background { margin: 12px 0; padding: 4px 16px; border: 1px solid var(--vp-c-divider); border-radius: 8px; scroll-margin-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 24px); }
+.vp-doc details.background > summary { cursor: pointer; padding: 8px 0; font-weight: 600; }
+.vp-doc details.background[open] > summary { margin-bottom: 8px; }
