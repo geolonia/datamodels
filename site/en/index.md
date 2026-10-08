@@ -6,7 +6,7 @@ hero:
   name: ''
   # HTML: "Data models" and the full stop (the mark's dot) are red (docs/brand.md).
   text: <span class="accent">Data models</span> that work in Japan, at URLs that never <span class="nowrap">change<span class="dot">.</span></span>
-  tagline: Published as JSON Schemas, JSON-LD @context files and vocabularies. Ready to use with NGSI-LD. Existing standards are extended, not copied.
+  tagline: Published as JSON Schemas, JSON-LD @context files and vocabularies. Use them with plain JSON, as linked data, or with any NGSI-LD broker.
   actions:
     - theme: brand
       text: All data models
@@ -15,26 +15,24 @@ hero:
       text: Using the models
       link: /en/guide/use
     - theme: alt
-      text: catalog.json
-      link: /catalog.json
+      text: Contribute
+      link: /en/guide/contribute
 
 features:
+  - title: Made for Japan
+    details: Already use a Japanese standard, such as the municipal standard open datasets, EEI or GSI's shelter data? Find the model that matches it.
+    link: /en/models/standards/
+    linkText: Standards mapped
   - title: Extend, do not duplicate
-    details: Types and attributes from Smart Data Models, NGSI-LD and schema.org are reused where they fit. Where nothing fits, the catalog publishes its own type and records why. The guide shows how.
+    details: Reuses Smart Data Models, NGSI-LD and schema.org where they fit. Add your own attributes on top.
     link: /en/guide/extend
     linkText: Extending models
   - title: URLs that never change
-    details: Published versioned @context files and JSON Schemas are never modified or removed. The guide says which URL to use when.
+    details: After the official launch, published versioned @context files, JSON Schemas and vocabularies are never changed or removed, so links to them keep working.
     link: /en/guide/urls
     linkText: The URL contract
-  - title: Any system
-    details: Every example is validated in CI. The JSON Schemas validate plain JSON, the JSON-LD contexts turn it into linked data (RDF), and NGSI-LD brokers take it as it is. No particular product is needed.
-    link: /en/guide/use
-    linkText: Using the models
-  - title: Other catalogs
-    details: Smart Data Models, the Digital Agency's GIF and municipal standard open datasets, and more, and how this catalog relates to them.
-    link: /en/guide/catalogs
-    linkText: Other data model catalogs
+  - title: Built together
+    details: Models for common needs, improved by the people who use them. Proposals are welcome.
+    link: /en/guide/contribute
+    linkText: Contributing
 ---
-
-If you know the standard your data follows (the municipal standard open datasets, EEI, GSI's shelter data and more), [Standards mapped](/en/models/standards/) leads to the matching model.

@@ -6,7 +6,7 @@ hero:
   name: ''
   # HTML: the break and the unbreakable phrase keep 「変わらない URL で」 on one line; 「データモデル」 and the full stop (the mark's dot) are red.
   text: 日本で使える<br><span class="accent">データモデル</span>を、<span class="nowrap">変わらない URL で<span class="dot">。</span></span>
-  tagline: JSON Schema・JSON-LD の @context・語彙として公開します。NGSI-LD ならそのまま使えます。既存の標準は複製せず拡張します。
+  tagline: JSON Schema・JSON-LD の @context・語彙として公開しています。JSON のままでも、Linked Data でも、どの NGSI-LD ブローカーでも使えます。
   actions:
     - theme: brand
       text: データモデル一覧
@@ -15,26 +15,24 @@ hero:
       text: 使い方ガイド
       link: /guide/use
     - theme: alt
-      text: catalog.json
-      link: /catalog.json
+      text: 貢献する
+      link: /guide/contribute
 
 features:
+  - title: 日本向け
+    details: 自治体標準オープンデータセット、EEI、国土地理院の避難所データなど、すでに使っている標準があれば、対応するモデルを探せます。
+    link: /models/standards/
+    linkText: 対応する標準
   - title: 拡張する、複製しない
-    details: Smart Data Models、NGSI-LD、schema.org の型や属性で合うものがあれば、それを使います。合うものがなければ独自の型を公開し、その理由を記録します。やり方はガイドにあります。
+    details: Smart Data Models、NGSI-LD、schema.org の型や属性で合うものはそのまま使います。独自の属性はその上に足せます。
     link: /guide/extend
     linkText: 拡張する
   - title: 変わらない URL
-    details: 公開したバージョン付きの @context と JSON Schema は変更も削除もされません。どの URL を使うべきかはガイドにあります。
+    details: 正式公開後は、バージョン付きで公開した @context・JSON Schema・語彙を変更も削除もしません。リンクはずっと使えます。
     link: /guide/urls
     linkText: URL の約束
-  - title: どのシステムでも
-    details: すべての例は CI で検証されます。JSON Schema で JSON を検証でき、JSON-LD で Linked Data（RDF）になり、NGSI-LD ブローカーにはそのまま送れます。特定の製品は要りません。
-    link: /guide/use
-    linkText: 使い方
-  - title: 他のカタログとの関係
-    details: Smart Data Models、デジタル庁の GIF や自治体標準オープンデータセットなど、世界と日本のデータモデルの一覧と、このカタログとの関係をまとめています。
-    link: /guide/catalogs
-    linkText: 他のデータモデルカタログ
+  - title: みんなで育てる
+    details: よくある用途のモデルを、使う人と一緒に改善していきます。提案を歓迎します。
+    link: /guide/contribute
+    linkText: 貢献する
 ---
-
-自団体のデータが沿っている標準（自治体標準オープンデータセット、EEI、国土地理院の避難所等データなど）がわかっていれば、[対応する標準](/models/standards/)から対応するモデルを探せます。
