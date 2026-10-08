@@ -274,3 +274,18 @@
 #VPSidebarNav .VPSidebarItem.level-0 { padding-bottom: 0.75rem; }
 #VPSidebarNav .VPSidebarItem.level-0.collapsed { padding-bottom: 0; }
 #VPSidebarNav .VPSidebarItem:has(> .item .sb-other) { margin-top: 0.5rem; }
+
+/* Label colours carry a meaning; the brand red stays for links and accents.
+ * green (tip): ready to use (stable, the current version)
+ * amber (warning): may still change (draft)
+ * red (danger): careful (deprecated, personal data)
+ * grey (info): just information (value type, required, ...) */
+:root {
+  --vp-c-tip-1: var(--vp-c-green-1);
+  --vp-c-tip-2: var(--vp-c-green-2);
+  --vp-c-tip-3: var(--vp-c-green-3);
+  --vp-c-tip-soft: var(--vp-c-green-soft);
+}
+
+/* A table whose header row has no text (a key/value table) shows no empty header bar. */
+.vp-doc table thead:not(:has(th:not(:empty))) { display: none; }

@@ -8,7 +8,6 @@
 import { mkdir, writeFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { attributesOf, subjectUrls, modelUrls, BASE_URL, ROOT, CORE_TERMS } from './models.mjs';
-import { sharedTerms } from './shared-terms.mjs';
 import { modelAnchor } from './adapter-pages.mjs';
 import { graphSvg, graphTitle } from './graph.mjs';
 import { listReleases } from './releases.mjs';
@@ -27,7 +26,7 @@ const fence = (obj) => '```json\n' + JSON.stringify(obj, null, 2) + '\n```';
 const T = {
   ja: {
     models: 'データモデル', overview: '概要', subjects: 'サブジェクト', attributes: '属性', example: '例（key-values）', normalized: '例（normalized）', exampleNote: (href) => `例は架空のシナリオ（東京都千代田区の大雨対応）です。地名とコードは実在のものですが、出来事・人・チームは架空です。書き方は[例の書き方](${href})にあります。`,
-    linkHeader: 'Link ヘッダー', notes: '注記', shared: '複数のモデルで共有する属性', usedBy: '使用モデル', typeIri: '型 IRI', otherName: '英語名', useGuide: (href) => `データの検証とブローカーへの送り方は[使い方](${href})にあります。`, context: '@context',
+    linkHeader: 'Link ヘッダー', notes: '注記', type: '型', name: '名前', stage: '段階', typeIri: '型 IRI', otherName: '英語名', useGuide: (href) => `データの検証とブローカーへの送り方は[使い方](${href})にあります。`, context: '@context',
     contextExact: '（このバージョン、不変）', contextAlias: '（エイリアス、互換性のある最新版）', schema: 'JSON Schema', examples: '例',
     adapters: 'アダプター', adaptersRow: 'ブローカーやツール向けのファイル', mappingFiles: '対応表（YAML）',
     source: 'ソース', namespace: '名前空間', version: 'バージョン', vocabulary: '語彙', vocabularyNote: '（RDFS: クラス、サブクラス関係、日英ラベル）',
@@ -48,7 +47,7 @@ const T = {
   },
   en: {
     models: 'Data models', overview: 'Overview', subjects: 'Subjects', attributes: 'Attributes', example: 'Example (key-values)', normalized: 'Example (normalized)', exampleNote: (href) => `The examples are a fictional scenario (heavy rain in Chiyoda, Tokyo). Place names and codes are real; the events, people and teams are invented. See [writing examples](${href}).`,
-    linkHeader: 'Link header', notes: 'Notes', shared: 'Attributes shared by several models', usedBy: 'Used by', typeIri: 'Type IRI', otherName: 'Japanese name', useGuide: (href) => `How to validate data and send it to a broker: [Using the models](${href}).`, context: '@context',
+    linkHeader: 'Link header', notes: 'Notes', type: 'Type', name: 'Name', stage: 'Stage', typeIri: 'Type IRI', otherName: 'Japanese name', useGuide: (href) => `How to validate data and send it to a broker: [Using the models](${href}).`, context: '@context',
     contextExact: '(this version, immutable)', contextAlias: '(alias, latest compatible version)', schema: 'JSON Schema', examples: 'Examples',
     adapters: 'Adapters', adaptersRow: 'files for particular brokers and tools', mappingFiles: 'Mapping files (YAML)',
     source: 'Source', namespace: 'Namespace', version: 'Version', vocabulary: 'Vocabulary', vocabularyNote: '(RDFS: classes, subclass relations, ja/en labels)',
@@ -70,7 +69,10 @@ const T = {
 };
 
 const badge = (type, text) => `<Badge type="${type}" text="${text}" />`;
-const statusBadge = (lang, status) => badge(status === 'stable' ? 'tip' : status === 'deprecated' ? 'danger' : 'info', T[lang].statusLabel[status] ?? status);
+// Label colours carry a meaning (custom.css): green (tip) ready to use, amber (warning)
+// may still change, red (danger) careful, grey (info) just information.
+const stageBadgeType = { stable: 'tip', draft: 'warning', deprecated: 'danger' };
+const statusBadge = (lang, status) => badge(stageBadgeType[status] ?? 'info', T[lang].statusLabel[status] ?? status);
 // The description is the page's meta and share-preview text, which shows no Markdown.
 export const plainText = (s) => String(s ?? '')
   .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/`([^`]*)`/g, '$1').replace(/\*\*([^*]+)\*\*/g, '$1')
@@ -202,7 +204,7 @@ function modelPage(lang, prefix, subject, model) {
   if (neighbourhood) md += `## ${graphTitle[lang]} {#graph}\n\n${neighbourhood}`;
   if (attributesOf(model).length) md += `## ${isValue ? t.fields : t.attributes} {#attributes}\n\n`;
   for (const [name, prop] of attributesOf(model)) {
-    const flags = [required.has(name) ? badge('warning', t.required) : '', prop['x-personal-data'] ? badge('danger', t.pii) : '', prop['x-deprecated'] ? badge('danger', t.deprecated) : ''].filter(Boolean).join(' ');
+    const flags = [required.has(name) ? badge('info', t.required) : '', prop['x-personal-data'] ? badge('danger', t.pii) : '', prop['x-deprecated'] ? badge('danger', t.deprecated) : ''].filter(Boolean).join(' ');
     md += `### ${name} {#${name}}\n\n`;
     if (flags) md += `${flags}\n\n`;
     md += `${model.catalog.attributes?.[name]?.[lang] ?? prop.description ?? ''}\n\n`;
@@ -252,7 +254,7 @@ async function subjectPage(lang, prefix, subject) {
   md += `# ${subject.title[lang]}\n\n${subject.description[lang]}\n\n`;
   md += `| | |\n|---|---|\n| ${t.subject} | ${code(subject.name)} ${badge('info', t.sourceLabel[subject.source] ?? subject.source)} |\n| ${t.version} | ${code(subject.version)} |\n`;
   md += `| ${t.context} | ${code(u.contextAlias)} ${t.contextAlias}<br>${code(u.contextExact)} ${t.contextExact} |\n| ${t.namespace} | ${code(u.namespace)} |\n| ${t.vocabulary} | [${code(rel(u.vocabExact))}](${rel(u.vocabExact)}) ${t.vocabularyNote} |\n\n`;
-  md += `## ${t.models} {#models}\n\n| Type | | |\n|---|---|---|\n`;
+  md += `## ${t.models} {#models}\n\n| ${t.type} | ${t.name} | ${t.stage} |\n|---|---|---|\n`;
   for (const m of subject.models) md += `| [${m.type}](${prefix}${rel(modelUrls(subject, m).page)}) | ${m.catalog.title?.[lang] ?? ''} | ${statusBadge(lang, m.catalog.status ?? 'draft')}${m.kind === 'value' ? ` ${badge('info', t.valueType)}` : ''}${m.schema['x-alias-of'] ? ` ${badge('info', t.alias)}` : ''}${m.schema['x-subclass-of'] ? ` ${badge('info', t.subclass)}` : ''} |\n`;
   const releases = await listReleases(subject);
   if (releases.length) {
@@ -261,14 +263,6 @@ async function subjectPage(lang, prefix, subject) {
       const ctxUrl = r.files[0].url;
       const schemas = r.files.filter((f) => f.url.includes('/schema/')).map((f) => `[${f.url.split('/').slice(-2, -1)[0]}](${rel(f.url)})`).join(', ');
       md += `| v${r.version}${r.version === subject.version ? ` ${badge('tip', t.current)}` : ''} | [${code(rel(ctxUrl))}](${rel(ctxUrl)}) | ${schemas} |\n`;
-    }
-  }
-  const shared = sharedTerms(subject);
-  if (shared.size) {
-    md += `\n## ${t.shared} {#shared}\n\n`;
-    for (const [name, types] of [...shared].sort(([a], [b]) => a.localeCompare(b))) {
-      const prop = subject.models.find((m) => m.type === types[0]).schema.properties[name];
-      md += `### ${name} {#${name}}\n\n${subject.models.find((m) => m.type === types[0]).catalog.attributes?.[name]?.[lang] ?? ''}\n\n- IRI: ${code(prop['x-iri'] ?? '')}\n- ${t.usedBy}: ${types.map((ty) => `[${ty}](${prefix}${rel(modelUrls(subject, { type: ty }).page)})`).join(', ')}\n\n`;
     }
   }
   return md;
