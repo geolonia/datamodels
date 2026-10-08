@@ -44,20 +44,23 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
 }
 
 // One sidebar per section, so it stays short as the catalog grows: guide pages
-// list the guides, model pages list the subjects. The other section is one link
-// at the end. Subjects start collapsed; the one containing the current page
-// opens by itself. catalog.json is linked from the model list and the URL guide,
-// not here: it is a file for programs.
+// list the guides, model pages list the subjects. Each starts with its topic
+// (a link to its landing page) and ends with the other topic, styled as topics
+// (sb-topic, custom.css). Subjects start collapsed; the one containing the
+// current page opens by itself. catalog.json is linked from the model list and
+// the URL guide, not here: it is a file for programs.
 function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
   const ja = lang === 'ja'
+  const topic = (text: string, link: string, other = false): DefaultTheme.SidebarItem =>
+    ({ text: `<span class="sb-topic${other ? ' sb-other' : ''}">${text}</span>`, link })
   return {
     [`${prefix}/guide/`]: [
-      { text: ja ? 'ガイド一覧' : 'All guides', link: `${prefix}/guide/` },
+      topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`),
       ...guideGroups(prefix, lang),
-      { text: ja ? 'データモデル' : 'Data models', link: `${prefix}/models/` },
+      topic(ja ? 'データモデル' : 'Data models', `${prefix}/models/`, true),
     ],
     [`${prefix}/models/`]: [
-      { text: ja ? 'データモデル一覧' : 'All data models', link: `${prefix}/models/` },
+      topic(ja ? 'データモデル' : 'Data models', `${prefix}/models/`),
       ...subjects.map((s) => ({
         text: s.title[lang],
         collapsed: true,
@@ -67,7 +70,7 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
         ],
       })),
       { text: ja ? '対応する標準' : 'Standards mapped', link: `${prefix}/models/standards/` },
-      { text: ja ? 'ガイド' : 'Guides', link: `${prefix}/guide/` },
+      topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`, true),
     ],
   }
 }

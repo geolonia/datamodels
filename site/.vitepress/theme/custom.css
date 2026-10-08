@@ -241,3 +241,20 @@
 .source-line { margin: 0 0 12px; font-size: 12px; line-height: 1.5; color: var(--vp-c-text-3); overflow-wrap: anywhere; }
 .source-line a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .source-line a:hover { color: var(--vp-c-brand-1); }
+
+/* No divider lines between sections, in the page and in the sidebar: headings
+ * and spacing separate them. The default theme draws a line above every h2 and
+ * between sidebar groups. */
+.vp-doc h2 { border-top: 0; padding-top: 0; margin-top: 2.5rem; --vp-extra-scroll-margin: 1.5rem; }
+#VPSidebarNav .group + .group { border-top: 0; }
+
+/* Sidebar: the two main topics (Guides, Data models) are bigger than the groups
+ * inside them (config.ts, sidebar()). The topic of the other section, at the
+ * end, carries an arrow and some space above it. Group labels without a page of
+ * their own (h2, not collapsible) are quieter. */
+.VPSidebar .sb-topic { font-size: 15px; font-weight: 700; }
+.VPSidebar .sb-other::after { content: ' →'; }
+.VPSidebar .VPSidebarItem:has(> .item .sb-other) { margin-top: 1rem; }
+.VPSidebar .VPSidebarItem.level-0:not(.collapsible) > .item > h2.text {
+  font-size: 12px; font-weight: 600; color: var(--vp-c-text-2); letter-spacing: 0.02em;
+}
