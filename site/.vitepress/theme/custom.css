@@ -299,3 +299,6 @@
   .vp-doc table { display: table; width: 100%; }
   .vp-doc td code { overflow-wrap: anywhere; }
 }
+
+/* Small notes under a table (<small> alone in a paragraph) get a tighter line height than body text. */
+.vp-doc p > small { display: inline-block; line-height: 1.6; }

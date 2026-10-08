@@ -10,8 +10,8 @@ summary:
   ja: 自治体の災害対応：避難場所、避難所とその運用状況
   en: "Municipal disaster response: evacuation sites, shelters and their operation"
 description:
-  ja: 自治体の災害対応のデータ。避難できる場所、避難して滞在する施設、災害時の避難所の運用を表します。自治体や国がすでに公開しているデータに対応し、高松市の水防アプリのデータモデルを基に汎用化しました。通行止めは交通サブジェクトにあります。
-  en: "Data for municipal disaster response: places to evacuate to, facilities where evacuees stay, and how shelters are run during a disaster. It matches the data municipalities and national agencies already publish, and was generalised from the data models of Takamatsu City's flood-response application. Road closures are in the Transportation subject."
+  ja: 自治体の災害対応のデータ。避難できる場所、避難して滞在する施設、災害時の避難所の運用を表します。自治体や国がすでに公開しているデータに対応しています。通行止めは交通サブジェクトにあります。
+  en: "Data for municipal disaster response: places to evacuate to, facilities where evacuees stay, and how shelters are run during a disaster. It matches the data municipalities and national agencies already publish. Road closures are in the Transportation subject."
 source: minted            # minted | profile | global
 origin:
   note: Seeded from two of the seven Custom Data Models of the Takamatsu City flood-prevention headquarters application; the road closure model is RoadRestriction in the transportation subject since 2026-09-25 (#55); the other five (DisasterEvent, IncidentReport, IncidentResponseAction, IncidentHandoverNote, IncidentPhoto) were removed 2026-09-24 as tenant-specific types with no external standard behind them (see docs/design.md, "Versioning and lifecycle").

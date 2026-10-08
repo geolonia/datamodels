@@ -34,8 +34,8 @@
         "en": "Disaster response"
       },
       "comment": {
-        "ja": "自治体の災害対応のデータ。避難できる場所、避難して滞在する施設、災害時の避難所の運用を表します。自治体や国がすでに公開しているデータに対応し、高松市の水防アプリのデータモデルを基に汎用化しました。通行止めは交通サブジェクトにあります。",
-        "en": "Data for municipal disaster response: places to evacuate to, facilities where evacuees stay, and how shelters are run during a disaster. It matches the data municipalities and national agencies already publish, and was generalised from the data models of Takamatsu City's flood-response application. Road closures are in the Transportation subject."
+        "ja": "自治体の災害対応のデータ。避難できる場所、避難して滞在する施設、災害時の避難所の運用を表します。自治体や国がすでに公開しているデータに対応しています。通行止めは交通サブジェクトにあります。",
+        "en": "Data for municipal disaster response: places to evacuate to, facilities where evacuees stay, and how shelters are run during a disaster. It matches the data municipalities and national agencies already publish. Road closures are in the Transportation subject."
       },
       "versionInfo": "1.0.0",
       "seeAlso": "https://datamodels.jp/context/disaster/v1.0.0.jsonld"
