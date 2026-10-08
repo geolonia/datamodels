@@ -260,12 +260,14 @@ async function subjectPage(lang, prefix, subject) {
   for (const m of subject.models) md += `| [${m.type}](${prefix}${rel(modelUrls(subject, m).page)}) | ${m.catalog.title?.[lang] ?? ''} | ${statusBadge(lang, m.catalog.status ?? 'draft')}${m.kind === 'value' ? ` ${badge('info', t.valueType)}` : ''}${m.schema['x-alias-of'] ? ` ${badge('info', t.alias)}` : ''}${m.schema['x-subclass-of'] ? ` ${badge('info', t.subclass)}` : ''} |\n`;
   const releases = await listReleases(subject);
   if (releases.length) {
-    md += `\n## ${t.versions} {#versions}\n\n| | @context | JSON Schema |\n|---|---|---|\n`;
+    // In a div (custom.css .versions): the version and the @context URL stay on one line, the schema list wraps.
+    md += `\n## ${t.versions} {#versions}\n\n<div class="versions">\n\n| | @context | JSON Schema |\n|---|---|---|\n`;
     for (const r of [...releases].reverse()) {
       const ctxUrl = r.files[0].url;
       const schemas = r.files.filter((f) => f.url.includes('/schema/')).map((f) => `[${f.url.split('/').slice(-2, -1)[0]}](${rel(f.url)})`).join(', ');
       md += `| v${r.version}${r.version === subject.version ? ` ${badge('tip', t.current)}` : ''} | [${code(rel(ctxUrl))}](${rel(ctxUrl)}) | ${schemas} |\n`;
     }
+    md += `\n</div>\n`;
   }
   return md;
 }

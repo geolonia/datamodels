@@ -302,3 +302,9 @@
 
 /* Small notes under a table (<small> alone in a paragraph) get a tighter line height than body text. */
 .vp-doc p > small { display: inline-block; line-height: 1.6; }
+
+/* Versions table on subject pages (scripts/lib/site.mjs): the version and the
+ * @context URL stay on one line; the list of schemas takes the remaining width and wraps. */
+.vp-doc .versions td:nth-child(-n+2) { white-space: nowrap; }
+.vp-doc .versions td code { overflow-wrap: normal; }
+.vp-doc .versions td:last-child { width: 100%; }
