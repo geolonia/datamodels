@@ -190,7 +190,7 @@ function modelPage(lang, prefix, subject, model) {
   if (otherTitle && !sameName(otherTitle)) md += `| ${t.otherName} | ${otherTitle} |\n`;
   md += `| ${isValue ? 'IRI' : t.typeIri} | ${code(mu.typeIri)} |\n`;
   // The aliases only; the fixed URLs of each version are on the subject page (urlNote below the table).
-  md += `| ${t.context} | ${code(u.contextAlias)} |\n`;
+  md += `| ${t.context} | [${code(u.contextAlias)}](${rel(u.contextAlias)}) |\n`;
   md += `| ${t.schema} | [${code(rel(mu.schemaAlias))}](${rel(mu.schemaAlias)}) |\n`;
   md += isValue ? `| ${t.examples} | [example.json](${rel(mu.examples)}example.json) |\n`
     : `| ${t.examples} | [key-values](${rel(mu.examples)}example.json) · [normalized](${rel(mu.examples)}example-normalized.jsonld) |\n`;
@@ -255,7 +255,7 @@ async function subjectPage(lang, prefix, subject) {
   let md = front(subject.title[lang], subject.description[lang]);
   md += `# ${subject.title[lang]}\n\n${subject.description[lang]}\n\n`;
   md += `| | |\n|---|---|\n| ${t.subject} | ${code(subject.name)} ${badge('info', t.sourceLabel[subject.source] ?? subject.source)} |\n| ${t.version} | ${code(subject.version)} |\n`;
-  md += `| ${t.context} | ${code(u.contextAlias)} |\n| ${t.namespace} | ${code(u.namespace)} |\n| ${t.vocabulary} | [${code(rel(u.vocabExact))}](${rel(u.vocabExact)}) |\n\n<small>${t.urlNote('#versions', `${prefix}/guide/urls`, false)}</small>\n\n`;
+  md += `| ${t.context} | [${code(u.contextAlias)}](${rel(u.contextAlias)}) |\n| ${t.namespace} | ${code(u.namespace)} |\n| ${t.vocabulary} | [${code(rel(u.vocabExact))}](${rel(u.vocabExact)}) |\n\n<small>${t.urlNote('#versions', `${prefix}/guide/urls`, false)}</small>\n\n`;
   md += `## ${t.models} {#models}\n\n| ${t.type} | ${t.name} | ${t.stage} |\n|---|---|---|\n`;
   for (const m of subject.models) md += `| [${m.type}](${prefix}${rel(modelUrls(subject, m).page)}) | ${m.catalog.title?.[lang] ?? ''} | ${statusBadge(lang, m.catalog.status ?? 'draft')}${m.kind === 'value' ? ` ${badge('info', t.valueType)}` : ''}${m.schema['x-alias-of'] ? ` ${badge('info', t.alias)}` : ''}${m.schema['x-subclass-of'] ? ` ${badge('info', t.subclass)}` : ''} |\n`;
   const releases = await listReleases(subject);
