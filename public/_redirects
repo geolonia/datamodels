@@ -13,3 +13,9 @@
 /en/guide/versioning /en/guide/urls 301
 /guide/tips /guide/names 301
 /en/guide/tips /en/guide/names 301
+
+# "Standards mapped" moved to the guides as "Find a model by standard" on 2026-10-09.
+/models/standards/ /guide/standards 301
+/models/standards /guide/standards 301
+/en/models/standards/ /en/guide/standards 301
+/en/models/standards /en/guide/standards 301

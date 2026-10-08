@@ -267,3 +267,10 @@
 }
 /* Japanese has no capitals: a little larger instead. */
 :lang(ja) .VPSidebar .VPSidebarItem.level-0:not(.collapsible) > .item > h2.text { font-size: 13px; letter-spacing: 0.04em; }
+
+/* Tighter sidebar: the default theme spaces every top-level entry and every
+ * collapsed subject as if it were a section, so the subject list grows tall. */
+#VPSidebarNav .group { padding-top: 0; }
+#VPSidebarNav .VPSidebarItem.level-0 { padding-bottom: 0.75rem; }
+#VPSidebarNav .VPSidebarItem.level-0.collapsed { padding-bottom: 0; }
+#VPSidebarNav .VPSidebarItem:has(> .item .sb-other) { margin-top: 0.5rem; }

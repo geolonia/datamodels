@@ -1,4 +1,4 @@
-// /models/standards/: every standard a model is mapped to (mapping/*.yaml), with
+// /guide/standards: every standard a model is mapped to (mapping/*.yaml), with
 // the model and its correspondence table. A municipality that knows which
 // standard its data follows (a 自治体標準オープンデータセット sheet, GSI's lists,
 // EEI) finds the matching model from here.
@@ -7,14 +7,14 @@ import { standardLicense } from './mapping-check.mjs';
 
 const T = {
   ja: {
-    title: '対応する標準',
-    intro: '各モデルの対応表（mapping/*.yaml）をまとめた一覧です。自団体のデータが沿っている標準から、対応するモデルと項目ごとの対応表にたどれます。',
+    title: '標準からモデルを探す',
+    intro: '自団体のデータが沿っている標準（自治体標準オープンデータセット、EEI、国土地理院の避難所データなど）がわかっていれば、ここから対応するモデルと、項目ごとの対応表にたどれます。それぞれの標準の説明は[他のデータモデルカタログ](/guide/catalogs)にあります。',
     standard: '標準', model: 'モデル', fields: '対応する項目', license: 'ライセンス', of: (n, total) => `${n} / ${total}`,
     groups: { government: '国・自治体', international: '国際標準・海外のモデル', tool: 'ツール・サービス' },
   },
   en: {
-    title: 'Standards mapped',
-    intro: 'All correspondence tables of the models (mapping/*.yaml) in one list. From the standard your data follows, go to the matching model and its field-by-field table.',
+    title: 'Find a model by standard',
+    intro: 'If you know the standard your data follows (the municipal standard open datasets, EEI, GSI\'s shelter data and more), find the matching model here, with a table of which field matches which. For a description of each standard, see [Other data model catalogs](/en/guide/catalogs).',
     standard: 'Standard', model: 'Model', fields: 'Fields with a counterpart', license: 'Licence', of: (n, total) => `${n} of ${total}`,
     groups: { government: 'National and local government', international: 'International standards and models', tool: 'Tools and services' },
   },
@@ -65,7 +65,7 @@ export function standardRows(lang, subjects) {
 export function standardsPage(lang, prefix, subjects) {
   const t = T[lang];
   const rows = standardRows(lang, subjects);
-  let md = `---\ntitle: ${JSON.stringify(t.title)}\ndescription: ${JSON.stringify(t.intro)}\n---\n\n# ${t.title}\n\n${t.intro}\n\n`;
+  let md = `---\ntitle: ${JSON.stringify(t.title)}\ndescription: ${JSON.stringify(t.intro.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1'))}\n---\n\n# ${t.title}\n\n${t.intro}\n\n`;
   for (const group of ORDER) {
     const inGroup = rows.filter((r) => r.group === group);
     if (!inGroup.length) continue;

@@ -4,6 +4,10 @@ version: 1.0.0
 title:
   ja: タスク管理
   en: Task management
+# One line for the subject card on the model list.
+summary:
+  ja: タスク、プロジェクト、コメント、添付ファイル
+  en: "Tasks, projects, comments and attachments"
 description:
   ja: 課題管理・作業管理の共通モデル。タスク、プロジェクト、コメント、添付ファイル。課題管理システムのチケット、カレンダーの ToDo、自治体の作業指示に共通する属性だけを核にし、状態と優先度の値域は RFC 8984（JSCalendar）に合わせる。位置は点に限らない。システム固有の用語はエイリアスで対応する。
   en: Common model for issue and work tracking. Task, Project, Comment, Attachment. The core holds only what issue trackers, calendar to-dos and municipal work orders share; state and priority follow RFC 8984 (JSCalendar). Location is not limited to points. System-specific terminology is handled with aliases.

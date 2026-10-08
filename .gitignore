@@ -8,3 +8,5 @@ site/.vitepress/cache/
 site/.vitepress/dist/
 site/adapters/
 site/en/adapters/
+site/guide/standards.md
+site/en/guide/standards.md

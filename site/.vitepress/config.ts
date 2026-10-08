@@ -28,6 +28,7 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
       text: ja ? 'モデルを使う' : 'Use the models',
       items: [
         page('使い方', 'Using the models', 'use', [{ text: 'GeonicDB', link: `${prefix}/guide/geonicdb` }]),
+        page('標準からモデルを探す', 'Find a model by standard', 'standards'),
         page('属性を足す', 'Adding attributes', 'extend', [page('拡張ビルダー', 'Extension builder', 'builder')]),
         page('独自の名前で使う', 'Your own names', 'names'),
         page('URL とバージョン', 'URLs and versions', 'urls'),
@@ -69,7 +70,6 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
           ...s.models.map((m) => ({ text: m.type, link: `${prefix}${rel(modelUrls(s, m).page)}` })),
         ],
       })),
-      { text: ja ? '対応する標準' : 'Standards mapped', link: `${prefix}/models/standards/` },
       topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`, true),
     ],
   }

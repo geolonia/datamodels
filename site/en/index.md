@@ -21,8 +21,8 @@ hero:
 features:
   - title: Made for Japan
     details: Already use a Japanese standard, such as the municipal standard open datasets, EEI or GSI's shelter data? Find the model that matches it.
-    link: /en/models/standards/
-    linkText: Standards mapped
+    link: /en/guide/standards
+    linkText: Find a model by standard
   - title: Extend, do not duplicate
     details: Reuses Smart Data Models, NGSI-LD and schema.org where they fit. Add your own attributes on top.
     link: /en/guide/extend
