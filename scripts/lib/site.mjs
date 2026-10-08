@@ -39,7 +39,7 @@ const T = {
     improveTitle: '改善の提案', improve: (issue, form, guide) => `属性が足りない、説明がおかしいと思ったら、[Issue で知らせてください](${issue})。新しい属性やモデルは[提案フォーム](${form})から提案できます。進め方は[貢献する](${guide})にあります。`,
     deprecatedNote: (link) => `このモデルは非推奨です。${link ? `代わりに ${link} を使ってください。` : ''}公開済みのファイルと URL はそのまま残ります。`, valueType: '値型', valueTypeNote: 'これはエンティティ型ではなく、属性の値として使う構造です。', fields: 'フィールド', versions: 'バージョン', current: '現行', usage: '使い方',
     forPrograms: 'プログラムからは、同じ一覧を [catalog.json](/catalog.json) で読めます。',
-    subjectsIntro: 'モデルは分野ごとの「サブジェクト」（災害対応、交通など）にまとめ、サブジェクトごとに 1 つの `@context` を公開しています。型と属性の IRI は `/ns/<subject>/<term>` で解決できます。',
+    intro: 'モデルは分野（サブジェクト）ごとにまとめています。分野を開くか、名前・属性・説明で探してください。使っている標準からも探せます（[標準からモデルを探す](/guide/standards)）。',
     statusLabel: { draft: 'ドラフト', stable: '安定', deprecated: '非推奨' },
     sourceLabel: { minted: 'このカタログで定義', profile: '上流モデルの日本向け拡張', global: '上流（Smart Data Models）' },
     subject: 'サブジェクト', mappings: '対応する標準', mappingField: 'このモデル', mappingTo: '対応先', mappingNote: '備考', none: '対応なし',
@@ -60,7 +60,7 @@ const T = {
     improveTitle: 'Something missing or wrong?', improve: (issue, form, guide) => `[Open an issue](${issue}), or propose new attributes or models with the [proposal form](${form}). How it works: [Contributing](${guide}).`,
     deprecatedNote: (link) => `This model is deprecated.${link ? ` Use ${link} instead.` : ''} Its published files and URLs stay as they are.`, valueType: 'value type', valueTypeNote: 'This is not an entity type but a structure used as the value of an attribute.', fields: 'Fields', versions: 'Versions', current: 'current', usage: 'Usage',
     forPrograms: 'Programs can read the same list from [catalog.json](/catalog.json).',
-    subjectsIntro: 'One `@context` is published per subject. Type and attribute IRIs resolve at `/ns/<subject>/<term>`.',
+    intro: 'Models are grouped by subject. Open a subject, or search by name, attribute or description. You can also start from a standard you use ([Find a model by standard](/en/guide/standards)).',
     statusLabel: { draft: 'draft', stable: 'stable', deprecated: 'deprecated' },
     sourceLabel: { minted: 'defined in this catalog', profile: 'Japanese profile of an upstream model', global: 'upstream (Smart Data Models)' },
     subject: 'Subject', mappings: 'Corresponding standards', mappingField: 'This model', mappingTo: 'Maps to', mappingNote: 'Note', none: 'no counterpart',
@@ -277,7 +277,8 @@ async function subjectPage(lang, prefix, subject) {
 export function indexPage(lang, prefix, subjects) {
   const t = T[lang];
   const other = lang === 'ja' ? 'en' : 'ja';
-  // One row per model for the filterable list (site/.vitepress/theme/ModelIndex.vue).
+  // One card per subject, and one row per model for the search results
+  // (site/.vitepress/theme/ModelIndex.vue).
   const rows = subjects.flatMap((s) => s.models.map((m) => ({
     type: m.type, href: `${prefix}${rel(modelUrls(s, m).page)}`, title: m.catalog.title?.[lang] ?? '', otherTitle: m.catalog.title?.[other] ?? '',
     subject: s.name, subjectTitle: s.title[lang], subjectHref: `${prefix}${rel(subjectUrls(s).page)}`,
@@ -285,11 +286,15 @@ export function indexPage(lang, prefix, subjects) {
     text: [m.type, s.name, s.title.ja, s.title.en, m.catalog.title?.ja, m.catalog.title?.en, m.catalog.description?.ja, m.catalog.description?.en, ...attributesOf(m).map(([n]) => n)]
       .filter(Boolean).join(' ').normalize('NFKC').toLowerCase(),
   })));
-  // "<" escaped so no text can close the script block.
-  let md = front(t.models, t.subjectsIntro) + `<script setup>\nconst models = ${JSON.stringify(rows).replaceAll('<', '\\u003c')}\n</script>\n\n`;
-  md += `# ${t.models}\n\n${t.subjectsIntro}\n\n<ModelIndex lang="${lang}" :models="models" />\n\n${t.forPrograms}\n\n`;
-  md += `## ${t.subjects} {#subjects}\n\n`;
-  for (const s of subjects) md += `### [${s.title[lang]}](${prefix}${rel(subjectUrls(s).page)}) {#${s.name}}\n\n${s.description[lang]}\n\n`;
+  const cards = subjects.map((s) => ({
+    name: s.name, title: s.title[lang], summary: s.summary[lang], href: `${prefix}${rel(subjectUrls(s).page)}`,
+    models: s.models.map((m) => ({ type: m.type, href: `${prefix}${rel(modelUrls(s, m).page)}` })),
+  }));
+  // "<" escaped so no text can close the script block. No outline column: the cards are the page's contents.
+  const data = (v) => JSON.stringify(v).replaceAll('<', '\\u003c');
+  let md = front(t.models, t.intro).replace(/\n---\n\n$/, '\naside: false\n---\n\n');
+  md += `<script setup>\nconst models = ${data(rows)}\nconst cards = ${data(cards)}\n</script>\n\n`;
+  md += `# ${t.models}\n\n${t.intro}\n\n<ModelIndex lang="${lang}" :models="models" :cards="cards" />\n\n${t.forPrograms}\n`;
   return md;
 }
 
@@ -302,9 +307,8 @@ export async function generateSitePages(subjects, adapters = []) {
     const base = join(SITE, prefix.replace(/^\//, ''), 'models');
     await rm(base, { recursive: true, force: true });
     await put(join(base, 'index.md'), indexPage(lang, prefix, subjects));
-    // /models/standards/ sits next to the subjects, so no subject may take that name.
-    if (subjects.some((s) => s.name === 'standards')) throw new Error('a subject named "standards" would replace /models/standards/');
-    await put(join(base, 'standards', 'index.md'), standardsPage(lang, prefix, subjects));
+    // Generated into the guides (ignored by git), next to the hand-written pages.
+    await put(join(SITE, prefix.replace(/^\//, ''), 'guide', 'standards.md'), standardsPage(lang, prefix, subjects));
     for (const s of subjects) {
       await put(join(base, s.name, 'index.md'), await subjectPage(lang, prefix, s));
       for (const m of s.models) await put(join(base, s.name, m.type, 'index.md'), modelPage(lang, prefix, s, m));

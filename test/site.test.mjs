@@ -27,6 +27,6 @@ test('page descriptions (meta and share previews) carry no Markdown', () => {
   for (const lang of ['ja', 'en']) {
     const description = JSON.parse(/^description: (.*)$/m.exec(indexPage(lang, lang === 'en' ? '/en' : '', subjects))[1]);
     assert.doesNotMatch(description, /[`*[\]]/, lang);
-    assert.match(description, /\/ns\/<subject>\/<term>/, lang);
+    assert.match(description, /標準からモデルを探す|Find a model by standard/, lang);
   }
 });

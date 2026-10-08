@@ -1,4 +1,4 @@
-// /models/standards/ (scripts/lib/standards.mjs): every mapping file once, linked to its table.
+// /guide/standards (scripts/lib/standards.mjs): every mapping file once, linked to its table.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { loadSubjects } from '../scripts/lib/models.mjs';

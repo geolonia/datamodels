@@ -9,6 +9,7 @@ description: カタログのモデルの使い方、属性の足し方、URL と
 
 - [使い方](/guide/use): カタログのモデルで JSON を検証し、NGSI-LD ブローカーに送り、Linked Data として使う。
   - [GeonicDB](/guide/geonicdb): モデルを GeonicDB に登録し、エンティティを作成・検索する。
+- [標準からモデルを探す](/guide/standards): 自治体標準オープンデータセットや EEI など、使っている標準から対応するモデルを探す。
 - [属性を足す](/guide/extend): モデルを複製せずに独自の属性を足す。
   - [拡張ビルダー](/guide/builder): そのためのファイルをブラウザで作る。
 - [独自の名前で使う](/guide/names): モデルを変えずに、属性名や型名を自分たちの呼び方に合わせる。

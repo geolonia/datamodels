@@ -1,7 +1,9 @@
 <!--
-  The filterable list of every model on /models/ and /en/models/. The rows come
-  from the generated page (scripts/lib/site.mjs), so the full table is
-  pre-rendered and works without JavaScript; the filters only hide rows.
+  The model list on /models/ and /en/models/: one card per subject, so the page
+  grows with the subjects, not the models. Searching or filtering shows the
+  matching models as a table instead. The data comes from the generated page
+  (scripts/lib/site.mjs); the cards are pre-rendered and link every model, so
+  the page works without JavaScript.
 -->
 <script setup lang="ts">
 import { computed, ref } from 'vue'
@@ -12,18 +14,19 @@ interface Row {
   kind: 'entity' | 'value'; status: 'draft' | 'stable' | 'deprecated'
   text: string // lower-cased names, titles, descriptions and attribute names in both languages
 }
-const props = defineProps<{ models: Row[]; lang: 'ja' | 'en' }>()
+interface Card { name: string; title: string; summary: string; href: string; models: { type: string; href: string }[] }
+const props = defineProps<{ models: Row[]; cards: Card[]; lang: 'ja' | 'en' }>()
 
 const L = {
   ja: {
     search: 'モデル名・属性名・説明で絞り込む', subject: 'サブジェクト', kind: '種類', status: '段階', all: 'すべて',
     type: '型', name: '名前', entity: 'エンティティ', value: '値型', count: (n: number, all: number) => `${all} 件中 ${n} 件`,
-    none: '当てはまるモデルはありません。', statusLabel: { draft: 'ドラフト', stable: '安定', deprecated: '非推奨' },
+    none: '当てはまるモデルはありません。', models: (n: number) => `${n} モデル`, statusLabel: { draft: 'ドラフト', stable: '安定', deprecated: '非推奨' },
   },
   en: {
     search: 'Filter by model, attribute or description', subject: 'Subject', kind: 'Kind', status: 'Stage', all: 'All',
     type: 'Type', name: 'Name', entity: 'entity', value: 'value type', count: (n: number, all: number) => `${n} of ${all} models`,
-    none: 'No model matches.', statusLabel: { draft: 'draft', stable: 'stable', deprecated: 'deprecated' },
+    none: 'No model matches.', models: (n: number) => (n === 1 ? '1 model' : `${n} models`), statusLabel: { draft: 'draft', stable: 'stable', deprecated: 'deprecated' },
   },
 }[props.lang]
 
@@ -47,6 +50,7 @@ const shown = computed(() => {
     (!status.value || m.status === status.value) &&
     terms.every((t) => m.text.includes(t)))
 })
+const searching = computed(() => !!(q.value.trim() || subject.value || kind.value || status.value))
 const badgeType = (s: Row['status']) => (s === 'stable' ? 'tip' : s === 'deprecated' ? 'danger' : 'info')
 </script>
 
@@ -65,8 +69,16 @@ const badgeType = (s: Row['status']) => (s === 'stable' ? 'tip' : s === 'depreca
         <select v-model="status"><option value="">{{ L.all }}</option><option v-for="s in statuses" :key="s" :value="s">{{ L.statusLabel[s] }}</option></select>
       </label>
     </div>
-    <p class="count" aria-live="polite">{{ L.count(shown.length, models.length) }}</p>
-    <div class="table">
+    <div v-if="!searching" class="cards">
+      <section v-for="s in cards" :key="s.name" class="card">
+        <h2 :id="s.name"><a :href="s.href">{{ s.title }}</a></h2>
+        <p class="summary">{{ s.summary }}</p>
+        <p class="types"><a v-for="m in s.models" :key="m.href" :href="m.href"><code>{{ m.type }}</code></a></p>
+        <p class="n">{{ L.models(s.models.length) }}</p>
+      </section>
+    </div>
+    <p v-if="searching" class="count" aria-live="polite">{{ L.count(shown.length, models.length) }}</p>
+    <div v-if="searching" class="table">
       <table>
         <thead><tr><th>{{ L.type }}</th><th>{{ L.name }}</th><th>{{ L.subject }}</th><th>{{ L.kind }}</th><th>{{ L.status }}</th></tr></thead>
         <tbody>
@@ -89,6 +101,17 @@ const badgeType = (s: Row['status']) => (s === 'stable' ? 'tip' : s === 'depreca
 .filters input { flex: 1 1 240px; min-width: 0; padding: 6px 10px; border: 1px solid var(--vp-c-divider); border-radius: 6px; background: var(--vp-c-bg); color: var(--vp-c-text-1); }
 .filters label { display: flex; gap: 6px; align-items: center; font-size: 14px; color: var(--vp-c-text-2); }
 .filters select { padding: 4px 6px; border: 1px solid var(--vp-c-divider); border-radius: 6px; background: var(--vp-c-bg); color: var(--vp-c-text-1); }
+/* Subject cards, styled like the home page features. */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin: 16px 0; }
+.card { display: flex; flex-direction: column; padding: 20px; border-radius: 12px; background: var(--vp-c-bg-soft); }
+.card h2 { margin: 0 0 6px; padding: 0; border: 0; font-size: 18px; line-height: 1.4; letter-spacing: 0; }
+.card h2 a { color: var(--vp-c-text-1); text-decoration: none; }
+.card h2 a:hover { color: var(--vp-c-brand-1); }
+.card .summary { margin: 0 0 12px; font-size: 14px; line-height: 1.6; color: var(--vp-c-text-2); }
+.card .types { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+.card .types a { text-decoration: none; }
+.card .types code { font-size: 13px; }
+.card .n { margin: auto 0 0; font-size: 12px; color: var(--vp-c-text-3); }
 .count { margin: 0; font-size: 14px; color: var(--vp-c-text-2); }
 .table { overflow-x: auto; }
 .table table { display: table; width: 100%; margin: 8px 0 0; }

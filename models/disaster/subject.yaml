@@ -5,6 +5,10 @@ version: 1.0.0
 title:
   ja: 災害対応
   en: Disaster response
+# One line for the subject card on the model list.
+summary:
+  ja: 自治体の災害対応：避難場所、避難所とその運用状況
+  en: "Municipal disaster response: evacuation sites, shelters and their operation"
 description:
   ja: 自治体の災害対応を表すデータモデル。現在は指定緊急避難場所（EvacuationSite。自治体が公開する一覧で、名称・所在地など施設の基本情報をまとめたマスタ）、指定避難所（DesignatedShelter。国土地理院が公開するマスタ）と避難所運用状況（EvacuationShelter）。独自の型で、状態の呼び方（statusLabel）はタスク管理の IRI を使う。災害対応の業務とのひも付けはアプリケーション側で行う（タスク管理の Task の refersTo など）。通行止めなどの通行規制は交通（transportation）サブジェクトの RoadRestriction で表す。高松市の水防アプリのデータモデルを基に汎用化した。
   en: Data models for municipal disaster response. Currently designated emergency evacuation sites (EvacuationSite, the master of the lists municipalities publish), designated shelters (DesignatedShelter, the master GSI publishes) and shelter operation (EvacuationShelter), their own types; the local status wording (statusLabel) uses the task subject's IRI. Linking entities to a disaster-response operation is left to the application (for example refersTo from a task subject Task). Road closures and other road restrictions are RoadRestriction in the transportation subject. Generalised from the data models of Takamatsu City's flood-response application.

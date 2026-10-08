@@ -21,8 +21,8 @@ hero:
 features:
   - title: 日本向け
     details: 自治体標準オープンデータセット、EEI、国土地理院の避難所データなど、すでに使っている標準があれば、対応するモデルを探せます。
-    link: /models/standards/
-    linkText: 対応する標準
+    link: /guide/standards
+    linkText: 標準からモデルを探す
   - title: 拡張する、複製しない
     details: Smart Data Models、NGSI-LD、schema.org の型や属性で合うものはそのまま使います。独自の属性はその上に足せます。
     link: /guide/extend
