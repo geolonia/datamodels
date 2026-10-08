@@ -398,7 +398,7 @@ for (const subject of subjects) {
 if (failures.length) {
   console.error(`Model validation failed (${failures.length}):`);
   for (const f of failures) console.error(`  ${f}`);
-  await reportFailures('Model validation failed', failures, 'Run `npm run validate:models` locally to see the same list. The rules are in the extend guide: https://datamodels.jp/guide/extend');
+  await reportFailures('Model validation failed', failures, 'Run `npm run validate:models` locally to see the same list. The rules are in the guide: https://datamodels.jp/en/guide/rules');
   process.exit(1);
 }
 const n = subjects.reduce((a, s) => a + s.models.length, 0);

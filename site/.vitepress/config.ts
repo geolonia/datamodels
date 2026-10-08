@@ -17,53 +17,57 @@ function addVPreToInlineCode(md: MarkdownIt) {
     orig(tokens, idx, options, env, self).replace(/^<code/, '<code v-pre')
 }
 
-const guides = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.SidebarItem[] => [
-  { text: lang === 'ja' ? '使い方' : 'Using the models', link: `${prefix}/guide/use` },
-  { text: lang === 'ja' ? '拡張する' : 'Extending models', link: `${prefix}/guide/extend` },
-  { text: lang === 'ja' ? '拡張ビルダー' : 'Extension builder', link: `${prefix}/guide/builder` },
-  { text: lang === 'ja' ? '貢献する' : 'Contributing', link: `${prefix}/guide/contribute` },
-  { text: lang === 'ja' ? '変わらない URL' : 'URLs that never change', link: `${prefix}/guide/urls` },
-  { text: lang === 'ja' ? 'バージョンと非推奨' : 'Versions and deprecation', link: `${prefix}/guide/versioning` },
-  { text: lang === 'ja' ? '他のデータモデルカタログ' : 'Other data model catalogs', link: `${prefix}/guide/catalogs` },
-  { text: 'Tips & Tricks', link: `${prefix}/guide/tips` },
-]
+// Guides in two groups: for people who use the models, and for people who add to the catalog.
+// A page that belongs to another one sits under it (GeonicDB under "Using the models").
+const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.SidebarItem[] => {
+  const ja = lang === 'ja'
+  const page = (jaText: string, enText: string, slug: string, items?: DefaultTheme.SidebarItem[]): DefaultTheme.SidebarItem =>
+    ({ text: ja ? jaText : enText, link: `${prefix}/guide/${slug}`, ...(items ? { items } : {}) })
+  return [
+    {
+      text: ja ? 'モデルを使う' : 'Use the models',
+      items: [
+        page('使い方', 'Using the models', 'use', [{ text: 'GeonicDB', link: `${prefix}/guide/geonicdb` }]),
+        page('属性を足す', 'Adding attributes', 'extend', [page('拡張ビルダー', 'Extension builder', 'builder')]),
+        page('独自の名前で使う', 'Your own names', 'names'),
+        page('URL とバージョン', 'URLs and versions', 'urls'),
+      ],
+    },
+    {
+      text: ja ? 'カタログに加わる' : 'Add to the catalog',
+      items: [
+        page('貢献する', 'Contributing', 'contribute', [page('モデルのルール', 'Rules for models', 'rules')]),
+        page('他のデータモデルカタログ', 'Other data model catalogs', 'catalogs'),
+      ],
+    },
+  ]
+}
 
 // One sidebar per section, so it stays short as the catalog grows: guide pages
-// list the guides, model pages list the subjects. Subjects start collapsed; the
-// one containing the current page opens by itself.
+// list the guides, model pages list the subjects. The other section is one link
+// at the end. Subjects start collapsed; the one containing the current page
+// opens by itself. catalog.json is linked from the model list and the URL guide,
+// not here: it is a file for programs.
 function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
-  const catalog: DefaultTheme.SidebarItem = {
-    text: lang === 'ja' ? 'カタログ' : 'Catalog',
-    items: [
-      { text: lang === 'ja' ? 'データモデル一覧' : 'All data models', link: `${prefix}/models/` },
-      { text: lang === 'ja' ? '対応する標準' : 'Standards mapped', link: `${prefix}/models/standards/` },
-      { text: lang === 'ja' ? 'catalog.json（プログラム向け）' : 'catalog.json (for programs)', link: '/catalog.json' },
-    ],
-  }
+  const ja = lang === 'ja'
   return {
     [`${prefix}/guide/`]: [
-      {
-        text: lang === 'ja' ? 'ガイド' : 'Guides',
-        // Product-specific pages sit under "Using the models", after the steps that work with any broker.
-        items: [
-          { text: lang === 'ja' ? 'ガイド一覧' : 'All guides', link: `${prefix}/guide/` },
-          ...guides(prefix, lang).map((g) => g.link === `${prefix}/guide/use`
-            ? { ...g, items: [{ text: 'GeonicDB', link: `${prefix}/guide/geonicdb` }] }
-            : g),
-        ],
-      },
-      catalog,
+      { text: ja ? 'ガイド一覧' : 'All guides', link: `${prefix}/guide/` },
+      ...guideGroups(prefix, lang),
+      { text: ja ? 'データモデル' : 'Data models', link: `${prefix}/models/` },
     ],
     [`${prefix}/models/`]: [
-      catalog,
+      { text: ja ? 'データモデル一覧' : 'All data models', link: `${prefix}/models/` },
       ...subjects.map((s) => ({
         text: s.title[lang],
         collapsed: true,
         items: [
-          { text: lang === 'ja' ? '概要' : 'Overview', link: `${prefix}${rel(subjectUrls(s).page)}` },
+          { text: ja ? '概要' : 'Overview', link: `${prefix}${rel(subjectUrls(s).page)}` },
           ...s.models.map((m) => ({ text: m.type, link: `${prefix}${rel(modelUrls(s, m).page)}` })),
         ],
       })),
+      { text: ja ? '対応する標準' : 'Standards mapped', link: `${prefix}/models/standards/` },
+      { text: ja ? 'ガイド' : 'Guides', link: `${prefix}/guide/` },
     ],
   }
 }

@@ -7,3 +7,9 @@
 # /guide/procurement (sample procurement wording) was published and removed on 2026-09-29: no reader had asked for it.
 /guide/procurement /guide/ 301
 /en/guide/procurement /en/guide/ 301
+
+# Guides regrouped on 2026-10-09: "Versions and deprecation" merged into "URLs and versions", "Tips & Tricks" became "Your own names".
+/guide/versioning /guide/urls 301
+/en/guide/versioning /en/guide/urls 301
+/guide/tips /guide/names 301
+/en/guide/tips /en/guide/names 301

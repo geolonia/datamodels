@@ -217,7 +217,7 @@ function modelPage(lang, prefix, subject, model) {
     md += `## ${t.usage} {#usage}\n\n\`\`\`json\n"${attr}": {\n  "$ref": "${mu.schemaExact}",\n  "x-ngsi": { "type": "${ngsiType}", "model": "${mu.typeIri}" },\n  "x-iri": "${attrIri}"\n}\n\`\`\`\n\n`;
     if (!geo) md += `\`\`\`json\n{ "@context": ["${u2.contextAlias}", { ... }] }\n\`\`\`\n\n`;
   }
-  if (model.examples['example.json']) md += `## ${t.example} {#example}\n\n${t.exampleNote(`${prefix}/guide/extend#examples`)}\n\n${fence(model.examples['example.json'])}\n\n`;
+  if (model.examples['example.json']) md += `## ${t.example} {#example}\n\n${t.exampleNote(`${prefix}/guide/rules#examples`)}\n\n${fence(model.examples['example.json'])}\n\n`;
   if (model.examples['example-normalized.jsonld']) {
     // The JSON-LD Playground fetches the published @context and shows every attribute as its full IRI.
     const playgroundLink = playgroundUrl(model.examples['example-normalized.jsonld']);

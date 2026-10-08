@@ -79,16 +79,7 @@ curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionS
 厳密さの順に 3 つのやり方があります。
 
 1. **未知の属性を許す。** `--allow-additional` で `additionalProperties: true` の定義を書き出して登録します。独自の属性は受け付けられますが検証されず、JSON-LD ではリクエストの context が定める IRI（無ければ GeonicDB の既定語彙）に展開されます。
-2. **定義を拡張する。** カタログの属性に自分の属性を足した定義を登録し、`contextUrl` にはカタログの context を取り込んで自分の語だけを定義した context を指定します（置き場所は[拡張](/guide/extend#host-context)を参照）。独自の属性も他と同じように検証され、IRI は自分の管理下に置けます。カタログが Smart Data Models に対して行っている「プロファイル」を、一段下で行う形です。
-
-   ```json
-   {
-     "@context": [
-       "https://datamodels.jp/context/transportation/v1.jsonld",
-       { "acme": "https://example.com/ns/acme/", "patrolRoute": "acme:patrolRoute" }
-     ]
-   }
-   ```
+2. **定義を拡張する。** 属性を足したプロファイルの @context を作って置き（[属性を足す](/guide/extend)）、カタログの属性に自分の属性を足した定義を、`contextUrl` にその URL を指定して登録します。独自の属性も他と同じように検証されます。
 
    拡張ファイル（型名をキーにする）を用意して書き出します。カタログの属性を再定義しようとするとエラーになります。
 

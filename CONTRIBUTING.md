@@ -17,7 +17,7 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 - **既存の標準に基づく**: 国や自治体のガイドライン、Smart Data Models、GIF、RFC などに基づくモデルだけを公開します。検討した上流の型と、採用しなかった理由は `notes.yaml` に書きます。
 - **実際のデータがある**: 架空のユースケースではなく、いま存在するデータを表すこと。
 - **製品に依存しない**: 特定の製品向けの注釈や型名は入れません（製品向けのファイルは `adapters/` が作ります）。
-- 書き方の詳細は[拡張する](https://datamodels.jp/guide/extend)にあります（名前空間、予約語、エイリアスとサブクラス、状態の属性、例の書き方）。
+- 書き方の詳細は[モデルのルール](https://datamodels.jp/guide/rules)にあります（独自の型を作るとき、予約語、エイリアスとサブクラス、状態の属性、標準との対応表、例の書き方）。
 
 ## 段階と決め方
 
@@ -78,7 +78,7 @@ datamodels.jp publishes data models that work in Japan as a shared, product-neut
 - **Built on an existing standard**: the catalog publishes models that rest on government or municipal guidelines, Smart Data Models, GIF, an RFC or similar. Record the upstream types you considered, and why they did not fit, in `notes.yaml`.
 - **Real data**: a model describes data that exists today, not a hypothetical use case.
 - **Product-neutral**: no product-specific annotations or type names (files for particular products come from `adapters/`).
-- The details are in [Extending models](https://datamodels.jp/en/guide/extend): namespaces, protected terms, aliases and subclasses, status attributes, writing examples.
+- The details are in [Rules for models](https://datamodels.jp/en/guide/rules): when to define a new type, reserved names, aliases and subclasses, status attributes, mapping to standards, writing examples.
 
 ## Stages and who decides
 

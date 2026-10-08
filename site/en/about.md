@@ -26,7 +26,7 @@ The site is run by [Geolonia Inc.](https://www.geolonia.com/company/) (株式会
 
 - The models are provided as they are, without any warranty of accuracy, completeness or fitness for a particular purpose.
 - Mappings to government and municipal standards are this catalog's reading of them; they are not endorsed by the agencies that publish those standards.
-- This is a pre-release. Until the official launch, published versions may still be corrected in place. After the launch, the promise in [URLs that never change](/en/guide/urls) applies.
+- This is a pre-release. Until the official launch, published versions may still be corrected in place. After the launch, the promise in [URLs and versions](/en/guide/urls) applies.
 
 ## Privacy
 

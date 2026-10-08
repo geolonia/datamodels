@@ -11,4 +11,4 @@ One automated decision about one entity: a model's answers to the questions of a
 - Schema: `https://datamodels.jp/schema/decision/Decision/v1.json` (alias), `https://datamodels.jp/schema/decision/Decision/v1.0.0.json` (exact)
 - Page: https://datamodels.jp/models/decision/Decision/
 
-Files follow the Smart Data Models layout: `schema.json`, `catalog.yaml` (Japanese and English descriptions), `examples/`, `notes.yaml`, `ADOPTERS.yaml`. Writing examples: https://datamodels.jp/guide/extend#examples
+Files follow the Smart Data Models layout: `schema.json`, `catalog.yaml` (Japanese and English descriptions), `examples/`, `notes.yaml`, `ADOPTERS.yaml`. Writing examples: https://datamodels.jp/guide/rules#examples

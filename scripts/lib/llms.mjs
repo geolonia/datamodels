@@ -10,13 +10,13 @@ import { subjectUrls, modelUrls, BASE_URL, ROOT } from './models.mjs';
 const GUIDES = [
   ['use', 'Using the models', 'validate JSON, send it to an NGSI-LD broker, use it as linked data'],
   ['geonicdb', 'Use with GeonicDB', 'register a catalog model in GeonicDB, then create and query entities'],
-  ['extend', 'Extending models', 'add attributes or models for Japan, the rules, examples'],
+  ['extend', 'Adding attributes', 'add attributes of your own to a catalog model without copying it, and where to host the result'],
   ['builder', 'Extension builder', 'build the @context and JSON Schema for your own attributes on a catalog model, in the browser'],
+  ['names', 'Your own names', 'use your own attribute and type names with JSON-LD aliases, without changing the model'],
+  ['urls', 'URLs and versions', 'which URL to use, what never changes, versions and deprecation'],
   ['contribute', 'Contributing', 'propose or change models, stages and who decides'],
-  ['urls', 'URLs that never change', 'which URL to use, versions, aliases, caching, IRI resolution'],
-  ['versioning', 'Versions and deprecation', 'how subjects are versioned, how deprecation works, the stages of a model'],
+  ['rules', 'Rules for models', 'when to define a new type, the rules, mapping to standards, writing examples'],
   ['catalogs', 'Other data model catalogs', 'catalogs and standards used globally and in Japan, and how this catalog relates to them'],
-  ['tips', 'Tips & Tricks', 'match attribute names to your own terms with JSON-LD aliases'],
 ];
 
 const exists = (path) => access(path).then(() => true, () => false);
