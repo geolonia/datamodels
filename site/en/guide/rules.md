@@ -42,7 +42,7 @@ A mapping file names the edition it follows (for example the 20260801 edition of
 
 ## Writing examples {#examples}
 
-Every model has two examples (key-values and normalized). They appear on the model page, CI validates them, and people copy them when they write a client, so all subjects share one scenario.
+Every entity model has two examples (key-values and normalized); a value type such as Geometry has only the key-values one. They appear on the model page, CI validates them, and people copy them when they write a client, so all subjects share one scenario.
 
 - **Scenario**: a fictional heavy-rain response in Chiyoda, Tokyo (July 2026). The ward sets up a disaster-response project, a task checks a flooded underpass on Yasukuni-dōri, the road is closed and a shelter opens.
 - **Real and fictional**: place names, addresses, codes (local government code, Address Base Registry town id and others) and coordinates are real. Events, people, teams and system numbers are invented. No personal names; use identifiers such as `staff-0012` or `field-team-a`.

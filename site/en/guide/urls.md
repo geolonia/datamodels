@@ -42,7 +42,7 @@ A new version does not replace the old one: `v1.0.0` stays at its URL, and the a
 ## Deprecation {#deprecation}
 
 - **An attribute** that is being replaced is marked deprecated in the schema and on the model page. It stays at least until the next minor version and is removed only in a major version.
-- **A model** that should not be used for new work is marked deprecated. It stays published at the same URLs; its page and `catalog.json` name the replacement (`supersededBy`).
+- **A model** that should not be used for new work is marked deprecated. It stays published at the same URLs. If there is a replacement, its page and `catalog.json` name it (`supersededBy`).
 
 ## All URLs
 
