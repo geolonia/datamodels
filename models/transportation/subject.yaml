@@ -10,8 +10,8 @@ summary:
   ja: 道路と交通：通行止めなどの通行規制
   en: "Roads and traffic: closures and other road restrictions"
 description:
-  ja: 道路と交通のデータモデル。国の基準（警察庁「交通規制情報（拡張版標準フォーマット）」、国土交通省の道路情報提供システム）に基づく。現在は通行規制（RoadRestriction）。状態の呼び方（statusLabel）はタスク管理の IRI を使う。
-  en: "Data models for roads and traffic, based on national standards (the National Police Agency's traffic regulation data format and MLIT's Road Information Provision System). Currently road restrictions (RoadRestriction). The local status wording (statusLabel) uses the task subject's IRI."
+  ja: 道路と交通のデータ。国の基準（警察庁の交通規制情報の標準フォーマット、国土交通省の道路情報提供システム）に基づきます。
+  en: "Data about roads and traffic, based on national standards (the National Police Agency's traffic regulation data format and MLIT's Road Information Provision System)."
 source: minted            # minted | profile | global
 origin:
   note: RoadRestriction was seeded from the road closure model of the Takamatsu City flood-prevention headquarters application and moved here from the disaster subject on 2026-09-25 (#55).

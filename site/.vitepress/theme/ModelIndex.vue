@@ -51,7 +51,8 @@ const shown = computed(() => {
     terms.every((t) => m.text.includes(t)))
 })
 const searching = computed(() => !!(q.value.trim() || subject.value || kind.value || status.value))
-const badgeType = (s: Row['status']) => (s === 'stable' ? 'tip' : s === 'deprecated' ? 'danger' : 'info')
+// Same colours as the generated pages (scripts/lib/site.mjs, statusBadge).
+const badgeType = (s: Row['status']) => (s === 'stable' ? 'tip' : s === 'deprecated' ? 'danger' : 'warning')
 </script>
 
 <template>

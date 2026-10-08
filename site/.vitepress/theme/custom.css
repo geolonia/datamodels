@@ -274,3 +274,37 @@
 #VPSidebarNav .VPSidebarItem.level-0 { padding-bottom: 0.75rem; }
 #VPSidebarNav .VPSidebarItem.level-0.collapsed { padding-bottom: 0; }
 #VPSidebarNav .VPSidebarItem:has(> .item .sb-other) { margin-top: 0.5rem; }
+
+/* Label colours carry a meaning; the brand red stays for links and accents.
+ * green (tip): ready to use (stable, the current version)
+ * amber (warning): may still change (draft)
+ * red (danger): careful (deprecated, personal data)
+ * grey (info): just information (value type, required, ...) */
+:root {
+  --vp-c-tip-1: var(--vp-c-green-1);
+  --vp-c-tip-2: var(--vp-c-green-2);
+  --vp-c-tip-3: var(--vp-c-green-3);
+  --vp-c-tip-soft: var(--vp-c-green-soft);
+}
+
+/* A table whose header row has no text (a key/value table) shows no empty header bar. */
+.vp-doc table thead:not(:has(th:not(:empty))) { display: none; }
+/* In such a key/value table the keys stay on one line (サブジェクト, not サブジェクト|ト). */
+.vp-doc table:has(thead:not(:has(th:not(:empty)))) td:first-child { white-space: nowrap; }
+
+/* Tables span the content width, so the tables on a page line up. The default
+ * theme makes them blocks that shrink to their content; on phones they stay
+ * blocks that scroll sideways. Long URLs in cells may break. */
+@media (min-width: 768px) {
+  .vp-doc table { display: table; width: 100%; }
+  .vp-doc td code { overflow-wrap: anywhere; }
+}
+
+/* Small notes under a table (<small> alone in a paragraph) get a tighter line height than body text. */
+.vp-doc p > small { display: inline-block; line-height: 1.6; }
+
+/* Versions table on subject pages (scripts/lib/site.mjs): the version and the
+ * @context URL stay on one line; the list of schemas takes the remaining width and wraps. */
+.vp-doc .versions td:nth-child(-n+2) { white-space: nowrap; }
+.vp-doc .versions td code { overflow-wrap: normal; }
+.vp-doc .versions td:last-child { width: 100%; }

@@ -6,7 +6,6 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { loadSubjects, attributesOf, subjectUrls, modelUrls, DIST, ROOT, BASE_URL } from './models.mjs';
 import { listReleases } from './releases.mjs';
-import { sharedTerms } from './shared-terms.mjs';
 import { buildVocabulary } from './vocab.mjs';
 import { exactVersionHeaderRules, readManifest } from './cache.mjs';
 
@@ -84,6 +83,30 @@ export function catalogEntry(subject, model, adapterUrls = {}) {
 }
 
 /**
+ * The redirects that make the IRIs of a subject resolve to documentation:
+ * the namespace to the subject page, each type to its page, each attribute to
+ * its heading on a model page. Only IRIs minted in this namespace get one;
+ * reused IRIs (schema.org, task, core) resolve elsewhere. An attribute that
+ * several models share (with one IRI) goes to the first of those models.
+ */
+export function termRedirects(subject) {
+  const u = subjectUrls(subject);
+  const out = [`/ns/${subject.name}/  /models/${subject.name}/  302`];
+  const done = new Set();
+  for (const model of subject.models) {
+    // An alias has no IRI of its own under this namespace.
+    if (modelUrls(subject, model).typeIri === `${u.namespace}${model.type}`) out.push(`/ns/${subject.name}/${model.type}  /models/${subject.name}/${model.type}/  302`);
+    for (const [name] of attributesOf(model)) {
+      const iri = model.schema.properties[name]['x-iri'] ?? '';
+      if (done.has(name) || !iri.startsWith(u.namespace)) continue;
+      done.add(name);
+      out.push(`/ns/${subject.name}/${name}  /models/${subject.name}/${model.type}/#${name}  302`);
+    }
+  }
+  return out;
+}
+
+/**
  * adapters: modules discovered under adapters/ by build.mjs (the core never
  * imports them). Each may add one file per model, listed in catalog.json.
  */
@@ -106,14 +129,7 @@ export async function publishModels(subjects, adapters = []) {
     const vocab = json(buildVocabulary(subject));
     await write(u.vocabExact, vocab); exact(u.vocabExact);
     await write(u.vocabAlias, vocab);
-    // The namespace IRI itself resolves to the subject page.
-    redirects.push(`/ns/${subject.name}/  /models/${subject.name}/  302`);
-    const shared = sharedTerms(subject);
-    // Only IRIs minted in this namespace get a redirect; reused IRIs (schema.org, task, core) resolve elsewhere.
-    for (const [name, types] of shared) {
-      const iri = subject.models.find((m) => m.type === types[0]).schema.properties[name]['x-iri'] ?? '';
-      if (iri.startsWith(u.namespace)) redirects.push(`/ns/${subject.name}/${name}  /models/${subject.name}/#${name}  302`);
-    }
+    redirects.push(...termRedirects(subject));
 
     for (const model of subject.models) {
       const mu = modelUrls(subject, model);
@@ -124,12 +140,6 @@ export async function publishModels(subjects, adapters = []) {
       for (const m of model.mappings ?? []) await write(`${mu.mapping}${m.name}.yaml`, await readFile(join(model.dir, 'mapping', `${m.name}.yaml`)));
       const adapterUrls = {};
       for (const a of adapters) { const url = a.urlFor(subject, model); if (url) { await write(url, a.content(subject, model)); adapterUrls[a.name] = url; } }
-      // An alias has no IRI of its own under this namespace.
-      if (mu.typeIri === `${u.namespace}${model.type}`) redirects.push(`/ns/${subject.name}/${model.type}  /models/${subject.name}/${model.type}/  302`);
-      for (const [name] of attributesOf(model)) if (!shared.has(name) && !(name in {})) {
-        const iri = model.schema.properties[name]['x-iri'] ?? '';
-        if (iri.startsWith(u.namespace)) redirects.push(`/ns/${subject.name}/${name}  /models/${subject.name}/${model.type}/#${name}  302`);
-      }
       catalog.models.push(catalogEntry(subject, model, adapterUrls));
     }
   }
