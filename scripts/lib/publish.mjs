@@ -83,10 +83,6 @@ export function catalogEntry(subject, model, adapterUrls = {}) {
 }
 
 /**
- * adapters: modules discovered under adapters/ by build.mjs (the core never
- * imports them). Each may add one file per model, listed in catalog.json.
- */
-/**
  * The redirects that make the IRIs of a subject resolve to documentation:
  * the namespace to the subject page, each type to its page, each attribute to
  * its heading on a model page. Only IRIs minted in this namespace get one;
@@ -110,6 +106,10 @@ export function termRedirects(subject) {
   return out;
 }
 
+/**
+ * adapters: modules discovered under adapters/ by build.mjs (the core never
+ * imports them). Each may add one file per model, listed in catalog.json.
+ */
 export async function publishModels(subjects, adapters = []) {
   const catalog = { formatVersion: 1, generatedAt: new Date().toISOString(), ...CATALOG_LICENSE, models: [] };
   const redirects = ['', '# Generated: type and attribute IRIs resolve to their documentation.'];
