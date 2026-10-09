@@ -56,7 +56,7 @@ NGSI-LD のブローカーに送るときは、[使い方](/guide/use#broker)の
 
 ## 置き場所 {#host-context}
 
-@context は、あなたが管理する、変わらない HTTPS のアドレスに置きます（自分のドメイン、GitHub Pages、アドレスが固定のオブジェクトストレージなど）。ブローカーや JSON-LD のツールは、そこから読みます（GeonicDB では、登録するモデルの `contextUrl`）。
+@context は、あなたが管理する、変わらない HTTPS のアドレスに置きます（自分のドメイン、GitHub Pages、アドレスが固定のオブジェクトストレージなど）。ブローカーや JSON-LD のツールは、そこから読みます。
 
 - バージョンごとに別のアドレスで公開し、公開したファイルは変えず、消さないでください。
 - `Content-Type: application/ld+json` と `Access-Control-Allow-Origin: *` で配信します。

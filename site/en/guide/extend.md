@@ -56,7 +56,7 @@ To send it to an NGSI-LD broker, convert the attributes to the normalized form, 
 
 ## Where to host it {#host-context}
 
-Put your @context at an HTTPS address that you control and that does not change: your own domain, GitHub Pages, or object storage with a fixed address. Brokers and JSON-LD tools fetch it from there (in GeonicDB, it is the `contextUrl` of a registered model).
+Put your @context at an HTTPS address that you control and that does not change: your own domain, GitHub Pages, or object storage with a fixed address. Brokers and JSON-LD tools fetch it from there.
 
 - Publish each version at its own address, and never change or remove a published file.
 - Serve it with `Content-Type: application/ld+json` and `Access-Control-Allow-Origin: *`.
