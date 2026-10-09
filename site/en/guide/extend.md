@@ -52,7 +52,7 @@ Your data names your @context instead of the catalog's, and has your attributes 
 }
 ```
 
-To send it to an NGSI-LD broker, list the NGSI-LD core context too, as in [Using the models](/en/guide/use#broker).
+To send it to an NGSI-LD broker, convert the attributes to the normalized form, and list both your @context and the NGSI-LD core context, as in [Using the models](/en/guide/use#broker).
 
 ## Where to host it {#host-context}
 

@@ -52,7 +52,7 @@ description: カタログのモデルを複製せずに独自の属性を足す�
 }
 ```
 
-NGSI-LD のブローカーに送るときは、[使い方](/guide/use#broker)のように NGSI-LD のコアコンテキストも並べます。
+NGSI-LD のブローカーに送るときは、[使い方](/guide/use#broker)のように属性を normalized 形式に変え、自分の @context と NGSI-LD のコアコンテキストの両方を並べます。
 
 ## 置き場所 {#host-context}
 
