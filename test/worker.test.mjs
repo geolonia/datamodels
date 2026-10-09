@@ -17,7 +17,7 @@ const env = {
     },
   },
 };
-const get = (path, accept) => worker.fetch(new Request(`https://datamodels.jp${path}`, { headers: accept ? { accept } : {} }), env);
+const get = (path, accept, method = 'GET') => worker.fetch(new Request(`https://datamodels.jp${path}`, { method, headers: accept ? { accept } : {} }), env);
 
 test('JSON-LD ranked above HTML wins; a tie, a wildcard or no Accept goes to the page', () => {
   assert.equal(prefersJsonLd('application/ld+json'), true);
@@ -40,6 +40,15 @@ test('a JSON-LD client gets a 303 to the subject vocabulary, for types, attribut
     assert.equal(r.headers.get('location'), location, path);
     assert.equal(r.headers.get('vary'), 'Accept');
     assert.equal(r.headers.get('access-control-allow-origin'), '*');
+  }
+});
+
+test('only GET and HEAD are negotiated; other methods get the static answer', async () => {
+  assert.equal((await get('/ns/task/Task', 'application/ld+json', 'HEAD')).status, 303);
+  for (const method of ['OPTIONS', 'POST']) {
+    const r = await get('/ns/task/Task', 'application/ld+json', method);
+    assert.equal(r.status, 302, method);
+    assert.equal(r.headers.get('location'), '/models/task/Task/', method);
   }
 });
 

@@ -49,7 +49,9 @@ export default {
     try {
       const subject = /^\/ns\/([a-z0-9-]+)\//.exec(new URL(request.url).pathname)?.[1];
       const known = res.status >= 300 && res.status < 400;
-      if (subject && known && prefersJsonLd(request.headers.get('accept'))) {
+      // Only reads are negotiated; a preflight or a POST gets the static answer.
+      const read = request.method === 'GET' || request.method === 'HEAD';
+      if (subject && known && read && prefersJsonLd(request.headers.get('accept'))) {
         const major = await subjectMajor(env, request, subject);
         if (major) {
           return new Response(null, {
