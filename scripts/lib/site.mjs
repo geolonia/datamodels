@@ -28,7 +28,7 @@ const T = {
     models: 'データモデル', overview: '概要', subjects: 'サブジェクト', attributes: '属性', exampleNote: (href) => `例は架空のシナリオ（東京都千代田区の大雨対応）です。地名とコードは実在のものですが、出来事・人・チームは架空です。書き方は[例の書き方](${href})にあります。`,
     linkHeader: 'Link ヘッダー', type: '型', name: '名前', stage: '段階', typeIri: '型 IRI', useGuide: (href) => `データの検証とブローカーへの送り方は[使い方](${href})にあります。`, context: '@context',
     urlNote: (versions, guide, withSchema) => `この @context${withSchema ? ' と JSON Schema' : ''} の URL は、常に互換性のある最新版を指します。<br>内容が変わらない URL は[バージョン](${versions})にあります。詳しくは[URL とバージョン](${guide})を見てください。`, schema: 'JSON Schema',
-    adapters: 'アダプター', adaptersRow: 'ブローカーやツール向けのファイル', mappingFiles: '対応表（YAML）',
+    adapters: 'アダプター', adaptersRow: 'ブローカーやツール向けのファイル',
     namespace: '名前空間', version: 'バージョン', vocabulary: '語彙',
     tryIt: '例を試す',
     extendThis: (href) => `このモデルに独自の属性を足すときは、[拡張ビルダー](${href})で @context と JSON Schema を作れます。`,
@@ -49,7 +49,7 @@ const T = {
     models: 'Data models', overview: 'Overview', subjects: 'Subjects', attributes: 'Attributes', exampleNote: (href) => `The examples are a fictional scenario (heavy rain in Chiyoda, Tokyo). Place names and codes are real; the events, people and teams are invented. See [writing examples](${href}).`,
     linkHeader: 'Link header', type: 'Type', name: 'Name', stage: 'Stage', typeIri: 'Type IRI', useGuide: (href) => `How to validate data and send it to a broker: [Using the models](${href}).`, context: '@context',
     urlNote: (versions, guide, withSchema) => `${withSchema ? 'These @context and JSON Schema URLs always point' : 'This @context URL always points'} to the latest compatible version.<br>For URLs that never change, see [Versions](${versions}). More in [URLs and versions](${guide}).`, schema: 'JSON Schema',
-    adapters: 'Adapters', adaptersRow: 'files for particular brokers and tools', mappingFiles: 'Mapping files (YAML)',
+    adapters: 'Adapters', adaptersRow: 'files for particular brokers and tools',
     namespace: 'Namespace', version: 'Version', vocabulary: 'Vocabulary',
     tryIt: 'Try the example',
     extendThis: (href) => `To add attributes of your own to this model, the [extension builder](${href}) writes the @context and JSON Schema.`,
@@ -170,7 +170,7 @@ const M = {
     requiredMark: '必須', requiredNote: '* は必須の属性です。', linkHeaderIntro: '本文に @context を書かずに送るときの Link ヘッダー:',
     use: 'このモデルを使う', useValue: (rules) => `他のモデルは、属性の値としてこの値型を参照します。書き方は[モデルのルール](${rules})にあります。`,
     standards: '参照している標準', standardsNote: 'このモデルが対応している標準と、項目ごとの対応です。開くと対応表が見られます。',
-    fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く', standardLicence: 'この標準のライセンス', notesTitle: '注記',
+    fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く', standardLicence: 'この標準のライセンス', mappingFile: 'この対応表のファイル（YAML、データ変換用）', notesTitle: '注記',
     sourceFiles: (href) => `ソースファイル（注記、対応表）は [GitHub](${href}) にあります。`,
   },
   en: {
@@ -182,7 +182,7 @@ const M = {
     requiredMark: 'required', requiredNote: '* required', linkHeaderIntro: 'The Link header, for sending data without @context in the body:',
     use: 'Using this model', useValue: (rules) => `Other models use this value type as the value of an attribute. How: [Rules for models](${rules}).`,
     standards: 'Referenced standards', standardsNote: 'The standards this model corresponds to, field by field. Open one to see its table.',
-    fieldsMapped: (n, total) => `${n} of ${total} fields`, openStandard: 'Open the standard', standardLicence: 'Licence of this standard', notesTitle: 'Notes',
+    fieldsMapped: (n, total) => `${n} of ${total} fields`, openStandard: 'Open the standard', standardLicence: 'Licence of this standard', mappingFile: 'This table as a file (YAML, for converting data)', notesTitle: 'Notes',
     sourceFiles: (href) => `The source files (notes, mapping tables) are on [GitHub](${href}).`,
   },
 };
@@ -223,8 +223,6 @@ function modelPage(lang, prefix, subject, model) {
   // The aliases only; the fixed URLs of each version are on the subject page (urlNote below the table).
   md += `| ${t.context} | [${code(u.contextAlias)}](${rel(u.contextAlias)}) |\n`;
   md += `| ${t.schema} | [${code(rel(mu.schemaAlias))}](${rel(mu.schemaAlias)}) |\n`;
-  // The correspondence tables below, as files a converter reads.
-  if (model.mappings?.length) md += `| ${t.mappingFiles} | ${model.mappings.map((m) => `[${m.name}.yaml](${rel(mu.mapping)}${m.name}.yaml)`).join(' · ')} |\n`;
   md += adapterRow(lang, prefix, subject, model, allAdapters);
   md += `| ${l.licence} | ${l.licenceText(`${prefix}/LICENSE-CONTENT`)} |\n\n`;
   md += `<small>${t.urlNote(`${prefix}${rel(subjectUrls(subject).page)}#versions`, `${prefix}/guide/urls`, true)}</small>\n\n`;
@@ -281,8 +279,11 @@ function modelPage(lang, prefix, subject, model) {
       md += `| ${t.mappingField} | ${t.mappingTo} | ${t.mappingNote} |\n|---|---|---|\n`;
       // Link a field to its attribute row; a value type such as Geometry has no rows to link to.
       for (const [field, m] of Object.entries(map.fields ?? {})) md += `| ${model.schema.properties?.[field] ? `[${code(field)}](#${field})` : code(field)} | ${m.to ? code(m.to) : `*${t.none}*`} | ${cellText(m.note?.[lang] ?? '')} |\n`;
+      // Under the table: the same table as a file a converter reads, and the standard's licence.
+      const file = `${rel(mu.mapping)}${map.name}.yaml`;
+      md += `\n<p class="licence">${l.mappingFile}: <a href="${file}">${map.name}.yaml</a></p>\n`;
       const licence = standardLicense(map.standard, lang);
-      if (licence) md += `\n<p class="licence">${l.standardLicence}: ${licence}</p>\n`;
+      if (licence) md += `<p class="licence">${l.standardLicence}: ${licence}</p>\n`;
       md += '\n</details>\n\n';
     }
     md += `</div>\n\n`;
