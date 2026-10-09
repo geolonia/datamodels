@@ -9,7 +9,7 @@ description: 世界と日本で使われているデータモデル・語彙の�
 
 ## 世界
 
-| カタログ | 内容 | NGSI-LD |
+| カタログ | 内容 | NGSI-LD での使い方 |
 |---|---|---|
 | [Smart Data Models](https://smartdatamodels.org/) | FIWARE・TM Forum・IUDX・OASC が運営。スマートシティ、農業、エネルギーなど 900 以上のモデル。JSON Schema、`@context`、例、多言語仕様（日本語は機械翻訳） | そのまま使える。このカタログの上流 |
 | [ETSI NGSI-LD 仕様（GS CIM 009 V1.8.1）](https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.08.01_60/gs_cim009v010801p.pdf) | NGSI-LD API の仕様書（PDF）。予約語（`location`, `observedAt`, `status` など）を定める core context は [uri.etsi.org](https://uri.etsi.org/ngsi-ld/v1/) にバージョン付きで公開 | 常に暗黙に適用される |
@@ -21,7 +21,7 @@ description: 世界と日本で使われているデータモデル・語彙の�
 
 どの標準にどのモデルが対応するかは[標準からモデルを探す](/guide/standards)にあります。
 
-| カタログ | 内容 | NGSI-LD |
+| カタログ | 内容 | NGSI-LD での使い方 |
 |---|---|---|
 | [デジタル庁 GIF（政府相互運用性フレームワーク）](https://www.digital.go.jp/policies/data_strategy_government_interoperability_framework) | コアデータモデル（個人、法人、住所、施設、建物 など）と分野別の実装データモデル。XSD と Excel で公開。[GitHub](https://github.com/JDA-DM/GIF) | 対応付けが必要。[JapaneseAddress](/models/common/JapaneseAddress/) は GIF の住所に対応 |
 | [自治体標準オープンデータセット](https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test)（旧 推奨データセット） | 自治体オープンデータの標準フォーマット（公共施設、指定緊急避難場所、AED、子育て施設、イベント など）。CSV の項目定義書。指定避難所のデータセットは無い | 対応付けが必要（対応表あり）。「03 指定緊急避難場所一覧」は [EvacuationSite](/models/disaster/EvacuationSite/)、所在地と緯度・経度の列は JapaneseAddress と Geometry。一覧は[標準からモデルを探す](/guide/standards) |
