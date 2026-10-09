@@ -7,13 +7,13 @@ import { standardLicense } from './mapping-check.mjs';
 
 const T = {
   ja: {
-    title: '標準からモデルを探す',
+    title: '対応している標準',
     intro: '自団体のデータが沿っている標準（自治体標準オープンデータセット、EEI、国土地理院の避難所データなど）がわかっていれば、ここから対応するモデルと、項目ごとの対応表にたどれます。それぞれの標準の説明は[他のデータモデルカタログ](/guide/catalogs)にあります。',
     part: '部分', model: 'モデル', fields: '対応する項目', of: (n, total) => `${total} 項目中 ${n}`,
     groups: { government: '国・自治体', international: '国際標準・海外のモデル', tool: 'ツール・サービス' },
   },
   en: {
-    title: 'Find a model by standard',
+    title: 'Standards covered',
     intro: 'If you know the standard your data follows (the municipal standard open datasets, EEI, GSI\'s shelter data and more), find the matching model here, with a table of which field matches which. For a description of each standard, see [Other data model catalogs](/en/guide/catalogs).',
     part: 'Part', model: 'Model', fields: 'Fields matched', of: (n, total) => `${n} of ${total}`,
     groups: { government: 'National and local government', international: 'International standards and models', tool: 'Tools and services' },

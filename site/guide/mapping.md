@@ -10,7 +10,7 @@ description: 標準に沿ったデータを、モデルの対応表（マッピ�
 ## どこにあるか
 
 - モデルのページの**参照している標準**: 標準ごとに 1 行で、開くと対応表が見られます。YAML のファイルは表の下にリンクがあります。
-- 標準ごとの一覧: [標準からモデルを探す](/guide/standards)
+- 標準ごとの一覧: [対応している標準](/guide/standards)
 - ファイル: `https://datamodels.jp/mapping/<subject>/<Type>/<name>.yaml`。モデルごとに `catalog.json`（`mappingUrls`）にも載っています。
 
 対応表にはバージョンがありません。URL は変わらず、内容は現在のモデルに合わせます。

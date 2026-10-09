@@ -28,12 +28,10 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
       text: ja ? 'モデルを使う' : 'Use the models',
       items: [
         page('使い方', 'Using the models', 'use', [{ text: 'GeonicDB', link: `${prefix}/guide/geonicdb` }]),
-        page('標準からモデルを探す', 'Find a model by standard', 'standards'),
         page('データを変換する', 'Converting data', 'mapping'),
         page('属性を足す', 'Adding attributes', 'extend'),
         page('拡張ビルダー', 'Extension builder', 'builder'),
         page('独自の名前で使う', 'Your own names', 'names'),
-        page('URL とバージョン', 'URLs and versions', 'urls'),
       ],
     },
     {
@@ -41,6 +39,14 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
       items: [
         page('貢献する', 'Contributing', 'contribute'),
         page('モデルのルール', 'Rules for models', 'rules'),
+      ],
+    },
+    {
+      // Pages to look things up in, not tasks.
+      text: ja ? '参照' : 'Reference',
+      items: [
+        page('対応している標準', 'Standards covered', 'standards'),
+        page('URL とバージョン', 'URLs and versions', 'urls'),
         page('他のデータモデルカタログ', 'Other data model catalogs', 'catalogs'),
       ],
     },

@@ -10,7 +10,7 @@ Many models correspond to a standard that data already follows in Japan, for exa
 ## Where to find them
 
 - On the model page, under **Referenced standards**: one row per standard, opening to the table. The YAML file is linked under the table.
-- All of them, by standard: [Find a model by standard](/en/guide/standards).
+- All of them, by standard: [Standards covered](/en/guide/standards).
 - As files: `https://datamodels.jp/mapping/<subject>/<Type>/<name>.yaml`, and listed per model in `catalog.json` (`mappingUrls`).
 
 A mapping file has no version: its URL stays, and its content follows the current model.
