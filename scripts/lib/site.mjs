@@ -197,6 +197,9 @@ const M = {
 const extensionForm = (subject, model) => `https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml&model=${encodeURIComponent(`${subject.name}/${model.type}`)}`;
 // A table cell: no line breaks, pipes escaped.
 const cellText = (s) => String(s ?? '').replace(/\r?\n/g, ' ').replace(/\|/g, '\\|');
+// Text reported by outsiders (extensions): a table cell in which Markdown has no effect either,
+// so **x** or [x](url) shows as written instead of formatting the page or adding a link.
+const plainCell = (s) => cellText(String(s ?? '').replace(/[\\`*_[\]#~]/g, '\\$&'));
 
 function modelPage(lang, prefix, subject, model) {
   const t = T[lang]; const l = M[lang]; const u = subjectUrls(subject); const mu = modelUrls(subject, model);
@@ -306,9 +309,9 @@ function modelPage(lang, prefix, subject, model) {
   if (model.extensions?.length) {
     md += `## ${l.extensions} {#extensions}\n\n${l.extensionsNote(extensionForm(subject, model))}\n\n| ${l.organization} | ${l.addedTerms} | @context |\n|---|---|---|\n`;
     for (const ext of model.extensions) {
-      const org = ext.url ? `[${cellText(ext.organization[lang])}](${ext.url})` : cellText(ext.organization[lang]);
+      const org = ext.url ? `[${plainCell(ext.organization[lang])}](${ext.url})` : plainCell(ext.organization[lang]);
       const data = ext.data ? `<br><small>[${l.dataLink}](${ext.data})</small>` : '';
-      const terms = Object.entries(ext.terms).map(([name, x]) => `${code(name)}: ${cellText(x.description[lang])}<br><span class="iri">${code(x.iri)}</span>`).join('<br>');
+      const terms = Object.entries(ext.terms).map(([name, x]) => `${code(name)}: ${plainCell(x.description[lang])}<br><span class="iri">${code(x.iri)}</span>`).join('<br>');
       const context = typeof ext.context === 'string' ? `[${code(ext.context)}](${ext.context})` : `*${l.inlineContext}*`;
       md += `| <a id="extension-${ext.name}"></a>${org}${data} | ${terms} | ${context} |\n`;
     }

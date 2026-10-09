@@ -62,3 +62,5 @@ body:
       options:
         - label: この組織を代表して、上の内容を datamodels.jp で公開することに同意します / I represent this organisation and agree to list the above publicly on datamodels.jp
           required: true
+        - label: "上の内容（説明と @context）を、カタログのファイルと同じ CC0 1.0 で公開してよいことに同意します / I agree that the above (descriptions and @context) is published under CC0 1.0, like the catalog's files"
+          required: true

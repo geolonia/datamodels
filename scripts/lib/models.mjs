@@ -87,7 +87,12 @@ export async function loadSubjects() {
       // Known extensions by other organisations (extensions/<name>.yaml, scripts/lib/extensions.mjs).
       const extensions = [];
       const mdirExt = join(mdir, 'extensions');
-      if (await isDir(mdirExt)) for (const f of (await readdir(mdirExt)).sort()) if (f.endsWith('.yaml')) extensions.push({ name: f.replace(/\.yaml$/, ''), ...(await readYaml(join(mdirExt, f))) });
+      if (await isDir(mdirExt)) for (const f of (await readdir(mdirExt)).sort()) if (f.endsWith('.yaml')) {
+        // The file name is the id; fileKeys lets the validator reject a name: written in the file.
+        const data = (await readYaml(join(mdirExt, f))) ?? {};
+        const fileKeys = data && typeof data === 'object' && !Array.isArray(data) ? Object.keys(data) : [];
+        extensions.push({ ...data, name: f.replace(/\.yaml$/, ''), fileKeys });
+      }
       const examples = {};
       for (const f of ['example.json', 'example-normalized.jsonld']) {
         const p = join(mdir, 'examples', f);

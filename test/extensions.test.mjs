@@ -77,6 +77,10 @@ test('catalog.json lists the extension, and the entry follows catalog.schema.jso
   const validate = ajv.compile(schema);
   const catalog = { formatVersion: 1, generatedAt: new Date().toISOString(), license: 'CC0-1.0', licenseUrl: `${BASE_URL}/LICENSE-CONTENT`, models: [entry] };
   assert.ok(validate(catalog), ajv.errorsText(validate.errors));
+  // Exactly one of contextUrl and context.
+  const { context, ...noContext } = entry.extensions[0];
+  assert.equal(validate({ ...catalog, models: [{ ...entry, extensions: [noContext] }] }), false, 'an extension without a context fails');
+  assert.equal(validate({ ...catalog, models: [{ ...entry, extensions: [{ ...entry.extensions[0], contextUrl: 'https://example.org/c.jsonld' }] }] }), false, 'both forms at once fail');
 });
 
 test('the model page lists extensions under "Extended by", and every entity page links the form', () => {
@@ -103,7 +107,34 @@ test('the validator reports a bad extension file with its path', async () => {
     const r = spawnSync(process.execPath, [join(ROOT, 'scripts', 'validate-models.mjs')], { env: { ...process.env, DATAMODELS_MODELS_DIR: dir }, encoding: 'utf8' });
     assert.notEqual(r.status, 0);
     assert.match(r.stderr, /transportation\/RoadRestriction\/extensions\/bad\.yaml: detour: the iri is under datamodels\.jp/);
+    // A name: in the file does not replace the file name; the validator says so under the file's own path.
+    await writeFile(join(dir, 'transportation', 'RoadRestriction', 'extensions', 'bad.yaml'), 'name: other-id\norganization: { ja: 和歌山県, en: Wakayama }\nversion: 1.0.0\ncontext: https://www.pref.wakayama.lg.jp/c.jsonld\nterms:\n  detour: { iri: https://www.pref.wakayama.lg.jp/ns/road/detour, description: { ja: 迂回路, en: Detour } }\n');
+    const r2 = spawnSync(process.execPath, [join(ROOT, 'scripts', 'validate-models.mjs')], { env: { ...process.env, DATAMODELS_MODELS_DIR: dir }, encoding: 'utf8' });
+    assert.match(r2.stderr, /extensions\/bad\.yaml: remove the key name/);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
+});
+
+test('the catalog host is recognised in any case and subdomain, and only published contexts count as imports', () => {
+  for (const iri of ['https://DATAMODELS.JP/ns/x', 'https://www.datamodels.jp/ns/x']) {
+    assert.match(problems({ terms: { detour: { ...detour.terms.detour, iri } } }).join('\n'), /under datamodels\.jp/, iri);
+  }
+  assert.match(problems({ context: 'https://Datamodels.jp/context/transportation/v1.jsonld' }).join('\n'), /own @context/);
+  const notAContext = [`${BASE_URL}/context/transportation/not-a-context`, detour.context[1]];
+  assert.match(problems({ context: notAContext }).join('\n'), /must import the transportation context/);
+  const exact = [`${BASE_URL}/context/transportation/v${transportation.version}.jsonld`, detour.context[1]];
+  assert.deepEqual(problems({ context: exact }), [], 'the exact current version is fine');
+});
+
+test('the file name is the id: a name key in the file is rejected, not used', () => {
+  assert.match(problems({ fileKeys: ['name', 'organization', 'version', 'context', 'terms'] }).join('\n'), /remove the key name/);
+  assert.deepEqual(problems({ fileKeys: ['organization', 'url', 'version', 'context', 'terms'] }), []);
+});
+
+test('Markdown in reported text shows as written on the page', () => {
+  const marked = { ...detour, organization: { ja: '**和歌山県** [x](https://evil.example)', en: '_Wakayama_ `x`' } };
+  const page = renderModelPage('ja', '', subjects, transportation, { ...RoadRestriction, extensions: [marked] });
+  assert.match(page, /\\\*\\\*和歌山県\\\*\\\* \\\[x\\\]\(https:\/\/evil\.example\)/);
+  assert.doesNotMatch(page, /\[x\]\(https:\/\/evil/, 'no working link');
 });

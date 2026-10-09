@@ -3,7 +3,7 @@
 // owner reports one with the issue form "Report an extension"; the catalog
 // lists it so others can find it and reuse its names, and does not review it.
 // The list shows on the model page ("Extended by") and in catalog.json.
-import { BASE_URL, CORE_TERMS, attributesOf } from './models.mjs';
+import { BASE_URL, CORE_TERMS, attributesOf, subjectUrls } from './models.mjs';
 import { bilingual } from './mapping-check.mjs';
 
 const TOP = new Set(['organization', 'url', 'version', 'context', 'terms', 'data', 'since']);
@@ -17,7 +17,9 @@ const SEMVER = /^(\d+)\.(\d+)\.(\d+)$/;
 const UNSAFE_TEXT = /[<>{}]/;
 const isLink = (u) => { if (typeof u !== 'string' || /[\s`<>{}|"\\^()[\]]/.test(u)) return false; try { const x = new URL(u); return (x.protocol === 'https:' || x.protocol === 'http:') && x.hostname !== ''; } catch { return false; } };
 const plain = (v) => bilingual(v) && !UNSAFE_TEXT.test(v.ja) && !UNSAFE_TEXT.test(v.en);
-const ours = (u) => typeof u === 'string' && (u === BASE_URL || u.startsWith(`${BASE_URL}/`));
+// A URL on the catalog's own host (any case, any subdomain): an extension's context and IRIs are the owner's.
+const CATALOG_HOST = new URL(BASE_URL).hostname;
+const ours = (u) => { try { const h = new URL(u).hostname.toLowerCase(); return h === CATALOG_HOST || h.endsWith(`.${CATALOG_HOST}`); } catch { return false; } };
 const older = (a, b) => { const x = a.match(SEMVER).slice(1).map(Number); const y = b.match(SEMVER).slice(1).map(Number); return x[0] - y[0] || x[1] - y[1] || x[2] - y[2]; };
 
 /** The IRI a term expands to in an inline context: its definition, with a prefix defined in the same context expanded. */
@@ -38,7 +40,10 @@ function inlineIri(defs, term) {
 export function extensionProblems(ext, model, subject) {
   const out = [];
   if (!EXTENSION_NAME.test(ext.name ?? '')) out.push('the file name must be lower-case letters, digits and -, for example wakayama-detour.yaml');
-  for (const k of Object.keys(ext)) if (k !== 'name' && !TOP.has(k)) out.push(`unknown key ${k} (allowed: ${[...TOP].join(', ')})`);
+  // The file name is the id: the loader passes the keys written in the file (fileKeys), so a name: there cannot replace it.
+  const keys = ext.fileKeys ?? Object.keys(ext).filter((k) => k !== 'name');
+  if (keys.includes('name')) out.push('remove the key name: the file name is the extension\'s id');
+  for (const k of keys) if (k !== 'name' && !TOP.has(k)) out.push(`unknown key ${k} (allowed: ${[...TOP].join(', ')})`);
   if (!plain(ext.organization)) out.push('organization needs ja and en, each non-empty plain text (no < > { }) and nothing else');
   for (const k of ['url', 'data']) if (ext[k] !== undefined && !isLink(ext[k])) out.push(`${k} must be a plain http(s) URL with a host, got ${JSON.stringify(ext[k])}`);
   if (ext.since !== undefined && !/^\d{4}-\d{2}(-\d{2})?$/.test(String(ext.since))) out.push(`since must be a date (2026-10 or 2026-10-09), got ${JSON.stringify(ext.since)}`);
@@ -52,7 +57,10 @@ export function extensionProblems(ext, model, subject) {
     else if (ours(ext.context)) out.push('context must be the extension\'s own @context, not a datamodels.jp URL');
   } else if (ext.context && typeof ext.context === 'object') {
     const parts = Array.isArray(ext.context) ? ext.context : [ext.context];
-    if (!parts.some((p) => typeof p === 'string' && p.startsWith(`${BASE_URL}/context/${subject.name}/`))) out.push(`an inline context must import the ${subject.name} context (${BASE_URL}/context/${subject.name}/v<major>.jsonld), so the catalog's attributes keep their meaning`);
+    // One of the subject's published contexts: the major alias, the current version, or the version it builds on.
+    const u = subjectUrls(subject);
+    const accepted = new Set([u.contextAlias, u.contextExact, ...(typeof ext.version === 'string' && SEMVER.test(ext.version) ? [`${BASE_URL}/context/${subject.name}/v${ext.version}.jsonld`] : [])]);
+    if (!parts.some((p) => accepted.has(p))) out.push(`an inline context must import the ${subject.name} context (${u.contextAlias}), so the catalog's attributes keep their meaning`);
     defs = Object.assign({}, ...parts.filter((p) => p && typeof p === 'object' && !Array.isArray(p)));
   } else out.push('context is required: the extension\'s @context URL, or the @context value written inline');
 
