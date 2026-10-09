@@ -28,7 +28,9 @@ fields:
     to: 想定収容人数 (maxCapacity)
     column: 想定収容人数
     transform: integer
-  nationalShelterId: { to: null, note: { ja: このデータセットには無い } }
+  nationalShelterId:
+    to: null
+    note: { ja: このデータセットには無い, en: not in this dataset }
 ```
 
 - `standard`: 標準の名前、リンク、ライセンス、短い説明。

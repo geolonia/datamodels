@@ -203,8 +203,9 @@ const rows = computed(() => Math.min(30, Math.max(10, text.value.split('\n').len
 @media (max-width: 640px) { .hint { order: 3; flex-basis: 100%; margin: 0; } }
 .bar + .editor { margin-top: 8px; }
 .editor { position: relative; border-radius: 8px; background: var(--vp-code-block-bg); }
-/* The <pre> and the textarea must lay out the text identically (font, padding, wrapping). */
-.editor .hl, .editor textarea { margin: 0; padding: 12px; font-family: var(--vp-font-family-mono); font-size: 13px; line-height: 1.5; tab-size: 2; white-space: pre-wrap; overflow-wrap: anywhere; border: 1px solid var(--vp-c-divider); border-radius: 8px; }
+/* The <pre> and the textarea must lay out the text identically (font, padding, wrapping, and the
+   scrollbar's space, so a long example wraps at the same width in both). */
+.editor .hl, .editor textarea { margin: 0; padding: 12px; font-family: var(--vp-font-family-mono); font-size: 13px; line-height: 1.5; tab-size: 2; white-space: pre-wrap; overflow-wrap: anywhere; border: 1px solid var(--vp-c-divider); border-radius: 8px; scrollbar-gutter: stable; }
 .editor .hl { position: absolute; inset: 0; overflow: hidden; color: var(--json-punct); background: none; pointer-events: none; }
 .editor textarea { position: relative; display: block; width: 100%; color: transparent; caret-color: var(--vp-c-text-1); background: transparent; resize: vertical; }
 .editor textarea::selection { color: transparent; background: var(--vp-c-brand-soft); }

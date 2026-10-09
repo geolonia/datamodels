@@ -22,11 +22,17 @@ async function pages() {
 test(`code lines in the guides are at most ${MAX} columns`, async () => {
   const long = [];
   for (const file of await pages()) {
+    // A fence closes only on the same marker (``` or ~~~), at least as long, with nothing after it.
     let fence = null;
     (await readFile(join(ROOT, file), 'utf8')).split('\n').forEach((line, i) => {
-      const m = /^\s*```(\w*)/.exec(line);
-      if (m) { fence = fence === null ? m[1] : null; return; }
-      if (fence !== null && fence !== 'text' && width(line) > MAX) long.push(`${file}:${i + 1} (${width(line)})`);
+      if (fence === null) {
+        const open = /^\s*(`{3,}|~{3,})\s*(\w*)/.exec(line);
+        if (open) fence = { marker: open[1], lang: open[2] };
+        return;
+      }
+      const close = /^\s*(`{3,}|~{3,})\s*$/.exec(line);
+      if (close && close[1][0] === fence.marker[0] && close[1].length >= fence.marker.length) { fence = null; return; }
+      if (fence.lang !== 'text' && width(line) > MAX) long.push(`${file}:${i + 1} (${width(line)})`);
     });
   }
   assert.deepEqual(long, []);
