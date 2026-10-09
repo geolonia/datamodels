@@ -28,7 +28,7 @@ const T = {
     models: 'データモデル', overview: '概要', subjects: 'サブジェクト', attributes: '属性', exampleNote: (href) => `例は架空のシナリオ（東京都千代田区の大雨対応）です。地名とコードは実在のものですが、出来事・人・チームは架空です。書き方は[例の書き方](${href})にあります。`,
     linkHeader: 'Link ヘッダー', type: '型', name: '名前', stage: '段階', typeIri: '型 IRI', useGuide: (href) => `データの検証とブローカーへの送り方は[使い方](${href})にあります。`, context: '@context',
     urlNote: (versions, guide, withSchema) => `この @context${withSchema ? ' と JSON Schema' : ''} の URL は、常に互換性のある最新版を指します。<br>内容が変わらない URL は[バージョン](${versions})にあります。詳しくは[URL とバージョン](${guide})を見てください。`, schema: 'JSON Schema',
-    adapters: 'アダプター', adaptersRow: 'ブローカーやツール向けのファイル',
+    adapters: 'アダプター', adaptersLine: (link) => `特定のブローカーやツールにそのまま読み込めるファイルも、このモデルから作っています: ${link}`,
     namespace: '名前空間', version: 'バージョン', vocabulary: '語彙',
     tryIt: '例を試す',
     extendThis: (href) => `このモデルに独自の属性を足すときは、[拡張ビルダー](${href})で @context と JSON Schema を作れます。`,
@@ -49,7 +49,7 @@ const T = {
     models: 'Data models', overview: 'Overview', subjects: 'Subjects', attributes: 'Attributes', exampleNote: (href) => `The examples are a fictional scenario (heavy rain in Chiyoda, Tokyo). Place names and codes are real; the events, people and teams are invented. See [writing examples](${href}).`,
     linkHeader: 'Link header', type: 'Type', name: 'Name', stage: 'Stage', typeIri: 'Type IRI', useGuide: (href) => `How to validate data and send it to a broker: [Using the models](${href}).`, context: '@context',
     urlNote: (versions, guide, withSchema) => `${withSchema ? 'These @context and JSON Schema URLs always point' : 'This @context URL always points'} to the latest compatible version.<br>For URLs that never change, see [Versions](${versions}). More in [URLs and versions](${guide}).`, schema: 'JSON Schema',
-    adapters: 'Adapters', adaptersRow: 'files for particular brokers and tools',
+    adapters: 'Adapters', adaptersLine: (link) => `Files that particular brokers and tools can load as they are, made from this model: ${link}`,
     namespace: 'Namespace', version: 'Version', vocabulary: 'Vocabulary',
     tryIt: 'Try the example',
     extendThis: (href) => `To add attributes of your own to this model, the [extension builder](${href}) writes the @context and JSON Schema.`,
@@ -86,9 +86,10 @@ let allSubjects = [];
 // Adapters discovered by build.mjs (the core never imports them): only whether one serves a model.
 let allAdapters = [];
 /** The URL table's "Adapters" row, or '' when no adapter serves the model. Product-neutral: it links the model's entry on /adapters/, which names the products and their files. */
-export function adapterRow(lang, prefix, subject, model, adapters) {
+/** The sentence under "Using this model" that links the model's adapter files, or '' without any. No product names. */
+export function adapterLine(lang, prefix, subject, model, adapters) {
   const t = T[lang];
-  return adapters.some((a) => a.urlFor(subject, model)) ? `| ${t.adapters} | [${t.adaptersRow}](${prefix}/adapters/#${modelAnchor(subject, model)}) |\n` : '';
+  return adapters.some((a) => a.urlFor(subject, model)) ? `${t.adaptersLine(`[${t.adapters}](${prefix}/adapters/#${modelAnchor(subject, model)})`)}\n\n` : '';
 }
 
 /** Everything the example playground (ExamplePlayground.vue) needs for one entity model. */
@@ -223,7 +224,6 @@ function modelPage(lang, prefix, subject, model) {
   // The aliases only; the fixed URLs of each version are on the subject page (urlNote below the table).
   md += `| ${t.context} | [${code(u.contextAlias)}](${rel(u.contextAlias)}) |\n`;
   md += `| ${t.schema} | [${code(rel(mu.schemaAlias))}](${rel(mu.schemaAlias)}) |\n`;
-  md += adapterRow(lang, prefix, subject, model, allAdapters);
   md += `| ${l.licence} | ${l.licenceText(`${prefix}/LICENSE-CONTENT`)} |\n\n`;
   md += `<small>${t.urlNote(`${prefix}${rel(subjectUrls(subject).page)}#versions`, `${prefix}/guide/urls`, true)}</small>\n\n`;
   // This model and its neighbours, one step; each neighbour links to its own page.
@@ -248,6 +248,7 @@ function modelPage(lang, prefix, subject, model) {
   if (isValue) md += `${l.useValue(`${prefix}/guide/rules#rules`)}\n\n`;
   else {
     md += `${t.useGuide(`${prefix}/guide/use`)}\n\n${t.extendThis(`${prefix}/guide/builder?model=${subject.name}/${model.type}`)}\n\n`;
+    md += adapterLine(lang, prefix, subject, model, allAdapters);
     md += `${l.linkHeaderIntro}\n\n\`\`\`http\nLink: <${u.contextAlias}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"\n\`\`\`\n\n`;
   }
   if (model.examples['example.json']) {

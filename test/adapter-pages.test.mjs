@@ -41,19 +41,19 @@ test('where GeonicDB is named, the text says whose broker it is', () => {
   assert.match(geonicdb.note.en, /Geolonia's NGSI-LD broker/);
 });
 
-test('a model page\'s "Adapters" row links its entry on /adapters/ without naming a product; value types have no row', async () => {
-  const { adapterRow } = await import('../scripts/lib/site.mjs');
+test('a model page\'s adapters sentence links its entry on /adapters/ without naming a product; value types have none', async () => {
+  const { adapterLine } = await import('../scripts/lib/site.mjs');
   for (const [lang, prefix, label] of [['ja', '', 'アダプター'], ['en', '/en', 'Adapters']]) {
     const index = adaptersIndexPage(lang, prefix, adapters, subjects);
     for (const s of subjects) for (const m of s.models) {
-      const row = adapterRow(lang, prefix, s, m, adapters);
-      if (m.kind === 'value') { assert.equal(row, '', `${m.type}: no row`); continue; }
+      const line = adapterLine(lang, prefix, s, m, adapters);
+      if (m.kind === 'value') { assert.equal(line, '', `${m.type}: no sentence`); continue; }
       const anchor = `${s.name}-${m.type}`.toLowerCase();
-      assert.match(row, new RegExp(`^\\| ${label} \\| \\[[^\\]]+\\]\\(${prefix}/adapters/#${anchor}\\) \\|\\n$`), `${lang} ${m.type}`);
-      assert.doesNotMatch(row, /GeonicDB|geonicdb/, `${lang} ${m.type}: no product in the row`);
+      assert.ok(line.includes(`[${label}](${prefix}/adapters/#${anchor})`), `${lang} ${m.type}`);
+      assert.doesNotMatch(line, /GeonicDB|geonicdb/, `${lang} ${m.type}: no product in the sentence`);
       assert.ok(index.includes(`<span id="${anchor}"></span>`), `${lang} ${m.type}: the anchor exists on /adapters/`);
       assert.equal(anchor, anchor.toLowerCase(), 'VitePress lowercases link hashes, so the id must be lower case');
     }
-    assert.equal(adapterRow(lang, prefix, subjects[0], subjects[0].models[0], []), '', 'no adapters, no row');
+    assert.equal(adapterLine(lang, prefix, subjects[0], subjects[0].models[0], []), '', 'no adapters, no sentence');
   }
 });
