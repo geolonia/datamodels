@@ -84,6 +84,15 @@ export async function loadSubjects() {
       const mappings = [];
       const mdirMapping = join(mdir, 'mapping');
       if (await isDir(mdirMapping)) for (const f of (await readdir(mdirMapping)).sort()) if (f.endsWith('.yaml')) mappings.push({ name: f.replace(/\.yaml$/, ''), ...(await readYaml(join(mdirMapping, f))) });
+      // Known extensions by other organisations (extensions/<name>.yaml, scripts/lib/extensions.mjs).
+      const extensions = [];
+      const mdirExt = join(mdir, 'extensions');
+      if (await isDir(mdirExt)) for (const f of (await readdir(mdirExt)).sort()) if (f.endsWith('.yaml')) {
+        // The file name is the id; fileKeys lets the validator reject a name: written in the file.
+        const data = (await readYaml(join(mdirExt, f))) ?? {};
+        const fileKeys = data && typeof data === 'object' && !Array.isArray(data) ? Object.keys(data) : [];
+        extensions.push({ ...data, name: f.replace(/\.yaml$/, ''), fileKeys });
+      }
       const examples = {};
       for (const f of ['example.json', 'example-normalized.jsonld']) {
         const p = join(mdir, 'examples', f);
@@ -93,7 +102,7 @@ export async function loadSubjects() {
       // structure such as an address, referenced from entity schemas).
       const kind = schema['x-kind'] ?? 'entity';
       if (!['entity', 'value'].includes(kind)) throw new Error(`${name}/${type}/schema.json: x-kind must be entity or value`);
-      models.push({ type, kind, dir: mdir, schema, catalog, notes, adopters, examples, mappings });
+      models.push({ type, kind, dir: mdir, schema, catalog, notes, adopters, examples, mappings, extensions });
     }
     subjects.push({ name, dir, ...meta, context, imports, inlineTerms, models });
   }

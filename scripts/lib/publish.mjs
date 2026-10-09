@@ -8,6 +8,7 @@ import { loadSubjects, attributesOf, subjectUrls, modelUrls, DIST, ROOT, BASE_UR
 import { listReleases } from './releases.mjs';
 import { buildVocabulary } from './vocab.mjs';
 import { exactVersionHeaderRules, readManifest } from './cache.mjs';
+import { extensionEntry } from './extensions.mjs';
 
 const rel = (url) => url.slice(BASE_URL.length).replace(/^\//, '');
 async function write(url, content) {
@@ -78,6 +79,8 @@ export function catalogEntry(subject, model, adapterUrls = {}) {
     // The same files with the standard each one maps, so a tool need not fetch them to show it (#156).
     ...(model.mappings?.length ? { mappings: model.mappings.map((m) => ({ url: `${mu.mapping}${m.name}.yaml`, standard: { ja: m.standard?.name?.ja ?? m.name, en: m.standard?.name?.en ?? m.name } })) } : {}),
     attributes: attributeEntries(model),
+    // Attributes other organisations added under their own IRIs, as their owners reported them (not reviewed).
+    ...(model.extensions?.length ? { extensions: model.extensions.map(extensionEntry) } : {}),
     ...(Object.keys(adapterUrls).length ? { adapters: adapterUrls } : {}),
     ...(model.schema['x-alias-of'] ? { aliasOf: model.schema['x-alias-of'] } : {}),
     ...(model.schema['x-subclass-of'] ? { subClassOf: model.schema['x-subclass-of'] } : {}),

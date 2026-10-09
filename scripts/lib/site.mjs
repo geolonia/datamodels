@@ -178,6 +178,9 @@ const M = {
     standards: '参照している標準', standardsNote: 'このモデルが対応している標準と、項目ごとの対応です。開くと対応表が見られます。',
     fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く', standardLicence: 'この標準のライセンス', mappingFile: (file, guide) => `この標準のデータを変換するための対応表（YAML）: ${file}（使い方は${guide('データを変換する')}）`, notesTitle: '注記',
     sourceFiles: (href) => `ソースファイル（注記、対応表）は [GitHub](${href}) にあります。`,
+    extensions: '拡張している組織', organization: '組織', addedTerms: '足した属性', inlineContext: 'データの中に記述', dataLink: 'データ',
+    extensionsNote: (form) => `このモデルに属性を足して使っている組織です。持ち主が登録したもので、datamodels.jp は内容を確認していません。同じ意味の属性が要るときは、ここにある名前を使えます。自分の拡張は[フォーム](${form})から登録できます。`,
+    reportExtension: (form, guide) => `このモデルを拡張したら、[フォームで登録してください](${form})。ほかの組織が同じ名前を使えます（[属性を足す](${guide})）。`,
   },
   en: {
     kind: 'Kind', entity: 'entity', valueKind: 'value type: used inside an attribute, not as an entity of its own',
@@ -190,10 +193,18 @@ const M = {
     standards: 'Referenced standards', standardsNote: 'The standards this model corresponds to, field by field. Open one to see its table.',
     fieldsMapped: (n, total) => `${n} of ${total} fields`, openStandard: 'Open the standard', standardLicence: 'Licence of this standard', mappingFile: (file, guide) => `Mapping file (YAML) for converting data from this standard: ${file} (how: ${guide('Converting data')})`, notesTitle: 'Notes',
     sourceFiles: (href) => `The source files (notes, mapping tables) are on [GitHub](${href}).`,
+    extensions: 'Extended by', organization: 'Organisation', addedTerms: 'Added attributes', inlineContext: 'inside the data', dataLink: 'data',
+    extensionsNote: (form) => `Organisations that added attributes to this model. Their owners listed them; datamodels.jp does not review the content. If you need an attribute with the same meaning, you can use a name listed here. List your own with the [form](${form}).`,
+    reportExtension: (form, guide) => `Extended this model? [List your extension](${form}) so others can reuse your names ([Adding attributes](${guide})).`,
   },
 };
+// The issue form for listing an extension, with the model filled in.
+const extensionForm = (subject, model) => `https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml&model=${encodeURIComponent(`${subject.name}/${model.type}`)}`;
 // A table cell: no line breaks, pipes escaped.
 const cellText = (s) => String(s ?? '').replace(/\r?\n/g, ' ').replace(/\|/g, '\\|');
+// Text reported by outsiders (extensions): a table cell in which Markdown has no effect either,
+// so **x** or [x](url) shows as written instead of formatting the page or adding a link.
+const plainCell = (s) => cellText(String(s ?? '').replace(/&/g, '&amp;').replace(/[\\`*_[\]#~]/g, '\\$&'));
 
 function modelPage(lang, prefix, subject, model) {
   const t = T[lang]; const l = M[lang]; const u = subjectUrls(subject); const mu = modelUrls(subject, model);
@@ -254,6 +265,7 @@ function modelPage(lang, prefix, subject, model) {
   else {
     // One line per task; the Link header last, with its code block (wraps, custom.css).
     md += `- ${t.useGuide(`${prefix}/guide/use`)}\n- ${t.extendThis(`${prefix}/guide/builder?model=${subject.name}/${model.type}`)}\n`;
+    md += `- ${l.reportExtension(extensionForm(subject, model), `${prefix}/guide/extend`)}\n`;
     const adapters = adapterLine(lang, prefix, subject, model, allAdapters);
     if (adapters) md += `- ${adapters.trim()}\n`;
     md += `- ${l.linkHeaderIntro}\n\n  \`\`\`http\n  Link: <${u.contextAlias}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"\n  \`\`\`\n\n`;
@@ -296,6 +308,19 @@ function modelPage(lang, prefix, subject, model) {
       md += '\n</details>\n\n';
     }
     md += `</div>\n\n`;
+  }
+  // Extensions by other organisations, as their owners listed them (scripts/lib/extensions.mjs):
+  // one row each, so a reader who needs the same attribute finds a name to reuse.
+  if (model.extensions?.length) {
+    md += `## ${l.extensions} {#extensions}\n\n${l.extensionsNote(extensionForm(subject, model))}\n\n| ${l.organization} | ${l.addedTerms} | @context |\n|---|---|---|\n`;
+    for (const ext of model.extensions) {
+      const org = ext.url ? `[${plainCell(ext.organization[lang])}](${ext.url})` : plainCell(ext.organization[lang]);
+      const data = ext.data ? `<br><small>[${l.dataLink}](${ext.data})</small>` : '';
+      const terms = Object.entries(ext.terms).map(([name, x]) => `${code(name)}: ${plainCell(x.description[lang])}<br><span class="iri">${code(x.iri)}</span>`).join('<br>');
+      const context = typeof ext.context === 'string' ? `[${code(ext.context)}](${ext.context})` : `*${l.inlineContext}*`;
+      md += `| <a id="extension-${ext.name}"></a>${org}${data} | ${terms} | ${context} |\n`;
+    }
+    md += '\n';
   }
   const notes = model.notes?.notes ?? [];
   if (notes.length) md += `## ${l.notesTitle} {#notes}\n\n${notes.map((n) => `- ${issueLinks(n[lang])}`).join('\n')}\n\n`;
@@ -348,6 +373,12 @@ export function indexPage(lang, prefix, subjects) {
 }
 
 async function put(path, content) { await mkdir(join(path, '..'), { recursive: true }); await writeFile(path, content); }
+
+/** One model page on its own, for tests (generateSitePages writes them all). */
+export function renderModelPage(lang, prefix, subjects, subject, model, adapters = []) {
+  allSubjects = subjects; allAdapters = adapters;
+  return modelPage(lang, prefix, subject, model);
+}
 
 /** Guides generated by generateSitePages (ignored by git), next to the hand-written ones. */
 export const GENERATED_GUIDES = ['standards'];

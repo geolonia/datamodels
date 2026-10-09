@@ -44,6 +44,34 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 - レビューを経て、他のモデルと同じく `draft` で取り込みます。新しい段階はありません。
 - `ADOPTERS.yaml` の記載は、早めの根拠になります。1 つの組織は 1 回だけ数えるので、`stable` に 2 つの独立した組織が要るという規則は変わりません（2026-10-06 決定、#156）。
 
+### 他のカタログを知らせる
+
+ほかのデータモデルカタログや語彙は、[他のカタログの登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=catalog-report.yml)で知らせてください。メンテナーが確認して「[他のデータモデルカタログ](https://datamodels.jp/guide/catalogs)」のページに載せます。datamodels.jp のモデルを拡張したカタログを機械が読める形で一覧にする方法は、まだ決まっていません（#56）。
+
+### 拡張を一覧に載せる
+
+モデルに属性を足して使っている組織は、その拡張をモデルのページの「拡張している組織」と `catalog.json` に載せられます。同じ意味の属性に、ほかの組織が同じ名前を使えるようにするためです。
+
+1. 持ち主が [拡張の登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml) に記入します（モデルのページからはモデル名が入った状態で開きます）。
+2. メンテナーか持ち主が、`models/<サブジェクト>/<型名>/extensions/<名前>.yaml` を足す Pull Request を開きます（署名付き）。
+3. CI が形を検査します。名前は自分のドメインの IRI で、モデルの属性や NGSI-LD のコアの用語と重ならないこと。@context をデータの中に書く場合は、サブジェクトの @context を取り込み、各用語を書いた IRI で定義していること。
+4. レビューで確かめるのは、登録した人がその組織を代表していることだけです。内容は確認せず、持ち主の申告のまま載せます。アクセス情報（キー、トークン、ログイン URL）は載せません。
+
+```yaml
+organization: { ja: 和歌山県, en: Wakayama Prefecture }
+url: https://www.pref.wakayama.lg.jp/        # 任意
+version: 1.0.0                               # 基にしたサブジェクトのバージョン
+context:                                     # URL、またはデータの中に書く @context
+  - https://datamodels.jp/context/transportation/v1.jsonld
+  - { detour: https://www.pref.wakayama.lg.jp/ns/road/detour }
+terms:
+  detour:
+    iri: https://www.pref.wakayama.lg.jp/ns/road/detour
+    description: { ja: 迂回路, en: Detour route }
+data: https://example.org/road-restrictions  # 任意：公開しているデータ
+since: 2026-10                               # 任意：載せた時期
+```
+
 ## 署名（DCO）
 
 コミットの `Signed-off-by: 名前 <メールアドレス>` は、[Developer Certificate of Origin](https://developercertificate.org/) に同意することを表します。つまり、その変更を自分で作ったか、公開する権利があり、このリポジトリのライセンスで公開してよいことを示します。別の同意書はありません。
@@ -104,6 +132,34 @@ A tool that registers data (a broker console, for example) may build a new model
 - **Tools never post.** A person opens the pull request under their own GitHub account and signs off the commits (DCO), so authorship and responsibility stay with a person.
 - After review, the model is merged as `draft`, like any other. There is no extra stage.
 - The `ADOPTERS.yaml` entry gives reviewers evidence early. One organisation still counts once, so `stable` still needs two independent organisations (decided 2026-10-06, #156).
+
+### Telling us about another catalog
+
+Report another catalog of data models or vocabularies with the [catalog form](https://github.com/geolonia/datamodels/issues/new?template=catalog-report.yml). A maintainer checks it and lists it on the page "[Other data model catalogs](https://datamodels.jp/en/guide/catalogs)". How catalogs that extend datamodels.jp models are listed for machines is not decided yet (#56).
+
+### Listing an extension
+
+An organisation that added attributes to a model can list its extension on the model page ("Extended by") and in `catalog.json`, so others who need an attribute with the same meaning can reuse the name.
+
+1. The owner fills in the [extension form](https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml) (from a model page it opens with the model filled in).
+2. A maintainer or the owner opens a pull request that adds `models/<subject>/<Type>/extensions/<name>.yaml` (signed off).
+3. CI checks the form of it: the names are IRIs under the owner's own domain and clash with no attribute of the model and no NGSI-LD core term; an inline @context imports the subject's @context and defines each term with the IRI listed.
+4. The review only checks that the person who reported it represents the organisation. The content is listed as the owner reported it, without review. Access details (keys, tokens, login URLs) are never listed.
+
+```yaml
+organization: { ja: 和歌山県, en: Wakayama Prefecture }
+url: https://www.pref.wakayama.lg.jp/        # optional
+version: 1.0.0                               # the subject version it builds on
+context:                                     # a URL, or the @context written inside the data
+  - https://datamodels.jp/context/transportation/v1.jsonld
+  - { detour: https://www.pref.wakayama.lg.jp/ns/road/detour }
+terms:
+  detour:
+    iri: https://www.pref.wakayama.lg.jp/ns/road/detour
+    description: { ja: 迂回路, en: Detour route }
+data: https://example.org/road-restrictions  # optional: the data, if public
+since: 2026-10                               # optional: when it was listed
+```
 
 ## Sign-off (DCO)
 

@@ -153,6 +153,89 @@
               }
             }
           },
+          "extensions": {
+            "type": "array",
+            "description": "Known extensions of the model: attributes another organisation added under its own IRIs, as the owner reported them (issue form \"Report an extension\"). Listed so tools can suggest an existing name before someone makes a new one; datamodels.jp does not review them. Absent when none is known.",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "organization",
+                "version",
+                "terms"
+              ],
+              "oneOf": [
+                {
+                  "required": [
+                    "contextUrl"
+                  ]
+                },
+                {
+                  "required": [
+                    "context"
+                  ]
+                }
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The file name, also the anchor on the model page (#extension-<id>)."
+                },
+                "organization": {
+                  "$ref": "#/$defs/i18n"
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "The organisation or project."
+                },
+                "version": {
+                  "type": "string",
+                  "description": "The subject version the extension builds on."
+                },
+                "contextUrl": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "The extended @context, on the owner's side. Either this or context."
+                },
+                "context": {
+                  "description": "The extended @context value, written inline in the data (nothing hosted). Either this or contextUrl."
+                },
+                "terms": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "name",
+                      "iri",
+                      "description"
+                    ],
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "iri": {
+                        "type": "string",
+                        "format": "uri"
+                      },
+                      "description": {
+                        "$ref": "#/$defs/i18n"
+                      }
+                    }
+                  }
+                },
+                "dataUrl": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Where the data is, when it is public."
+                },
+                "since": {
+                  "type": "string",
+                  "description": "When the extension was listed (YYYY-MM or YYYY-MM-DD)."
+                }
+              }
+            }
+          },
           "attributes": {
             "type": "array",
             "description": "A summary of the model's attributes, so a tool can list them or match a CSV against several models without fetching every schema. The schema at schemaUrl stays the authority: conditional rules (anyOf, oneOf), lengths and ranges are only there. `required` is the schema's top-level required list. For a value type (kind value), the entries are the fields inside the value and have no ngsiType. A value type (JapaneseAddress, Geometry) has type object and its IRI in valueModel; a relationship names its target type in target.",
