@@ -157,6 +157,8 @@ export function valueText(lang, subject, prop, prefix) {
   return `${kind}, ${t}`;
 }
 
+// A small "opens elsewhere" icon (box with an arrow), in the text colour.
+const EXTERNAL_ICON = '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6"/><path d="M20 4 11 13"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>';
 // Labels of the model page only (the shared ones are in T).
 const M = {
   ja: {
@@ -168,7 +170,7 @@ const M = {
     requiredMark: '必須', requiredNote: '* は必須の属性です。', linkHeaderIntro: '本文に @context を書かずに送るときの Link ヘッダー:',
     use: 'このモデルを使う', useValue: (rules) => `他のモデルは、属性の値としてこの値型を参照します。書き方は[モデルのルール](${rules})にあります。`,
     standards: '参照している標準', standardsNote: 'このモデルが対応している標準と、項目ごとの対応です。開くと対応表が見られます。',
-    fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く ↗', notesTitle: '注記',
+    fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く', standardLicence: 'この標準のライセンス', notesTitle: '注記',
     sourceFiles: (href) => `ソースファイル（注記、対応表）は [GitHub](${href}) にあります。`,
   },
   en: {
@@ -180,7 +182,7 @@ const M = {
     requiredMark: 'required', requiredNote: '* required', linkHeaderIntro: 'The Link header, for sending data without @context in the body:',
     use: 'Using this model', useValue: (rules) => `Other models use this value type as the value of an attribute. How: [Rules for models](${rules}).`,
     standards: 'Referenced standards', standardsNote: 'The standards this model corresponds to, field by field. Open one to see its table.',
-    fieldsMapped: (n, total) => `${n} of ${total} fields`, openStandard: 'Open the standard ↗', notesTitle: 'Notes',
+    fieldsMapped: (n, total) => `${n} of ${total} fields`, openStandard: 'Open the standard', standardLicence: 'Licence of this standard', notesTitle: 'Notes',
     sourceFiles: (href) => `The source files (notes, mapping tables) are on [GitHub](${href}).`,
   },
 };
@@ -271,14 +273,16 @@ function modelPage(lang, prefix, subject, model) {
     for (const map of model.mappings ?? []) {
       const fields = Object.values(map.fields ?? {});
       const mapped = fields.filter((f) => f?.to !== null && f?.to !== undefined).length;
-      md += `<details id="mapping-${map.name}"><summary><span class="name">${map.standard?.name?.[lang] ?? map.name}</span><span class="meta">${l.fieldsMapped(mapped, fields.length)}</span></summary>\n\n`;
-      // The name is in the summary already; here the link and the licence.
-      if (map.standard?.url) md += `[${l.openStandard}](${map.standard.url})${standardLicense(map.standard, lang) ? ` · ${standardLicense(map.standard, lang)}` : ''}\n\n`;
+      // The link to the standard is an icon next to the count; a link inside <summary> does not fold or unfold it.
+      const link = map.standard?.url ? `<a class="ext" href="${map.standard.url}" target="_blank" rel="noreferrer" title="${l.openStandard}" aria-label="${l.openStandard}">${EXTERNAL_ICON}</a>` : '';
+      md += `<details id="mapping-${map.name}"><summary><span class="name">${map.standard?.name?.[lang] ?? map.name}</span><span class="meta">${l.fieldsMapped(mapped, fields.length)}</span>${link}</summary>\n\n`;
       if (map.standard?.note?.[lang]) md += `${map.standard.note[lang]}\n\n`;
       if (map.structure?.[lang]) md += `${map.structure[lang]}\n\n`;
       md += `| ${t.mappingField} | ${t.mappingTo} | ${t.mappingNote} |\n|---|---|---|\n`;
       // Link a field to its attribute row; a value type such as Geometry has no rows to link to.
       for (const [field, m] of Object.entries(map.fields ?? {})) md += `| ${model.schema.properties?.[field] ? `[${code(field)}](#${field})` : code(field)} | ${m.to ? code(m.to) : `*${t.none}*`} | ${cellText(m.note?.[lang] ?? '')} |\n`;
+      const licence = standardLicense(map.standard, lang);
+      if (licence) md += `\n<p class="licence">${l.standardLicence}: ${licence}</p>\n`;
       md += '\n</details>\n\n';
     }
     md += `</div>\n\n`;
