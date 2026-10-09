@@ -91,6 +91,7 @@ GeonicDB checks every entity of the type when it is created or changed, also in 
 
 It does not check:
 
+- the values inside a list, such as allowed values or a minimum number of items: only that the value is a list (the catalog's JSON Schema checks them, for example during `datamodels convert`);
 - whether an attribute is sent as a Property or a Relationship, or which type a Relationship points to;
 - entities of a type that has no registered model: they are stored as they are;
 - the other types of an entity with several types: only the first type is checked;

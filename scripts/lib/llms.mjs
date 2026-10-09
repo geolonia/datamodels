@@ -8,6 +8,7 @@ import { subjectUrls, modelUrls, BASE_URL, ROOT } from './models.mjs';
 // Guides in the order of the sidebar (site/.vitepress/config.ts); one whose
 // English page does not exist is left out.
 const GUIDES = [
+  ['tutorial', 'Tutorial: from a CSV file to a map', 'one real open-data CSV converted into a catalog model, loaded into GeonicDB, queried and shown on a map, step by step'],
   ['use', 'Using the models', 'validate JSON, send it to an NGSI-LD broker, use it as linked data'],
   ['geonicdb', 'Use with GeonicDB', 'register a catalog model in GeonicDB, then create and query entities'],
   ['mapping', 'Converting data', 'convert data that follows a standard into a model with its mapping file (datamodels convert)'],
