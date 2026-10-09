@@ -1,16 +1,16 @@
 ---
-title: Mapping files
-description: What the mapping files of a model say, and how to convert data that follows a standard into the model with them
+title: Converting data
+description: Convert data that follows a standard into a catalog model, with the model's mapping file
 ---
 
-# Mapping files
+# Converting data
 
 Many models correspond to a standard that data already follows in Japan, for example a dataset of the municipal standard open datasets, EEI or GSI's shelter data. A **mapping file** says, for one model and one standard, which field of the standard matches which attribute of the model. With it you can convert existing data into the model.
 
 ## Where to find them
 
 - On the model page, under **Referenced standards**: one row per standard, opening to the table. The YAML file is linked under the table.
-- All of them, by standard: [Find a model by standard](/en/guide/standards).
+- All of them, by standard: [Standards covered](/en/guide/standards).
 - As files: `https://datamodels.jp/mapping/<subject>/<Type>/<name>.yaml`, and listed per model in `catalog.json` (`mappingUrls`).
 
 A mapping file has no version: its URL stays, and its content follows the current model.
@@ -19,13 +19,18 @@ A mapping file has no version: its URL stays, and its content follows the curren
 
 ```yaml
 standard:
-  name: { ja: …, en: "Municipal standard open dataset, … sheet '03. designated emergency evacuation sites'" }
+  name: { ja: …, en: "Municipal standard open dataset, … sheet '03. …'" }
   url: https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test
-  license: { ja: …, en: "Public Data License (Version 1.0) (PDL1.0), compatible with CC BY 4.0" }
+  license: { ja: …, en: "Public Data License 1.0, compatible with CC BY 4.0" }
 fields:
   name: { to: 名称 (name), column: 名称 }
-  maxCapacity: { to: 想定収容人数 (maxCapacity), column: 想定収容人数, transform: integer }
-  nationalShelterId: { to: null, note: { en: "not in this dataset" } }
+  maxCapacity:
+    to: 想定収容人数 (maxCapacity)
+    column: 想定収容人数
+    transform: integer
+  nationalShelterId:
+    to: null
+    note: { ja: このデータセットには無い, en: not in this dataset }
 ```
 
 - `standard`: the standard, its link, its licence and a short note.
@@ -38,7 +43,9 @@ A row can also say how to convert: `column` (the column of the CSV), `transform`
 The converter `datamodels convert` from [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) reads these rules. It turns a CSV list into entities of the model and checks each one against the model's JSON Schema:
 
 ```bash
-npx github:geolonia/datamodels-toolkit convert disaster/EvacuationSite jichitai-opendata-site 092011_evacuation_space.csv --out sites.json
+npx github:geolonia/datamodels-toolkit convert \
+  disaster/EvacuationSite jichitai-opendata-site \
+  092011_evacuation_space.csv --out sites.json
 ```
 
 Add `--normalized` for the NGSI-LD normalized form. Rows with only `to` are documentation: convert those fields yourself, following the note.

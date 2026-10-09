@@ -5,24 +5,21 @@ description: カタログのモデルで JSON を検証し、NGSI-LD ブロー�
 
 # 使い方
 
-各モデルのページには、`@context`、JSON Schema、例の URL があります。どれも普通の URL なので、特定の製品は要りません。使い方は 3 通りあります。
+各モデルのページには 3 つのものがあります。**@context**（各属性の意味）、**JSON Schema**（正しいデータの形）、**例**です。どれも普通の URL なので、特定の製品は要りません。データにはエイリアスの URL（`…/v1.jsonld`、`…/v1.json`）を使います。どの URL をいつ使うかは[URL とバージョン](/guide/urls)にあります。
 
-- **JSON として**: JSON Schema で、API のリクエスト、フォームの入力、CSV から変換したデータなどを検証します（手順 2）。
-- **NGSI-LD で**: 標準の NGSI-LD API を話すブローカーに、そのまま送ります（手順 3）。モデルの形（`id`・`type`、属性の種類、normalized の例）は NGSI-LD の約束に従っています。
-- **Linked Data として**: `@context` を付けると RDF になり、各属性の意味を IRI で指せます（手順 4）。
+使い方は 3 通りあり、1 つでも、組み合わせても使えます。
 
-コードブロックは右上のボタンでコピーできます。
+- [JSON を検証する](#validate): API、フォーム、CSV ファイルからのデータを JSON Schema で確認します。
+- [NGSI-LD ブローカーに送る](#broker): 標準の NGSI-LD API を話すブローカーに保存し、検索します。
+- [Linked Data として使う](#linked-data): @context を付けると、各属性が世界で一意の名前（IRI）を持ちます。
 
-## 1. URL を決める
-
-- データに書く `@context` と `Link` ヘッダーには**エイリアス**（例 `https://datamodels.jp/context/transportation/v1.jsonld`）を使います。同じメジャーバージョンの中では属性の意味が変わらないので、データは新しい属性を得るだけです。監査や結果の再現には、中身が変わらない正確なバージョン（`v1.0.0.jsonld`）を使います。詳しくは[変わらない URL](/guide/urls)にあります。
-- JSON Schema も同じで、`/schema/<サブジェクト>/<型>/v1.0.0.json` です。サブジェクトは分野ごとのモデルのまとまり（`transportation` など）です。
+<svg class="flow-diagram" viewBox="0 0 460 292" role="group" aria-label="datamodels.jp の 1 つのモデル（@context、JSON Schema、例）は 3 通りに使えます。JSON を検証する、NGSI-LD ブローカーに送る、Linked Data として使う。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="use-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box main" x="20" y="8" width="420" height="58" rx="10"/><text class="t" x="230.0" y="33">datamodels.jp のモデル</text><text class="s" x="230.0" y="53">@context・JSON Schema・例</text><line class="a" x1="44" y1="66" x2="44" y2="256"/><line class="a" x1="44" y1="116" x2="76" y2="116" marker-end="url(#use-ah)"/><a href="#validate"><rect class="box" x="80" y="88" width="360" height="56" rx="10"/><text class="t" x="260.0" y="112">JSON を検証する</text><text class="s" x="260.0" y="132">JSON Schema で</text></a><line class="a" x1="44" y1="186" x2="76" y2="186" marker-end="url(#use-ah)"/><a href="#broker"><rect class="box" x="80" y="158" width="360" height="56" rx="10"/><text class="t" x="260.0" y="182">NGSI-LD ブローカーに送る</text><text class="s" x="260.0" y="202">@context 付きの normalized の形で</text></a><line class="a" x1="44" y1="256" x2="76" y2="256" marker-end="url(#use-ah)"/><a href="#linked-data"><rect class="box" x="80" y="228" width="360" height="56" rx="10"/><text class="t" x="260.0" y="252">Linked Data として使う</text><text class="s" x="260.0" y="272">@context で JSON を RDF に</text></a></svg>
 
 以下の例は[通行規制（RoadRestriction）](/models/transportation/RoadRestriction/)で書いていますが、URL を替えればどのモデルでも同じです。
 
-## 2. 送る前に検証する
+## JSON を検証する {#validate}
 
-JSON Schema は key-values 形式（属性名と値だけの形）を検証します。住所やジオメトリなど他のスキーマを参照している部分も、自動で取得して検証します。
+JSON Schema は、属性名と値だけのシンプルな形（*key-values* と呼びます）のデータを確認します。住所やジオメトリなど他のスキーマを参照している部分も、自動で取得して確認します。
 
 ::: code-group
 
@@ -31,52 +28,92 @@ JSON Schema は key-values 形式（属性名と値だけの形）を検証し�
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 
-const schemaUrl = 'https://datamodels.jp/schema/transportation/RoadRestriction/v1.0.0.json';
-const entity = await (await fetch('https://datamodels.jp/examples/transportation/RoadRestriction/example.json')).json();
+const base = 'https://datamodels.jp';
+const model = 'transportation/RoadRestriction';
+const getJson = async (url) => (await fetch(url)).json();
 
-// strict: false はカタログの x-* 注釈を受け入れる。loadSchema は参照先のスキーマを取得する。
-const ajv = new Ajv2020({ strict: false, loadSchema: async (url) => (await fetch(url)).json() });
+const schema = await getJson(`${base}/schema/${model}/v1.0.0.json`);
+const entity = await getJson(`${base}/examples/${model}/example.json`);
+
+// strict: false はカタログの x-* 注釈を受け入れる。
+// loadSchema は参照先のスキーマを取得する。
+const ajv = new Ajv2020({ strict: false, loadSchema: getJson });
 addFormats(ajv);
-const validate = await ajv.compileAsync(await (await fetch(schemaUrl)).json());
+const validate = await ajv.compileAsync(schema);
 console.log(validate(entity) ? 'valid' : validate.errors);
 ```
 
 ```python [Python]
-# pip install "jsonschema[format]" requests（[format] がないと URI と日時の形式を検査しない）
+# pip install "jsonschema[format]" requests
+# （[format] がないと URI と日時の形式を検査しない）
 import requests
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
+BASE = "https://datamodels.jp"
+MODEL = "transportation/RoadRestriction"
+
 def get(url):
     return requests.get(url, timeout=30).json()
 
-schema = get("https://datamodels.jp/schema/transportation/RoadRestriction/v1.0.0.json")
-entity = get("https://datamodels.jp/examples/transportation/RoadRestriction/example.json")
+schema = get(f"{BASE}/schema/{MODEL}/v1.0.0.json")
+entity = get(f"{BASE}/examples/{MODEL}/example.json")
 
-# 参照先のスキーマ（住所、ジオメトリ）は、使われたときに取得する。
+# 参照先のスキーマ（住所、ジオメトリ）は、
+# 使われたときに取得する。
 registry = Registry(retrieve=lambda url: Resource.from_contents(get(url)))
-validator = Draft202012Validator(schema, registry=registry, format_checker=Draft202012Validator.FORMAT_CHECKER)
+validator = Draft202012Validator(
+    schema,
+    registry=registry,
+    format_checker=Draft202012Validator.FORMAT_CHECKER,
+)
 errors = [e.message for e in validator.iter_errors(entity)]
 print(errors or "valid")
 ```
 
 ```bash [コマンドライン]
 # pipx install check-jsonschema（または uvx check-jsonschema ...）
-curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example.json -o entity.json
-check-jsonschema --schemafile https://datamodels.jp/schema/transportation/RoadRestriction/v1.0.0.json entity.json
+BASE=https://datamodels.jp
+MODEL=transportation/RoadRestriction
+curl -sSf "$BASE/examples/$MODEL/example.json" -o entity.json
+check-jsonschema --schemafile "$BASE/schema/$MODEL/v1.0.0.json" entity.json
 ```
 
 :::
 
-値が決められた値域にない場合などは、どの属性のどこが違うかが表示されます。
+値が許されていないときは、どの属性のどこが違うかが表示されます。
 
-## 3. ブローカーに送る
+## NGSI-LD ブローカーに送る {#broker}
 
-各モデルの「例（normalized）」は `@context` を含む NGSI-LD の形なので、そのまま送れます。自分のデータを送るときは、body に `@context` を入れて `application/ld+json` で送るか、`@context` を入れずに `application/json` と `Link` ヘッダーで送ります。
+NGSI-LD のブローカーは、ふつう *normalized* の形を受け取ります。各属性が、値を持つ Property か、別のエンティティを指す Relationship かなど、自分の種類も示す形です。モデルのページには例が両方の形であるので、normalized の例はそのまま送れます。
 
-### key-values から normalized にする {#normalized}
+```bash
+BROKER=http://localhost:1026   # ブローカーの URL
+BASE=https://datamodels.jp
+MODEL=transportation/RoadRestriction
+curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" -o entity.jsonld
 
-JSON Schema が検証するのは key-values 形式です。ブローカーが normalized 形式を求めるときは、次のように変換します。
+# 作成
+curl -X POST "$BROKER/ngsi-ld/v1/entities" \
+  -H "Content-Type: application/ld+json" \
+  --data @entity.jsonld
+
+# 検索: 通行止め中のものだけ
+CONTEXT="$BASE/context/transportation/v1.jsonld"
+REL='rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
+curl -G "$BROKER/ngsi-ld/v1/entities" \
+  --data-urlencode 'type=RoadRestriction' \
+  --data-urlencode 'q=restrictionStatus=="closed"' \
+  -H "Accept: application/ld+json" \
+  -H "Link: <$CONTEXT>; $REL"
+```
+
+body に @context を入れて `application/ld+json` で送るか、入れずに `application/json` と `Link` ヘッダー（モデルのページにあります）で送ります。複数のテナントを持つブローカーでは `NGSILD-Tenant` ヘッダーでテナントを指定します。認証の方法はブローカーごとに違います。
+
+**自分のデータを normalized にする。** モデルのページの「試す」タブで、書いたものを 2 つの形の間で切り替えられます。CSV の一覧なら [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) の `datamodels convert … --normalized` が変換します（[データを変換する](/guide/mapping)）。自分のコードで変換するときは、次の決まりに従ってください。
+
+<details class="rules">
+<summary>key-values から normalized への決まり</summary>
 
 - `id` と `type` はそのまま。
 - 各属性は、モデルのページの属性の表にある NGSI-LD の型で包みます。Property は `{ "type": "Property", "value": … }`、Relationship は `{ "type": "Relationship", "object": … }`、GeoProperty は `{ "type": "GeoProperty", "value": … }`、JsonProperty は `{ "type": "JsonProperty", "json": … }`、VocabProperty は `{ "type": "VocabProperty", "vocab": … }` です。key-values の形でも、JsonProperty と VocabProperty はメンバーを残します（`{ "json": … }`、`{ "vocab": … }`）。JSON Schema は中の値を表すので、key-values のデータをスキーマで検証するときは、このメンバーを外してから検証してください。この 2 つは NGSI-LD 1.8 の型なので、使うモデルの前に、ブローカーが対応しているかを確かめてください。
@@ -107,60 +144,30 @@ normalized では次のようになります。
   ],
   "id": "urn:ngsi-ld:Task:1234",
   "type": "Task",
-  "name": { "type": "Property", "value": "靖国通りのアンダーパスの冠水を確認する" },
+  "name": {
+    "type": "Property",
+    "value": "靖国通りのアンダーパスの冠水を確認する"
+  },
   "progress": { "type": "Property", "value": "in-process" },
-  "due": { "type": "Property", "value": { "@type": "DateTime", "@value": "2026-07-08T12:00:00+09:00" } },
+  "due": {
+    "type": "Property",
+    "value": { "@type": "DateTime", "@value": "2026-07-08T12:00:00+09:00" }
+  },
   "assignee": [
-    { "type": "Relationship", "object": "urn:ngsi-ld:Team:field-team-a", "datasetId": "urn:ngsi-ld:dataset:assignee:1" }
+    {
+      "type": "Relationship",
+      "object": "urn:ngsi-ld:Team:field-team-a",
+      "datasetId": "urn:ngsi-ld:dataset:assignee:1"
+    }
   ]
 }
 ```
 
-モデルのページの「例を試す」では、書いた JSON を key-values と normalized の間で切り替えられます。公開されている一覧（CSV）なら、[datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) の `datamodels convert <サブジェクト>/<型> <対応表> <file.csv> --normalized` がこの変換まで行います。
+</details>
 
-::: code-group
+## Linked Data として使う {#linked-data}
 
-```bash [NGSI-LD（標準 API）]
-# BROKER: ブローカーの URL（例 http://localhost:1026）
-curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example-normalized.jsonld -o entity.jsonld
-
-# 作成
-curl -X POST "$BROKER/ngsi-ld/v1/entities" \
-  -H "Content-Type: application/ld+json" \
-  --data @entity.jsonld
-
-# 検索: 通行止め中のものだけ
-curl "$BROKER/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionStatus==%22closed%22" \
-  -H "Accept: application/ld+json" \
-  -H 'Link: <https://datamodels.jp/context/transportation/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
-```
-
-```bash [GeonicDB]
-# GEONICDB_BASE_URL, GEONICDB_TENANT, GEONICDB_API_KEY は GeonicDB のテナントの値（API キーにはポリシーが要る。GeonicDB のページを参照）
-curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example-normalized.jsonld -o entity.jsonld
-
-# 作成
-curl -X POST "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
-  -H "Content-Type: application/ld+json" \
-  -H "x-api-key: $GEONICDB_API_KEY" \
-  -H "NGSILD-Tenant: $GEONICDB_TENANT" \
-  --data @entity.jsonld
-
-# 検索: 通行止め中のものだけ
-curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionStatus==%22closed%22" \
-  -H "Accept: application/ld+json" \
-  -H 'Link: <https://datamodels.jp/context/transportation/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
-  -H "x-api-key: $GEONICDB_API_KEY" \
-  -H "NGSILD-Tenant: $GEONICDB_TENANT"
-```
-
-:::
-
-複数のテナントを持つブローカーでは、標準の `NGSILD-Tenant` ヘッダーでテナントを指定します。認証の方法はブローカーごとに違います。
-
-## 4. Linked Data として使う
-
-JSON に `@context` を付けると JSON-LD になり、RDF に変換できます。属性はカタログの IRI（`https://datamodels.jp/ns/...`）や、借りている標準の IRI（schema.org、Smart Data Models）になります。`id` と `type` を JSON-LD の `@id`・`@type` にするため、NGSI-LD の core context も並べます。
+@context を付けると、普通の JSON が JSON-LD になります。各属性は世界で一意の名前（IRI）を持ちます。カタログ独自の IRI（`https://datamodels.jp/ns/...`）か、借りている標準（schema.org、Smart Data Models）の IRI です。JSON-LD は Linked Data のツールが使う RDF に変換できます。`id` と `type` を JSON-LD の `@id`・`@type` にするため、NGSI-LD の core context も並べます。
 
 ::: code-group
 
@@ -168,16 +175,28 @@ JSON に `@context` を付けると JSON-LD になり、RDF に変換できま�
 // npm install jsonld
 import jsonld from 'jsonld';
 
-const entity = await (await fetch('https://datamodels.jp/examples/transportation/RoadRestriction/example.json')).json();
+const base = 'https://datamodels.jp';
+const getJson = async (url) => (await fetch(url)).json();
+const entity = await getJson(
+  `${base}/examples/transportation/RoadRestriction/example.json`,
+);
 // 普通の JSON に context を付けると Linked Data になる。
 entity['@context'] = [
-  'https://datamodels.jp/context/transportation/v1.jsonld',
-  'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld', // id と type の対応
+  `${base}/context/transportation/v1.jsonld`,
+  // id と type の対応:
+  'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld',
 ];
 
 // 既定のローダーの代わりに fetch を使う（どの環境でも動く）。
-const documentLoader = async (url) => ({ documentUrl: url, document: await (await fetch(url)).json() });
-console.log(await jsonld.toRDF(entity, { format: 'application/n-quads', documentLoader }));
+const documentLoader = async (url) => ({
+  documentUrl: url,
+  document: await getJson(url),
+});
+const nquads = await jsonld.toRDF(entity, {
+  format: 'application/n-quads',
+  documentLoader,
+});
+console.log(nquads);
 ```
 
 ```python [Python]
@@ -185,11 +204,14 @@ console.log(await jsonld.toRDF(entity, { format: 'application/n-quads', document
 import requests
 from pyld import jsonld
 
-entity = requests.get("https://datamodels.jp/examples/transportation/RoadRestriction/example.json", timeout=30).json()
+BASE = "https://datamodels.jp"
+url = f"{BASE}/examples/transportation/RoadRestriction/example.json"
+entity = requests.get(url, timeout=30).json()
 # 普通の JSON に context を付けると Linked Data になる。
 entity["@context"] = [
-    "https://datamodels.jp/context/transportation/v1.jsonld",
-    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",  # id と type の対応
+    f"{BASE}/context/transportation/v1.jsonld",
+    # id と type の対応:
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",
 ]
 
 print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))
@@ -197,7 +219,7 @@ print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))
 
 :::
 
-結果の一部:
+結果の一部です。N-Quads は RDF をテキストで書く形式で、1 行が 1 つの文です。どの行も「エンティティ（1 つ目）が、属性（2 つ目、IRI）として、値（3 つ目）を持つ」と読みます:
 
 ```text
 <urn:ngsi-ld:RoadRestriction:0001> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://datamodels.jp/ns/transportation/RoadRestriction> .
@@ -205,14 +227,4 @@ print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))
 <urn:ngsi-ld:RoadRestriction:0001> <https://smartdatamodels.org/dataModel.Transportation/roadName> "靖国通り" .
 ```
 
-各サブジェクトの語彙（`/vocab/<サブジェクト>/v1.0.0.jsonld`）は RDFS で、型の名前と説明を日本語と英語で持ちます。このカタログが定める属性は、名前（属性名）と日本語・英語の説明を持ちます。他の語彙から借りた属性（schema.org の `address` など）は含まず、それぞれの提供元の語彙を参照します。GIF や自治体標準オープンデータセットなど他の標準との対応表は、各モデルのページにあり、データの変換に使えます。YAML のファイルとしても `/mapping/<サブジェクト>/<型>/<名前>.yaml` で公開しています（catalog.json の `mappingUrls`）。
-
-## 試したブローカー
-
-上の手順は標準の NGSI-LD API だけを使うので、NGSI-LD に準拠したブローカーならどれでも同じように動くはずです。ただし、これまでに試したのは GeonicDB だけです。Orion-LD、Scorpio、Stellio など他のブローカーでは、まだ試していません。
-
-製品によっては、モデルをサーバー側に登録して検証させるなどの追加機能があります。
-
-- [GeonicDB](/guide/geonicdb)（Geolonia の製品）: モデルを登録すると、作成・更新時にサーバーがエンティティを検証します。登録用の定義はモデルごとに用意しています。ただし現在は、カタログの `@context` を付けたリクエスト（上の例のような送り方）では登録したモデルが見つからず、検証されずに受け付けられます。修正は GeonicDB 側で進んでいます（詳しくは GeonicDB のページの注意書き）。送る前の検証（手順 2）はこの制限と関係なく使えます。
-
-他のブローカーで試した結果は、うまく動かなかった場合も含めて、[Issue か Pull Request](https://github.com/geolonia/datamodels) でお知らせください。
+各サブジェクトは語彙（`/vocab/<サブジェクト>/v1.0.0.jsonld`、RDFS）も公開しています。型と属性の名前と説明を日本語と英語で持ちます。他の語彙から借りた属性（schema.org の `address` など）は、それぞれの提供元が説明しています。

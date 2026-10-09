@@ -9,6 +9,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue'
 import { toKeyValues, toNormalized } from '../../../scripts/lib/ngsi.mjs'
+import { highlightJson } from './json-highlight'
 
 interface Iri { iri: string; origin: 'subject' | 'other' | 'core' | 'upstream'; label: string }
 const props = defineProps<{
@@ -46,21 +47,9 @@ const form = ref<'kv' | 'norm'>('kv')
 const text = ref(pretty(props.kv))
 
 // JSON highlighting for the editor: the textarea is transparent over a <pre>
-// with the same text in colour, the colours of the site's code blocks. The text
-// may be invalid while someone types, so this colours tokens, it does not parse.
-const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-const TOKEN = /("(?:[^"\\\n]|\\.)*"?)(\s*:)?|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)|\b(true|false|null)\b/g
-const highlighted = computed(() => {
-  let out = ''; let last = 0
-  for (const m of text.value.matchAll(TOKEN)) {
-    out += esc(text.value.slice(last, m.index))
-    if (m[1] !== undefined) out += `<span class="${m[2] ? 'key' : 'str'}">${esc(m[1])}</span>${m[2] ? esc(m[2]) : ''}`
-    else out += `<span class="lit">${esc(m[0])}</span>`
-    last = m.index! + m[0].length
-  }
-  // A final newline needs a character after it, or the <pre> is one line shorter than the textarea.
-  return out + esc(text.value.slice(last)) + '\n '
-})
+// with the same text in colour (json-highlight.ts). A final newline needs a
+// character after it, or the <pre> is one line shorter than the textarea.
+const highlighted = computed(() => highlightJson(text.value) + '\n ')
 const hl = ref<HTMLElement | null>(null)
 const syncScroll = (e: Event) => { const t = e.target as HTMLTextAreaElement; if (hl.value) { hl.value.scrollTop = t.scrollTop; hl.value.scrollLeft = t.scrollLeft } }
 const switchError = ref('')
@@ -203,8 +192,9 @@ const rows = computed(() => Math.min(30, Math.max(10, text.value.split('\n').len
 @media (max-width: 640px) { .hint { order: 3; flex-basis: 100%; margin: 0; } }
 .bar + .editor { margin-top: 8px; }
 .editor { position: relative; border-radius: 8px; background: var(--vp-code-block-bg); }
-/* The <pre> and the textarea must lay out the text identically (font, padding, wrapping). */
-.editor .hl, .editor textarea { margin: 0; padding: 12px; font-family: var(--vp-font-family-mono); font-size: 13px; line-height: 1.5; tab-size: 2; white-space: pre-wrap; overflow-wrap: anywhere; border: 1px solid var(--vp-c-divider); border-radius: 8px; }
+/* The <pre> and the textarea must lay out the text identically (font, padding, wrapping, and the
+   scrollbar's space, so a long example wraps at the same width in both). */
+.editor .hl, .editor textarea { margin: 0; padding: 12px; font-family: var(--vp-font-family-mono); font-size: 13px; line-height: 1.5; tab-size: 2; white-space: pre-wrap; overflow-wrap: anywhere; border: 1px solid var(--vp-c-divider); border-radius: 8px; scrollbar-gutter: stable; }
 .editor .hl { position: absolute; inset: 0; overflow: hidden; color: var(--json-punct); background: none; pointer-events: none; }
 .editor textarea { position: relative; display: block; width: 100%; color: transparent; caret-color: var(--vp-c-text-1); background: transparent; resize: vertical; }
 .editor textarea::selection { color: transparent; background: var(--vp-c-brand-soft); }

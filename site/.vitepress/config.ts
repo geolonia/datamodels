@@ -18,7 +18,7 @@ function addVPreToInlineCode(md: MarkdownIt) {
 }
 
 // Guides in two groups: for people who use the models, and for people who add to the catalog.
-// A page that belongs to another one sits under it (GeonicDB under "Using the models").
+// One level only; the one exception is GeonicDB, the product-specific page, under the generic "Using the models".
 const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.SidebarItem[] => {
   const ja = lang === 'ja'
   const page = (jaText: string, enText: string, slug: string, items?: DefaultTheme.SidebarItem[]): DefaultTheme.SidebarItem =>
@@ -28,16 +28,25 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
       text: ja ? 'モデルを使う' : 'Use the models',
       items: [
         page('使い方', 'Using the models', 'use', [{ text: 'GeonicDB', link: `${prefix}/guide/geonicdb` }]),
-        page('標準からモデルを探す', 'Find a model by standard', 'standards', [page('対応表', 'Mapping files', 'mapping')]),
-        page('属性を足す', 'Adding attributes', 'extend', [page('拡張ビルダー', 'Extension builder', 'builder')]),
+        page('データを変換する', 'Converting data', 'mapping'),
+        page('属性を足す', 'Adding attributes', 'extend'),
+        page('拡張ビルダー', 'Extension builder', 'builder'),
         page('独自の名前で使う', 'Your own names', 'names'),
-        page('URL とバージョン', 'URLs and versions', 'urls'),
       ],
     },
     {
       text: ja ? 'カタログに加わる' : 'Add to the catalog',
       items: [
-        page('貢献する', 'Contributing', 'contribute', [page('モデルのルール', 'Rules for models', 'rules')]),
+        page('貢献する', 'Contributing', 'contribute'),
+        page('モデルのルール', 'Rules for models', 'rules'),
+      ],
+    },
+    {
+      // Pages to look things up in, not tasks.
+      text: ja ? '参照' : 'Reference',
+      items: [
+        page('対応している標準', 'Standards covered', 'standards'),
+        page('URL とバージョン', 'URLs and versions', 'urls'),
         page('他のデータモデルカタログ', 'Other data model catalogs', 'catalogs'),
       ],
     },
@@ -54,24 +63,30 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
   const ja = lang === 'ja'
   const topic = (text: string, link: string, other = false): DefaultTheme.SidebarItem =>
     ({ text: `<span class="sb-topic${other ? ' sb-other' : ''}">${text}</span>`, link })
+  const about = topic(ja ? 'このサイトについて' : 'About this site', `${prefix}/about`, true)
+  const modelsSidebar: DefaultTheme.SidebarItem[] = [
+    topic(ja ? 'データモデル' : 'Data models', `${prefix}/models/`),
+    ...subjects.map((s) => ({
+      text: s.title[lang],
+      collapsed: true,
+      items: [
+        { text: ja ? '概要' : 'Overview', link: `${prefix}${rel(subjectUrls(s).page)}` },
+        ...s.models.map((m) => ({ text: m.type, link: `${prefix}${rel(modelUrls(s, m).page)}` })),
+      ],
+    })),
+    topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`, true),
+    about,
+  ]
   return {
     [`${prefix}/guide/`]: [
       topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`),
       ...guideGroups(prefix, lang),
       topic(ja ? 'データモデル' : 'Data models', `${prefix}/models/`, true),
+      about,
     ],
-    [`${prefix}/models/`]: [
-      topic(ja ? 'データモデル' : 'Data models', `${prefix}/models/`),
-      ...subjects.map((s) => ({
-        text: s.title[lang],
-        collapsed: true,
-        items: [
-          { text: ja ? '概要' : 'Overview', link: `${prefix}${rel(subjectUrls(s).page)}` },
-          ...s.models.map((m) => ({ text: m.type, link: `${prefix}${rel(modelUrls(s, m).page)}` })),
-        ],
-      })),
-      topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`, true),
-    ],
+    // The adapter pages list files per model: they belong to the Data models section.
+    [`${prefix}/models/`]: modelsSidebar,
+    [`${prefix}/adapters/`]: modelsSidebar,
     // The pages about the site itself: no third topic in the navigation, but no dead end either.
     ...Object.fromEntries([`${prefix}/about`, `${prefix}/LICENSE-CONTENT`, `${prefix}/ai`].map((path) => [path, [
       topic(ja ? 'このサイトについて' : 'About this site', `${prefix}/about`),
@@ -85,7 +100,7 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
 
 const nav = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.NavItem[] => [
   // Both sections are links to a landing page; the sidebar lists their pages.
-  { text: lang === 'ja' ? 'データモデル' : 'Data models', link: `${prefix}/models/`, activeMatch: `^${prefix}/models/` },
+  { text: lang === 'ja' ? 'データモデル' : 'Data models', link: `${prefix}/models/`, activeMatch: `^${prefix}/(models|adapters)/` },
   { text: lang === 'ja' ? 'ガイド' : 'Guides', link: `${prefix}/guide/`, activeMatch: `^${prefix}/guide/` },
 ]
 
