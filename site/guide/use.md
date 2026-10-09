@@ -72,7 +72,7 @@ check-jsonschema --schemafile https://datamodels.jp/schema/transportation/RoadRe
 NGSI-LD のブローカーは、ふつう *normalized* の形を受け取ります。各属性が、値を持つ Property か、別のエンティティを指す Relationship かなど、自分の種類も示す形です。モデルのページには例が両方の形であるので、normalized の例はそのまま送れます。
 
 ```bash
-# BROKER: ブローカーの URL（例 http://localhost:1026）
+BROKER=http://localhost:1026   # ブローカーの URL
 curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example-normalized.jsonld -o entity.jsonld
 
 # 作成

@@ -72,7 +72,7 @@ When a value is not allowed, the output names the attribute and what is wrong.
 NGSI-LD brokers usually take the *normalized* form, in which each attribute also says what kind it is (a Property with a value, a Relationship pointing to another entity, and so on). Every model page has the example in both forms, so the normalized example can be sent as it is:
 
 ```bash
-# BROKER: the broker's URL, for example http://localhost:1026
+BROKER=http://localhost:1026   # your broker's URL
 curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example-normalized.jsonld -o entity.jsonld
 
 # Create
