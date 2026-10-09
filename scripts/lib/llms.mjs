@@ -17,6 +17,8 @@ const GUIDES = [
   ['urls', 'URLs and versions', 'which URL to use, what never changes, versions and deprecation'],
   ['contribute', 'Contributing', 'propose or change models, stages and who decides'],
   ['rules', 'Rules for models', 'when to define a new type, the rules, mapping to standards, writing examples'],
+  ['list-extension', 'Listing your extension', 'list the attributes you added to a model under "Extended by" on its page: the issue form, field by field'],
+  ['report-catalog', 'Telling us about another catalog', 'report a missing catalog of data models or vocabularies: the issue form, field by field'],
   ['catalogs', 'Other data model catalogs', 'catalogs and standards used globally and in Japan, and how this catalog relates to them'],
 ];
 

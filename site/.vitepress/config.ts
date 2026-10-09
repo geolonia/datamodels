@@ -39,6 +39,8 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
       items: [
         page('貢献する', 'Contributing', 'contribute'),
         page('モデルのルール', 'Rules for models', 'rules'),
+        page('拡張を載せる', 'Listing your extension', 'list-extension'),
+        page('他のカタログを知らせる', 'Telling us about another catalog', 'report-catalog'),
       ],
     },
     {

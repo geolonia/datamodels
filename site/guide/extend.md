@@ -61,7 +61,7 @@ NGSI-LD のブローカーに送るときは、[使い方](/guide/use#broker)の
 - バージョンごとに別のアドレスで公開し、公開したファイルは変えず、消さないでください。
 - `Content-Type: application/ld+json` と `Access-Control-Allow-Origin: *` で配信します。
 
-カタログはあなたの @context を預かりません。[拡張の登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml)から、モデルのページの「拡張している組織」に載せられます。同じ意味の属性が要るほかの組織が、その名前を使えます。
+カタログはあなたの @context を預かりません。モデルのページの「拡張している組織」には載せられます（[拡張を載せる](/guide/list-extension)）。同じ意味の属性が要るほかの組織が、その名前を使えます。
 
 ## カタログに新しい属性が増えたとき {#updates}
 
