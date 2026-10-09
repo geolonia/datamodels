@@ -334,3 +334,8 @@
 .vp-doc .standards details[open] { padding-bottom: 8px; }
 .vp-doc .standards td:first-child, .vp-doc .standards td:nth-child(2) { white-space: nowrap; }
 .vp-doc .standards td code { overflow-wrap: normal; }
+
+/* JSON colours of the "Try it" editor (ExamplePlayground.vue), the same as
+ * the code blocks (Shiki github-light / github-dark). */
+:root { --json-punct: #24292e; --json-key: #005cc5; --json-str: #032f62; }
+.dark { --json-punct: #e1e4e8; --json-key: #79b8ff; --json-str: #9ecbff; }

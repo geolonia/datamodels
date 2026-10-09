@@ -44,6 +44,25 @@ const L = {
 const pretty = (v: unknown) => JSON.stringify(v, null, 2)
 const form = ref<'kv' | 'norm'>('kv')
 const text = ref(pretty(props.kv))
+
+// JSON highlighting for the editor: the textarea is transparent over a <pre>
+// with the same text in colour, the colours of the site's code blocks. The text
+// may be invalid while someone types, so this colours tokens, it does not parse.
+const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+const TOKEN = /("(?:[^"\\\n]|\\.)*"?)(\s*:)?|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)|\b(true|false|null)\b/g
+const highlighted = computed(() => {
+  let out = ''; let last = 0
+  for (const m of text.value.matchAll(TOKEN)) {
+    out += esc(text.value.slice(last, m.index))
+    if (m[1] !== undefined) out += `<span class="${m[2] ? 'key' : 'str'}">${esc(m[1])}</span>${m[2] ? esc(m[2]) : ''}`
+    else out += `<span class="lit">${esc(m[0])}</span>`
+    last = m.index! + m[0].length
+  }
+  // A final newline needs a character after it, or the <pre> is one line shorter than the textarea.
+  return out + esc(text.value.slice(last)) + '\n '
+})
+const hl = ref<HTMLElement | null>(null)
+const syncScroll = (e: Event) => { const t = e.target as HTMLTextAreaElement; if (hl.value) { hl.value.scrollTop = t.scrollTop; hl.value.scrollLeft = t.scrollLeft } }
 const switchError = ref('')
 const multi = new Set(Object.entries(props.schema.properties ?? {}).filter(([, p]: [string, any]) => p['x-ngsi']?.multi).map(([n]) => n))
 
@@ -145,7 +164,10 @@ const rows = computed(() => Math.min(30, Math.max(10, text.value.split('\n').len
       <button type="button" class="reset" @click="reset">{{ L.reset }}</button>
     </div>
     <p class="hint">{{ L.hint }}</p>
-    <textarea v-model="text" :rows="rows" spellcheck="false" autocapitalize="off" autocomplete="off" :aria-label="`${type} (${form === 'kv' ? 'key-values' : 'normalized'})`" aria-describedby="playground-status" />
+    <div class="editor">
+      <pre ref="hl" class="hl" aria-hidden="true" v-html="highlighted" />
+      <textarea v-model="text" :rows="rows" spellcheck="false" autocapitalize="off" autocomplete="off" :aria-label="`${type} (${form === 'kv' ? 'key-values' : 'normalized'})`" aria-describedby="playground-status" @scroll="syncScroll" />
+    </div>
     <div id="playground-status" class="status" :class="result.errors.length ? 'bad' : result.pending ? 'wait' : 'good'" aria-live="polite">
       <p v-if="switchError">{{ switchError }}</p>
       <template v-if="result.errors.length">
@@ -177,8 +199,16 @@ const rows = computed(() => Math.min(30, Math.max(10, text.value.split('\n').len
 .reset { padding: 4px 12px; font-size: 14px; border: 1px solid var(--vp-c-divider); border-radius: 8px; color: var(--vp-c-text-2); }
 .reset:hover, .forms button:hover { color: var(--vp-c-brand-1); }
 .hint { margin: 8px 0 4px; font-size: 14px; color: var(--vp-c-text-2); }
-textarea { display: block; width: 100%; padding: 12px; font-family: var(--vp-font-family-mono); font-size: 13px; line-height: 1.5; color: var(--vp-c-text-1); background: var(--vp-c-bg-alt); border: 1px solid var(--vp-c-divider); border-radius: 8px; resize: vertical; tab-size: 2; }
-textarea:focus { outline: 2px solid var(--vp-c-brand-1); outline-offset: -1px; }
+.editor { position: relative; border-radius: 8px; background: var(--vp-code-block-bg); }
+/* The <pre> and the textarea must lay out the text identically (font, padding, wrapping). */
+.editor .hl, .editor textarea { margin: 0; padding: 12px; font-family: var(--vp-font-family-mono); font-size: 13px; line-height: 1.5; tab-size: 2; white-space: pre-wrap; overflow-wrap: anywhere; border: 1px solid var(--vp-c-divider); border-radius: 8px; }
+.editor .hl { position: absolute; inset: 0; overflow: hidden; color: var(--json-punct); background: none; pointer-events: none; }
+.editor textarea { position: relative; display: block; width: 100%; color: transparent; caret-color: var(--vp-c-text-1); background: transparent; resize: vertical; }
+.editor textarea::selection { color: transparent; background: var(--vp-c-brand-soft); }
+.editor textarea:focus { outline: 2px solid var(--vp-c-brand-1); outline-offset: -1px; }
+/* The colours of the site's code blocks (--json-* in custom.css, light and dark). */
+.editor .hl :deep(.key), .editor .hl :deep(.lit) { color: var(--json-key); }
+.editor .hl :deep(.str) { color: var(--json-str); }
 .status { margin: 8px 0; padding: 8px 12px; border-radius: 8px; font-size: 14px; }
 .status p { margin: 0; }
 .status ul { margin: 4px 0 0; padding-left: 20px; }
