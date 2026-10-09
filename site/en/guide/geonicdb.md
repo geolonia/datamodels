@@ -18,27 +18,34 @@ For every model, a ready-made definition is published at `https://datamodels.jp/
 You need a tenant and an API key whose policy allows these requests ([API keys](https://docs.geonicdb.com/en/saas/api-key), [policy binding](https://docs.geonicdb.com/en/reference/auth#policy-binding-policyid)), and three environment variables: `GEONICDB_BASE_URL` (for example `https://<your-deployment>.geonicdb.jp`), `GEONICDB_TENANT`, `GEONICDB_API_KEY`.
 
 ```bash
+BASE=https://datamodels.jp
+MODEL=transportation/RoadRestriction
+KEY="x-api-key: $GEONICDB_API_KEY"
+TENANT="NGSILD-Tenant: $GEONICDB_TENANT"
+
 # 1. Register the model (once per tenant). The tenant comes from the API key.
-curl -sSf https://datamodels.jp/adapters/geonicdb/transportation/RoadRestriction.json -o RoadRestriction.json
+curl -sSf "$BASE/adapters/geonicdb/$MODEL.json" -o model.json
 curl -X POST "$GEONICDB_BASE_URL/custom-data-models" \
-  -H "Content-Type: application/json" -H "x-api-key: $GEONICDB_API_KEY" \
-  --data @RoadRestriction.json
+  -H "Content-Type: application/json" -H "$KEY" \
+  --data @model.json
 
 # 2. Create an entity: the model page's normalized example, as it is.
-curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example-normalized.jsonld -o entity.jsonld
+curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" -o entity.jsonld
 curl -X POST "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
-  -H "Content-Type: application/ld+json" \
-  -H "x-api-key: $GEONICDB_API_KEY" -H "NGSILD-Tenant: $GEONICDB_TENANT" \
+  -H "Content-Type: application/ld+json" -H "$KEY" -H "$TENANT" \
   --data @entity.jsonld
 
 # 3. Query: closed roads only.
-curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionStatus==%22closed%22" \
-  -H "Accept: application/ld+json" \
-  -H 'Link: <https://datamodels.jp/context/transportation/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
-  -H "x-api-key: $GEONICDB_API_KEY" -H "NGSILD-Tenant: $GEONICDB_TENANT"
+CONTEXT="$BASE/context/transportation/v1.jsonld"
+REL='rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
+curl -G "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
+  --data-urlencode 'type=RoadRestriction' \
+  --data-urlencode 'q=restrictionStatus=="closed"' \
+  -H "Accept: application/ld+json" -H "Link: <$CONTEXT>; $REL" \
+  -H "$KEY" -H "$TENANT"
 ```
 
-- Registering returns `201 Created`, or `409` if a model of that type already exists. With the `geonic` CLI logged in as a tenant admin, no policy is needed: `geonic models create @RoadRestriction.json`.
+- Registering returns `201 Created`, or `409` if a model of that type already exists. With the `geonic` CLI logged in as a tenant admin, no policy is needed: `geonic models create @model.json`.
 - For your own data, put the @context in the body (`application/ld+json`) or send `application/json` with the `Link` header, never both. The tenant header is `NGSILD-Tenant` ([multi-tenancy](https://docs.geonicdb.com/en/core-concepts/multi-tenancy)).
 
 ## Your own attributes
@@ -55,14 +62,21 @@ Write an extension file keyed by type and export with it. Redefining a catalog a
   "RoadRestriction": {
     "contextUrl": "https://example.com/context/acme-transportation.jsonld",
     "propertyDetails": {
-      "patrolRoute": { "ngsiType": "Property", "valueType": "string", "example": "A-3", "description": "Patrol route", "@context": "https://example.com/ns/acme/patrolRoute" }
+      "patrolRoute": {
+        "ngsiType": "Property",
+        "valueType": "string",
+        "example": "A-3",
+        "description": "Patrol route",
+        "@context": "https://example.com/ns/acme/patrolRoute"
+      }
     }
   }
 }
 ```
 
 ```bash
-node adapters/geonicdb/export.mjs transportation --type RoadRestriction --extend ./acme.json --out ./out
+node adapters/geonicdb/export.mjs transportation \
+  --type RoadRestriction --extend ./acme.json --out ./out
 ```
 
 To accept unknown attributes without checking them instead, export with `--allow-additional`.
@@ -76,7 +90,8 @@ A tenant that needs a prefix on its type names (for example when several project
 
 ```bash
 git clone https://github.com/geolonia/datamodels && cd datamodels && npm ci
-node adapters/geonicdb/export.mjs transportation --type-prefix Acme --out ./out
+node adapters/geonicdb/export.mjs transportation \
+  --type-prefix Acme --out ./out
 ```
 
 </details>
