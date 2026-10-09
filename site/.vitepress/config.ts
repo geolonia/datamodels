@@ -72,6 +72,13 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
       })),
       topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`, true),
     ],
+    // The pages about the site itself: no third topic in the navigation, but no dead end either.
+    ...Object.fromEntries([`${prefix}/about`, `${prefix}/LICENSE-CONTENT`].map((path) => [path, [
+      topic(ja ? 'このサイトについて' : 'About this site', `${prefix}/about`),
+      { text: ja ? 'ライセンス' : 'Licences', link: `${prefix}/LICENSE-CONTENT` },
+      topic(ja ? 'データモデル' : 'Data models', `${prefix}/models/`, true),
+      topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`, true),
+    ]])),
   }
 }
 
@@ -161,7 +168,7 @@ export default defineConfig({
       description: DESCRIPTION.ja,
       themeConfig: {
         nav: nav('', 'ja'),
-        footer: { message: '運営: <a href="https://geolonia.com/">Geolonia</a> · モデルのファイル CC0 · 文章 CC BY 4.0 · コード Apache-2.0 · <a href="/about">このサイトについて</a>' },
+        footer: { message: '運営: <a href="https://geolonia.com/">Geolonia</a> · <a href="/LICENSE-CONTENT">モデルのファイル CC0 · 文章 CC BY 4.0 · コード Apache-2.0</a> · <a href="/about">このサイトについて</a>' },
         sidebar: sidebar('', 'ja'),
         outline: { label: '目次', level: [2, 3] },
         docFooter: { prev: '前のページ', next: '次のページ' },
@@ -177,7 +184,7 @@ export default defineConfig({
       link: '/en/',
       themeConfig: {
         nav: nav('/en', 'en'),
-        footer: { message: 'Operated by <a href="https://geolonia.com/">Geolonia</a> · Model files CC0 · Text CC BY 4.0 · Code Apache-2.0 · <a href="/en/about">About this site</a>' },
+        footer: { message: 'Operated by <a href="https://geolonia.com/">Geolonia</a> · <a href="/en/LICENSE-CONTENT">Model files CC0 · Text CC BY 4.0 · Code Apache-2.0</a> · <a href="/en/about">About this site</a>' },
         sidebar: sidebar('/en', 'en'),
         outline: { level: [2, 3] },
       },
