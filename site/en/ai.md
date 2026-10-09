@@ -7,7 +7,7 @@ description: How AI is used to make datamodels.jp, and what AI agents and tools 
 
 ## How this site is made
 
-Much of the site's content (models, notes and pages) was drafted with AI assistance. People decide what goes into the catalog: a new subject, a new major version or a model becoming stable is decided by a small group, in the issue or pull request concerned ([Contributing](/en/guide/contribute)). Before anything is published, CI checks every model and example against its schema and the catalog's rules, and the site's links.
+Much of the site's content (models, notes and pages) was drafted with AI assistance. People decide what goes into the catalog: a new subject, a new major version or a model becoming stable is decided by a small group, in the issue or pull request concerned ([Contributing](/en/guide/contribute)). Before anything is published, CI checks every model and example against its schema and the catalog's rules, and the build fails on a broken link inside the site.
 
 If something is wrong, please [open an issue](https://github.com/geolonia/datamodels/issues).
 
@@ -21,4 +21,4 @@ This site is meant for people and for assistants alike. Search, AI answers and A
 - **Meaning:** every type and attribute IRI under `https://datamodels.jp/ns/` opens its documentation.
 - **Stable URLs:** published versions never change ([URLs and versions](/en/guide/urls)), so a URL you cite stays correct. Until the official launch (pre-release), published versions may still be corrected in place.
 
-Machine-readable files (schemas, @context files, vocabularies, examples) are CC0 1.0; text, such as these pages and the models' notes, is CC BY 4.0 ([Licences](/en/LICENSE-CONTENT)).
+Machine-readable files (schemas, @context files, vocabularies, examples) are CC0 1.0; text, such as these pages and the models' notes, is CC BY 4.0. A file that copies content from a CC BY source stays CC BY 4.0; none does today ([Licences](/en/LICENSE-CONTENT)).
