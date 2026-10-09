@@ -165,10 +165,6 @@ is, in normalized form:
 
 </details>
 
-### Brokers tried
-
-These steps use only the standard NGSI-LD API, so they should work with any compliant broker. So far they have been tried with one, [GeonicDB](/en/guide/geonicdb), which has its own page for what is specific to it. Orion-LD, Scorpio and Stellio have not been tried yet. If you try another broker, please tell us the result in an [issue](https://github.com/geolonia/datamodels/issues), also when something does not work.
-
 ## Use it as linked data {#linked-data}
 
 Adding the @context turns plain JSON into JSON-LD. Every attribute then has a globally unique name, an IRI: the catalog's own (`https://datamodels.jp/ns/...`) or those of the standards it borrows from (schema.org, Smart Data Models). JSON-LD converts to RDF, the format of linked data tools. The NGSI-LD core context is listed too, so that `id` and `type` become JSON-LD's `@id` and `@type`.
@@ -223,7 +219,7 @@ print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))
 
 :::
 
-Part of the output (N-Quads, one statement per line):
+Part of the output, in N-Quads: RDF written as plain text, one statement per line. Each line says that the entity (first) has an attribute (second, its IRI) with a value (third):
 
 ```text
 <urn:ngsi-ld:RoadRestriction:0001> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://datamodels.jp/ns/transportation/RoadRestriction> .

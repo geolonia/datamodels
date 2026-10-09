@@ -165,10 +165,6 @@ normalized では次のようになります。
 
 </details>
 
-### 試したブローカー
-
-この手順は標準の NGSI-LD API だけを使うので、準拠したブローカーならどれでも動くはずです。これまでに試したのは [GeonicDB](/guide/geonicdb) の 1 つで、GeonicDB に固有のことはそのページにあります。Orion-LD、Scorpio、Stellio はまだ試していません。他のブローカーで試したら、うまく動かなかった場合も含めて [Issue](https://github.com/geolonia/datamodels/issues) でお知らせください。
-
 ## Linked Data として使う {#linked-data}
 
 @context を付けると、普通の JSON が JSON-LD になります。各属性は世界で一意の名前（IRI）を持ちます。カタログ独自の IRI（`https://datamodels.jp/ns/...`）か、借りている標準（schema.org、Smart Data Models）の IRI です。JSON-LD は Linked Data のツールが使う RDF に変換できます。`id` と `type` を JSON-LD の `@id`・`@type` にするため、NGSI-LD の core context も並べます。
@@ -223,7 +219,7 @@ print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))
 
 :::
 
-結果の一部（N-Quads、1 行に 1 つの文）:
+結果の一部です。N-Quads は RDF をテキストで書く形式で、1 行が 1 つの文です。どの行も「エンティティ（1 つ目）が、属性（2 つ目、IRI）として、値（3 つ目）を持つ」と読みます:
 
 ```text
 <urn:ngsi-ld:RoadRestriction:0001> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://datamodels.jp/ns/transportation/RoadRestriction> .
