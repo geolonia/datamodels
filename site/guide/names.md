@@ -18,11 +18,13 @@ description: モデルを変えずに、属性名や型名を自分たちの用�
     {
       "tm": "https://datamodels.jp/ns/task/",
       "Saigai": "tm:Project",
-      "responsibleTeam": "tm:assignee"
+      "responsibleTeam": { "@id": "tm:assignee", "@type": "@id" }
     }
   ]
 }
 ```
+
+属性の名前だけでなく、定義をまるごと写してください。`assignee` は別のエンティティを指す（`"@type": "@id"`）ので、`responsibleTeam` にもそう書きます。書かないと、チームの ID がただの文字列として読まれます。
 
 `responsibleTeam` で書いたデータは、`assignee` で書いたものとまったく同じ意味です。ブローカーは同じ属性として保存するので、検索・購読・他のクライアントから見た違いはありません。この @context を渡したクライアントには、`responsibleTeam` と `Saigai` で返ってきます。
 

@@ -18,11 +18,13 @@ The example below uses `Saigai` for `Project` and `responsibleTeam` for `assigne
     {
       "tm": "https://datamodels.jp/ns/task/",
       "Saigai": "tm:Project",
-      "responsibleTeam": "tm:assignee"
+      "responsibleTeam": { "@id": "tm:assignee", "@type": "@id" }
     }
   ]
 }
 ```
+
+Copy an attribute's whole definition, not only its name: `assignee` points to another entity (`"@type": "@id"`), so `responsibleTeam` must say so too, or a team's id is read as plain text.
 
 Data written with `responsibleTeam` means exactly the same as data written with `assignee`. A broker stores them as one attribute, so queries, subscriptions and other clients see no difference. A client that sends this @context gets `responsibleTeam` and `Saigai` back.
 
