@@ -347,3 +347,9 @@
 .vp-doc .standards details > p.licence { margin: 4px 14px; font-size: 13px; color: var(--vp-c-text-2); }
 /* The Link header on model pages is one long line: wrap it instead of hiding most of it. */
 .vp-doc div.language-http pre code { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* A folded block of reference detail inside a guide (<details class="rules">). */
+.vp-doc details.rules { margin: 16px 0; border: 1px solid var(--vp-c-divider); border-radius: 8px; padding: 0 14px; }
+.vp-doc details.rules > summary { margin: 0; padding: 8px 0; cursor: pointer; font-weight: 500; }
+.vp-doc details.rules > summary:focus:not(:focus-visible) { outline: none; }
+.vp-doc details.rules[open] { padding-bottom: 8px; }

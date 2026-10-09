@@ -5,24 +5,19 @@ description: Validate JSON with the catalog models, send it to an NGSI-LD broker
 
 # Using the models
 
-Every model page lists its `@context`, JSON Schema and example URLs. They are plain URLs, so no particular product is needed. There are three ways to use them:
+Every model page gives three things: the **@context** (what each attribute means), the **JSON Schema** (what valid data looks like) and **examples**. They are plain URLs, so no particular product is needed. Use the alias URLs (`…/v1.jsonld`, `…/v1.json`) in your data; which URL to use when is in [URLs and versions](/en/guide/urls).
 
-- **As JSON**: validate API requests, form input or data converted from CSV with the JSON Schema (step 2).
-- **With NGSI-LD**: send the data as it is to any broker that speaks the standard NGSI-LD API (step 3). The models' shape (`id` and `type`, the kinds of attributes, the normalized examples) follows NGSI-LD conventions.
-- **As linked data**: add the `@context` and the data becomes RDF, with every attribute's meaning identified by an IRI (step 4).
+There are three ways to use a model, and you can use one, two or all three:
 
-Copy a code block with the button at its top right.
+- [Validate JSON](#validate): check data from an API, a form or a CSV file against the JSON Schema.
+- [Send it to an NGSI-LD broker](#broker): store and query the data in any broker that speaks the standard NGSI-LD API.
+- [Use it as linked data](#linked-data): add the @context and every attribute gets a globally unique name (an IRI).
 
-## 1. Choose the URLs
+The examples use [road restriction (RoadRestriction)](/en/models/transportation/RoadRestriction/); swap the URLs for any other model.
 
-- Data and `Link` headers use the **alias** `@context` URL (for example `https://datamodels.jp/context/transportation/v1.jsonld`). Within a major version an attribute's meaning never changes, so data only gains new attributes. For audits and for reproducing a result, use the exact version (`v1.0.0.jsonld`), whose content never changes. See [URLs that never change](/en/guide/urls).
-- JSON Schemas work the same way: `/schema/<subject>/<Type>/v1.0.0.json`.
+## Validate JSON {#validate}
 
-The examples below use [road restriction (RoadRestriction)](/en/models/transportation/RoadRestriction/); swap the URLs for any other model.
-
-## 2. Validate before sending
-
-The JSON Schema validates the key-values form (attribute names and plain values). Parts that reference other schemas, such as the address or the geometry, are fetched and validated too.
+The JSON Schema checks data in the simple form: attribute names with plain values (called *key-values*). Parts that refer to other schemas, such as the address or the geometry, are fetched and checked too.
 
 ::: code-group
 
@@ -68,15 +63,33 @@ check-jsonschema --schemafile https://datamodels.jp/schema/transportation/RoadRe
 
 :::
 
-When a value is outside its allowed values, or similar, the output names the attribute and what is wrong.
+When a value is not allowed, the output names the attribute and what is wrong.
 
-## 3. Send to a broker
+## Send it to an NGSI-LD broker {#broker}
 
-Each model's normalized example is NGSI-LD with its `@context`, so it can be sent as it is. For your own data, either put the `@context` in the body and send `application/ld+json`, or leave it out and send `application/json` with a `Link` header.
+NGSI-LD brokers usually take the *normalized* form, in which each attribute also says what kind it is (a Property with a value, a Relationship pointing to another entity, and so on). Every model page has the example in both forms, so the normalized example can be sent as it is:
 
-### From key-values to normalized {#normalized}
+```bash
+# BROKER: the broker's URL, for example http://localhost:1026
+curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example-normalized.jsonld -o entity.jsonld
 
-The JSON Schemas validate the key-values form. When a broker expects the normalized form, convert like this:
+# Create
+curl -X POST "$BROKER/ngsi-ld/v1/entities" \
+  -H "Content-Type: application/ld+json" \
+  --data @entity.jsonld
+
+# Query: closed roads only
+curl "$BROKER/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionStatus==%22closed%22" \
+  -H "Accept: application/ld+json" \
+  -H 'Link: <https://datamodels.jp/context/transportation/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
+```
+
+Put the @context in the body and send `application/ld+json`, or leave it out and send `application/json` with a `Link` header (the model page shows it). Brokers with several tenants take the tenant in the `NGSILD-Tenant` header; authentication differs from broker to broker.
+
+**Your own data in the normalized form.** The "Try it" tab on a model page switches what you write between the two forms, and for a CSV list `datamodels convert … --normalized` from [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) does it ([Converting data](/en/guide/mapping)). To do it in your own code, follow the rules below.
+
+<details class="rules">
+<summary>The rules, from key-values to normalized</summary>
 
 - `id` and `type` stay as they are.
 - Wrap each attribute in the NGSI-LD type that the attribute table on the model page gives: a Property is `{ "type": "Property", "value": … }`, a Relationship `{ "type": "Relationship", "object": … }`, a GeoProperty `{ "type": "GeoProperty", "value": … }`, a JsonProperty `{ "type": "JsonProperty", "json": … }`, a VocabProperty `{ "type": "VocabProperty", "vocab": … }`. In key-values form, a JsonProperty and a VocabProperty keep their member: `{ "json": … }`, `{ "vocab": … }`. The JSON Schema describes the value inside, so remove that member before you validate key-values data against the schema. Both are NGSI-LD 1.8 types: check that your broker supports them before you use a model that has them.
@@ -116,51 +129,15 @@ is, in normalized form:
 }
 ```
 
-On a model page, "Try the example" switches the JSON you write between key-values and normalized. For a published list (CSV), `datamodels convert <subject>/<Type> <mapping> <file.csv> --normalized` from [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) does this conversion too.
+</details>
 
-::: code-group
+### Brokers tried
 
-```bash [NGSI-LD (standard API)]
-# BROKER: the broker's URL, for example http://localhost:1026
-curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example-normalized.jsonld -o entity.jsonld
+These steps use only the standard NGSI-LD API, so they should work with any compliant broker. So far they have been tried with one, [GeonicDB](/en/guide/geonicdb), which has its own page for what is specific to it. Orion-LD, Scorpio and Stellio have not been tried yet. If you try another broker, please tell us the result in an [issue](https://github.com/geolonia/datamodels/issues), also when something does not work.
 
-# Create
-curl -X POST "$BROKER/ngsi-ld/v1/entities" \
-  -H "Content-Type: application/ld+json" \
-  --data @entity.jsonld
+## Use it as linked data {#linked-data}
 
-# Query: closed roads only
-curl "$BROKER/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionStatus==%22closed%22" \
-  -H "Accept: application/ld+json" \
-  -H 'Link: <https://datamodels.jp/context/transportation/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
-```
-
-```bash [GeonicDB]
-# GEONICDB_BASE_URL, GEONICDB_TENANT, GEONICDB_API_KEY: your GeonicDB tenant's values (the key needs a policy; see the GeonicDB page)
-curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example-normalized.jsonld -o entity.jsonld
-
-# Create
-curl -X POST "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
-  -H "Content-Type: application/ld+json" \
-  -H "x-api-key: $GEONICDB_API_KEY" \
-  -H "NGSILD-Tenant: $GEONICDB_TENANT" \
-  --data @entity.jsonld
-
-# Query: closed roads only
-curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionStatus==%22closed%22" \
-  -H "Accept: application/ld+json" \
-  -H 'Link: <https://datamodels.jp/context/transportation/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
-  -H "x-api-key: $GEONICDB_API_KEY" \
-  -H "NGSILD-Tenant: $GEONICDB_TENANT"
-```
-
-:::
-
-Brokers with several tenants take the tenant in the standard `NGSILD-Tenant` header. Authentication differs from broker to broker.
-
-## 4. Use as linked data
-
-Adding the `@context` turns JSON into JSON-LD, which converts to RDF. Attributes become the catalog's IRIs (`https://datamodels.jp/ns/...`) or those of the standards it borrows from (schema.org, Smart Data Models). The NGSI-LD core context is listed too, so that `id` and `type` become JSON-LD's `@id` and `@type`.
+Adding the @context turns plain JSON into JSON-LD. Every attribute then has a globally unique name, an IRI: the catalog's own (`https://datamodels.jp/ns/...`) or those of the standards it borrows from (schema.org, Smart Data Models). JSON-LD converts to RDF, the format of linked data tools. The NGSI-LD core context is listed too, so that `id` and `type` become JSON-LD's `@id` and `@type`.
 
 ::: code-group
 
@@ -197,7 +174,7 @@ print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))
 
 :::
 
-Part of the output:
+Part of the output (N-Quads, one statement per line):
 
 ```text
 <urn:ngsi-ld:RoadRestriction:0001> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://datamodels.jp/ns/transportation/RoadRestriction> .
@@ -205,14 +182,4 @@ Part of the output:
 <urn:ngsi-ld:RoadRestriction:0001> <https://smartdatamodels.org/dataModel.Transportation/roadName> "靖国通り" .
 ```
 
-Each subject's vocabulary (`/vocab/<subject>/v1.0.0.jsonld`) is RDFS: its types have Japanese and English names and descriptions, and the attributes the catalog defines have their term name and Japanese and English descriptions. Attributes borrowed from other vocabularies (for example schema.org's `address`) are not included; their own publishers' vocabularies describe them. The mapping tables to other standards, such as GIF and the municipal standard open datasets, are on each model page and help with converting data. They are also published as YAML files at `/mapping/<subject>/<Type>/<name>.yaml` (`mappingUrls` in catalog.json).
-
-## Brokers tried
-
-The steps above use only the standard NGSI-LD API, so they should work the same with any NGSI-LD compliant broker. So far, though, they have been tried with GeonicDB only. Other brokers, such as Orion-LD, Scorpio and Stellio, have not been tried yet.
-
-Some products add features on top, such as registering a model so the server validates entities.
-
-- [GeonicDB](/en/guide/geonicdb) (Geolonia's product): register a model and the server validates creates and updates. A ready-made definition is published for each model. For now, requests that carry the catalog `@context` (as in the example above) do not find the registered model and are accepted without validation; a fix is in progress on the GeonicDB side (see the warning on the GeonicDB page). Validating before sending (step 2) works regardless.
-
-If you have tried another broker, please tell us the result in an [issue or pull request](https://github.com/geolonia/datamodels), including when something did not work.
+Each subject also publishes a vocabulary (`/vocab/<subject>/v1.0.0.jsonld`, RDFS) with the Japanese and English names and descriptions of its types and attributes. Attributes borrowed from other vocabularies, such as schema.org's `address`, are described by their own publishers.
