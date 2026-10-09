@@ -5,111 +5,78 @@ description: Register a catalog data model in GeonicDB, then create and query en
 
 # Use with GeonicDB
 
-GeonicDB is an NGSI-LD broker made by Geolonia, the company that runs this catalog.
+GeonicDB is an NGSI-LD broker made by Geolonia, the company that runs this catalog. The steps for any broker are in [Using the models](/en/guide/use); this page covers what GeonicDB adds: you can **register a model**, and GeonicDB then checks every entity of that type against it.
 
-The steps that work with any broker (validate, create, query) are in [Using the models](/en/guide/use); this page covers what is specific to GeonicDB. For every model, a GeonicDB Custom Data Model definition, the request body for `POST /custom-data-models`, is published at `https://datamodels.jp/adapters/geonicdb/<subject>/<Type>.json` (listed [by model](/en/adapters/geonicdb/) and in `catalog.json` under `adapters.geonicdb`). It already contains `contextUrl`, so registering it is enough to make GeonicDB use the catalog vocabulary.
+<svg class="flow-diagram" viewBox="0 0 460 300" role="img" aria-label="Register the model's definition from datamodels.jp in GeonicDB; your application then creates entities, which GeonicDB checks against the model, and queries them." xmlns="http://www.w3.org/2000/svg"><defs><marker id="gdb-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="20" y="8" width="420" height="58" rx="10"/><text class="t" x="230.0" y="33">datamodels.jp</text><text class="s" x="230.0" y="53">the model's definition (.json) and @context</text><rect class="box main" x="20" y="121" width="420" height="58" rx="10"/><text class="t" x="230.0" y="146">GeonicDB (your tenant)</text><text class="s" x="230.0" y="166">the registered model: rules for the type</text><rect class="box" x="20" y="234" width="420" height="58" rx="10"/><text class="t" x="230.0" y="259">Your application</text><text class="s" x="230.0" y="279">creates and queries entities</text><line class="a" x1="110" y1="68" x2="110" y2="119" marker-end="url(#gdb-ah)"/><text class="l" x="120" y="98">① register</text><line class="a d" x1="350" y1="119" x2="350" y2="68" marker-end="url(#gdb-ah)"/><text class="l e" x="340" y="98">reads the @context</text><line class="a" x1="110" y1="232" x2="110" y2="181" marker-end="url(#gdb-ah)"/><text class="l" x="120" y="211">② create: checked, stored</text><line class="a" x1="350" y1="181" x2="350" y2="232" marker-end="url(#gdb-ah)"/><text class="l e" x="340" y="211">③ query</text></svg>
 
-## Prerequisites
+For every model, a ready-made definition is published at `https://datamodels.jp/adapters/geonicdb/<subject>/<Type>.json` ([list by model](/en/adapters/geonicdb/)). It names the model's @context (`contextUrl`), so registering it is enough for GeonicDB to use the catalog's attribute names.
 
-- A GeonicDB tenant and API key ([GeonicDB documentation](https://docs.geonicdb.com/en/saas/api-key)). Bind the key to a policy that permits the requests on this page (`POST` to `/custom-data-models`, creating and querying at `/ngsi-ld/v1/entities`); see [policy binding](https://docs.geonicdb.com/en/reference/auth#policy-binding-policyid). Unless a policy permits it (bound to the key, or one of the tenant's policies), a key is denied on every API.
-- Environment variables: `GEONICDB_BASE_URL` (for example `https://<your-deployment>.geonicdb.jp`), `GEONICDB_TENANT`, `GEONICDB_API_KEY`
+**What a registered model checks** when an entity is created or updated: required attributes, value types (date-times strictly RFC 3339), allowed values, patterns, minimum and maximum. Attributes the model does not know are rejected (models with `additionalProperties: false`, the catalog's default). Registration is optional, and existing entities are not checked again when a model is registered or changed.
 
-## What registering does
+## Steps
 
-Registration is optional. GeonicDB accepts entities of any type without a model. Registering a Custom Data Model attaches rules to that type name within your tenant.
-
-- Every create, replace and partial update is validated: required attributes, `valueType` (datetimes strictly RFC 3339), and `enum`, `pattern`, `minimum`, `maximum` and length rules.
-- Attributes with a `defaultValue` are filled in when missing.
-- Unique constraints, if declared, are enforced with a database index.
-- With `additionalProperties: false`, an attribute the model does not know is rejected with 400. With `true`, it passes unvalidated.
-- `contextUrl` tells GeonicDB which context the type's attribute names belong to, so names still match when entities arrive with a `@context` or `Link` header. Without it, GeonicDB generates a tenant-specific context and IRIs of its own.
-- Registered models feed the generated JSON Schema, the console, and the MCP and A2A tooling.
-
-Existing entities are not re-validated when a model is registered or changed (a conformance report is available separately). Responses do not change either: GeonicDB injects no `@context`, clients pass the context themselves.
-
-::: warning Current GeonicDB limitation
-When the request's `@context` (in the body or in a `Link` header) maps the type to an IRI, GeonicDB currently stores the type as that IRI and does not find the model registered under the short name. **Validation is then skipped and the entity is accepted as it is.** The catalog contexts map every type to an IRI, so the way step 2 below sends entities is affected. A fix is in progress in GeonicDB: at registration it derives the type's IRI from the model's `contextUrl` and matches both the short name and the IRI. Until it is released, do not rely on a registered model to reject invalid data.
-:::
-
-## 1. Register the Custom Data Model
+You need a tenant and an API key whose policy allows these requests ([API keys](https://docs.geonicdb.com/en/saas/api-key), [policy binding](https://docs.geonicdb.com/en/reference/auth#policy-binding-policyid)), and three environment variables: `GEONICDB_BASE_URL` (for example `https://<your-deployment>.geonicdb.jp`), `GEONICDB_TENANT`, `GEONICDB_API_KEY`.
 
 ```bash
+# 1. Register the model (once per tenant). The tenant comes from the API key.
 curl -sSf https://datamodels.jp/adapters/geonicdb/transportation/RoadRestriction.json -o RoadRestriction.json
-
 curl -X POST "$GEONICDB_BASE_URL/custom-data-models" \
-  -H "Content-Type: application/json" \
-  -H "x-api-key: $GEONICDB_API_KEY" \
+  -H "Content-Type: application/json" -H "x-api-key: $GEONICDB_API_KEY" \
   --data @RoadRestriction.json
-```
 
-Registration (`/custom-data-models`) takes the tenant from the API key (or token), not from a header, so no tenant header is needed. The entity steps (`/ngsi-ld/v1/...`) name the tenant with the NGSI-LD header `NGSILD-Tenant` ([multi-tenancy](https://docs.geonicdb.com/en/core-concepts/multi-tenancy)).
-
-`201 Created` means it is registered; `409` means a model of that type already exists. With the `geonic` CLI logged in as a tenant admin (`tenant_admin`), no policy is needed: `geonic models create @RoadRestriction.json`.
-
-The registered definition validates attribute types, required attributes and enums (models with `additionalProperties: false` reject undefined attributes) and uses the context at `contextUrl` as the vocabulary of the type.
-
-## 2. Create an entity
-
-The "Example (normalized)" on each model page is JSON-LD with its `@context` inside, so it can be posted as it is with `Content-Type: application/ld+json`.
-
-```bash
+# 2. Create an entity: the model page's normalized example, as it is.
 curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example-normalized.jsonld -o entity.jsonld
-
 curl -X POST "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
   -H "Content-Type: application/ld+json" \
-  -H "x-api-key: $GEONICDB_API_KEY" \
-  -H "NGSILD-Tenant: $GEONICDB_TENANT" \
+  -H "x-api-key: $GEONICDB_API_KEY" -H "NGSILD-Tenant: $GEONICDB_TENANT" \
   --data @entity.jsonld
-```
 
-For your own data, either put `@context` in the body and send `application/ld+json`, or leave it out and send `Content-Type: application/json` with a `Link` header (see the query below). Never both at once. The alias (`v1.jsonld`) is the normal choice.
-
-## 3. Query
-
-```bash
+# 3. Query: closed roads only.
 curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionStatus==%22closed%22" \
   -H "Accept: application/ld+json" \
   -H 'Link: <https://datamodels.jp/context/transportation/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
-  -H "x-api-key: $GEONICDB_API_KEY" \
-  -H "NGSILD-Tenant: $GEONICDB_TENANT"
+  -H "x-api-key: $GEONICDB_API_KEY" -H "NGSILD-Tenant: $GEONICDB_TENANT"
 ```
 
-## The model fits, but you need a few attributes of your own
+- Registering returns `201 Created`, or `409` if a model of that type already exists. With the `geonic` CLI logged in as a tenant admin, no policy is needed: `geonic models create @RoadRestriction.json`.
+- For your own data, put the @context in the body (`application/ld+json`) or send `application/json` with the `Link` header, never both. The tenant header is `NGSILD-Tenant` ([multi-tenancy](https://docs.geonicdb.com/en/core-concepts/multi-tenancy)).
 
-Three ways, in increasing order of rigour.
+## Your own attributes
 
-1. **Allow unknown attributes.** Export with `--allow-additional` to get `additionalProperties: true`. Your attributes are accepted but not validated, and in JSON-LD they expand to whatever IRI your request context defines, or to GeonicDB's default vocabulary if none does.
-2. **Extend the definition.** Write a profile @context that adds your attributes ([Adding attributes](/en/guide/extend)), host it, and register the catalog attributes plus yours with `contextUrl` pointing to it. Your attributes are validated like the others.
+If the model fits but you need a few attributes of your own, write a profile @context that adds them ([Adding attributes](/en/guide/extend)), host it, and register a definition that has the catalog's attributes and yours. Your attributes are then checked like the others. If they are useful beyond your project, [propose them](https://github.com/geolonia/datamodels/issues) to the catalog.
 
-   Write an extension file keyed by type and export with it. Redefining a catalog attribute is an error.
+<details class="rules">
+<summary>Exporting a definition with your attributes</summary>
 
-   ```json
-   {
-     "RoadRestriction": {
-       "contextUrl": "https://example.com/context/acme-transportation.jsonld",
-       "propertyDetails": {
-         "patrolRoute": { "ngsiType": "Property", "valueType": "string", "example": "A-3", "description": "Patrol route", "@context": "https://example.com/ns/acme/patrolRoute" }
-       }
-     }
-   }
-   ```
+Write an extension file keyed by type and export with it. Redefining a catalog attribute is an error.
 
-   ```bash
-   node adapters/geonicdb/export.mjs transportation --type RoadRestriction --extend ./acme.json --out ./out
-   ```
+```json
+{
+  "RoadRestriction": {
+    "contextUrl": "https://example.com/context/acme-transportation.jsonld",
+    "propertyDetails": {
+      "patrolRoute": { "ngsiType": "Property", "valueType": "string", "example": "A-3", "description": "Patrol route", "@context": "https://example.com/ns/acme/patrolRoute" }
+    }
+  }
+}
+```
 
-3. **Propose it to the catalog.** If the attribute is useful beyond your project, open an [issue](https://github.com/geolonia/datamodels/issues) or a pull request. Once it lands in the next minor version, the extension is no longer needed.
+```bash
+node adapters/geonicdb/export.mjs transportation --type RoadRestriction --extend ./acme.json --out ./out
+```
 
-## Different type names
+To accept unknown attributes without checking them instead, export with `--allow-additional`.
 
-A tenant that needs a prefix on its type names, for example because several projects share the tenant and authorisation policies match on the type name, can export prefixed definitions from the repository. The vocabulary (IRIs) stays the catalog's.
+</details>
+
+<details class="rules">
+<summary>Different type names in your tenant</summary>
+
+A tenant that needs a prefix on its type names (for example when several projects share it and policies match on the type name) can export prefixed definitions. The attribute names and their meaning stay the catalog's.
 
 ```bash
 git clone https://github.com/geolonia/datamodels && cd datamodels && npm ci
 node adapters/geonicdb/export.mjs transportation --type-prefix Acme --out ./out
 ```
 
-## Notes
-
-- `catalog.json` lists every model with its `contextUrl`, `schemaUrl` and GeonicDB definition URL, for automation.
-- Letting GeonicDB read the catalog directly and offer "create from model" is planned.
+</details>

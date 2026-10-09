@@ -353,3 +353,19 @@
 .vp-doc details.rules > summary { margin: 0; padding: 8px 0; cursor: pointer; font-weight: 500; }
 .vp-doc details.rules > summary:focus:not(:focus-visible) { outline: none; }
 .vp-doc details.rules[open] { padding-bottom: 8px; }
+
+/* A small flow diagram in a guide (an inline SVG with class flow-diagram, e.g. /guide/geonicdb). */
+.vp-doc .flow-diagram { display: block; width: 100%; max-width: 460px; margin: 24px auto; }
+.flow-diagram .box { fill: var(--vp-c-bg-soft); stroke: var(--vp-c-divider); stroke-width: 1.5; }
+.flow-diagram .box.main { stroke: var(--vp-c-brand-1); stroke-width: 2; }
+.flow-diagram text { text-anchor: middle; fill: var(--vp-c-text-1); font-family: var(--vp-font-family-base); }
+.flow-diagram .t { font-size: 15px; font-weight: 600; }
+.flow-diagram .s { font-size: 12.5px; fill: var(--vp-c-text-2); }
+.flow-diagram .l { font-size: 12.5px; text-anchor: start; fill: var(--vp-c-text-2); }
+.flow-diagram .l.e { text-anchor: end; }
+.flow-diagram .a { stroke: var(--vp-c-text-3); stroke-width: 1.5; }
+.flow-diagram .a.d { stroke-dasharray: 4 3; }
+.flow-diagram .ah { fill: var(--vp-c-text-3); }
+.flow-diagram a .box { transition: stroke 0.15s; }
+.flow-diagram a:hover .box { stroke: var(--vp-c-brand-1); }
+.vp-doc .flow-diagram a, .vp-doc .flow-diagram a text { text-decoration: none; }
