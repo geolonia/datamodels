@@ -20,7 +20,7 @@ A mapping file has no version: its URL stays, and its content follows the curren
 ```yaml
 standard:
   name: { ja: …, en: "Municipal standard open dataset, … sheet '03. …'" }
-  url: https://www.digital.go.jp/resources/open_data/…
+  url: https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test
   license: { ja: …, en: "Public Data License 1.0, compatible with CC BY 4.0" }
 fields:
   name: { to: 名称 (name), column: 名称 }

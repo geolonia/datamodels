@@ -45,7 +45,7 @@ curl -G "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
   -H "$KEY" -H "$TENANT"
 ```
 
-- 登録すると `201 Created`、同じ型名のモデルが既にあれば `409` が返ります。テナント管理者としてログインした `geonic` CLI なら、ポリシーなしで `geonic models create @RoadRestriction.json` で登録できます。
+- 登録すると `201 Created`、同じ型名のモデルが既にあれば `409` が返ります。テナント管理者としてログインした `geonic` CLI なら、ポリシーなしで `geonic models create @model.json` で登録できます。
 - 自分のデータは、body に @context を入れて（`application/ld+json`）送るか、`application/json` と `Link` ヘッダーで送ります。両方は同時に使いません。テナントは `NGSILD-Tenant` ヘッダーで指定します（[マルチテナンシー](https://docs.geonicdb.com/ja/core-concepts/multi-tenancy)）。
 
 ## 独自の属性

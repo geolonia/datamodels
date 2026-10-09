@@ -45,7 +45,7 @@ curl -G "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
   -H "$KEY" -H "$TENANT"
 ```
 
-- Registering returns `201 Created`, or `409` if a model of that type already exists. With the `geonic` CLI logged in as a tenant admin, no policy is needed: `geonic models create @RoadRestriction.json`.
+- Registering returns `201 Created`, or `409` if a model of that type already exists. With the `geonic` CLI logged in as a tenant admin, no policy is needed: `geonic models create @model.json`.
 - For your own data, put the @context in the body (`application/ld+json`) or send `application/json` with the `Link` header, never both. The tenant header is `NGSILD-Tenant` ([multi-tenancy](https://docs.geonicdb.com/en/core-concepts/multi-tenancy)).
 
 ## Your own attributes
