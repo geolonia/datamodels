@@ -370,3 +370,6 @@
 .flow-diagram a .box { transition: stroke 0.15s; }
 .flow-diagram a:hover .box { stroke: var(--vp-c-brand-1); }
 .vp-doc .flow-diagram a, .vp-doc .flow-diagram a text { text-decoration: none; }
+/* The h2 has no top padding here, so its anchor (#) moves back up to the text. */
+.vp-doc h2 .header-anchor { top: 0; }
+.flow-diagram .t.m { font-family: var(--vp-font-family-mono); font-size: 14px; }

@@ -28,39 +28,55 @@ The JSON Schema checks data in the simple form: attribute names with plain value
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 
-const schemaUrl = 'https://datamodels.jp/schema/transportation/RoadRestriction/v1.0.0.json';
-const entity = await (await fetch('https://datamodels.jp/examples/transportation/RoadRestriction/example.json')).json();
+const base = 'https://datamodels.jp';
+const model = 'transportation/RoadRestriction';
+const getJson = async (url) => (await fetch(url)).json();
 
-// strict: false accepts the catalog's x-* annotations; loadSchema fetches referenced schemas.
-const ajv = new Ajv2020({ strict: false, loadSchema: async (url) => (await fetch(url)).json() });
+const schema = await getJson(`${base}/schema/${model}/v1.0.0.json`);
+const entity = await getJson(`${base}/examples/${model}/example.json`);
+
+// strict: false accepts the catalog's x-* annotations.
+// loadSchema fetches the schemas this one refers to.
+const ajv = new Ajv2020({ strict: false, loadSchema: getJson });
 addFormats(ajv);
-const validate = await ajv.compileAsync(await (await fetch(schemaUrl)).json());
+const validate = await ajv.compileAsync(schema);
 console.log(validate(entity) ? 'valid' : validate.errors);
 ```
 
 ```python [Python]
-# pip install "jsonschema[format]" requests  ([format] is needed to check URIs and dates)
+# pip install "jsonschema[format]" requests
+# ([format] is needed to check URIs and dates)
 import requests
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
+BASE = "https://datamodels.jp"
+MODEL = "transportation/RoadRestriction"
+
 def get(url):
     return requests.get(url, timeout=30).json()
 
-schema = get("https://datamodels.jp/schema/transportation/RoadRestriction/v1.0.0.json")
-entity = get("https://datamodels.jp/examples/transportation/RoadRestriction/example.json")
+schema = get(f"{BASE}/schema/{MODEL}/v1.0.0.json")
+entity = get(f"{BASE}/examples/{MODEL}/example.json")
 
-# The registry fetches referenced schemas (address, geometry) when they are first used.
+# The registry fetches referenced schemas (address, geometry)
+# when they are first used.
 registry = Registry(retrieve=lambda url: Resource.from_contents(get(url)))
-validator = Draft202012Validator(schema, registry=registry, format_checker=Draft202012Validator.FORMAT_CHECKER)
+validator = Draft202012Validator(
+    schema,
+    registry=registry,
+    format_checker=Draft202012Validator.FORMAT_CHECKER,
+)
 errors = [e.message for e in validator.iter_errors(entity)]
 print(errors or "valid")
 ```
 
 ```bash [Command line]
 # pipx install check-jsonschema (or uvx check-jsonschema ...)
-curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example.json -o entity.json
-check-jsonschema --schemafile https://datamodels.jp/schema/transportation/RoadRestriction/v1.0.0.json entity.json
+BASE=https://datamodels.jp
+MODEL=transportation/RoadRestriction
+curl -sSf "$BASE/examples/$MODEL/example.json" -o entity.json
+check-jsonschema --schemafile "$BASE/schema/$MODEL/v1.0.0.json" entity.json
 ```
 
 :::
@@ -72,8 +88,10 @@ When a value is not allowed, the output names the attribute and what is wrong.
 NGSI-LD brokers usually take the *normalized* form, in which each attribute also says what kind it is (a Property with a value, a Relationship pointing to another entity, and so on). Every model page has the example in both forms, so the normalized example can be sent as it is:
 
 ```bash
-# BROKER: the broker's URL, for example http://localhost:1026
-curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example-normalized.jsonld -o entity.jsonld
+BROKER=http://localhost:1026   # your broker's URL
+BASE=https://datamodels.jp
+MODEL=transportation/RoadRestriction
+curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" -o entity.jsonld
 
 # Create
 curl -X POST "$BROKER/ngsi-ld/v1/entities" \
@@ -81,9 +99,13 @@ curl -X POST "$BROKER/ngsi-ld/v1/entities" \
   --data @entity.jsonld
 
 # Query: closed roads only
-curl "$BROKER/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionStatus==%22closed%22" \
+CONTEXT="$BASE/context/transportation/v1.jsonld"
+REL='rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
+curl -G "$BROKER/ngsi-ld/v1/entities" \
+  --data-urlencode 'type=RoadRestriction' \
+  --data-urlencode 'q=restrictionStatus=="closed"' \
   -H "Accept: application/ld+json" \
-  -H 'Link: <https://datamodels.jp/context/transportation/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
+  -H "Link: <$CONTEXT>; $REL"
 ```
 
 Put the @context in the body and send `application/ld+json`, or leave it out and send `application/json` with a `Link` header (the model page shows it). Brokers with several tenants take the tenant in the `NGSILD-Tenant` header; authentication differs from broker to broker.
@@ -122,11 +144,21 @@ is, in normalized form:
   ],
   "id": "urn:ngsi-ld:Task:1234",
   "type": "Task",
-  "name": { "type": "Property", "value": "靖国通りのアンダーパスの冠水を確認する" },
+  "name": {
+    "type": "Property",
+    "value": "靖国通りのアンダーパスの冠水を確認する"
+  },
   "progress": { "type": "Property", "value": "in-process" },
-  "due": { "type": "Property", "value": { "@type": "DateTime", "@value": "2026-07-08T12:00:00+09:00" } },
+  "due": {
+    "type": "Property",
+    "value": { "@type": "DateTime", "@value": "2026-07-08T12:00:00+09:00" }
+  },
   "assignee": [
-    { "type": "Relationship", "object": "urn:ngsi-ld:Team:field-team-a", "datasetId": "urn:ngsi-ld:dataset:assignee:1" }
+    {
+      "type": "Relationship",
+      "object": "urn:ngsi-ld:Team:field-team-a",
+      "datasetId": "urn:ngsi-ld:dataset:assignee:1"
+    }
   ]
 }
 ```
@@ -147,16 +179,28 @@ Adding the @context turns plain JSON into JSON-LD. Every attribute then has a gl
 // npm install jsonld
 import jsonld from 'jsonld';
 
-const entity = await (await fetch('https://datamodels.jp/examples/transportation/RoadRestriction/example.json')).json();
+const base = 'https://datamodels.jp';
+const getJson = async (url) => (await fetch(url)).json();
+const entity = await getJson(
+  `${base}/examples/transportation/RoadRestriction/example.json`,
+);
 // Plain JSON becomes linked data by adding the catalog context.
 entity['@context'] = [
-  'https://datamodels.jp/context/transportation/v1.jsonld',
-  'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld', // maps id and type
+  `${base}/context/transportation/v1.jsonld`,
+  // maps id and type:
+  'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld',
 ];
 
 // fetch replaces the default document loader, so this runs anywhere.
-const documentLoader = async (url) => ({ documentUrl: url, document: await (await fetch(url)).json() });
-console.log(await jsonld.toRDF(entity, { format: 'application/n-quads', documentLoader }));
+const documentLoader = async (url) => ({
+  documentUrl: url,
+  document: await getJson(url),
+});
+const nquads = await jsonld.toRDF(entity, {
+  format: 'application/n-quads',
+  documentLoader,
+});
+console.log(nquads);
 ```
 
 ```python [Python]
@@ -164,11 +208,14 @@ console.log(await jsonld.toRDF(entity, { format: 'application/n-quads', document
 import requests
 from pyld import jsonld
 
-entity = requests.get("https://datamodels.jp/examples/transportation/RoadRestriction/example.json", timeout=30).json()
+BASE = "https://datamodels.jp"
+url = f"{BASE}/examples/transportation/RoadRestriction/example.json"
+entity = requests.get(url, timeout=30).json()
 # Plain JSON becomes linked data by adding the catalog context.
 entity["@context"] = [
-    "https://datamodels.jp/context/transportation/v1.jsonld",
-    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",  # maps id and type
+    f"{BASE}/context/transportation/v1.jsonld",
+    # maps id and type:
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",
 ]
 
 print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))

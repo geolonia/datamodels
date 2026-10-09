@@ -18,27 +18,34 @@ GeonicDB は、このカタログを運営している Geolonia の NGSI-LD ブ�
 テナントと、これらの操作を許すポリシーを付けた API キー（[API キー](https://docs.geonicdb.com/ja/saas/api-key)、[ポリシーバインディング](https://docs.geonicdb.com/ja/reference/auth#ポリシーバインディング-policyid)）、それに 3 つの環境変数が要ります: `GEONICDB_BASE_URL`（例 `https://<your-deployment>.geonicdb.jp`）、`GEONICDB_TENANT`、`GEONICDB_API_KEY`。
 
 ```bash
+BASE=https://datamodels.jp
+MODEL=transportation/RoadRestriction
+KEY="x-api-key: $GEONICDB_API_KEY"
+TENANT="NGSILD-Tenant: $GEONICDB_TENANT"
+
 # 1. モデルを登録する（テナントごとに 1 回）。テナントは API キーで決まります。
-curl -sSf https://datamodels.jp/adapters/geonicdb/transportation/RoadRestriction.json -o RoadRestriction.json
+curl -sSf "$BASE/adapters/geonicdb/$MODEL.json" -o model.json
 curl -X POST "$GEONICDB_BASE_URL/custom-data-models" \
-  -H "Content-Type: application/json" -H "x-api-key: $GEONICDB_API_KEY" \
-  --data @RoadRestriction.json
+  -H "Content-Type: application/json" -H "$KEY" \
+  --data @model.json
 
 # 2. エンティティを作成する。モデルのページの normalized の例をそのまま。
-curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example-normalized.jsonld -o entity.jsonld
+curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" -o entity.jsonld
 curl -X POST "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
-  -H "Content-Type: application/ld+json" \
-  -H "x-api-key: $GEONICDB_API_KEY" -H "NGSILD-Tenant: $GEONICDB_TENANT" \
+  -H "Content-Type: application/ld+json" -H "$KEY" -H "$TENANT" \
   --data @entity.jsonld
 
 # 3. 検索する（通行止めだけ）。
-curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionStatus==%22closed%22" \
-  -H "Accept: application/ld+json" \
-  -H 'Link: <https://datamodels.jp/context/transportation/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
-  -H "x-api-key: $GEONICDB_API_KEY" -H "NGSILD-Tenant: $GEONICDB_TENANT"
+CONTEXT="$BASE/context/transportation/v1.jsonld"
+REL='rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
+curl -G "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
+  --data-urlencode 'type=RoadRestriction' \
+  --data-urlencode 'q=restrictionStatus=="closed"' \
+  -H "Accept: application/ld+json" -H "Link: <$CONTEXT>; $REL" \
+  -H "$KEY" -H "$TENANT"
 ```
 
-- 登録すると `201 Created`、同じ型名のモデルが既にあれば `409` が返ります。テナント管理者としてログインした `geonic` CLI なら、ポリシーなしで `geonic models create @RoadRestriction.json` で登録できます。
+- 登録すると `201 Created`、同じ型名のモデルが既にあれば `409` が返ります。テナント管理者としてログインした `geonic` CLI なら、ポリシーなしで `geonic models create @model.json` で登録できます。
 - 自分のデータは、body に @context を入れて（`application/ld+json`）送るか、`application/json` と `Link` ヘッダーで送ります。両方は同時に使いません。テナントは `NGSILD-Tenant` ヘッダーで指定します（[マルチテナンシー](https://docs.geonicdb.com/ja/core-concepts/multi-tenancy)）。
 
 ## 独自の属性
@@ -55,14 +62,21 @@ curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionS
   "RoadRestriction": {
     "contextUrl": "https://example.com/context/acme-transportation.jsonld",
     "propertyDetails": {
-      "patrolRoute": { "ngsiType": "Property", "valueType": "string", "example": "A-3", "description": "巡回ルート", "@context": "https://example.com/ns/acme/patrolRoute" }
+      "patrolRoute": {
+        "ngsiType": "Property",
+        "valueType": "string",
+        "example": "A-3",
+        "description": "巡回ルート",
+        "@context": "https://example.com/ns/acme/patrolRoute"
+      }
     }
   }
 }
 ```
 
 ```bash
-node adapters/geonicdb/export.mjs transportation --type RoadRestriction --extend ./acme.json --out ./out
+node adapters/geonicdb/export.mjs transportation \
+  --type RoadRestriction --extend ./acme.json --out ./out
 ```
 
 未知の属性を検証せずに受け付けるだけなら、`--allow-additional` で書き出します。
@@ -76,7 +90,8 @@ node adapters/geonicdb/export.mjs transportation --type RoadRestriction --extend
 
 ```bash
 git clone https://github.com/geolonia/datamodels && cd datamodels && npm ci
-node adapters/geonicdb/export.mjs transportation --type-prefix Acme --out ./out
+node adapters/geonicdb/export.mjs transportation \
+  --type-prefix Acme --out ./out
 ```
 
 </details>
