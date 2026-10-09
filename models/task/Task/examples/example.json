@@ -4,6 +4,7 @@
   "name": "靖国通りのアンダーパスの冠水を確認する",
   "description": "住民からの通報の現地確認。水位と通行可否を報告すること。",
   "project": "urn:ngsi-ld:Project:heavy-rain-2026-07",
+  "milestone": "urn:ngsi-ld:Milestone:heavy-rain-2026-07-initial",
   "parent": "urn:ngsi-ld:Task:1200",
   "relatedTo": [
     "urn:ngsi-ld:Task:1198"

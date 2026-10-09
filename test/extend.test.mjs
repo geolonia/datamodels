@@ -68,10 +68,10 @@ test('problems: bad names, clashes with the model and the core, taken namespaces
   assert.deepEqual(codes({ ...input(attrs), base: 'https://notdatamodels.jp/ns/x/' }), [], 'a different domain that merely ends the same way is fine');
   assert.deepEqual(codes({ ...input(attrs), base: 'https://example.com/ns/acme' }), ['base']);
   assert.deepEqual(codes({ ...input(attrs), prefix: 'Acme' }), ['prefix']);
-  // Terms of the subject context from other models (Comment's text in the task
+  // Terms of the subject context from other models (Project's homepage in the task
   // context) and imported ones (task's statusLabel in the transportation context).
-  assert.deepEqual(codes(input([{ name: 'text', ngsiType: 'Property', valueType: 'string' }])), ['inContext:text']);
-  assert.deepEqual(codes({ ...input(attrs), prefix: 'text' }), ['prefixInContext:text']);
+  assert.deepEqual(codes(input([{ name: 'homepage', ngsiType: 'Property', valueType: 'string' }])), ['inContext:homepage']);
+  assert.deepEqual(codes({ ...input(attrs), prefix: 'homepage' }), ['prefixInContext:homepage']);
   const road = entities.find((e) => e.model.type === 'RoadRestriction').model;
   assert.ok(road.contextTerms.includes('statusLabel'), 'transportation imports the task terms');
   // An empty row is ignored, not an error.

@@ -62,6 +62,16 @@
       },
       "x-iri": "https://datamodels.jp/ns/task/project"
     },
+    "milestone": {
+      "type": "string",
+      "format": "uri",
+      "description": "The milestone (version, release) this is planned for",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "https://datamodels.jp/ns/task/Milestone"
+      },
+      "x-iri": "https://datamodels.jp/ns/task/milestone"
+    },
     "parent": {
       "type": "string",
       "format": "uri",

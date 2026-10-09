@@ -8,6 +8,7 @@ fields:
   name: { to: "subject" }
   description: { to: "description" }
   project: { to: "project_id" }
+  milestone: { to: "fixed_version_id", note: { ja: 対象バージョン, en: target version } }
   parent: { to: "parent_issue_id" }
   relatedTo: { to: "relations[].issue_to_id", note: { ja: "relation_type（relates, blocks, precedes, duplicates）は核に含めない", en: "relation_type is not in the core" } }
   refersTo: { to: null, note: { ja: GTT の refersTo（購読元エンティティ）に対応, en: corresponds to GTT refersTo (the subscribed entity) } }

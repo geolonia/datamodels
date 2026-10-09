@@ -17,6 +17,10 @@
     "type": "Relationship",
     "object": "urn:ngsi-ld:Project:heavy-rain-2026-07"
   },
+  "milestone": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:Milestone:heavy-rain-2026-07-initial"
+  },
   "parent": {
     "type": "Relationship",
     "object": "urn:ngsi-ld:Task:1200"

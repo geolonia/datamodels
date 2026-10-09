@@ -86,14 +86,12 @@ export const STANDARDS = [
   } },
   { id: 'github', name: { ja: 'GitHub', en: 'GitHub' }, parts: {
     'Task/github-issues': { ja: 'Issues（REST API）', en: 'Issues (REST API)' },
-    'Comment/github': { ja: 'Issue コメント', en: 'Issue comments' },
-    'Attachment/github': { ja: 'Issue の添付（本文中の埋め込み）', en: 'Issue attachments (embedded in the body)' },
+    'Milestone/github': { ja: 'マイルストーン', en: 'Milestones' },
     'Project/github': { ja: 'リポジトリ', en: 'Repositories' },
   } },
   { id: 'redmine', name: { ja: 'Redmine', en: 'Redmine' }, parts: {
     'Task/redmine': { ja: 'Issue（redmine_gtt_fiware の出力を含む）', en: 'Issues (including redmine_gtt_fiware output)' },
-    'Comment/redmine': { ja: 'ジャーナル（注記）', en: 'Journal notes' },
-    'Attachment/redmine': { ja: '添付ファイル', en: 'Attachments' },
+    'Milestone/redmine': { ja: 'バージョン（マイルストーン）', en: 'Versions (milestones)' },
     'Project/redmine': { ja: 'プロジェクト', en: 'Projects' },
   } },
 ];

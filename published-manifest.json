@@ -5,7 +5,7 @@
     "context/common/v1.0.0.jsonld": "59fe038a9d8c1f459a86940f17371f1b5842942940afa68da4f21502e07b453d",
     "context/decision/v1.0.0.jsonld": "d230eadccb5dfdf76b25f0d310b8a3c23c910b3ffbf953c9344bd74e61712035",
     "context/disaster/v1.0.0.jsonld": "0caf637b212e6955f5eb1d6e231d2481e4e04eafe0c4d57d4d305e97880d9a86",
-    "context/task/v1.0.0.jsonld": "7c542815fe5f9982372b8587c1a55f869b9a830ed6c7a5f3b3eddbb0e10d5d4c",
+    "context/task/v1.0.0.jsonld": "145d1552d8b822688c853bae867d830cf193f48a0272bd4689013cbbb8d97145",
     "context/transportation/v1.0.0.jsonld": "f1a41df5c58b66e7afc55faf294e9b76f9ad4a786fa2922363a6870a1f4df8c4",
     "schema/common/Geometry/v1.0.0.json": "370263be66dbaf5bec92ef1017a6cff8c3183373679a6d63e993fd055777a295",
     "schema/common/JapaneseAddress/v1.0.0.json": "c406ec23e60486dff7bd38858d981bed35620a293ec7e9dd7a5b6012d0ad341a",
@@ -13,15 +13,14 @@
     "schema/disaster/DesignatedShelter/v1.0.0.json": "4353f41c9cdedc4ddf3667f1cf1c5b7e929efd20e9eb5b855fe1a402a8cda2f9",
     "schema/disaster/EvacuationShelter/v1.0.0.json": "bfec7fc87c568ed4849ed962aacae40695086f585ab310bfd23dc72d71e5027f",
     "schema/disaster/EvacuationSite/v1.0.0.json": "dfe2c2d058e60ca2143a325272328ee66e6f3be574453ebba5a92a531481bfeb",
-    "schema/task/Attachment/v1.0.0.json": "fb29410d562b14815d53da778bc9fe8897e253af456f8a9011e7a48eacbe412e",
-    "schema/task/Comment/v1.0.0.json": "603bf0658c235dd5c09bc68c0f515a36c0a5bf818480c33cd203781188c816dd",
+    "schema/task/Milestone/v1.0.0.json": "7209e7865370132b1aeccbce4b2cce12ac071e6e17348328169f16f303df8a61",
     "schema/task/Project/v1.0.0.json": "b81cb2b6db1b7c999f0f3264b0e6465cdfdd553b8b01da9f737d89fbaea075c8",
-    "schema/task/Task/v1.0.0.json": "0780188e4744f6b29a6e9cd3902201dac08fbead1b4abaff8d98efa9456663e1",
+    "schema/task/Task/v1.0.0.json": "4dd8f6f28b983da9d42aa65319d0a294bd3a806fb5a68ce53cc54af10a38d0f5",
     "schema/transportation/RoadRestriction/v1.0.0.json": "3e56446b573899fe58b110e9f409c20232edb49d6e28a664fac559bae1d23e5a",
     "vocab/common/v1.0.0.jsonld": "ca9c28d8686baf70be72455e2f30e3d9ee6af7dc07f9853c4b5738e491dbb313",
     "vocab/decision/v1.0.0.jsonld": "947e6cada19cfea05b0ec77c52dcebdff91afbb3b389715bc1f1f7b781c648d1",
     "vocab/disaster/v1.0.0.jsonld": "1a3d481d2a3ef3b1f39fdd2ce05799febd31944d4189c5283ee4c3e73e2e4ce7",
-    "vocab/task/v1.0.0.jsonld": "bc5be4ea6fd5e1483904d210286de4371522157bcfebef6ae2440844f36d8f8e",
+    "vocab/task/v1.0.0.jsonld": "9e57072cddfcc67e551d47f03af41453350612d66a94bc551ed3f1c73af9d32d",
     "vocab/transportation/v1.0.0.jsonld": "c135027870eb300edb4fdeaa10bc55d207e3a3debbb9de9433b03175a7611b27"
   }
 }
