@@ -18,8 +18,8 @@ import type { PanzoomObject } from '@panzoom/panzoom'
 const props = defineProps<{ width: number; height: number; title?: string }>()
 const { lang } = useData()
 const t = computed(() => lang.value === 'ja'
-  ? { label: '型と関係の図', hint: 'ドラッグで移動、ピンチまたは Ctrl/⌘ + スクロールで拡大・縮小', zoomIn: '拡大', zoomOut: '縮小', fit: '全体を表示', actual: '100% で表示', download: 'SVG でダウンロード' }
-  : { label: 'Types and relationships', hint: 'Drag to move; pinch or Ctrl/⌘ + scroll to zoom', zoomIn: 'Zoom in', zoomOut: 'Zoom out', fit: 'Fit to width', actual: 'Show at 100%', download: 'Download as SVG' })
+  ? { label: '型と関係の図', hint: 'ドラッグで移動、ピンチまたは Ctrl/⌘ + スクロールで拡大・縮小', zoomIn: '拡大', zoomOut: '縮小', full: '全画面で表示', exitFull: '全画面を終了', actual: '100% で表示', download: 'SVG でダウンロード' }
+  : { label: 'Types and relationships', hint: 'Drag to move; pinch or Ctrl/⌘ + scroll to zoom', zoomIn: 'Zoom in', zoomOut: 'Zoom out', full: 'Full screen', exitFull: 'Exit full screen', actual: 'Show at 100%', download: 'Download as SVG' })
 
 const MAX = 2
 const viewport = ref<HTMLElement | null>(null)
@@ -28,12 +28,22 @@ const ready = ref(false)
 const vw = ref(0)
 const scale = ref(1)
 
-const zoomable = computed(() => ready.value && props.width > vw.value + 1)
-const fit = computed(() => (vw.value ? Math.min(1, vw.value / props.width) : 1))
-// The viewport is as tall as the graph at its fitted size, but not so flat that a very wide graph becomes a strip.
-const vh = computed(() => Math.round(Math.max(props.height * fit.value, Math.min(props.height, 200))))
+// Full screen: the card fills the screen (the Fullscreen API where the browser has it for any element,
+// otherwise the window), the graph fits both its width and height and can always be zoomed.
+const full = ref(false)
+const fullHeight = ref(0)
+const zoomable = computed(() => ready.value && (full.value || props.width > vw.value + 1))
+const fit = computed(() => {
+  if (!vw.value) return 1
+  if (full.value && fullHeight.value) return Math.min(1, vw.value / props.width, fullHeight.value / props.height)
+  return Math.min(1, vw.value / props.width)
+})
+// The viewport is as tall as the graph at its fitted size, but not so flat that a very wide graph becomes a strip;
+// in full screen it takes the height left by the toolbar and the legend.
+const vh = computed(() => full.value && fullHeight.value ? fullHeight.value : Math.round(Math.max(props.height * fit.value, Math.min(props.height, 200))))
 // The stage has the viewport's proportions at the fitted scale (the graph centred in it), so containment
 // ('outside': no gap at any edge) holds from the fitted view up to the largest zoom.
+const stageWidth = computed(() => Math.max(props.width, vw.value / fit.value))
 const stageHeight = computed(() => vh.value / fit.value)
 const percent = computed(() => `${Math.round(scale.value * 100)}%`)
 
@@ -74,7 +84,23 @@ async function setup() {
 
 function zoomIn() { touched = true; run(() => pz?.zoomIn()) }
 function zoomOut() { touched = true; run(() => pz?.zoomOut()) }
-function toFit() { touched = false; run(() => pz?.zoom(fit.value, { animate: true })) }
+const root = ref<HTMLElement | null>(null)
+const fsElement = () => document.fullscreenElement ?? (document as any).webkitFullscreenElement
+async function toggleFull() {
+  touched = false
+  if (full.value) {
+    if (fsElement()) await (document.exitFullscreen?.() ?? (document as any).webkitExitFullscreen?.())
+    full.value = false
+    return
+  }
+  full.value = true
+  const el = root.value as any
+  // No element full screen (iPhone): the card covers the window instead (CSS .full).
+  try { await (el?.requestFullscreen?.() ?? el?.webkitRequestFullscreen?.()) } catch {}
+}
+// Leaving the browser's full screen (Esc) ends ours; without the API, Esc ends the window cover.
+const onFsChange = () => { if (!fsElement() && full.value) { full.value = false; touched = false } }
+const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && full.value && !fsElement()) { full.value = false; touched = false } }
 function actual() { touched = true; run(() => pz?.zoom(1, { animate: true })) }
 // Wheel zooms go through the queue too. A trackpad pinch sends many events a frame, so they add up
 // while a zoom is pending and are applied as one, at the latest pointer position.
@@ -144,18 +170,32 @@ let observer: ResizeObserver | undefined
 onMounted(() => {
   vw.value = viewport.value?.clientWidth ?? 0
   ready.value = true
-  observer = new ResizeObserver(() => { vw.value = viewport.value?.clientWidth ?? 0 })
+  observer = new ResizeObserver(() => {
+    vw.value = viewport.value?.clientWidth ?? 0
+    // In full screen the viewport is sized by the card (flex); measure the height it gets.
+    if (full.value) fullHeight.value = viewport.value?.clientHeight ?? 0
+  })
   if (viewport.value) observer.observe(viewport.value)
+  document.addEventListener('fullscreenchange', onFsChange)
+  document.addEventListener('webkitfullscreenchange', onFsChange)
+  document.addEventListener('keydown', onKey)
 })
-// After the stage has its size for the new width.
-watch([vw, ready], setup, { flush: 'post' })
-onBeforeUnmount(() => { observer?.disconnect(); pz?.destroy() })
+watch(full, () => { if (!full.value) fullHeight.value = 0 })
+// After the stage has its size for the new width (or the full screen's size).
+watch([vw, vh, ready, full], setup, { flush: 'post' })
+onBeforeUnmount(() => {
+  observer?.disconnect(); pz?.destroy()
+  document.removeEventListener('fullscreenchange', onFsChange)
+  document.removeEventListener('webkitfullscreenchange', onFsChange)
+  document.removeEventListener('keydown', onKey)
+})
 </script>
 
 <template>
-  <figure class="graph-viewer" :class="{ ready, zoomable }" :aria-label="t.label">
-    <div v-if="zoomable" class="head">
+  <figure ref="root" class="graph-viewer" :class="{ ready, zoomable, full }" :aria-label="t.label">
+    <div v-if="ready" class="head">
       <div class="zoom" role="group" :title="t.hint">
+        <template v-if="zoomable">
         <button type="button" class="icon" :aria-label="t.zoomOut" :title="t.zoomOut" :disabled="scale <= fit + 0.001" @click="zoomOut">
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10" /></svg>
         </button>
@@ -163,21 +203,23 @@ onBeforeUnmount(() => { observer?.disconnect(); pz?.destroy() })
         <button type="button" class="icon" :aria-label="t.zoomIn" :title="t.zoomIn" :disabled="scale >= MAX - 0.001" @click="zoomIn">
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M8 3v10" /></svg>
         </button>
-        <button type="button" class="icon" :aria-label="t.fit" :title="t.fit" @click="toFit">
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" /></svg>
+        </template>
+        <button type="button" class="icon" :aria-label="full ? t.exitFull : t.full" :title="full ? t.exitFull : t.full" :aria-pressed="full" @click="toggleFull">
+          <svg v-if="!full" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" /></svg>
+          <svg v-else viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2v4H2M14 6h-4V2M10 14v-4h4M2 10h4v4" /></svg>
         </button>
       </div>
     </div>
     <div
       ref="viewport"
       class="viewport"
-      :style="zoomable ? { height: `${vh}px` } : undefined"
+      :style="zoomable && !full ? { height: `${vh}px` } : undefined"
       @pointerdown.capture="down"
       @click.capture="click"
       @wheel="wheel"
       @focusin="focusin"
     >
-      <div ref="stage" class="stage" :style="zoomable ? { width: `${width}px`, height: `${stageHeight}px` } : undefined"><slot /></div>
+      <div ref="stage" class="stage" :style="zoomable ? { width: `${stageWidth}px`, height: `${stageHeight}px` } : undefined"><slot /></div>
     </div>
     <div class="foot">
       <slot name="legend" />
@@ -205,6 +247,10 @@ button:focus-visible { outline: 2px solid var(--vp-c-brand-1); outline-offset: 1
 .graph-viewer :deep(.model-graph) { margin: 0; }
 .graph-viewer.zoomable .viewport { overflow: hidden; position: relative; border-radius: 6px; }
 /* The stage is moved, not the scroll position; the graph's own sideways scroll is off. */
-.graph-viewer.zoomable .stage { display: flex; align-items: center; }
+.graph-viewer.zoomable .stage { display: flex; align-items: center; justify-content: center; }
+/* Full screen: the card fills the screen, the graph takes what the toolbar and the legend leave. */
+.graph-viewer.full { position: fixed; inset: 0; z-index: 200; margin: 0; border-radius: 0; display: flex; flex-direction: column; }
+.graph-viewer.full .viewport { flex: 1; min-height: 0; }
+.graph-viewer:fullscreen { background: var(--vp-c-bg); }
 .graph-viewer.zoomable :deep(.model-graph) { overflow: visible; }
 </style>

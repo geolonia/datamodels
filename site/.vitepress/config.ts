@@ -28,7 +28,7 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
       text: ja ? 'モデルを使う' : 'Use the models',
       items: [
         page('使い方', 'Using the models', 'use', [{ text: 'GeonicDB', link: `${prefix}/guide/geonicdb` }]),
-        page('標準からモデルを探す', 'Find a model by standard', 'standards'),
+        page('標準からモデルを探す', 'Find a model by standard', 'standards', [page('対応表', 'Mapping files', 'mapping')]),
         page('属性を足す', 'Adding attributes', 'extend', [page('拡張ビルダー', 'Extension builder', 'builder')]),
         page('独自の名前で使う', 'Your own names', 'names'),
         page('URL とバージョン', 'URLs and versions', 'urls'),

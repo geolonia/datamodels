@@ -171,7 +171,7 @@ const M = {
     requiredMark: '必須', requiredNote: '* は必須の属性です。', linkHeaderIntro: '本文に @context を書かずに送るときの Link ヘッダー:',
     use: 'このモデルを使う', useValue: (rules) => `他のモデルは、属性の値としてこの値型を参照します。書き方は[モデルのルール](${rules})にあります。`,
     standards: '参照している標準', standardsNote: 'このモデルが対応している標準と、項目ごとの対応です。開くと対応表が見られます。',
-    fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く', standardLicence: 'この標準のライセンス', mappingFile: 'この対応表のファイル（YAML、データ変換用）', notesTitle: '注記',
+    fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く', standardLicence: 'この標準のライセンス', mappingFile: (file, guide) => `この標準のデータを変換するための対応表（YAML）: ${file}（使い方は${guide('対応表')}）`, notesTitle: '注記',
     sourceFiles: (href) => `ソースファイル（注記、対応表）は [GitHub](${href}) にあります。`,
   },
   en: {
@@ -183,7 +183,7 @@ const M = {
     requiredMark: 'required', requiredNote: '* required', linkHeaderIntro: 'The Link header, for sending data without @context in the body:',
     use: 'Using this model', useValue: (rules) => `Other models use this value type as the value of an attribute. How: [Rules for models](${rules}).`,
     standards: 'Referenced standards', standardsNote: 'The standards this model corresponds to, field by field. Open one to see its table.',
-    fieldsMapped: (n, total) => `${n} of ${total} fields`, openStandard: 'Open the standard', standardLicence: 'Licence of this standard', mappingFile: 'This table as a file (YAML, for converting data)', notesTitle: 'Notes',
+    fieldsMapped: (n, total) => `${n} of ${total} fields`, openStandard: 'Open the standard', standardLicence: 'Licence of this standard', mappingFile: (file, guide) => `Mapping file (YAML) for converting data from this standard: ${file} (how: ${guide('Mapping files')})`, notesTitle: 'Notes',
     sourceFiles: (href) => `The source files (notes, mapping tables) are on [GitHub](${href}).`,
   },
 };
@@ -247,9 +247,11 @@ function modelPage(lang, prefix, subject, model) {
   md += `## ${l.use} {#use}\n\n`;
   if (isValue) md += `${l.useValue(`${prefix}/guide/rules#rules`)}\n\n`;
   else {
-    md += `${t.useGuide(`${prefix}/guide/use`)}\n\n${t.extendThis(`${prefix}/guide/builder?model=${subject.name}/${model.type}`)}\n\n`;
-    md += adapterLine(lang, prefix, subject, model, allAdapters);
-    md += `${l.linkHeaderIntro}\n\n\`\`\`http\nLink: <${u.contextAlias}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"\n\`\`\`\n\n`;
+    // One line per task; the Link header last, with its code block (wraps, custom.css).
+    md += `- ${t.useGuide(`${prefix}/guide/use`)}\n- ${t.extendThis(`${prefix}/guide/builder?model=${subject.name}/${model.type}`)}\n`;
+    const adapters = adapterLine(lang, prefix, subject, model, allAdapters);
+    if (adapters) md += `- ${adapters.trim()}\n`;
+    md += `- ${l.linkHeaderIntro}\n\n  \`\`\`http\n  Link: <${u.contextAlias}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"\n  \`\`\`\n\n`;
   }
   if (model.examples['example.json']) {
     // Both forms of one example in tabs; the files below for download.
@@ -282,7 +284,7 @@ function modelPage(lang, prefix, subject, model) {
       for (const [field, m] of Object.entries(map.fields ?? {})) md += `| ${model.schema.properties?.[field] ? `[${code(field)}](#${field})` : code(field)} | ${m.to ? code(m.to) : `*${t.none}*`} | ${cellText(m.note?.[lang] ?? '')} |\n`;
       // Under the table: the same table as a file a converter reads, and the standard's licence.
       const file = `${rel(mu.mapping)}${map.name}.yaml`;
-      md += `\n<p class="licence">${l.mappingFile}: <a href="${file}">${map.name}.yaml</a></p>\n`;
+      md += `\n<p class="licence">${l.mappingFile(`<a href="${file}">${map.name}.yaml</a>`, (text) => `<a href="${prefix}/guide/mapping">${text}</a>`)}</p>\n`;
       const licence = standardLicense(map.standard, lang);
       if (licence) md += `<p class="licence">${l.standardLicence}: ${licence}</p>\n`;
       md += '\n</details>\n\n';

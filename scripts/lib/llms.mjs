@@ -10,6 +10,7 @@ import { subjectUrls, modelUrls, BASE_URL, ROOT } from './models.mjs';
 const GUIDES = [
   ['use', 'Using the models', 'validate JSON, send it to an NGSI-LD broker, use it as linked data'],
   ['geonicdb', 'Use with GeonicDB', 'register a catalog model in GeonicDB, then create and query entities'],
+  ['mapping', 'Mapping files', 'which field of a standard matches which attribute, and converting data with datamodels convert'],
   ['extend', 'Adding attributes', 'add attributes of your own to a catalog model without copying it, and where to host the result'],
   ['builder', 'Extension builder', 'build the @context and JSON Schema for your own attributes on a catalog model, in the browser'],
   ['names', 'Your own names', 'use your own attribute and type names with JSON-LD aliases, without changing the model'],
