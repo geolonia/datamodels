@@ -10,6 +10,7 @@ description: How to use the catalog's models, add attributes, URLs and versions,
 - [Using the models](/en/guide/use): validate JSON with the catalog models, send it to an NGSI-LD broker, and use it as linked data.
   - [GeonicDB](/en/guide/geonicdb): register a model in GeonicDB, then create and query entities.
 - [Find a model by standard](/en/guide/standards): start from a standard you use, such as the municipal standard open datasets or EEI.
+  - [Mapping files](/en/guide/mapping): what they say, and converting data with them.
 - [Adding attributes](/en/guide/extend): add attributes of your own to a model without copying it.
   - [Extension builder](/en/guide/builder): make the files for that in the browser.
 - [Your own names](/en/guide/names): use your own names for attributes and types without changing the model.

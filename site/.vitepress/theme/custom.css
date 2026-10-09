@@ -308,3 +308,42 @@
 .vp-doc .versions td:nth-child(-n+2) { white-space: nowrap; }
 .vp-doc .versions td code { overflow-wrap: normal; }
 .vp-doc .versions td:last-child { width: 100%; }
+
+/* Model page (scripts/lib/site.mjs, modelPage). Attributes: one row each; the
+ * name links to its own row, the IRI sits small under the description, and the
+ * row a link points to is highlighted. */
+.vp-doc .attributes td:first-child { white-space: nowrap; }
+.vp-doc .attributes td:first-child a[id] { text-decoration: none; scroll-margin-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 24px); }
+.vp-doc .attributes .iri { display: inline-block; margin-top: 4px; font-size: 12px; }
+.vp-doc .attributes .iri code { font-size: 12px; color: var(--vp-c-text-2); background: none; padding: 0; overflow-wrap: anywhere; }
+.vp-doc .attributes tr:has(a[id]:target) td { background: var(--vp-c-brand-soft); }
+/* Required attributes: a star after the name, explained under the table. */
+.vp-doc .attributes .req { margin-left: 2px; color: var(--vp-c-brand-1); font-weight: 700; }
+/* Referenced standards: one box, a row per standard that opens to its table. */
+.vp-doc .standards { margin: 16px 0; border: 1px solid var(--vp-c-divider); border-radius: 8px; overflow: hidden; }
+.vp-doc .standards details + details { border-top: 1px solid var(--vp-c-divider); }
+.vp-doc .standards details { scroll-margin-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 24px); }
+.vp-doc .standards summary { display: flex; align-items: baseline; gap: 12px; margin: 0; padding: 8px 14px; cursor: pointer; list-style: none; line-height: 1.5; }
+.vp-doc .standards summary:focus { outline: none; }
+.vp-doc .standards summary:focus-visible { outline: 2px solid var(--vp-c-brand-1); outline-offset: -2px; }
+.vp-doc .standards summary::-webkit-details-marker { display: none; }
+.vp-doc .standards summary::before { content: ''; flex: none; width: 7px; height: 7px; border-right: 2px solid var(--vp-c-text-2); border-bottom: 2px solid var(--vp-c-text-2); transform: rotate(-45deg); transition: transform 0.15s; align-self: center; }
+.vp-doc .standards details[open] > summary::before { transform: rotate(45deg); }
+.vp-doc .standards summary:hover { background: var(--vp-c-bg-soft); }
+.vp-doc .standards summary .name { flex: 1; font-size: 15px; font-weight: 500; color: var(--vp-c-text-1); }
+.vp-doc .standards summary .meta { flex: none; font-size: 13px; color: var(--vp-c-text-2); white-space: nowrap; }
+.vp-doc .standards details > :not(summary) { margin-left: 14px; margin-right: 14px; }
+.vp-doc .standards details > p:first-of-type { margin-top: 4px; font-size: 14px; }
+.vp-doc .standards details[open] { padding-bottom: 8px; }
+.vp-doc .standards td:first-child, .vp-doc .standards td:nth-child(2) { white-space: nowrap; }
+.vp-doc .standards td code { overflow-wrap: normal; }
+
+/* JSON colours of the "Try it" editor (ExamplePlayground.vue), the same as
+ * the code blocks (Shiki github-light / github-dark). */
+:root { --json-punct: #24292e; --json-key: #005cc5; --json-str: #032f62; }
+.dark { --json-punct: #e1e4e8; --json-key: #79b8ff; --json-str: #9ecbff; }
+.vp-doc .standards summary .ext { flex: none; align-self: center; display: inline-flex; padding: 4px; margin: -4px -4px -4px 0; border-radius: 4px; color: var(--vp-c-text-2); }
+.vp-doc .standards summary .ext:hover { color: var(--vp-c-brand-1); background: var(--vp-c-default-soft); }
+.vp-doc .standards details > p.licence { margin: 4px 14px; font-size: 13px; color: var(--vp-c-text-2); }
+/* The Link header on model pages is one long line: wrap it instead of hiding most of it. */
+.vp-doc div.language-http pre code { white-space: pre-wrap; overflow-wrap: anywhere; }

@@ -20,6 +20,7 @@ import '@fontsource/ibm-plex-mono/latin-600.css'
 import './custom.css'
 import ModelIndex from './ModelIndex.vue'
 import GraphViewer from './GraphViewer.vue'
+import ExampleTabs from './ExampleTabs.vue'
 
 const PrereleaseBanner = defineComponent({
   setup() {
@@ -57,12 +58,32 @@ const SourceLine = defineComponent({
   },
 })
 
+// A link into a folded section (<details>, a referenced standard on a model
+// page: #mapping-<name>) opens it and scrolls to it. Browsers do not all open
+// a closed <details> for a fragment.
+function openTarget() {
+  if (!location.hash) return
+  const el = document.getElementById(decodeURIComponent(location.hash.slice(1)))
+  const details = el?.closest('details')
+  if (!el || !details || details.open) return
+  details.open = true
+  el.scrollIntoView()
+}
+
 export default {
   extends: DefaultTheme,
-  enhanceApp({ app }) {
+  enhanceApp({ app, router }) {
+    if (typeof window !== 'undefined') {
+      window.addEventListener('hashchange', openTarget)
+      const after = router.onAfterRouteChange
+      router.onAfterRouteChange = (to) => { after?.(to); setTimeout(openTarget) }
+      setTimeout(openTarget)
+    }
     app.component('ModelIndex', ModelIndex)
     // Pan and zoom for the relationship graph on every model page.
     app.component('GraphViewer', GraphViewer)
+    // The example tabs on entity model pages (key-values, normalized, try it).
+    app.component('ExampleTabs', ExampleTabs)
     // Only model pages use it: its code stays out of the chunk every page loads.
     app.component('ExamplePlayground', defineAsyncComponent(() => import('./ExamplePlayground.vue')))
     // Only /guide/builder uses it: its code and model data stay out of the chunk every page loads.

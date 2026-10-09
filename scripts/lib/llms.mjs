@@ -10,6 +10,7 @@ import { subjectUrls, modelUrls, BASE_URL, ROOT } from './models.mjs';
 const GUIDES = [
   ['use', 'Using the models', 'validate JSON, send it to an NGSI-LD broker, use it as linked data'],
   ['geonicdb', 'Use with GeonicDB', 'register a catalog model in GeonicDB, then create and query entities'],
+  ['mapping', 'Mapping files', 'which field of a standard matches which attribute, and converting data with datamodels convert'],
   ['extend', 'Adding attributes', 'add attributes of your own to a catalog model without copying it, and where to host the result'],
   ['builder', 'Extension builder', 'build the @context and JSON Schema for your own attributes on a catalog model, in the browser'],
   ['names', 'Your own names', 'use your own attribute and type names with JSON-LD aliases, without changing the model'],
@@ -48,6 +49,7 @@ export async function llmsTxt(subjects) {
   txt += `## Optional\n\n`;
   txt += `- [catalog.json](${BASE_URL}/catalog.json): every model with its type IRI, context, schema, vocabulary, example, page (Japanese and English), mapping and adapter URLs, its attributes (type, required, IRI) and the licence (CC0-1.0)\n`;
   txt += `- [Find a model by standard](${BASE_URL}/en/guide/standards): every external standard a model is mapped to (EEI, the municipal standard open datasets, GSI, GIF and more), with a link to each field-by-field table\n`;
+  txt += `- [AI and agents](${BASE_URL}/en/ai): how AI is used to make this site, and what agents can use\n`;
   txt += `- [Source repository](https://github.com/geolonia/datamodels): schemas, mappings to other standards, notes\n`;
   txt += `- [Licences](${BASE_URL}/LICENSE-CONTENT): machine-readable files CC0 1.0, prose CC BY 4.0, code Apache-2.0\n`;
   return txt;

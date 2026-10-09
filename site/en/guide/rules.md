@@ -23,7 +23,7 @@ Write the upstream types you looked at, and why they did not fit, in the model's
 
 So far, every model in the catalog is the catalog's own type; upstream names are used for some attributes. Each model's notes and [issue #16](https://github.com/geolonia/datamodels/issues/16) record why.
 
-## Rules
+## Rules {#rules}
 
 - Never change the meaning or type of an upstream attribute. Add a new one instead.
 - Status attributes (`progress`, `openingStatus`, `restrictionStatus` and others) have fixed value lists. When no value fits, leave the status out and give the local wording in `statusLabel` (then required). Do not force the nearest value.

@@ -16,11 +16,11 @@ The site is run by [Geolonia Inc.](https://www.geolonia.com/company/) (株式会
 
 ## Licences
 
-- **Model files** (JSON Schemas, JSON-LD `@context` files, vocabularies, examples, `catalog.yaml`, mapping files, `catalog.json`, the published adapter files under `/adapters/…`): [CC0 1.0](/en/LICENSE-CONTENT), no conditions. Please keep the canonical URLs inside them when you copy them (`$id` in a schema, the `@context` URL, the type and attribute IRIs): a request, not a condition. They tell anyone who finds a copy that a newer version may exist.
-- **Text** (the models' notes and `README.md` files, and the pages of this site): [CC BY 4.0](/en/LICENSE-CONTENT). When you use it, give credit, for example "Source: datamodels.jp (Geolonia Inc.), CC BY 4.0", with a link to the page you used, and say so if you changed it. Every page shows its URL at the top.
-- A file that copies content from a CC BY standard (Smart Data Models, the GIF core schema and others) stays CC BY 4.0 as a whole; the model's `LICENSE.md` names the file and its source. Today nothing is copied: correspondences are recorded and IRIs reused.
-- **Tooling code** (site, scripts, the adapter code in `adapters/`): [Apache-2.0](https://github.com/geolonia/datamodels/blob/main/LICENSE)
-- IRIs from other vocabularies (Smart Data Models, schema.org, NGSI-LD and others) are only referenced here and belong to their publishers. Where a model derives from upstream material, its notes name the source.
+Machine-readable files (schemas, @context files, vocabularies, examples and the other files the catalog publishes) are **CC0 1.0**: use them without conditions. Text, such as the pages of this site and the models' notes and READMEs, is **CC BY 4.0**, and the tooling code **Apache-2.0**. A file that copies content from a CC BY source stays CC BY 4.0 (none does today). What each covers, how to give credit and the parts from other sources: [Licences](/en/LICENSE-CONTENT).
+
+## AI and agents
+
+How AI was used to make this site, and what AI agents can use: [AI and agents](/en/ai).
 
 ## Disclaimer
 
