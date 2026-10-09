@@ -86,17 +86,27 @@ function zoomIn() { touched = true; run(() => pz?.zoomIn()) }
 function zoomOut() { touched = true; run(() => pz?.zoomOut()) }
 const root = ref<HTMLElement | null>(null)
 const fsElement = () => document.fullscreenElement ?? (document as any).webkitFullscreenElement
+// Entering and leaving are asynchronous: a click while one is pending is ignored,
+// and the state follows the browser's once it is done.
+let pending = false
 async function toggleFull() {
+  if (pending) return
+  pending = true
   touched = false
-  if (full.value) {
-    if (fsElement()) await (document.exitFullscreen?.() ?? (document as any).webkitExitFullscreen?.())
-    full.value = false
-    return
+  try {
+    if (full.value) {
+      if (fsElement()) await (document.exitFullscreen?.() ?? (document as any).webkitExitFullscreen?.())
+      full.value = false
+      return
+    }
+    full.value = true
+    const el = root.value as any
+    const request = el?.requestFullscreen ?? el?.webkitRequestFullscreen
+    // No element full screen (iPhone): the card covers the window instead (CSS .full).
+    if (request) { try { await request.call(el) } catch {} }
+  } finally {
+    pending = false
   }
-  full.value = true
-  const el = root.value as any
-  // No element full screen (iPhone): the card covers the window instead (CSS .full).
-  try { await (el?.requestFullscreen?.() ?? el?.webkitRequestFullscreen?.()) } catch {}
 }
 // Leaving the browser's full screen (Esc) ends ours; without the API, Esc ends the window cover.
 const onFsChange = () => { if (!fsElement() && full.value) { full.value = false; touched = false } }
@@ -111,7 +121,9 @@ function wheel(e: WheelEvent) {
   if (e.ctrlKey || e.metaKey || (full.value && Math.abs(e.deltaY) >= Math.abs(e.deltaX))) {
     e.preventDefault()
     touched = true
-    const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY
+    // A pinch (or Ctrl/⌘ + wheel) sends small steps; a plain mouse wheel sends about 100 per
+    // notch, so it counts a fifth as much: one notch is about +20 %, not straight to the maximum.
+    const dy = (e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY) * (e.ctrlKey || e.metaKey ? 1 : 0.2)
     if (wheelZoom) { wheelZoom.dy += dy; wheelZoom.clientX = e.clientX; wheelZoom.clientY = e.clientY; return }
     wheelZoom = { dy, clientX: e.clientX, clientY: e.clientY }
     run(() => {

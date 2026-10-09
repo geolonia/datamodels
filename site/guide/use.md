@@ -13,6 +13,8 @@ description: カタログのモデルで JSON を検証し、NGSI-LD ブロー�
 - [NGSI-LD ブローカーに送る](#broker): 標準の NGSI-LD API を話すブローカーに保存し、検索します。
 - [Linked Data として使う](#linked-data): @context を付けると、各属性が世界で一意の名前（IRI）を持ちます。
 
+<svg class="flow-diagram" viewBox="0 0 460 292" role="group" aria-label="datamodels.jp の 1 つのモデル（@context、JSON Schema、例）は 3 通りに使えます。JSON を検証する、NGSI-LD ブローカーに送る、Linked Data として使う。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="use-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box main" x="20" y="8" width="420" height="58" rx="10"/><text class="t" x="230.0" y="33">datamodels.jp のモデル</text><text class="s" x="230.0" y="53">@context・JSON Schema・例</text><line class="a" x1="44" y1="66" x2="44" y2="256"/><line class="a" x1="44" y1="116" x2="76" y2="116" marker-end="url(#use-ah)"/><a href="#validate"><rect class="box" x="80" y="88" width="360" height="56" rx="10"/><text class="t" x="260.0" y="112">JSON を検証する</text><text class="s" x="260.0" y="132">JSON Schema で</text></a><line class="a" x1="44" y1="186" x2="76" y2="186" marker-end="url(#use-ah)"/><a href="#broker"><rect class="box" x="80" y="158" width="360" height="56" rx="10"/><text class="t" x="260.0" y="182">NGSI-LD ブローカーに送る</text><text class="s" x="260.0" y="202">@context 付きの normalized の形で</text></a><line class="a" x1="44" y1="256" x2="76" y2="256" marker-end="url(#use-ah)"/><a href="#linked-data"><rect class="box" x="80" y="228" width="360" height="56" rx="10"/><text class="t" x="260.0" y="252">Linked Data として使う</text><text class="s" x="260.0" y="272">@context で JSON を RDF に</text></a></svg>
+
 以下の例は[通行規制（RoadRestriction）](/models/transportation/RoadRestriction/)で書いていますが、URL を替えればどのモデルでも同じです。
 
 ## JSON を検証する {#validate}
@@ -26,39 +28,55 @@ JSON Schema は、属性名と値だけのシンプルな形（*key-values* と�
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 
-const schemaUrl = 'https://datamodels.jp/schema/transportation/RoadRestriction/v1.0.0.json';
-const entity = await (await fetch('https://datamodels.jp/examples/transportation/RoadRestriction/example.json')).json();
+const base = 'https://datamodels.jp';
+const model = 'transportation/RoadRestriction';
+const getJson = async (url) => (await fetch(url)).json();
 
-// strict: false はカタログの x-* 注釈を受け入れる。loadSchema は参照先のスキーマを取得する。
-const ajv = new Ajv2020({ strict: false, loadSchema: async (url) => (await fetch(url)).json() });
+const schema = await getJson(`${base}/schema/${model}/v1.0.0.json`);
+const entity = await getJson(`${base}/examples/${model}/example.json`);
+
+// strict: false はカタログの x-* 注釈を受け入れる。
+// loadSchema は参照先のスキーマを取得する。
+const ajv = new Ajv2020({ strict: false, loadSchema: getJson });
 addFormats(ajv);
-const validate = await ajv.compileAsync(await (await fetch(schemaUrl)).json());
+const validate = await ajv.compileAsync(schema);
 console.log(validate(entity) ? 'valid' : validate.errors);
 ```
 
 ```python [Python]
-# pip install "jsonschema[format]" requests（[format] がないと URI と日時の形式を検査しない）
+# pip install "jsonschema[format]" requests
+# （[format] がないと URI と日時の形式を検査しない）
 import requests
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
+BASE = "https://datamodels.jp"
+MODEL = "transportation/RoadRestriction"
+
 def get(url):
     return requests.get(url, timeout=30).json()
 
-schema = get("https://datamodels.jp/schema/transportation/RoadRestriction/v1.0.0.json")
-entity = get("https://datamodels.jp/examples/transportation/RoadRestriction/example.json")
+schema = get(f"{BASE}/schema/{MODEL}/v1.0.0.json")
+entity = get(f"{BASE}/examples/{MODEL}/example.json")
 
-# 参照先のスキーマ（住所、ジオメトリ）は、使われたときに取得する。
+# 参照先のスキーマ（住所、ジオメトリ）は、
+# 使われたときに取得する。
 registry = Registry(retrieve=lambda url: Resource.from_contents(get(url)))
-validator = Draft202012Validator(schema, registry=registry, format_checker=Draft202012Validator.FORMAT_CHECKER)
+validator = Draft202012Validator(
+    schema,
+    registry=registry,
+    format_checker=Draft202012Validator.FORMAT_CHECKER,
+)
 errors = [e.message for e in validator.iter_errors(entity)]
 print(errors or "valid")
 ```
 
 ```bash [コマンドライン]
 # pipx install check-jsonschema（または uvx check-jsonschema ...）
-curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example.json -o entity.json
-check-jsonschema --schemafile https://datamodels.jp/schema/transportation/RoadRestriction/v1.0.0.json entity.json
+BASE=https://datamodels.jp
+MODEL=transportation/RoadRestriction
+curl -sSf "$BASE/examples/$MODEL/example.json" -o entity.json
+check-jsonschema --schemafile "$BASE/schema/$MODEL/v1.0.0.json" entity.json
 ```
 
 :::
@@ -71,7 +89,9 @@ NGSI-LD のブローカーは、ふつう *normalized* の形を受け取りま�
 
 ```bash
 BROKER=http://localhost:1026   # ブローカーの URL
-curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example-normalized.jsonld -o entity.jsonld
+BASE=https://datamodels.jp
+MODEL=transportation/RoadRestriction
+curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" -o entity.jsonld
 
 # 作成
 curl -X POST "$BROKER/ngsi-ld/v1/entities" \
@@ -79,9 +99,13 @@ curl -X POST "$BROKER/ngsi-ld/v1/entities" \
   --data @entity.jsonld
 
 # 検索: 通行止め中のものだけ
-curl "$BROKER/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionStatus==%22closed%22" \
+CONTEXT="$BASE/context/transportation/v1.jsonld"
+REL='rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
+curl -G "$BROKER/ngsi-ld/v1/entities" \
+  --data-urlencode 'type=RoadRestriction' \
+  --data-urlencode 'q=restrictionStatus=="closed"' \
   -H "Accept: application/ld+json" \
-  -H 'Link: <https://datamodels.jp/context/transportation/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
+  -H "Link: <$CONTEXT>; $REL"
 ```
 
 body に @context を入れて `application/ld+json` で送るか、入れずに `application/json` と `Link` ヘッダー（モデルのページにあります）で送ります。複数のテナントを持つブローカーでは `NGSILD-Tenant` ヘッダーでテナントを指定します。認証の方法はブローカーごとに違います。
@@ -120,11 +144,21 @@ normalized では次のようになります。
   ],
   "id": "urn:ngsi-ld:Task:1234",
   "type": "Task",
-  "name": { "type": "Property", "value": "靖国通りのアンダーパスの冠水を確認する" },
+  "name": {
+    "type": "Property",
+    "value": "靖国通りのアンダーパスの冠水を確認する"
+  },
   "progress": { "type": "Property", "value": "in-process" },
-  "due": { "type": "Property", "value": { "@type": "DateTime", "@value": "2026-07-08T12:00:00+09:00" } },
+  "due": {
+    "type": "Property",
+    "value": { "@type": "DateTime", "@value": "2026-07-08T12:00:00+09:00" }
+  },
   "assignee": [
-    { "type": "Relationship", "object": "urn:ngsi-ld:Team:field-team-a", "datasetId": "urn:ngsi-ld:dataset:assignee:1" }
+    {
+      "type": "Relationship",
+      "object": "urn:ngsi-ld:Team:field-team-a",
+      "datasetId": "urn:ngsi-ld:dataset:assignee:1"
+    }
   ]
 }
 ```
@@ -145,16 +179,28 @@ normalized では次のようになります。
 // npm install jsonld
 import jsonld from 'jsonld';
 
-const entity = await (await fetch('https://datamodels.jp/examples/transportation/RoadRestriction/example.json')).json();
+const base = 'https://datamodels.jp';
+const getJson = async (url) => (await fetch(url)).json();
+const entity = await getJson(
+  `${base}/examples/transportation/RoadRestriction/example.json`,
+);
 // 普通の JSON に context を付けると Linked Data になる。
 entity['@context'] = [
-  'https://datamodels.jp/context/transportation/v1.jsonld',
-  'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld', // id と type の対応
+  `${base}/context/transportation/v1.jsonld`,
+  // id と type の対応:
+  'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld',
 ];
 
 // 既定のローダーの代わりに fetch を使う（どの環境でも動く）。
-const documentLoader = async (url) => ({ documentUrl: url, document: await (await fetch(url)).json() });
-console.log(await jsonld.toRDF(entity, { format: 'application/n-quads', documentLoader }));
+const documentLoader = async (url) => ({
+  documentUrl: url,
+  document: await getJson(url),
+});
+const nquads = await jsonld.toRDF(entity, {
+  format: 'application/n-quads',
+  documentLoader,
+});
+console.log(nquads);
 ```
 
 ```python [Python]
@@ -162,11 +208,14 @@ console.log(await jsonld.toRDF(entity, { format: 'application/n-quads', document
 import requests
 from pyld import jsonld
 
-entity = requests.get("https://datamodels.jp/examples/transportation/RoadRestriction/example.json", timeout=30).json()
+BASE = "https://datamodels.jp"
+url = f"{BASE}/examples/transportation/RoadRestriction/example.json"
+entity = requests.get(url, timeout=30).json()
 # 普通の JSON に context を付けると Linked Data になる。
 entity["@context"] = [
-    "https://datamodels.jp/context/transportation/v1.jsonld",
-    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",  # id と type の対応
+    f"{BASE}/context/transportation/v1.jsonld",
+    # id と type の対応:
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",
 ]
 
 print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))
