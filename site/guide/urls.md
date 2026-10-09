@@ -21,6 +21,8 @@ description: どの URL を使うか、何が変わらないか、バージョ�
 
 エイリアスは互換性のあるバージョンにしか進まないので、通常はエイリアスで十分です。監査や結果の再現が要るときは正確なバージョンを使ってください。
 
+<svg class="flow-diagram" viewBox="0 0 460 160" role="img" aria-label="エイリアス v1.jsonld は常に最新の 1.x（ここでは v1.2.0）を指します。v1.0.0、v1.1.0、v1.2.0 は公開されたまま変わりません。互換性のない変更は v2.0.0 になり、エイリアス v2.jsonld を持ちます。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="ver-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="10" y="92" width="100" height="44" rx="8"/><text class="t m" x="60" y="119">v1.0.0</text><rect class="box" x="120" y="92" width="100" height="44" rx="8"/><text class="t m" x="170" y="119">v1.1.0</text><rect class="box" x="230" y="92" width="100" height="44" rx="8"/><text class="t m" x="280" y="119">v1.2.0</text><rect class="box" x="350" y="92" width="100" height="44" rx="8"/><text class="t m" x="400" y="119">v2.0.0</text><text class="s" x="175" y="154">公開したバージョン: 変わらない</text><rect class="box main" x="190" y="8" width="120" height="40" rx="8"/><text class="t m" x="250" y="33">v1.jsonld</text><line class="a" x1="270" y1="48" x2="280" y2="90" marker-end="url(#ver-ah)"/><text class="l e" x="182" y="33">エイリアス: 最新の 1.x</text><rect class="box" x="350" y="8" width="100" height="40" rx="8"/><text class="t m" x="400" y="33">v2.jsonld</text><line class="a" x1="400" y1="48" x2="400" y2="90" marker-end="url(#ver-ah)"/><text class="s" x="400" y="154">互換性のない変更</text></svg>
+
 ## 約束
 
 1. **公開したバージョン付きファイルは変更も削除もしない。** `/context/<subject>/v1.0.0.jsonld` の中身は永久に同じです。CI はすべてのファイルのハッシュを記録し、変更を取り込みません。
