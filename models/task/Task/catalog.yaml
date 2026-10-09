@@ -47,11 +47,11 @@ attributes:
     ja: "作成者（人・組織・チームのエンティティ）"
     en: "Creator (a person, organisation or team entity)"
   start:
-    ja: "開始（予定）日時（RFC 8984 start）"
-    en: "Planned start (RFC 8984 start)"
+    ja: "開始の予定。日付、または日時（RFC 8984 start）"
+    en: "Planned start: a date, or a date and time (RFC 8984 start)"
   due:
-    ja: "期限（RFC 8984 due）"
-    en: "Due time (RFC 8984 due)"
+    ja: "期限。日付、または日時（RFC 8984 due）"
+    en: "Due: a date, or a date and time (RFC 8984 due)"
   completedAt:
     ja: "progress が completed になった日時"
     en: "When progress became completed"

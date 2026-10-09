@@ -115,8 +115,8 @@
         "en": "due"
       },
       "comment": {
-        "ja": "期限（予定したリリース・完了の日時）",
-        "en": "Due time: the planned release or completion"
+        "ja": "期限（予定したリリース・完了）。日付、または日時",
+        "en": "Due: the planned release or completion, a date or a date and time"
       },
       "isDefinedBy": "https://datamodels.jp/ns/task/",
       "seeAlso": "https://datamodels.jp/models/task/Milestone/#due"
@@ -128,8 +128,8 @@
         "en": "end"
       },
       "comment": {
-        "ja": "予定期間の終了",
-        "en": "Planned end"
+        "ja": "予定期間の終了。日付、または日時",
+        "en": "Planned end: a date, or a date and time"
       },
       "isDefinedBy": "https://datamodels.jp/ns/task/",
       "seeAlso": "https://datamodels.jp/models/task/Project/#end"
@@ -336,8 +336,8 @@
         "en": "start"
       },
       "comment": {
-        "ja": "予定期間の開始",
-        "en": "Planned start"
+        "ja": "予定期間の開始。日付、または日時",
+        "en": "Planned start: a date, or a date and time"
       },
       "isDefinedBy": "https://datamodels.jp/ns/task/",
       "seeAlso": "https://datamodels.jp/models/task/Milestone/#start"

@@ -73,6 +73,19 @@ test('every model lists its attributes with type, NGSI-LD type and required, as 
   assert.deepEqual(schema.properties.models.items.properties.attributes.items.required, ['name', 'iri', 'type', 'required', 'description']);
 });
 
+test('an attribute that may be a date or a date-time lists both formats, and no single format', () => {
+  const attr = (type, name) => models.find((x) => x.m.type === type).entry.attributes.find((a) => a.name === name);
+  for (const [type, name] of [['Task', 'start'], ['Task', 'due'], ['Milestone', 'start'], ['Milestone', 'due'], ['Project', 'start'], ['Project', 'end']]) {
+    const a = attr(type, name);
+    assert.deepEqual(a.formats, ['date', 'date-time'], `${type}.${name}`);
+    assert.equal(a.type, 'string');
+    assert.ok(!('format' in a), `${type}.${name}`);
+  }
+  assert.equal(attr('Task', 'completedAt').format, 'date-time');
+  assert.ok(!('formats' in attr('Task', 'completedAt')));
+  assert.ok(schema.properties.models.items.properties.attributes.items.properties.formats, 'catalog.schema.json describes formats');
+});
+
 test('mappings name the standard of each mapping file, for the same files as mappingUrls (#156)', () => {
   for (const { m, entry } of models) {
     if (!entry.mappingUrls) { assert.equal(entry.mappings, undefined, m.type); continue; }

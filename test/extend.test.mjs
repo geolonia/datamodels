@@ -52,6 +52,19 @@ test('for every entity model: a context with only the new terms, and a schema th
   }
 });
 
+test('an extension keeps a date or date-time attribute: both forms validate, a word does not', () => {
+  const ajv = new Ajv2020({ allErrors: true, strict: false });
+  addFormats(ajv);
+  for (const s of subjects) for (const m of s.models) if (m.kind === 'value') ajv.addSchema(m.schema, m.schema.$id);
+  const { raw, model } = entities.find((e) => e.model.type === 'Milestone');
+  const out = buildExtension(model, input(attrs), core);
+  assert.deepEqual(out.schema.properties.due.anyOf, [{ format: 'date' }, { format: 'date-time' }]);
+  const validate = ajv.compile(out.schema);
+  const ok = { ...raw.examples['example.json'], patrolRoute: 'A-3' };
+  for (const due of ['2026-07-11', '2026-07-11T07:00:00+09:00']) assert.ok(validate({ ...ok, due }), `${due}: ${ajv.errorsText(validate.errors)}`);
+  assert.ok(!validate({ ...ok, due: 'tomorrow' }));
+});
+
 test('problems: bad names, clashes with the model and the core, taken namespaces', () => {
   const { model } = entities.find((e) => e.model.type === 'Task');
   const codes = (inp) => buildExtension(model, inp, core).problems.map((p) => `${p.code}${p.name ? `:${p.name}` : ''}`);

@@ -13,14 +13,14 @@
     "schema/disaster/DesignatedShelter/v1.0.0.json": "4353f41c9cdedc4ddf3667f1cf1c5b7e929efd20e9eb5b855fe1a402a8cda2f9",
     "schema/disaster/EvacuationShelter/v1.0.0.json": "bfec7fc87c568ed4849ed962aacae40695086f585ab310bfd23dc72d71e5027f",
     "schema/disaster/EvacuationSite/v1.0.0.json": "dfe2c2d058e60ca2143a325272328ee66e6f3be574453ebba5a92a531481bfeb",
-    "schema/task/Milestone/v1.0.0.json": "7209e7865370132b1aeccbce4b2cce12ac071e6e17348328169f16f303df8a61",
-    "schema/task/Project/v1.0.0.json": "b81cb2b6db1b7c999f0f3264b0e6465cdfdd553b8b01da9f737d89fbaea075c8",
-    "schema/task/Task/v1.0.0.json": "4dd8f6f28b983da9d42aa65319d0a294bd3a806fb5a68ce53cc54af10a38d0f5",
+    "schema/task/Milestone/v1.0.0.json": "848fb079d2ab1846d1ef798651d8d50334e85b2e45e4e3ea935788aecb34fd08",
+    "schema/task/Project/v1.0.0.json": "bbcac92732688bda365a0f63fc7bc0a51c363aae05deb7ce12970b552986e353",
+    "schema/task/Task/v1.0.0.json": "b11d6e5fe4a0d10f93340930067f9f8db9554c6c4d310c9abc0006952cc0cda8",
     "schema/transportation/RoadRestriction/v1.0.0.json": "3e56446b573899fe58b110e9f409c20232edb49d6e28a664fac559bae1d23e5a",
     "vocab/common/v1.0.0.jsonld": "ca9c28d8686baf70be72455e2f30e3d9ee6af7dc07f9853c4b5738e491dbb313",
     "vocab/decision/v1.0.0.jsonld": "947e6cada19cfea05b0ec77c52dcebdff91afbb3b389715bc1f1f7b781c648d1",
     "vocab/disaster/v1.0.0.jsonld": "1a3d481d2a3ef3b1f39fdd2ce05799febd31944d4189c5283ee4c3e73e2e4ce7",
-    "vocab/task/v1.0.0.jsonld": "9e57072cddfcc67e551d47f03af41453350612d66a94bc551ed3f1c73af9d32d",
+    "vocab/task/v1.0.0.jsonld": "aeb615e773e7aff314165f73f7bd9a82711dce0f58a263f1b05c051f5eba7278",
     "vocab/transportation/v1.0.0.jsonld": "c135027870eb300edb4fdeaa10bc55d207e3a3debbb9de9433b03175a7611b27"
   }
 }

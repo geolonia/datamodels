@@ -63,8 +63,15 @@
     },
     "start": {
       "type": "string",
-      "format": "date-time",
-      "description": "Planned start",
+      "anyOf": [
+        {
+          "format": "date"
+        },
+        {
+          "format": "date-time"
+        }
+      ],
+      "description": "Planned start: a date, or a date and time",
       "x-ngsi": {
         "type": "Property"
       },
@@ -72,8 +79,15 @@
     },
     "due": {
       "type": "string",
-      "format": "date-time",
-      "description": "Due time: the planned release or completion",
+      "anyOf": [
+        {
+          "format": "date"
+        },
+        {
+          "format": "date-time"
+        }
+      ],
+      "description": "Due: the planned release or completion, a date or a date and time",
       "x-ngsi": {
         "type": "Property"
       },

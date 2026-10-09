@@ -18,8 +18,8 @@ fields:
   priority: { to: "priority.position", note: { ja: 順位を 1〜9 に写す, en: position mapped onto 1 to 9 } }
   assignee: { to: "assigned_to_id" }
   author: { to: "author_id" }
-  start: { to: "start_date" }
-  due: { to: "due_date" }
+  start: { to: "start_date", note: { ja: "日付（YYYY-MM-DD）のまま入れる", en: "a date (YYYY-MM-DD), kept as it is" } }
+  due: { to: "due_date", note: { ja: "日付（YYYY-MM-DD）のまま入れる", en: "a date (YYYY-MM-DD), kept as it is" } }
   completedAt: { to: "closed_on" }
   estimatedDuration: { to: "estimated_hours", note: { ja: 時間を ISO 8601 期間に変換（1.5 → PT1H30M）, en: hours converted to an ISO 8601 duration (1.5 → PT1H30M) } }
   percentComplete: { to: "done_ratio" }

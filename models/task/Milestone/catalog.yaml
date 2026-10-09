@@ -17,11 +17,11 @@ attributes:
     ja: "所属プロジェクト"
     en: "The project this belongs to"
   start:
-    ja: "予定期間の開始"
-    en: "Planned start"
+    ja: "予定期間の開始。日付、または日時"
+    en: "Planned start: a date, or a date and time"
   due:
-    ja: "期限（予定したリリース・完了の日時）"
-    en: "Due time: the planned release or completion"
+    ja: "期限（予定したリリース・完了）。日付、または日時"
+    en: "Due: the planned release or completion, a date or a date and time"
   milestoneStatus:
     ja: "状態。open=受付中、locked=ロック中（新しいタスクを追加できない）、closed=完了。core context の status は予約語のため milestoneStatus"
     en: "State: open, locked (no new tasks may be added) or closed; status is protected in the core context, hence milestoneStatus"

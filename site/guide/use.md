@@ -117,7 +117,7 @@ body に @context を入れて `application/ld+json` で送るか、入れずに
 
 - `id` と `type` はそのまま。
 - 各属性は、モデルのページの属性の表にある NGSI-LD の型で包みます。Property は `{ "type": "Property", "value": … }`、Relationship は `{ "type": "Relationship", "object": … }`、GeoProperty は `{ "type": "GeoProperty", "value": … }`、JsonProperty は `{ "type": "JsonProperty", "json": … }`、VocabProperty は `{ "type": "VocabProperty", "vocab": … }` です。key-values の形でも、JsonProperty と VocabProperty はメンバーを残します（`{ "json": … }`、`{ "vocab": … }`）。JSON Schema は中の値を表すので、key-values のデータをスキーマで検証するときは、このメンバーを外してから検証してください。この 2 つは NGSI-LD 1.8 の型なので、使うモデルの前に、ブローカーが対応しているかを確かめてください。
-- 日時の Property（スキーマの `format: date-time`）の値は `{ "@type": "DateTime", "@value": … }` にします。
+- 日時の Property（スキーマの `format: date-time`）の値は `{ "@type": "DateTime", "@value": … }` に、日付の Property（`format: date`）の値は `{ "@type": "Date", "@value": … }` にします。日付でも日時でもよい Property（モデルのページで「日付または日時」）は値に合わせます。`2026-07-11` なら Date、`2026-07-11T09:00:00+09:00` なら DateTime です。
 - 複数の値を持つ属性（属性の表で「複数可」と示すもの。Task の `assignee` など）は、値ごとに 1 つのインスタンスを並べた配列にし、それぞれに `datasetId` を付けます。カタログの例は `urn:ngsi-ld:dataset:<属性名>:<番号>` の形を使っています。
 - `@context` にはサブジェクトのエイリアスと NGSI-LD のコアコンテキストを並べます。
 

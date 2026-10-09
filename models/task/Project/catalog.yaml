@@ -29,11 +29,11 @@ attributes:
     ja: "ホームページ"
     en: "Homepage"
   start:
-    ja: "予定期間の開始"
-    en: "Planned start"
+    ja: "予定期間の開始。日付、または日時"
+    en: "Planned start: a date, or a date and time"
   end:
-    ja: "予定期間の終了"
-    en: "Planned end"
+    ja: "予定期間の終了。日付、または日時"
+    en: "Planned end: a date, or a date and time"
   location:
     ja: "位置。点・線・面・それらの集合など任意の GeoJSON ジオメトリ"
     en: "Location as any GeoJSON geometry: point, line, polygon or a collection"

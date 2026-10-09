@@ -176,8 +176,15 @@
     },
     "start": {
       "type": "string",
-      "format": "date-time",
-      "description": "Planned start (RFC 8984 start)",
+      "anyOf": [
+        {
+          "format": "date"
+        },
+        {
+          "format": "date-time"
+        }
+      ],
+      "description": "Planned start: a date, or a date and time (RFC 8984 start)",
       "x-ngsi": {
         "type": "Property"
       },
@@ -185,8 +192,15 @@
     },
     "due": {
       "type": "string",
-      "format": "date-time",
-      "description": "Due time (RFC 8984 due)",
+      "anyOf": [
+        {
+          "format": "date"
+        },
+        {
+          "format": "date-time"
+        }
+      ],
+      "description": "Due: a date, or a date and time (RFC 8984 due)",
       "x-ngsi": {
         "type": "Property"
       },

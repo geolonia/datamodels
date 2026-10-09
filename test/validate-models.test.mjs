@@ -118,6 +118,30 @@ test('a key-values example violating the schema fails', () =>
   withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => { e.restrictionStatus = '不明'; }),
     /example\.json: .*(enum|allowed values)/));
 
+// Task.start may be a date or a date-time (team decision, 2026-10-09).
+const setTaskStart = (kvValue, normValue) => async (d) => {
+  await editJson(join(d, 'task', 'Task', 'examples', 'example.json'), (e) => { e.start = kvValue; });
+  await editJson(join(d, 'task', 'Task', 'examples', 'example-normalized.jsonld'), (e) => { e.start.value = normValue; });
+};
+
+test('a date or date-time attribute accepts a plain date and a date-time', async () => {
+  await withMutatedModels(setTaskStart('2026-07-08', { '@type': 'Date', '@value': '2026-07-08' }), null, { pass: true });
+  await withMutatedModels(setTaskStart('2026-07-08T10:30:00Z', { '@type': 'DateTime', '@value': '2026-07-08T10:30:00Z' }), null, { pass: true });
+});
+
+test('a date or date-time attribute rejects an impossible time and a word', async () => {
+  for (const bad of ['2026-07-11T25:00', 'tomorrow']) {
+    await withMutatedModels(setTaskStart(bad, { '@type': 'DateTime', '@value': bad }), /Task\/examples\/example\.json: .*data\/start must match a schema in anyOf/);
+  }
+});
+
+test('a normalized date typed as DateTime, or a date-time left untyped, fails', async () => {
+  await withMutatedModels(setTaskStart('2026-07-08', { '@type': 'DateTime', '@value': '2026-07-08' }),
+    /attribute "start": value must be \{ "@type": "Date", "@value": "2026-07-08" \}/);
+  await withMutatedModels(setTaskStart('2026-07-08T10:30:00Z', '2026-07-08T10:30:00Z'),
+    /attribute "start": value must be \{ "@type": "DateTime"/);
+});
+
 test('an out-of-vocabulary regulationCategory fails', () =>
   withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => { e.regulationCategory = '全面通行止め'; }),
     /example\.json: .*(enum|allowed values)/));

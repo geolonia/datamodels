@@ -5,4 +5,6 @@ notes:
     en: The core is deliberately small. System-specific data (time spent, watchers, custom fields, map rotation) belongs in extensions.
   - ja: status はコアコンテキストの予約語なので、projectStatus としている。
     en: status is a protected core-context term, hence projectStatus.
+  - ja: "2026-10-09 の変更（チームの決定。プレリリース中のため 1.0.0 をその場で修正）：Task と Milestone の start と due にそろえて、start と end は日付（YYYY-MM-DD）でも日時でもよい。理由は Task の注記にある。normalized 形式では、日付は NGSI-LD の Date、日時は DateTime の値になる。"
+    en: "Changed on 2026-10-09 (team decision; a pre-release correction of 1.0.0 in place): like start and due on Task and Milestone, start and end accept a date (YYYY-MM-DD) or a date-time; the reason is in the notes of Task. In the normalized form a date is an NGSI-LD Date value and a date-time a DateTime value."
 license: CC0 1.0 (machine-readable files), CC BY 4.0 (prose); see /LICENSE-CONTENT.md

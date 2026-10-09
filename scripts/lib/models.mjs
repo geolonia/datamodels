@@ -107,7 +107,7 @@ export function attributesOf(model) {
 
 // The projection between the two forms lives in ngsi.mjs, which has no Node
 // imports, so the site's example playground runs the same code in the browser.
-export { toKeyValues, toNormalized, unwrapKeyValues, NGSI_TYPES } from './ngsi.mjs';
+export { toKeyValues, toNormalized, unwrapKeyValues, dateFormats, typedDate, NGSI_TYPES } from './ngsi.mjs';
 
 /** Imports (URLs) and merged inline terms of a context document. */
 export function splitContext(doc) {

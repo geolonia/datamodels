@@ -1,12 +1,31 @@
 // Build a GeonicDB Custom Data Model request body from a catalog model.
 // The body is what POST /custom-data-models accepts; contextUrl points at the
 // exact catalog context so the broker uses the catalog vocabulary.
-import { attributesOf, subjectUrls } from '../../scripts/lib/models.mjs';
+import { attributesOf, subjectUrls, dateFormats } from '../../scripts/lib/models.mjs';
+
+// GeonicDB's datetime value type (and its alias date) accepts only a date-time,
+// so a value that may be a plain date is a string checked by a pattern:
+// YYYY-MM-DD, and for a date or date-time the time part GeonicDB's datetime
+// check requires (seconds and Z or an offset). GeonicDB compiles patterns only
+// without repeated groups that contain alternatives; this has none.
+const DATE = '\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])';
+const TIME = 'T(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|[+-](?:[01]\\d|2[0-3]):[0-5]\\d)';
+export const DATE_PATTERN = `^${DATE}$`;
+export const DATE_OR_DATE_TIME_PATTERN = `^${DATE}(?:${TIME})?$`;
+
+/** The pattern for a string Property that may be a plain date, or undefined. */
+function datePattern(prop) {
+  if (prop['x-ngsi']?.type !== 'Property' || prop.type !== 'string') return undefined;
+  const dates = dateFormats(prop);
+  if (!dates.includes('date')) return undefined;
+  return dates.includes('date-time') ? DATE_OR_DATE_TIME_PATTERN : DATE_PATTERN;
+}
 
 function valueTypeOf(prop) {
   const ngsi = prop['x-ngsi']?.type;
   if (ngsi === 'Relationship') return 'uri';
   if (ngsi === 'GeoProperty') return 'geojson';
+  if (datePattern(prop)) return 'string'; // may be a plain date: checked by the pattern
   if (prop.format === 'date-time') return 'datetime';
   if (prop.allOf || prop.$ref) return 'object'; // value type referenced by $ref
   if (prop.format === 'uri') return 'uri';
@@ -61,6 +80,7 @@ export function toCustomDataModel(subject, model, { typePrefix = '', typeName, c
     if (typeof iri === 'string' && /^https?:\/\//.test(iri)) d['@context'] = iri;
     const validation = {};
     for (const k of ['minLength', 'maxLength', 'minimum', 'maximum', 'pattern', 'enum']) if (prop[k] !== undefined) validation[k] = prop[k];
+    if (datePattern(prop) && validation.pattern === undefined) validation.pattern = datePattern(prop);
     if (Object.keys(validation).length) d.validation = validation;
     propertyDetails[rename[name] ?? name] = d;
   }
