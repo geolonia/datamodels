@@ -21,4 +21,4 @@ description: datamodels.jp の作成での AI の使い方と、AI エージェ�
 - **意味:** `https://datamodels.jp/ns/` の下の型と属性の IRI は、それぞれのドキュメントにつながります。
 - **変わらない URL:** 公開したバージョンは変わりません（[URL とバージョン](/guide/urls)）。引用した URL はそのまま正しいままです。
 
-モデルのファイルは CC0 1.0、文章は CC BY 4.0 です（[ライセンス](/LICENSE-CONTENT)）。
+機械が読むファイル（スキーマ、@context、語彙、例）は CC0 1.0、このサイトのページやモデルの注記などの文章は CC BY 4.0 です（[ライセンス](/LICENSE-CONTENT)）。

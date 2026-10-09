@@ -58,6 +58,19 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
   const topic = (text: string, link: string, other = false): DefaultTheme.SidebarItem =>
     ({ text: `<span class="sb-topic${other ? ' sb-other' : ''}">${text}</span>`, link })
   const about = topic(ja ? 'このサイトについて' : 'About this site', `${prefix}/about`, true)
+  const modelsSidebar: DefaultTheme.SidebarItem[] = [
+    topic(ja ? 'データモデル' : 'Data models', `${prefix}/models/`),
+    ...subjects.map((s) => ({
+      text: s.title[lang],
+      collapsed: true,
+      items: [
+        { text: ja ? '概要' : 'Overview', link: `${prefix}${rel(subjectUrls(s).page)}` },
+        ...s.models.map((m) => ({ text: m.type, link: `${prefix}${rel(modelUrls(s, m).page)}` })),
+      ],
+    })),
+    topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`, true),
+    about,
+  ]
   return {
     [`${prefix}/guide/`]: [
       topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`),
@@ -65,19 +78,9 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
       topic(ja ? 'データモデル' : 'Data models', `${prefix}/models/`, true),
       about,
     ],
-    [`${prefix}/models/`]: [
-      topic(ja ? 'データモデル' : 'Data models', `${prefix}/models/`),
-      ...subjects.map((s) => ({
-        text: s.title[lang],
-        collapsed: true,
-        items: [
-          { text: ja ? '概要' : 'Overview', link: `${prefix}${rel(subjectUrls(s).page)}` },
-          ...s.models.map((m) => ({ text: m.type, link: `${prefix}${rel(modelUrls(s, m).page)}` })),
-        ],
-      })),
-      topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`, true),
-      about,
-    ],
+    // The adapter pages list files per model: they belong to the Data models section.
+    [`${prefix}/models/`]: modelsSidebar,
+    [`${prefix}/adapters/`]: modelsSidebar,
     // The pages about the site itself: no third topic in the navigation, but no dead end either.
     ...Object.fromEntries([`${prefix}/about`, `${prefix}/LICENSE-CONTENT`, `${prefix}/ai`].map((path) => [path, [
       topic(ja ? 'このサイトについて' : 'About this site', `${prefix}/about`),
@@ -91,7 +94,7 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
 
 const nav = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.NavItem[] => [
   // Both sections are links to a landing page; the sidebar lists their pages.
-  { text: lang === 'ja' ? 'データモデル' : 'Data models', link: `${prefix}/models/`, activeMatch: `^${prefix}/models/` },
+  { text: lang === 'ja' ? 'データモデル' : 'Data models', link: `${prefix}/models/`, activeMatch: `^${prefix}/(models|adapters)/` },
   { text: lang === 'ja' ? 'ガイド' : 'Guides', link: `${prefix}/guide/`, activeMatch: `^${prefix}/guide/` },
 ]
 
