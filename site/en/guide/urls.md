@@ -50,6 +50,8 @@ A new version does not replace the old one: `v1.0.0` stays at its URL, and the a
 
 ## All URLs
 
+<div class="url-list">
+
 | URL | What it is |
 |---|---|
 | `/context/<subject>/vX.Y.Z.jsonld` | @context (immutable) |
@@ -63,6 +65,8 @@ A new version does not replace the old one: `v1.0.0` stays at its URL, and the a
 | `/mapping/<subject>/<Type>/<name>.yaml` | mapping file (correspondence to another standard and conversion rules; not versioned: the URL stays, the content follows the current model) |
 | `/adapters/<name>/<subject>/<Type>.json` | adapter output (for example a GeonicDB Custom Data Model definition) |
 | `/catalog.json` | list of all models for programs (conforms to /catalog.schema.json) |
+
+</div>
 
 Everything is served with `Access-Control-Allow-Origin: *`; `.jsonld` files as `application/ld+json`, schemas as `application/schema+json`, mapping files as `application/yaml`.
 

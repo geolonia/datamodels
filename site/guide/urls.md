@@ -50,6 +50,8 @@ description: どの URL を使うか、何が変わらないか、バージョ�
 
 ## URL の一覧
 
+<div class="url-list">
+
 | URL | 内容 |
 |---|---|
 | `/context/<subject>/vX.Y.Z.jsonld` | @context（不変） |
@@ -63,6 +65,8 @@ description: どの URL を使うか、何が変わらないか、バージョ�
 | `/mapping/<subject>/<Type>/<name>.yaml` | 対応表（他の標準との対応と変換の規則。バージョンなし: URL は変わらず、内容は現在のモデルに合わせる） |
 | `/adapters/<name>/<subject>/<Type>.json` | アダプターの出力（例: GeonicDB の Custom Data Model 定義） |
 | `/catalog.json` | プログラム向けの全モデルの一覧（/catalog.schema.json に準拠） |
+
+</div>
 
 すべてのファイルは `Access-Control-Allow-Origin: *` で配信され、`.jsonld` は `application/ld+json`、スキーマは `application/schema+json`、対応表は `application/yaml` です。
 
