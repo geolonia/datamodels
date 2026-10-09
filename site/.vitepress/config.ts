@@ -18,7 +18,7 @@ function addVPreToInlineCode(md: MarkdownIt) {
 }
 
 // Guides in two groups: for people who use the models, and for people who add to the catalog.
-// A page that belongs to another one sits under it (GeonicDB under "Using the models").
+// One level only; the one exception is GeonicDB, the product-specific page, under the generic "Using the models".
 const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.SidebarItem[] => {
   const ja = lang === 'ja'
   const page = (jaText: string, enText: string, slug: string, items?: DefaultTheme.SidebarItem[]): DefaultTheme.SidebarItem =>
@@ -28,8 +28,10 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
       text: ja ? 'モデルを使う' : 'Use the models',
       items: [
         page('使い方', 'Using the models', 'use', [{ text: 'GeonicDB', link: `${prefix}/guide/geonicdb` }]),
-        page('標準からモデルを探す', 'Find a model by standard', 'standards', [page('対応表', 'Mapping files', 'mapping')]),
-        page('属性を足す', 'Adding attributes', 'extend', [page('拡張ビルダー', 'Extension builder', 'builder')]),
+        page('標準からモデルを探す', 'Find a model by standard', 'standards'),
+        page('データを変換する', 'Converting data', 'mapping'),
+        page('属性を足す', 'Adding attributes', 'extend'),
+        page('拡張ビルダー', 'Extension builder', 'builder'),
         page('独自の名前で使う', 'Your own names', 'names'),
         page('URL とバージョン', 'URLs and versions', 'urls'),
       ],
@@ -37,7 +39,8 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
     {
       text: ja ? 'カタログに加わる' : 'Add to the catalog',
       items: [
-        page('貢献する', 'Contributing', 'contribute', [page('モデルのルール', 'Rules for models', 'rules')]),
+        page('貢献する', 'Contributing', 'contribute'),
+        page('モデルのルール', 'Rules for models', 'rules'),
         page('他のデータモデルカタログ', 'Other data model catalogs', 'catalogs'),
       ],
     },
@@ -54,11 +57,13 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
   const ja = lang === 'ja'
   const topic = (text: string, link: string, other = false): DefaultTheme.SidebarItem =>
     ({ text: `<span class="sb-topic${other ? ' sb-other' : ''}">${text}</span>`, link })
+  const about = topic(ja ? 'このサイトについて' : 'About this site', `${prefix}/about`, true)
   return {
     [`${prefix}/guide/`]: [
       topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`),
       ...guideGroups(prefix, lang),
       topic(ja ? 'データモデル' : 'Data models', `${prefix}/models/`, true),
+      about,
     ],
     [`${prefix}/models/`]: [
       topic(ja ? 'データモデル' : 'Data models', `${prefix}/models/`),
@@ -71,6 +76,7 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
         ],
       })),
       topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`, true),
+      about,
     ],
     // The pages about the site itself: no third topic in the navigation, but no dead end either.
     ...Object.fromEntries([`${prefix}/about`, `${prefix}/LICENSE-CONTENT`, `${prefix}/ai`].map((path) => [path, [

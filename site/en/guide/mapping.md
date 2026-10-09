@@ -1,9 +1,9 @@
 ---
-title: Mapping files
-description: What the mapping files of a model say, and how to convert data that follows a standard into the model with them
+title: Converting data
+description: Convert data that follows a standard into a catalog model, with the model's mapping file
 ---
 
-# Mapping files
+# Converting data
 
 Many models correspond to a standard that data already follows in Japan, for example a dataset of the municipal standard open datasets, EEI or GSI's shelter data. A **mapping file** says, for one model and one standard, which field of the standard matches which attribute of the model. With it you can convert existing data into the model.
 
