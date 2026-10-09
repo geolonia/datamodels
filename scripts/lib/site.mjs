@@ -280,8 +280,9 @@ function modelPage(lang, prefix, subject, model) {
       if (map.standard?.note?.[lang]) md += `${map.standard.note[lang]}\n\n`;
       if (map.structure?.[lang]) md += `${map.structure[lang]}\n\n`;
       md += `| ${t.mappingField} | ${t.mappingTo} | ${t.mappingNote} |\n|---|---|---|\n`;
-      // Link a field to its attribute row; a value type such as Geometry has no rows to link to.
-      for (const [field, m] of Object.entries(map.fields ?? {})) md += `| ${model.schema.properties?.[field] ? `[${code(field)}](#${field})` : code(field)} | ${m.to ? code(m.to) : `*${t.none}*`} | ${cellText(m.note?.[lang] ?? '')} |\n`;
+      // Link a field to its attribute row (raw HTML: VitePress lowercases Markdown link fragments, the
+      // ids keep the attribute's case for the /ns/ redirects); a value type such as Geometry has no rows.
+      for (const [field, m] of Object.entries(map.fields ?? {})) md += `| ${model.schema.properties?.[field] ? `<a href="#${field}">${code(field)}</a>` : code(field)} | ${m.to ? code(m.to) : `*${t.none}*`} | ${cellText(m.note?.[lang] ?? '')} |\n`;
       // Under the table: the same table as a file a converter reads, and the standard's licence.
       const file = `${rel(mu.mapping)}${map.name}.yaml`;
       md += `\n<p class="licence">${l.mappingFile(`<a href="${file}">${map.name}.yaml</a>`, (text) => `<a href="${prefix}/guide/mapping">${text}</a>`)}</p>\n`;

@@ -10,7 +10,7 @@
 //
 // Drag, or one finger on the graph, pans; pinch, or Ctrl/⌘ + wheel, zooms at
 // the pointer; a trackpad's sideways swipe pans; a plain vertical wheel still
-// scrolls the page. A graph that fits the column gets no zoom.
+// scrolls the page, except in full screen, where it zooms. A graph that fits the column gets no zoom.
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useData } from 'vitepress'
 import type { PanzoomObject } from '@panzoom/panzoom'
@@ -18,8 +18,8 @@ import type { PanzoomObject } from '@panzoom/panzoom'
 const props = defineProps<{ width: number; height: number; title?: string }>()
 const { lang } = useData()
 const t = computed(() => lang.value === 'ja'
-  ? { label: '型と関係の図', hint: 'ドラッグで移動、ピンチまたは Ctrl/⌘ + スクロールで拡大・縮小', zoomIn: '拡大', zoomOut: '縮小', full: '全画面で表示', exitFull: '全画面を終了', actual: '100% で表示', download: 'SVG でダウンロード' }
-  : { label: 'Types and relationships', hint: 'Drag to move; pinch or Ctrl/⌘ + scroll to zoom', zoomIn: 'Zoom in', zoomOut: 'Zoom out', full: 'Full screen', exitFull: 'Exit full screen', actual: 'Show at 100%', download: 'Download as SVG' })
+  ? { label: '型と関係の図', hint: 'ドラッグで移動、ピンチまたは Ctrl/⌘ + スクロールで拡大・縮小（全画面ではスクロールだけで拡大・縮小）', zoomIn: '拡大', zoomOut: '縮小', full: '全画面で表示', exitFull: '全画面を終了', actual: '100% で表示', download: 'SVG でダウンロード' }
+  : { label: 'Types and relationships', hint: 'Drag to move; pinch or Ctrl/⌘ + scroll to zoom (in full screen, scroll alone zooms)', zoomIn: 'Zoom in', zoomOut: 'Zoom out', full: 'Full screen', exitFull: 'Exit full screen', actual: 'Show at 100%', download: 'Download as SVG' })
 
 const MAX = 2
 const viewport = ref<HTMLElement | null>(null)
@@ -107,7 +107,8 @@ function actual() { touched = true; run(() => pz?.zoom(1, { animate: true })) }
 let wheelZoom: { dy: number; clientX: number; clientY: number } | null = null
 function wheel(e: WheelEvent) {
   if (!pz) return
-  if (e.ctrlKey || e.metaKey) {
+  // In full screen there is no page to scroll: the plain wheel zooms too.
+  if (e.ctrlKey || e.metaKey || (full.value && Math.abs(e.deltaY) >= Math.abs(e.deltaX))) {
     e.preventDefault()
     touched = true
     const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY
