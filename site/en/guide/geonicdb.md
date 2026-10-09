@@ -11,13 +11,15 @@ GeonicDB is an NGSI-LD broker made by Geolonia, the company that runs this catal
 
 For every model, a ready-made definition is published at `https://datamodels.jp/adapters/geonicdb/<subject>/<Type>.json` ([list by model](/en/adapters/geonicdb/)). It names the model's @context (`contextUrl`), so registering it is enough for GeonicDB to use the catalog's attribute names.
 
-**What a registered model checks** when an entity is created or updated: required attributes, value types (date-times strictly RFC 3339), allowed values, patterns, minimum and maximum. Attributes the model does not know are rejected (models with `additionalProperties: false`, the catalog's default). Registration is optional, and existing entities are not checked again when a model is registered or changed.
+Registration is optional. What a registered model checks, and what it does not, is [below](#checks).
 
 ## Steps
 
 You need a tenant and an API key whose policy allows these requests ([API keys](https://docs.geonicdb.com/en/saas/api-key), [policy binding](https://docs.geonicdb.com/en/reference/auth#policy-binding-policyid)), and three environment variables: `GEONICDB_BASE_URL` (for example `https://<your-deployment>.geonicdb.jp`), `GEONICDB_TENANT`, `GEONICDB_API_KEY`.
 
-```bash
+::: code-group
+
+```bash [curl]
 BASE=https://datamodels.jp
 MODEL=transportation/RoadRestriction
 KEY="x-api-key: $GEONICDB_API_KEY"
@@ -29,8 +31,11 @@ curl -X POST "$GEONICDB_BASE_URL/custom-data-models" \
   -H "Content-Type: application/json" -H "$KEY" \
   --data @model.json
 
-# 2. Create an entity: the model page's normalized example, as it is.
-curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" -o entity.jsonld
+# 2. Create an entity: the model page's normalized example, with typed
+#    dates turned into strings (see the note below).
+curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" \
+  | jq 'walk(if type == "object" and has("@value") then .["@value"] else . end)' \
+  > entity.jsonld
 curl -X POST "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
   -H "Content-Type: application/ld+json" -H "$KEY" -H "$TENANT" \
   --data @entity.jsonld
@@ -45,8 +50,51 @@ curl -G "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
   -H "$KEY" -H "$TENANT"
 ```
 
-- Registering returns `201 Created`, or `409` if a model of that type already exists. With the `geonic` CLI logged in as a tenant admin, no policy is needed: `geonic models create @model.json`.
+```bash [GeonicDB CLI]
+BASE=https://datamodels.jp
+MODEL=transportation/RoadRestriction
+# Once: where to send requests. With an API key, also export GDB_API_KEY.
+geonic config set url "$GEONICDB_BASE_URL"
+geonic config set service "$GEONICDB_TENANT"
+export GDB_API_KEY="$GEONICDB_API_KEY"
+
+# 1. Register the model (once per tenant).
+curl -sSf "$BASE/adapters/geonicdb/$MODEL.json" | geonic models create
+
+# 2. Create an entity: the model page's normalized example, with typed
+#    dates turned into strings (see the note below).
+curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" \
+  | jq 'walk(if type == "object" and has("@value") then .["@value"] else . end)' \
+  | geonic entities create
+
+# 3. Query: closed roads only.
+geonic entities list --type RoadRestriction \
+  --query 'restrictionStatus=="closed"' \
+  --context "$BASE/context/transportation/v1.jsonld"
+```
+
+:::
+
+- Registering returns `201 Created`, or `409` if a model of that type already exists. To change a registered model, use `PATCH /custom-data-models/<Type>` or `geonic models update <Type> @model.json`.
+- **Typed dates:** the normalized example writes date-times as `{"@type": "DateTime", "@value": "…"}`. GeonicDB's model check accepts only the plain string for now, so step 2 turns them into strings with [jq](https://jqlang.org/) ([#185](https://github.com/geolonia/datamodels/issues/185)). Your own data can send the plain string, as in `"validFrom": {"type": "Property", "value": "2026-07-08T09:00:00+09:00"}`.
+- **GeonicDB CLI:** [geonicdb-cli](https://github.com/geolonia/geonicdb-cli) (`npm install -g @geolonia/geonicdb-cli`). Logged in as a tenant admin with `geonic auth login`, it needs no API key or policy. A saved login is used before `--api-key`, so run `geonic auth logout` first when you use an API key. Add `--dry-run` to any command to see the request without sending it.
 - For your own data, put the @context in the body (`application/ld+json`) or send `application/json` with the `Link` header, never both. The tenant header is `NGSILD-Tenant` ([multi-tenancy](https://docs.geonicdb.com/en/core-concepts/multi-tenancy)).
+
+## What a registered model checks {#checks}
+
+GeonicDB checks every entity of the type when it is created or changed, also in batches and through NGSIv2:
+
+- the required attributes are there;
+- each value has the right type (text, number, whole number, true or false, list, object, GeoJSON, URI, date-time in RFC 3339) and follows the rules: length, minimum and maximum, pattern, allowed values;
+- there are no attributes the model does not know (the catalog's definitions do not allow them);
+- combinations that must be unique are unique, if the definition declares them.
+
+It does not check:
+
+- whether an attribute is sent as a Property or a Relationship, or which type a Relationship points to;
+- entities of a type that has no registered model: they are stored as they are;
+- the other types of an entity with several types: only the first type is checked;
+- entities that existed before the model was registered or changed. To see how a change would affect them, send it with `PATCH /custom-data-models/<Type>?dryRun=true` or `geonic models update <Type> @model.json --api-dry-run`: nothing changes, and the answer says how many entities would break the model, with examples.
 
 ## Your own attributes
 
