@@ -16,11 +16,17 @@
   "preview_urls": true,
   "previews": {},
 
-  // Assets-only Worker: no script, Cloudflare serves the built tree directly.
-  // `_headers` and `_redirects` inside the directory set the URL contract
-  // (content types, CORS, caching, IRI redirects). See public/_headers.
+  // Cloudflare serves the built tree directly. `_headers` and `_redirects`
+  // inside the directory set the URL contract (content types, CORS, caching,
+  // IRI redirects). See public/_headers.
+  // The script runs only for the IRIs (/ns/*): it answers JSON-LD clients with
+  // the subject's vocabulary and passes everything else to the assets (#196).
+  // No other path runs it.
+  "main": "worker/index.mjs",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/ns/*"],
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page"
   },

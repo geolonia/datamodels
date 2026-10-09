@@ -29,7 +29,7 @@ Servers and brokers may keep a copy: the alias for 5 minutes, so a new compatibl
 
 1. **A published versioned file is never changed or removed.** `/context/<subject>/v1.0.0.jsonld` stays the same forever. CI records a hash of every file and rejects a change to one.
 2. **The meaning of an attribute never changes.** When it must, the catalog adds a new attribute and marks the old one deprecated.
-3. **Type and attribute IRIs lead to documentation.** Opening `https://datamodels.jp/ns/transportation/RoadRestriction` in a browser shows the type's page.
+3. **Type and attribute IRIs lead to documentation.** Opening `https://datamodels.jp/ns/transportation/RoadRestriction` in a browser shows the type's page. A program that asks for JSON-LD (`Accept: application/ld+json`) is sent to the subject's vocabulary instead (`/vocab/transportation/v1.jsonld`), which defines the type with its labels and description.
 
 ## Versions {#versions}
 
@@ -61,7 +61,7 @@ A new version does not replace the old one: `v1.0.0` stays at its URL, and the a
 | `/vocab/<subject>/vX.Y.Z.jsonld` | vocabulary (RDFS: classes, subclass relations, ja/en labels; immutable) |
 | `/examples/<subject>/<Type>/example.json` | example (key-values) |
 | `/examples/<subject>/<Type>/example-normalized.jsonld` | example (NGSI-LD normalized; not for value types) |
-| `/ns/<subject>/<Term>` | type and attribute IRIs (redirect to the page) |
+| `/ns/<subject>/<Term>` | type and attribute IRIs (redirect to the page; to the vocabulary for JSON-LD clients) |
 | `/mapping/<subject>/<Type>/<name>.yaml` | mapping file (correspondence to another standard and conversion rules; not versioned: the URL stays, the content follows the current model) |
 | `/adapters/<name>/<subject>/<Type>.json` | adapter output (for example a GeonicDB Custom Data Model definition) |
 | `/catalog.json` | list of all models for programs (conforms to /catalog.schema.json) |
