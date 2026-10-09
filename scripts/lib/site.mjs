@@ -168,7 +168,7 @@ const M = {
     requiredMark: '必須', requiredNote: '* は必須の属性です。', linkHeaderIntro: '本文に @context を書かずに送るときの Link ヘッダー:',
     use: 'このモデルを使う', useValue: (rules) => `他のモデルは、属性の値としてこの値型を参照します。書き方は[モデルのルール](${rules})にあります。`,
     standards: '参照している標準', standardsNote: 'このモデルが対応している標準と、項目ごとの対応です。開くと対応表が見られます。',
-    fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, notesTitle: '注記',
+    fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く ↗', notesTitle: '注記',
     sourceFiles: (href) => `ソースファイル（注記、対応表）は [GitHub](${href}) にあります。`,
   },
   en: {
@@ -180,7 +180,7 @@ const M = {
     requiredMark: 'required', requiredNote: '* required', linkHeaderIntro: 'The Link header, for sending data without @context in the body:',
     use: 'Using this model', useValue: (rules) => `Other models use this value type as the value of an attribute. How: [Rules for models](${rules}).`,
     standards: 'Referenced standards', standardsNote: 'The standards this model corresponds to, field by field. Open one to see its table.',
-    fieldsMapped: (n, total) => `${n} of ${total} fields`, notesTitle: 'Notes',
+    fieldsMapped: (n, total) => `${n} of ${total} fields`, openStandard: 'Open the standard ↗', notesTitle: 'Notes',
     sourceFiles: (href) => `The source files (notes, mapping tables) are on [GitHub](${href}).`,
   },
 };
@@ -270,7 +270,8 @@ function modelPage(lang, prefix, subject, model) {
       const fields = Object.values(map.fields ?? {});
       const mapped = fields.filter((f) => f?.to !== null && f?.to !== undefined).length;
       md += `<details id="mapping-${map.name}"><summary><span class="name">${map.standard?.name?.[lang] ?? map.name}</span><span class="meta">${l.fieldsMapped(mapped, fields.length)}</span></summary>\n\n`;
-      if (map.standard?.url) md += `[${map.standard.name?.[lang] ?? map.name}](${map.standard.url})${standardLicense(map.standard, lang) ? ` · ${standardLicense(map.standard, lang)}` : ''}\n\n`;
+      // The name is in the summary already; here the link and the licence.
+      if (map.standard?.url) md += `[${l.openStandard}](${map.standard.url})${standardLicense(map.standard, lang) ? ` · ${standardLicense(map.standard, lang)}` : ''}\n\n`;
       if (map.standard?.note?.[lang]) md += `${map.standard.note[lang]}\n\n`;
       if (map.structure?.[lang]) md += `${map.structure[lang]}\n\n`;
       md += `| ${t.mappingField} | ${t.mappingTo} | ${t.mappingNote} |\n|---|---|---|\n`;
