@@ -129,6 +129,8 @@ function modelForIri(subject, iri, { ownerOnly = false } = {}) {
 export const playgroundUrl = (doc) => `https://json-ld.org/playground/#startTab=tab-expanded&json-ld=${encodeURIComponent(JSON.stringify(doc)).replace(/[()]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`)}`;
 const modelLink = (prefix, found) => `[${found.model.type}](${prefix}${rel(modelUrls(found.subject, found.model).page)})`;
 
+const FORMAT_JA = { date: '日付', 'date-time': '日時' };
+
 export function valueText(lang, subject, prop, prefix) {
   const ngsi = prop['x-ngsi']?.type;
   if (ngsi === 'Relationship') {
@@ -148,7 +150,10 @@ export function valueText(lang, subject, prop, prefix) {
   const kind = ngsi === 'JsonProperty' || ngsi === 'VocabProperty' ? ngsi : 'Property';
   if (ref) return `${kind}, object: ${refText}`;
   let t = prop.type ?? '';
+  // A value that may take one of several formats (the schema's anyOf): "date or date-time".
+  const formats = (prop.anyOf ?? []).map((a) => a?.format).filter(Boolean);
   if (prop.format) t += ` (${prop.format})`;
+  else if (formats.length) t += ` (${lang === 'ja' ? formats.map((f) => FORMAT_JA[f] ?? f).join('または') : formats.join(' or ')})`;
   if (prop.enum) t += `: ${prop.enum.map(code).join(' \\| ')}`;
   if (prop.minimum !== undefined) t += `, ≥ ${prop.minimum}`;
   if (prop.exclusiveMinimum !== undefined) t += `, > ${prop.exclusiveMinimum}`;

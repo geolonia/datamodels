@@ -3,7 +3,7 @@
 // back the catalog's own examples.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { loadSubjects, attributesOf, toKeyValues, toNormalized } from '../scripts/lib/models.mjs';
+import { loadSubjects, attributesOf, toKeyValues, toNormalized, dateFormats, typedDate } from '../scripts/lib/models.mjs';
 
 const entities = (await loadSubjects()).flatMap((s) => s.models.filter((m) => m.examples['example-normalized.jsonld']).map((m) => m));
 
@@ -41,6 +41,25 @@ test('toNormalized: declared types, DateTime values, datasetIds, unknown attribu
     extra: { type: 'Property', value: 3 },
   });
   assert.ok(!('@context' in out), 'no @context unless one is given');
+});
+
+test('a date or date-time Property: a date becomes Date, a date-time DateTime, and both come back unchanged', () => {
+  const schema = { properties: {
+    due: { type: 'string', anyOf: [{ format: 'date' }, { format: 'date-time' }], 'x-ngsi': { type: 'Property' } },
+    day: { type: 'string', format: 'date', 'x-ngsi': { type: 'Property' } },
+  } };
+  for (const [value, type] of [['2026-07-11', 'Date'], ['2026-07-11T07:00:00+09:00', 'DateTime'], ['2026-07-11T07:00:00Z', 'DateTime']]) {
+    const kv = { id: 'urn:x:1', type: 'X', due: value };
+    const norm = toNormalized(kv, schema);
+    assert.deepEqual(norm.due, { type: 'Property', value: { '@type': type, '@value': value } }, value);
+    assert.deepEqual(toKeyValues(norm), kv, value);
+  }
+  // A schema with format date alone types its value as Date too.
+  assert.deepEqual(toNormalized({ day: '2026-07-11' }, schema).day.value, { '@type': 'Date', '@value': '2026-07-11' });
+  assert.deepEqual(dateFormats(schema.properties.due), ['date', 'date-time']);
+  assert.deepEqual(dateFormats({ type: 'string', format: 'date-time' }), ['date-time']);
+  assert.deepEqual(dateFormats({ type: 'string' }), []);
+  assert.equal(typedDate(3, ['date']), 3, 'only strings are typed');
 });
 
 test('JsonProperty and VocabProperty keep their json / vocab member in key-values form', async () => {

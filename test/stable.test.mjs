@@ -14,7 +14,7 @@ async function validateWith({ status, adopters, catalogExtra }) {
   const dir = await mkdtemp(join(tmpdir(), 'datamodels-stable-'));
   try {
     await cp(join(root, 'models'), dir, { recursive: true });
-    const m = join(dir, 'task', 'Comment');
+    const m = join(dir, 'task', 'Milestone');
     if (status !== undefined) {
       const f = join(m, 'catalog.yaml');
       await writeFile(f, (await readFile(f, 'utf8')).replace(/^status: draft$/m, `status: ${status}`));
@@ -36,7 +36,7 @@ test('stable with two organisations, each with a url, validates', async () => {
 test('stable with one organisation fails', async () => {
   const r = await validateWith({ status: 'stable', adopters: `adopters:\n${entry('Org A', 'https://a.example')}` });
   assert.equal(r.status, 1);
-  assert.match(r.stderr, /Comment\/ADOPTERS\.yaml: status stable needs two implementations from different organisations, each with a url; found 1/);
+  assert.match(r.stderr, /Milestone\/ADOPTERS\.yaml: status stable needs two implementations from different organisations, each with a url; found 1/);
 });
 
 test('stable counts one organisation once, whatever its spelling', async () => {
@@ -53,11 +53,11 @@ test('stable ignores entries without a url', async () => {
 
 test('an ADOPTERS entry without organization, a bad url or a wrong shape fails', async () => {
   let r = await validateWith({ adopters: 'adopters:\n  - name: Something\n' });
-  assert.match(r.stderr, /Comment\/ADOPTERS\.yaml: entry 1: needs name and organization/);
+  assert.match(r.stderr, /Milestone\/ADOPTERS\.yaml: entry 1: needs name and organization/);
   r = await validateWith({ adopters: `adopters:\n${entry('Org A', 'ftp://a.example')}` });
   assert.match(r.stderr, /entry 1: url must be an http\(s\) URL with a host/);
   r = await validateWith({ adopters: '- name: x\n' });
-  assert.match(r.stderr, /Comment\/ADOPTERS\.yaml: root value must be a mapping with an adopters list/);
+  assert.match(r.stderr, /Milestone\/ADOPTERS\.yaml: root value must be a mapping with an adopters list/);
 });
 
 test('a url without a host does not count and fails', async () => {
@@ -77,7 +77,7 @@ test('a url that is not a string does not count and fails', async () => {
 test('an explicit null status fails', async () => {
   const r = await validateWith({ status: 'null' });
   assert.equal(r.status, 1);
-  assert.match(r.stderr, /Comment\/catalog\.yaml: status must be draft, stable or deprecated, got null/);
+  assert.match(r.stderr, /Milestone\/catalog\.yaml: status must be draft, stable or deprecated, got null/);
 });
 
 test('a deprecated model may name its replacement', async () => {
@@ -87,7 +87,7 @@ test('a deprecated model may name its replacement', async () => {
 
 test('supersededBy on a model that is not deprecated, or not a URL, fails', async () => {
   let r = await validateWith({ catalogExtra: 'supersededBy: https://datamodels.jp/ns/task/Task\n' });
-  assert.match(r.stderr, /Comment\/catalog\.yaml: supersededBy is only for status deprecated, the status is draft/);
+  assert.match(r.stderr, /Milestone\/catalog\.yaml: supersededBy is only for status deprecated, the status is draft/);
   r = await validateWith({ status: 'deprecated', catalogExtra: 'supersededBy: Task\n' });
   assert.match(r.stderr, /supersededBy must be an http\(s\) URL with a host/);
 });
@@ -95,7 +95,7 @@ test('supersededBy on a model that is not deprecated, or not a URL, fails', asyn
 test('an unknown status fails', async () => {
   const r = await validateWith({ status: 'beta' });
   assert.equal(r.status, 1);
-  assert.match(r.stderr, /Comment\/catalog\.yaml: status must be draft, stable or deprecated, got "beta"/);
+  assert.match(r.stderr, /Milestone\/catalog\.yaml: status must be draft, stable or deprecated, got "beta"/);
 });
 
 test('an outside supersededBy URL renders as a link to exactly that URL', async () => {

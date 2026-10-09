@@ -16,10 +16,31 @@ export const NGSI_TYPES = ['Property', 'Relationship', 'GeoProperty', 'JsonPrope
 export const WRAPPED = { JsonProperty: 'json', VocabProperty: 'vocab' };
 
 /**
- * The key-values entity with the json and vocab wrappers removed, as the
- * model's JSON Schema describes it (the schema describes the value, as for a
- * Property). Throws when an attribute of one of these types is not wrapped.
+ * The date formats a Property's value may take, from its schema: "date",
+ * "date-time" or both. A schema that accepts either writes them as
+ * `"anyOf": [{ "format": "date" }, { "format": "date-time" }]`; an array
+ * attribute takes the formats of its items.
  */
+export function dateFormats(prop) {
+  const formatsOf = (p) => (!p || typeof p !== 'object' ? [] : [p.format, ...(p.anyOf ?? []).map((a) => a?.format)]);
+  const all = [...formatsOf(prop), ...formatsOf(prop?.items)];
+  return ['date', 'date-time'].filter((f) => all.includes(f));
+}
+
+const PLAIN_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
+ * The NGSI-LD value of a date or date-time Property: { "@type": "Date" } or
+ * { "@type": "DateTime" } with the string as @value (NGSI-LD defines both).
+ * When the schema accepts either, the value decides: YYYY-MM-DD is a Date,
+ * anything else a DateTime. Other values are returned unchanged.
+ */
+export function typedDate(value, formats) {
+  if (typeof value !== 'string' || !formats.length) return value;
+  const isDate = formats.includes('date') && (!formats.includes('date-time') || PLAIN_DATE.test(value));
+  return { '@type': isDate ? 'Date' : 'DateTime', '@value': value };
+}
+
 /** The content of a {"json": ...} / {"vocab": ...} wrapper; throws when it is not exactly that. */
 function unwrapOne(k, type, v) {
   const member = WRAPPED[type];
@@ -29,6 +50,11 @@ function unwrapOne(k, type, v) {
   return v[member];
 }
 
+/**
+ * The key-values entity with the json and vocab wrappers removed, as the
+ * model's JSON Schema describes it (the schema describes the value, as for a
+ * Property). Throws when an attribute of one of these types is not wrapped.
+ */
 export function unwrapKeyValues(keyValues, schema) {
   const out = { ...keyValues };
   for (const [k, prop] of Object.entries(schema.properties ?? {})) {
@@ -86,7 +112,8 @@ export function toKeyValues(normalized, { multi = new Set() } = {}) {
 /**
  * Normalized form of a key-values entity, for a model's JSON Schema: each
  * attribute takes the NGSI-LD type the schema declares (x-ngsi.type),
- * date-time Properties become typed DateTime values, and each instance of a
+ * date and date-time Properties become typed Date and DateTime values
+ * (typedDate), and each instance of a
  * multi-valued attribute gets a datasetId (urn:ngsi-ld:dataset:<attribute>:<n>,
  * the form the catalog's examples use). An attribute the schema does not
  * declare becomes a Property.
@@ -105,8 +132,7 @@ export function toNormalized(keyValues, schema, context) {
       // Key-values carries the wrapper ({"json": ...}); take its content.
       const member = WRAPPED[ngsi.type];
       if (member) return { type: ngsi.type, [member]: unwrapOne(k, ngsi.type, value) };
-      const format = prop.format ?? prop.items?.format;
-      return { type: 'Property', value: format === 'date-time' && typeof value === 'string' ? { '@type': 'DateTime', '@value': value } : value };
+      return { type: 'Property', value: typedDate(value, dateFormats(prop)) };
     };
     if (ngsi.multi && Array.isArray(v)) out[k] = v.map((item, i) => ({ ...one(item), datasetId: `urn:ngsi-ld:dataset:${k}:${i + 1}` }));
     else out[k] = one(v);

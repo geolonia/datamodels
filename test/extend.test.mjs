@@ -52,6 +52,19 @@ test('for every entity model: a context with only the new terms, and a schema th
   }
 });
 
+test('an extension keeps a date or date-time attribute: both forms validate, a word does not', () => {
+  const ajv = new Ajv2020({ allErrors: true, strict: false });
+  addFormats(ajv);
+  for (const s of subjects) for (const m of s.models) if (m.kind === 'value') ajv.addSchema(m.schema, m.schema.$id);
+  const { raw, model } = entities.find((e) => e.model.type === 'Milestone');
+  const out = buildExtension(model, input(attrs), core);
+  assert.deepEqual(out.schema.properties.due.anyOf, [{ format: 'date' }, { format: 'date-time' }]);
+  const validate = ajv.compile(out.schema);
+  const ok = { ...raw.examples['example.json'], patrolRoute: 'A-3' };
+  for (const due of ['2026-07-11', '2026-07-11T07:00:00+09:00']) assert.ok(validate({ ...ok, due }), `${due}: ${ajv.errorsText(validate.errors)}`);
+  assert.ok(!validate({ ...ok, due: 'tomorrow' }));
+});
+
 test('problems: bad names, clashes with the model and the core, taken namespaces', () => {
   const { model } = entities.find((e) => e.model.type === 'Task');
   const codes = (inp) => buildExtension(model, inp, core).problems.map((p) => `${p.code}${p.name ? `:${p.name}` : ''}`);
@@ -68,10 +81,10 @@ test('problems: bad names, clashes with the model and the core, taken namespaces
   assert.deepEqual(codes({ ...input(attrs), base: 'https://notdatamodels.jp/ns/x/' }), [], 'a different domain that merely ends the same way is fine');
   assert.deepEqual(codes({ ...input(attrs), base: 'https://example.com/ns/acme' }), ['base']);
   assert.deepEqual(codes({ ...input(attrs), prefix: 'Acme' }), ['prefix']);
-  // Terms of the subject context from other models (Comment's text in the task
+  // Terms of the subject context from other models (Project's homepage in the task
   // context) and imported ones (task's statusLabel in the transportation context).
-  assert.deepEqual(codes(input([{ name: 'text', ngsiType: 'Property', valueType: 'string' }])), ['inContext:text']);
-  assert.deepEqual(codes({ ...input(attrs), prefix: 'text' }), ['prefixInContext:text']);
+  assert.deepEqual(codes(input([{ name: 'homepage', ngsiType: 'Property', valueType: 'string' }])), ['inContext:homepage']);
+  assert.deepEqual(codes({ ...input(attrs), prefix: 'homepage' }), ['prefixInContext:homepage']);
   const road = entities.find((e) => e.model.type === 'RoadRestriction').model;
   assert.ok(road.contextTerms.includes('statusLabel'), 'transportation imports the task terms');
   // An empty row is ignored, not an error.

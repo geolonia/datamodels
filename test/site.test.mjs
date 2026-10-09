@@ -15,6 +15,13 @@ test('an attribute row shows the schema\'s minimum and maximum', () => {
   assert.equal(valueText('en', task, { type: 'number', exclusiveMinimum: 0, exclusiveMaximum: 1 }, '/en'), 'Property, number, > 0, < 1');
 });
 
+test('a date or date-time attribute says so in both languages', () => {
+  const Milestone = task.models.find((m) => m.type === 'Milestone');
+  assert.equal(valueText('en', task, Task.schema.properties.due, '/en'), 'Property, string (date or date-time)');
+  assert.equal(valueText('ja', task, Milestone.schema.properties.due, ''), 'Property, string (日付または日時)');
+  assert.equal(valueText('en', task, Task.schema.properties.completedAt, '/en'), 'Property, string (date-time)');
+});
+
 test('"#85" in a note links the issue; anchors and other hashes stay as they are', () => {
   assert.equal(issueLinks('Added (#85): see issue #22.'), 'Added ([#85](https://github.com/geolonia/datamodels/issues/85)): see issue [#22](https://github.com/geolonia/datamodels/issues/22).');
   assert.equal(issueLinks('#7 first'), '[#7](https://github.com/geolonia/datamodels/issues/7) first');

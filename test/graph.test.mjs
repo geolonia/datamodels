@@ -10,7 +10,8 @@ const edges = catalogEdges(subjects);
 const edge = (from, to, kind) => edges.find((e) => e.from === from && e.to === to && e.kind === kind);
 
 test('Relationships, value types and pseudo targets become edges, merged per pair', () => {
-  assert.deepEqual(edge('task/Comment', 'task/Task', 'rel')?.labels, ['task']);
+  assert.deepEqual(edge('task/Milestone', 'task/Project', 'rel')?.labels, ['project']);
+  assert.deepEqual(edge('task/Task', 'task/Milestone', 'rel')?.labels, ['milestone']);
   assert.deepEqual(edge('task/Task', 'task/Task', 'rel')?.labels, ['parent', 'relatedTo']);
   assert.deepEqual(edge('task/Task', '@agent', 'rel')?.labels, ['assignee', 'author']);
   assert.ok(edge('task/Task', '@any', 'rel'), 'refersTo points at any entity');
@@ -101,15 +102,17 @@ test('ids in the SVG use only safe characters, whatever the subject is called', 
 });
 
 test('a model page graph shows the model and its neighbours only, each neighbour a link with its further links counted', () => {
-  const svg = graphSvg('en', '/en', subjects, null, 'LR', { center: 'task/Comment' });
+  const svg = graphSvg('en', '/en', subjects, null, 'LR', { center: 'task/Project' });
   const types = [...svg.matchAll(/<text class="type"[^>]*>([^<]*)</g)].map((m) => m[1]).sort();
-  assert.deepEqual(types, ['Comment', 'Task']);
+  assert.deepEqual(types, ['Geometry', 'Milestone', 'Project', 'Task']);
   assert.match(svg, /class="node entity center"/);
-  assert.doesNotMatch(svg, /href="\/en\/models\/task\/Comment\/"/, 'the model itself is not a link');
+  assert.doesNotMatch(svg, /href="\/en\/models\/task\/Project\/"/, 'the model itself is not a link');
   assert.match(svg, /<a href="\/en\/models\/task\/Task\/"/);
-  // Task's links besides Comment (project, parent/relatedTo, refersTo, assignee/author, location, Attachment.task).
-  assert.match(svg, /class="more"[^>]*>6 more links →</);
-  assert.match(svg, /↻ inReplyTo/);
+  // Task's links besides Project (milestone, parent/relatedTo, refersTo, assignee/author, location).
+  assert.match(svg, /class="more"[^>]*>5 more links →</);
+  // Milestone's one link besides Project (Task.milestone): singular.
+  assert.match(svg, /class="more"[^>]*>1 more link →</);
+  assert.match(svg, /↻ parent/);
 });
 
 test('a model page graph for a value type shows who uses it, from other subjects too', () => {
