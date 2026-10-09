@@ -15,7 +15,8 @@ const SEMVER = /^(\d+)\.(\d+)\.(\d+)$/;
 // Reported by outsiders and rendered into the page (Markdown with HTML and Vue): plain text and
 // plain URLs only, so nothing in a file can add markup, a script or a template expression.
 const UNSAFE_TEXT = /[<>{}]/;
-const isLink = (u) => { if (typeof u !== 'string' || /[\s`<>{}|"\\^()[\]]/.test(u)) return false; try { const x = new URL(u); return (x.protocol === 'https:' || x.protocol === 'http:') && x.hostname !== ''; } catch { return false; } };
+// No user name or password in a URL either: the listing never carries credentials.
+const isLink = (u) => { if (typeof u !== 'string' || /[\s`<>{}|"\\^()[\]]/.test(u)) return false; try { const x = new URL(u); return (x.protocol === 'https:' || x.protocol === 'http:') && x.hostname !== '' && x.username === '' && x.password === ''; } catch { return false; } };
 const plain = (v) => bilingual(v) && !UNSAFE_TEXT.test(v.ja) && !UNSAFE_TEXT.test(v.en);
 // A URL on the catalog's own host (any case, any subdomain): an extension's context and IRIs are the owner's.
 const CATALOG_HOST = new URL(BASE_URL).hostname;
@@ -36,8 +37,12 @@ function inlineIri(defs, term) {
   return id;
 }
 
-/** Problems with one extension file; an empty list when it is fine. */
-export function extensionProblems(ext, model, subject) {
+/**
+ * Problems with one extension file; an empty list when it is fine. published:
+ * the subject's published versions (releases/), plus the current one; an
+ * extension builds on one of them, and an inline context may import its exact URL.
+ */
+export function extensionProblems(ext, model, subject, published = [subject.version]) {
   const out = [];
   if (!EXTENSION_NAME.test(ext.name ?? '')) out.push('the file name must be lower-case letters, digits and -, for example wakayama-detour.yaml');
   // The file name is the id: the loader passes the keys written in the file (fileKeys), so a name: there cannot replace it.
@@ -49,6 +54,7 @@ export function extensionProblems(ext, model, subject) {
   if (ext.since !== undefined && !/^\d{4}-\d{2}(-\d{2})?$/.test(String(ext.since))) out.push(`since must be a date (2026-10 or 2026-10-09), got ${JSON.stringify(ext.since)}`);
   if (typeof ext.version !== 'string' || !SEMVER.test(ext.version)) out.push(`version must be the subject version the extension builds on (X.Y.Z), got ${JSON.stringify(ext.version)}`);
   else if (older(subject.version, ext.version) < 0) out.push(`version ${ext.version} is newer than the subject (${subject.version})`);
+  else if (!published.includes(ext.version)) out.push(`version ${ext.version} was never published; published: ${[...new Set(published)].join(', ')}`);
 
   // The extended @context: a URL on the owner's side, or written inline (the @context value).
   let defs = null;
@@ -59,7 +65,7 @@ export function extensionProblems(ext, model, subject) {
     const parts = Array.isArray(ext.context) ? ext.context : [ext.context];
     // One of the subject's published contexts: the major alias, the current version, or the version it builds on.
     const u = subjectUrls(subject);
-    const accepted = new Set([u.contextAlias, u.contextExact, ...(typeof ext.version === 'string' && SEMVER.test(ext.version) ? [`${BASE_URL}/context/${subject.name}/v${ext.version}.jsonld`] : [])]);
+    const accepted = new Set([u.contextAlias, u.contextExact, ...(published.includes(ext.version) ? [`${BASE_URL}/context/${subject.name}/v${ext.version}.jsonld`] : [])]);
     if (!parts.some((p) => accepted.has(p))) out.push(`an inline context must import the ${subject.name} context (${u.contextAlias}), so the catalog's attributes keep their meaning`);
     defs = Object.assign({}, ...parts.filter((p) => p && typeof p === 'object' && !Array.isArray(p)));
   } else out.push('context is required: the extension\'s @context URL, or the @context value written inline');

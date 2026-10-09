@@ -18,7 +18,7 @@ import jsonld from 'jsonld';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { loadSubjects, attributesOf, toKeyValues, unwrapKeyValues, NGSI_TYPES, subjectUrls, modelUrls, resolveContextTerms, CORE_CONTEXT_URL, CORE_CONTEXT_FIXTURE } from './lib/models.mjs';
-import { resolveContextDocument } from './lib/releases.mjs';
+import { resolveContextDocument, listReleases } from './lib/releases.mjs';
 import { bilingual, mappingProblems, viaCycles } from './lib/mapping-check.mjs';
 import { reportFailures } from './lib/ci-summary.mjs';
 import { extensionProblems } from './lib/extensions.mjs';
@@ -290,7 +290,8 @@ for (const subject of subjects) {
     // Correspondence tables render on the model page: every field must be one of the model's.
     for (const map of model.mappings ?? []) for (const msg of mappingProblems(map, model.schema, mappingNames)) fail(`${mwhere}/mapping/${map.name}.yaml`, msg);
     // Listed extensions render on the model page and in catalog.json; the owner's IRIs, never datamodels.jp's.
-    for (const ext of model.extensions ?? []) for (const msg of extensionProblems(ext, model, subject)) fail(`${mwhere}/extensions/${ext.name}.yaml`, msg);
+    const published = [subject.version, ...(await listReleases(subject)).map((r) => r.version)];
+    for (const ext of model.extensions ?? []) for (const msg of extensionProblems(ext, model, subject, published)) fail(`${mwhere}/extensions/${ext.name}.yaml`, msg);
 
     // Status and adopters (decided in #38): stable needs two independent
     // implementations, self-reported with a link and checked by a reviewer in

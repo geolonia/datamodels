@@ -138,3 +138,13 @@ test('Markdown in reported text shows as written on the page', () => {
   assert.match(page, /\\\*\\\*和歌山県\\\*\\\* \\\[x\\\]\(https:\/\/evil\.example\)/);
   assert.doesNotMatch(page, /\[x\]\(https:\/\/evil/, 'no working link');
 });
+
+test('no credentials in URLs, and only published versions count', () => {
+  for (const k of ['url', 'data']) assert.match(problems({ [k]: 'https://user:secret@example.org/x' }).join('\n'), new RegExp(`${k} must be a plain http`), k);
+  assert.match(problems({ context: 'https://user:secret@example.org/c.jsonld' }).join('\n'), /context must be an http/);
+  assert.match(problems({ version: '0.9.0' }).join('\n'), /0\.9\.0 was never published/);
+  const unpublished = [`${BASE_URL}/context/transportation/v0.9.0.jsonld`, detour.context[1]];
+  assert.match(problems({ version: '0.9.0', context: unpublished }).join('\n'), /must import the transportation context/);
+  const older = extensionProblems({ ...detour, version: '0.9.0', context: unpublished }, RoadRestriction, transportation, [transportation.version, '0.9.0']);
+  assert.deepEqual(older, [], 'a published older version and its exact context are fine');
+});
