@@ -46,15 +46,15 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 
 ### 他のカタログを知らせる
 
-ほかのデータモデルカタログや語彙は、[他のカタログの登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=catalog-report.yml)で知らせてください。メンテナーが確認して「[他のデータモデルカタログ](https://datamodels.jp/guide/catalogs)」のページに載せます。datamodels.jp のモデルを拡張したカタログを機械が読める形で一覧にする方法は、まだ決まっていません（#56）。
+ほかのデータモデルカタログや語彙は、[他のカタログの登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=catalog-report.yml)で知らせてください。メンテナーが確認して「[他のデータモデルカタログ](https://datamodels.jp/guide/catalogs)」のページに載せます。書き方は「[他のカタログを知らせる](https://datamodels.jp/guide/report-catalog)」にあります。datamodels.jp のモデルを拡張したカタログを機械が読める形で一覧にする方法は、まだ決まっていません（#56）。
 
 ### 拡張を一覧に載せる
 
 モデルに属性を足して使っている組織は、その拡張をモデルのページの「拡張している組織」と `catalog.json` に載せられます。同じ意味の属性に、ほかの組織が同じ名前を使えるようにするためです。
 
-1. 持ち主が [拡張の登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml) に記入します（モデルのページからはモデル名が入った状態で開きます）。
+1. 持ち主が [拡張の登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml) に記入します（モデルのページからはモデル名が入った状態で開きます）。書き方は「[拡張を載せる](https://datamodels.jp/guide/list-extension)」にあります。
 2. メンテナーか持ち主が、`models/<サブジェクト>/<型名>/extensions/<名前>.yaml` を足す Pull Request を開きます（署名付き）。
-3. CI が形を検査します。名前は自分のドメインの IRI で、モデルの属性や NGSI-LD のコアの用語と重ならないこと。@context をデータの中に書く場合は、サブジェクトの @context を取り込み、各用語を書いた IRI で定義していること。
+3. CI が形を検査します。IRI が datamodels.jp のアドレスでないこと（自分のドメインかどうかは検査しない）、名前がモデルの属性や NGSI-LD のコアの用語と重ならないこと。@context をデータの中に書く場合は、サブジェクトの @context を取り込み、各用語を書いた IRI で定義していること。
 4. レビューで確かめるのは、登録した人がその組織を代表していることだけです。内容は確認せず、持ち主の申告のまま載せます。アクセス情報（キー、トークン、ログイン URL）は載せません。
 
 ```yaml
@@ -135,15 +135,15 @@ A tool that registers data (a broker console, for example) may build a new model
 
 ### Telling us about another catalog
 
-Report another catalog of data models or vocabularies with the [catalog form](https://github.com/geolonia/datamodels/issues/new?template=catalog-report.yml). A maintainer checks it and lists it on the page "[Other data model catalogs](https://datamodels.jp/en/guide/catalogs)". How catalogs that extend datamodels.jp models are listed for machines is not decided yet (#56).
+Report another catalog of data models or vocabularies with the [catalog form](https://github.com/geolonia/datamodels/issues/new?template=catalog-report.yml). A maintainer checks it and lists it on the page "[Other data model catalogs](https://datamodels.jp/en/guide/catalogs)". Step by step: "[Telling us about another catalog](https://datamodels.jp/en/guide/report-catalog)". How catalogs that extend datamodels.jp models are listed for machines is not decided yet (#56).
 
 ### Listing an extension
 
 An organisation that added attributes to a model can list its extension on the model page ("Extended by") and in `catalog.json`, so others who need an attribute with the same meaning can reuse the name.
 
-1. The owner fills in the [extension form](https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml) (from a model page it opens with the model filled in).
+1. The owner fills in the [extension form](https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml) (from a model page it opens with the model filled in). Step by step: "[Listing your extension](https://datamodels.jp/en/guide/list-extension)".
 2. A maintainer or the owner opens a pull request that adds `models/<subject>/<Type>/extensions/<name>.yaml` (signed off).
-3. CI checks the form of it: the names are IRIs under the owner's own domain and clash with no attribute of the model and no NGSI-LD core term; an inline @context imports the subject's @context and defines each term with the IRI listed.
+3. CI checks the form of it: the IRIs are not under datamodels.jp (whether the domain is the owner's is not checked), and the names clash with no attribute of the model and no NGSI-LD core term; an inline @context imports the subject's @context and defines each term with the IRI listed.
 4. The review only checks that the person who reported it represents the organisation. The content is listed as the owner reported it, without review. Access details (keys, tokens, login URLs) are never listed.
 
 ```yaml

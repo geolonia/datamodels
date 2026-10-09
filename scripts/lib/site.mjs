@@ -180,7 +180,7 @@ const M = {
     sourceFiles: (href) => `ソースファイル（注記、対応表）は [GitHub](${href}) にあります。`,
     extensions: '拡張している組織', organization: '組織', addedTerms: '足した属性', inlineContext: 'データの中に記述', dataLink: 'データ',
     extensionsNote: (form) => `このモデルに属性を足して使っている組織です。持ち主が登録したもので、datamodels.jp は内容を確認していません。同じ意味の属性が要るときは、ここにある名前を使えます。自分の拡張は[フォーム](${form})から登録できます。`,
-    reportExtension: (form, guide) => `このモデルを拡張したら、[フォームで登録してください](${form})。ほかの組織が同じ名前を使えます（[属性を足す](${guide})）。`,
+    reportExtension: (form, guide) => `このモデルを拡張したら、[フォームで登録してください](${form})。ほかの組織が同じ名前を使えます（[フォームの書き方](${guide})）。`,
   },
   en: {
     kind: 'Kind', entity: 'entity', valueKind: 'value type: used inside an attribute, not as an entity of its own',
@@ -195,7 +195,7 @@ const M = {
     sourceFiles: (href) => `The source files (notes, mapping tables) are on [GitHub](${href}).`,
     extensions: 'Extended by', organization: 'Organisation', addedTerms: 'Added attributes', inlineContext: 'inside the data', dataLink: 'data',
     extensionsNote: (form) => `Organisations that added attributes to this model. Their owners listed them; datamodels.jp does not review the content. If you need an attribute with the same meaning, you can use a name listed here. List your own with the [form](${form}).`,
-    reportExtension: (form, guide) => `Extended this model? [List your extension](${form}) so others can reuse your names ([Adding attributes](${guide})).`,
+    reportExtension: (form, guide) => `Extended this model? [List your extension](${form}) so others can reuse your names ([how to fill in the form](${guide})).`,
   },
 };
 // The issue form for listing an extension, with the model filled in.
@@ -265,7 +265,7 @@ function modelPage(lang, prefix, subject, model) {
   else {
     // One line per task; the Link header last, with its code block (wraps, custom.css).
     md += `- ${t.useGuide(`${prefix}/guide/use`)}\n- ${t.extendThis(`${prefix}/guide/builder?model=${subject.name}/${model.type}`)}\n`;
-    md += `- ${l.reportExtension(extensionForm(subject, model), `${prefix}/guide/extend`)}\n`;
+    md += `- ${l.reportExtension(extensionForm(subject, model), `${prefix}/guide/list-extension`)}\n`;
     const adapters = adapterLine(lang, prefix, subject, model, allAdapters);
     if (adapters) md += `- ${adapters.trim()}\n`;
     md += `- ${l.linkHeaderIntro}\n\n  \`\`\`http\n  Link: <${u.contextAlias}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"\n  \`\`\`\n\n`;

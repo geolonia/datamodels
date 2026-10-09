@@ -18,6 +18,8 @@ description: How to use the catalog's models, add attributes, URLs and versions,
 
 - [Contributing](/en/guide/contribute): how to propose, stages and who decides, pull request steps.
 - [Rules for models](/en/guide/rules): when to define a new type, the rules, mapping to standards, writing examples.
+- [Listing your extension](/en/guide/list-extension): show the attributes you added to a model on its page. The form, step by step.
+- [Telling us about another catalog](/en/guide/report-catalog): a catalog of data models or vocabularies that is missing. The form, step by step.
 
 ## Reference
 
