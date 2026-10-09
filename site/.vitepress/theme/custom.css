@@ -317,7 +317,20 @@
 .vp-doc .attributes .iri { display: inline-block; margin-top: 4px; font-size: 12px; }
 .vp-doc .attributes .iri code { font-size: 12px; color: var(--vp-c-text-2); background: none; padding: 0; overflow-wrap: anywhere; }
 .vp-doc .attributes tr:has(a[id]:target) td { background: var(--vp-c-brand-soft); }
-/* The folded background sections. */
-.vp-doc details.background { margin: 12px 0; padding: 4px 16px; border: 1px solid var(--vp-c-divider); border-radius: 8px; scroll-margin-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 24px); }
-.vp-doc details.background > summary { cursor: pointer; padding: 8px 0; font-weight: 600; }
-.vp-doc details.background[open] > summary { margin-bottom: 8px; }
+/* Required attributes: a star after the name, explained under the table. */
+.vp-doc .attributes .req { margin-left: 2px; color: var(--vp-c-brand-1); font-weight: 700; }
+/* Referenced standards: one box, a row per standard that opens to its table. */
+.vp-doc .standards { margin: 16px 0; border: 1px solid var(--vp-c-divider); border-radius: 8px; overflow: hidden; }
+.vp-doc .standards details + details { border-top: 1px solid var(--vp-c-divider); }
+.vp-doc .standards details { scroll-margin-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 24px); }
+.vp-doc .standards summary { display: flex; align-items: baseline; gap: 12px; padding: 12px 16px; cursor: pointer; list-style: none; line-height: 1.5; }
+.vp-doc .standards summary::-webkit-details-marker { display: none; }
+.vp-doc .standards summary::before { content: ''; flex: none; width: 7px; height: 7px; border-right: 2px solid var(--vp-c-text-2); border-bottom: 2px solid var(--vp-c-text-2); transform: rotate(-45deg); transition: transform 0.15s; align-self: center; }
+.vp-doc .standards details[open] > summary::before { transform: rotate(45deg); }
+.vp-doc .standards summary:hover { background: var(--vp-c-bg-soft); }
+.vp-doc .standards summary .name { flex: 1; font-size: 15px; font-weight: 500; color: var(--vp-c-text-1); }
+.vp-doc .standards summary .meta { flex: none; font-size: 13px; color: var(--vp-c-text-2); white-space: nowrap; }
+.vp-doc .standards details > :not(summary) { margin-left: 16px; margin-right: 16px; }
+.vp-doc .standards details[open] { padding-bottom: 8px; }
+.vp-doc .standards td:first-child, .vp-doc .standards td:nth-child(2) { white-space: nowrap; }
+.vp-doc .standards td code { overflow-wrap: normal; }

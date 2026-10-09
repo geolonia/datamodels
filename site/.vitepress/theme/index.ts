@@ -20,6 +20,7 @@ import '@fontsource/ibm-plex-mono/latin-600.css'
 import './custom.css'
 import ModelIndex from './ModelIndex.vue'
 import GraphViewer from './GraphViewer.vue'
+import ExampleTabs from './ExampleTabs.vue'
 
 const PrereleaseBanner = defineComponent({
   setup() {
@@ -57,8 +58,8 @@ const SourceLine = defineComponent({
   },
 })
 
-// A link into a folded section (<details>, the background of a model page:
-// #mapping-<name>, #notes) opens it and scrolls to it. Browsers do not all open
+// A link into a folded section (<details>, a referenced standard on a model
+// page: #mapping-<name>) opens it and scrolls to it. Browsers do not all open
 // a closed <details> for a fragment.
 function openTarget() {
   if (!location.hash) return
@@ -81,6 +82,8 @@ export default {
     app.component('ModelIndex', ModelIndex)
     // Pan and zoom for the relationship graph on every model page.
     app.component('GraphViewer', GraphViewer)
+    // The example tabs on entity model pages (key-values, normalized, try it).
+    app.component('ExampleTabs', ExampleTabs)
     // Only model pages use it: its code stays out of the chunk every page loads.
     app.component('ExamplePlayground', defineAsyncComponent(() => import('./ExamplePlayground.vue')))
     // Only /guide/builder uses it: its code and model data stay out of the chunk every page loads.

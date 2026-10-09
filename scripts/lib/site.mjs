@@ -164,10 +164,11 @@ const M = {
     sameAs: '同じ型', subclassOf: '親の型', licence: 'ライセンス',
     licenceText: (href) => `[CC0 1.0](${href})：ファイル（@context、JSON Schema、例）は条件なしで使えます`,
     attribute: '属性', field: 'フィールド', description: '説明', valueCol: '値',
-    example: '例', simple: 'シンプル（key-values）', ngsi: 'NGSI-LD（normalized）', files: 'ファイル',
+    example: '例', simple: 'シンプル（key-values）', ngsi: 'NGSI-LD（normalized）', tryIt: '試す', files: 'ファイル',
+    requiredMark: '必須', requiredNote: '* は必須の属性です。', linkHeaderIntro: '本文に @context を書かずに送るときの Link ヘッダー:',
     use: 'このモデルを使う', useValue: (rules) => `他のモデルは、属性の値としてこの値型を参照します。書き方は[モデルのルール](${rules})にあります。`,
-    background: '背景', backgroundNote: 'このモデルの元になった標準との対応と、設計の注記です。',
-    mappingTitle: (name) => `対応する標準：${name}`, notesTitle: '注記',
+    standards: '参照している標準', standardsNote: 'このモデルが対応している標準と、項目ごとの対応です。開くと対応表が見られます。',
+    fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, notesTitle: '注記',
     sourceFiles: (href) => `ソースファイル（注記、対応表）は [GitHub](${href}) にあります。`,
   },
   en: {
@@ -175,10 +176,11 @@ const M = {
     sameAs: 'Same type as', subclassOf: 'Subclass of', licence: 'Licence',
     licenceText: (href) => `[CC0 1.0](${href}): the files (@context, JSON Schema, examples) can be used without conditions`,
     attribute: 'Attribute', field: 'Field', description: 'Description', valueCol: 'Value',
-    example: 'Example', simple: 'Simple (key-values)', ngsi: 'NGSI-LD (normalized)', files: 'Files',
+    example: 'Example', simple: 'Simple (key-values)', ngsi: 'NGSI-LD (normalized)', tryIt: 'Try it', files: 'Files',
+    requiredMark: 'required', requiredNote: '* required', linkHeaderIntro: 'The Link header, for sending data without @context in the body:',
     use: 'Using this model', useValue: (rules) => `Other models use this value type as the value of an attribute. How: [Rules for models](${rules}).`,
-    background: 'Background', backgroundNote: 'How this model corresponds to the standards it is based on, and design notes.',
-    mappingTitle: (name) => `Corresponding standard: ${name}`, notesTitle: 'Notes',
+    standards: 'Referenced standards', standardsNote: 'The standards this model corresponds to, field by field. Open one to see its table.',
+    fieldsMapped: (n, total) => `${n} of ${total} fields`, notesTitle: 'Notes',
     sourceFiles: (href) => `The source files (notes, mapping tables) are on [GitHub](${href}).`,
   },
 };
@@ -232,37 +234,42 @@ function modelPage(lang, prefix, subject, model) {
   if (attributesOf(model).length) {
     md += `## ${isValue ? t.fields : t.attributes} {#attributes}\n\n<div class="attributes">\n\n| ${isValue ? l.field : l.attribute} | ${l.description} | ${l.valueCol} |\n|---|---|---|\n`;
     for (const [name, prop] of attributesOf(model)) {
-      const flags = [required.has(name) ? badge('info', t.required) : '', prop['x-personal-data'] ? badge('danger', t.pii) : '', prop['x-deprecated'] ? badge('danger', t.deprecated) : ''].filter(Boolean).join(' ');
+      // Required is a star (explained under the table); the rarer warnings stay labels.
+      const flags = [prop['x-personal-data'] ? badge('danger', t.pii) : '', prop['x-deprecated'] ? badge('danger', t.deprecated) : ''].filter(Boolean).join(' ');
+      const star = required.has(name) ? `<span class="req" title="${l.requiredMark}">*</span>` : '';
       const value = isValue ? `${prop.type}${prop.const ? ` = ${code(prop.const)}` : ''}${prop.pattern ? `, pattern ${code(prop.pattern)}` : ''}` : valueText(lang, subject, prop, prefix);
       const text = model.catalog.attributes?.[name]?.[lang] ?? prop.description ?? '';
-      md += `| <a id="${name}" href="#${name}">${code(name)}</a>${flags ? `<br>${flags}` : ''} | ${cellText(text)}<br><span class="iri">${code(prop['x-iri'] ?? '')}</span> | ${cellText(value)} |\n`;
+      md += `| <a id="${name}" href="#${name}">${code(name)}</a>${star}${flags ? `<br>${flags}` : ''} | ${cellText(text)}<br><span class="iri">${code(prop['x-iri'] ?? '')}</span> | ${cellText(value)} |\n`;
     }
     md += `\n</div>\n\n`;
+    if (required.size) md += `<small>${l.requiredNote}</small>\n\n`;
   }
   if (model.examples['example.json']) {
     // Both forms of one example in tabs; the files below for download.
     const norm = model.examples['example-normalized.jsonld'];
     const files = [`[example.json](${rel(mu.examples)}example.json)`, ...(norm ? [`[example-normalized.jsonld](${rel(mu.examples)}example-normalized.jsonld)`] : [])].join(' · ');
     md += `## ${l.example} {#example}\n\n${t.exampleNote(`${prefix}/guide/rules#examples`)}\n\n`;
-    md += norm
-      ? `::: code-group\n\n\`\`\`json [${l.simple}]\n${JSON.stringify(model.examples['example.json'], null, 2)}\n\`\`\`\n\n\`\`\`json [${l.ngsi}]\n${JSON.stringify(norm, null, 2)}\n\`\`\`\n\n:::\n\n`
+    // Entities: tabs for both forms and "Try it" (theme/ExampleTabs.vue); a value type has one form.
+    md += playground
+      ? `<ExampleTabs :labels='${JSON.stringify({ simple: l.simple, ngsi: l.ngsi, try: l.tryIt }).replaceAll("'", '&#39;')}'>\n<template #simple>\n\n${fence(model.examples['example.json'])}\n\n</template>\n<template #ngsi>\n\n${fence(norm)}\n\n</template>\n<template #try>\n\n<ExamplePlayground v-bind="playground" />\n\n</template>\n</ExampleTabs>\n\n`
       : `${fence(model.examples['example.json'])}\n\n`;
     md += `${l.files}: ${files}${norm ? ` · ${t.playground(playgroundUrl(norm))}` : ''}\n\n`;
   }
-  if (playground) md += `## ${t.tryIt} {#try}\n\n<ExamplePlayground v-bind="playground" />\n\n`;
   md += `## ${l.use} {#use}\n\n`;
   if (isValue) md += `${l.useValue(`${prefix}/guide/rules#rules`)}\n\n`;
   else {
     md += `${t.useGuide(`${prefix}/guide/use`)}\n\n${t.extendThis(`${prefix}/guide/builder?model=${subject.name}/${model.type}`)}\n\n`;
-    md += `### ${t.linkHeader} {#link-header}\n\n\`\`\`http\nLink: <${u.contextAlias}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"\n\`\`\`\n\n`;
+    md += `${l.linkHeaderIntro}\n\n\`\`\`http\nLink: <${u.contextAlias}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"\n\`\`\`\n\n`;
   }
-  // The standards behind the model and the design notes: folded, for readers
-  // who want to know why. A link to #mapping-<name> or #notes opens its section (theme/index.ts).
-  const notes = model.notes?.notes ?? [];
-  if (model.mappings?.length || notes.length) {
-    md += `## ${l.background} {#background}\n\n${l.backgroundNote}\n\n`;
+  // The standards behind the model, one folded row each (custom.css .standards),
+  // for readers who want to know where it comes from. A link to #mapping-<name>
+  // opens its row (theme/index.ts).
+  if (model.mappings?.length) {
+    md += `## ${l.standards} {#standards}\n\n${l.standardsNote}\n\n<div class="standards">\n\n`;
     for (const map of model.mappings ?? []) {
-      md += `<details id="mapping-${map.name}" class="background"><summary>${l.mappingTitle(map.standard?.name?.[lang] ?? map.name)}</summary>\n\n`;
+      const fields = Object.values(map.fields ?? {});
+      const mapped = fields.filter((f) => f?.to !== null && f?.to !== undefined).length;
+      md += `<details id="mapping-${map.name}"><summary><span class="name">${map.standard?.name?.[lang] ?? map.name}</span><span class="meta">${l.fieldsMapped(mapped, fields.length)}</span></summary>\n\n`;
       if (map.standard?.url) md += `[${map.standard.name?.[lang] ?? map.name}](${map.standard.url})${standardLicense(map.standard, lang) ? ` · ${standardLicense(map.standard, lang)}` : ''}\n\n`;
       if (map.standard?.note?.[lang]) md += `${map.standard.note[lang]}\n\n`;
       if (map.structure?.[lang]) md += `${map.structure[lang]}\n\n`;
@@ -271,8 +278,10 @@ function modelPage(lang, prefix, subject, model) {
       for (const [field, m] of Object.entries(map.fields ?? {})) md += `| ${model.schema.properties?.[field] ? `[${code(field)}](#${field})` : code(field)} | ${m.to ? code(m.to) : `*${t.none}*`} | ${cellText(m.note?.[lang] ?? '')} |\n`;
       md += '\n</details>\n\n';
     }
-    if (notes.length) md += `<details id="notes" class="background"><summary>${l.notesTitle}</summary>\n\n${notes.map((n) => `- ${issueLinks(n[lang])}`).join('\n')}\n\n</details>\n\n`;
+    md += `</div>\n\n`;
   }
+  const notes = model.notes?.notes ?? [];
+  if (notes.length) md += `## ${l.notesTitle} {#notes}\n\n${notes.map((n) => `- ${issueLinks(n[lang])}`).join('\n')}\n\n`;
   // Invite corrections where readers notice them: an issue titled after the type, or the proposal form.
   md += `::: tip ${t.improveTitle}\n${t.improve(`${repo}/issues/new?title=${encodeURIComponent(`${model.type}: `)}`, `${repo}/issues/new?template=model-proposal.yml`, `${prefix}/guide/contribute`)} ${l.sourceFiles(`${repo}/tree/main/models/${subject.name}/${model.type}`)}\n:::\n`;
   return md;
