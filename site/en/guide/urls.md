@@ -13,13 +13,15 @@ These promises apply **from the official launch**. Until then, published files, 
 
 ## Which URL to use
 
-| Purpose | URL | Cache |
-|---|---|---|
-| `@context` of stored data, `Link` header | alias `/context/<subject>/v1.jsonld` | 5 minutes |
-| Audits, reproducing a result on another broker | exact version `/context/<subject>/v1.0.0.jsonld` | 1 year, immutable |
-| Validation | `/schema/<subject>/<Type>/v1.json` (alias) or `v1.0.0.json` | same |
+| Purpose | URL |
+|---|---|
+| `@context` of stored data, `Link` header | alias `/context/<subject>/v1.jsonld` |
+| Audits, reproducing a result on another broker | exact version `/context/<subject>/v1.0.0.jsonld` |
+| Validation | `/schema/<subject>/<Type>/v1.json` (alias) or `v1.0.0.json` |
 
 The alias moves only to compatible versions, so it is the right default. Use the exact version when you need to audit or reproduce a result.
+
+Servers and brokers may keep a copy: the alias for 5 minutes, so a new compatible version reaches everyone within 5 minutes; an exact version for a year, because it never changes.
 
 <svg class="flow-diagram" viewBox="0 0 460 160" role="img" aria-label="The alias v1.jsonld always points to the latest 1.x version (here v1.2.0); v1.0.0, v1.1.0 and v1.2.0 stay published and never change. An incompatible change becomes v2.0.0, with its own alias v2.jsonld." xmlns="http://www.w3.org/2000/svg"><defs><marker id="ver-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="10" y="92" width="100" height="44" rx="8"/><text class="t m" x="60" y="119">v1.0.0</text><rect class="box" x="120" y="92" width="100" height="44" rx="8"/><text class="t m" x="170" y="119">v1.1.0</text><rect class="box" x="230" y="92" width="100" height="44" rx="8"/><text class="t m" x="280" y="119">v1.2.0</text><rect class="box" x="350" y="92" width="100" height="44" rx="8"/><text class="t m" x="400" y="119">v2.0.0</text><text class="s" x="175" y="154">published versions: never change</text><rect class="box main" x="190" y="8" width="120" height="40" rx="8"/><text class="t m" x="250" y="33">v1.jsonld</text><line class="a" x1="270" y1="48" x2="280" y2="90" marker-end="url(#ver-ah)"/><text class="l e" x="182" y="33">the alias: latest 1.x</text><rect class="box" x="350" y="8" width="100" height="40" rx="8"/><text class="t m" x="400" y="33">v2.jsonld</text><line class="a" x1="400" y1="48" x2="400" y2="90" marker-end="url(#ver-ah)"/><text class="s" x="400" y="154">incompatible change</text></svg>
 
