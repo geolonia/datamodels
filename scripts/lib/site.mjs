@@ -244,6 +244,12 @@ function modelPage(lang, prefix, subject, model) {
     md += `\n</div>\n\n`;
     if (required.size) md += `<small>${l.requiredNote}</small>\n\n`;
   }
+  md += `## ${l.use} {#use}\n\n`;
+  if (isValue) md += `${l.useValue(`${prefix}/guide/rules#rules`)}\n\n`;
+  else {
+    md += `${t.useGuide(`${prefix}/guide/use`)}\n\n${t.extendThis(`${prefix}/guide/builder?model=${subject.name}/${model.type}`)}\n\n`;
+    md += `${l.linkHeaderIntro}\n\n\`\`\`http\nLink: <${u.contextAlias}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"\n\`\`\`\n\n`;
+  }
   if (model.examples['example.json']) {
     // Both forms of one example in tabs; the files below for download.
     const norm = model.examples['example-normalized.jsonld'];
@@ -255,12 +261,8 @@ function modelPage(lang, prefix, subject, model) {
       : `${fence(model.examples['example.json'])}\n\n`;
     md += `${l.files}: ${files}${norm ? ` · ${t.playground(playgroundUrl(norm))}` : ''}\n\n`;
   }
-  md += `## ${l.use} {#use}\n\n`;
-  if (isValue) md += `${l.useValue(`${prefix}/guide/rules#rules`)}\n\n`;
-  else {
-    md += `${t.useGuide(`${prefix}/guide/use`)}\n\n${t.extendThis(`${prefix}/guide/builder?model=${subject.name}/${model.type}`)}\n\n`;
-    md += `${l.linkHeaderIntro}\n\n\`\`\`http\nLink: <${u.contextAlias}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"\n\`\`\`\n\n`;
-  }
+  // Invite corrections where readers notice them: an issue titled after the type, or the proposal form.
+  md += `::: tip ${t.improveTitle}\n${t.improve(`${repo}/issues/new?title=${encodeURIComponent(`${model.type}: `)}`, `${repo}/issues/new?template=model-proposal.yml`, `${prefix}/guide/contribute`)} ${l.sourceFiles(`${repo}/tree/main/models/${subject.name}/${model.type}`)}\n:::\n\n`;
   // The standards behind the model, one folded row each (custom.css .standards),
   // for readers who want to know where it comes from. A link to #mapping-<name>
   // opens its row (theme/index.ts).
@@ -283,8 +285,6 @@ function modelPage(lang, prefix, subject, model) {
   }
   const notes = model.notes?.notes ?? [];
   if (notes.length) md += `## ${l.notesTitle} {#notes}\n\n${notes.map((n) => `- ${issueLinks(n[lang])}`).join('\n')}\n\n`;
-  // Invite corrections where readers notice them: an issue titled after the type, or the proposal form.
-  md += `::: tip ${t.improveTitle}\n${t.improve(`${repo}/issues/new?title=${encodeURIComponent(`${model.type}: `)}`, `${repo}/issues/new?template=model-proposal.yml`, `${prefix}/guide/contribute`)} ${l.sourceFiles(`${repo}/tree/main/models/${subject.name}/${model.type}`)}\n:::\n`;
   return md;
 }
 
