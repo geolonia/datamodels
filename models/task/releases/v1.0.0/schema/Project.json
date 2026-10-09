@@ -102,8 +102,15 @@
     },
     "start": {
       "type": "string",
-      "format": "date-time",
-      "description": "Planned start",
+      "anyOf": [
+        {
+          "format": "date"
+        },
+        {
+          "format": "date-time"
+        }
+      ],
+      "description": "Planned start: a date, or a date and time",
       "x-ngsi": {
         "type": "Property"
       },
@@ -111,8 +118,15 @@
     },
     "end": {
       "type": "string",
-      "format": "date-time",
-      "description": "Planned end",
+      "anyOf": [
+        {
+          "format": "date"
+        },
+        {
+          "format": "date-time"
+        }
+      ],
+      "description": "Planned end: a date, or a date and time",
       "x-ngsi": {
         "type": "Property"
       },

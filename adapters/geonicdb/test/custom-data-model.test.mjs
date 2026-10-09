@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { loadSubjects, CORE_TERMS, CORE_CONTEXT_FIXTURE } from '../../../scripts/lib/models.mjs';
-import { toCustomDataModel } from '../custom-data-model.mjs';
+import { toCustomDataModel, DATE_OR_DATE_TIME_PATTERN } from '../custom-data-model.mjs';
 
 const subjects = await loadSubjects();
 const transportation = subjects.find((s) => s.name === 'transportation');
@@ -91,4 +91,26 @@ test('every core-context term a model uses carries the core IRI', async () => {
       if (CORE_TERMS.has(name) && coreIri(name)) assert.equal(d['@context'], coreIri(name), `${m.type}.${name}`);
     }
   }
+});
+
+test('a date or date-time attribute is a string with a pattern: GeonicDB\'s datetime rejects a plain date', () => {
+  const task = subjects.find((s) => s.name === 'task');
+  const body = (type) => toCustomDataModel(task, task.models.find((m) => m.type === type)).propertyDetails;
+  for (const [type, name] of [['Task', 'start'], ['Task', 'due'], ['Milestone', 'start'], ['Milestone', 'due'], ['Project', 'start'], ['Project', 'end']]) {
+    const d = body(type)[name];
+    assert.equal(d.valueType, 'string', `${type}.${name}`);
+    assert.equal(d.validation?.pattern, DATE_OR_DATE_TIME_PATTERN, `${type}.${name}`);
+  }
+  assert.equal(body('Milestone').due.example, '2026-07-11');
+  assert.equal(body('Task').completedAt.valueType, 'datetime', 'a date-time only attribute keeps datetime');
+  assert.ok(!body('Task').completedAt.validation);
+  const re = new RegExp(DATE_OR_DATE_TIME_PATTERN);
+  for (const v of ['2026-07-11', '2026-07-11T07:00:00+09:00', '2026-07-11T07:00:00.5Z']) assert.ok(re.test(v), v);
+  // As strict as GeonicDB's datetime for a date-time: seconds and an offset are required.
+  for (const v of ['2026-07-11T25:00', '2026-07-11T07:00', '2026-13-01', 'tomorrow']) assert.ok(!re.test(v), v);
+  // GeonicDB's pattern limits (security-validators.ts): at most 200 characters and 10
+  // alternatives, and no repeated group (a group followed by *, + or {n}).
+  assert.ok(DATE_OR_DATE_TIME_PATTERN.length <= 200);
+  assert.ok(DATE_OR_DATE_TIME_PATTERN.split('|').length - 1 <= 10);
+  assert.ok(!/\)[*+{]/.test(DATE_OR_DATE_TIME_PATTERN));
 });

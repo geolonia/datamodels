@@ -4,8 +4,7 @@
     "schema": "https://schema.org/",
     "Task": "tm:Task",
     "Project": "tm:Project",
-    "Comment": "tm:Comment",
-    "Attachment": "tm:Attachment",
+    "Milestone": "tm:Milestone",
     "assignee": {
       "@id": "tm:assignee",
       "@type": "@id"
@@ -15,26 +14,22 @@
       "@type": "@id"
     },
     "completedAt": "tm:completedAt",
-    "contentSize": "schema:contentSize",
-    "contentUrl": "schema:contentUrl",
     "dateCreated": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/dateCreated",
     "dateModified": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/dateModified",
-    "digest": "tm:digest",
     "due": "tm:due",
-    "encodingFormat": "schema:encodingFormat",
     "end": "tm:end",
     "estimatedDuration": "tm:estimatedDuration",
     "externalId": "tm:externalId",
-    "filename": "tm:filename",
     "homepage": "schema:url",
     "identifier": "schema:identifier",
-    "inReplyTo": {
-      "@id": "tm:inReplyTo",
-      "@type": "@id"
-    },
     "isPrivate": "tm:isPrivate",
     "isPublic": "tm:isPublic",
     "keywords": "schema:keywords",
+    "milestone": {
+      "@id": "tm:milestone",
+      "@type": "@id"
+    },
+    "milestoneStatus": "tm:milestoneStatus",
     "name": "https://uri.etsi.org/ngsi-ld/name",
     "parent": {
       "@id": "tm:parent",
@@ -56,17 +51,10 @@
       "@id": "tm:relatedTo",
       "@type": "@id"
     },
-    "sentAt": "schema:dateSent",
     "source": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/source",
     "spatialId": "tm:spatialId",
     "start": "tm:start",
     "statusLabel": "tm:statusLabel",
-    "subtype": "tm:subtype",
-    "task": {
-      "@id": "tm:task",
-      "@type": "@id"
-    },
-    "text": "schema:text",
-    "textFormat": "tm:textFormat"
+    "subtype": "tm:subtype"
   }
 }

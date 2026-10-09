@@ -117,7 +117,7 @@ Put the @context in the body and send `application/ld+json`, or leave it out and
 
 - `id` and `type` stay as they are.
 - Wrap each attribute in the NGSI-LD type that the attribute table on the model page gives: a Property is `{ "type": "Property", "value": … }`, a Relationship `{ "type": "Relationship", "object": … }`, a GeoProperty `{ "type": "GeoProperty", "value": … }`, a JsonProperty `{ "type": "JsonProperty", "json": … }`, a VocabProperty `{ "type": "VocabProperty", "vocab": … }`. In key-values form, a JsonProperty and a VocabProperty keep their member: `{ "json": … }`, `{ "vocab": … }`. The JSON Schema describes the value inside, so remove that member before you validate key-values data against the schema. Both are NGSI-LD 1.8 types: check that your broker supports them before you use a model that has them.
-- The value of a date-time Property (`format: date-time` in the schema) becomes `{ "@type": "DateTime", "@value": … }`.
+- The value of a date-time Property (`format: date-time` in the schema) becomes `{ "@type": "DateTime", "@value": … }`, and that of a date Property (`format: date`) `{ "@type": "Date", "@value": … }`. A Property that takes either ("date or date-time" on the model page) follows its value: `2026-07-11` is a Date, `2026-07-11T09:00:00+09:00` a DateTime.
 - A multi-valued attribute (marked "(multiple)" in the attribute table; for example `assignee` on Task) becomes an array with one instance per value, each with a `datasetId`. The catalog's examples use the form `urn:ngsi-ld:dataset:<attribute>:<n>`.
 - The `@context` lists the subject's alias and the NGSI-LD core context.
 

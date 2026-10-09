@@ -17,8 +17,8 @@ fields:
   priority: { to: "priority" }
   assignee: { to: "participants", note: { ja: roles に attendee または owner を持つ participant, en: participants with role attendee or owner } }
   author: { to: null, note: { ja: JSCalendar は所有者を participant の owner 役割で表す, en: JSCalendar expresses the owner as a participant role } }
-  start: { to: "start" }
-  due: { to: "due" }
+  start: { to: "start", note: { ja: "JSCalendar の start は時差を含まない日時（LocalDateTime）で、タイムゾーンは timeZone に持つ。ここでは日付か、時差付きの日時。日付は、時刻 00:00:00 の start と showWithoutTime: true に当たる", en: "JSCalendar start is a LocalDateTime (no offset; the time zone is in timeZone). Here it is a date, or a date-time with an offset; a date corresponds to a start at 00:00:00 with showWithoutTime: true" } }
+  due: { to: "due", note: { ja: "JSCalendar の due は時差を含まない日時（LocalDateTime）。ここでは日付か、時差付きの日時", en: "JSCalendar due is a LocalDateTime (no offset); here it is a date, or a date-time with an offset" } }
   completedAt: { to: "progressUpdated", note: { ja: progress が completed の場合のみ, en: only when progress is completed } }
   estimatedDuration: { to: "estimatedDuration" }
   percentComplete: { to: "percentComplete" }

@@ -17,7 +17,7 @@ import addFormats from 'ajv-formats';
 import jsonld from 'jsonld';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { loadSubjects, attributesOf, toKeyValues, unwrapKeyValues, NGSI_TYPES, subjectUrls, modelUrls, resolveContextTerms, CORE_CONTEXT_URL, CORE_CONTEXT_FIXTURE } from './lib/models.mjs';
+import { loadSubjects, attributesOf, toKeyValues, unwrapKeyValues, dateFormats, typedDate, NGSI_TYPES, subjectUrls, modelUrls, resolveContextTerms, CORE_CONTEXT_URL, CORE_CONTEXT_FIXTURE } from './lib/models.mjs';
 import { resolveContextDocument, listReleases } from './lib/releases.mjs';
 import { bilingual, mappingProblems, viaCycles } from './lib/mapping-check.mjs';
 import { reportFailures } from './lib/ci-summary.mjs';
@@ -347,6 +347,14 @@ for (const subject of subjects) {
       for (const inst of instances) {
         const got = inst?.type;
         if (got !== prop['x-ngsi']?.type) fail(`${mwhere}/examples/example-normalized.jsonld`, `attribute "${name}" is a ${got} but schema.json declares ${prop['x-ngsi']?.type}`);
+      }
+      // A date or date-time value carries its NGSI-LD type, and the type fits the value (/guide/use).
+      const formats = prop['x-ngsi']?.type === 'Property' ? dateFormats(prop) : [];
+      for (const inst of formats.length ? instances : []) {
+        const v = inst?.value;
+        const plain = v && typeof v === 'object' && '@value' in v ? v['@value'] : v;
+        const want = typedDate(plain, formats);
+        if (typeof plain === 'string' && v?.['@type'] !== want['@type']) fail(`${mwhere}/examples/example-normalized.jsonld`, `attribute "${name}": value must be { "@type": "${want['@type']}", "@value": ${JSON.stringify(plain)} }`);
       }
     }
     const multi = new Set(attributesOf(model).filter(([, p]) => p['x-ngsi']?.multi).map(([n]) => n));

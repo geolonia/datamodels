@@ -31,7 +31,7 @@ description: このカタログのモデルが守るルール、独自の型を�
 - 状態の属性（`progress`、`openingStatus`、`restrictionStatus` など）の値の一覧は決まっています。合う値がないときは状態の属性を省き、`statusLabel` に元の呼び方を書きます（そのとき `statusLabel` は必須）。近い値に無理に当てはめないでください。
 - NGSI-LD core context の予約語（`status`, `description`, `location`, `createdAt`, `modifiedAt`, `observedAt` など）は再定義しません。CI が弾きます。`status` が要るときは `incidentStatus` のように名前を変えます。
 - モデルはサブジェクト（分野）でまとめ、地域名・顧客名・案件名ではまとめません。
-- 共通の構造は [common](/models/common/) の値型を使います。住所は [JapaneseAddress](/models/common/JapaneseAddress/)、`location` などの位置は [Geometry](/models/common/Geometry/)。使えるジオメトリを絞るときは `$ref` の横で制約します（Attachment は点だけ）。
+- 共通の構造は [common](/models/common/) の値型を使います。住所は [JapaneseAddress](/models/common/JapaneseAddress/)、`location` などの位置は [Geometry](/models/common/Geometry/)。使えるジオメトリを絞るときは `$ref` の横で制約します（DesignatedShelter は点だけ）。
 - 既にある型に名前だけ合わせたいならエイリアス（`x-alias-of`、属性も必須項目も同じ）、属性を足す・型を分けたいならサブクラス（`x-subclass-of`、同名の属性は親と同じ意味、親の必須項目は維持）を使います。CI が両方を検査します。
 
 ## 日本の標準との対応表 {#mapping}

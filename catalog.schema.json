@@ -275,6 +275,14 @@
                 "format": {
                   "type": "string"
                 },
+                "formats": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "minItems": 1,
+                  "description": "When the value may take one of several formats (the schema's anyOf), the formats, for example [\"date\", \"date-time\"] for a date or a date and time; format is then absent"
+                },
                 "enum": {
                   "type": "array"
                 },

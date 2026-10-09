@@ -34,39 +34,25 @@
         "en": "Task management"
       },
       "comment": {
-        "ja": "作業を管理するためのデータ。何を、誰が、いつまでにするか、そのメモやファイル。課題管理システムのチケット、カレンダーの ToDo、自治体の作業指示に共通する部分を扱い、状態と優先度は RFC 8984（JSCalendar）に合わせます。システム固有の呼び方はエイリアスで使えます。",
-        "en": "Data for tracking work: what needs to be done, by whom and by when, with notes and files. It covers what issue trackers, calendar to-dos and municipal work orders have in common; status and priority follow RFC 8984 (JSCalendar). System-specific names can be used with aliases."
+        "ja": "作業を管理するためのデータ。何を、誰が、いつまでにするか、どのマイルストーンに向けてか。課題管理システムのチケット、カレンダーの ToDo、自治体の作業指示に共通する部分を扱い、状態と優先度は RFC 8984（JSCalendar）に合わせます。システム固有の呼び方はエイリアスで使えます。",
+        "en": "Data for tracking work: what needs to be done, by whom, by when and for which milestone. It covers what issue trackers, calendar to-dos and municipal work orders have in common; status and priority follow RFC 8984 (JSCalendar). System-specific names can be used with aliases."
       },
       "versionInfo": "1.0.0",
       "seeAlso": "https://datamodels.jp/context/task/v1.0.0.jsonld"
     },
     {
-      "@id": "https://datamodels.jp/ns/task/Attachment",
+      "@id": "https://datamodels.jp/ns/task/Milestone",
       "@type": "rdfs:Class",
       "label": {
-        "ja": "添付ファイル",
-        "en": "Attachment"
+        "ja": "マイルストーン",
+        "en": "Milestone"
       },
       "comment": {
-        "ja": "タスクまたはプロジェクトに添付されたファイルのメタデータ。ファイル本体はブローカーの外（元システムやオブジェクトストレージ）に置き、URL で参照する。",
-        "en": "Metadata of a file attached to a task or a project. The file itself stays outside the broker and is referenced by URL."
+        "ja": "プロジェクトの中でタスクをまとめる予定の目標。Redmine のバージョン、GitHub や GitLab のマイルストーン、Jira の修正バージョンなど。名前、期限、状態を持つ。",
+        "en": "A planned target that groups tasks within a project: a version in Redmine, a milestone in GitHub or GitLab, a fix version in Jira. It has a name, a due date and a state."
       },
       "isDefinedBy": "https://datamodels.jp/ns/task/",
-      "seeAlso": "https://datamodels.jp/models/task/Attachment/"
-    },
-    {
-      "@id": "https://datamodels.jp/ns/task/Comment",
-      "@type": "rdfs:Class",
-      "label": {
-        "ja": "コメント",
-        "en": "Comment"
-      },
-      "comment": {
-        "ja": "タスクに付けられた記録・申し送り・返信。フィールドの変更履歴は含めない（履歴は Temporal API が持つ）。",
-        "en": "A note, handover or reply on a task. Field change history is not a comment; the temporal API keeps history."
-      },
-      "isDefinedBy": "https://datamodels.jp/ns/task/",
-      "seeAlso": "https://datamodels.jp/models/task/Comment/"
+      "seeAlso": "https://datamodels.jp/models/task/Milestone/"
     },
     {
       "@id": "https://datamodels.jp/ns/task/Project",
@@ -123,30 +109,17 @@
       "seeAlso": "https://datamodels.jp/models/task/Task/#completedAt"
     },
     {
-      "@id": "https://datamodels.jp/ns/task/digest",
-      "@type": "rdf:Property",
-      "label": {
-        "en": "digest"
-      },
-      "comment": {
-        "ja": "ハッシュ。アルゴリズム名:16進（例: sha256:…）",
-        "en": "Hash as algorithm:hex, e.g. sha256:…"
-      },
-      "isDefinedBy": "https://datamodels.jp/ns/task/",
-      "seeAlso": "https://datamodels.jp/models/task/Attachment/#digest"
-    },
-    {
       "@id": "https://datamodels.jp/ns/task/due",
       "@type": "rdf:Property",
       "label": {
         "en": "due"
       },
       "comment": {
-        "ja": "期限（RFC 8984 due）",
-        "en": "Due time (RFC 8984 due)"
+        "ja": "期限（予定したリリース・完了）。日付、または日時",
+        "en": "Due: the planned release or completion, a date or a date and time"
       },
       "isDefinedBy": "https://datamodels.jp/ns/task/",
-      "seeAlso": "https://datamodels.jp/models/task/Task/#due"
+      "seeAlso": "https://datamodels.jp/models/task/Milestone/#due"
     },
     {
       "@id": "https://datamodels.jp/ns/task/end",
@@ -155,8 +128,8 @@
         "en": "end"
       },
       "comment": {
-        "ja": "予定期間の終了",
-        "en": "Planned end"
+        "ja": "予定期間の終了。日付、または日時",
+        "en": "Planned end: a date, or a date and time"
       },
       "isDefinedBy": "https://datamodels.jp/ns/task/",
       "seeAlso": "https://datamodels.jp/models/task/Project/#end"
@@ -185,33 +158,7 @@
         "en": "Identifier in the system of record"
       },
       "isDefinedBy": "https://datamodels.jp/ns/task/",
-      "seeAlso": "https://datamodels.jp/models/task/Attachment/#externalId"
-    },
-    {
-      "@id": "https://datamodels.jp/ns/task/filename",
-      "@type": "rdf:Property",
-      "label": {
-        "en": "filename"
-      },
-      "comment": {
-        "ja": "ファイル名",
-        "en": "File name"
-      },
-      "isDefinedBy": "https://datamodels.jp/ns/task/",
-      "seeAlso": "https://datamodels.jp/models/task/Attachment/#filename"
-    },
-    {
-      "@id": "https://datamodels.jp/ns/task/inReplyTo",
-      "@type": "rdf:Property",
-      "label": {
-        "en": "inReplyTo"
-      },
-      "comment": {
-        "ja": "返信先のコメント",
-        "en": "The comment this replies to"
-      },
-      "isDefinedBy": "https://datamodels.jp/ns/task/",
-      "seeAlso": "https://datamodels.jp/models/task/Comment/#inReplyTo"
+      "seeAlso": "https://datamodels.jp/models/task/Milestone/#externalId"
     },
     {
       "@id": "https://datamodels.jp/ns/task/isPrivate",
@@ -224,7 +171,7 @@
         "en": "true when private; default false"
       },
       "isDefinedBy": "https://datamodels.jp/ns/task/",
-      "seeAlso": "https://datamodels.jp/models/task/Comment/#isPrivate"
+      "seeAlso": "https://datamodels.jp/models/task/Task/#isPrivate"
     },
     {
       "@id": "https://datamodels.jp/ns/task/isPublic",
@@ -238,6 +185,32 @@
       },
       "isDefinedBy": "https://datamodels.jp/ns/task/",
       "seeAlso": "https://datamodels.jp/models/task/Project/#isPublic"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/milestone",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "milestone"
+      },
+      "comment": {
+        "ja": "予定しているマイルストーン（バージョン、リリース）",
+        "en": "The milestone (version, release) this is planned for"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Task/#milestone"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/task/milestoneStatus",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "milestoneStatus"
+      },
+      "comment": {
+        "ja": "状態。open=受付中、locked=ロック中（新しいタスクを追加できない）、closed=完了。core context の status は予約語のため milestoneStatus",
+        "en": "State: open, locked (no new tasks may be added) or closed; status is protected in the core context, hence milestoneStatus"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/task/",
+      "seeAlso": "https://datamodels.jp/models/task/Milestone/#milestoneStatus"
     },
     {
       "@id": "https://datamodels.jp/ns/task/parent",
@@ -302,7 +275,7 @@
         "en": "The project this belongs to"
       },
       "isDefinedBy": "https://datamodels.jp/ns/task/",
-      "seeAlso": "https://datamodels.jp/models/task/Attachment/#project"
+      "seeAlso": "https://datamodels.jp/models/task/Milestone/#project"
     },
     {
       "@id": "https://datamodels.jp/ns/task/projectStatus",
@@ -363,11 +336,11 @@
         "en": "start"
       },
       "comment": {
-        "ja": "予定期間の開始",
-        "en": "Planned start"
+        "ja": "予定期間の開始。日付、または日時",
+        "en": "Planned start: a date, or a date and time"
       },
       "isDefinedBy": "https://datamodels.jp/ns/task/",
-      "seeAlso": "https://datamodels.jp/models/task/Project/#start"
+      "seeAlso": "https://datamodels.jp/models/task/Milestone/#start"
     },
     {
       "@id": "https://datamodels.jp/ns/task/statusLabel",
@@ -394,32 +367,6 @@
       },
       "isDefinedBy": "https://datamodels.jp/ns/task/",
       "seeAlso": "https://datamodels.jp/models/task/Task/#subtype"
-    },
-    {
-      "@id": "https://datamodels.jp/ns/task/task",
-      "@type": "rdf:Property",
-      "label": {
-        "en": "task"
-      },
-      "comment": {
-        "ja": "対象のタスク",
-        "en": "The task this belongs to"
-      },
-      "isDefinedBy": "https://datamodels.jp/ns/task/",
-      "seeAlso": "https://datamodels.jp/models/task/Attachment/#task"
-    },
-    {
-      "@id": "https://datamodels.jp/ns/task/textFormat",
-      "@type": "rdf:Property",
-      "label": {
-        "en": "textFormat"
-      },
-      "comment": {
-        "ja": "本文の形式",
-        "en": "Format of the text"
-      },
-      "isDefinedBy": "https://datamodels.jp/ns/task/",
-      "seeAlso": "https://datamodels.jp/models/task/Comment/#textFormat"
     }
   ]
 }

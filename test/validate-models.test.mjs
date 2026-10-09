@@ -118,6 +118,30 @@ test('a key-values example violating the schema fails', () =>
   withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => { e.restrictionStatus = '不明'; }),
     /example\.json: .*(enum|allowed values)/));
 
+// Task.start may be a date or a date-time (team decision, 2026-10-09).
+const setTaskStart = (kvValue, normValue) => async (d) => {
+  await editJson(join(d, 'task', 'Task', 'examples', 'example.json'), (e) => { e.start = kvValue; });
+  await editJson(join(d, 'task', 'Task', 'examples', 'example-normalized.jsonld'), (e) => { e.start.value = normValue; });
+};
+
+test('a date or date-time attribute accepts a plain date and a date-time', async () => {
+  await withMutatedModels(setTaskStart('2026-07-08', { '@type': 'Date', '@value': '2026-07-08' }), null, { pass: true });
+  await withMutatedModels(setTaskStart('2026-07-08T10:30:00Z', { '@type': 'DateTime', '@value': '2026-07-08T10:30:00Z' }), null, { pass: true });
+});
+
+test('a date or date-time attribute rejects an impossible time and a word', async () => {
+  for (const bad of ['2026-07-11T25:00', 'tomorrow']) {
+    await withMutatedModels(setTaskStart(bad, { '@type': 'DateTime', '@value': bad }), /Task\/examples\/example\.json: .*data\/start must match a schema in anyOf/);
+  }
+});
+
+test('a normalized date typed as DateTime, or a date-time left untyped, fails', async () => {
+  await withMutatedModels(setTaskStart('2026-07-08', { '@type': 'DateTime', '@value': '2026-07-08' }),
+    /attribute "start": value must be \{ "@type": "Date", "@value": "2026-07-08" \}/);
+  await withMutatedModels(setTaskStart('2026-07-08T10:30:00Z', '2026-07-08T10:30:00Z'),
+    /attribute "start": value must be \{ "@type": "DateTime"/);
+});
+
 test('an out-of-vocabulary regulationCategory fails', () =>
   withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => { e.regulationCategory = '全面通行止め'; }),
     /example\.json: .*(enum|allowed values)/));
@@ -140,10 +164,10 @@ test('a RoadRestriction MultiLineString with no lines fails', () =>
     e.location = { type: 'MultiLineString', coordinates: [] };
   }), /example\.json: .*location/));
 
-test('an Attachment location that is not a Point fails (narrowed shared Geometry)', () =>
-  withMutatedModels((d) => editJson(join(d, 'task', 'Attachment', 'examples', 'example.json'), (e) => {
+test('a DesignatedShelter location that is not a Point fails (narrowed shared Geometry)', () =>
+  withMutatedModels((d) => editJson(join(d, 'disaster', 'DesignatedShelter', 'examples', 'example.json'), (e) => {
     e.location = { type: 'LineString', coordinates: [[134.04, 34.34], [134.05, 34.35]] };
-  }), /Attachment\/examples\/example\.json: .*location/));
+  }), /DesignatedShelter\/examples\/example\.json: .*location/));
 
 test('a Geometry value with an unknown geometry type fails', () =>
   withMutatedModels((d) => editJson(join(d, 'common', 'Geometry', 'examples', 'example.json'), (e) => { e.type = 'Circle'; }),
@@ -151,24 +175,24 @@ test('a Geometry value with an unknown geometry type fails', () =>
 
 test('a model title that is not a string fails', () =>
   withMutatedModels(async (d) => {
-    const f = join(d, 'task', 'Comment', 'catalog.yaml');
+    const f = join(d, 'task', 'Milestone', 'catalog.yaml');
     const s = await readFile(f, 'utf8');
-    await writeFile(f, s.replace(/^title:\n  ja: .*$/m, 'title:\n  ja: [コメント]'));
-  }, /Comment\/catalog\.yaml: title\.ja must be a non-empty string/));
+    await writeFile(f, s.replace(/^title:\n  ja: .*$/m, 'title:\n  ja: [マイルストーン]'));
+  }, /Milestone\/catalog\.yaml: title\.ja must be a non-empty string/));
 
 test('an example referencing a catalog type other than its example fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'task', 'Comment', 'examples', 'example.json'), (e) => { e.task = 'urn:ngsi-ld:Task:9999'; }),
-    /Comment\/examples\/example\.json: task: urn:ngsi-ld:Task:9999 should reference the Task example urn:ngsi-ld:Task:1234/));
+  withMutatedModels((d) => editJson(join(d, 'task', 'Milestone', 'examples', 'example.json'), (e) => { e.project = 'urn:ngsi-ld:Project:9999'; }),
+    /Milestone\/examples\/example\.json: project: urn:ngsi-ld:Project:9999 should reference the Project example urn:ngsi-ld:Project:heavy-rain-2026-07/));
 
 test('a normalized example referencing a different target than example.json fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'task', 'Comment', 'examples', 'example-normalized.jsonld'), (e) => { e.task.object = 'urn:ngsi-ld:Task:9999'; }),
-    /Comment\/examples\/example-normalized\.jsonld: task: references urn:ngsi-ld:Task:9999, but example\.json references urn:ngsi-ld:Task:1234/));
+  withMutatedModels((d) => editJson(join(d, 'task', 'Milestone', 'examples', 'example-normalized.jsonld'), (e) => { e.project.object = 'urn:ngsi-ld:Project:9999'; }),
+    /Milestone\/examples\/example-normalized\.jsonld: project: references urn:ngsi-ld:Project:9999, but example\.json references urn:ngsi-ld:Project:heavy-rain-2026-07/));
 
 test('a reference of another type than the schema declares fails', () =>
   withMutatedModels(async (d) => {
-    await editJson(join(d, 'task', 'Comment', 'examples', 'example.json'), (e) => { e.task = 'urn:ngsi-ld:Project:heavy-rain-2026-07'; });
-    await editJson(join(d, 'task', 'Comment', 'examples', 'example-normalized.jsonld'), (e) => { e.task.object = 'urn:ngsi-ld:Project:heavy-rain-2026-07'; });
-  }, /Comment\/examples\/example\.json: task: urn:ngsi-ld:Project:heavy-rain-2026-07 is a Project, but schema\.json declares a Task target/));
+    await editJson(join(d, 'task', 'Milestone', 'examples', 'example.json'), (e) => { e.project = 'urn:ngsi-ld:Task:1234'; });
+    await editJson(join(d, 'task', 'Milestone', 'examples', 'example-normalized.jsonld'), (e) => { e.project.object = 'urn:ngsi-ld:Task:1234'; });
+  }, /Milestone\/examples\/example\.json: project: urn:ngsi-ld:Task:1234 is a Task, but schema\.json declares a Project target/));
 
 test('an example id not in the urn:ngsi-ld:<Type>:<local id> form fails', () =>
   withMutatedModels((d) => editJson(join(d, 'task', 'Project', 'examples', 'example.json'), (e) => { e.id = 'urn:ngsi-ld:Proj:heavy-rain-2026-07'; }),
@@ -285,8 +309,11 @@ test('a single instance of a multi-valued attribute projects to a one-element ar
     await editJson(join(d, 'task', 'Task', 'examples', 'example.json'), (e) => { e.assignee = 'urn:ngsi-ld:Team:a'; });
   }, /assignee must be array/));
 
-test('an Attachment owned by both a task and a project fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'task', 'Attachment', 'examples', 'example.json'), (e) => { e.project = 'urn:ngsi-ld:Project:redmine:takamatsu:kasen'; }),
+// No remaining model has a oneOf whose branches can both match (Attachment's
+// task-or-project owner was the last, removed on 2026-10-09); Decision's
+// answers are a oneOf of answer kinds, so an answer of no known kind fails it.
+test('a Decision answer of no known kind fails (oneOf)', () =>
+  withMutatedModels((d) => editJson(join(d, 'decision', 'Decision', 'examples', 'example.json'), (e) => { e.answers.json[0].type = 'unknown'; }),
     /must match exactly one schema in oneOf/));
 
 test('a geometry without coordinates fails', () =>

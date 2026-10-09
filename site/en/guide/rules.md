@@ -31,7 +31,7 @@ So far, every model in the catalog is the catalog's own type; upstream names are
 - Status attributes (`progress`, `openingStatus`, `restrictionStatus` and others) have fixed value lists. When no value fits, leave the status out and give the local wording in `statusLabel` (then required). Do not force the nearest value.
 - Never redefine a reserved name of the NGSI-LD core context (`status`, `description`, `location`, `createdAt`, `modifiedAt`, `observedAt` and others). CI rejects it. When you need a status, name it like `incidentStatus`.
 - Group models by subject (topic), never by region, customer or project.
-- Use the [common](/en/models/common/) value types for shared structures: [JapaneseAddress](/en/models/common/JapaneseAddress/) for addresses, [Geometry](/en/models/common/Geometry/) for `location` and other locations. When a model allows fewer geometry types, narrow it next to the `$ref` (Attachment allows only a Point).
+- Use the [common](/en/models/common/) value types for shared structures: [JapaneseAddress](/en/models/common/JapaneseAddress/) for addresses, [Geometry](/en/models/common/Geometry/) for `location` and other locations. When a model allows fewer geometry types, narrow it next to the `$ref` (DesignatedShelter allows only a Point).
 - To give an existing type another name, use an alias (`x-alias-of`: same attributes, same required fields). To add attributes or to keep a type separate, use a subclass (`x-subclass-of`: attributes with the same name keep the parent's meaning, the parent's required attributes stay required). CI checks both.
 
 ## Mapping to Japanese standards {#mapping}

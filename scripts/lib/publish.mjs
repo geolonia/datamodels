@@ -40,6 +40,8 @@ export function attributeEntries(model) {
     // A value type ($ref, e.g. JapaneseAddress or Geometry) is an object; its own schema is at valueModel's schema URL.
     const type = prop.$ref || prop.allOf ? 'object' : prop.type;
     const items = prop.items && { ...(prop.items.type ? { type: prop.items.type } : {}), ...(prop.items.format ? { format: prop.items.format } : {}), ...(prop.items.enum ? { enum: prop.items.enum } : {}) };
+    // A value that may take one of several formats (date or date-time) lists them, as the schema's anyOf does.
+    const formats = (prop.anyOf ?? []).map((a) => a?.format).filter(Boolean);
     const description = model.catalog?.attributes?.[name];
     // catalog.schema.json requires both; say which attribute lacks one instead of failing on the whole catalog.
     if (!prop['x-iri']) throw new Error(`${model.type}.${name}: no x-iri, so catalog.json cannot list its IRI`);
@@ -51,6 +53,7 @@ export function attributeEntries(model) {
       ...(model.kind === 'value' ? {} : { ngsiType: ngsi.type ?? 'Property' }),
       ...(type ? { type } : {}),
       ...(prop.format ? { format: prop.format } : {}),
+      ...(formats.length ? { formats } : {}),
       ...(prop.enum ? { enum: prop.enum } : {}),
       ...(items && Object.keys(items).length ? { items } : {}),
       // From the referenced catalog schema, not x-ngsi.model, which may name a narrower class (geojson Point).

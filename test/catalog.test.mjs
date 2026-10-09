@@ -63,7 +63,7 @@ test('every model lists its attributes with type, NGSI-LD type and required, as 
   // Every valueModel is a catalog value type; a point-restricted location still names Geometry.
   const valueTypes = new Set(models.filter((x) => x.m.kind === 'value').map((x) => x.entry.typeIri));
   for (const { entry } of models) for (const a of entry.attributes) if (a.valueModel) assert.ok(valueTypes.has(a.valueModel), `${entry.type}.${a.name}: ${a.valueModel}`);
-  assert.equal(models.find((x) => x.m.type === 'Attachment').entry.attributes.find((a) => a.name === 'location').valueModel, 'https://datamodels.jp/ns/common/Geometry');
+  assert.equal(models.find((x) => x.m.type === 'DesignatedShelter').entry.attributes.find((a) => a.name === 'location').valueModel, 'https://datamodels.jp/ns/common/Geometry');
   assert.ok(site.attributes.find((a) => a.name === 'hazardTypes').items.enum.includes('flood'));
   assert.ok(models.find((x) => x.m.type === 'Task').entry.attributes.find((a) => a.name === 'assignee').multi);
   assert.ok(models.find((x) => x.m.type === 'JapaneseAddress').entry.attributes.every((a) => !('ngsiType' in a)), 'value type fields');
@@ -71,6 +71,19 @@ test('every model lists its attributes with type, NGSI-LD type and required, as 
   assert.deepEqual(Object.keys(items), ['type', 'format', 'enum']);
   // The schema requires what every entry carries; ngsiType stays conditional (value-type fields have none).
   assert.deepEqual(schema.properties.models.items.properties.attributes.items.required, ['name', 'iri', 'type', 'required', 'description']);
+});
+
+test('an attribute that may be a date or a date-time lists both formats, and no single format', () => {
+  const attr = (type, name) => models.find((x) => x.m.type === type).entry.attributes.find((a) => a.name === name);
+  for (const [type, name] of [['Task', 'start'], ['Task', 'due'], ['Milestone', 'start'], ['Milestone', 'due'], ['Project', 'start'], ['Project', 'end']]) {
+    const a = attr(type, name);
+    assert.deepEqual(a.formats, ['date', 'date-time'], `${type}.${name}`);
+    assert.equal(a.type, 'string');
+    assert.ok(!('format' in a), `${type}.${name}`);
+  }
+  assert.equal(attr('Task', 'completedAt').format, 'date-time');
+  assert.ok(!('formats' in attr('Task', 'completedAt')));
+  assert.ok(schema.properties.models.items.properties.attributes.items.properties.formats, 'catalog.schema.json describes formats');
 });
 
 test('mappings name the standard of each mapping file, for the same files as mappingUrls (#156)', () => {
