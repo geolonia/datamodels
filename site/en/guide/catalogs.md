@@ -9,7 +9,7 @@ This catalog references and extends what exists elsewhere instead of copying it.
 
 ## Global
 
-| Catalog | Content | NGSI-LD |
+| Catalog | Content | With NGSI-LD |
 |---|---|---|
 | [Smart Data Models](https://smartdatamodels.org/) | Run by FIWARE, TM Forum, IUDX and OASC. Over 900 models for smart cities, agriculture, energy and more. JSON Schema, `@context`, examples, multilingual specs (Japanese is machine-translated) | Ready to use. The upstream of this catalog |
 | [ETSI NGSI-LD specification (GS CIM 009 V1.8.1)](https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.08.01_60/gs_cim009v010801p.pdf) | The NGSI-LD API specification (PDF). Its core context with the reserved terms (`location`, `observedAt`, `status` and others) is published versioned at [uri.etsi.org](https://uri.etsi.org/ngsi-ld/v1/) | Always applied implicitly |
@@ -21,7 +21,7 @@ This catalog references and extends what exists elsewhere instead of copying it.
 
 Which catalog model matches which of these standards: [Find a model by standard](/en/guide/standards).
 
-| Catalog | Content | NGSI-LD |
+| Catalog | Content | With NGSI-LD |
 |---|---|---|
 | [Digital Agency GIF (Government Interoperability Framework)](https://www.digital.go.jp/policies/data_strategy_government_interoperability_framework) | Core data models (person, legal entity, address, facility, building and more) and domain implementation models. Published as XSD and Excel. [GitHub](https://github.com/JDA-DM/GIF) | Needs mapping. [JapaneseAddress](/en/models/common/JapaneseAddress/) maps to the GIF address |
 | [自治体標準オープンデータセット (municipal standard open datasets)](https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test), formerly 推奨データセット | Standard formats for municipal open data (public facilities, designated emergency evacuation sites, AEDs, childcare facilities, events and more). CSV column definitions. There is no dataset for designated shelters (指定避難所) | Needs mapping; mapped in this catalog. Sheet 03, designated emergency evacuation sites, maps to [EvacuationSite](/en/models/disaster/EvacuationSite/); the address and latitude/longitude columns to JapaneseAddress and Geometry. All tables: [Find a model by standard](/en/guide/standards) |

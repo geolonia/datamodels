@@ -16,7 +16,7 @@ The site is run by [Geolonia Inc.](https://www.geolonia.com/company/) (株式会
 
 ## Licences
 
-Model files (schemas, @context files, vocabularies, examples and the other files the catalog publishes) are **CC0 1.0**: use them without conditions. The text of this site is **CC BY 4.0**, the tooling code **Apache-2.0**. What each covers, how to give credit and the parts from other sources: [Licences](/en/LICENSE-CONTENT).
+Machine-readable files (schemas, @context files, vocabularies, examples and the other files the catalog publishes) are **CC0 1.0**: use them without conditions. Text, such as the pages of this site and the models' notes and READMEs, is **CC BY 4.0**, and the tooling code **Apache-2.0**. A file that copies content from a CC BY source stays CC BY 4.0 (none does today). What each covers, how to give credit and the parts from other sources: [Licences](/en/LICENSE-CONTENT).
 
 ## AI and agents
 
