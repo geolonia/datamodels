@@ -32,7 +32,7 @@ Open the [catalog form](https://github.com/geolonia/datamodels/issues/new?templa
 | Licence | For example CC BY 4.0. Write "unknown" if you do not know | `PDL 1.0 (public data licence)` |
 | Public | Tick the box: anyone can read it without a login or a contract | ticked |
 
-Not sure about a field? Write what you know. The maintainer can ask.
+Not sure about a field? In a required text field, write what you know, or "unknown". In a choice, pick the closest option. Related models, Machine-readable index and Licence can stay empty. The maintainer can ask.
 
 Then click "Create".
 

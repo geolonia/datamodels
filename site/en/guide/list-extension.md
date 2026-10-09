@@ -44,7 +44,7 @@ Then click "Create".
 ## What happens next {#next}
 
 1. A maintainer checks that you speak for the organisation, and may ask you a question in the issue.
-2. A maintainer, or you, adds the entry to the catalog with a pull request. Automatic checks make sure your names do not clash with the model's attributes and that the IRIs are under your domain.
+2. A maintainer, or you, adds the entry to the catalog with a pull request. Automatic checks make sure your names do not clash with the model's attributes and that the IRIs are not datamodels.jp addresses. They do not check that the domain is yours: that is what the consent box is for.
 3. When it is merged, your organisation appears under "Extended by" on the model page and in `catalog.json`, within minutes.
 
 Your entry is shown as you reported it. datamodels.jp does not check whether the attributes are well designed. To change or remove an entry later, say so in a new [issue](https://github.com/geolonia/datamodels/issues).
