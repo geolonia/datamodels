@@ -73,9 +73,10 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
       topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`, true),
     ],
     // The pages about the site itself: no third topic in the navigation, but no dead end either.
-    ...Object.fromEntries([`${prefix}/about`, `${prefix}/LICENSE-CONTENT`].map((path) => [path, [
+    ...Object.fromEntries([`${prefix}/about`, `${prefix}/LICENSE-CONTENT`, `${prefix}/ai`].map((path) => [path, [
       topic(ja ? 'このサイトについて' : 'About this site', `${prefix}/about`),
       { text: ja ? 'ライセンス' : 'Licences', link: `${prefix}/LICENSE-CONTENT` },
+      { text: ja ? 'AI とエージェント' : 'AI and agents', link: `${prefix}/ai` },
       topic(ja ? 'データモデル' : 'Data models', `${prefix}/models/`, true),
       topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`, true),
     ]])),
@@ -104,7 +105,7 @@ export default defineConfig({
   sitemap: { hostname: SITE_URL },
   lastUpdated: false,
   // Links to the machine files and IRIs are not pages; everything else must resolve.
-  ignoreDeadLinks: [/^\/(context|schema|examples|adapters|vocab|catalog|ns|LICENSE-CONTENT)/],
+  ignoreDeadLinks: [/^\/(context|schema|examples|adapters|vocab|catalog|ns|LICENSE-CONTENT|llms\.txt)/],
   markdown: { config: addVPreToInlineCode },
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],

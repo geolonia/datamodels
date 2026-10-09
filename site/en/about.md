@@ -18,6 +18,10 @@ The site is run by [Geolonia Inc.](https://www.geolonia.com/company/) (株式会
 
 Model files (schemas, @context files, vocabularies, examples and the other files the catalog publishes) are **CC0 1.0**: use them without conditions. The text of this site is **CC BY 4.0**, the tooling code **Apache-2.0**. What each covers, how to give credit and the parts from other sources: [Licences](/en/LICENSE-CONTENT).
 
+## AI and agents
+
+How AI was used to make this site, and what AI agents can use: [AI and agents](/en/ai).
+
 ## Disclaimer
 
 - The models are provided as they are, without any warranty of accuracy, completeness or fitness for a particular purpose.
