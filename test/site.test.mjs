@@ -2,8 +2,8 @@
 // and page descriptions say.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { loadSubjects } from '../scripts/lib/models.mjs';
-import { valueText, indexPage, plainText, issueLinks } from '../scripts/lib/site.mjs';
+import { loadSubjects, mdText } from '../scripts/lib/models.mjs';
+import { valueText, indexPage, plainText, issueLinks, renderModelPage } from '../scripts/lib/site.mjs';
 
 const subjects = await loadSubjects();
 const task = subjects.find((s) => s.name === 'task');
@@ -36,4 +36,27 @@ test('page descriptions (meta and share previews) carry no Markdown', () => {
     assert.doesNotMatch(description, /[`*[\]]/, lang);
     assert.match(description, /サブジェクト|subject/, lang);
   }
+});
+
+test('model text shows <tags> and {{ braces }} as written; Markdown and code spans still work', () => {
+  assert.equal(mdText('see <owner>/<repo>'), 'see &lt;owner>/&lt;repo>');
+  assert.equal(mdText('{{ 1 + 1 }}'), '&#123;&#123; 1 + 1 }}');
+  assert.equal(mdText('[a link](https://example.org) and `<code>` and `{x}`'), '[a link](https://example.org) and `<code>` and `{x}`');
+  assert.equal(mdText(undefined), '');
+  // Code spans as CommonMark reads them: matching backtick runs, within one paragraph.
+  assert.equal(mdText('``<owner>``'), '``<owner>``');
+  assert.equal(mdText('`` a ` <b> ``'), '`` a ` <b> ``');
+  assert.equal(mdText('`a\n\n<owner>\n`'), '`a\n\n&lt;owner>\n`');
+  assert.equal(mdText('`` <x> ` and <y>'), '`` &lt;x> ` and &lt;y>');
+  assert.equal(mdText('a `<x>` b `<y>` c <z>'), 'a `<x>` b `<y>` c &lt;z>');
+  // In a page: a note, a mapping note and a description (VitePress would read <owner> as a tag and fail).
+  const Milestone = task.models.find((m) => m.type === 'Milestone');
+  const probe = structuredClone(Milestone);
+  probe.notes = { ...probe.notes, notes: [{ ja: '<owner>/<repo> と {{ x }}', en: '<owner>/<repo> and {{ x }}' }] };
+  probe.catalog = { ...probe.catalog, description: { ...probe.catalog.description, en: 'A <b>bold</b> claim' } };
+  const page = renderModelPage('en', '/en', subjects, task, probe);
+  assert.match(page, /- &lt;owner>\/&lt;repo> and &#123;&#123; x }}/);
+  assert.match(page, /A &lt;b>bold&lt;\/b> claim/);
+  // The front matter keeps plain text (VitePress escapes meta tags itself); the body has no raw tag.
+  assert.doesNotMatch(page.slice(page.indexOf('\n---\n') + 5), /<owner>|<b>bold/);
 });

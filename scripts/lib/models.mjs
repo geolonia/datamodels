@@ -138,3 +138,34 @@ export async function resolveContextTerms(doc, subjects, resolveDocument) {
   }
   return Object.assign(terms, inlineTerms);
 }
+
+// Text from the model files (descriptions, notes, mapping notes) is Markdown: links and
+// `code` work. Outside code spans, < and { become character references, so a "<owner>"
+// or a "{{ x }}" shows as written instead of being read as an HTML tag or a Vue expression.
+// A code span is as in CommonMark: a run of backticks up to the next run of the same
+// length, within one paragraph (no blank line between). A run with no partner is text.
+export function mdText(s) {
+  const text = String(s ?? '');
+  const escape = (part) => part.replace(/</g, '&lt;').replace(/\{/g, '&#123;');
+  let out = '';
+  let i = 0;
+  while (i < text.length) {
+    const open = /`+/g;
+    open.lastIndex = i;
+    const o = open.exec(text);
+    if (!o) { out += escape(text.slice(i)); break; }
+    const run = o[0];
+    const close = new RegExp(`(?<!\`)${run}(?!\`)`, 'g');
+    close.lastIndex = o.index + run.length;
+    const c = close.exec(text);
+    const span = c ? text.slice(o.index, c.index + run.length) : '';
+    if (c && !/\n[ \t]*\n/.test(span)) {
+      out += escape(text.slice(i, o.index)) + span;
+      i = c.index + run.length;
+    } else {
+      out += escape(text.slice(i, o.index + run.length));
+      i = o.index + run.length;
+    }
+  }
+  return out;
+}
