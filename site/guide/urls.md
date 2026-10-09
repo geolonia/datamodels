@@ -46,19 +46,19 @@ description: どの URL を使うか、何が変わらないか、バージョ�
 
 ## URL の一覧
 
-```text
-/context/<subject>/vX.Y.Z.jsonld        @context（不変）
-/context/<subject>/vX.jsonld            エイリアス（最新の X.y.z）
-/schema/<subject>/<Type>/vX.Y.Z.json    JSON Schema（不変）
-/schema/<subject>/<Type>/vX.json        エイリアス
-/vocab/<subject>/vX.Y.Z.jsonld          語彙（RDFS: クラス、サブクラス関係、日英ラベル。不変）
-/examples/<subject>/<Type>/example.json               例（key-values）
-/examples/<subject>/<Type>/example-normalized.jsonld  例（NGSI-LD normalized。値型には無い）
-/ns/<subject>/<Term>                    型・属性の IRI（ページにリダイレクト）
-/mapping/<subject>/<Type>/<name>.yaml   対応表（他の標準との対応と変換の規則。バージョンなし: URL は変わらず、内容は現在のモデルに合わせる）
-/adapters/<name>/<subject>/<Type>.json  アダプターの出力（例: GeonicDB の Custom Data Model 定義）
-/catalog.json                           プログラム向けの全モデルの一覧（/catalog.schema.json に準拠）
-```
+| URL | 内容 |
+|---|---|
+| `/context/<subject>/vX.Y.Z.jsonld` | @context（不変） |
+| `/context/<subject>/vX.jsonld` | エイリアス（最新の X.y.z） |
+| `/schema/<subject>/<Type>/vX.Y.Z.json` | JSON Schema（不変） |
+| `/schema/<subject>/<Type>/vX.json` | エイリアス |
+| `/vocab/<subject>/vX.Y.Z.jsonld` | 語彙（RDFS: クラス、サブクラス関係、日英ラベル。不変） |
+| `/examples/<subject>/<Type>/example.json` | 例（key-values） |
+| `/examples/<subject>/<Type>/example-normalized.jsonld` | 例（NGSI-LD normalized。値型には無い） |
+| `/ns/<subject>/<Term>` | 型・属性の IRI（ページにリダイレクト） |
+| `/mapping/<subject>/<Type>/<name>.yaml` | 対応表（他の標準との対応と変換の規則。バージョンなし: URL は変わらず、内容は現在のモデルに合わせる） |
+| `/adapters/<name>/<subject>/<Type>.json` | アダプターの出力（例: GeonicDB の Custom Data Model 定義） |
+| `/catalog.json` | プログラム向けの全モデルの一覧（/catalog.schema.json に準拠） |
 
 すべてのファイルは `Access-Control-Allow-Origin: *` で配信され、`.jsonld` は `application/ld+json`、スキーマは `application/schema+json`、対応表は `application/yaml` です。
 

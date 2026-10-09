@@ -35,10 +35,12 @@ An entity written with `responsibleTeam` expands to the same IRI as one written 
 The keys of `propertyDetails` are short names. With aliases, register the definition under your names and point `contextUrl` at the alias context. The export script applies the renames in one go:
 
 ```bash
+CONTEXT=https://example.com/context/city-disaster.jsonld
 node adapters/geonicdb/export.mjs task --type Project --type-name Saigai \
-  --context-url https://example.com/context/city-disaster.jsonld --out ./out
-node adapters/geonicdb/export.mjs task --type Task --rename assignee=responsibleTeam \
-  --context-url https://example.com/context/city-disaster.jsonld --out ./out
+  --context-url "$CONTEXT" --out ./out
+node adapters/geonicdb/export.mjs task --type Task \
+  --rename assignee=responsibleTeam \
+  --context-url "$CONTEXT" --out ./out
 ```
 
 Each property keeps the catalog IRI in its `@context`, so the vocabulary is unchanged even though the names are yours.

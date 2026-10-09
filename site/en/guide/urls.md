@@ -46,19 +46,19 @@ A new version does not replace the old one: `v1.0.0` stays at its URL, and the a
 
 ## All URLs
 
-```text
-/context/<subject>/vX.Y.Z.jsonld        @context (immutable)
-/context/<subject>/vX.jsonld            alias (latest X.y.z)
-/schema/<subject>/<Type>/vX.Y.Z.json    JSON Schema (immutable)
-/schema/<subject>/<Type>/vX.json        alias
-/vocab/<subject>/vX.Y.Z.jsonld          vocabulary (RDFS: classes, subclass relations, ja/en labels; immutable)
-/examples/<subject>/<Type>/example.json               example (key-values)
-/examples/<subject>/<Type>/example-normalized.jsonld  example (NGSI-LD normalized; not for value types)
-/ns/<subject>/<Term>                    type and attribute IRIs (redirect to the page)
-/mapping/<subject>/<Type>/<name>.yaml   mapping file (correspondence to another standard and conversion rules; not versioned: the URL stays, the content follows the current model)
-/adapters/<name>/<subject>/<Type>.json  adapter output (for example a GeonicDB Custom Data Model definition)
-/catalog.json                           list of all models for programs (conforms to /catalog.schema.json)
-```
+| URL | What it is |
+|---|---|
+| `/context/<subject>/vX.Y.Z.jsonld` | @context (immutable) |
+| `/context/<subject>/vX.jsonld` | alias (latest X.y.z) |
+| `/schema/<subject>/<Type>/vX.Y.Z.json` | JSON Schema (immutable) |
+| `/schema/<subject>/<Type>/vX.json` | alias |
+| `/vocab/<subject>/vX.Y.Z.jsonld` | vocabulary (RDFS: classes, subclass relations, ja/en labels; immutable) |
+| `/examples/<subject>/<Type>/example.json` | example (key-values) |
+| `/examples/<subject>/<Type>/example-normalized.jsonld` | example (NGSI-LD normalized; not for value types) |
+| `/ns/<subject>/<Term>` | type and attribute IRIs (redirect to the page) |
+| `/mapping/<subject>/<Type>/<name>.yaml` | mapping file (correspondence to another standard and conversion rules; not versioned: the URL stays, the content follows the current model) |
+| `/adapters/<name>/<subject>/<Type>.json` | adapter output (for example a GeonicDB Custom Data Model definition) |
+| `/catalog.json` | list of all models for programs (conforms to /catalog.schema.json) |
 
 Everything is served with `Access-Control-Allow-Origin: *`; `.jsonld` files as `application/ld+json`, schemas as `application/schema+json`, mapping files as `application/yaml`.
 

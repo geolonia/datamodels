@@ -35,10 +35,12 @@ description: モデルを変えずに、属性名や型名を自分たちの用�
 Custom Data Model の `propertyDetails` のキーは短縮名です。エイリアスを使うなら、定義もエイリアスの名前で登録し、`contextUrl` にはエイリアス用の context を指定します。書き出しスクリプトが名前の置き換えをまとめて行います。
 
 ```bash
+CONTEXT=https://example.com/context/city-disaster.jsonld
 node adapters/geonicdb/export.mjs task --type Project --type-name Saigai \
-  --context-url https://example.com/context/city-disaster.jsonld --out ./out
-node adapters/geonicdb/export.mjs task --type Task --rename assignee=responsibleTeam \
-  --context-url https://example.com/context/city-disaster.jsonld --out ./out
+  --context-url "$CONTEXT" --out ./out
+node adapters/geonicdb/export.mjs task --type Task \
+  --rename assignee=responsibleTeam \
+  --context-url "$CONTEXT" --out ./out
 ```
 
 各属性の `@context` にはカタログの IRI が残るので、名前が変わっても語彙は同じです。

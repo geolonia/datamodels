@@ -19,12 +19,15 @@ description: 標準に沿ったデータを、モデルの対応表（マッピ�
 
 ```yaml
 standard:
-  name: { ja: "自治体標準オープンデータセット・データ項目定義書A（20260801版）シート「03.指定緊急避難場所一覧」", en: … }
-  url: https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test
+  name: { ja: "自治体標準オープンデータセット … シート「03.指定緊急避難場所一覧」", en: … }
+  url: https://www.digital.go.jp/resources/open_data/…
   license: { ja: "公共データ利用規約（第1.0版）（PDL1.0、CC BY 4.0 と互換）", en: … }
 fields:
   name: { to: 名称 (name), column: 名称 }
-  maxCapacity: { to: 想定収容人数 (maxCapacity), column: 想定収容人数, transform: integer }
+  maxCapacity:
+    to: 想定収容人数 (maxCapacity)
+    column: 想定収容人数
+    transform: integer
   nationalShelterId: { to: null, note: { ja: このデータセットには無い } }
 ```
 
@@ -38,7 +41,9 @@ fields:
 [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) の `datamodels convert` がこの規則を読みます。CSV の一覧をモデルのエンティティに変換し、それぞれをモデルの JSON Schema で検証します。
 
 ```bash
-npx github:geolonia/datamodels-toolkit convert disaster/EvacuationSite jichitai-opendata-site 092011_evacuation_space.csv --out sites.json
+npx github:geolonia/datamodels-toolkit convert \
+  disaster/EvacuationSite jichitai-opendata-site \
+  092011_evacuation_space.csv --out sites.json
 ```
 
 NGSI-LD の normalized 形式にするときは `--normalized` を付けます。`to` だけの行は説明です。その項目は注記に従って自分で変換してください。
