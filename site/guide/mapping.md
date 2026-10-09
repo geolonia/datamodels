@@ -19,7 +19,7 @@ description: 標準に沿ったデータを、モデルの対応表（マッピ�
 
 ```yaml
 standard:
-  name: { ja: "自治体標準オープンデータセット … シート「03.指定緊急避難場所一覧」", en: … }
+  name: { ja: "自治体標準オープンデータセット … シート「03.…」", en: … }
   url: https://www.digital.go.jp/resources/open_data/…
   license: { ja: "公共データ利用規約（第1.0版）（PDL1.0、CC BY 4.0 と互換）", en: … }
 fields:
