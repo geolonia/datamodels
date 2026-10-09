@@ -61,7 +61,7 @@ Put your @context at an HTTPS address that you control and that does not change:
 - Publish each version at its own address, and never change or remove a published file.
 - Serve it with `Content-Type: application/ld+json` and `Access-Control-Allow-Origin: *`.
 
-The catalog does not host extensions today; ideas for that are discussed in [#56](https://github.com/geolonia/datamodels/issues/56).
+The catalog does not host your @context. You can list your extension on the model page ("Extended by") with the [extension form](https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml), so others who need an attribute with the same meaning can reuse your name.
 
 ## When the catalog gets new attributes {#updates}
 

@@ -5,7 +5,7 @@ description: Catalogs of data models and vocabularies used globally and in Japan
 
 # Other data model catalogs
 
-This catalog references and extends what exists elsewhere instead of copying it. This page lists that "elsewhere". Some can be used with NGSI-LD as they are; others need a mapping.
+This catalog references and extends what exists elsewhere instead of copying it. This page lists that "elsewhere". Some can be used with NGSI-LD as they are; others need a mapping. Know a catalog that is missing here? Tell us with the [catalog form](https://github.com/geolonia/datamodels/issues/new?template=catalog-report.yml).
 
 ## Global
 
