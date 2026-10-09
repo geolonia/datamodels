@@ -55,3 +55,11 @@ test('an unknown IRI or subject stays a 404, also for JSON-LD clients', async ()
   assert.equal((await get('/ns/task/Nope', 'application/ld+json')).status, 404);
   assert.equal((await get('/ns/nope/Thing', 'application/ld+json')).status, 404);
 });
+
+test('an error in the script falls back to the static answer', async () => {
+  // A request whose headers cannot be read.
+  const broken = { url: 'https://datamodels.jp/ns/task/Task', headers: { get() { throw new Error('boom'); } } };
+  const r = await worker.fetch(broken, env);
+  assert.equal(r.status, 302);
+  assert.equal(r.headers.get('location'), '/models/task/Task/');
+});

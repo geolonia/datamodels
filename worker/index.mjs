@@ -44,25 +44,31 @@ async function subjectMajor(env, request, subject) {
 export default {
   async fetch(request, env) {
     const res = await env.ASSETS.fetch(request);
-    const subject = /^\/ns\/([a-z0-9-]+)\//.exec(new URL(request.url).pathname)?.[1];
-    const known = res.status >= 300 && res.status < 400;
-    if (subject && known && prefersJsonLd(request.headers.get('accept'))) {
-      const major = await subjectMajor(env, request, subject);
-      if (major) {
-        return new Response(null, {
-          status: 303,
-          headers: {
-            location: `/vocab/${subject}/v${major}.jsonld`,
-            vary: 'Accept',
-            'access-control-allow-origin': '*',
-            'cache-control': 'public, max-age=300',
-          },
-        });
+    // Any error below falls back to the static answer, so the IRIs are never
+    // worse off than without this script.
+    try {
+      const subject = /^\/ns\/([a-z0-9-]+)\//.exec(new URL(request.url).pathname)?.[1];
+      const known = res.status >= 300 && res.status < 400;
+      if (subject && known && prefersJsonLd(request.headers.get('accept'))) {
+        const major = await subjectMajor(env, request, subject);
+        if (major) {
+          return new Response(null, {
+            status: 303,
+            headers: {
+              location: `/vocab/${subject}/v${major}.jsonld`,
+              vary: 'Accept',
+              'access-control-allow-origin': '*',
+              'cache-control': 'public, max-age=300',
+            },
+          });
+        }
       }
+      // Same answer as before, marked as depending on Accept for caches.
+      const out = new Response(res.body, res);
+      out.headers.append('vary', 'Accept');
+      return out;
+    } catch {
+      return res;
     }
-    // Same answer as before, marked as depending on Accept for caches.
-    const out = new Response(res.body, res);
-    out.headers.append('vary', 'Accept');
-    return out;
   },
 };
