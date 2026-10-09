@@ -69,8 +69,8 @@ Your @context takes the catalog by its alias (`v1.jsonld`), so new catalog attri
 
 ## Starting from a Smart Data Models model
 
-It works the same way. Take the upstream @context by an address pinned to a commit (`…/dataModel.<Domain>/<commit>/context.jsonld`), not `master`, so the meaning of your data does not change when upstream changes.
+It works the same way. Take the upstream @context by an address pinned to a commit, not `master` (`https://raw.githubusercontent.com/smart-data-models/dataModel.<Domain>/<commit>/context.jsonld`), so the meaning of your data does not change when upstream changes.
 
 ## Useful beyond your project?
 
-Propose the attribute to the catalog with an [issue](https://github.com/geolonia/datamodels/issues). Once it is in the next minor version, you no longer need your extension for it.
+Propose the attribute to the catalog with an [issue](https://github.com/geolonia/datamodels/issues). Once it is in the catalog, new data can use the catalog's attribute. Data you already wrote keeps your attribute (and its meaning) until you convert it.

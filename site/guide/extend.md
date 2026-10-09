@@ -69,8 +69,8 @@ NGSI-LD のブローカーに送るときは、[使い方](/guide/use#broker)の
 
 ## Smart Data Models のモデルから始めるとき
 
-書き方は同じです。上流の @context は `master` ではなく、コミットを固定したアドレス（`…/dataModel.<分野>/<commit>/context.jsonld`）で取り込みます。上流が変わっても、データの意味が変わらないようにするためです。
+書き方は同じです。上流の @context は `master` ではなく、コミットを固定したアドレス（`https://raw.githubusercontent.com/smart-data-models/dataModel.<分野>/<commit>/context.jsonld`）で取り込みます。上流が変わっても、データの意味が変わらないようにするためです。
 
 ## 他の人にも役立ちそうなら
 
-その属性を [Issue](https://github.com/geolonia/datamodels/issues) でカタログに提案してください。次のマイナーバージョンに入れば、その属性のための拡張は要らなくなります。
+その属性を [Issue](https://github.com/geolonia/datamodels/issues) でカタログに提案してください。カタログに入れば、新しいデータではカタログの属性を使えます。すでに書いたデータは、変換するまで自分の属性（とその意味）のままです。
