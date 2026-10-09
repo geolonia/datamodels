@@ -161,6 +161,8 @@ test('character references, extra URLs in an inline context, impossible dates an
   assert.match(problems({ organization: { ja: '&#123;&#123; 1 + 1 &#125;&#125;', en: 'Wakayama' } }).join('\n'), /plain text/);
   const base = `${BASE_URL}/context/transportation/v${major}.jsonld`;
   assert.match(problems({ context: [base, 'https://user:secret@example.org/private.jsonld', detour.context[1]] }).join('\n'), /may import only the transportation context/);
+  assert.match(problems({ context: [base, null, detour.context[1]] }).join('\n'), /must not contain null/);
+  for (const bad of [42, true, [detour.context[1]]]) assert.match(problems({ context: [base, bad, detour.context[1]] }).join('\n'), /URLs and objects only/, JSON.stringify(bad));
   for (const since of ['2026-99', '2026-02-31', '2026-13-01']) assert.match(problems({ since }).join('\n'), /since must be a date/, since);
   for (const since of ['2026-10', '2026-02-28', '2028-02-29']) assert.deepEqual(problems({ since }), [], since);
   // The prefix comes after the term that uses it: JSON-LD does not see it there.

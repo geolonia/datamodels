@@ -93,6 +93,9 @@ export function extensionProblems(ext, model, subject, published = [subject.vers
     if (!parts.some((p) => accepted.has(p))) out.push(`an inline context must import the ${subject.name} context (${u.contextAlias}), so the catalog's attributes keep their meaning`);
     // Inline means nothing hosted: the only URL in it is the catalog context it builds on.
     for (const p of parts) if (typeof p === 'string' && !accepted.has(p)) out.push(`an inline context may import only the ${subject.name} context, not ${JSON.stringify(p)}`);
+    // null would reset the subject context; numbers, booleans and nested arrays are not contexts at all.
+    for (const p of parts) if (p === null) out.push('an inline context must not contain null: it resets the subject context');
+    else if (typeof p !== 'string' && (typeof p !== 'object' || Array.isArray(p))) out.push(`an inline context holds URLs and objects only, not ${JSON.stringify(p)}`);
     defs = Object.assign({}, ...parts.filter((p) => p && typeof p === 'object' && !Array.isArray(p)));
     iris = inlineIris(parts);
     // The inline part only adds: no keyword (@vocab, @base ...) that changes how other terms are read,
