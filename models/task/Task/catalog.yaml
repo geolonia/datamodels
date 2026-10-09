@@ -30,13 +30,13 @@ attributes:
     en: "The entity this task is about (a report, an asset, a road)"
   progress:
     ja: "正規化した進行状態（RFC 8984 progress）。needs-action=未着手、in-process=対応中、completed=完了、failed=失敗、cancelled=取消。値域に合う値がないときは省き、statusLabel に元の呼び方を書く。"
-    en: "Normalised state (RFC 8984 progress: needs-action, in-process, completed, failed, cancelled). When no value fits, leave it out and give the local wording in statusLabel."
+    en: "Normalised state (RFC 8984 progress): needs-action = not started, in-process = in progress, completed = done, failed = failed, cancelled = cancelled. When no value fits, leave it out and give the local wording in statusLabel."
   statusLabel:
     ja: "元システムの状態名そのまま（「対応中」「解決」など）。progress を省いたときは必須"
     en: "The source system's own status name, unchanged (for example \"In progress\", \"Resolved\"). Required when progress is left out"
   subtype:
     ja: "元システムの種別（トラッカー、Issue タイプ、カテゴリなど）"
-    en: "The source system's kind: tracker, issue type, category"
+    en: "The source system's kind, for example a tracker, an issue type or a category"
   priority:
     ja: "優先度 0〜9。1 が最高、9 が最低、0 は未定義（RFC 8984）"
     en: "Priority 0 to 9: 1 highest, 9 lowest, 0 undefined (RFC 8984)"

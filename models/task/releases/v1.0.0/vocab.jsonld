@@ -207,7 +207,7 @@
       },
       "comment": {
         "ja": "状態。open=受付中、locked=ロック中（新しいタスクを追加できない）、closed=完了。core context の status は予約語のため milestoneStatus",
-        "en": "State: open, locked (no new tasks may be added) or closed; status is protected in the core context, hence milestoneStatus"
+        "en": "State: open = accepting tasks, locked = no new tasks may be added, closed = done; status is protected in the core context, hence milestoneStatus"
       },
       "isDefinedBy": "https://datamodels.jp/ns/task/",
       "seeAlso": "https://datamodels.jp/models/task/Milestone/#milestoneStatus"
@@ -259,7 +259,7 @@
       },
       "comment": {
         "ja": "正規化した進行状態（RFC 8984 progress）。needs-action=未着手、in-process=対応中、completed=完了、failed=失敗、cancelled=取消。値域に合う値がないときは省き、statusLabel に元の呼び方を書く。",
-        "en": "Normalised state (RFC 8984 progress: needs-action, in-process, completed, failed, cancelled). When no value fits, leave it out and give the local wording in statusLabel."
+        "en": "Normalised state (RFC 8984 progress): needs-action = not started, in-process = in progress, completed = done, failed = failed, cancelled = cancelled. When no value fits, leave it out and give the local wording in statusLabel."
       },
       "isDefinedBy": "https://datamodels.jp/ns/task/",
       "seeAlso": "https://datamodels.jp/models/task/Task/#progress"
@@ -284,8 +284,8 @@
         "en": "projectStatus"
       },
       "comment": {
-        "ja": "状態。core context の status は予約語のため projectStatus",
-        "en": "State; status is protected in the core context, hence projectStatus"
+        "ja": "状態。active=進行中、closed=終了、archived=アーカイブ済み（使わなくなったが残している）。core context の status は予約語のため projectStatus",
+        "en": "State: active = in progress, closed = finished, archived = no longer used but kept; status is protected in the core context, hence projectStatus"
       },
       "isDefinedBy": "https://datamodels.jp/ns/task/",
       "seeAlso": "https://datamodels.jp/models/task/Project/#projectStatus"
@@ -363,7 +363,7 @@
       },
       "comment": {
         "ja": "元システムの種別（トラッカー、Issue タイプ、カテゴリなど）",
-        "en": "The source system's kind: tracker, issue type, category"
+        "en": "The source system's kind, for example a tracker, an issue type or a category"
       },
       "isDefinedBy": "https://datamodels.jp/ns/task/",
       "seeAlso": "https://datamodels.jp/models/task/Task/#subtype"

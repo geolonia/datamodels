@@ -24,7 +24,7 @@ attributes:
     en: "Due: the planned release or completion, a date or a date and time"
   milestoneStatus:
     ja: "状態。open=受付中、locked=ロック中（新しいタスクを追加できない）、closed=完了。core context の status は予約語のため milestoneStatus"
-    en: "State: open, locked (no new tasks may be added) or closed; status is protected in the core context, hence milestoneStatus"
+    en: "State: open = accepting tasks, locked = no new tasks may be added, closed = done; status is protected in the core context, hence milestoneStatus"
   source:
     ja: "元システムにおけるこのオブジェクトの URL"
     en: "URL of this object in the system of record"

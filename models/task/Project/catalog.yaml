@@ -20,8 +20,8 @@ attributes:
     ja: "親プロジェクト"
     en: "Parent project"
   projectStatus:
-    ja: "状態。core context の status は予約語のため projectStatus"
-    en: "State; status is protected in the core context, hence projectStatus"
+    ja: "状態。active=進行中、closed=終了、archived=アーカイブ済み（使わなくなったが残している）。core context の status は予約語のため projectStatus"
+    en: "State: active = in progress, closed = finished, archived = no longer used but kept; status is protected in the core context, hence projectStatus"
   isPublic:
     ja: "公開プロジェクトなら true"
     en: "true when public"
