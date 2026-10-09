@@ -345,8 +345,9 @@
 .vp-doc .standards summary .ext { flex: none; align-self: center; display: inline-flex; padding: 4px; margin: -4px -4px -4px 0; border-radius: 4px; color: var(--vp-c-text-2); }
 .vp-doc .standards summary .ext:hover { color: var(--vp-c-brand-1); background: var(--vp-c-default-soft); }
 .vp-doc .standards details > p.licence { margin: 4px 14px; font-size: 13px; color: var(--vp-c-text-2); }
-/* The Link header on model pages is one long line: wrap it instead of hiding most of it. */
-.vp-doc div.language-http pre code { white-space: pre-wrap; overflow-wrap: anywhere; }
+/* Code blocks wrap long lines instead of hiding them behind a sideways scroll. The copy
+ * button copies the original lines. */
+.vp-doc div[class*='language-'] pre code { white-space: pre-wrap; overflow-wrap: anywhere; }
 
 /* A folded block of reference detail inside a guide (<details class="rules">). */
 .vp-doc details.rules { margin: 16px 0; border: 1px solid var(--vp-c-divider); border-radius: 8px; padding: 0 14px; }
