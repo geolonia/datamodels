@@ -68,6 +68,13 @@ export function extensionProblems(ext, model, subject, published = [subject.vers
     const accepted = new Set([u.contextAlias, u.contextExact, ...(published.includes(ext.version) ? [`${BASE_URL}/context/${subject.name}/v${ext.version}.jsonld`] : [])]);
     if (!parts.some((p) => accepted.has(p))) out.push(`an inline context must import the ${subject.name} context (${u.contextAlias}), so the catalog's attributes keep their meaning`);
     defs = Object.assign({}, ...parts.filter((p) => p && typeof p === 'object' && !Array.isArray(p)));
+    // The inline part only adds: no keyword (@vocab, @base ...) that changes how other terms are read,
+    // and no term of the catalog or the NGSI-LD core context, so the catalog's attributes keep their meaning.
+    const catalogTerms = new Set([...Object.keys(subject.inlineTerms ?? {}), ...attributesOf(model).map(([n]) => n)]);
+    for (const k of Object.keys(defs)) {
+      if (k.startsWith('@')) out.push(`an inline context must not set ${k}: it changes how the catalog's terms are read`);
+      else if (catalogTerms.has(k) || CORE_TERMS.has(k)) out.push(`an inline context must not redefine ${k}, a term of the ${subject.name} or core context`);
+    }
   } else out.push('context is required: the extension\'s @context URL, or the @context value written inline');
 
   const attrs = new Set(attributesOf(model).map(([n]) => n));

@@ -148,3 +148,11 @@ test('no credentials in URLs, and only published versions count', () => {
   const older = extensionProblems({ ...detour, version: '0.9.0', context: unpublished }, RoadRestriction, transportation, [transportation.version, '0.9.0']);
   assert.deepEqual(older, [], 'a published older version and its exact context are fine');
 });
+
+test('an inline context only adds: no keywords and no catalog or core terms redefined', () => {
+  const base = `${BASE_URL}/context/transportation/v${major}.jsonld`;
+  const [[attr]] = attributesOf(RoadRestriction);
+  assert.match(problems({ context: [base, { '@vocab': 'https://evil.example/', ...detour.context[1] }] }).join('\n'), /must not set @vocab/);
+  assert.match(problems({ context: [base, { [attr]: 'https://evil.example/x', ...detour.context[1] }] }).join('\n'), new RegExp(`must not redefine ${attr}`));
+  assert.match(problems({ context: [base, { location: 'https://evil.example/x', ...detour.context[1] }] }).join('\n'), /must not redefine location/);
+});
