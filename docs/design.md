@@ -207,6 +207,6 @@ Japanese is the default language, English the second; both are mandatory for eve
 - Smart Data Models: https://smartdatamodels.org/ and https://github.com/smart-data-models
 - ETSI NGSI-LD core context files: https://uri.etsi.org/ngsi-ld/v1/
 - RFC 8984, JSCalendar: https://www.rfc-editor.org/rfc/rfc8984.html
-- Digital Agency GIF: https://www.digital.go.jp/policies/data_strategy_government_interoperability_framework and https://github.com/JDA-DM/GIF
+- Digital Agency GIF: https://www.digital.go.jp/policies/data_strategy_government_interoperability_framework and https://github.com/digital-go-jp/GIF
 - 自治体標準オープンデータセット: https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test
 - Cloudflare Workers static assets, headers and redirects: https://developers.cloudflare.com/workers/static-assets/
