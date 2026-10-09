@@ -1,0 +1,77 @@
+name: 他のカタログの登録 / Report another catalog
+description: ほかのデータモデルカタログや語彙を知らせる / Tell us about another catalog of data models or vocabularies
+body:
+  - type: markdown
+    attributes:
+      value: |
+        「[他のデータモデルカタログ](https://datamodels.jp/guide/catalogs)」のページに載せる候補です。メンテナーが確認してから載せます。datamodels.jp のモデルを拡張したカタログなら、そのことも書いてください。日本語でも英語でも構いません。
+        Candidates for the page "[Other data model catalogs](https://datamodels.jp/en/guide/catalogs)". A maintainer checks them before listing. If the catalog extends models of datamodels.jp, please say so. Japanese or English are both fine.
+  - type: input
+    id: name
+    attributes:
+      label: カタログの名前（日本語と英語） / Name of the catalog (Japanese and English)
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: カタログのページ / Page of the catalog
+      description: 人が読むページの URL / The URL of the page people read
+    validations:
+      required: true
+  - type: input
+    id: publisher
+    attributes:
+      label: 公開している組織 / Publisher
+      description: 例 デジタル庁、FIWARE Foundation / For example the Digital Agency or the FIWARE Foundation
+    validations:
+      required: true
+  - type: dropdown
+    id: scope
+    attributes:
+      label: 範囲 / Scope
+      options:
+        - 世界 / Global
+        - 日本 / Japan
+        - 1 つの組織またはプロジェクト / One organisation or project
+    validations:
+      required: true
+  - type: textarea
+    id: content
+    attributes:
+      label: 内容と形式 / Content and formats
+      description: どんな分野のモデルか、どの形式か（JSON Schema、@context、XSD、Excel など） / Which fields the models cover and in which formats (JSON Schema, @context, XSD, Excel and so on)
+    validations:
+      required: true
+  - type: dropdown
+    id: relation
+    attributes:
+      label: datamodels.jp との関係 / Relation to datamodels.jp
+      options:
+        - datamodels.jp のモデルを拡張している / Extends models of datamodels.jp
+        - datamodels.jp のモデルと重なる、または対応表を作れる / Overlaps with models of datamodels.jp, or could be mapped
+        - 参考になる / Useful as a reference
+    validations:
+      required: true
+  - type: textarea
+    id: models
+    attributes:
+      label: 関係する datamodels.jp のモデル（任意） / Related models of datamodels.jp (optional)
+      description: サブジェクト/型、例 transportation/RoadRestriction / subject/Type, for example transportation/RoadRestriction
+  - type: input
+    id: index
+    attributes:
+      label: 機械が読める一覧（任意） / Machine-readable index (optional)
+      description: catalog.json と同じ形式なら、そう書いてください / If it uses the same format as catalog.json, please say so
+  - type: input
+    id: license
+    attributes:
+      label: ライセンス / Licence
+      description: 例 CC BY 4.0、不明 / For example CC BY 4.0, or unknown
+  - type: checkboxes
+    id: public
+    attributes:
+      label: 公開 / Public
+      options:
+        - label: 誰でも読めるカタログです（ログインや契約なしで） / Anyone can read this catalog (no login or contract)
+          required: true

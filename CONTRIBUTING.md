@@ -44,6 +44,10 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 - レビューを経て、他のモデルと同じく `draft` で取り込みます。新しい段階はありません。
 - `ADOPTERS.yaml` の記載は、早めの根拠になります。1 つの組織は 1 回だけ数えるので、`stable` に 2 つの独立した組織が要るという規則は変わりません（2026-10-06 決定、#156）。
 
+### 他のカタログを知らせる
+
+ほかのデータモデルカタログや語彙は、[他のカタログの登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=catalog-report.yml)で知らせてください。メンテナーが確認して「[他のデータモデルカタログ](https://datamodels.jp/guide/catalogs)」のページに載せます。datamodels.jp のモデルを拡張したカタログを機械が読める形で一覧にする方法は、まだ決まっていません（#56）。
+
 ### 拡張を一覧に載せる
 
 モデルに属性を足して使っている組織は、その拡張をモデルのページの「拡張している組織」と `catalog.json` に載せられます。同じ意味の属性に、ほかの組織が同じ名前を使えるようにするためです。
@@ -128,6 +132,10 @@ A tool that registers data (a broker console, for example) may build a new model
 - **Tools never post.** A person opens the pull request under their own GitHub account and signs off the commits (DCO), so authorship and responsibility stay with a person.
 - After review, the model is merged as `draft`, like any other. There is no extra stage.
 - The `ADOPTERS.yaml` entry gives reviewers evidence early. One organisation still counts once, so `stable` still needs two independent organisations (decided 2026-10-06, #156).
+
+### Telling us about another catalog
+
+Report another catalog of data models or vocabularies with the [catalog form](https://github.com/geolonia/datamodels/issues/new?template=catalog-report.yml). A maintainer checks it and lists it on the page "[Other data model catalogs](https://datamodels.jp/en/guide/catalogs)". How catalogs that extend datamodels.jp models are listed for machines is not decided yet (#56).
 
 ### Listing an extension
 

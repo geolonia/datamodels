@@ -26,7 +26,7 @@ body:
     id: terms
     attributes:
       label: 足した属性 / Added attributes
-      description: 1 行に 1 つ：名前、IRI、意味（日本語と英語）。IRI は自分のドメインで / One per line: name, IRI, meaning (Japanese and English). IRIs under your own domain
+      description: "1 行に 1 つ：名前、IRI、意味（日本語と英語）。IRI は自分のドメインで / One per line: name, IRI, meaning (Japanese and English). IRIs under your own domain"
       placeholder: detour, https://www.pref.wakayama.lg.jp/ns/road/detour, 迂回路 / detour route
       render: text
     validations:
