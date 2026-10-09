@@ -34,22 +34,7 @@ Data written with `responsibleTeam` means exactly the same as data written with 
 - **One name per meaning in your @context.** If you take the catalog's @context and add an alias, one meaning has two names, and JSON-LD returns the shorter one. To always get your names back, write your @context as a complete list of the names you use, without the catalog's. Copying the catalog's @context and renaming is the quick way.
 - **A type alias is not a separate type.** `Saigai` and `Project` have the same meaning, so a broker stores and matches them as one type, and access rules treat them as one. A type that must be separate (to control access by type, or to add attributes) is a **subclass**, not an alias: it has its own meaning and keeps the parent's attributes (a schema's `x-subclass-of`; [Rules for models](/en/guide/rules#rules)).
 
-## With GeonicDB
-
-A registered model uses short names. With aliases, register it under your names and point `contextUrl` at your @context. The export script renames in one go:
-
-```bash
-CONTEXT=https://example.com/context/city-disaster.jsonld
-node adapters/geonicdb/export.mjs task --type Project --type-name Saigai \
-  --context-url "$CONTEXT" --out ./out
-node adapters/geonicdb/export.mjs task --type Task \
-  --rename assignee=responsibleTeam \
-  --context-url "$CONTEXT" --out ./out
-```
-
-Each attribute keeps the catalog's meaning, so only the names are yours.
-
 ## Related
 
 - [Adding attributes](/en/guide/extend): when you need to **add** attributes
-- [Use with GeonicDB](/en/guide/geonicdb): what registering does, adding your own attributes
+- [Use with GeonicDB](/en/guide/geonicdb): what registering does, your own attributes, registering under your own names

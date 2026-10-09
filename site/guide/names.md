@@ -34,22 +34,7 @@ description: モデルを変えずに、属性名や型名を自分たちの用�
 - **自分の @context では、ひとつの意味にひとつの名前。** カタログの @context を取り込んだ上で別名を足すと、ひとつの意味に名前が 2 つでき、JSON-LD は短いほうで返します。必ず自分の名前で受け取りたいなら、自分の @context は使う名前をすべて並べた一覧として書き、カタログの @context は取り込まないでください。カタログの @context をコピーして名前を書き換えるのが早道です。
 - **型のエイリアスは、別の型ではありません。** `Saigai` と `Project` は同じ意味なので、ブローカーは同じ型として保存・照合し、アクセスの規則も同じ型として扱います。型を分けたい（型でアクセスを分ける、属性を足す）ときは、エイリアスではなく**サブクラス**を使います。独自の意味を持ちつつ、親の属性はそのまま使います（スキーマの `x-subclass-of`。[モデルのルール](/guide/rules#rules)）。
 
-## GeonicDB で使う
-
-登録するモデルは短い名前を使います。エイリアスを使うなら、自分の名前で登録し、`contextUrl` に自分の @context を指定します。書き出しスクリプトが名前をまとめて置き換えます。
-
-```bash
-CONTEXT=https://example.com/context/city-disaster.jsonld
-node adapters/geonicdb/export.mjs task --type Project --type-name Saigai \
-  --context-url "$CONTEXT" --out ./out
-node adapters/geonicdb/export.mjs task --type Task \
-  --rename assignee=responsibleTeam \
-  --context-url "$CONTEXT" --out ./out
-```
-
-各属性はカタログの意味を保つので、変わるのは名前だけです。
-
 ## 関連
 
 - [属性を足す](/guide/extend): 属性を**足す**とき
-- [GeonicDB で使う](/guide/geonicdb): 登録すると何が起きるか、独自の属性を足すとき
+- [GeonicDB で使う](/guide/geonicdb): 登録すると何が起きるか、独自の属性を足すとき、独自の名前で登録するとき

@@ -84,7 +84,7 @@ To accept unknown attributes without checking them instead, export with `--allow
 </details>
 
 <details class="rules">
-<summary>Different type names in your tenant</summary>
+<summary>Different type or attribute names in your tenant</summary>
 
 A tenant that needs a prefix on its type names (for example when several projects share it and policies match on the type name) can export prefixed definitions. The attribute names and their meaning stay the catalog's.
 
@@ -92,6 +92,17 @@ A tenant that needs a prefix on its type names (for example when several project
 git clone https://github.com/geolonia/datamodels && cd datamodels && npm ci
 node adapters/geonicdb/export.mjs transportation \
   --type-prefix Acme --out ./out
+```
+
+With your own names for a type or an attribute ([Your own names](/en/guide/names)), register the model under your names and point `contextUrl` at your @context. The export script renames in one go; each attribute keeps the catalog's meaning:
+
+```bash
+CONTEXT=https://example.com/context/city-disaster.jsonld
+node adapters/geonicdb/export.mjs task --type Project --type-name Saigai \
+  --context-url "$CONTEXT" --out ./out
+node adapters/geonicdb/export.mjs task --type Task \
+  --rename assignee=responsibleTeam \
+  --context-url "$CONTEXT" --out ./out
 ```
 
 </details>

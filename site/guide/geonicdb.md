@@ -84,7 +84,7 @@ node adapters/geonicdb/export.mjs transportation \
 </details>
 
 <details class="rules">
-<summary>テナント内で型名を変える</summary>
+<summary>テナント内で型名や属性名を変える</summary>
 
 型名に接頭辞を付けたいテナント（複数の案件が共有し、ポリシーを型名で分けているときなど）は、接頭辞付きの定義を書き出せます。属性名とその意味はカタログのままです。
 
@@ -92,6 +92,17 @@ node adapters/geonicdb/export.mjs transportation \
 git clone https://github.com/geolonia/datamodels && cd datamodels && npm ci
 node adapters/geonicdb/export.mjs transportation \
   --type-prefix Acme --out ./out
+```
+
+型や属性を独自の名前で使う（[独自の名前で使う](/guide/names)）なら、自分の名前で登録し、`contextUrl` に自分の @context を指定します。書き出しスクリプトが名前をまとめて置き換えます。各属性はカタログの意味を保ちます:
+
+```bash
+CONTEXT=https://example.com/context/city-disaster.jsonld
+node adapters/geonicdb/export.mjs task --type Project --type-name Saigai \
+  --context-url "$CONTEXT" --out ./out
+node adapters/geonicdb/export.mjs task --type Task \
+  --rename assignee=responsibleTeam \
+  --context-url "$CONTEXT" --out ./out
 ```
 
 </details>
