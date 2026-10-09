@@ -50,6 +50,8 @@ function key(e: KeyboardEvent, i: number) {
 .tabs button:hover { color: var(--vp-c-text-1); }
 .tabs button.on { color: var(--vp-c-text-1); border-bottom-color: var(--vp-c-brand-1); }
 .tabs button:focus-visible, [role='tabpanel']:focus-visible { outline: 2px solid var(--vp-c-brand-1); outline-offset: 2px; }
+/* A mouse click leaves no focus ring; the keyboard does. */
+.tabs button:focus:not(:focus-visible), [role='tabpanel']:focus:not(:focus-visible) { outline: none; }
 .example-tabs :deep(div[class*='language-']) { margin-top: 12px; }
 .try { padding-top: 12px; }
 </style>

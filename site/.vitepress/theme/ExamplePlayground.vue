@@ -20,7 +20,7 @@ const props = defineProps<{
 const DEFAULT_VOCAB = 'https://uri.etsi.org/ngsi-ld/default-context/'
 const L = {
   ja: {
-    hint: '書き換えると、その場で検証します。', reset: '元に戻す', loading: 'スキーマを読み込んでいます…',
+    hint: '書き換えると、その場でモデルと照合します', reset: '元に戻す', loading: 'スキーマを読み込んでいます…',
     valid: (t: string) => `${t} のスキーマに合っています。`, invalid: (n: number) => `${n} 件の問題があります。`,
     syntax: 'JSON の書式エラー: ', notObject: 'エンティティは JSON のオブジェクト（{ … }）です。',
     typeMismatch: (k: string, got: string, want: string) => `${k}: ${got} になっていますが、このモデルでは ${want} です。`,
@@ -30,7 +30,7 @@ const L = {
     unknown: 'このモデルに無い属性。NGSI-LD の既定のコンテキストに展開され、カタログの意味は付きません。',
   },
   en: {
-    hint: 'Edit it and it is checked as you type.', reset: 'Reset', loading: 'Loading the schema…',
+    hint: 'Checked against the model as you type', reset: 'Reset', loading: 'Loading the schema…',
     valid: (t: string) => `Fits the ${t} schema.`, invalid: (n: number) => `${n} problem${n === 1 ? '' : 's'}.`,
     syntax: 'JSON syntax error: ', notObject: 'An entity is a JSON object ({ … }).',
     typeMismatch: (k: string, got: string, want: string) => `${k}: this is a ${got}, the model declares ${want}.`,
@@ -161,9 +161,9 @@ const rows = computed(() => Math.min(30, Math.max(10, text.value.split('\n').len
         <button type="button" role="radio" :aria-checked="form === 'kv'" :class="{ on: form === 'kv' }" @click="switchTo('kv')">key-values</button>
         <button type="button" role="radio" :aria-checked="form === 'norm'" :class="{ on: form === 'norm' }" @click="switchTo('norm')">normalized</button>
       </div>
+      <span class="hint">{{ L.hint }}</span>
       <button type="button" class="reset" @click="reset">{{ L.reset }}</button>
     </div>
-    <p class="hint">{{ L.hint }}</p>
     <div class="editor">
       <pre ref="hl" class="hl" aria-hidden="true" v-html="highlighted" />
       <textarea v-model="text" :rows="rows" spellcheck="false" autocapitalize="off" autocomplete="off" :aria-label="`${type} (${form === 'kv' ? 'key-values' : 'normalized'})`" aria-describedby="playground-status" @scroll="syncScroll" />
@@ -198,7 +198,10 @@ const rows = computed(() => Math.min(30, Math.max(10, text.value.split('\n').len
 .forms button.on { color: var(--vp-c-text-1); background: var(--vp-c-default-soft); font-weight: 600; }
 .reset { padding: 4px 12px; font-size: 14px; border: 1px solid var(--vp-c-divider); border-radius: 8px; color: var(--vp-c-text-2); }
 .reset:hover, .forms button:hover { color: var(--vp-c-brand-1); }
-.hint { margin: 8px 0 4px; font-size: 14px; color: var(--vp-c-text-2); }
+.hint { flex: 1; margin-left: 4px; font-size: 13px; color: var(--vp-c-text-2); }
+/* On a narrow screen the hint goes under the switch and Reset, on one line. */
+@media (max-width: 640px) { .hint { order: 3; flex-basis: 100%; margin: 0; } }
+.bar + .editor { margin-top: 8px; }
 .editor { position: relative; border-radius: 8px; background: var(--vp-code-block-bg); }
 /* The <pre> and the textarea must lay out the text identically (font, padding, wrapping). */
 .editor .hl, .editor textarea { margin: 0; padding: 12px; font-family: var(--vp-font-family-mono); font-size: 13px; line-height: 1.5; tab-size: 2; white-space: pre-wrap; overflow-wrap: anywhere; border: 1px solid var(--vp-c-divider); border-radius: 8px; }
