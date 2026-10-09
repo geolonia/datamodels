@@ -29,7 +29,7 @@ description: どの URL を使うか、何が変わらないか、バージョ�
 
 1. **公開したバージョン付きファイルは変更も削除もしない。** `/context/<subject>/v1.0.0.jsonld` の中身は永久に同じです。CI はすべてのファイルのハッシュを記録し、変更を取り込みません。
 2. **属性の意味は変えない。** 変える必要があるときは新しい属性を足し、古い属性を非推奨にします。
-3. **型と属性の IRI はドキュメントにつながる。** `https://datamodels.jp/ns/transportation/RoadRestriction` をブラウザで開くと、その型のページが表示されます。
+3. **型と属性の IRI はドキュメントにつながる。** `https://datamodels.jp/ns/transportation/RoadRestriction` をブラウザで開くと、その型のページが表示されます。JSON-LD を求めるプログラム（`Accept: application/ld+json`）には、代わりにサブジェクトの語彙（`/vocab/transportation/v1.jsonld`）を返します。型の定義、ラベル、説明が入っています。
 
 ## バージョン {#versions}
 
@@ -61,7 +61,7 @@ description: どの URL を使うか、何が変わらないか、バージョ�
 | `/vocab/<subject>/vX.Y.Z.jsonld` | 語彙（RDFS: クラス、サブクラス関係、日英ラベル。不変） |
 | `/examples/<subject>/<Type>/example.json` | 例（key-values） |
 | `/examples/<subject>/<Type>/example-normalized.jsonld` | 例（NGSI-LD normalized。値型には無い） |
-| `/ns/<subject>/<Term>` | 型・属性の IRI（ページにリダイレクト） |
+| `/ns/<subject>/<Term>` | 型・属性の IRI（ページにリダイレクト。JSON-LD のクライアントには語彙） |
 | `/mapping/<subject>/<Type>/<name>.yaml` | 対応表（他の標準との対応と変換の規則。バージョンなし: URL は変わらず、内容は現在のモデルに合わせる） |
 | `/adapters/<name>/<subject>/<Type>.json` | アダプターの出力（例: GeonicDB の Custom Data Model 定義） |
 | `/catalog.json` | プログラム向けの全モデルの一覧（/catalog.schema.json に準拠） |

@@ -59,6 +59,11 @@ for (const subject of subjects) {
     if (mu.typeIri === `${BASE_URL}/ns/${subject.name}/${model.type}`) {
       r = await head(mu.typeIri);
       expect(r.status === 302 && h(r, 'location') === mu.page.replace(BASE_URL, ''), `${mu.typeIri}: ${r.status} -> ${h(r, 'location')}`);
+      // A JSON-LD client gets the subject's vocabulary instead (#196); both answers vary by Accept.
+      const vocab = u.vocabAlias.replace(BASE_URL, '');
+      const ld = await fetch(swap(mu.typeIri), { method: 'HEAD', redirect: 'manual', headers: { accept: 'application/ld+json' } });
+      expect(ld.status === 303 && h(ld, 'location') === vocab, `${mu.typeIri} (JSON-LD): ${ld.status} -> ${h(ld, 'location')}, expected 303 -> ${vocab}`);
+      expect(/accept/i.test(h(r, 'vary')) && /accept/i.test(h(ld, 'vary')), `${mu.typeIri}: Vary must include Accept (${h(r, 'vary')} / ${h(ld, 'vary')})`);
     }
     r = await head(mu.page); expect(r.status === 200, `${mu.page}: ${r.status}`);
     // Value types have no adapter files and no normalized example of their own.
