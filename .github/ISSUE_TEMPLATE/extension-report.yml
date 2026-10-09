@@ -1,0 +1,64 @@
+name: 拡張の登録 / Report an extension
+description: モデルに足した属性を「拡張している組織」に載せる / List the attributes you added to a model under "Extended by"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        モデルのページの「拡張している組織」と catalog.json に載せます。ほかの組織が同じ意味の属性に同じ名前を使えるようにするためです。内容は確認せず、持ち主の申告のまま載せます。日本語でも英語でも構いません。
+        This lists your extension on the model page ("Extended by") and in catalog.json, so others who need the same attribute can reuse your name. It is listed as you report it, without review. Japanese or English are both fine.
+
+        **載せないもの / Never include:** API キー、トークン、ログイン URL などのアクセス情報 / credentials or access details (API keys, tokens, login URLs).
+  - type: input
+    id: model
+    attributes:
+      label: 拡張したモデル / Model you extended
+      description: サブジェクト/型、例 transportation/RoadRestriction / subject/Type, for example transportation/RoadRestriction
+    validations:
+      required: true
+  - type: input
+    id: organization
+    attributes:
+      label: 組織名（日本語と英語） / Organisation (Japanese and English)
+      description: 例 和歌山県 / Wakayama Prefecture
+    validations:
+      required: true
+  - type: textarea
+    id: terms
+    attributes:
+      label: 足した属性 / Added attributes
+      description: 1 行に 1 つ：名前、IRI、意味（日本語と英語）。IRI は自分のドメインで / One per line: name, IRI, meaning (Japanese and English). IRIs under your own domain
+      placeholder: detour, https://www.pref.wakayama.lg.jp/ns/road/detour, 迂回路 / detour route
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: "@context"
+      description: 拡張した @context の URL、またはデータの中に書いている @context / The URL of your extended @context, or the @context you write inside the data
+      render: json
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: 基にしたバージョン / Version it builds on
+      description: サブジェクトのバージョン、例 1.0.0 / The subject version, for example 1.0.0
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: 組織またはプロジェクトのページ（任意） / Organisation or project page (optional)
+  - type: input
+    id: data
+    attributes:
+      label: 公開しているデータ（任意） / Public data (optional)
+      description: 公開していなければ空のままで / Leave empty if the data is not public
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: 公開の同意 / Consent to list
+      options:
+        - label: この組織を代表して、上の内容を datamodels.jp で公開することに同意します / I represent this organisation and agree to list the above publicly on datamodels.jp
+          required: true

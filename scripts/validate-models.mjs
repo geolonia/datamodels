@@ -21,6 +21,7 @@ import { loadSubjects, attributesOf, toKeyValues, unwrapKeyValues, NGSI_TYPES, s
 import { resolveContextDocument } from './lib/releases.mjs';
 import { bilingual, mappingProblems, viaCycles } from './lib/mapping-check.mjs';
 import { reportFailures } from './lib/ci-summary.mjs';
+import { extensionProblems } from './lib/extensions.mjs';
 import { buildVocabulary } from './lib/vocab.mjs';
 
 const failures = [];
@@ -288,6 +289,8 @@ for (const subject of subjects) {
 
     // Correspondence tables render on the model page: every field must be one of the model's.
     for (const map of model.mappings ?? []) for (const msg of mappingProblems(map, model.schema, mappingNames)) fail(`${mwhere}/mapping/${map.name}.yaml`, msg);
+    // Listed extensions render on the model page and in catalog.json; the owner's IRIs, never datamodels.jp's.
+    for (const ext of model.extensions ?? []) for (const msg of extensionProblems(ext, model, subject)) fail(`${mwhere}/extensions/${ext.name}.yaml`, msg);
 
     // Status and adopters (decided in #38): stable needs two independent
     // implementations, self-reported with a link and checked by a reviewer in
