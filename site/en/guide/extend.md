@@ -43,6 +43,10 @@ Your data names your @context instead of the catalog's, and has your attributes 
   "id": "urn:ngsi-ld:RoadRestriction:0001",
   "type": "RoadRestriction",
   "roadName": "靖国通り",
+  "location": {
+    "type": "LineString",
+    "coordinates": [[139.7505, 35.695], [139.752, 35.6956]]
+  },
   "restrictionStatus": "closed",
   "patrolRoute": "A-3"
 }

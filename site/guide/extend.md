@@ -43,6 +43,10 @@ description: カタログのモデルを複製せずに独自の属性を足す�
   "id": "urn:ngsi-ld:RoadRestriction:0001",
   "type": "RoadRestriction",
   "roadName": "靖国通り",
+  "location": {
+    "type": "LineString",
+    "coordinates": [[139.7505, 35.695], [139.752, 35.6956]]
+  },
   "restrictionStatus": "closed",
   "patrolRoute": "A-3"
 }
