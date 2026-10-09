@@ -25,7 +25,7 @@ const T = {
 const GROUPS = [
   ['government', /^https:\/\/([a-z0-9-]+\.)*go\.jp\//],
   ['government', /^https:\/\/www\.jartic\.or\.jp\//],
-  ['government', /^https:\/\/github\.com\/JDA-DM\//],
+  ['government', /^https:\/\/github\.com\/digital-go-jp\//],
   ['international', /^https:\/\/www\.rfc-editor\.org\//],
   ['international', /^https:\/\/github\.com\/smart-data-models\//],
   ['tool', /^https:\/\/docs\.github\.com\//],

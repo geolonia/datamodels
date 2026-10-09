@@ -27,7 +27,7 @@
 
 - **CC BY の出典から写した部分**: Smart Data Models やデジタル庁の GIF コアデータモデルのスキーマなど、CC BY の出典から内容を写したファイルは、ファイル全体が CC BY 4.0 のままで、その出典の表示が付きます。機械が読むファイルでも同じです。該当するファイルと出典は、モデルのフォルダの `LICENSE.md` に書きます。
 - **現在、上流から内容を写したモデルはありません。** 上流の標準は写さずに対応付けています。対応は `mapping/*.yaml` に記録し、IRI を再利用しています。再利用した IRI は名前であり、写した内容ではありません。
-- **GIF**: リポジトリ（https://github.com/JDA-DM/GIF）は CC0 1.0 で、コアデータモデルのスキーマ `GIF_Core_DataModel.xsd` は CC BY 4.0 と宣言しています。対応表は、対応を記録するために GIF の項目名を挙げています。どちらのライセンスが適用されるかは [#65](https://github.com/geolonia/datamodels/issues/65) でデジタル庁に問い合わせています。
+- **GIF**: リポジトリ（https://github.com/digital-go-jp/GIF）は CC0 1.0 で、コアデータモデルのスキーマ `GIF_Core_DataModel.xsd` は CC BY 4.0 と宣言しています。対応表は、対応を記録するために GIF の項目名を挙げています。どちらのライセンスが適用されるかは [#65](https://github.com/geolonia/datamodels/issues/65) でデジタル庁に問い合わせています。
 - **自治体標準オープンデータセット**: デジタル庁の自治体標準オープンデータセット（公共データ利用規約（第1.0版）、PDL1.0、CC BY 4.0 と互換）に由来する部分は、モデルの対応表に出典を書いています。
 
 ## 変更
@@ -69,7 +69,7 @@ The reason for the split: attribution works where people read, and it does not s
 
 - **Copied from a CC BY source**: a file that contains content copied from a source under CC BY, such as Smart Data Models or the Digital Agency's GIF core data model schema, stays CC BY 4.0 as a whole, with that source's attribution. This holds for machine-readable files too. The `LICENSE.md` of the model folder names each such file and its source.
 - **Today no model contains copied upstream content.** Upstream standards are mapped, not copied: the `mapping/*.yaml` files record the correspondence, and IRIs are reused. A reused IRI is a name, not copied content.
-- **GIF**: the repository (https://github.com/JDA-DM/GIF) is CC0 1.0, and its core data model schema `GIF_Core_DataModel.xsd` declares CC BY 4.0. The mapping files name GIF fields to record the correspondence. [#65](https://github.com/geolonia/datamodels/issues/65) asks the Digital Agency which licence applies.
+- **GIF**: the repository (https://github.com/digital-go-jp/GIF) is CC0 1.0, and its core data model schema `GIF_Core_DataModel.xsd` declares CC BY 4.0. The mapping files name GIF fields to record the correspondence. [#65](https://github.com/geolonia/datamodels/issues/65) asks the Digital Agency which licence applies.
 - **自治体標準オープンデータセット**: material from the Digital Agency's municipal standard open datasets (公共データ利用規約（第1.0版）, PDL1.0, compatible with CC BY 4.0) is credited to its source in the model's mapping files.
 
 ## Change

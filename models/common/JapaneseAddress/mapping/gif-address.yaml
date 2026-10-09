@@ -5,7 +5,7 @@ standard:
   name:
     ja: デジタル庁 GIF コアデータモデル「住所」
     en: Digital Agency GIF core data model "Address"
-  url: https://github.com/JDA-DM/GIF/tree/main/430_%E3%82%B3%E3%82%A2%E3%83%87%E3%83%BC%E3%82%BF%E3%83%A2%E3%83%87%E3%83%AB
+  url: https://github.com/digital-go-jp/GIF/tree/main/430_%E3%82%B3%E3%82%A2%E3%83%87%E3%83%BC%E3%82%BF%E3%83%A2%E3%83%87%E3%83%AB
   license:
     ja: "スキーマは CC BY 4.0、リポジトリは CC0 1.0"
     en: "CC BY 4.0 (schema), CC0 1.0 (repository)"
