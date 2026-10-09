@@ -14,7 +14,8 @@ const TERM = /^[A-Za-z][A-Za-z0-9_]*$/;
 const SEMVER = /^(\d+)\.(\d+)\.(\d+)$/;
 // Reported by outsiders and rendered into the page (Markdown with HTML and Vue): plain text and
 // plain URLs only, so nothing in a file can add markup, a script or a template expression.
-const UNSAFE_TEXT = /[<>{}]/;
+// HTML character references too (&#123; is a brace once Markdown has decoded it).
+const UNSAFE_TEXT = /[<>{}]|&#?\w+;/;
 // No user name or password in a URL either: the listing never carries credentials.
 const isLink = (u) => { if (typeof u !== 'string' || /[\s`<>{}|"\\^()[\]]/.test(u)) return false; try { const x = new URL(u); return (x.protocol === 'https:' || x.protocol === 'http:') && x.hostname !== '' && x.username === '' && x.password === ''; } catch { return false; } };
 const plain = (v) => bilingual(v) && !UNSAFE_TEXT.test(v.ja) && !UNSAFE_TEXT.test(v.en);
@@ -23,7 +24,30 @@ const CATALOG_HOST = new URL(BASE_URL).hostname;
 const ours = (u) => { try { const h = new URL(u).hostname.toLowerCase(); return h === CATALOG_HOST || h.endsWith(`.${CATALOG_HOST}`); } catch { return false; } };
 const older = (a, b) => { const x = a.match(SEMVER).slice(1).map(Number); const y = b.match(SEMVER).slice(1).map(Number); return x[0] - y[0] || x[1] - y[1] || x[2] - y[2]; };
 
-/** The IRI a term expands to in an inline context: its definition, with a prefix defined in the same context expanded. */
+/** YYYY-MM or YYYY-MM-DD with a real month and day. */
+function isDate(s) {
+  const m = /^(\d{4})-(\d{2})(?:-(\d{2}))?$/.exec(s);
+  if (!m) return false;
+  const [y, mo, d] = [Number(m[1]), Number(m[2]), m[3] === undefined ? 1 : Number(m[3])];
+  const t = new Date(Date.UTC(y, mo - 1, d));
+  return mo >= 1 && mo <= 12 && t.getUTCMonth() === mo - 1 && t.getUTCDate() === d;
+}
+
+/**
+ * The IRIs the terms of an inline context expand to, read in order as JSON-LD does: a term in one
+ * object sees the prefixes of that object and of the objects before it, not of later ones.
+ */
+function inlineIris(parts) {
+  const out = {}; let active = {};
+  for (const part of parts) {
+    if (!part || typeof part !== 'object' || Array.isArray(part)) continue;
+    active = { ...active, ...part };
+    for (const term of Object.keys(part)) out[term] = inlineIri(active, term);
+  }
+  return out;
+}
+
+/** The IRI a term expands to with the given definitions: its definition, with a defined prefix expanded. */
 function inlineIri(defs, term) {
   const def = defs[term];
   const id = typeof def === 'string' ? def : def?.['@id'];
@@ -51,13 +75,13 @@ export function extensionProblems(ext, model, subject, published = [subject.vers
   for (const k of keys) if (k !== 'name' && !TOP.has(k)) out.push(`unknown key ${k} (allowed: ${[...TOP].join(', ')})`);
   if (!plain(ext.organization)) out.push('organization needs ja and en, each non-empty plain text (no < > { }) and nothing else');
   for (const k of ['url', 'data']) if (ext[k] !== undefined && !isLink(ext[k])) out.push(`${k} must be a plain http(s) URL with a host, got ${JSON.stringify(ext[k])}`);
-  if (ext.since !== undefined && !/^\d{4}-\d{2}(-\d{2})?$/.test(String(ext.since))) out.push(`since must be a date (2026-10 or 2026-10-09), got ${JSON.stringify(ext.since)}`);
+  if (ext.since !== undefined && !isDate(String(ext.since))) out.push(`since must be a date (2026-10 or 2026-10-09), got ${JSON.stringify(ext.since)}`);
   if (typeof ext.version !== 'string' || !SEMVER.test(ext.version)) out.push(`version must be the subject version the extension builds on (X.Y.Z), got ${JSON.stringify(ext.version)}`);
   else if (older(subject.version, ext.version) < 0) out.push(`version ${ext.version} is newer than the subject (${subject.version})`);
   else if (!published.includes(ext.version)) out.push(`version ${ext.version} was never published; published: ${[...new Set(published)].join(', ')}`);
 
   // The extended @context: a URL on the owner's side, or written inline (the @context value).
-  let defs = null;
+  let defs = null; let iris = {};
   if (typeof ext.context === 'string') {
     if (!isLink(ext.context)) out.push(`context must be an http(s) URL or the @context value itself, got ${JSON.stringify(ext.context)}`);
     else if (ours(ext.context)) out.push('context must be the extension\'s own @context, not a datamodels.jp URL');
@@ -67,7 +91,10 @@ export function extensionProblems(ext, model, subject, published = [subject.vers
     const u = subjectUrls(subject);
     const accepted = new Set([u.contextAlias, u.contextExact, ...(published.includes(ext.version) ? [`${BASE_URL}/context/${subject.name}/v${ext.version}.jsonld`] : [])]);
     if (!parts.some((p) => accepted.has(p))) out.push(`an inline context must import the ${subject.name} context (${u.contextAlias}), so the catalog's attributes keep their meaning`);
+    // Inline means nothing hosted: the only URL in it is the catalog context it builds on.
+    for (const p of parts) if (typeof p === 'string' && !accepted.has(p)) out.push(`an inline context may import only the ${subject.name} context, not ${JSON.stringify(p)}`);
     defs = Object.assign({}, ...parts.filter((p) => p && typeof p === 'object' && !Array.isArray(p)));
+    iris = inlineIris(parts);
     // The inline part only adds: no keyword (@vocab, @base ...) that changes how other terms are read,
     // and no term of the catalog or the NGSI-LD core context, so the catalog's attributes keep their meaning.
     const catalogTerms = new Set([...Object.keys(subject.inlineTerms ?? {}), ...attributesOf(model).map(([n]) => n)]);
@@ -88,7 +115,7 @@ export function extensionProblems(ext, model, subject, published = [subject.vers
     for (const k of Object.keys(t)) if (k !== 'iri' && k !== 'description') out.push(`${term}: unknown key ${k} (allowed: iri, description)`);
     if (!isLink(t.iri)) out.push(`${term}: iri must be an http(s) URL, got ${JSON.stringify(t.iri)}`);
     else if (ours(t.iri)) out.push(`${term}: the iri is under datamodels.jp; an extension names its terms under its own domain`);
-    else if (defs && inlineIri(defs, term) !== t.iri) out.push(`${term}: the inline context does not define it as ${t.iri}`);
+    else if (defs && iris[term] !== t.iri) out.push(`${term}: the inline context does not define it as ${t.iri}`);
     if (!plain(t.description)) out.push(`${term}: description needs ja and en, each non-empty plain text (no < > { }) and nothing else`);
   }
   return out;

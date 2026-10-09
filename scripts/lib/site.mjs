@@ -204,7 +204,7 @@ const extensionForm = (subject, model) => `https://github.com/geolonia/datamodel
 const cellText = (s) => String(s ?? '').replace(/\r?\n/g, ' ').replace(/\|/g, '\\|');
 // Text reported by outsiders (extensions): a table cell in which Markdown has no effect either,
 // so **x** or [x](url) shows as written instead of formatting the page or adding a link.
-const plainCell = (s) => cellText(String(s ?? '').replace(/[\\`*_[\]#~]/g, '\\$&'));
+const plainCell = (s) => cellText(String(s ?? '').replace(/&/g, '&amp;').replace(/[\\`*_[\]#~]/g, '\\$&'));
 
 function modelPage(lang, prefix, subject, model) {
   const t = T[lang]; const l = M[lang]; const u = subjectUrls(subject); const mu = modelUrls(subject, model);

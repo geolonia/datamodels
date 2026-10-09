@@ -156,3 +156,19 @@ test('an inline context only adds: no keywords and no catalog or core terms rede
   assert.match(problems({ context: [base, { [attr]: 'https://evil.example/x', ...detour.context[1] }] }).join('\n'), new RegExp(`must not redefine ${attr}`));
   assert.match(problems({ context: [base, { location: 'https://evil.example/x', ...detour.context[1] }] }).join('\n'), /must not redefine location/);
 });
+
+test('character references, extra URLs in an inline context, impossible dates and JSON-LD order are caught', () => {
+  assert.match(problems({ organization: { ja: '&#123;&#123; 1 + 1 &#125;&#125;', en: 'Wakayama' } }).join('\n'), /plain text/);
+  const base = `${BASE_URL}/context/transportation/v${major}.jsonld`;
+  assert.match(problems({ context: [base, 'https://user:secret@example.org/private.jsonld', detour.context[1]] }).join('\n'), /may import only the transportation context/);
+  for (const since of ['2026-99', '2026-02-31', '2026-13-01']) assert.match(problems({ since }).join('\n'), /since must be a date/, since);
+  for (const since of ['2026-10', '2026-02-28', '2028-02-29']) assert.deepEqual(problems({ since }), [], since);
+  // The prefix comes after the term that uses it: JSON-LD does not see it there.
+  const late = [base, { detour: 'pref:detour' }, { pref: 'https://www.pref.wakayama.lg.jp/ns/road/' }];
+  assert.match(problems({ context: late }).join('\n'), /does not define it as/);
+});
+
+test('an ampersand in reported text shows as written', () => {
+  const amp = { ...detour, organization: { ja: '和歌山県 R&D', en: 'Wakayama R&D' } };
+  assert.match(renderModelPage('en', '/en', subjects, transportation, { ...RoadRestriction, extensions: [amp] }), /Wakayama R&amp;D/);
+});
