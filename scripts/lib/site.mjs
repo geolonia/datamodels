@@ -7,7 +7,7 @@
 // which point at `#<term>`, keep working with case preserved.
 import { mkdir, writeFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
-import { attributesOf, subjectUrls, modelUrls, BASE_URL, ROOT, CORE_TERMS } from './models.mjs';
+import { attributesOf, subjectUrls, modelUrls, BASE_URL, ROOT, CORE_TERMS, mdText } from './models.mjs';
 import { modelAnchor } from './adapter-pages.mjs';
 import { graphSvg, graphTitle } from './graph.mjs';
 import { listReleases } from './releases.mjs';
@@ -231,7 +231,7 @@ function modelPage(lang, prefix, subject, model) {
   // only when it says more than the type name.
   const sameName = (a) => a.replace(/\s+/g, '').toLowerCase() === model.type.toLowerCase();
   if (!sameName(title)) md += `**${title}**\n\n`;
-  md += `${desc}\n\n`;
+  md += `${mdText(desc)}\n\n`;
   md += `| | |\n|---|---|\n`;
   md += `| ${l.kind} | ${isValue ? l.valueKind : l.entity} |\n`;
   if (aliasOf) md += `| ${l.sameAs} | ${cellText(t.aliasNote(modelLink(prefix, aliasOf)))} |\n`;
@@ -254,7 +254,7 @@ function modelPage(lang, prefix, subject, model) {
       const flags = [prop['x-personal-data'] ? badge('danger', t.pii) : '', prop['x-deprecated'] ? badge('danger', t.deprecated) : ''].filter(Boolean).join(' ');
       const star = required.has(name) ? `<span class="req" title="${l.requiredMark}">*</span>` : '';
       const value = isValue ? `${prop.type}${prop.const ? ` = ${code(prop.const)}` : ''}${prop.pattern ? `, pattern ${code(prop.pattern)}` : ''}` : valueText(lang, subject, prop, prefix);
-      const text = model.catalog.attributes?.[name]?.[lang] ?? prop.description ?? '';
+      const text = mdText(model.catalog.attributes?.[name]?.[lang] ?? prop.description ?? '');
       md += `| <a id="${name}" href="#${name}">${code(name)}</a>${star}${flags ? `<br>${flags}` : ''} | ${cellText(text)}<br><span class="iri">${code(prop['x-iri'] ?? '')}</span> | ${cellText(value)} |\n`;
     }
     md += `\n</div>\n\n`;
@@ -293,13 +293,13 @@ function modelPage(lang, prefix, subject, model) {
       const mapped = fields.filter((f) => f?.to !== null && f?.to !== undefined).length;
       // The link to the standard is an icon next to the count; a link inside <summary> does not fold or unfold it.
       const link = map.standard?.url ? `<a class="ext" href="${map.standard.url}" target="_blank" rel="noreferrer" title="${l.openStandard}" aria-label="${l.openStandard}">${EXTERNAL_ICON}</a>` : '';
-      md += `<details id="mapping-${map.name}"><summary><span class="name">${map.standard?.name?.[lang] ?? map.name}</span><span class="meta">${l.fieldsMapped(mapped, fields.length)}</span>${link}</summary>\n\n`;
-      if (map.standard?.note?.[lang]) md += `${map.standard.note[lang]}\n\n`;
-      if (map.structure?.[lang]) md += `${map.structure[lang]}\n\n`;
+      md += `<details id="mapping-${map.name}"><summary><span class="name">${mdText(map.standard?.name?.[lang] ?? map.name)}</span><span class="meta">${l.fieldsMapped(mapped, fields.length)}</span>${link}</summary>\n\n`;
+      if (map.standard?.note?.[lang]) md += `${mdText(map.standard.note[lang])}\n\n`;
+      if (map.structure?.[lang]) md += `${mdText(map.structure[lang])}\n\n`;
       md += `| ${t.mappingField} | ${t.mappingTo} | ${t.mappingNote} |\n|---|---|---|\n`;
       // Link a field to its attribute row (raw HTML: VitePress lowercases Markdown link fragments, the
       // ids keep the attribute's case for the /ns/ redirects); a value type such as Geometry has no rows.
-      for (const [field, m] of Object.entries(map.fields ?? {})) md += `| ${model.schema.properties?.[field] ? `<a href="#${field}">${code(field)}</a>` : code(field)} | ${m.to ? code(m.to) : `*${t.none}*`} | ${cellText(m.note?.[lang] ?? '')} |\n`;
+      for (const [field, m] of Object.entries(map.fields ?? {})) md += `| ${model.schema.properties?.[field] ? `<a href="#${field}">${code(field)}</a>` : code(field)} | ${m.to ? code(m.to) : `*${t.none}*`} | ${cellText(mdText(m.note?.[lang] ?? ''))} |\n`;
       // Under the table: the same table as a file a converter reads, and the standard's licence.
       const file = `${rel(mu.mapping)}${map.name}.yaml`;
       md += `\n<p class="licence">${l.mappingFile(`<a href="${file}">${map.name}.yaml</a>`, (text) => `<a href="${prefix}/guide/mapping">${text}</a>`)}</p>\n`;
@@ -323,14 +323,14 @@ function modelPage(lang, prefix, subject, model) {
     md += '\n';
   }
   const notes = model.notes?.notes ?? [];
-  if (notes.length) md += `## ${l.notesTitle} {#notes}\n\n${notes.map((n) => `- ${issueLinks(n[lang])}`).join('\n')}\n\n`;
+  if (notes.length) md += `## ${l.notesTitle} {#notes}\n\n${notes.map((n) => `- ${issueLinks(mdText(n[lang]))}`).join('\n')}\n\n`;
   return md;
 }
 
 async function subjectPage(lang, prefix, subject) {
   const t = T[lang]; const u = subjectUrls(subject);
   let md = front(subject.title[lang], subject.description[lang]);
-  md += `# ${subject.title[lang]}\n\n${subject.description[lang]}\n\n`;
+  md += `# ${subject.title[lang]}\n\n${mdText(subject.description[lang])}\n\n`;
   md += `| | |\n|---|---|\n| ${t.subject} | ${code(subject.name)} ${badge('info', t.sourceLabel[subject.source] ?? subject.source)} |\n| ${t.version} | ${code(subject.version)} |\n`;
   md += `| ${t.context} | [${code(u.contextAlias)}](${rel(u.contextAlias)}) |\n| ${t.namespace} | ${code(u.namespace)} |\n| ${t.vocabulary} | [${code(rel(u.vocabExact))}](${rel(u.vocabExact)}) |\n\n<small>${t.urlNote('#versions', `${prefix}/guide/urls`, false)}</small>\n\n`;
   md += `## ${t.models} {#models}\n\n| ${t.type} | ${t.name} | ${t.stage} |\n|---|---|---|\n`;

@@ -2,7 +2,7 @@
 // the model and its correspondence table. A municipality that knows which
 // standard its data follows (a 自治体標準オープンデータセット sheet, GSI's lists,
 // EEI) finds the matching model from here.
-import { modelUrls, BASE_URL } from './models.mjs';
+import { modelUrls, BASE_URL, mdText } from './models.mjs';
 import { standardLicense } from './mapping-check.mjs';
 
 const T = {
@@ -97,8 +97,8 @@ export const STANDARDS = [
 ];
 const standardOf = (type, mapName) => STANDARDS.find((f) => f.parts[`${type}/${mapName}`]);
 
-// Table cells: a pipe would end the cell, a line break the row.
-const cell = (s) => String(s ?? '').replace(/\|/g, '\\|').replace(/\s*\n\s*/g, ' ');
+// Table cells: a pipe would end the cell, a line break the row; < and { as in mdText.
+const cell = (s) => mdText(s).replace(/\|/g, '\\|').replace(/\s*\n\s*/g, ' ');
 /** Rows of the page: one per mapping file, by group, then the standard's name (a standard's files start with the same name), then model. */
 export function standardRows(lang, subjects) {
   const rows = [];

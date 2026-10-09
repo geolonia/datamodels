@@ -138,3 +138,8 @@ export async function resolveContextTerms(doc, subjects, resolveDocument) {
   }
   return Object.assign(terms, inlineTerms);
 }
+
+// Text from the model files (descriptions, notes, mapping notes) is Markdown: links and
+// `code` work. Outside code spans, < and { become character references, so a "<owner>"
+// or a "{{ x }}" shows as written instead of being read as an HTML tag or a Vue expression.
+export const mdText = (s) => String(s ?? '').split(/(`[^`]*`)/).map((part, i) => (i % 2 ? part : part.replace(/</g, '&lt;').replace(/\{/g, '&#123;'))).join('');
