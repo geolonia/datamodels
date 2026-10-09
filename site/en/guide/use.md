@@ -5,24 +5,21 @@ description: Validate JSON with the catalog models, send it to an NGSI-LD broker
 
 # Using the models
 
-Every model page lists its `@context`, JSON Schema and example URLs. They are plain URLs, so no particular product is needed. There are three ways to use them:
+Every model page gives three things: the **@context** (what each attribute means), the **JSON Schema** (what valid data looks like) and **examples**. They are plain URLs, so no particular product is needed. Use the alias URLs (`…/v1.jsonld`, `…/v1.json`) in your data; which URL to use when is in [URLs and versions](/en/guide/urls).
 
-- **As JSON**: validate API requests, form input or data converted from CSV with the JSON Schema (step 2).
-- **With NGSI-LD**: send the data as it is to any broker that speaks the standard NGSI-LD API (step 3). The models' shape (`id` and `type`, the kinds of attributes, the normalized examples) follows NGSI-LD conventions.
-- **As linked data**: add the `@context` and the data becomes RDF, with every attribute's meaning identified by an IRI (step 4).
+There are three ways to use a model, and you can use one, two or all three:
 
-Copy a code block with the button at its top right.
+- [Validate JSON](#validate): check data from an API, a form or a CSV file against the JSON Schema.
+- [Send it to an NGSI-LD broker](#broker): store and query the data in any broker that speaks the standard NGSI-LD API.
+- [Use it as linked data](#linked-data): add the @context and every attribute gets a globally unique name (an IRI).
 
-## 1. Choose the URLs
+<svg class="flow-diagram" viewBox="0 0 460 292" role="group" aria-label="One model on datamodels.jp (its @context, JSON Schema and examples) can be used in three ways: validate JSON, send it to an NGSI-LD broker, use it as linked data." xmlns="http://www.w3.org/2000/svg"><defs><marker id="use-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box main" x="20" y="8" width="420" height="58" rx="10"/><text class="t" x="230.0" y="33">A model on datamodels.jp</text><text class="s" x="230.0" y="53">@context · JSON Schema · examples</text><line class="a" x1="44" y1="66" x2="44" y2="256"/><line class="a" x1="44" y1="116" x2="76" y2="116" marker-end="url(#use-ah)"/><a href="#validate"><rect class="box" x="80" y="88" width="360" height="56" rx="10"/><text class="t" x="260.0" y="112">Validate JSON</text><text class="s" x="260.0" y="132">with the JSON Schema</text></a><line class="a" x1="44" y1="186" x2="76" y2="186" marker-end="url(#use-ah)"/><a href="#broker"><rect class="box" x="80" y="158" width="360" height="56" rx="10"/><text class="t" x="260.0" y="182">Send it to an NGSI-LD broker</text><text class="s" x="260.0" y="202">in the normalized form, with the @context</text></a><line class="a" x1="44" y1="256" x2="76" y2="256" marker-end="url(#use-ah)"/><a href="#linked-data"><rect class="box" x="80" y="228" width="360" height="56" rx="10"/><text class="t" x="260.0" y="252">Use it as linked data</text><text class="s" x="260.0" y="272">the @context turns JSON into RDF</text></a></svg>
 
-- Data and `Link` headers use the **alias** `@context` URL (for example `https://datamodels.jp/context/transportation/v1.jsonld`). Within a major version an attribute's meaning never changes, so data only gains new attributes. For audits and for reproducing a result, use the exact version (`v1.0.0.jsonld`), whose content never changes. See [URLs that never change](/en/guide/urls).
-- JSON Schemas work the same way: `/schema/<subject>/<Type>/v1.0.0.json`.
+The examples use [road restriction (RoadRestriction)](/en/models/transportation/RoadRestriction/); swap the URLs for any other model.
 
-The examples below use [road restriction (RoadRestriction)](/en/models/transportation/RoadRestriction/); swap the URLs for any other model.
+## Validate JSON {#validate}
 
-## 2. Validate before sending
-
-The JSON Schema validates the key-values form (attribute names and plain values). Parts that reference other schemas, such as the address or the geometry, are fetched and validated too.
+The JSON Schema checks data in the simple form: attribute names with plain values (called *key-values*). Parts that refer to other schemas, such as the address or the geometry, are fetched and checked too.
 
 ::: code-group
 
@@ -31,52 +28,92 @@ The JSON Schema validates the key-values form (attribute names and plain values)
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 
-const schemaUrl = 'https://datamodels.jp/schema/transportation/RoadRestriction/v1.0.0.json';
-const entity = await (await fetch('https://datamodels.jp/examples/transportation/RoadRestriction/example.json')).json();
+const base = 'https://datamodels.jp';
+const model = 'transportation/RoadRestriction';
+const getJson = async (url) => (await fetch(url)).json();
 
-// strict: false accepts the catalog's x-* annotations; loadSchema fetches referenced schemas.
-const ajv = new Ajv2020({ strict: false, loadSchema: async (url) => (await fetch(url)).json() });
+const schema = await getJson(`${base}/schema/${model}/v1.0.0.json`);
+const entity = await getJson(`${base}/examples/${model}/example.json`);
+
+// strict: false accepts the catalog's x-* annotations.
+// loadSchema fetches the schemas this one refers to.
+const ajv = new Ajv2020({ strict: false, loadSchema: getJson });
 addFormats(ajv);
-const validate = await ajv.compileAsync(await (await fetch(schemaUrl)).json());
+const validate = await ajv.compileAsync(schema);
 console.log(validate(entity) ? 'valid' : validate.errors);
 ```
 
 ```python [Python]
-# pip install "jsonschema[format]" requests  ([format] is needed to check URIs and dates)
+# pip install "jsonschema[format]" requests
+# ([format] is needed to check URIs and dates)
 import requests
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
+BASE = "https://datamodels.jp"
+MODEL = "transportation/RoadRestriction"
+
 def get(url):
     return requests.get(url, timeout=30).json()
 
-schema = get("https://datamodels.jp/schema/transportation/RoadRestriction/v1.0.0.json")
-entity = get("https://datamodels.jp/examples/transportation/RoadRestriction/example.json")
+schema = get(f"{BASE}/schema/{MODEL}/v1.0.0.json")
+entity = get(f"{BASE}/examples/{MODEL}/example.json")
 
-# The registry fetches referenced schemas (address, geometry) when they are first used.
+# The registry fetches referenced schemas (address, geometry)
+# when they are first used.
 registry = Registry(retrieve=lambda url: Resource.from_contents(get(url)))
-validator = Draft202012Validator(schema, registry=registry, format_checker=Draft202012Validator.FORMAT_CHECKER)
+validator = Draft202012Validator(
+    schema,
+    registry=registry,
+    format_checker=Draft202012Validator.FORMAT_CHECKER,
+)
 errors = [e.message for e in validator.iter_errors(entity)]
 print(errors or "valid")
 ```
 
 ```bash [Command line]
 # pipx install check-jsonschema (or uvx check-jsonschema ...)
-curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example.json -o entity.json
-check-jsonschema --schemafile https://datamodels.jp/schema/transportation/RoadRestriction/v1.0.0.json entity.json
+BASE=https://datamodels.jp
+MODEL=transportation/RoadRestriction
+curl -sSf "$BASE/examples/$MODEL/example.json" -o entity.json
+check-jsonschema --schemafile "$BASE/schema/$MODEL/v1.0.0.json" entity.json
 ```
 
 :::
 
-When a value is outside its allowed values, or similar, the output names the attribute and what is wrong.
+When a value is not allowed, the output names the attribute and what is wrong.
 
-## 3. Send to a broker
+## Send it to an NGSI-LD broker {#broker}
 
-Each model's normalized example is NGSI-LD with its `@context`, so it can be sent as it is. For your own data, either put the `@context` in the body and send `application/ld+json`, or leave it out and send `application/json` with a `Link` header.
+NGSI-LD brokers usually take the *normalized* form, in which each attribute also says what kind it is (a Property with a value, a Relationship pointing to another entity, and so on). Every model page has the example in both forms, so the normalized example can be sent as it is:
 
-### From key-values to normalized {#normalized}
+```bash
+BROKER=http://localhost:1026   # your broker's URL
+BASE=https://datamodels.jp
+MODEL=transportation/RoadRestriction
+curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" -o entity.jsonld
 
-The JSON Schemas validate the key-values form. When a broker expects the normalized form, convert like this:
+# Create
+curl -X POST "$BROKER/ngsi-ld/v1/entities" \
+  -H "Content-Type: application/ld+json" \
+  --data @entity.jsonld
+
+# Query: closed roads only
+CONTEXT="$BASE/context/transportation/v1.jsonld"
+REL='rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
+curl -G "$BROKER/ngsi-ld/v1/entities" \
+  --data-urlencode 'type=RoadRestriction' \
+  --data-urlencode 'q=restrictionStatus=="closed"' \
+  -H "Accept: application/ld+json" \
+  -H "Link: <$CONTEXT>; $REL"
+```
+
+Put the @context in the body and send `application/ld+json`, or leave it out and send `application/json` with a `Link` header (the model page shows it). Brokers with several tenants take the tenant in the `NGSILD-Tenant` header; authentication differs from broker to broker.
+
+**Your own data in the normalized form.** The "Try it" tab on a model page switches what you write between the two forms, and for a CSV list `datamodels convert … --normalized` from [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) does it ([Converting data](/en/guide/mapping)). To do it in your own code, follow the rules below.
+
+<details class="rules">
+<summary>The rules, from key-values to normalized</summary>
 
 - `id` and `type` stay as they are.
 - Wrap each attribute in the NGSI-LD type that the attribute table on the model page gives: a Property is `{ "type": "Property", "value": … }`, a Relationship `{ "type": "Relationship", "object": … }`, a GeoProperty `{ "type": "GeoProperty", "value": … }`, a JsonProperty `{ "type": "JsonProperty", "json": … }`, a VocabProperty `{ "type": "VocabProperty", "vocab": … }`. In key-values form, a JsonProperty and a VocabProperty keep their member: `{ "json": … }`, `{ "vocab": … }`. The JSON Schema describes the value inside, so remove that member before you validate key-values data against the schema. Both are NGSI-LD 1.8 types: check that your broker supports them before you use a model that has them.
@@ -107,60 +144,30 @@ is, in normalized form:
   ],
   "id": "urn:ngsi-ld:Task:1234",
   "type": "Task",
-  "name": { "type": "Property", "value": "靖国通りのアンダーパスの冠水を確認する" },
+  "name": {
+    "type": "Property",
+    "value": "靖国通りのアンダーパスの冠水を確認する"
+  },
   "progress": { "type": "Property", "value": "in-process" },
-  "due": { "type": "Property", "value": { "@type": "DateTime", "@value": "2026-07-08T12:00:00+09:00" } },
+  "due": {
+    "type": "Property",
+    "value": { "@type": "DateTime", "@value": "2026-07-08T12:00:00+09:00" }
+  },
   "assignee": [
-    { "type": "Relationship", "object": "urn:ngsi-ld:Team:field-team-a", "datasetId": "urn:ngsi-ld:dataset:assignee:1" }
+    {
+      "type": "Relationship",
+      "object": "urn:ngsi-ld:Team:field-team-a",
+      "datasetId": "urn:ngsi-ld:dataset:assignee:1"
+    }
   ]
 }
 ```
 
-On a model page, "Try the example" switches the JSON you write between key-values and normalized. For a published list (CSV), `datamodels convert <subject>/<Type> <mapping> <file.csv> --normalized` from [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) does this conversion too.
+</details>
 
-::: code-group
+## Use it as linked data {#linked-data}
 
-```bash [NGSI-LD (standard API)]
-# BROKER: the broker's URL, for example http://localhost:1026
-curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example-normalized.jsonld -o entity.jsonld
-
-# Create
-curl -X POST "$BROKER/ngsi-ld/v1/entities" \
-  -H "Content-Type: application/ld+json" \
-  --data @entity.jsonld
-
-# Query: closed roads only
-curl "$BROKER/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionStatus==%22closed%22" \
-  -H "Accept: application/ld+json" \
-  -H 'Link: <https://datamodels.jp/context/transportation/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"'
-```
-
-```bash [GeonicDB]
-# GEONICDB_BASE_URL, GEONICDB_TENANT, GEONICDB_API_KEY: your GeonicDB tenant's values (the key needs a policy; see the GeonicDB page)
-curl -sSf https://datamodels.jp/examples/transportation/RoadRestriction/example-normalized.jsonld -o entity.jsonld
-
-# Create
-curl -X POST "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
-  -H "Content-Type: application/ld+json" \
-  -H "x-api-key: $GEONICDB_API_KEY" \
-  -H "NGSILD-Tenant: $GEONICDB_TENANT" \
-  --data @entity.jsonld
-
-# Query: closed roads only
-curl "$GEONICDB_BASE_URL/ngsi-ld/v1/entities?type=RoadRestriction&q=restrictionStatus==%22closed%22" \
-  -H "Accept: application/ld+json" \
-  -H 'Link: <https://datamodels.jp/context/transportation/v1.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"' \
-  -H "x-api-key: $GEONICDB_API_KEY" \
-  -H "NGSILD-Tenant: $GEONICDB_TENANT"
-```
-
-:::
-
-Brokers with several tenants take the tenant in the standard `NGSILD-Tenant` header. Authentication differs from broker to broker.
-
-## 4. Use as linked data
-
-Adding the `@context` turns JSON into JSON-LD, which converts to RDF. Attributes become the catalog's IRIs (`https://datamodels.jp/ns/...`) or those of the standards it borrows from (schema.org, Smart Data Models). The NGSI-LD core context is listed too, so that `id` and `type` become JSON-LD's `@id` and `@type`.
+Adding the @context turns plain JSON into JSON-LD. Every attribute then has a globally unique name, an IRI: the catalog's own (`https://datamodels.jp/ns/...`) or those of the standards it borrows from (schema.org, Smart Data Models). JSON-LD converts to RDF, the format of linked data tools. The NGSI-LD core context is listed too, so that `id` and `type` become JSON-LD's `@id` and `@type`.
 
 ::: code-group
 
@@ -168,16 +175,28 @@ Adding the `@context` turns JSON into JSON-LD, which converts to RDF. Attributes
 // npm install jsonld
 import jsonld from 'jsonld';
 
-const entity = await (await fetch('https://datamodels.jp/examples/transportation/RoadRestriction/example.json')).json();
+const base = 'https://datamodels.jp';
+const getJson = async (url) => (await fetch(url)).json();
+const entity = await getJson(
+  `${base}/examples/transportation/RoadRestriction/example.json`,
+);
 // Plain JSON becomes linked data by adding the catalog context.
 entity['@context'] = [
-  'https://datamodels.jp/context/transportation/v1.jsonld',
-  'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld', // maps id and type
+  `${base}/context/transportation/v1.jsonld`,
+  // maps id and type:
+  'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld',
 ];
 
 // fetch replaces the default document loader, so this runs anywhere.
-const documentLoader = async (url) => ({ documentUrl: url, document: await (await fetch(url)).json() });
-console.log(await jsonld.toRDF(entity, { format: 'application/n-quads', documentLoader }));
+const documentLoader = async (url) => ({
+  documentUrl: url,
+  document: await getJson(url),
+});
+const nquads = await jsonld.toRDF(entity, {
+  format: 'application/n-quads',
+  documentLoader,
+});
+console.log(nquads);
 ```
 
 ```python [Python]
@@ -185,11 +204,14 @@ console.log(await jsonld.toRDF(entity, { format: 'application/n-quads', document
 import requests
 from pyld import jsonld
 
-entity = requests.get("https://datamodels.jp/examples/transportation/RoadRestriction/example.json", timeout=30).json()
+BASE = "https://datamodels.jp"
+url = f"{BASE}/examples/transportation/RoadRestriction/example.json"
+entity = requests.get(url, timeout=30).json()
 # Plain JSON becomes linked data by adding the catalog context.
 entity["@context"] = [
-    "https://datamodels.jp/context/transportation/v1.jsonld",
-    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",  # maps id and type
+    f"{BASE}/context/transportation/v1.jsonld",
+    # maps id and type:
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld",
 ]
 
 print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))
@@ -197,7 +219,7 @@ print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))
 
 :::
 
-Part of the output:
+Part of the output, in N-Quads: RDF written as plain text, one statement per line. Each line says that the entity (first) has an attribute (second, its IRI) with a value (third):
 
 ```text
 <urn:ngsi-ld:RoadRestriction:0001> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://datamodels.jp/ns/transportation/RoadRestriction> .
@@ -205,14 +227,4 @@ Part of the output:
 <urn:ngsi-ld:RoadRestriction:0001> <https://smartdatamodels.org/dataModel.Transportation/roadName> "靖国通り" .
 ```
 
-Each subject's vocabulary (`/vocab/<subject>/v1.0.0.jsonld`) is RDFS: its types have Japanese and English names and descriptions, and the attributes the catalog defines have their term name and Japanese and English descriptions. Attributes borrowed from other vocabularies (for example schema.org's `address`) are not included; their own publishers' vocabularies describe them. The mapping tables to other standards, such as GIF and the municipal standard open datasets, are on each model page and help with converting data. They are also published as YAML files at `/mapping/<subject>/<Type>/<name>.yaml` (`mappingUrls` in catalog.json).
-
-## Brokers tried
-
-The steps above use only the standard NGSI-LD API, so they should work the same with any NGSI-LD compliant broker. So far, though, they have been tried with GeonicDB only. Other brokers, such as Orion-LD, Scorpio and Stellio, have not been tried yet.
-
-Some products add features on top, such as registering a model so the server validates entities.
-
-- [GeonicDB](/en/guide/geonicdb) (Geolonia's product): register a model and the server validates creates and updates. A ready-made definition is published for each model. For now, requests that carry the catalog `@context` (as in the example above) do not find the registered model and are accepted without validation; a fix is in progress on the GeonicDB side (see the warning on the GeonicDB page). Validating before sending (step 2) works regardless.
-
-If you have tried another broker, please tell us the result in an [issue or pull request](https://github.com/geolonia/datamodels), including when something did not work.
+Each subject also publishes a vocabulary (`/vocab/<subject>/v1.0.0.jsonld`, RDFS) with the Japanese and English names and descriptions of its types and attributes. Attributes borrowed from other vocabularies, such as schema.org's `address`, are described by their own publishers.

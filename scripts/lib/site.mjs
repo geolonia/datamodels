@@ -171,7 +171,7 @@ const M = {
     requiredMark: '必須', requiredNote: '* は必須の属性です。', linkHeaderIntro: '本文に @context を書かずに送るときの Link ヘッダー:',
     use: 'このモデルを使う', useValue: (rules) => `他のモデルは、属性の値としてこの値型を参照します。書き方は[モデルのルール](${rules})にあります。`,
     standards: '参照している標準', standardsNote: 'このモデルが対応している標準と、項目ごとの対応です。開くと対応表が見られます。',
-    fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く', standardLicence: 'この標準のライセンス', mappingFile: (file, guide) => `この標準のデータを変換するための対応表（YAML）: ${file}（使い方は${guide('対応表')}）`, notesTitle: '注記',
+    fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く', standardLicence: 'この標準のライセンス', mappingFile: (file, guide) => `この標準のデータを変換するための対応表（YAML）: ${file}（使い方は${guide('データを変換する')}）`, notesTitle: '注記',
     sourceFiles: (href) => `ソースファイル（注記、対応表）は [GitHub](${href}) にあります。`,
   },
   en: {
@@ -183,7 +183,7 @@ const M = {
     requiredMark: 'required', requiredNote: '* required', linkHeaderIntro: 'The Link header, for sending data without @context in the body:',
     use: 'Using this model', useValue: (rules) => `Other models use this value type as the value of an attribute. How: [Rules for models](${rules}).`,
     standards: 'Referenced standards', standardsNote: 'The standards this model corresponds to, field by field. Open one to see its table.',
-    fieldsMapped: (n, total) => `${n} of ${total} fields`, openStandard: 'Open the standard', standardLicence: 'Licence of this standard', mappingFile: (file, guide) => `Mapping file (YAML) for converting data from this standard: ${file} (how: ${guide('Mapping files')})`, notesTitle: 'Notes',
+    fieldsMapped: (n, total) => `${n} of ${total} fields`, openStandard: 'Open the standard', standardLicence: 'Licence of this standard', mappingFile: (file, guide) => `Mapping file (YAML) for converting data from this standard: ${file} (how: ${guide('Converting data')})`, notesTitle: 'Notes',
     sourceFiles: (href) => `The source files (notes, mapping tables) are on [GitHub](${href}).`,
   },
 };

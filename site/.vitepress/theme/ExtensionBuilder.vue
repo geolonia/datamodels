@@ -8,6 +8,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { data } from './catalog.data.mjs'
 import { buildExtension, proposalUrl } from '../../../scripts/lib/extend.mjs'
+import { highlightJson } from './json-highlight'
 
 const props = defineProps<{ lang: 'ja' | 'en' }>()
 const L = {
@@ -118,12 +119,12 @@ async function copy(which: 'context' | 'schema') {
     <template v-else>
       <div class="out">
         <div class="head"><h3>{{ L.context }}</h3><button type="button" @click="copy('context')">{{ copied === 'context' ? L.copied : L.copy }}</button></div>
-        <pre><code>{{ pretty(result.context) }}</code></pre>
+        <pre><code v-html="highlightJson(pretty(result.context))" /></pre>
       </div>
       <div class="out">
         <div class="head"><h3>{{ L.schema }}</h3><button type="button" @click="copy('schema')">{{ copied === 'schema' ? L.copied : L.copy }}</button></div>
         <p class="note">{{ L.schemaNote(model.schemaExact) }}</p>
-        <pre class="long"><code>{{ pretty(result.schema) }}</code></pre>
+        <pre class="long"><code v-html="highlightJson(pretty(result.schema))" /></pre>
       </div>
       <p><a :href="proposal" target="_blank" rel="noreferrer">{{ L.propose }}</a></p>
     </template>
@@ -150,4 +151,8 @@ button:hover { color: var(--vp-c-brand-1); }
 .note { font-size: 13px; color: var(--vp-c-text-2); }
 pre { margin: 8px 0; padding: 12px; overflow: auto; font-size: 13px; line-height: 1.5; background: var(--vp-c-bg-alt); border-radius: 8px; }
 pre.long { max-height: 420px; }
+/* JSON colours of the site's code blocks (json-highlight.ts, --json-* in custom.css). */
+pre code { color: var(--json-punct); }
+pre :deep(.key), pre :deep(.lit) { color: var(--json-key); }
+pre :deep(.str) { color: var(--json-str); }
 </style>
