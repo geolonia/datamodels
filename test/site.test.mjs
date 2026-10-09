@@ -43,6 +43,12 @@ test('model text shows <tags> and {{ braces }} as written; Markdown and code spa
   assert.equal(mdText('{{ 1 + 1 }}'), '&#123;&#123; 1 + 1 }}');
   assert.equal(mdText('[a link](https://example.org) and `<code>` and `{x}`'), '[a link](https://example.org) and `<code>` and `{x}`');
   assert.equal(mdText(undefined), '');
+  // Code spans as CommonMark reads them: matching backtick runs, within one paragraph.
+  assert.equal(mdText('``<owner>``'), '``<owner>``');
+  assert.equal(mdText('`` a ` <b> ``'), '`` a ` <b> ``');
+  assert.equal(mdText('`a\n\n<owner>\n`'), '`a\n\n&lt;owner>\n`');
+  assert.equal(mdText('`` <x> ` and <y>'), '`` &lt;x> ` and &lt;y>');
+  assert.equal(mdText('a `<x>` b `<y>` c <z>'), 'a `<x>` b `<y>` c &lt;z>');
   // In a page: a note, a mapping note and a description (VitePress would read <owner> as a tag and fail).
   const Milestone = task.models.find((m) => m.type === 'Milestone');
   const probe = structuredClone(Milestone);
