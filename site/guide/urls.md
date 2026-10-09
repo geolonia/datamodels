@@ -69,7 +69,3 @@ description: どの URL を使うか、何が変わらないか、バージョ�
 </div>
 
 すべてのファイルは `Access-Control-Allow-Origin: *` で配信され、`.jsonld` は `application/ld+json`、スキーマは `application/schema+json`、対応表は `application/yaml` です。
-
-## 上流のモデルについて
-
-Smart Data Models の context は上流の GitHub リポジトリの `master` ブランチにあり、バージョンが付いていません。コミットを固定した URL で参照してください（[属性を足す](/guide/extend)）。上流に依存できない人のために、同じファイルをこのドメインから配信する写しを用意する計画があります（未提供）。

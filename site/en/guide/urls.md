@@ -69,7 +69,3 @@ A new version does not replace the old one: `v1.0.0` stays at its URL, and the a
 </div>
 
 Everything is served with `Access-Control-Allow-Origin: *`; `.jsonld` files as `application/ld+json`, schemas as `application/schema+json`, mapping files as `application/yaml`.
-
-## About upstream models
-
-Smart Data Models contexts live on the `master` branch of the upstream GitHub repositories and have no version. Reference them at URLs pinned to a commit ([Adding attributes](/en/guide/extend)). A copy of the same files served from this domain, for users who cannot depend on upstream, is planned (not yet available).
