@@ -90,7 +90,7 @@ since: 2026-10                               # 任意：載せた時期
 
 - 機械が読むファイル（スキーマ、`@context`、語彙、例、`catalog.yaml`、対応表、公開する `catalog.json` とアダプターのファイル）：[CC0 1.0](https://github.com/geolonia/datamodels/blob/main/LICENSE-CONTENT.md)
 - 文章（注記、モデルの README、サイトのページ）：[CC BY 4.0](https://github.com/geolonia/datamodels/blob/main/LICENSE-CONTENT.md)
-- ツールのコード：[Apache-2.0](https://github.com/geolonia/datamodels/blob/main/LICENSE)
+- `models/` 以外のコード（`site/`、`scripts/`、アダプターのコード、CI を含む）：[Apache-2.0](https://github.com/geolonia/datamodels/blob/main/LICENSE)
 
 CC BY の出典（Smart Data Models、GIF のコアスキーマなど）から内容を写したファイルは CC BY 4.0 のままです。そのファイルと出典を、モデルのフォルダの `LICENSE.md` に書いてください。
 
@@ -184,5 +184,5 @@ The [DCO app](https://github.com/apps/dco) checks that every commit of a pull re
 
 ## Licences
 
-Machine-readable files (schemas, `@context` files, vocabularies, examples, `catalog.yaml`, mapping files, and the published `catalog.json` and adapter files) are [CC0 1.0](https://github.com/geolonia/datamodels/blob/main/LICENSE-CONTENT.md); prose (notes, the models' READMEs, the site's pages) is [CC BY 4.0](https://github.com/geolonia/datamodels/blob/main/LICENSE-CONTENT.md); the tooling is [Apache-2.0](https://github.com/geolonia/datamodels/blob/main/LICENSE). A file that copies content from a CC BY source (Smart Data Models, the GIF core schema) stays CC BY 4.0: name the file and its source in the model folder's `LICENSE.md`.
+Machine-readable files (schemas, `@context` files, vocabularies, examples, `catalog.yaml`, mapping files, and the published `catalog.json` and adapter files) are [CC0 1.0](https://github.com/geolonia/datamodels/blob/main/LICENSE-CONTENT.md); prose (notes, the models' READMEs, the site's pages) is [CC BY 4.0](https://github.com/geolonia/datamodels/blob/main/LICENSE-CONTENT.md); code outside `models/` (including `site/`, `scripts/`, the adapter code and CI) is [Apache-2.0](https://github.com/geolonia/datamodels/blob/main/LICENSE). A file that copies content from a CC BY source (Smart Data Models, the GIF core schema) stays CC BY 4.0: name the file and its source in the model folder's `LICENSE.md`.
 <!-- #endregion en -->
