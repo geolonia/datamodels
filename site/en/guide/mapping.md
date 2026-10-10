@@ -17,6 +17,7 @@ A mapping file has no version: its URL stays, and its content follows the curren
 
 ## What a mapping file says
 
+<!-- languages: own code -->
 ```yaml
 standard:
   name: { ja: …, en: "Municipal standard open dataset, … sheet '03. …'" }

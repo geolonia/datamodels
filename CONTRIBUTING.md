@@ -38,6 +38,8 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 
 サイトの日本語のページは、`npm run lint:ja`（textlint、Geolonia のハンドブックと同じ規則）で検査します。このサイトでは、全角と半角の間に半角スペースを入れ、箇条書きも本文と同じです・ます体で書きます（`.textlintrc.json`）。英語版を一文ずつ訳すのではなく、日本語の読み手に向けて書いてください。
 
+日本語と英語のページは、同じ Pull Request で両方を変えます。`npm run check:languages` が、見出し、コード、リンク、囲み（`:::`）が両方で同じかを検査します。文章の意味までは検査しないので、レビューで確かめます。片方の言語だけを変えるときは（日本語の書き直しなど）、Pull Request の説明に `One language only:` で始まる行を書き、理由を添えてください。
+
 ### ツールが作ったモデルを提案する
 
 データを登録するツール（ブローカーの管理画面など）は、利用者のデータから新しいモデルを作ることがあります。それを提案として渡すときは、このリポジトリのモデルと同じ構成のフォルダ（**提案バンドル**）を書き出します。
@@ -135,6 +137,8 @@ datamodels.jp publishes data models that work in Japan as a shared, product-neut
 Recording published versions (snapshots and the manifest) is a maintainer step. Until the official launch (pre-release), the current version may still be corrected in place.
 
 The site's Japanese pages are checked with `npm run lint:ja` (textlint, the rules of Geolonia's handbook). This site puts a half-width space between Japanese and Latin text, and writes list items in the same polite form as the body (`.textlintrc.json`). Write the Japanese for Japanese readers, rather than translating the English sentence by sentence.
+
+Change the Japanese and English page in the same pull request. `npm run check:languages` checks that both have the same headings, code, links and boxes (`:::`). It does not check what the words mean; review does. To change one language only (a rewrite of the Japanese, say), add a line starting with `One language only:` and the reason to the pull request description.
 
 ### Proposing a model that a tool made
 
