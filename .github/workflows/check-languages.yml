@@ -1,0 +1,52 @@
+name: Check languages
+
+# The Japanese and English pages of the site share their headings, code, links
+# and boxes (scripts/check-languages.mjs). On a pull request, a page changed in
+# one language only fails, unless the description has a line
+# "One language only: <reason>". It runs again when the description is edited.
+#
+# No `paths` filter on purpose: a filtered workflow never reports on pull
+# requests it skips, so it could not become a required check.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Japanese and English pages
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # The merge commit and its first parent, the base: the pull request's changes.
+          fetch-depth: 2
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Compare the pages
+        if: github.event_name != 'pull_request'
+        run: npm run check:languages
+
+      # The description is passed as data in an environment variable, never
+      # into the script itself.
+      - name: Compare the pages, and the languages a pull request changes
+        if: github.event_name == 'pull_request'
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: npm run check:languages -- --base HEAD^1
