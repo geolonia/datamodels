@@ -13,7 +13,7 @@
 - `catalog.json` は datamodels.jp と同じ形の一部で、足すのは 3 つ：公開者（`publisher`）、ほかのノードのモデルを拡張していること（`extends`）、知っているほかのノード（`nodes`）。
 - 段階は `draft`、`experimental`、`stable`、`deprecated`。
 - DCAT にそのまま対応させられるので、ネットワーク全体をブローカーのエンティティとしても扱える。
-- 決めたこと（2026-10-10）：サブジェクトの単位は datamodels.jp と同じ。GitHub Pages では `#` 付きの IRI が既定。ライセンスは必須（ひな形は CC0 を提案）。`extends` は RDF では `prov:wasDerivedFrom`。`experimental` はノードだけの段階。
+- 決めたこと（2026-10-10）：サブジェクトの単位は datamodels.jp と同じ。GitHub Pages では `#` 付きの IRI が既定。ライセンスは必須（ひな形は CC0 を提案）。`extends` は RDF では `prov:wasDerivedFrom`。段階は 4 つで、`experimental` は datamodels.jp でも選べる（使うことは少ない）。
 - 残る問い：合意したあと、この文書をどこに置くか。
 
 ## Words
@@ -122,7 +122,7 @@ The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.
 | `stable` | Relied on; changes only by new versions that keep compatibility. |
 | `deprecated` | Not for new data; still published, with `supersededBy` when there is a replacement. |
 
-`experimental` is for nodes only, for models published while they are tried out. datamodels.jp keeps `draft`, `stable` and `deprecated`, and shows `experimental` when it reads it from a node.
+`experimental` is new: for models published while they are tried out. Nodes and datamodels.jp both accept it; on datamodels.jp it is an option that will be rare, since its models go through review first.
 
 ## 5. How the network is found
 
@@ -155,7 +155,7 @@ Mapping files, adapters, ADOPTERS files, a second language, a review process, se
 2. **IRIs:** hash IRIs by default on static hosts; slash IRIs as an option with w3id.org or a server that redirects.
 3. **Licence:** required in every index; the template suggests CC0.
 4. **`extends`:** expressed as `prov:wasDerivedFrom` in RDF and DCAT.
-5. **Stages:** `experimental` is for nodes only; datamodels.jp keeps its three stages.
+5. **Stages:** the four stages are the same everywhere: datamodels.jp adds `experimental` as an option, even if it is used rarely there.
 
 ## Open question
 
