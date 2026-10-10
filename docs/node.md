@@ -59,7 +59,7 @@ Terms a node reuses (from datamodels.jp, another node, NGSI-LD, schema.org) keep
 
 ## 3. The index (`catalog.json`)
 
-The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.json) ([schema](https://datamodels.jp/catalog.schema.json)), with fewer required fields and three additions. A tool that reads one can read the other.
+The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.json) ([schema](https://datamodels.jp/catalog.schema.json)), with fewer required fields and three additions. A tool written for the node format can also read datamodels.jp's `catalog.json`, which carries every field a node requires (except `publisher`, which it will add). The other way round does not work yet: `catalog.schema.json` requires more fields and knows neither the additions nor `experimental`. Adopting this format means extending that schema, with the toolkit library (geolonia/datamodels-toolkit#10).
 
 ```json
 {
@@ -142,6 +142,7 @@ The index maps onto W3C [DCAT](https://www.w3.org/TR/vocab-dcat-3/), so the netw
 | a model | `dcat:Dataset`, with `dct:identifier` = `typeIri`, `dct:title`, `dct:description`, `dcat:version` |
 | its @context, JSON Schema, vocabulary | `dcat:Distribution` each, with `dcat:downloadURL` and `dcat:mediaType` |
 | `pageUrl` | `dcat:landingPage` |
+| `license`, `licenseUrl` | `dct:license`: the `licenseUrl` when present, otherwise the SPDX page of the identifier (`https://spdx.org/licenses/CC0-1.0.html`); on the catalog, and on each distribution |
 | `nodes` | `dcat:catalog` (a catalog listing other catalogs) |
 | `extends` | `prov:wasDerivedFrom` (W3C PROV) |
 
