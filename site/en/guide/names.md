@@ -30,7 +30,7 @@ Data written with `responsibleTeam` means exactly the same as data written with 
 
 ## Rules
 
-- **Names use ASCII letters, digits and `_`.** Brokers such as GeonicDB accept only these (or a full IRI); a name in Japanese script is rejected. Most other tools assume ASCII too.
+- **Names use ASCII letters, digits and `_`.** NGSI-LD does not require this, but GeonicDB accepts only these (or a full IRI) and rejects a name in Japanese script. Most other tools assume ASCII too.
 - **One name per meaning in your @context.** If you take the catalog's @context and add an alias, one meaning has two names, and JSON-LD returns the shorter one. To always get your names back, write your @context as a complete list of the names you use, without the catalog's. Copying the catalog's @context and renaming is the quick way.
 - **A type alias is not a separate type.** `Saigai` and `Project` have the same meaning, so a broker stores and matches them as one type, and access rules treat them as one. A type that must be separate (to control access by type, or to add attributes) is a **subclass**, not an alias: it has its own meaning and keeps the parent's attributes (a schema's `x-subclass-of`; [Rules for models](/en/guide/rules#rules)).
 
