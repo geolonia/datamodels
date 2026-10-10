@@ -7,6 +7,11 @@ hero:
   # HTML: "Data models" and the full stop (the mark's dot) are red (docs/brand.md).
   text: <span class="accent">Data models</span> that work in Japan, at URLs that never <span class="nowrap">change<span class="dot">.</span></span>
   tagline: Published as JSON Schemas, JSON-LD @context files and vocabularies. Use them with plain JSON, as linked data, or with any NGSI-LD broker.
+  # Records from many systems linked to the shared definitions; one branch adds its own attribute (#167).
+  image:
+    light: /hero-illustration.svg
+    dark: /hero-illustration-dark.svg
+    alt: Records from several systems linked to shared definitions, with one system adding an attribute of its own on top
   actions:
     - theme: brand
       text: All data models
