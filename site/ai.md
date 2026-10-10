@@ -13,12 +13,12 @@ description: datamodels.jp の作成での AI の使い方と、AI エージェ�
 
 ## AI エージェントやツールへ
 
-このサイトは人にもアシスタントにも使ってもらうためのものです。検索、AI の回答、AI の学習のどれに使っても構いません。`robots.txt` が [Content Signals](https://contentsignals.org) でそう示しています。
+このサイトは、人にも AI アシスタントにも使ってもらうことを想定しています。検索、AI の回答、AI の学習のいずれに使っても構いません。`robots.txt` でも、[Content Signals](https://contentsignals.org) の形式でそう示しています。
 
 - **入口:** [/llms.txt](/llms.txt)。ガイドとすべてのモデルの短い一覧（英語）です。
 - **すべてのモデルとその URL:** [catalog.json](/catalog.json)。
-- **書いたデータの確認:** モデルの JSON Schema（`/schema/<subject>/<Type>/v1.json`）で検証できます。例（`/examples/…`）は、そのまま使える正しいデータです。
-- **意味:** `https://datamodels.jp/ns/` の下の型と属性の IRI は、それぞれのドキュメントにつながります。
-- **変わらない URL:** 公開したバージョンは変わりません（[URL とバージョン](/guide/urls)）。引用した URL はそのまま正しいままです。ただし正式公開までのプレリリース中は、公開済みのバージョンも直接修正することがあります。
+- **作ったデータの確認:** モデルの JSON Schema（`/schema/<subject>/<Type>/v1.json`）で検証できます。例（`/examples/…`）は、そのまま使える正しいデータです。
+- **意味:** `https://datamodels.jp/ns/` の下にある型と属性の IRI を開くと、それぞれの説明のページが表示されます。
+- **変わらない URL:** 公開したバージョンは変わりません（[URL とバージョン](/guide/urls)）。引用した URL は、ずっと同じ内容を指します。ただし正式公開までのプレリリース中は、公開済みのバージョンも直接修正することがあります。
 
 機械が読むファイル（スキーマ、@context、語彙、例）は CC0 1.0、このサイトのページやモデルの注記などの文章は CC BY 4.0 です。CC BY の出典から内容を写したファイルは CC BY 4.0 のままです（現在はありません。[ライセンス](/LICENSE-CONTENT)）。
