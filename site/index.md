@@ -7,6 +7,12 @@ hero:
   # HTML: the break and the unbreakable phrase keep 「変わらない URL で」 on one line; 「データモデル」 and the full stop (the mark's dot) are red.
   text: 日本で使える<br><span class="accent">データモデル</span>を、<span class="nowrap">変わらない URL で<span class="dot">。</span></span>
   tagline: JSON Schema・JSON-LD の @context・語彙として公開しています。JSON のままでも、Linked Data でも、どの NGSI-LD ブローカーでも使えます。
+  # Records from many systems linked to the shared definitions; one branch adds its own attribute (#167).
+  # Decorative: the headline says the same, so the alt text is empty.
+  image:
+    light: /hero-illustration.svg
+    dark: /hero-illustration-dark.svg
+    alt: ''
   actions:
     - theme: brand
       text: データモデル一覧

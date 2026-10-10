@@ -105,8 +105,6 @@
 @media (min-width: 960px) {
   .VPHero .main .text {
     font-size: 46px !important;
-    /* The home page has no hero image: room for 「データモデルを、変わらない URL で。」 on one line. */
-    max-width: 800px;
   }
 }
 
@@ -376,3 +374,22 @@
 
 /* All URLs (guide/urls): the URL and its description share the width. */
 .vp-doc .url-list td:first-child { width: 50%; }
+
+/* Home illustration (#167, site/public/hero-illustration*.svg): beside the text
+   from 960px, without VitePress' round glow; below the buttons on narrower
+   screens, at most 220px high, so the boxes below are not pushed far down. */
+.VPHero .image-bg { display: none; }
+.VPHero .image-container { width: 100%; height: auto; transform: none; }
+.VPHero .image-src {
+  position: static;
+  transform: none;
+  width: 100%;
+  max-width: 480px;
+  max-height: 220px;
+}
+@media (max-width: 959px) {
+  .VPHero .image { order: 3; margin: 24px 0 0; }
+}
+@media (min-width: 960px) {
+  .VPHero .image-src { max-height: 360px; }
+}
