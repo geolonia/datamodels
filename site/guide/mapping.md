@@ -17,6 +17,7 @@ description: 標準に沿ったデータを、モデルの対応表（マッピ�
 
 ## 対応表に書いてあること
 
+<!-- languages: own code -->
 ```yaml
 standard:
   name: { ja: "自治体標準オープンデータセット … シート「03.…」", en: … }
