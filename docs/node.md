@@ -13,7 +13,8 @@
 - `catalog.json` は datamodels.jp と同じ形の一部で、足すのは 3 つ：公開者（`publisher`）、ほかのノードのモデルを拡張していること（`extends`）、知っているほかのノード（`nodes`）。
 - 段階は `draft`、`experimental`、`stable`、`deprecated`。
 - DCAT にそのまま対応させられるので、ネットワーク全体をブローカーのエンティティとしても扱える。
-- 最後に、まだ決めていないことの一覧があります。
+- 決めたこと（2026-10-10）：サブジェクトの単位は datamodels.jp と同じ。GitHub Pages では `#` 付きの IRI が既定。ライセンスは必須（ひな形は CC0 を提案）。`extends` は RDF では `prov:wasDerivedFrom`。`experimental` はノードだけの段階。
+- 残る問い：合意したあと、この文書をどこに置くか。
 
 ## Words
 
@@ -37,7 +38,7 @@ All paths are relative to the node's base URL. A node may use other paths for th
 | `llms.txt` (an index for AI tools) | `/llms.txt` | recommended |
 | DCAT form of the index | `/catalog.dcat.jsonld` | optional (section 6) |
 
-A **subject** groups models that share one @context and one vocabulary, as on datamodels.jp. A small node may have one subject.
+A **subject** groups models that share one @context and one vocabulary, as on datamodels.jp; nodes keep this level so every tool reads them the same way. A small node simply has one subject.
 
 **Rules for the files**
 
@@ -52,7 +53,7 @@ Every type and attribute a node defines has an IRI under the node's own domain, 
 - **Hash IRIs**, `https://example.org/ns/<subject>#<Term>`: the part before `#` is one page (or the vocabulary) that has an anchor per term. Works on any static host without redirects. gtt-project.org uses this form.
 - **Slash IRIs**, `https://example.org/ns/<subject>/<Term>`: needs a page per term, or a redirect to the model page. datamodels.jp uses this form, and answers JSON-LD clients with the vocabulary (content negotiation, #196); a static host cannot do that, but [w3id.org](https://w3id.org/) in front can.
 
-A node chooses one form per subject and keeps it: an IRI is a name, and published data uses it forever.
+**Default: hash IRIs** for nodes on GitHub Pages and other static hosts; slash IRIs are an option for nodes behind w3id.org or on a server that can redirect. A node chooses one form per subject and keeps it: an IRI is a name, and published data uses it forever.
 
 Terms a node reuses (from datamodels.jp, another node, NGSI-LD, schema.org) keep their original IRIs. A node only mints IRIs for what is new.
 
@@ -76,7 +77,7 @@ The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.
   "models": [
     {
       "type": "RoadPatrol",
-      "typeIri": "https://models.geolonia.com/ns/road/RoadPatrol",
+      "typeIri": "https://models.geolonia.com/ns/road#RoadPatrol",
       "subject": "road",
       "version": "0.1.0",
       "status": "experimental",
@@ -100,6 +101,8 @@ The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.
 
 `RoadPatrol` is an invented example.
 
+**Required at the top:** `formatVersion`, `generatedAt`, `publisher`, `license` (the publisher decides; the template suggests CC0, as datamodels.jp uses), `models`.
+
 **Required for every model:** `type`, `typeIri`, `subject`, `version`, `status`, `title`, `description`, `contextUrl`, `schemaUrl`, `vocabularyUrl`, `pageUrl`. `title` and `description` have at least one language (`ja`, `en` or another BCP 47 tag).
 
 **Optional, as on datamodels.jp:** `contextAliasUrl`, `pageUrlEn`, `exampleUrls`, `attributes`, `kind`, `subClassOf`, `aliasOf`, `supersededBy`, `mappingUrls`, `adapters`, `extensions`.
@@ -119,7 +122,7 @@ The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.
 | `stable` | Relied on; changes only by new versions that keep compatibility. |
 | `deprecated` | Not for new data; still published, with `supersededBy` when there is a replacement. |
 
-datamodels.jp uses `draft`, `stable` and `deprecated` today; `experimental` is the one addition, for nodes that publish models while trying them out.
+`experimental` is for nodes only, for models published while they are tried out. datamodels.jp keeps `draft`, `stable` and `deprecated`, and shows `experimental` when it reads it from a node.
 
 ## 5. How the network is found
 
@@ -140,17 +143,20 @@ The index maps onto W3C [DCAT](https://www.w3.org/TR/vocab-dcat-3/), so the netw
 | its @context, JSON Schema, vocabulary | `dcat:Distribution` each, with `dcat:downloadURL` and `dcat:mediaType` |
 | `pageUrl` | `dcat:landingPage` |
 | `nodes` | `dcat:catalog` (a catalog listing other catalogs) |
-| `extends` | no DCAT term; `prov:wasDerivedFrom` is the closest (open question 3) |
+| `extends` | `prov:wasDerivedFrom` (W3C PROV) |
 
 ## 7. What a node does not need
 
 Mapping files, adapters, ADOPTERS files, a second language, a review process, search, or a large site. These are what a shared catalog needs; a node can add any of them later.
 
-## Open questions
+## Decided (2026-10-10)
 
-1. **Subjects in a node:** keep the `<subject>` level (same as datamodels.jp, one @context per subject), or allow one @context for the whole node?
-2. **Stage names:** add `experimental` to datamodels.jp too, so the two lists are the same?
-3. **`extends` in DCAT and RDF:** `prov:wasDerivedFrom`, or a small term of our own (and where its IRI lives)?
-4. **Licence:** require a licence per node (`license`), or default to CC0 like datamodels.jp?
-5. **IRI form:** recommend hash IRIs for GitHub Pages nodes (no redirects needed), or slash IRIs with w3id.org?
-6. **Where this text lives once agreed:** a guide on datamodels.jp, the toolkit's README, or both.
+1. **Subjects:** nodes keep the `<subject>` level of datamodels.jp.
+2. **IRIs:** hash IRIs by default on static hosts; slash IRIs as an option with w3id.org or a server that redirects.
+3. **Licence:** required in every index; the template suggests CC0.
+4. **`extends`:** expressed as `prov:wasDerivedFrom` in RDF and DCAT.
+5. **Stages:** `experimental` is for nodes only; datamodels.jp keeps its three stages.
+
+## Open question
+
+- **Where this text lives once agreed:** a guide on datamodels.jp, the toolkit's README, or both.
