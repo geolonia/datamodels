@@ -5,7 +5,7 @@ description: For a first try of a FIWARE context broker. One real open-data file
 
 # Tutorial: from a CSV file to a map
 
-This tutorial is for a first try of a FIWARE context broker. You take one real open-data file, put it into a broker, ask it questions and see the result on a map. Each step says what happened and why. You need no knowledge of FIWARE or NGSI-LD, only a terminal. It takes about 30 minutes.
+This tutorial is for a first try of a FIWARE context broker. You take one real open-data file, put it into a broker, ask it questions and see the result on a map. Each step says what happened and why. You need no knowledge of FIWARE or NGSI-LD, only a terminal with Bash or zsh (macOS, Linux, or WSL on Windows). It takes about 30 minutes.
 
 The data is Utsunomiya City's list of designated emergency evacuation sites (指定緊急避難場所): 198 schools, parks and other places, published as a CSV file. Every command here was run on 2026-10-10.
 
@@ -13,7 +13,7 @@ The data is Utsunomiya City's list of designated emergency evacuation sites (指
 
 A **context broker** is a database for the current state of things in a city: an evacuation site, a road closure, a sensor reading, a task. Applications write to it and read from it over the web. It does three things a spreadsheet cannot:
 
-- **Every application speaks the same language.** The broker follows **NGSI-LD**, an international standard (ETSI). An app written for one NGSI-LD broker works with another. **FIWARE** is the open-source community around this standard; Orion-LD, Scorpio and GeonicDB are such brokers. This tutorial uses GeonicDB.
+- **Every application speaks the same language.** The broker follows **NGSI-LD**, an international standard (ETSI). An app written for one NGSI-LD broker is easier to move to another, though brokers differ in how much of the standard they support. **FIWARE** is the open-source community around this standard; Orion-LD, Scorpio and GeonicDB are such brokers. This tutorial uses GeonicDB.
 - **You can ask by meaning and by place:** "all sites for floods", "all sites within 1 km of the station".
 - **Others can follow changes:** an app can subscribe and is told when something changes. This tutorial does not go that far.
 

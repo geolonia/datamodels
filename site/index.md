@@ -6,7 +6,7 @@ hero:
   name: ''
   # HTML: the break and the unbreakable phrase keep 「変わらない URL で」 on one line; 「データモデル」 and the full stop (the mark's dot) are red.
   text: 日本で使える<br><span class="accent">データモデル</span>を、<span class="nowrap">変わらない URL で<span class="dot">。</span></span>
-  tagline: JSON Schema・JSON-LD の @context・語彙として公開しています。JSON のままでも、Linked Data でも、どの NGSI-LD ブローカーでも使えます。
+  tagline: JSON Schema、JSON-LD の @context、語彙の形で公開しています。JSON のままでも、Linked Data としても、どの NGSI-LD ブローカーでも使えます。
   # Records from many systems linked to the shared definitions; one branch adds its own attribute (#167).
   image:
     light: /hero-illustration.svg
@@ -28,7 +28,7 @@ features:
     details: 自治体標準オープンデータセット、EEI、国土地理院の避難所データなど、すでに使っている標準があれば、対応するモデルを探せます。
     link: /guide/standards
     linkText: 対応している標準
-  - title: 拡張する、複製しない
+  - title: 複製せず、拡張する
     details: Smart Data Models、NGSI-LD、schema.org の型や属性で合うものはそのまま使います。独自の属性はその上に足せます。
     link: /guide/extend
     linkText: 拡張する
@@ -37,7 +37,7 @@ features:
     link: /guide/urls
     linkText: URL とバージョン
   - title: みんなで育てる
-    details: よくある用途のモデルを、使う人と一緒に改善していきます。提案を歓迎します。
+    details: よくある用途のモデルを、使う人と一緒に改善していきます。ご提案をお待ちしています。
     link: /guide/contribute
     linkText: 貢献する
 ---
