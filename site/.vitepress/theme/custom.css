@@ -376,8 +376,8 @@
 .vp-doc .url-list td:first-child { width: 50%; }
 
 /* Home illustration (#167, site/public/hero-illustration*.svg): beside the text
-   from 960px, without VitePress' round glow; below the buttons on narrower
-   screens, at most 220px high, so the boxes below are not pushed far down. */
+   from 960px, without VitePress' round glow. Hidden on narrower screens, where
+   it only pushed the content further down: on a phone the content comes first. */
 .VPHero .image-bg { display: none; }
 .VPHero .image-container { width: 100%; height: auto; transform: none; }
 .VPHero .image-src {
@@ -385,11 +385,8 @@
   transform: none;
   width: 100%;
   max-width: 480px;
-  max-height: 220px;
+  max-height: 360px;
 }
 @media (max-width: 959px) {
-  .VPHero .image { order: 3; margin: 24px 0 0; }
-}
-@media (min-width: 960px) {
-  .VPHero .image-src { max-height: 360px; }
+  .VPHero .image { display: none; }
 }
