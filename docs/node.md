@@ -13,7 +13,8 @@
 - `catalog.json` は datamodels.jp と同じ形の一部で、足すのは 3 つ：公開者（`publisher`）、ほかのノードのモデルを拡張していること（`extends`）、知っているほかのノード（`nodes`）。
 - 段階は `draft`、`experimental`、`stable`、`deprecated`。
 - DCAT にそのまま対応させられるので、ネットワーク全体をブローカーのエンティティとしても扱える。
-- 決めたこと（2026-10-10）：サブジェクトの単位は datamodels.jp と同じ。GitHub Pages では `#` 付きの IRI が既定。ライセンスは必須（ひな形は CC0 を提案）。`extends` は RDF では `prov:wasDerivedFrom`。段階は 4 つで、`experimental` は datamodels.jp でも選べる（使うことは少ない）。
+- 決めたこと（2026-10-10）：サブジェクトの単位は datamodels.jp と同じ。GitHub Pages では `#` 付きの IRI が既定。ライセンスは必須（`datamodels init` が CC0 を提案）。`extends` は RDF では `prov:wasDerivedFrom`。段階は 4 つで、`experimental` は datamodels.jp でも選べる（使うことは少ない）。
+- ツールキットの `datamodels build` は、ノードの設定 `node.yaml` と `models/` から `_site/` にファイルを作る（名前は 2026-10-10 決定）。
 - 残る問い：合意したあと、この文書をどこに置くか。
 
 ## Words
@@ -101,7 +102,7 @@ The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.
 
 `RoadPatrol` is an invented example.
 
-**Required at the top:** `formatVersion`, `generatedAt`, `publisher`, `license` (the publisher decides; the template suggests CC0, as datamodels.jp uses), `models`.
+**Required at the top:** `formatVersion`, `generatedAt`, `publisher`, `license` (the publisher decides; `datamodels init` suggests CC0, as datamodels.jp uses), `models`.
 
 **Required for every model:** `type`, `typeIri`, `subject`, `version`, `status`, `title`, `description`, `contextUrl`, `schemaUrl`, `vocabularyUrl`, `pageUrl`. `title` and `description` have at least one language (`ja`, `en` or another BCP 47 tag).
 
@@ -150,13 +151,23 @@ The index maps onto W3C [DCAT](https://www.w3.org/TR/vocab-dcat-3/), so the netw
 
 Mapping files, adapters, ADOPTERS files, a second language, a review process, search, or a large site. These are what a shared catalog needs; a node can add any of them later.
 
+## 8. Building a node
+
+[`datamodels build`](https://github.com/geolonia/datamodels-toolkit#build) in the toolkit builds a node from a folder with two parts, and writes the index, @contexts, JSON Schemas, vocabularies, examples and `llms.txt` into `_site/`. The pages for people follow in [geolonia/datamodels-toolkit#18](https://github.com/geolonia/datamodels-toolkit/pull/18); until then a node writes them itself.
+
+- `node.yaml`: the settings (base URL, IRI form, languages, publisher, licence, known nodes).
+- `models/`: the subjects and models, laid out as in this repository's `models/`.
+
+A node does not have to use the toolkit; what counts is what it publishes.
+
 ## Decided (2026-10-10)
 
 1. **Subjects:** nodes keep the `<subject>` level of datamodels.jp.
 2. **IRIs:** hash IRIs by default on static hosts; slash IRIs as an option with w3id.org or a server that redirects.
-3. **Licence:** required in every index; the template suggests CC0.
+3. **Licence:** required in every index; `datamodels init` suggests CC0 (no template repository: `init` generates a node's files, decided 2026-10-10).
 4. **`extends`:** expressed as `prov:wasDerivedFrom` in RDF and DCAT.
 5. **Stages:** the four stages are the same everywhere: datamodels.jp adds `experimental` as an option, even if it is used rarely there.
+6. **Toolkit names:** the settings file is `node.yaml`, and `datamodels build` writes into `_site/` (Eleventy's default).
 
 ## Open question
 
