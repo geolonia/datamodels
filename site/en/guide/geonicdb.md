@@ -95,7 +95,7 @@ It does not check:
 - whether an attribute is sent as a Property or a Relationship, or which type a Relationship points to;
 - entities of a type that has no registered model: they are stored as they are;
 - the other types of an entity with several types: only the first type is checked;
-- entities that existed before the model was registered or changed. To see how a change would affect them, send it with `PATCH /custom-data-models/<Type>?dryRun=true` or `geonic models update <Type> @model.json --api-dry-run`: nothing changes, and the answer says how many entities would break the model, with examples.
+- entities that existed before the model was registered or changed. To see how a change would affect them, send it with `PATCH /custom-data-models/<Type>?dryRun=true` (GeonicDB v0.17.0 or later) or `geonic models update <Type> @model.json --api-dry-run` (geonicdb-cli 0.25.0 or later): nothing changes, and the answer says how many entities would break the model, with examples.
 
 ## Your own attributes
 

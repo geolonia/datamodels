@@ -100,8 +100,8 @@ GeonicDB は、その型のエンティティを作成・変更するたびに�
 - モデルを登録していない型のエンティティ。そのまま保存されます。
 - 型を複数持つエンティティの 2 つめ以降の型。検査するのは 1 つめの型だけです。
 - モデルを登録・変更する前からあるエンティティ。変更の影響は、試しに実行して確かめられます。何も変えずに、モデルに合わなくなるエンティティの数と例が返ります。
-  - API：`PATCH /custom-data-models/<型名>?dryRun=true`。
-  - CLI：`geonic models update <型名> @model.json --api-dry-run`。
+  - API：`PATCH /custom-data-models/<型名>?dryRun=true`（GeonicDB v0.17.0 以降）。
+  - CLI：`geonic models update <型名> @model.json --api-dry-run`（geonicdb-cli 0.25.0 以降）。
 
 ## 独自の属性
 
