@@ -91,6 +91,7 @@
             "type": "string",
             "enum": [
               "draft",
+              "experimental",
               "stable",
               "deprecated"
             ]

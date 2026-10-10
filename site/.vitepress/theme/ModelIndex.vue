@@ -11,7 +11,7 @@ import { computed, ref } from 'vue'
 interface Row {
   type: string; href: string; title: string
   subject: string; subjectTitle: string; subjectHref: string
-  kind: 'entity' | 'value'; status: 'draft' | 'stable' | 'deprecated'
+  kind: 'entity' | 'value'; status: 'draft' | 'experimental' | 'stable' | 'deprecated'
   text: string // lower-cased names, titles, descriptions and attribute names in both languages
 }
 interface Card { name: string; title: string; summary: string; href: string; models: { type: string; href: string }[] }
@@ -21,12 +21,12 @@ const L = {
   ja: {
     search: 'モデル名・属性名・説明で絞り込む', subject: 'サブジェクト', kind: '種類', status: '段階', all: 'すべて',
     type: '型', name: '名前', entity: 'エンティティ', value: '値型', count: (n: number, all: number) => `${all} 件中 ${n} 件`,
-    none: '当てはまるモデルはありません。', models: (n: number) => `${n} モデル`, statusLabel: { draft: 'ドラフト', stable: '安定', deprecated: '非推奨' },
+    none: '当てはまるモデルはありません。', models: (n: number) => `${n} モデル`, statusLabel: { draft: 'ドラフト', experimental: '試行', stable: '安定', deprecated: '非推奨' },
   },
   en: {
     search: 'Filter by model, attribute or description', subject: 'Subject', kind: 'Kind', status: 'Stage', all: 'All',
     type: 'Type', name: 'Name', entity: 'entity', value: 'value type', count: (n: number, all: number) => `${n} of ${all} models`,
-    none: 'No model matches.', models: (n: number) => (n === 1 ? '1 model' : `${n} models`), statusLabel: { draft: 'draft', stable: 'stable', deprecated: 'deprecated' },
+    none: 'No model matches.', models: (n: number) => (n === 1 ? '1 model' : `${n} models`), statusLabel: { draft: 'draft', experimental: 'experimental', stable: 'stable', deprecated: 'deprecated' },
   },
 }[props.lang]
 

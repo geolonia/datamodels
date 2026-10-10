@@ -22,6 +22,7 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 ## 段階と決め方
 
 - **提案**（Issue）→ **ドラフト**（`draft`、マージされたモデル）→ **安定**（`stable`）→ **非推奨**（`deprecated`）。非推奨になったモデルも公開をやめず、URL は変わりません。
+- **試行**（`experimental`）は、必要なときだけ使う段階です。実際に使いながら学ぶためのモデルで、別のモデルに置き換わることがあります。データモデルのネットワークのほかのノードと同じ段階で（#200）、datamodels.jp で使うことは少ないはずです（2026-10-10 決定）。
 - **安定**になるには、`ADOPTERS.yaml` に別々の組織による 2 つの実装が必要です。各項目に `name`、`organization`、`url`（公開リポジトリ、ドキュメント、連絡先）を書きます。CI は組織が 2 つあるかを検査し、安定にする Pull Request のレビュアーが、実在し独立しているかを確認します。カタログを運営する Geolonia の実装も、同じ条件（`url` を含む）で 1 つとして数えます。もう 1 つは別の組織の実装です。同じ組織は、顧客や案件が違っても 1 つとして数え、`organization` には実装した組織の名前を書きます。
 - 通常の Pull Request はメンテナーがレビューしてマージします。新しいサブジェクト（分野ごとのモデルのまとまり）、メジャーバージョン、安定への昇格は、小さなグループ（Hal、宮内さん、大橋さん、Daniel）がその Pull Request や Issue の上で決めます。
 
@@ -111,6 +112,7 @@ datamodels.jp publishes data models that work in Japan as a shared, product-neut
 ## Stages and who decides
 
 - **Proposal** (an issue) → **draft** (a merged model) → **stable** → **deprecated**. A deprecated model stays published; its URLs never change.
+- **Experimental** (`experimental`) is an optional stage: a model in use, to learn from, that may still be replaced. It is the same stage as on the other nodes of the web of data models (#200); on datamodels.jp it will be rare (decided 2026-10-10).
 - **Stable** needs two implementations from different organisations in `ADOPTERS.yaml`. Each entry gives `name`, `organization` and a `url` (public repository, documentation or a contact). CI checks that two organisations are listed; the reviewer of the pull request that sets `stable` checks that they are real and independent. An implementation by Geolonia, which runs the catalog, counts as one on the same terms (with a `url`); the other must come from a different organisation. One organisation counts once, whatever the customer or project, and `organization` names the organisation that built it.
 - Maintainers review and merge ordinary pull requests. New subjects, major versions and promotions to `stable` are decided by a small group (Hal, 宮内さん, 大橋さん, Daniel), in the pull request or issue concerned.
 

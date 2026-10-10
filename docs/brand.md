@@ -72,8 +72,8 @@ On the site:
   red on hover, like a link.
 - The pre-release banner is ink on paper-2 with a small red dot.
 
-Status badges keep VitePress semantics (draft = info, stable = tip, deprecated =
-danger); `tip` inherits the brand red.
+Status badges keep VitePress semantics (draft and experimental = warning, stable =
+tip, deprecated = danger); `tip` is green (custom.css).
 
 ## 5. Typography
 

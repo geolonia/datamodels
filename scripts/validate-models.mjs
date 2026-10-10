@@ -298,7 +298,7 @@ for (const subject of subjects) {
     // the pull request that sets it; CI checks the mechanics only.
     // Only a missing status means draft; an explicit null is an error like any other value.
     const status = model.catalog?.status === undefined ? 'draft' : model.catalog.status;
-    if (!['draft', 'stable', 'deprecated'].includes(status)) fail(`${mwhere}/catalog.yaml`, `status must be draft, stable or deprecated, got ${JSON.stringify(status)}`);
+    if (!['draft', 'experimental', 'stable', 'deprecated'].includes(status)) fail(`${mwhere}/catalog.yaml`, `status must be draft, experimental, stable or deprecated, got ${JSON.stringify(status)}`);
     // A link must name a host: "https://" alone identifies no implementation.
     const isLink = (u) => { if (typeof u !== 'string') return false; try { const x = new URL(u); return (x.protocol === 'https:' || x.protocol === 'http:') && x.hostname !== ''; } catch { return false; } };
     // A deprecated model may name its replacement (catalog.json supersededBy).
