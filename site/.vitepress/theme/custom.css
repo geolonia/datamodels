@@ -275,7 +275,7 @@
 
 /* Label colours carry a meaning; the brand red stays for links and accents.
  * green (tip): ready to use (stable, the current version)
- * amber (warning): may still change (draft)
+ * amber (warning): may still change (draft, experimental)
  * red (danger): careful (deprecated, personal data)
  * grey (info): just information (value type, required, ...) */
 :root {

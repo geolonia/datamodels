@@ -77,7 +77,7 @@ test('a url that is not a string does not count and fails', async () => {
 test('an explicit null status fails', async () => {
   const r = await validateWith({ status: 'null' });
   assert.equal(r.status, 1);
-  assert.match(r.stderr, /Milestone\/catalog\.yaml: status must be draft, stable or deprecated, got null/);
+  assert.match(r.stderr, /Milestone\/catalog\.yaml: status must be draft, experimental, stable or deprecated, got null/);
 });
 
 test('a deprecated model may name its replacement', async () => {
@@ -92,10 +92,15 @@ test('supersededBy on a model that is not deprecated, or not a URL, fails', asyn
   assert.match(r.stderr, /supersededBy must be an http\(s\) URL with a host/);
 });
 
+test('experimental validates without adopters', async () => {
+  const r = await validateWith({ status: 'experimental' });
+  assert.equal(r.status, 0, r.stderr);
+});
+
 test('an unknown status fails', async () => {
   const r = await validateWith({ status: 'beta' });
   assert.equal(r.status, 1);
-  assert.match(r.stderr, /Milestone\/catalog\.yaml: status must be draft, stable or deprecated, got "beta"/);
+  assert.match(r.stderr, /Milestone\/catalog\.yaml: status must be draft, experimental, stable or deprecated, got "beta"/);
 });
 
 test('an outside supersededBy URL renders as a link to exactly that URL', async () => {

@@ -39,7 +39,7 @@ const T = {
     deprecatedNote: (link) => `このモデルは非推奨です。${link ? `代わりに ${link} を使ってください。` : ''}公開済みのファイルと URL はそのまま残ります。`, valueType: '値型', fields: 'フィールド', versions: 'バージョン', current: '現行',
     forPrograms: 'プログラムからは、同じ一覧を [catalog.json](/catalog.json) で読めます。',
     intro: 'モデルは分野（サブジェクト）ごとにまとめています。分野を開くか、名前・属性・説明で探してください。',
-    statusLabel: { draft: 'ドラフト', stable: '安定', deprecated: '非推奨' },
+    statusLabel: { draft: 'ドラフト', experimental: '試行', stable: '安定', deprecated: '非推奨' },
     sourceLabel: { minted: 'このカタログで定義', profile: '上流モデルの日本向け拡張', global: '上流（Smart Data Models）' },
     subject: 'サブジェクト', mappingField: 'このモデル', mappingTo: '対応先', mappingNote: '備考', none: '対応なし',
     alias: 'エイリアス', aliasNote: (link) => `${link} と同じ型です（IRI が同一）。名称だけがこのサブジェクトの言い方に合わせてあり、属性も必須項目も同じです。ブローカーでは同じ型として保存・照合されます。`,
@@ -60,7 +60,7 @@ const T = {
     deprecatedNote: (link) => `This model is deprecated.${link ? ` Use ${link} instead.` : ''} Its published files and URLs stay as they are.`, valueType: 'value type', fields: 'Fields', versions: 'Versions', current: 'current',
     forPrograms: 'Programs can read the same list from [catalog.json](/catalog.json).',
     intro: 'Models are grouped by subject. Open a subject, or search by name, attribute or description.',
-    statusLabel: { draft: 'draft', stable: 'stable', deprecated: 'deprecated' },
+    statusLabel: { draft: 'draft', experimental: 'experimental', stable: 'stable', deprecated: 'deprecated' },
     sourceLabel: { minted: 'defined in this catalog', profile: 'Japanese profile of an upstream model', global: 'upstream (Smart Data Models)' },
     subject: 'Subject', mappingField: 'This model', mappingTo: 'Maps to', mappingNote: 'Note', none: 'no counterpart',
     alias: 'alias', aliasNote: (link) => `The same type as ${link} (identical IRI). Only the name follows this subject's wording; attributes and required fields are the same. A broker stores and matches both names as one type.`,
@@ -71,7 +71,7 @@ const T = {
 const badge = (type, text) => `<Badge type="${type}" text="${text}" />`;
 // Label colours carry a meaning (custom.css): green (tip) ready to use, amber (warning)
 // may still change, red (danger) careful, grey (info) just information.
-const stageBadgeType = { stable: 'tip', draft: 'warning', deprecated: 'danger' };
+const stageBadgeType = { stable: 'tip', draft: 'warning', experimental: 'warning', deprecated: 'danger' };
 const statusBadge = (lang, status) => badge(stageBadgeType[status] ?? 'info', T[lang].statusLabel[status] ?? status);
 // The description is the page's meta and share-preview text, which shows no Markdown.
 export const plainText = (s) => String(s ?? '')
