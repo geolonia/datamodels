@@ -18,7 +18,7 @@ description: datamodels-toolkit で、自分のデータモデルを変わらな
 ## 1. ノードを作る {#init}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.2.0 init my-models
+npx github:geolonia/datamodels-toolkit#v0.2.1 init my-models
 cd my-models
 ```
 
@@ -37,13 +37,13 @@ cd my-models
 ## 2. モデルを足す {#add}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.2.0 add road/RoadPatrol
+npx github:geolonia/datamodels-toolkit#v0.2.1 add road/RoadPatrol
 ```
 
 このカタログのモデルから始めるときは、`extend` を使います。カタログのモデルのスキーマをコピーし、その `@context` を取り込み、土台にしたモデルを記録します。そのため、`check` が名前と意味を変えていないかを検査できます。そのうえで、下のように自分の属性を足します。`--subclass` を付けると、独自の IRI を持つサブタイプになります。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.2.0 extend task/Task road/RoadTask
+npx github:geolonia/datamodels-toolkit#v0.2.1 extend task/Task road/RoadTask
 ```
 
 `models/road/RoadPatrol/` に `schema.json`、`catalog.yaml`、`examples/example.json` ができます。サブジェクトの `@context` には型 `RoadPatrol` が入ります。属性は、1 つにつき 3 か所に書きます。まず `models/road/RoadPatrol/schema.json` の `properties` に書き、IRI は `x-iri` に入れます。
@@ -74,8 +74,8 @@ attributes:
 ## 3. 検査してビルドする {#check}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.2.0 check
-npx github:geolonia/datamodels-toolkit#v0.2.0 build
+npx github:geolonia/datamodels-toolkit#v0.2.1 check
+npx github:geolonia/datamodels-toolkit#v0.2.1 build
 ```
 
 `check` は、すべてのスキーマと例を検査します。`build` はサイトを `_site/` に書き出すので、`_site/index.html` を開いて確かめられます。GitHub では、Pull Request のたびにワークフローが同じ検査をします。
@@ -102,7 +102,7 @@ npx github:geolonia/datamodels-toolkit#v0.2.0 build
 変える前に、公開したバージョンをサイトに残す手続きをします。`release` が、その `@context`、語彙、スキーマを `models/road/releases/` に保存するので、コミットしてください。公開済みのファイルと違えば、`release` は止まります。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.2.0 release road
+npx github:geolonia/datamodels-toolkit#v0.2.1 release road
 ```
 
 そのうえでモデルを変え、`subject.yaml` の `version` を上げます（[URL とバージョン](/guide/urls#versions)）。サイトには両方のバージョンが残ります。
