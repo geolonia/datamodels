@@ -1,0 +1,67 @@
+{
+  "rules": {
+    "preset-ja-technical-writing": {
+      "no-mix-dearu-desumasu": {
+        "preferInHeader": "",
+        "preferInBody": "ですます",
+        "preferInList": "ですます",
+        "strict": false
+      },
+      "ja-no-weak-phrase": true,
+      "no-unmatched-pair": true,
+      "no-doubled-conjunction": true,
+      "ja-no-abusage": true,
+      "max-kanji-continuous-len": {
+        "max": 6,
+        "allow": [
+          "指定緊急避難場所一覧",
+          "指定緊急避難場所",
+          "災害対応基本共有情報",
+          "全国共通避難所",
+          "避難所運営等避難生活支援",
+          "東京都千代田区",
+          "全国地方公共団体",
+          "新総合防災情報",
+          "日本道路交通情報",
+          "次元時空間情報"
+        ]
+      },
+      "no-doubled-joshi": {
+        "allow": [
+          "も",
+          "にも",
+          "でも"
+        ]
+      },
+      "ja-no-mixed-period": {
+        "allowPeriodMarks": [
+          "："
+        ]
+      },
+      "no-exclamation-question-mark": {
+        "allowFullWidthQuestion": true
+      },
+      "sentence-length": {
+        "max": 100,
+        "skipPatterns": [
+          "/`[^`]+`/"
+        ]
+      }
+    },
+    "preset-jtf-style": {
+      "1.1.1.本文": true,
+      "2.1.5.カタカナ": true,
+      "2.1.6.カタカナの長音": true,
+      "3.2.カタカナ語間のスペースの有無": true,
+      "3.1.1.全角文字と半角文字の間": false
+    }
+  },
+  "filters": {
+    "allowlist": {
+      "allow": [
+        "/<svg[\\s\\S]*?<\\/svg>/",
+        "/^:::.*$/m"
+      ]
+    }
+  }
+}
