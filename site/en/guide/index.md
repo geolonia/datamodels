@@ -7,6 +7,7 @@ description: How to use the catalog's models, add attributes, URLs and versions,
 
 ## Use the models
 
+- [Tutorial: from a CSV file to a map](/en/guide/tutorial): one real open-data file converted into a model, loaded into a broker, queried and shown on a map, step by step.
 - [Using the models](/en/guide/use): validate JSON with the catalog models, send it to an NGSI-LD broker, and use it as linked data.
   - [GeonicDB](/en/guide/geonicdb): register a model in GeonicDB, then create and query entities.
 - [Converting data](/en/guide/mapping): convert data that follows a standard into a model, with its mapping file.
