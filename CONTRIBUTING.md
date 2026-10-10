@@ -24,12 +24,12 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 - **提案**（Issue）→ **ドラフト**（`draft`、マージされたモデル）→ **安定**（`stable`）→ **非推奨**（`deprecated`）。非推奨になったモデルも公開をやめず、URL は変わりません。
 - **試行**（`experimental`）は、必要なときだけ使う段階です。実際に使いながら学ぶためのモデルで、別のモデルに置き換わることがあります。データモデルのネットワークのほかのノードと同じ段階で（#200）、datamodels.jp で使うことは少ないはずです（2026-10-10 決定）。
 - **安定**になるには、`ADOPTERS.yaml` に別々の組織による 2 つの実装が必要です。各項目に `name`、`organization`、`url`（公開リポジトリ、ドキュメント、連絡先）を書きます。CI は組織が 2 つあるかを検査し、安定にする Pull Request のレビュアーが、実在し独立しているかを確認します。カタログを運営する Geolonia の実装も、同じ条件（`url` を含む）で 1 つとして数えます。もう 1 つは別の組織の実装です。同じ組織は、顧客や案件が違っても 1 つとして数え、`organization` には実装した組織の名前を書きます。
-- 通常の Pull Request はメンテナーがレビューしてマージします。新しいサブジェクト（分野ごとのモデルのまとまり）、メジャーバージョン、安定への昇格は、小さなグループ（Hal、宮内さん、大橋さん、Daniel）がその Pull Request や Issue の上で決めます。
+- 通常の Pull Request はメンテナーがレビューしてマージします。新しいサブジェクト（分野ごとのモデルのまとまり）、メジャーバージョン、安定への昇格は、小さなグループが決めます。メンバーは Hal、宮内さん、大橋さん、Daniel で、その Pull Request や Issue の上で決めます。
 
 ## Pull Request の手順
 
 1. リポジトリをフォークして、ブランチを作ります。
-2. `npm ci` の後、新しいモデルなら `npm run new-model -- <サブジェクト> <型名>` でひな形を作ります（Smart Data Models と同じ構成: `schema.json`, `catalog.yaml`, `examples/`, `notes.yaml`）。TODO の箇所を埋めます。
+2. `npm ci` を実行します。新しいモデルなら、`npm run new-model -- <サブジェクト> <型名>` でひな形を作り、TODO の箇所を埋めます。構成は Smart Data Models と同じです（`schema.json`、`catalog.yaml`、`examples/`、`notes.yaml`）。
 3. `npm run validate:models` が、足りない箇所を一覧にします。最後に `npm run check` と `npm test` が通ることを確認します。
 4. すべてのコミットに `git commit -s` で署名（Signed-off-by）を付けて、Pull Request を送ります。
 5. CI（スキーマ、例、`@context` の展開、予約語、バージョンの検証と自動レビュー。このリポジトリ内のブランチならプレビュー URL も）の結果を見て、レビューに答えます。
@@ -42,7 +42,7 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 
 データを登録するツール（ブローカーの管理画面など）は、利用者のデータから新しいモデルを作ることがあります。それを提案として渡すときは、このリポジトリのモデルと同じ構成のフォルダ（**提案バンドル**）を書き出します。
 
-- `models/<サブジェクト>/<型名>/` に `catalog.yaml`、`schema.json`、`examples/`、あれば `mapping/`（元になった標準や公開データとの対応）、`notes.yaml`、`ADOPTERS.yaml`（使っている組織とおよそのデータ量）を置きます。`npm run validate:models` で足りない箇所が分かります。
+- `models/<サブジェクト>/<型名>/` に、モデルのファイルを置きます。`catalog.yaml`、`schema.json`、`examples/`、`notes.yaml`、`ADOPTERS.yaml`（使っている組織とおよそのデータ量）です。元になった標準や公開データとの対応があれば、`mapping/` も置きます。`npm run validate:models` で足りない箇所が分かります。
 - **ツールは自分で投稿しません。** 人が自分の GitHub アカウントで Pull Request を開き、署名（DCO）を付けます。作者と責任は人に残ります。
 - レビューを経て、他のモデルと同じく `draft` で取り込みます。新しい段階はありません。
 - `ADOPTERS.yaml` の記載は、早めの根拠になります。1 つの組織は 1 回だけ数えるので、`stable` に 2 つの独立した組織が要るという規則は変わりません（2026-10-06 決定、#156）。
@@ -79,14 +79,20 @@ since: 2026-10                               # 任意：載せた時期
 
 コミットの `Signed-off-by: 名前 <メールアドレス>` は、[Developer Certificate of Origin](https://developercertificate.org/) に同意することを表します。つまり、その変更を自分で作ったか、公開する権利があり、このリポジトリのライセンスで公開してよいことを示します。別の同意書はありません。
 
-- 付け方: `git commit -s`（名前とメールアドレスはコミットの作者と同じにします）
-- 付け忘れたとき: `git rebase --signoff origin/main` の後、`git push --force-with-lease`。履歴を書き換えたくなければ、DCO チェックの詳細に表示される文面で、前のコミットに署名を追加するコミットを 1 つ足すこともできます。
+- 付け方：`git commit -s`（名前とメールアドレスは、コミットの作者と同じにします）。
+- 付け忘れたとき：`git rebase --signoff origin/main` の後、`git push --force-with-lease` を実行します。履歴を書き換えたくなければ、DCO チェックの詳細に表示される文面で、前のコミットに署名を追加するコミットを 1 つ足すこともできます。
 
 [DCO アプリ](https://github.com/apps/dco)が、Pull Request のすべてのコミット（ボットとマージコミットを除く）に作者の署名があるかを検査します。
 
 ## ライセンス
 
-機械が読むファイル（スキーマ、`@context`、語彙、例、`catalog.yaml`、対応表、公開する `catalog.json` とアダプターのファイル）は [CC0 1.0](https://github.com/geolonia/datamodels/blob/main/LICENSE-CONTENT.md)、文章（注記、モデルの README、サイトのページ）は [CC BY 4.0](https://github.com/geolonia/datamodels/blob/main/LICENSE-CONTENT.md)、ツールのコードは [Apache-2.0](https://github.com/geolonia/datamodels/blob/main/LICENSE) です。CC BY の出典（Smart Data Models、GIF のコアスキーマなど）から内容を写したファイルは CC BY 4.0 のままです。そのファイルと出典を、モデルのフォルダの `LICENSE.md` に書いてください。
+ライセンスは、ファイルの種類によって次のとおりです。
+
+- 機械が読むファイル（スキーマ、`@context`、語彙、例、`catalog.yaml`、対応表、公開する `catalog.json` とアダプターのファイル）：[CC0 1.0](https://github.com/geolonia/datamodels/blob/main/LICENSE-CONTENT.md)
+- 文章（注記、モデルの README、サイトのページ）：[CC BY 4.0](https://github.com/geolonia/datamodels/blob/main/LICENSE-CONTENT.md)
+- ツールのコード：[Apache-2.0](https://github.com/geolonia/datamodels/blob/main/LICENSE)
+
+CC BY の出典（Smart Data Models、GIF のコアスキーマなど）から内容を写したファイルは CC BY 4.0 のままです。そのファイルと出典を、モデルのフォルダの `LICENSE.md` に書いてください。
 
 <!-- #endregion ja -->
 
