@@ -14,6 +14,7 @@
 - 段階は `draft`、`experimental`、`stable`、`deprecated`。
 - DCAT にそのまま対応させられるので、ネットワーク全体をブローカーのエンティティとしても扱える。
 - 決めたこと（2026-10-10）：サブジェクトの単位は datamodels.jp と同じ。GitHub Pages では `#` 付きの IRI が既定。ライセンスは必須（ひな形は CC0 を提案）。`extends` は RDF では `prov:wasDerivedFrom`。段階は 4 つで、`experimental` は datamodels.jp でも選べる（使うことは少ない）。
+- ツールキットの `datamodels build` は、ノードの設定 `node.yaml` と `models/` から `_site/` にファイルを作る（名前は 2026-10-10 決定）。
 - 残る問い：合意したあと、この文書をどこに置くか。
 
 ## Words
@@ -150,6 +151,15 @@ The index maps onto W3C [DCAT](https://www.w3.org/TR/vocab-dcat-3/), so the netw
 
 Mapping files, adapters, ADOPTERS files, a second language, a review process, search, or a large site. These are what a shared catalog needs; a node can add any of them later.
 
+## 8. Building a node
+
+[`datamodels build`](https://github.com/geolonia/datamodels-toolkit#build) in the toolkit builds a node from a folder with two parts, and writes everything in section 1 into `_site/`:
+
+- `node.yaml`: the settings (base URL, IRI form, languages, publisher, licence, known nodes).
+- `models/`: the subjects and models, laid out as in this repository's `models/`.
+
+A node does not have to use the toolkit; what counts is what it publishes.
+
 ## Decided (2026-10-10)
 
 1. **Subjects:** nodes keep the `<subject>` level of datamodels.jp.
@@ -157,6 +167,7 @@ Mapping files, adapters, ADOPTERS files, a second language, a review process, se
 3. **Licence:** required in every index; the template suggests CC0.
 4. **`extends`:** expressed as `prov:wasDerivedFrom` in RDF and DCAT.
 5. **Stages:** the four stages are the same everywhere: datamodels.jp adds `experimental` as an option, even if it is used rarely there.
+6. **Toolkit names:** the settings file is `node.yaml`, and `datamodels build` writes into `_site/` (Eleventy's default).
 
 ## Open question
 
