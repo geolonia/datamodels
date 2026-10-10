@@ -5,7 +5,7 @@ description: 世界と日本で使われているデータモデル・語彙の�
 
 # 他のデータモデルカタログ
 
-このカタログは、他所にあるものを複製せず、参照して拡張します。ここでは、その「他所」をまとめます。NGSI-LD でそのまま使えるものと、対応付けが必要なものがあります。ここに無いカタログを知っていれば、[他のカタログの登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=catalog-report.yml)で知らせてください（[書き方](/guide/report-catalog)）。
+このカタログは、他所にあるものを複製せず、参照して拡張します。ここでは、その「他所」をまとめます。NGSI-LD でそのまま使えるものと、対応付けの要るものがあります。ここに無いカタログを知っていれば、[他のカタログの登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=catalog-report.yml)で知らせてください（[書き方](/guide/report-catalog)）。
 
 ## 世界
 

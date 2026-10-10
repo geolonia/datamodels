@@ -40,6 +40,11 @@ jobs:
       - name: Test
         run: npm test
 
+      # The Japanese pages with textlint (.textlintrc.json): the rules of
+      # Geolonia's handbook; the site's two choices are in CONTRIBUTING.md.
+      - name: Lint the Japanese pages
+        run: npm run lint:ja
+
       # Validates models, builds dist/, checks immutability and runs
       # `wrangler deploy --dry-run`, which validates wrangler.jsonc and the
       # assets directory without touching Cloudflare.

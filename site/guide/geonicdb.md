@@ -15,7 +15,11 @@ GeonicDB は、このカタログを運営している Geolonia の NGSI-LD ブ�
 
 ## 手順
 
-テナントと、これらの操作を許すポリシーを付けた API キー（[API キー](https://docs.geonicdb.com/ja/saas/api-key)、[ポリシーバインディング](https://docs.geonicdb.com/ja/reference/auth#ポリシーバインディング-policyid)）、それに 3 つの環境変数が要ります: `GEONICDB_BASE_URL`（例 `https://<your-deployment>.geonicdb.jp`）、`GEONICDB_TENANT`、`GEONICDB_API_KEY`。
+テナントと、これらの操作を許すポリシーを付けた API キーが要ります（[API キー](https://docs.geonicdb.com/ja/saas/api-key)、[ポリシーバインディング](https://docs.geonicdb.com/ja/reference/auth#ポリシーバインディング-policyid)）。使う環境変数は次の 3 つです。
+
+- `GEONICDB_BASE_URL`（例：`https://<your-deployment>.geonicdb.jp`）
+- `GEONICDB_TENANT`
+- `GEONICDB_API_KEY`
 
 ::: code-group
 
@@ -92,10 +96,12 @@ GeonicDB は、その型のエンティティを作成・変更するたびに�
 検査しないこと：
 
 - リストの中の値（許される値、最低の個数など）。リストであることだけを検査します（カタログの JSON Schema は中の値も検査します。`datamodels convert` の変換時など）。
-- 属性が Property と Relationship のどちらで送られたか、Relationship がどの型を指しているか
+- 属性が Property と Relationship のどちらで送られたか、Relationship がどの型を指しているか。
 - モデルを登録していない型のエンティティ。そのまま保存されます。
 - 型を複数持つエンティティの 2 つめ以降の型。検査するのは 1 つめの型だけです。
-- モデルを登録・変更する前からあるエンティティ。変更がそれらにどう影響するかは、`PATCH /custom-data-models/<型名>?dryRun=true` か `geonic models update <型名> @model.json --api-dry-run` で確かめられます。何も変わらず、モデルに合わなくなるエンティティの数と例が返ります。
+- モデルを登録・変更する前からあるエンティティ。変更の影響は、試しに実行して確かめられます。何も変えずに、モデルに合わなくなるエンティティの数と例が返ります。
+  - API：`PATCH /custom-data-models/<型名>?dryRun=true`。
+  - CLI：`geonic models update <型名> @model.json --api-dry-run`。
 
 ## 独自の属性
 
@@ -143,7 +149,7 @@ node adapters/geonicdb/export.mjs transportation \
   --type-prefix Acme --out ./out
 ```
 
-型や属性を独自の名前で使う（[独自の名前で使う](/guide/names)）なら、自分の名前で登録し、`contextUrl` に自分の @context を指定します。書き出しスクリプトが名前をまとめて置き換えます。各属性はカタログの意味を保ちます:
+型や属性を独自の名前で使う（[独自の名前で使う](/guide/names)）なら、自分の名前で登録し、`contextUrl` に自分の @context を指定します。書き出しスクリプトが名前をまとめて置き換えます。各属性はカタログの意味を保ちます。
 
 ```bash
 CONTEXT=https://example.com/context/city-disaster.jsonld

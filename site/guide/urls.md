@@ -29,7 +29,7 @@ description: どの URL を使うか、何が変わらないか、バージョ�
 
 1. **公開したバージョン付きファイルは変更も削除もしない。** `/context/<subject>/v1.0.0.jsonld` の中身は永久に同じです。CI はすべてのファイルのハッシュを記録し、変更を取り込みません。
 2. **属性の意味は変えない。** 変える必要があるときは新しい属性を足し、古い属性を非推奨にします。
-3. **型と属性の IRI はドキュメントにつながる。** `https://datamodels.jp/ns/transportation/RoadRestriction` をブラウザで開くと、その型のページが表示されます。JSON-LD を求めるプログラム（`Accept: application/ld+json`）には、代わりにサブジェクトの語彙（`/vocab/transportation/v1.jsonld`）を返します。型の定義、ラベル、説明が入っています。
+3. **型と属性の IRI はドキュメントにつながる。** 型の IRI をブラウザで開くと、その型のページが表示されます。たとえば `https://datamodels.jp/ns/transportation/RoadRestriction` です。プログラムが JSON-LD を求めると（`Accept: application/ld+json`）、語彙が返ります（`/vocab/transportation/v1.jsonld`）。語彙には、型の定義、ラベル、説明が入っています。
 
 ## バージョン {#versions}
 
@@ -68,4 +68,8 @@ description: どの URL を使うか、何が変わらないか、バージョ�
 
 </div>
 
-すべてのファイルは `Access-Control-Allow-Origin: *` で配信され、`.jsonld` は `application/ld+json`、スキーマは `application/schema+json`、対応表は `application/yaml` です。
+すべてのファイルは、`Access-Control-Allow-Origin: *` を付けて配信します。Content-Type は次のとおりです。
+
+- `.jsonld`：`application/ld+json`
+- スキーマ：`application/schema+json`
+- 対応表：`application/yaml`

@@ -36,6 +36,8 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 
 公開済みのバージョンの記録（スナップショットとマニフェスト）はメンテナーが行います。正式公開前（プレリリース）は、現行バージョンをその場で修正できます。
 
+サイトの日本語のページは、`npm run lint:ja`（textlint、Geolonia のハンドブックと同じ規則）で検査します。このサイトでは、全角と半角の間に半角スペースを入れ、箇条書きも本文と同じです・ます体で書きます（`.textlintrc.json`）。英語版を一文ずつ訳すのではなく、日本語の読み手に向けて書いてください。
+
 ### ツールが作ったモデルを提案する
 
 データを登録するツール（ブローカーの管理画面など）は、利用者のデータから新しいモデルを作ることがあります。それを提案として渡すときは、このリポジトリのモデルと同じ構成のフォルダ（**提案バンドル**）を書き出します。
@@ -125,6 +127,8 @@ datamodels.jp publishes data models that work in Japan as a shared, product-neut
 5. Check the CI results (validation of schemas, examples, `@context` expansion, protected terms and versions, and an automated review; for branches in this repository also a preview URL) and answer the review.
 
 Recording published versions (snapshots and the manifest) is a maintainer step. Until the official launch (pre-release), the current version may still be corrected in place.
+
+The site's Japanese pages are checked with `npm run lint:ja` (textlint, the rules of Geolonia's handbook). This site puts a half-width space between Japanese and Latin text, and writes list items in the same polite form as the body (`.textlintrc.json`). Write the Japanese for Japanese readers, rather than translating the English sentence by sentence.
 
 ### Proposing a model that a tool made
 

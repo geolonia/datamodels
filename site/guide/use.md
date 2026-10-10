@@ -115,13 +115,20 @@ body に @context を入れて `application/ld+json` で送るか、入れずに
 <details class="rules">
 <summary>key-values から normalized への決まり</summary>
 
-- `id` と `type` はそのまま。
-- 各属性は、モデルのページの属性の表にある NGSI-LD の型で包みます。Property は `{ "type": "Property", "value": … }`、Relationship は `{ "type": "Relationship", "object": … }`、GeoProperty は `{ "type": "GeoProperty", "value": … }`、JsonProperty は `{ "type": "JsonProperty", "json": … }`、VocabProperty は `{ "type": "VocabProperty", "vocab": … }` です。key-values の形でも、JsonProperty と VocabProperty はメンバーを残します（`{ "json": … }`、`{ "vocab": … }`）。JSON Schema は中の値を表すので、key-values のデータをスキーマで検証するときは、このメンバーを外してから検証してください。この 2 つは NGSI-LD 1.8 の型なので、使うモデルの前に、ブローカーが対応しているかを確かめてください。
-- 日時の Property（スキーマの `format: date-time`）の値は `{ "@type": "DateTime", "@value": … }` に、日付の Property（`format: date`）の値は `{ "@type": "Date", "@value": … }` にします。日付でも日時でもよい Property（モデルのページで「日付または日時」）は値に合わせます。`2026-07-11` なら Date、`2026-07-11T09:00:00+09:00` なら DateTime です。
+- `id` と `type` はそのままにします。
+- 各属性は、モデルのページの属性の表にある NGSI-LD の型で包みます。
+  - Property：`{ "type": "Property", "value": … }`。
+  - Relationship：`{ "type": "Relationship", "object": … }`。
+  - GeoProperty：`{ "type": "GeoProperty", "value": … }`。
+  - JsonProperty：`{ "type": "JsonProperty", "json": … }`。
+  - VocabProperty：`{ "type": "VocabProperty", "vocab": … }`。
+
+  JsonProperty と VocabProperty は、key-values の形でもメンバーを残します（`{ "json": … }`、`{ "vocab": … }`）。JSON Schema が表すのは中の値です。key-values のデータをスキーマで検証するときは、このメンバーを外してください。この 2 つは NGSI-LD 1.8 の型です。使う前に、ブローカーが対応しているかを確かめてください。
+- 日時の Property（スキーマの `format: date-time`）の値は `{ "@type": "DateTime", "@value": … }` にします。日付の Property（`format: date`）は `{ "@type": "Date", "@value": … }` です。日付でも日時でもよい Property（モデルのページで「日付または日時」）は、値に合わせます。`2026-07-11` なら Date、`2026-07-11T09:00:00+09:00` なら DateTime です。
 - 複数の値を持つ属性（属性の表で「複数可」と示すもの。Task の `assignee` など）は、値ごとに 1 つのインスタンスを並べた配列にし、それぞれに `datasetId` を付けます。カタログの例は `urn:ngsi-ld:dataset:<属性名>:<番号>` の形を使っています。
 - `@context` にはサブジェクトのエイリアスと NGSI-LD のコアコンテキストを並べます。
 
-たとえば、この key-values の Task は
+たとえば、次の key-values の Task があります。
 
 ```json
 {
@@ -134,7 +141,7 @@ body に @context を入れて `application/ld+json` で送るか、入れずに
 }
 ```
 
-normalized では次のようになります。
+これを normalized にすると、次のようになります。
 
 ```json
 {
@@ -219,7 +226,7 @@ print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))
 
 :::
 
-結果の一部です。N-Quads は RDF をテキストで書く形式で、1 行が 1 つの文です。どの行も「エンティティ（1 つ目）が、属性（2 つ目、IRI）として、値（3 つ目）を持つ」と読みます:
+結果の一部です。N-Quads は、RDF をテキストで書く形式です。1 行が 1 つの文です。どの行も「エンティティ（1 つ目）が、属性（2 つ目、IRI）として、値（3 つ目）を持つ」と読みます。
 
 ```text
 <urn:ngsi-ld:RoadRestriction:0001> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://datamodels.jp/ns/transportation/RoadRestriction> .

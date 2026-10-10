@@ -11,8 +11,8 @@ datamodels.jp は、日本で使えるデータモデルのカタログです。
 
 [株式会社Geolonia](https://www.geolonia.com/company/) が運営しています。
 
-- モデルへの質問・提案・不具合の報告: [GitHub の Issue](https://github.com/geolonia/datamodels/issues)（日本語・英語どちらでも）
-- その他のお問い合わせ: [Geolonia のお問い合わせフォーム](https://www.geolonia.com/contact/)
+- モデルへの質問・提案・不具合の報告：[GitHub の Issue](https://github.com/geolonia/datamodels/issues)（日本語・英語どちらでも）
+- その他のお問い合わせ：[Geolonia のお問い合わせフォーム](https://www.geolonia.com/contact/)
 
 ## ライセンス
 
@@ -20,7 +20,7 @@ datamodels.jp は、日本で使えるデータモデルのカタログです。
 
 ## AI とエージェント
 
-このサイトを作るときの AI の使い方と、AI エージェントが使えるもの: [AI とエージェント](/ai)
+このサイトを作るときの AI の使い方と、AI エージェントが使えるもの：[AI とエージェント](/ai)
 
 ## 免責
 

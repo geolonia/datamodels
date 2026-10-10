@@ -50,7 +50,7 @@ FILE=resource/ab7c2ca6-9ce3-409a-947b-4744fcfec7c6/download
 curl -sSfL -o sites.csv "$HOST/$SET/$FILE/092011_evacuation_space_sanitized_new.csv"
 ```
 
-表計算ソフトで開いてみてください。1 行が 1 か所で、名称、緯度、経度と、災害の種別ごとの列（洪水なら 災害種別_洪水）があります。多くの自治体が同じ列で公開しています。自治体標準オープンデータセットの形式です。
+表計算ソフトで開いてみてください。1 行が 1 か所で、名称、緯度、経度と、災害の種別ごとの列（洪水なら `災害種別_洪水`）があります。多くの自治体が同じ列で公開しています。自治体標準オープンデータセットの形式です。
 
 ## 2. カタログのモデルに変換する {#convert}
 
@@ -74,7 +74,7 @@ npx github:geolonia/datamodels-toolkit convert disaster/EvacuationSite \
 }
 ```
 
-列 災害種別_洪水 は `hazardTypes` の `"flood"` に、緯度と経度は GeoJSON の点になりました。名前（`name`、`hazardTypes`）はモデルのもので、どの自治体でも同じです。
+列 `災害種別_洪水` は `hazardTypes` の `"flood"` に、緯度と経度は GeoJSON の点になりました。名前（`name`、`hazardTypes`）はモデルのもので、どの自治体でも同じです。
 
 次に、ブローカー用にもう一度変換します。
 
@@ -83,7 +83,7 @@ npx github:geolonia/datamodels-toolkit convert disaster/EvacuationSite \
   jichitai-opendata-site sites.csv --normalized --out sites.jsonld
 ```
 
-`--normalized` は、同じデータを NGSI-LD の標準が送るときの形で書き出し、**@context** を付けます。@context は辞書のようなものです。ここでの `name` は `https://uri.etsi.org/ngsi-ld/name`、`hazardTypes` は `https://datamodels.jp/ns/disaster/hazardTypes` のことだとブローカーに伝えます。この完全な名前（**IRI**）は Web 全体で一意なので、2 つのシステムが違う意味の「name」を取り違えることがありません。
+`--normalized` を付けると、同じデータを NGSI-LD の正規の形（normalized）で書き出し、**@context** を付けます。@context は辞書のようなものです。ここでは、`name` が `https://uri.etsi.org/ngsi-ld/name` のことだと、ブローカーに伝えます。`hazardTypes` は `https://datamodels.jp/ns/disaster/hazardTypes` のことです。この完全な名前（**IRI**）は Web 全体で一意なので、2 つのシステムが違う意味の「name」を取り違えることがありません。
 
 ## 3. モデルを登録してデータを入れる {#load}
 
