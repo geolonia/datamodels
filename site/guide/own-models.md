@@ -35,7 +35,7 @@ description: このカタログに合わないデータモデルの公開先：�
 - 手順：[自分のサイトで公開する](/guide/own-site)
 - 例：[models.geolonia.com](https://models.geolonia.com)（Geolonia のプロジェクトのモデル）
 
-自分のサイトのモデルは、このカタログのモデルを土台にできます。土台にしたモデルを書いておくと、その名前と意味を変えていないかをツールキットが検査します。
+自分のサイトのモデルは、このカタログのモデルを土台にできます（[`extend`](/guide/own-site#add)）。土台にしたモデルを書いておくと、その名前と意味を変えていないかをツールキットが検査します。
 
 ## Smart Data Models {#smart-data-models}
 

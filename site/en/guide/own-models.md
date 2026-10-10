@@ -35,7 +35,7 @@ A node is static files. GitHub Pages hosts it for free, and you need no server. 
 - Steps: [Publishing on your own site](/en/guide/own-site).
 - An example: [models.geolonia.com](https://models.geolonia.com), the models of Geolonia projects.
 
-A model on your site can build on a model of this catalog. It names the model it extends, and the toolkit checks that it keeps that model's names and meanings.
+A model on your site can build on a model of this catalog ([`extend`](/en/guide/own-site#add)). It names the model it extends, and the toolkit checks that it keeps that model's names and meanings.
 
 ## Smart Data Models {#smart-data-models}
 

@@ -18,7 +18,7 @@ The result looks like [models.geolonia.com](https://models.geolonia.com): `catal
 ## 1. Start the node {#init}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.1.0 init my-models
+npx github:geolonia/datamodels-toolkit#v0.2.0 init my-models
 cd my-models
 ```
 
@@ -37,7 +37,13 @@ With the [GitHub CLI](https://cli.github.com/) (`gh`), add `--github my-org/my-m
 ## 2. Add a model {#add}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.1.0 add road/RoadPatrol
+npx github:geolonia/datamodels-toolkit#v0.2.0 add road/RoadPatrol
+```
+
+To start from a model of this catalog instead, use `extend`. It copies the catalog model's schema, imports its `@context` and records the model it builds on, so `check` keeps its names and meanings. Then add your attributes as below. With `--subclass`, the new model is a subtype with its own IRI.
+
+```bash
+npx github:geolonia/datamodels-toolkit#v0.2.0 extend task/Task road/RoadTask
 ```
 
 This adds `models/road/RoadPatrol/` with `schema.json`, `catalog.yaml` and `examples/example.json`, and the type `RoadPatrol` to the subject's `@context`. Then add each attribute in three places. In `models/road/RoadPatrol/schema.json`, under `properties`, with its IRI in `x-iri`:
@@ -68,8 +74,8 @@ Put a value in `examples/example.json` too (`"route": "A-3"`), and replace the t
 ## 3. Check and build {#check}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.1.0 check
-npx github:geolonia/datamodels-toolkit#v0.1.0 build
+npx github:geolonia/datamodels-toolkit#v0.2.0 check
+npx github:geolonia/datamodels-toolkit#v0.2.0 build
 ```
 
 `check` validates every schema and example. `build` writes the site into `_site/`; open `_site/index.html` to look at it. On GitHub, the workflow runs the same check on every pull request.
@@ -91,10 +97,14 @@ It is worth [verifying the domain](https://docs.github.com/en/pages/configuring-
 
 ## Changing a model later {#versions}
 
-A published version must not change: data that names its `@context` relies on it. `check` compares the files with the published ones and fails when a published file would change. Then raise the subject's `version` in `subject.yaml`, as described in [URLs and versions](/en/guide/urls#versions).
+A published version must not change: data that names its `@context` relies on it. `check` compares the files with the published ones and fails when a published file would change.
 
-::: warning Older versions
-The site holds only the current version of each subject so far. When you raise the version, the files of the old one leave the site. A command that keeps them is planned ([datamodels-toolkit#27](https://github.com/geolonia/datamodels-toolkit/issues/27)).
-:::
+Before you change anything, keep the published version online. `release` saves its `@context`, vocabulary and schemas in `models/road/releases/`; commit them. It refuses when the files differ from the published ones.
+
+```bash
+npx github:geolonia/datamodels-toolkit#v0.2.0 release road
+```
+
+Then make the change, and raise the subject's `version` in `subject.yaml`, as described in [URLs and versions](/en/guide/urls#versions). The site then has both versions.
 
 All commands and options: [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit#readme).
