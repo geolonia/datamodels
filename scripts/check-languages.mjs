@@ -27,17 +27,43 @@ import { reportFailures } from './lib/ci-summary.mjs';
 // Generated pages are checked through their generator, not here.
 const GENERATED = new Set(GENERATED_GUIDES.map((g) => `guide/${g}.md`));
 const OWN_CODE = '<!-- languages: own code -->';
-const ONE_LANGUAGE = /^One language only:\s*\S/m;
+// The reason is on the same line: an empty one does not count.
+const ONE_LANGUAGE = /^One language only:[ \t]*\S/m;
+
+/**
+ * Split a page into prose and fenced code blocks, as CommonMark does: a fence
+ * of three or more backticks or tildes, closed by a run of the same marker at
+ * least as long, with nothing but spaces after it (a block left open runs to
+ * the end). A block right after <!-- languages: own code --> is marked own.
+ */
+function splitCode(body) {
+  const code = [];
+  const prose = [];
+  let open = null;
+  for (const line of body.split('\n')) {
+    if (open) {
+      const close = /^ {0,3}(`{3,}|~{3,})[ \t]*$/.exec(line);
+      if (close && close[1][0] === open.marker[0] && close[1].length >= open.marker.length) { code.push(open.block); open = null; }
+      else open.block.src += `${line}\n`;
+      continue;
+    }
+    const start = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line);
+    // A backtick fence's info string has no backtick.
+    if (start && !(start[1][0] === '`' && start[2].includes('`'))) {
+      const own = prose.slice(-2).some((l) => l.includes(OWN_CODE));
+      open = { marker: start[1], block: { lang: start[2].trim().split(/[\s[{]/)[0], src: '', own } };
+      continue;
+    }
+    prose.push(line);
+  }
+  if (open) code.push(open.block);
+  return { prose: prose.join('\n'), code };
+}
 
 /** The parts of a page that both languages share. */
 export function shape(text) {
   const body = text.replace(/^---\n[\s\S]*?\n---\n/, '');
-  const code = [];
-  const prose = body.replace(/^(`{3,})([^\n]*)\n([\s\S]*?)^\1[ \t]*$/gm, (_, fence, info, src, offset) => {
-    const own = body.slice(Math.max(0, offset - OWN_CODE.length - 2), offset).includes(OWN_CODE);
-    code.push({ lang: info.trim().split(/[\s[{]/)[0], src, own });
-    return '';
-  });
+  const { prose, code } = splitCode(body);
   return {
     headings: [...prose.matchAll(/^(#{1,6})[ \t].*?(?:\{#([^}]+)\})?[ \t]*$/gm)].map((m) => m[1].length + (m[2] ? `#${m[2]}` : '')),
     links: [...new Set([...prose.matchAll(/\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g)].map((m) => linkTarget(m[1])))].sort(),
@@ -56,14 +82,23 @@ export function linkTarget(href) {
 const JAPANESE = /[^\x00-\x7f]/;
 const STRING = /"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*'/g;
 
-/** A code block's lines without comments, and its string literals. */
+/**
+ * A code block's lines without comments, and the string literals left in
+ * them. Strings are taken out first, so a # or // inside one is not a comment.
+ */
 function codeParts(src) {
-  const lines = src.split('\n')
-    .filter((l) => !/^\s*(#|\/\/)(?!!)/.test(l))
-    .map((l) => l.replace(/\s+(#|\/\/)\s.*$/, '').trimEnd())
-    .filter(Boolean);
+  const skeleton = [];
   const strings = [];
-  const skeleton = lines.map((l) => l.replace(STRING, (s) => { strings.push(s); return '""'; }));
+  for (const line of src.split('\n')) {
+    const found = [];
+    // Each string becomes a numbered placeholder, then comments are cut from what is left.
+    const tokens = line.replace(STRING, (s) => `"\u0000${found.push(s) - 1}\u0000"`);
+    if (/^\s*(#|\/\/)(?!!)/.test(tokens)) continue;
+    const code = tokens.replace(/\s+(#|\/\/)\s.*$/, '').trimEnd();
+    if (!code) continue;
+    for (const [, i] of code.matchAll(/"\u0000(\d+)\u0000"/g)) strings.push(found[Number(i)]);
+    skeleton.push(code.replace(/"\u0000\d+\u0000"/g, '""'));
+  }
   return { skeleton, strings };
 }
 
@@ -109,6 +144,16 @@ export function pagePairs(files) {
     .map((p) => ({ page: p, ja: `site/${p}`, en: `site/en/${p}` }));
 }
 
+/** English pages without a Japanese one (generated pages left out). */
+export function missingJapanese(files) {
+  return files.filter((f) => f.startsWith('site/en/') && f.endsWith('.md')).map((f) => f.slice('site/en/'.length))
+    .filter((page) => !GENERATED.has(page) && !files.includes(`site/${page}`))
+    .map((page) => `${page}: no Japanese page`);
+}
+
+/** Whether a pull request description says it changes one language on purpose, with a reason on that line. */
+export const oneLanguageAllowed = (body) => ONE_LANGUAGE.test(body ?? '');
+
 /** Pages changed in one language only, from the changed files of a pull request. */
 export function oneSided(changed, pairs) {
   const set = new Set(changed);
@@ -129,9 +174,7 @@ async function main() {
     const found = comparePages(await readFile(join(ROOT, p.ja), 'utf8'), await readFile(join(ROOT, p.en), 'utf8'));
     problems.push(...found.map((f) => `${p.page}: ${f}`));
   }
-  for (const f of files.filter((f) => f.startsWith('site/en/') && f.endsWith('.md'))) {
-    if (!files.includes(`site/${f.slice('site/en/'.length)}`)) problems.push(`${f.slice('site/en/'.length)}: no Japanese page`);
-  }
+  problems.push(...missingJapanese(files));
   let notes = [];
   if (base) {
     let changed;
@@ -139,7 +182,7 @@ async function main() {
       throw new Error(`cannot compare with ${base}: ${String(e.stderr || e.message).trim()}. Fetch the base branch first, for example: git fetch origin main`);
     }
     notes = oneSided(changed, pairs);
-    if (notes.length && ONE_LANGUAGE.test(process.env.PR_BODY ?? '')) {
+    if (notes.length && oneLanguageAllowed(process.env.PR_BODY)) {
       console.log(`one language only, as the pull request says:\n${notes.map((n) => `  ${n}`).join('\n')}`);
       notes = [];
     }

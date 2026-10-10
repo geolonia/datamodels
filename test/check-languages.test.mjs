@@ -1,7 +1,7 @@
 // The Japanese and English pages share headings, code, links and boxes.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { comparePages, linkTarget, oneSided, pagePairs } from '../scripts/check-languages.mjs';
+import { comparePages, linkTarget, oneSided, pagePairs, missingJapanese, oneLanguageAllowed } from '../scripts/check-languages.mjs';
 
 const ja = `---
 title: 使い方
@@ -87,4 +87,25 @@ test('page pairs leave out generated and English pages; one-sided changes are li
   assert.deepEqual(pairs.map((p) => p.page), ['index.md', 'guide/use.md']);
   assert.deepEqual(oneSided(['site/guide/use.md', 'site/index.md', 'site/en/index.md', 'scripts/x.mjs'], pairs), ['guide/use.md: changed in Japanese only']);
   assert.deepEqual(oneSided(['site/en/guide/use.md'], pairs), ['guide/use.md: changed in English only']);
+});
+
+test('code fenced with tildes, or closed by a longer fence, is code too', () => {
+  const page = (fence, close, cmd) => `# T\n\n${fence}bash\n${cmd}\n${close}\n`;
+  assert.match(comparePages(page('~~~', '~~~', 'ls -a'), page('~~~', '~~~', 'ls -l')).join('\n'), /code block 1 differs/);
+  assert.match(comparePages(page('```', '````', 'ls -a'), page('```', '````', 'ls -l')).join('\n'), /code block 1 differs/);
+  // A closing run of the other marker does not close the block.
+  assert.deepEqual(comparePages(page('```', '~~~\n```', 'ls'), page('```', '~~~\n```', 'ls')), []);
+});
+
+test('a # inside a string is not a comment', () => {
+  const page = (s) => `# T\n\n\`\`\`bash\necho "alpha # ${s}"   # a comment\n\`\`\`\n`;
+  assert.match(comparePages(page('one'), page('two')).join('\n'), /code block 1 differs: ja "alpha # one", en "alpha # two"/);
+  assert.deepEqual(comparePages(page('one'), page('one').replace('# a comment', '# 注')), []);
+});
+
+test('the one-language line needs its reason on the same line; generated pages need no Japanese one', () => {
+  assert.equal(oneLanguageAllowed('One language only: a Japanese rewrite'), true);
+  assert.equal(oneLanguageAllowed('One language only:\nthe next line is not the reason'), false);
+  assert.equal(oneLanguageAllowed(undefined), false);
+  assert.deepEqual(missingJapanese(['site/en/guide/standards.md', 'site/en/guide/use.md', 'site/en/guide/x.md', 'site/guide/use.md']), ['guide/x.md: no Japanese page']);
 });
