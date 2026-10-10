@@ -29,22 +29,23 @@ description: このカタログのモデルが守るルール、独自の型を�
 
 - 上流の属性の意味や型は変えません。必要なら新しい属性を足します。
 - 状態の属性（`progress`、`openingStatus`、`restrictionStatus` など）の値の一覧は決まっています。合う値がないときは状態の属性を省き、`statusLabel` に元の呼び方を書きます（そのとき `statusLabel` は必須）。近い値に無理に当てはめないでください。
-- NGSI-LD core context の予約語（`status`, `description`, `location`, `createdAt`, `modifiedAt`, `observedAt` など）は再定義しません。CI が弾きます。`status` が要るときは `incidentStatus` のように名前を変えます。
+- NGSI-LD core context の予約語は再定義しません。`status`、`description`、`location`、`createdAt`、`modifiedAt`、`observedAt` などです。CI が弾きます。`status` が要るときは `incidentStatus` のように名前を変えます。
 - モデルはサブジェクト（分野）でまとめ、地域名・顧客名・案件名ではまとめません。
 - 共通の構造は [common](/models/common/) の値型を使います。住所は [JapaneseAddress](/models/common/JapaneseAddress/)、`location` などの位置は [Geometry](/models/common/Geometry/)。使えるジオメトリを絞るときは `$ref` の横で制約します（DesignatedShelter は点だけ）。
-- 既にある型に名前だけ合わせたいならエイリアス（`x-alias-of`、属性も必須項目も同じ）、属性を足す・型を分けたいならサブクラス（`x-subclass-of`、同名の属性は親と同じ意味、親の必須項目は維持）を使います。CI が両方を検査します。
+- 既にある型に名前だけ合わせたいときは、エイリアス（`x-alias-of`）を使います。属性も必須項目も同じです。
+- 属性を足したいとき、型を分けたいときは、サブクラス（`x-subclass-of`）を使います。同じ名前の属性は親と同じ意味で、親の必須項目は残ります。CI はどちらも検査します。
 
 ## 日本の標準との対応表 {#mapping}
 
-モデルに当たるデータが日本の標準にあるとき（例えばデジタル庁の[自治体標準オープンデータセット](https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test)のデータセット）は、対応表（`mapping/*.yaml`）を書きます。自治体が自分のデータをそのままモデルに当てはめられるようにするためです。例は [EvacuationSite](/models/disaster/EvacuationSite/#mapping-jichitai-opendata-site) です。当たるデータセットがあるかはレビューで確認します（CI では検査しません）。
+モデルに当たるデータが日本の標準にあるとき（例えばデジタル庁の[自治体標準オープンデータセット](https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test)のデータセット）は、対応表（`mapping/*.yaml`）を書きます。自治体が、自分のデータをそのままモデルで使えるようにするためです。例は [EvacuationSite](/models/disaster/EvacuationSite/#mapping-jichitai-opendata-site) です。当たるデータセットがあるかはレビューで確認します（CI では検査しません）。
 
 ### 標準の新しい版 {#standard-revisions}
 
-対応表には、対応する標準の版を書きます（例 自治体標準オープンデータセットの 20260801版、EEI 第1.1版）。新しい版が出たら、メンテナーが対応表を合わせます。それだけではバージョンは上がりません。モデルも変える必要があれば、[バージョンの決まり](/guide/urls#versions)のとおりです。追従の期限は決めていません。
+対応表には、対応する標準の版を書きます（例：自治体標準オープンデータセットの 20260801 版、EEI 第 1.1 版）。新しい版が出たら、メンテナーが対応表を合わせます。対応表だけの変更なら、バージョンは上がりません。モデルも変える必要があれば、[バージョンの決まり](/guide/urls#versions)のとおりです。追従の期限は決めていません。
 
 ## 例の書き方 {#examples}
 
-エンティティのモデルには例が 2 つ（key-values と normalized）、Geometry などの値型には key-values の 1 つがあり、モデルのページに載り、CI が検証します。クライアントを書く人が真似をするので、全サブジェクトで 1 つのシナリオにそろえています。
+エンティティのモデルには、例が 2 つあります（key-values と normalized）。Geometry などの値型には、key-values の例が 1 つあります。例はモデルのページに載り、CI が検証します。クライアントを書く人が真似をするので、全サブジェクトで 1 つのシナリオにそろえています。
 
 - **シナリオ**: 架空の出来事として、東京都千代田区の大雨対応（令和8年7月）を使います。区が災害対応のプロジェクトを立ち上げ、靖国通りのアンダーパスの冠水を確認するタスクがあり、道路が通行止めになり、避難所が開設されます。
 - **実在と架空**: 地名、住所、各種コード（全国地方公共団体コード、アドレス・ベース・レジストリの町字 ID など）、座標は実在のものを使います。出来事、人、チーム、システムの番号は架空です。個人名は使わず、`staff-0012` や `field-team-a` のような識別子にします。

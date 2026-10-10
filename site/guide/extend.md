@@ -69,7 +69,7 @@ NGSI-LD のブローカーに送るときは、[使い方](/guide/use#broker)の
 
 ## Smart Data Models のモデルから始めるとき
 
-書き方は同じです。上流の @context は `master` ではなく、コミットを固定したアドレス（`https://raw.githubusercontent.com/smart-data-models/dataModel.<分野>/<commit>/context.jsonld`）で取り込みます。上流が変わっても、データの意味が変わらないようにするためです。
+書き方は同じです。上流の @context は、`master` ではなく、コミットを固定したアドレスで取り込みます。形は `https://raw.githubusercontent.com/smart-data-models/dataModel.<分野>/<commit>/context.jsonld` です。上流が変わっても、データの意味が変わらないようにするためです。
 
 ## 他の人にも役立ちそうなら
 
