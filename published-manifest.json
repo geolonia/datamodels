@@ -18,7 +18,7 @@
     "schema/task/Task/v1.0.0.json": "b11d6e5fe4a0d10f93340930067f9f8db9554c6c4d310c9abc0006952cc0cda8",
     "schema/transportation/RoadRestriction/v1.0.0.json": "3e56446b573899fe58b110e9f409c20232edb49d6e28a664fac559bae1d23e5a",
     "vocab/common/v1.0.0.jsonld": "10ba20ac1c202668b78db6d2de4ecfde5ba046fbb9b446f938f4fd6a116abb15",
-    "vocab/decision/v1.0.0.jsonld": "947e6cada19cfea05b0ec77c52dcebdff91afbb3b389715bc1f1f7b781c648d1",
+    "vocab/decision/v1.0.0.jsonld": "873a6c9bd9ba916ad68e55f1ac7f17c4cbad966aa76dd9f93ce72786b47a7143",
     "vocab/disaster/v1.0.0.jsonld": "d96a266c9aeb6790567ee92ef16e364cb11e01bed1a5183ee2a44137b7f0e356",
     "vocab/task/v1.0.0.jsonld": "f2e6e5305666c1e52057b20982664d0372fe1f9c1891781f9bd589b071690bc9",
     "vocab/transportation/v1.0.0.jsonld": "e51b5ead9ad90d48aa03e2f3481faf4a4563a292529f74a6abcf51ec45a03690"
