@@ -172,6 +172,6 @@ One limit: for a list such as `hazardTypes`, GeonicDB checks that the value is a
 
 Next:
 
-- **Your own data:** [Converting data](/en/guide/mapping) explains the mapping files; [Standards covered](/en/guide/standards) lists the standards that have one.
+- **Your own data:** [Converting your data](/en/toolkit/convert) shows the steps; [Mapping files](/en/guide/mapping) explains the mapping files; [Standards covered](/en/guide/standards) lists the standards that have one.
 - **Attributes of your own** on top of a model: [Adding attributes](/en/guide/extend).
 - **The same steps with curl** instead of the CLI, and more on the broker: [Use with GeonicDB](/en/guide/geonicdb).

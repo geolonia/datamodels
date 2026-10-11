@@ -7,7 +7,7 @@ description: datamodels-toolkit で、自分のデータモデルを変わらな
 
 [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) は、オープンソースのコマンドラインツールと GitHub Action です。コマンドの名前は `datamodels` です。次のことができます。
 
-- 自分のデータモデルを、自分のサイト（ノード）で変わらない URL で公開します。サイトには `catalog.json`、`@context`、JSON Schema、語彙、例、型と属性ごとの説明のページがそろいます。例は [models.gtt-project.org](https://models.gtt-project.org/)（Redmine の GTT プラグインのモデル）です。
+- 自分のデータモデルを、自分のサイト（ノード）で変わらない URL で公開します。サイトには `catalog.json`、`@context`、JSON Schema、語彙、例、型と属性ごとの説明のページがそろいます。例は [models.gtt-project.org](https://models.gtt-project.org/)（Redmine の GTT プラグインのモデル）です。ほかのサイトは[データモデルのサイト](/guide/sites)にあります。
 - CSV の一覧を、このカタログのモデルのエンティティに変換します。
 
 自分のサイトが要るかどうかは、[自分のデータモデル](/guide/own-models)で確かめてください。
@@ -27,14 +27,10 @@ npx github:geolonia/datamodels-toolkit#v0.3.3 --help
 ### 自分のサイトを公開する {#publish}
 
 - [サイトを始める](/toolkit/start)：`init` でノードを作り、GitHub Pages と自分のドメインで公開します。
-- [モデルを足す](/toolkit/models)：`add` と `extend` でモデルを足し、属性を書きます。
+- [サイトのモデル](/toolkit/models)：`add` と `extend` でモデルを足し、属性を書きます。
 - [検査とビルド](/toolkit/check)：`check` と `build`、公開する GitHub Action です。
 - [バージョン](/toolkit/versions)：公開したモデルを `bump` で変え、`upgrade` で新しいツールキットに移ります。
 
-### データを扱う {#data}
+### 自分のデータ {#data}
 
-- [一覧を変換する](/toolkit/convert)：`convert` で、CSV の一覧をモデルのエンティティに変換します。
-
-### 参照 {#reference}
-
-- [データモデルのサイト](/toolkit/sites)：datamodels.jp が知っているノードの一覧です。1 行に 1 つのサイトで、もとにしたカタログのモデルが分かります。
+- [データを変換する](/toolkit/convert)：`convert` で、CSV の一覧をモデルのエンティティに変換します。

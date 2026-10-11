@@ -1,9 +1,9 @@
 ---
-title: データを変換する
-description: 標準に沿ったデータを、モデルの対応表（マッピングファイル）を使ってモデルに変換する方法
+title: 対応表
+description: 標準のどの項目がモデルのどの属性に当たるかを示す対応表（マッピングファイル）のある場所と、書いてあること
 ---
 
-# データを変換する
+# 対応表
 
 多くのモデルは、日本のデータがすでに従っている標準（自治体標準オープンデータセット、EEI、国土地理院の避難所データなど）に対応しています。**対応表**（マッピングファイル）は、1 つのモデルと 1 つの標準について、標準のどの項目がモデルのどの属性に当たるかを示します。これを使うと、手元のデータをモデルに変換できます。
 
@@ -41,7 +41,7 @@ fields:
 
 行には変換の仕方も書けます。`column`（CSV の列）、`transform`（`integer`、`flag`、`split` など）、固定の値 `value`、`via`（住所など入れ子の値を別の対応表で作る）です。`convert.id` はエンティティの ID の付け方です。`to` だけの行は、説明のための行です。
 
-[datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) の `datamodels convert` がこの規則を読み、CSV の一覧をモデルのエンティティに変換します。使い方は[一覧を変換する](/toolkit/convert)にあります。
+[datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) の `datamodels convert` がこの規則を読み、CSV の一覧をモデルのエンティティに変換します。使い方は[データを変換する](/toolkit/convert)にあります。
 
 ## 対応表を足す
 

@@ -27,5 +27,11 @@
 # /guide/own-site or /en/guide/own-site, and published nodes keep it: keep these lines.
 /guide/own-site /toolkit/start 301
 /en/guide/own-site /en/toolkit/start 301
-/guide/nodes /toolkit/sites 301
-/en/guide/nodes /en/toolkit/sites 301
+/guide/nodes /guide/sites 301
+/en/guide/nodes /en/guide/sites 301
+
+# "Data model sites" moved from the Toolkit section to the guides (Reference) on 2026-10-11: guides explain
+# the catalog, the Toolkit section documents the datamodels command. Nodes built with older toolkit releases
+# and the toolkit's skill link /en/toolkit/sites: keep these lines.
+/toolkit/sites /guide/sites 301
+/en/toolkit/sites /en/guide/sites 301

@@ -79,4 +79,4 @@ IRI には自分のドメインが入るので、IRI が使えるのはドメイ
 
 ハッシュ IRI も転送を通して使えます。`#` から後ろはブラウザーに残るので、`https://w3id.org/my-org-models/ns/road#RoadPatrol` は、ページの該当する行を開きます。
 
-サイトができたら、[モデルを足す](/toolkit/models)に進みます。
+サイトができたら、[サイトのモデル](/toolkit/models)に進みます。
