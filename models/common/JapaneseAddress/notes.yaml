@@ -1,14 +1,14 @@
 notes:
-  - ja: エンティティ型ではなく値型である。`address` Property（IRI https://schema.org/address）の値として使い、エンティティのスキーマから $ref でこのスキーマを参照する。
+  - ja: "エンティティの型ではなく、値型です。`address` Property（IRI https://schema.org/address）の値として使い、エンティティのスキーマから $ref でこのスキーマを参照します。"
     en: A value type, not an entity type. Use it as the value of an `address` Property (IRI https://schema.org/address) and reference the schema with $ref from an entity schema.
-  - ja: 日本の住所の公式なモデルは、デジタル庁 GIF コアデータモデルの「住所」である。JapaneseAddress は同じ情報を扱い、項目ごとの対応は mapping/gif-address.yaml とこのページにある。GIF は XSD と Excel で公開されていて、JSON-LD でも JSON Schema でもない。この値型があるのはそのためである。
+  - ja: "日本の住所の公式なモデルは、デジタル庁の GIF コアデータモデルの「住所」です。JapaneseAddress は同じ情報を扱い、項目ごとの対応は mapping/gif-address.yaml とこのページにあります。GIF は XSD と Excel で公開されていて、JSON-LD でも JSON Schema でもありません。この値型があるのはそのためです。"
     en: The official Japanese address model is the Digital Agency's GIF core data model 住所 (Address). JapaneseAddress covers the same information; the field-by-field correspondence is in mapping/gif-address.yaml and on the page. GIF is published as XSD and Excel, not as JSON-LD or JSON Schema, which is why this value type exists.
-  - ja: schema.org の PostalAddress の語は、意味が合うものを再利用している（addressCountry、postalCode、addressRegion、addressLocality）。streetAddress は使わない。schema.org はこの語で欧米式の住所の番地の行を指すが、GIF は同じ名前を町字に使っている。IRI を再利用すると意味があいまいになるので、構造化した項目と addressText で置き換え、対応は GIF の対応表に記録している。
+  - ja: "schema.org の PostalAddress の語は、意味が合うものを再利用しています（addressCountry、postalCode、addressRegion、addressLocality）。streetAddress は使いません。schema.org はこの語で欧米式の住所の番地の行を指しますが、GIF は同じ名前を町字に使っているからです。IRI を再利用すると意味があいまいになるので、構造化した項目と addressText で置き換えました。対応は GIF の対応表に記録しています。"
     en: "schema.org PostalAddress terms are reused where the meaning matches (addressCountry, postalCode, addressRegion, addressLocality). streetAddress is not used: schema.org means the street line of a Western address by it, while GIF uses the same name for 町字. Reusing the IRI would carry an ambiguous meaning; the structured fields and addressText replace it, and the GIF mapping records the correspondence."
-  - ja: コードは JIS X 0401（都道府県、2桁）、JIS X 0402（市区町村、5桁）、全国地方公共団体コード（検査数字を含む6桁）に従う。abrMachiazaId はデジタル庁のアドレス・ベース・レジストリの町字ID である。
+  - ja: "コードは、JIS X 0401（都道府県、2 桁）、JIS X 0402（市区町村、5 桁）、全国地方公共団体コード（検査数字を含む 6 桁）に従います。abrMachiazaId は、デジタル庁のアドレス・ベース・レジストリの町字 ID です。"
     en: Codes follow JIS X 0401 (prefecture, 2 digits), JIS X 0402 (municipality, 5 digits) and the 全国地方公共団体コード (6 digits with check digit). abrMachiazaId is the 町字ID of the Digital Agency's Address Base Registry.
-  - ja: GeoProperty の座標は、GeoJSON の仕様により WGS84 である。JGD2011 の座標は、ここで必要な精度ではそのまま使える。
+  - ja: "GeoProperty の座標は、GeoJSON の仕様により WGS84 です。JGD2011 の座標は、ここで必要な精度ではそのまま使えます。"
     en: GeoProperty coordinates are WGS84 by the GeoJSON specification; JGD2011 coordinates can be used as-is at the precision relevant here.
-  - ja: 2026-10-03、地番の区域では地番全体（枝番を含む、例 4638-1）を banchi に入れ、go は空にすると決めた。枝番は号ではないため。アドレス・ベース・レジストリでは住居表示の街区符号・住居番号（rsdt）と地番（chiban）が別の項目で、変換（geolonia/datamodels-toolkit#3）で実データを試したときに分かった。
+  - ja: "2026-10-03 に、地番の区域では地番全体（枝番を含む。例：4638-1）を banchi に入れ、go は空にすると決めました。枝番は号ではないからです。アドレス・ベース・レジストリでは、住居表示の街区符号・住居番号（rsdt）と地番（chiban）が別の項目になっています。変換（geolonia/datamodels-toolkit#3）で実データを試したときにわかりました。"
     en: "Decided on 2026-10-03: in a lot-number (地番) area, banchi holds the whole lot number, branch number included (for example 4638-1), and go stays empty, because a branch number is not a 号. The Address Base Registry keeps residential-indication block and residence numbers (rsdt) apart from lot numbers (chiban); this came up when trying real data for the converter (geolonia/datamodels-toolkit#3)."
 license: CC0 1.0 (machine-readable files), CC BY 4.0 (prose); see /LICENSE-CONTENT.md
