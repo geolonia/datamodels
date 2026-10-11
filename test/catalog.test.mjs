@@ -30,7 +30,8 @@ test('the catalog lists the nodes of nodes.yaml, so tools that start here find t
   const catalog = { ...catalogHead(nodes), models: models.map((x) => x.entry) };
   assert.ok(validate(catalog), ajv.errorsText(validate.errors));
   assert.deepEqual(catalog.nodes, nodes.map(({ url, index }) => ({ url, index })));
-  assert.deepEqual(Object.keys(catalog), ['formatVersion', 'generatedAt', 'license', 'licenseUrl', 'nodes', 'models']);
+  assert.deepEqual(Object.keys(catalog), ['formatVersion', 'generatedAt', 'publisher', 'license', 'licenseUrl', 'nodes', 'models']);
+  assert.deepEqual(catalog.publisher, { name: { ja: '株式会社Geolonia', en: 'Geolonia Inc.' }, url: 'https://geolonia.com/' });
   // No nodes, no empty list.
   assert.equal(catalogHead([]).nodes, undefined);
 });

@@ -20,6 +20,8 @@ const json = (o) => JSON.stringify(o, null, 2) + '\n';
 
 // catalog.json and every file it lists are CC0; the prose of the pages is CC BY 4.0 (LICENSE-CONTENT).
 export const CATALOG_LICENSE = { license: 'CC0-1.0', licenseUrl: `${BASE_URL}/LICENSE-CONTENT` };
+// Who publishes the catalog, in the node format (docs/node.md), so tools that read many catalogs can name it (decided 2026-10-12).
+export const CATALOG_PUBLISHER = { name: { ja: '株式会社Geolonia', en: 'Geolonia Inc.' }, url: 'https://geolonia.com/' };
 
 /**
  * The attributes of a model as catalog.json lists them, so a tool can list a
@@ -117,7 +119,7 @@ export function termRedirects(subject) {
  * knows (nodes.yaml, [{ url, index }]), listed so that tools starting here find
  * them, as every node lists the nodes it knows (docs/node.md, section 3).
  */
-export const catalogHead = (nodes = []) => ({ formatVersion: 1, generatedAt: new Date().toISOString(), ...CATALOG_LICENSE, ...(nodes.length ? { nodes: nodes.map(({ url, index }) => ({ url, index })) } : {}) });
+export const catalogHead = (nodes = []) => ({ formatVersion: 1, generatedAt: new Date().toISOString(), publisher: CATALOG_PUBLISHER, ...CATALOG_LICENSE, ...(nodes.length ? { nodes: nodes.map(({ url, index }) => ({ url, index })) } : {}) });
 
 /**
  * adapters: modules discovered under adapters/ by build.mjs (the core never

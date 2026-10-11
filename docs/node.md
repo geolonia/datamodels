@@ -60,7 +60,7 @@ Terms a node reuses (from datamodels.jp, another node, NGSI-LD, schema.org) keep
 
 ## 3. The index (`catalog.json`)
 
-The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.json) ([schema](https://datamodels.jp/catalog.schema.json)), with fewer required fields and three additions. A tool written for the node format can also read datamodels.jp's `catalog.json`, which carries every field a node requires (except `publisher`, which it will add). The other way round does not work yet: `catalog.schema.json` requires more fields and knows neither the additions nor `experimental`. Adopting this format means extending that schema, with the toolkit library (geolonia/datamodels-toolkit#10).
+The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.json) ([schema](https://datamodels.jp/catalog.schema.json)), with fewer required fields and three additions. A tool written for the node format can also read datamodels.jp's `catalog.json`, which carries every field a node requires, `publisher` included. The other way round does not work yet: `catalog.schema.json` requires more fields and knows neither the additions nor `experimental`. Adopting this format means extending that schema, with the toolkit library (geolonia/datamodels-toolkit#10).
 
 ```json
 {
