@@ -1,46 +1,23 @@
 {
-  "id": "urn:ngsi-ld:AEDLocation:131016-131016A00001",
+  "id": "urn:ngsi-ld:AEDLocation:131024-206",
   "type": "AEDLocation",
-  "name": "千代田区役所",
-  "nameKana": "チヨダクヤクショ",
-  "externalFacilityId": "131016A00001",
-  "localGovernmentCode": "131016",
+  "name": "アスク勝どき保育園",
+  "externalFacilityId": "206",
+  "localGovernmentCode": "131024",
   "address": {
     "addressCountry": "JP",
-    "addressRegion": "東京都",
-    "addressLocality": "千代田区",
-    "machiaza": "九段南",
-    "chome": "1",
-    "banchi": "2",
-    "go": "1",
-    "localGovernmentCode": "131016",
-    "addressText": "東京都千代田区九段南1丁目2番1号"
+    "localGovernmentCode": "131024",
+    "addressText": "東京都中央区勝どき4-8-14"
   },
   "location": {
     "type": "Point",
     "coordinates": [
-      139.75354,
-      35.693947
+      139.775622,
+      35.656884
     ]
   },
-  "installationLocation": "1階 総合案内",
-  "operatorName": "千代田区",
-  "corporateNumber": "8000020131016",
+  "installationLocation": "１階事務室",
   "contactPoint": {
-    "telephone": "03-3264-2111"
-  },
-  "openingHoursSpecification": {
-    "dayOfWeek": [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday"
-    ],
-    "opens": "08:30",
-    "closes": "17:00",
-    "description": "千代田区役所の開庁時間に従う。"
-  },
-  "pediatricSupport": true,
-  "restrictedAccess": false
+    "postalCode": "1040054"
+  }
 }

@@ -1,5 +1,5 @@
 notes:
-  - ja: "デジタル庁の自治体標準オープンデータセット、データ項目定義書 A（2026-08-01、2026-10-11 に確認）のシート「13 公衆トイレ一覧」（https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test）に基づいています。項目ごとの対応は mapping/jichitai-opendata-toilet.yaml にあります。"
+  - ja: "デジタル庁の自治体標準オープンデータセット、データ項目定義書 A（2026-08-01、2026-10-11 に確認）のシート「13 公衆トイレ一覧」（https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test ）に基づいています。項目ごとの対応は mapping/jichitai-opendata-toilet.yaml にあります。"
     en: Built on the Digital Agency's 自治体標準オープンデータセット, data item definition sheet A (2026-08-01, checked 2026-10-11), sheet 13 公衆トイレ一覧 (https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test). Field by field in mapping/jichitai-opendata-toilet.yaml.
   - ja: "Facility の下位の型（x-subclass-of）です。足しているのは、このデータセットだけの列（設置位置、種類ごとのトイレの数、バリアフリートイレの数、車椅子使用者用・乳幼児用・オストメイト用のトイレの有無）です。このデータセットには、連絡先、法人番号、URL、曜日の列がありません。トイレの数は、データセットの列ごとに 1 つの整数の属性にしています。"
     en: "A subtype (x-subclass-of) of Facility that adds the columns of this dataset only: installation location, the number of toilets by kind, the number of barrier-free toilets, and whether there are toilets for wheelchair users, babies and ostomates. The dataset has no contact, corporate number, URL or weekday column. Each count column is one integer attribute."

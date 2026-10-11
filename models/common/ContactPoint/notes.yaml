@@ -1,5 +1,5 @@
 notes:
-  - ja: "エンティティの型ではなく、値型です。`contactPoint` Property（IRI https://schema.org/contactPoint）の値として使い、エンティティのスキーマから $ref でこのスキーマを参照します。"
+  - ja: "エンティティの型ではなく、値型です。`contactPoint` Property（IRI https://schema.org/contactPoint ）の値として使い、エンティティのスキーマから $ref でこのスキーマを参照します。"
     en: A value type, not an entity type. Use it as the value of a `contactPoint` Property (IRI https://schema.org/contactPoint) and reference the schema with $ref from an entity schema.
   - ja: "デジタル庁の自治体標準オープンデータセット、データ項目定義書 A（2026-08-01、2026-10-11 に確認）の連絡先の列（電話番号、内線番号、FAX番号、連絡先メールアドレス、連絡先FormURL、連絡先備考（その他、SNSなど）、郵便番号）に基づいています。これらの列は 01 公共施設、05 子育て施設、08 AED、09 介護サービス事業所、10 医療機関、11 観光施設にあります（FAX番号は 05、09、10 だけ）。11 観光施設は、同じ列を「連絡先電話番号」「連絡先内線番号」という名前で持ち、「連絡先名称」も持ちます。対応は mapping/jichitai-opendata-contact.yaml にあります。"
     en: "Built on the contact columns of the Digital Agency's 自治体標準オープンデータセット, data item definition sheet A (2026-08-01, checked 2026-10-11): 電話番号, 内線番号, FAX番号, 連絡先メールアドレス, 連絡先FormURL, 連絡先備考（その他、SNSなど） and 郵便番号. Datasets 01 public facilities, 05 childcare facilities, 08 AEDs, 09 care service providers, 10 medical institutions and 11 tourist facilities have them (FAX番号 only 05, 09 and 10). Dataset 11 names two of them 連絡先電話番号 and 連絡先内線番号, and adds 連絡先名称. The correspondence is in mapping/jichitai-opendata-contact.yaml."
