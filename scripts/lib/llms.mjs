@@ -18,7 +18,7 @@ const GUIDES = [
   ['urls', 'URLs and versions', 'which URL to use, what never changes, versions and deprecation'],
   ['contribute', 'Contributing', 'propose or change models, stages and who decides'],
   ['rules', 'Rules for models', 'when to define a new type, the rules, mapping to standards, writing examples'],
-  ['list-extension', 'Listing your extension', 'list the attributes you added to a model under "Extended by" on its page: the issue form, field by field'],
+  ['list-extension', 'Listing your extension', 'list the attributes you added to a model under "Built on by others" on its page, for an extension without a site of its own: the issue form, field by field'],
   ['report-catalog', 'Telling us about another catalog', 'report a missing catalog of data models or vocabularies: the issue form, field by field'],
   ['own-models', 'Your own data models', 'where to publish a model that does not belong in this catalog: your own site (a node) or Smart Data Models'],
   ['catalogs', 'Other data model catalogs', 'catalogs and standards used globally and in Japan, and how this catalog relates to them'],
@@ -68,7 +68,7 @@ export async function llmsTxt(subjects) {
   txt += `## Optional\n\n`;
   txt += `- [catalog.json](${BASE_URL}/catalog.json): every model with its type IRI, context, schema, vocabulary, example, page (Japanese and English), mapping and adapter URLs, its attributes (type, required, IRI) and the licence (CC0-1.0)\n`;
   txt += `- [Standards covered](${BASE_URL}/en/guide/standards): every external standard a model is mapped to (EEI, the municipal standard open datasets, GSI, GIF and more), with a link to each field-by-field table\n`;
-  txt += `- [Data model sites](${BASE_URL}/en/toolkit/sites): other sites that publish their own data models with datamodels-toolkit, their models, and which catalog models they build on\n`;
+  txt += `- [Data model sites](${BASE_URL}/en/toolkit/sites): other sites that publish their own data models with datamodels-toolkit: one row per site, with its licence, how many models it has and which catalog models they build on. Each catalog model page lists the site models and listed extensions built on it, with the attributes they add and their IRIs ("Built on by others")\n`;
   txt += `- [AI and agents](${BASE_URL}/en/ai): how AI is used to make this site, and what agents can use\n`;
   txt += `- [Source repository](https://github.com/geolonia/datamodels): schemas, mappings to other standards, notes\n`;
   txt += `- [Licences](${BASE_URL}/LICENSE-CONTENT): machine-readable files CC0 1.0, prose CC BY 4.0, code Apache-2.0\n`;

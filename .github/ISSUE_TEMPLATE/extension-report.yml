@@ -1,11 +1,11 @@
 name: 拡張の登録 / Report an extension
-description: モデルに足した属性を「拡張している組織」に載せる / List the attributes you added to a model under "Extended by"
+description: モデルに足した属性を「このモデルをもとにしたもの」に載せる / List the attributes you added to a model under "Built on by others"
 body:
   - type: markdown
     attributes:
       value: |
-        モデルのページの「拡張している組織」と catalog.json に載せます。ほかの組織が同じ意味の属性に同じ名前を使えるようにするためです。内容は確認せず、持ち主の申告のまま載せます。日本語でも英語でも構いません。
-        This lists your extension on the model page ("Extended by") and in catalog.json, so others who need the same attribute can reuse your name. It is listed as you report it, without review. Japanese or English are both fine.
+        モデルのページの「このモデルをもとにしたもの」と catalog.json に載せます。ほかの組織が同じ意味の属性に同じ名前を使えるようにするためです。内容は確認せず、持ち主の申告のまま載せます。日本語でも英語でも構いません。ツールキットで作った自分のサイトで公開しているなら、このフォームは要りません。サイトが「データモデルのサイト」の一覧に載れば、モデルのページにも自動で載ります。
+        This lists your extension on the model page ("Built on by others") and in catalog.json, so others who need the same attribute can reuse your name. It is listed as you report it, without review. Japanese or English are both fine. If you publish it on a site of your own made with the toolkit, you need no form: once your site is on the list of data model sites, the model page shows it by itself.
 
         **載せないもの / Never include:** API キー、トークン、ログイン URL などのアクセス情報 / credentials or access details (API keys, tokens, login URLs).
   - type: input

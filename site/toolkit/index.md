@@ -37,4 +37,4 @@ npx github:geolonia/datamodels-toolkit#v0.3.3 --help
 
 ### 参照 {#reference}
 
-- [データモデルのサイト](/toolkit/sites)：datamodels.jp が知っているノードと、そのモデルの一覧です。
+- [データモデルのサイト](/toolkit/sites)：datamodels.jp が知っているノードの一覧です。1 行に 1 つのサイトで、もとにしたカタログのモデルが分かります。

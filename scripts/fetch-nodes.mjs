@@ -1,11 +1,15 @@
 // npm run nodes: read the catalog.json of every node in nodes.yaml into
 // nodes.snapshot.json, keeping only what the pages show. A node that does not
 // answer keeps its previous entry, so a short outage never removes it. Commit the
-// result in a pull request: the diff is what datamodels.jp will show.
+// result in a pull request: the diff is what datamodels.jp will show. For a model
+// built on a catalog model, it also records the attributes it adds (compared with
+// the catalog models in models/), which the catalog model's page lists.
 import { writeFile, rename } from 'node:fs/promises';
-import { readNodeList, readSnapshot, nodeEntry, isIndex, SNAPSHOT_FILE } from './lib/nodes.mjs';
+import { readNodeList, readSnapshot, nodeEntry, isIndex, catalogAttributeIris, SNAPSHOT_FILE } from './lib/nodes.mjs';
+import { loadSubjects } from './lib/models.mjs';
 
 const TIMEOUT = 15000;
+const catalogIris = catalogAttributeIris(await loadSubjects());
 const previous = new Map((await readSnapshot()).nodes.map((n) => [n.index, n]));
 const nodes = [];
 let failed = 0;
@@ -15,7 +19,7 @@ for (const node of await readNodeList()) {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const catalog = await res.json();
     if (!isIndex(catalog)) throw new Error('not a node index (no models list)');
-    const entry = nodeEntry(node, catalog, new Date().toISOString().slice(0, 10));
+    const entry = nodeEntry(node, catalog, new Date().toISOString().slice(0, 10), catalogIris);
     nodes.push(entry);
     console.error(`${node.index}: ${entry.models.length} model(s)`);
   } catch (e) {

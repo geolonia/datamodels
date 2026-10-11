@@ -83,18 +83,18 @@ test('catalog.json lists the extension, and the entry follows catalog.schema.jso
   assert.equal(validate({ ...catalog, models: [{ ...entry, extensions: [{ ...entry.extensions[0], contextUrl: 'https://example.org/c.jsonld' }] }] }), false, 'both forms at once fail');
 });
 
-test('the model page lists extensions under "Extended by", and every entity page links the form', () => {
+test('the model page lists extensions under "Built on by others", with both old anchors, and every entity page links the form', () => {
   const model = { ...RoadRestriction, extensions: [detour] };
   const en = renderModelPage('en', '/en', subjects, transportation, model);
-  assert.match(en, /^## Extended by \{#extensions\}$/m);
-  assert.match(en, /<a id="extension-wakayama-detour"><\/a>\[Wakayama Prefecture\]\(https:\/\/www\.pref\.wakayama\.lg\.jp\/\)/);
+  assert.match(en, /^## Built on by others \{#built-on\}$/m);
+  assert.match(en, /^<div id="extensions" class="old-anchor"><\/div>$/m, 'the old #extensions anchor lands on the section');
+  assert.match(en, /\| <a id="extension-wakayama-detour"><\/a>\[Wakayama Prefecture\]\(https:\/\/www\.pref\.wakayama\.lg\.jp\/\) \| \*listed extension\*<br><small>@context: \*inside the data\*<\/small> \| added attributes \(v\d+\.\d+\.\d+\) \|/);
   assert.match(en, /`detour`: Detour route<br><span class="iri">`https:\/\/www\.pref\.wakayama\.lg\.jp\/ns\/road\/detour`<\/span>/);
-  assert.match(en, /\*inside the data\*/);
   const ja = renderModelPage('ja', '', subjects, transportation, model);
-  assert.match(ja, /^## 拡張している組織 \{#extensions\}$/m);
+  assert.match(ja, /^## このモデルをもとにしたもの \{#built-on\}$/m);
   assert.match(ja, /\[和歌山県\]/);
   const plain = renderModelPage('en', '/en', subjects, transportation, RoadRestriction);
-  assert.doesNotMatch(plain, /\{#extensions\}/);
+  assert.doesNotMatch(plain, /\{#built-on\}|id="extensions"/);
   assert.match(plain, /template=extension-report\.yml&model=transportation%2FRoadRestriction/);
 });
 

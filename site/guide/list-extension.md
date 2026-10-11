@@ -5,7 +5,9 @@ description: モデルに足した属性をモデルのページに載せ、ほ�
 
 # 拡張を載せる
 
-このカタログのモデルに属性を足して使っている組織は、モデルのページの「拡張している組織」に載せられます。同じ意味の属性が要るほかの組織が、新しく作らずにその名前を使えるので、お互いのデータがそろいます。
+このカタログのモデルに属性を足して使っている組織は、モデルのページの「このモデルをもとにしたもの」に載せられます。同じ意味の属性が要るほかの組織が、新しく作らずにその名前を使えるので、お互いのデータがそろいます。
+
+[ツールキット](/toolkit/)で作った自分のサイトで公開しているなら、フォームは要りません。サイトが[データモデルのサイト](/toolkit/sites)の一覧に載れば、サイトのモデルと足した属性が自動でモデルのページに載ります。このフォームは、自分のサイトが無い組織の拡張のためのものです。
 
 フォームに記入するだけです。費用はかからず、プログラミングも要りません。足した属性の良し悪しは審査しません。GitHub のアカウントが要ります。
 
@@ -45,7 +47,7 @@ Issue は公開されます。API キー、パスワード、トークン、ロ�
 
 1. メンテナーが、登録した人が組織を代表していることを確かめます。Issue で質問することがあります。
 2. メンテナーか登録した人が、Pull Request でカタログに登録します。間違いは自動の検査で見つかります。たとえば、名前がモデルの属性や NGSI-LD のコアの用語と重なっている、IRI が datamodels.jp のアドレスになっている、など。ドメインの持ち主かどうかは検査しません。検査の一覧は[貢献する](/guide/contribute#拡張を一覧に載せる)にあります。
-3. マージされると、数分でモデルのページの「拡張している組織」と `catalog.json` に載ります。
+3. マージされると、数分でモデルのページの「このモデルをもとにしたもの」と `catalog.json` に載ります。
 
 内容は申告のまま載せます。属性の設計が良いかどうかは、datamodels.jp では確かめません。あとで直したり外したりしたいときは、新しい [Issue](https://github.com/geolonia/datamodels/issues) で知らせてください。
 
@@ -54,8 +56,8 @@ Issue は公開されます。API キー、パスワード、トークン、ロ�
 GTT プロジェクトの Redmine 用プラグインは、課題を Task のエンティティとして NGSI-LD ブローカーに送ります。Task には課題のカテゴリーの属性が無いので、GTT は `category` を 1 つ足しました。
 
 - GTT は、自分のサイト [models.gtt-project.org](https://models.gtt-project.org/models/redmine/Issue/) で公開しています。サイトは[ツールキット](/toolkit/)で作りました。@context の [redmine/v0.jsonld](https://models.gtt-project.org/context/redmine/v0.jsonld) は、カタログの task の @context を取り込み、`category` を足しています。また、GTT はモデルを Redmine の言葉で `Issue` と呼んでいます。@context で `Issue` を Task の IRI に結び付けているので、ほかの人から見ればエンティティは Task のままです。
-- GTT が [#189](https://github.com/geolonia/datamodels/issues/189) で登録し、[#190](https://github.com/geolonia/datamodels/pull/190) でカタログに入りました。
-- [Task のページ](/models/task/Task/#extensions)に載っています。
+- GTT は、まだサイトが一覧に無かったころ、[#189](https://github.com/geolonia/datamodels/issues/189) のフォームで登録しました。[#190](https://github.com/geolonia/datamodels/pull/190) でカタログに入りました。
+- いまは GTT のサイトが[データモデルのサイト](/toolkit/sites)の一覧にあるので、[Task のページ](/models/task/Task/#built-on)ではサイトから読んだ内容を載せています。同じ拡張が二重に載らないよう、フォームで登録した分は外しました。
 
 ## みんなに役立ちそうなら {#propose}
 

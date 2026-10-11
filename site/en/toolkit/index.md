@@ -37,4 +37,4 @@ The examples in this section use this release. All commands and options are in `
 
 ### Reference {#reference}
 
-- [Data model sites](/en/toolkit/sites): the nodes datamodels.jp knows, and their models.
+- [Data model sites](/en/toolkit/sites): the nodes datamodels.jp knows, one row each, with the catalog models they build on.
