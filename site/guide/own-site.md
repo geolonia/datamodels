@@ -101,7 +101,7 @@ IRI には自分のドメインが入るので、IRI が使えるのはドメイ
 
 公開する前に決めてください。ベース URL は、すべての IRI に入ります。
 
-1. 名前を決めます。小文字の英字、数字、ハイフンで、一般的な単語は避けます（例：`my-org-models`）。
+1. 名前を決めます。小文字の英字、数字、ハイフンで、一般的な単語は避けます（例：`my-org-models`）。[`ids/`](https://github.com/perma-id/w3id.org/tree/master/ids) で、その名前が使われていないか確かめてください。大文字と小文字の違いも確かめます（`ids/Foo/` と `ids/foo/` を両方置くことはできません）。個人のノードは、自分の名前の代わりに共用の [`/people/`](https://github.com/perma-id/w3id.org/tree/master/ids/people) の下に置きます（`https://w3id.org/people/<名前>/`）。
 2. [手順 1](#init) で、ベース URL に `https://w3id.org/my-org-models` を指定し、ノードを自分のドメインで公開します（[手順 4](#publish)、[手順 5](#domain)）。サイト自体はそこに置いたままです。ノードが公開するリンクと IRI はすべて w3id.org を通るので、転送ができた時点で使えるようになります。
 3. [perma-id/w3id.org](https://github.com/perma-id/w3id.org) に、`ids/my-org-models/.htaccess` を足す Pull Request を開きます。連絡先と転送の規則を書きます。
 

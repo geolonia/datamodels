@@ -101,7 +101,7 @@ Your IRIs contain your domain, so they last as long as you keep the domain. If t
 
 Decide before you publish: the base URL is part of every IRI.
 
-1. Choose a name: lower-case letters, digits and hyphens, not a generic word, for example `my-org-models`.
+1. Choose a name: lower-case letters, digits and hyphens, not a generic word, for example `my-org-models`. Check that it is free in [`ids/`](https://github.com/perma-id/w3id.org/tree/master/ids), including other cases (`ids/Foo/` and `ids/foo/` cannot both exist). A personal node goes under the shared [`/people/`](https://github.com/perma-id/w3id.org/tree/master/ids/people) space (`https://w3id.org/people/<name>/`), not a name of its own.
 2. In [step 1](#init), give `https://w3id.org/my-org-models` as the base URL, and publish the node at your domain ([steps 4](#publish) and [5](#domain)). The site itself stays there; every link and IRI the node publishes goes through w3id.org, so they work once the redirect is in place.
 3. Open a pull request to [perma-id/w3id.org](https://github.com/perma-id/w3id.org) that adds `ids/my-org-models/.htaccess` with your contact and the redirect:
 
