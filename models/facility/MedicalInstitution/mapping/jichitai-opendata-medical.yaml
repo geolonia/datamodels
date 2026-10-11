@@ -16,7 +16,7 @@ convert:
   id: "urn:ngsi-ld:MedicalInstitution:{localGovernmentCode}-{externalFacilityId}"
 fields:
   localGovernmentCode: { to: 全国地方公共団体コード (localGovernmentCode), note: { ja: 一覧を公開する自治体。所在地の自治体は address.localGovernmentCode（所在地_全国地方公共団体コード）, en: "the publishing municipality; the municipality the facility lies in is address.localGovernmentCode (所在地_全国地方公共団体コード)" }, column: 全国地方公共団体コード, transform: code6 }
-  externalFacilityId: { to: ID (identifier), column: ID }
+  externalFacilityId: { to: ID (identifier), note: { ja: "エンティティの id はこの ID から作る（convert.id）。定義書では自治体の一覧の中で一意。同じ ID が複数の行にある一覧（表計算ソフトで丸められた 1.31E+11 など）は、行番号で補わず、一覧の ID を直してから変換する", en: "the entity id is made from this ID (convert.id); the definition sheet makes it unique within the municipality's list. A list that has one ID on several rows (for example 1.31E+11, rounded by a spreadsheet) is converted after its IDs are fixed, not by numbering rows" }, column: ID }
   name: { to: 名称 (name), column: 名称 }
   nameKana: { to: 名称_カナ (nameKana), column: 名称_カナ }
   nameEn: { to: 名称_英字 (nameEn), column: 名称_英字 }
