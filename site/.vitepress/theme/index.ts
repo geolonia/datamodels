@@ -73,10 +73,11 @@ function openTarget() {
 // /guide/own-site was split into the Toolkit pages and redirects to /toolkit/start
 // (public/_redirects), which keeps most of its anchors. The browser keeps the
 // fragment through the redirect: the sections that went to another page follow.
-const MOVED_ANCHORS: Record<string, string> = { add: 'models#add', check: 'check', versions: 'versions' }
+// A Map, so a fragment such as #constructor finds nothing (no inherited keys).
+const MOVED_ANCHORS = new Map([['add', 'models#add'], ['check', 'check'], ['versions', 'versions']])
 function followMovedAnchor() {
   const start = /^(\/en)?\/toolkit\/start(\.html)?$/.exec(location.pathname)
-  const to = start && MOVED_ANCHORS[location.hash.slice(1)]
+  const to = start && MOVED_ANCHORS.get(location.hash.slice(1))
   if (to) location.replace(`${start[1] ?? ''}/toolkit/${to}`)
 }
 
