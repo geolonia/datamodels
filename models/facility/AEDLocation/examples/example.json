@@ -1,0 +1,23 @@
+{
+  "id": "urn:ngsi-ld:AEDLocation:131024-206",
+  "type": "AEDLocation",
+  "name": "アスク勝どき保育園",
+  "externalFacilityId": "206",
+  "localGovernmentCode": "131024",
+  "address": {
+    "addressCountry": "JP",
+    "localGovernmentCode": "131024",
+    "addressText": "東京都中央区勝どき4-8-14"
+  },
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      139.775622,
+      35.656884
+    ]
+  },
+  "installationLocation": "１階事務室",
+  "contactPoint": {
+    "postalCode": "1040054"
+  }
+}

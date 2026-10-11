@@ -1,0 +1,44 @@
+# Correspondence between MedicalInstitution and sheet 10 of the Digital Agency's
+# 自治体標準オープンデータセット (data item definition sheet A).
+standard:
+  name:
+    ja: 自治体標準オープンデータセット・データ項目定義書A（20260801版）シート「10.医療機関一覧」（デジタル庁）
+    en: "Municipal standard open dataset, data item definition sheet A (2026-08-01), sheet '10. medical institutions' (Digital Agency)"
+  url: https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test
+  license:
+    ja: "公共データ利用規約（第1.0版）（PDL1.0、CC BY 4.0 と互換）"
+    en: "Public Data License (Version 1.0) (PDL1.0), compatible with CC BY 4.0"
+  note:
+    ja: "このモデルが表す一覧そのもの。医療機関は病院または診療所。項目名は日本語名（英語名）で示す。住所、位置、連絡先、診療時間の列は、JapaneseAddress、Geometry、ContactPoint、OpeningHours の対応表のとおり。入れていない列：地方公共団体名、高度の種別・高度の値、状況（status。定義も値の一覧も無く、NGSI-LD のコアの用語と同じ名前）、画像とそのライセンス。"
+    en: "The list this model represents; a medical institution is a hospital or a clinic. Columns are given as the Japanese name (English item name). The address, location, contact and consultation-hours columns map as in the JapaneseAddress, Geometry, ContactPoint and OpeningHours tables. Columns left out: 地方公共団体名, 高度の種別 and 高度の値, 状況 (status: no definition or value list, and the name of an NGSI-LD core term), 画像 with its licence."
+# How the converter (datamodels convert, geolonia/datamodels-toolkit) names the entities it makes from this list.
+convert:
+  id: "urn:ngsi-ld:MedicalInstitution:{localGovernmentCode}-{externalFacilityId}"
+fields:
+  localGovernmentCode: { to: 全国地方公共団体コード (localGovernmentCode), note: { ja: 一覧を公開する自治体。所在地の自治体は address.localGovernmentCode（所在地_全国地方公共団体コード）, en: "the publishing municipality; the municipality the facility lies in is address.localGovernmentCode (所在地_全国地方公共団体コード)" }, column: 全国地方公共団体コード, transform: code6 }
+  externalFacilityId: { to: ID (identifier), note: { ja: "エンティティの id はこの ID から作る（convert.id）。定義書では自治体の一覧の中で一意。同じ ID が複数の行にある一覧（表計算ソフトで丸められた 1.31E+11 など）は、行番号で補わず、一覧の ID を直してから変換する", en: "the entity id is made from this ID (convert.id); the definition sheet makes it unique within the municipality's list. A list that has one ID on several rows (for example 1.31E+11, rounded by a spreadsheet) is converted after its IDs are fixed, not by numbering rows" }, column: ID }
+  name: { to: 名称 (name), column: 名称 }
+  nameKana: { to: 名称_カナ (nameKana), column: 名称_カナ }
+  nameEn: { to: 名称_英字 (nameEn), column: 名称_英字 }
+  medicalInstitutionType:
+    to: 医療機関の種類 (medicalType)
+    note:
+      ja: "病院 → hospital、有床診療所 → clinicWithBeds、無床診療所 → clinicWithoutBeds。変換ツールにはまだこの変換が無い"
+      en: "病院 → hospital, 有床診療所 → clinicWithBeds, 無床診療所 → clinicWithoutBeds; the converter has no transform for this yet"
+  address: { to: "所在地_* (fullAddress, prefecture, city, streetAddress, cityBlock), 建物名等(方書) (buildingNameEtc), 町字ID (streetAddressId)", note: { ja: 詳細は JapaneseAddress の対応表, en: see the JapaneseAddress table }, via: common/JapaneseAddress/jichitai-opendata-address }
+  location: { to: "緯度 (latitude), 経度 (longitude)", note: { ja: "[経度, 緯度] の点", en: "a point [longitude, latitude]" }, via: common/Geometry/jichitai-opendata-location }
+  operatorName: { to: 法人の名称 (legalEntityName), column: 法人の名称 }
+  corporateNumber: { to: 法人番号 (legalEntityNumber), column: 法人番号 }
+  medicalInstitutionCode: { to: 医療機関コード (medicalCode), column: 医療機関コード }
+  contactPoint: { to: "電話番号 (contactPointPhoneNumber) … 郵便番号 (contactPointPostalCode)", note: { ja: FAX番号を含む。詳細は ContactPoint の対応表, en: "FAX番号 included; see the ContactPoint table" }, via: common/ContactPoint/jichitai-opendata-contact }
+  openingHoursSpecification: { to: "診療曜日 (serviceDay), 診療開始時間 (startTime), 診療終了時間 (endTime), 診療日時特記事項 (dateTimeRemarks)", note: { ja: 詳細は OpeningHours の対応表 jichitai-opendata-medical-hours, en: see the OpeningHours table jichitai-opendata-medical-hours }, via: common/OpeningHours/jichitai-opendata-medical-hours }
+  afterHoursCare: { to: 時間外における対応 (afterHoursCare), column: 時間外における対応 }
+  medicalDepartments: { to: 診療科目 (medicalSpecialities), note: { ja: "「;」区切りを配列にする", en: "split at ';'" }, column: 診療科目, transform: split }
+  numberOfBeds: { to: 病床数 (numberOfBeds), column: 病床数, transform: integer }
+  disasterBaseClass:
+    to: 災害拠点分類 (disasterClassification)
+    note:
+      ja: "基幹災害医療センター → core、地域災害医療センター → regional、救護所 → firstAidStation。定義書の値の一覧と記入例は「期間災害医療センター」と書いているが、基幹の誤りと読む。変換ツールにはまだこの変換が無い"
+      en: "基幹災害医療センター → core, 地域災害医療センター → regional, 救護所 → firstAidStation. The definition sheet's value list and example write 期間災害医療センター, read as a typo for 基幹. The converter has no transform for this yet"
+  url: { to: URL (url), column: URL }
+  remarks: { to: 備考 (remarks), column: 備考 }

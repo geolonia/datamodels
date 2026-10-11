@@ -1,0 +1,48 @@
+{
+  "@context": [
+    "https://datamodels.jp/context/facility/v1.jsonld",
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
+  ],
+  "id": "urn:ngsi-ld:AEDLocation:131024-206",
+  "type": "AEDLocation",
+  "name": {
+    "type": "Property",
+    "value": "アスク勝どき保育園"
+  },
+  "externalFacilityId": {
+    "type": "Property",
+    "value": "206"
+  },
+  "localGovernmentCode": {
+    "type": "Property",
+    "value": "131024"
+  },
+  "address": {
+    "type": "Property",
+    "value": {
+      "addressCountry": "JP",
+      "localGovernmentCode": "131024",
+      "addressText": "東京都中央区勝どき4-8-14"
+    }
+  },
+  "location": {
+    "type": "GeoProperty",
+    "value": {
+      "type": "Point",
+      "coordinates": [
+        139.775622,
+        35.656884
+      ]
+    }
+  },
+  "installationLocation": {
+    "type": "Property",
+    "value": "１階事務室"
+  },
+  "contactPoint": {
+    "type": "Property",
+    "value": {
+      "postalCode": "1040054"
+    }
+  }
+}
