@@ -5,11 +5,12 @@ import { loadSubjects } from './lib/models.mjs';
 import { generateSitePages } from './lib/site.mjs';
 import { generateAdapterPages } from './lib/adapter-pages.mjs';
 import { discoverAdapters } from './lib/adapters.mjs';
+import { readSnapshot } from './lib/nodes.mjs';
 import { pathToFileURL } from 'node:url';
 
 export async function generatePages() {
-  const [subjects, adapters] = await Promise.all([loadSubjects(), discoverAdapters()]);
-  await generateSitePages(subjects, adapters);
+  const [subjects, adapters, nodes] = await Promise.all([loadSubjects(), discoverAdapters(), readSnapshot()]);
+  await generateSitePages(subjects, adapters, nodes);
   await generateAdapterPages(subjects, adapters);
   return { subjects, adapters };
 }

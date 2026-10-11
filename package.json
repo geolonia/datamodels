@@ -19,6 +19,7 @@
     "dev": "npm run build && wrangler dev",
     "deploy": "npm run build:deploy && wrangler deploy",
     "validate:models": "node scripts/validate-models.mjs",
+    "nodes": "node scripts/fetch-nodes.mjs",
     "test": "node --test \"test/**/*.test.mjs\" \"adapters/**/*.test.mjs\"",
     "check:languages": "node scripts/check-languages.mjs",
     "lint:ja": "textlint site/index.md site/about.md site/ai.md \"site/guide/*.md\"",

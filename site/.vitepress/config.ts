@@ -50,6 +50,7 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
       items: [
         page('自分のデータモデル', 'Your own data models', 'own-models'),
         page('自分のサイトで公開する', 'Publishing on your own site', 'own-site'),
+        page('データモデルのサイト', 'Data model sites', 'nodes'),
       ],
     },
     {

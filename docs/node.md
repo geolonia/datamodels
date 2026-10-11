@@ -129,7 +129,7 @@ The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.
 
 - A node's index is always at `/catalog.json`.
 - Every page of a node links to it: `<link rel="alternate" type="application/json" href="/catalog.json">`.
-- `nodes` and `extends` link indexes to each other. datamodels.jp keeps a list of the nodes it knows and reads their indexes to show "Extended by" and other catalogs.
+- `nodes` and `extends` link indexes to each other. datamodels.jp keeps a list of the nodes it knows (`nodes.yaml`). `npm run nodes` reads their indexes into a snapshot (`nodes.snapshot.json`) that is reviewed in a pull request; the site shows the nodes (/guide/nodes) and, on each catalog model's page, the node models built on it (their `extends`, `aliasOf`, `subClassOf`).
 - A node that is down or gone is skipped; nobody's build fails because of it.
 
 ## 6. DCAT
