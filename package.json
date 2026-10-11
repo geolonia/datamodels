@@ -22,7 +22,7 @@
     "nodes": "node scripts/fetch-nodes.mjs",
     "test": "node --test \"test/**/*.test.mjs\" \"adapters/**/*.test.mjs\"",
     "check:languages": "node scripts/check-languages.mjs",
-    "lint:ja": "textlint site/index.md site/about.md site/ai.md \"site/guide/*.md\"",
+    "lint:ja": "textlint site/index.md site/about.md site/ai.md \"site/guide/*.md\" \"site/toolkit/*.md\"",
     "export:geonicdb": "node adapters/geonicdb/export.mjs",
     "build:deploy": "npm run build && npm run check:immutability",
     "check:live": "node scripts/check-live.mjs",

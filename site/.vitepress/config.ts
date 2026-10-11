@@ -18,7 +18,7 @@ function addVPreToInlineCode(md: MarkdownIt) {
 }
 
 // Guides in groups: for people who use the models, for people who add to the catalog, and for people
-// whose models belong elsewhere.
+// whose models belong elsewhere (the steps for that are in the Toolkit section).
 // One level only; the one exception is GeonicDB, the product-specific page, under the generic "Using the models".
 const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.SidebarItem[] => {
   const ja = lang === 'ja'
@@ -49,8 +49,8 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
       text: ja ? '自分のモデルを公開する' : 'Publish your own models',
       items: [
         page('自分のデータモデル', 'Your own data models', 'own-models'),
-        page('自分のサイトで公開する', 'Publishing on your own site', 'own-site'),
-        page('データモデルのサイト', 'Data model sites', 'nodes'),
+        // The steps are the Toolkit section's: a link there, not a copy.
+        { text: ja ? 'ツールキット' : 'Toolkit', link: `${prefix}/toolkit/` },
       ],
     },
     {
@@ -65,12 +65,30 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
   ]
 }
 
+// The Toolkit section: datamodels-toolkit (the datamodels command), one page per task.
+// The command reference stays with the toolkit (--help and its README).
+const toolkitPages = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.SidebarItem[] => {
+  const ja = lang === 'ja'
+  const page = (jaText: string, enText: string, slug: string): DefaultTheme.SidebarItem =>
+    ({ text: ja ? jaText : enText, link: `${prefix}/toolkit/${slug}` })
+  // Few pages, in the order of the work: no groups.
+  return [
+    page('サイトを始める', 'Starting a site', 'start'),
+    page('モデルを足す', 'Adding models', 'models'),
+    page('検査とビルド', 'Checking and building', 'check'),
+    page('バージョン', 'Versions', 'versions'),
+    page('一覧を変換する', 'Converting a list', 'convert'),
+    page('データモデルのサイト', 'Data model sites', 'sites'),
+  ]
+}
+
 // One sidebar per section, so it stays short as the catalog grows: guide pages
-// list the guides, model pages list the subjects. Each starts with its topic
-// (a link to its landing page) and ends with the other topic, styled as topics
-// (sb-topic, custom.css). Subjects start collapsed; the one containing the
-// current page opens by itself. catalog.json is linked from the model list and
-// the URL guide, not here: it is a file for programs.
+// list the guides, model pages list the subjects, toolkit pages list the
+// toolkit's tasks. Each starts with its topic (a link to its landing page) and
+// ends with the other topics, styled as topics (sb-topic, custom.css). Subjects
+// start collapsed; the one containing the current page opens by itself.
+// catalog.json is linked from the model list and the URL guide, not here: it is
+// a file for programs.
 function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
   const ja = lang === 'ja'
   const topic = (text: string, link: string, other = false): DefaultTheme.SidebarItem =>
@@ -87,6 +105,7 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
       ],
     })),
     topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`, true),
+    topic(ja ? 'ツールキット' : 'Toolkit', `${prefix}/toolkit/`, true),
     about,
   ]
   return {
@@ -94,26 +113,36 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
       topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`),
       ...guideGroups(prefix, lang),
       topic(ja ? 'データモデル' : 'Data models', `${prefix}/models/`, true),
+      topic(ja ? 'ツールキット' : 'Toolkit', `${prefix}/toolkit/`, true),
+      about,
+    ],
+    [`${prefix}/toolkit/`]: [
+      topic(ja ? 'ツールキット' : 'Toolkit', `${prefix}/toolkit/`),
+      ...toolkitPages(prefix, lang),
+      topic(ja ? 'データモデル' : 'Data models', `${prefix}/models/`, true),
+      topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`, true),
       about,
     ],
     // The adapter pages list files per model: they belong to the Data models section.
     [`${prefix}/models/`]: modelsSidebar,
     [`${prefix}/adapters/`]: modelsSidebar,
-    // The pages about the site itself: no third topic in the navigation, but no dead end either.
+    // The pages about the site itself: not a topic in the navigation, but no dead end either.
     ...Object.fromEntries([`${prefix}/about`, `${prefix}/LICENSE-CONTENT`, `${prefix}/ai`].map((path) => [path, [
       topic(ja ? 'このサイトについて' : 'About this site', `${prefix}/about`),
       { text: ja ? 'ライセンス' : 'Licences', link: `${prefix}/LICENSE-CONTENT` },
       { text: ja ? 'AI とエージェント' : 'AI and agents', link: `${prefix}/ai` },
       topic(ja ? 'データモデル' : 'Data models', `${prefix}/models/`, true),
       topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`, true),
+      topic(ja ? 'ツールキット' : 'Toolkit', `${prefix}/toolkit/`, true),
     ]])),
   }
 }
 
 const nav = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.NavItem[] => [
-  // Both sections are links to a landing page; the sidebar lists their pages.
+  // Every section is a link to a landing page; the sidebar lists its pages.
   { text: lang === 'ja' ? 'データモデル' : 'Data models', link: `${prefix}/models/`, activeMatch: `^${prefix}/(models|adapters)/` },
   { text: lang === 'ja' ? 'ガイド' : 'Guides', link: `${prefix}/guide/`, activeMatch: `^${prefix}/guide/` },
+  { text: lang === 'ja' ? 'ツールキット' : 'Toolkit', link: `${prefix}/toolkit/`, activeMatch: `^${prefix}/toolkit/` },
 ]
 
 const SITE_URL = 'https://datamodels.jp';
