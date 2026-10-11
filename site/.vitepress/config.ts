@@ -17,7 +17,8 @@ function addVPreToInlineCode(md: MarkdownIt) {
     orig(tokens, idx, options, env, self).replace(/^<code/, '<code v-pre')
 }
 
-// Guides in two groups: for people who use the models, and for people who add to the catalog.
+// Guides in groups: for people who use the models, for people who add to the catalog, and for people
+// whose models belong elsewhere.
 // One level only; the one exception is GeonicDB, the product-specific page, under the generic "Using the models".
 const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.SidebarItem[] => {
   const ja = lang === 'ja'
@@ -42,6 +43,13 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
         page('モデルのルール', 'Rules for models', 'rules'),
         page('拡張を載せる', 'Listing your extension', 'list-extension'),
         page('他のカタログを知らせる', 'Telling us about another catalog', 'report-catalog'),
+      ],
+    },
+    {
+      text: ja ? '自分のモデルを公開する' : 'Publish your own models',
+      items: [
+        page('自分のデータモデル', 'Your own data models', 'own-models'),
+        page('自分のサイトで公開する', 'Publishing on your own site', 'own-site'),
       ],
     },
     {

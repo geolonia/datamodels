@@ -1,6 +1,6 @@
 ---
 title: Guides
-description: How to use the catalog's models, add attributes, URLs and versions, and how to contribute
+description: How to use the catalog's models, add attributes, URLs and versions, how to contribute, and how to publish your own models
 ---
 
 # Guides
@@ -21,6 +21,11 @@ description: How to use the catalog's models, add attributes, URLs and versions,
 - [Rules for models](/en/guide/rules): when to define a new type, the rules, mapping to standards, writing examples.
 - [Listing your extension](/en/guide/list-extension): show the attributes you added to a model on its page. The form, step by step.
 - [Telling us about another catalog](/en/guide/report-catalog): a catalog of data models or vocabularies that is missing. The form, step by step.
+
+## Publish your own models
+
+- [Your own data models](/en/guide/own-models): where to publish a model that does not belong in this catalog: your own site, or Smart Data Models.
+- [Publishing on your own site](/en/guide/own-site): publish your models with fixed URLs on GitHub Pages, step by step.
 
 ## Reference
 

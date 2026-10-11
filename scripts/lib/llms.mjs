@@ -20,6 +20,8 @@ const GUIDES = [
   ['rules', 'Rules for models', 'when to define a new type, the rules, mapping to standards, writing examples'],
   ['list-extension', 'Listing your extension', 'list the attributes you added to a model under "Extended by" on its page: the issue form, field by field'],
   ['report-catalog', 'Telling us about another catalog', 'report a missing catalog of data models or vocabularies: the issue form, field by field'],
+  ['own-models', 'Your own data models', 'where to publish a model that does not belong in this catalog: your own site (a node) or Smart Data Models'],
+  ['own-site', 'Publishing on your own site', 'publish your own models with fixed URLs on GitHub Pages with datamodels-toolkit: init, add, check, build, your domain'],
   ['catalogs', 'Other data model catalogs', 'catalogs and standards used globally and in Japan, and how this catalog relates to them'],
 ];
 
