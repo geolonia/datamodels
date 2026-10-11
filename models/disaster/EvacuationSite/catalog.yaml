@@ -2,7 +2,7 @@ title:
   ja: 指定緊急避難場所
   en: Designated emergency evacuation site
 description:
-  ja: 指定緊急避難場所（災害対策基本法第49条の4）1か所を表す。自治体が「指定緊急避難場所一覧」（自治体標準オープンデータセット 03）として公開する、名称・所在地など施設の基本情報の一覧（マスタ）の1行にあたる。災害種別ごとに指定される。開設状況や避難者数は持たない（それは EvacuationShelter で表す）。
+  ja: "指定緊急避難場所（災害対策基本法第 49 条の 4）1 か所のデータです。自治体が「指定緊急避難場所一覧」（自治体標準オープンデータセット 03）として公開する一覧の 1 行にあたり、名称や所在地などの基本情報を持ちます。指定は災害の種別ごとです。開設状況や避難者数は、このモデルではなく EvacuationShelter で表します。"
   en: One designated emergency evacuation site (指定緊急避難場所, Basic Act on Disaster Management Art. 49-4), one row of the list a municipality publishes as 自治体標準オープンデータセット dataset 03. Sites are designated per hazard. Opening status and evacuee counts are not here (that is EvacuationShelter).
 status: draft
 tags:
@@ -19,31 +19,31 @@ attributes:
     ja: 名称の英語表記
     en: Name in English
   externalSiteId:
-    ja: 自治体の指定緊急避難場所一覧における ID（自治体内で一意）。localGovernmentCode と合わせて全国で一意になる。nationalShelterId が無いときは必須（国土地理院のデータには自治体の ID が無い）
+    ja: "自治体の指定緊急避難場所一覧での ID（自治体の中で一意）。localGovernmentCode と合わせると全国で一意になります。nationalShelterId が無いときは必須です（国土地理院のデータには自治体の ID がありません）。"
     en: The site's ID in the municipality's list (unique within the municipality). Together with localGovernmentCode it is unique nationwide. Required when nationalShelterId is not given (GSI's data has no municipal ID)
   nationalShelterId:
-    ja: "全国共通避難所・避難場所ID（14文字、国土地理院の指定緊急避難場所データの「共通ID」）。このモデルでは種別コード 20（指定緊急避難場所）のものだけ有効。未採番なら省く。構造と出典は、EvacuationShelter の対応表「全国共通避難所・避難場所ID」（gsi-national-shelter-id）にまとめている。externalSiteId が無いときは必須"
+    ja: "全国共通避難所・避難場所 ID（14 文字。国土地理院の指定緊急避難場所データの「共通 ID」）。このモデルで使えるのは、種別コード 20（指定緊急避難場所）だけです。採番されていなければ省きます。ID の構造と出典は、EvacuationShelter の対応表「全国共通避難所・避難場所 ID」（gsi-national-shelter-id）にまとめています。externalSiteId が無いときは必須です。"
     en: "The nationwide common shelter/evacuation-site ID (14 characters, the '共通ID' of GSI's designated emergency evacuation site data). Only type code 20 (designated emergency evacuation site) is valid on this model. Leave it out when none is assigned. Its structure and source are described once, in EvacuationShelter's mapping 'nationwide common shelter/evacuation-site ID' (gsi-national-shelter-id). Required when externalSiteId is not given"
   localGovernmentCode:
-    ja: 指定し、一覧を公開する自治体の全国地方公共団体コード（検査数字を含む6桁）
+    ja: "避難場所を指定し、一覧を公開する自治体の全国地方公共団体コード（検査数字を含む 6 桁）"
     en: Local government code (6 digits including the check digit) of the municipality that designates the site and publishes the list
   address:
-    ja: 所在地（JapaneseAddress）。その localGovernmentCode は所在地の自治体のもので、公開する自治体と異なることがある
+    ja: "所在地（JapaneseAddress）。その localGovernmentCode は所在地の自治体のもので、公開する自治体とは違うことがあります。"
     en: Address of the site (JapaneseAddress). Its localGovernmentCode is that of the municipality the site lies in, which can differ from the publisher
   location:
     ja: 位置（点）
     en: Location (a point)
   elevation:
-    ja: 標高（m）
+    ja: "標高（メートル）"
     en: Elevation in metres above mean sea level
   hazardTypes:
     ja: 指定されている災害の種別。flood（洪水）、landslide（崖崩れ、土石流及び地滑り）、stormSurge（高潮）、earthquake（地震）、tsunami（津波）、greatFire（大規模な火事）、inlandFlood（内水氾濫）、eruption（火山現象）
     en: "The hazards the site is designated for: flood, landslide (landslides, debris flows and slope failures), stormSurge, earthquake, tsunami, greatFire (large-scale fire), inlandFlood (inland flooding), eruption (volcanic phenomena)"
   alsoDesignatedShelter:
-    ja: 指定避難所を兼ねるとき true（指定避難所との重複）
+    ja: "指定避難所も兼ねるとき true"
     en: true when the site is also a designated shelter
   alsoWelfareShelter:
-    ja: 指定福祉避難所を兼ねるとき true（指定福祉避難所との重複）
+    ja: "指定福祉避難所も兼ねるとき true"
     en: true when the site is also a designated welfare shelter
   maxCapacity:
     ja: 想定収容人数

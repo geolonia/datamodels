@@ -48,7 +48,7 @@
         "en": "Designated shelter"
       },
       "comment": {
-        "ja": "指定避難所（災害対策基本法第49条の7）1か所を表す。避難した人が一定期間滞在する施設の基本情報（名称・所在地などをまとめたマスタ）で、市町村が登録し国土地理院が公開する。開設状況や避難者数は持たない（それは EvacuationShelter で表し、shelter でここを参照する）。",
+        "ja": "指定避難所（災害対策基本法第 49 条の 7）1 か所のデータです。避難した人が一定期間滞在する施設の基本情報（名称、所在地など）を持ちます。市町村が登録し、国土地理院が公開しています。開設状況や避難者数は、このモデルではなく EvacuationShelter で表し、その shelter からここを参照します。",
         "en": "One designated shelter (指定避難所, Basic Act on Disaster Management Art. 49-7), the master record of a facility where evacuees stay for a while, as municipalities register it and GSI publishes it. Opening status and evacuee counts are not here (that is EvacuationShelter, which links here with shelter)."
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
@@ -58,11 +58,11 @@
       "@id": "https://datamodels.jp/ns/disaster/EvacuationShelter",
       "@type": "rdfs:Class",
       "label": {
-        "ja": "避難所運用状況",
+        "ja": "避難所の運用状況",
         "en": "Evacuation shelter operation"
       },
       "comment": {
-        "ja": "避難所1か所の運用状況を表す。避難所そのものの基本情報（名称・位置などのマスタ）は含まず、指定避難所を shelter（DesignatedShelter）か externalShelterId / nationalShelterId で参照して（どれか 1 つは必須）、その上に開設状況と避難者数だけを重ねる。同じ場所の指定緊急避難場所は site で EvacuationSite を参照する。災害対策基本法第49条の7に基づき市町村長が指定する「指定避難所」（同法第49条の4の「指定緊急避難場所」とは別の概念）の運用を想定している。",
+        "ja": "避難所 1 か所の運用状況のデータです。避難所そのものの基本情報（名称、位置など）は持ちません。指定避難所は、shelter（DesignatedShelter）、externalShelterId、nationalShelterId のどれかで参照します（どれか 1 つは必須）。そのうえに、開設状況と避難者数だけを重ねます。同じ場所の指定緊急避難場所は、site で EvacuationSite を参照します。災害対策基本法第 49 条の 7 に基づいて市町村長が指定する「指定避難所」の運用を想定しています。同法第 49 条の 4 の「指定緊急避難場所」とは別のものです。",
         "en": "Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included: the designated shelter is referenced by shelter (DesignatedShelter) or by externalShelterId / nationalShelterId, and one of the three is required. Only opening status and evacuee counts live here. When the shelter is also a designated emergency evacuation site, site links to its EvacuationSite. Models the operation of a 指定避難所 (designated shelter, Basic Act on Disaster Management Art. 49-7), a distinct legal concept from the 指定緊急避難場所 (designated emergency evacuation site, Art. 49-4)."
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
@@ -76,7 +76,7 @@
         "en": "Designated emergency evacuation site"
       },
       "comment": {
-        "ja": "指定緊急避難場所（災害対策基本法第49条の4）1か所を表す。自治体が「指定緊急避難場所一覧」（自治体標準オープンデータセット 03）として公開する、名称・所在地など施設の基本情報の一覧（マスタ）の1行にあたる。災害種別ごとに指定される。開設状況や避難者数は持たない（それは EvacuationShelter で表す）。",
+        "ja": "指定緊急避難場所（災害対策基本法第 49 条の 4）1 か所のデータです。自治体が「指定緊急避難場所一覧」（自治体標準オープンデータセット 03）として公開する一覧の 1 行にあたり、名称や所在地などの基本情報を持ちます。指定は災害の種別ごとです。開設状況や避難者数は、このモデルではなく EvacuationShelter で表します。",
         "en": "One designated emergency evacuation site (指定緊急避難場所, Basic Act on Disaster Management Art. 49-4), one row of the list a municipality publishes as 自治体標準オープンデータセット dataset 03. Sites are designated per hazard. Opening status and evacuee counts are not here (that is EvacuationShelter)."
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
@@ -89,7 +89,7 @@
         "en": "alsoDesignatedShelter"
       },
       "comment": {
-        "ja": "指定避難所を兼ねるとき true（指定避難所との重複）",
+        "ja": "指定避難所も兼ねるとき true",
         "en": "true when the site is also a designated shelter"
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
@@ -102,7 +102,7 @@
         "en": "alsoEmergencyEvacuationSite"
       },
       "comment": {
-        "ja": "同じ住所に指定緊急避難場所があるとき true（指定緊急避難場所との住所同一）",
+        "ja": "同じ住所に指定緊急避難場所があるとき true",
         "en": "true when a designated emergency evacuation site has the same address"
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
@@ -115,7 +115,7 @@
         "en": "alsoWelfareShelter"
       },
       "comment": {
-        "ja": "指定福祉避難所を兼ねるとき true（指定福祉避難所との重複）",
+        "ja": "指定福祉避難所も兼ねるとき true",
         "en": "true when the site is also a designated welfare shelter"
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
@@ -154,7 +154,7 @@
         "en": "elevation"
       },
       "comment": {
-        "ja": "標高（m）",
+        "ja": "標高（メートル）",
         "en": "Elevation in metres above mean sea level"
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
@@ -219,7 +219,7 @@
         "en": "externalShelterId"
       },
       "comment": {
-        "ja": "市町村の避難所一覧における ID（市町村内で一意）。nationalShelterId が無いときは必須",
+        "ja": "市町村の避難所一覧での ID（市町村の中で一意）。nationalShelterId が無いときは必須です。",
         "en": "The shelter's ID in the municipality's own list (unique within it). Required when nationalShelterId is not given"
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
@@ -232,7 +232,7 @@
         "en": "externalSiteId"
       },
       "comment": {
-        "ja": "自治体の指定緊急避難場所一覧における ID（自治体内で一意）。localGovernmentCode と合わせて全国で一意になる。nationalShelterId が無いときは必須（国土地理院のデータには自治体の ID が無い）",
+        "ja": "自治体の指定緊急避難場所一覧での ID（自治体の中で一意）。localGovernmentCode と合わせると全国で一意になります。nationalShelterId が無いときは必須です（国土地理院のデータには自治体の ID がありません）。",
         "en": "The site's ID in the municipality's list (unique within the municipality). Together with localGovernmentCode it is unique nationwide. Required when nationalShelterId is not given (GSI's data has no municipal ID)"
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
@@ -297,7 +297,7 @@
         "en": "nationalShelterId"
       },
       "comment": {
-        "ja": "全国共通避難所・避難場所ID（14文字、国土地理院のデータの「共通ID」）。このモデルでは種別コード 11（一般の指定避難所）か 12（福祉避難所）のものだけ有効。構造と出典は、EvacuationShelter の対応表「全国共通避難所・避難場所ID」（gsi-national-shelter-id）にまとめている。externalShelterId が無いときは必須",
+        "ja": "全国共通避難所・避難場所 ID（14 文字。国土地理院のデータの「共通 ID」）。このモデルで使えるのは、種別コード 11（一般の指定避難所）と 12（福祉避難所）だけです。ID の構造と出典は、EvacuationShelter の対応表「全国共通避難所・避難場所 ID」（gsi-national-shelter-id）にまとめています。externalShelterId が無いときは必須です。",
         "en": "The nationwide common shelter/evacuation-site ID (14 characters, the '共通ID' of GSI's data). Only type codes 11 (general designated shelter) and 12 (welfare shelter) are valid on this model. Its structure and source are described once, in EvacuationShelter's mapping 'nationwide common shelter/evacuation-site ID' (gsi-national-shelter-id). Required when externalShelterId is not given"
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
@@ -323,7 +323,7 @@
         "en": "openingStatus"
       },
       "comment": {
-        "ja": "正規化した開設状況: open（開設中）、closed（未開設・閉鎖）、full（満員）、requested（開設を依頼・指示されたが、開設はまだ確認できていない。公的なコード表や用語集には見当たらない区分）。現場の呼び方は必ず statusLabel にも記載する。値域に合う値がないときは省き、statusLabel だけを送る",
+        "ja": "正規化した開設状況：open（開設中）、closed（未開設・閉鎖）、full（満員）、requested（開設を依頼・指示されたが、まだ確認できていない）。requested は、公的なコード表や用語集には見当たらない区分です。現場での呼び方も、必ず statusLabel に書きます。合う値がないときは省き、statusLabel だけを送ります。",
         "en": "Normalised opening state: open, closed, full (open but at capacity), requested (opening has been requested/instructed but not yet confirmed open; no public controlled vocabulary defines this state). The local wording always also goes in statusLabel. When no value fits, leave it out and send only statusLabel"
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
@@ -336,7 +336,7 @@
         "en": "shelter"
       },
       "comment": {
-        "ja": "この運用状況が対象とする指定避難所（DesignatedShelter）。shelter、externalShelterId、nationalShelterId のどれか 1 つは必須",
+        "ja": "この運用状況が対象とする指定避難所（DesignatedShelter）。shelter、externalShelterId、nationalShelterId のどれか 1 つは必須です。",
         "en": "The designated shelter (DesignatedShelter) this operation record is for. One of shelter, externalShelterId and nationalShelterId is required"
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",
@@ -349,7 +349,7 @@
         "en": "shelterType"
       },
       "comment": {
-        "ja": "general（一般避難所）または welfare（福祉避難所、特別な配慮が必要な人のため）。nationalShelterId の種別コードの2桁目と同じ",
+        "ja": "general（一般の避難所）か welfare（福祉避難所。特別な配慮が必要な人のための避難所）。nationalShelterId の種別コードの 2 桁目と同じです。",
         "en": "general (一般避難所) or welfare (福祉避難所, for people who need special care); the same as the second type digit of nationalShelterId"
       },
       "isDefinedBy": "https://datamodels.jp/ns/disaster/",

@@ -1,10 +1,10 @@
 notes:
-  - ja: 国土地理院の指定避難所データ（市町村別 CSV、https://hinanmap.gsi.go.jp/hinanjocp/hinanbasho/koukaidate.html）に基づく。市町村が災害対策基本法第49条の7に基づいて登録するデータである。種別コードは全国共通避難所・避難場所ID（内閣府、2024-11-07）に従う。項目ごとの対応は mapping/gsi-designated-shelter.yaml にある。
+  - ja: "国土地理院の指定避難所データ（市町村別の CSV、https://hinanmap.gsi.go.jp/hinanjocp/hinanbasho/koukaidate.html）に基づいています。市町村が災害対策基本法第 49 条の 7 に基づいて登録するデータです。種別コードは、全国共通避難所・避難場所 ID（内閣府、2024-11-07）に従います。項目ごとの対応は mapping/gsi-designated-shelter.yaml にあります。"
     en: Built on GSI's designated shelter data (指定避難所データ, one CSV per municipality, https://hinanmap.gsi.go.jp/hinanjocp/hinanbasho/koukaidate.html), which municipalities register under the Basic Act on Disaster Management Art. 49-7. The type codes follow the nationwide common ID (Cabinet Office, 2024-11-07). Field by field in mapping/gsi-designated-shelter.yaml.
-  - ja: 2026-09-29 に、EvacuationShelter（避難所の運用）が参照するマスタとして追加した。それまでは ID でしかマスタを参照できなかった。EvacuationSite（自治体が公開する指定緊急避難場所）と合わせて、法が区別する 2 つの指定の両方にマスタができた。同じ場所が両方を兼ねることがある。site で結び、2 つの共通ID に含まれる施設コードは同じになる（都立一橋高校：指定避難所として E1310100012111、指定緊急避難場所として E1310100012201）。
+  - ja: "2026-09-29 に、EvacuationShelter（避難所の運用状況）が参照する基本情報として追加しました。それまでは、基本情報を ID でしか参照できませんでした。EvacuationSite（自治体が公開する指定緊急避難場所）と合わせて、法律が区別する 2 つの指定の両方に基本情報のモデルができました。同じ場所が両方を兼ねることがあり、その場合は site で結びます。2 つの共通 ID に含まれる施設コードも同じになります（都立一橋高校：指定避難所として E1310100012111、指定緊急避難場所として E1310100012201）。"
     en: "Added on 2026-09-29 as the master that EvacuationShelter (the operation of a shelter) points to; until then it referenced the master only by ID. With EvacuationSite (the 指定緊急避難場所 a municipality publishes) both designations the law separates now have a master. A place can be both: site links them, and the facility code inside the two common IDs is the same (都立一橋高校: E1310100012111 as a shelter, E1310100012201 as a site)."
-  - ja: 自治体標準オープンデータセットには指定避難所のデータセットが無いので、公開されている出典は国土地理院のデータである。収容人数は国土地理院の一覧に無い。maxCapacity は、収容人数を持つ市町村の一覧のためにある。
+  - ja: "自治体標準オープンデータセットには指定避難所のデータセットが無いため、公開されている出典は国土地理院のデータです。国土地理院の一覧には収容人数がありません。maxCapacity は、収容人数を載せている市町村の一覧のための属性です。"
     en: The 自治体標準オープンデータセット has no dataset for designated shelters, so GSI's data is the published source. Capacity is not in GSI's list; maxCapacity is for municipal lists that have it.
-  - ja: 検討した上流（2026-09-29）：Smart Data Models には避難所の型が無い。
+  - ja: "検討した上流（2026-09-29）：Smart Data Models には避難所の型がありません。"
     en: "Upstream considered (2026-09-29): Smart Data Models has no shelter type."
 license: CC0 1.0 (machine-readable files), CC BY 4.0 (prose); see /LICENSE-CONTENT.md
