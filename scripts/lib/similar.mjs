@@ -11,8 +11,9 @@ const STOP = new Set(('the and for with from that this which one each are is was
 export function words(text) {
   const out = new Set();
   const s = String(text ?? '').replace(/([a-z])([A-Z])/g, '$1 $2').replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2');
-  // A plural s is dropped (roads → road), but not from words like status, process or analysis.
-  for (const w of s.toLowerCase().match(/[a-z]{3,}/g) ?? []) if (!STOP.has(w)) out.add(w.length > 4 && /[^sui]s$/.test(w) ? w.slice(0, -1) : w);
+  // A plural is made singular: roads → road, facilities → facility; not status, process,
+  // analysis, or words whose -ies is not a plural (series, species).
+  for (const w of s.toLowerCase().match(/[a-z]{3,}/g) ?? []) if (!STOP.has(w)) out.add(singular(w));
   for (const run of s.match(/[\p{Script=Han}\p{Script=Katakana}\p{Script=Hiragana}ー]+/gu) ?? []) {
     const chars = [...run];
     for (let i = 0; i + 1 < chars.length; i++) {
@@ -22,6 +23,11 @@ export function words(text) {
   }
   return out;
 }
+
+const NOT_PLURAL_IES = new Set(['series', 'species', 'movies', 'cookies', 'pies', 'ties', 'lies']);
+const singular = (w) => (NOT_PLURAL_IES.has(w) ? w
+  : w.length > 4 && w.endsWith('ies') ? `${w.slice(0, -3)}y`
+  : w.length > 4 && /[^sui]s$/.test(w) ? w.slice(0, -1) : w);
 
 const texts = (o) => (o && typeof o === 'object' ? Object.values(o).filter((v) => typeof v === 'string') : []);
 
@@ -90,4 +96,19 @@ export function comment(results) {
     md += `- [${r.entry.type}](${r.entry.url})${title ? ` ${title}` : ''} (${r.entry.where}): ${r.matched.slice(0, 6).map((w) => `\`${w}\``).join(', ')}\n`;
   }
   return md;
+}
+
+/**
+ * The comment this workflow made before, on any page of an issue's comments
+ * (`page(n)` returns page n, 100 per page, and throws when GitHub answers with
+ * an error: posting anyway would add a second comment instead of updating it).
+ */
+export async function findMarkedComment(page) {
+  for (let n = 1; ; n++) {
+    const comments = await page(n);
+    if (!Array.isArray(comments)) throw new Error('the comment list is not a list');
+    const mine = comments.find((c) => c.user?.type === 'Bot' && c.body?.startsWith(MARKER));
+    if (mine) return mine;
+    if (comments.length < 100) return null;
+  }
 }

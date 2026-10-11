@@ -42,3 +42,20 @@ test('the comment lists the models with links, or says none were found, and carr
   assert.match(comment([]), /No similar model found/);
   assert.equal(proposalText('Just a plain issue without the form'), '\n', 'not a form proposal: nothing to match');
 });
+
+test('a plural in -ies matches the singular type; series and species stay as they are', () => {
+  assert.ok(words('Facilities').has('facility'));
+  assert.ok(words('Facility').has('facility'));
+  assert.ok(words('time series').has('series'));
+  assert.ok(words('species list').has('species'));
+});
+
+test('the marked comment is found on a later page; a failed read stops instead of posting again', async () => {
+  const { findMarkedComment, MARKER } = await import('../scripts/lib/similar.mjs');
+  const other = (i) => ({ id: i, user: { type: 'User' }, body: 'hi' });
+  const pages = { 1: Array.from({ length: 100 }, (_, i) => other(i)), 2: [other(100), { id: 101, user: { type: 'Bot' }, body: `${MARKER}\nold` }] };
+  assert.equal((await findMarkedComment(async (n) => pages[n] ?? [])).id, 101);
+  assert.equal(await findMarkedComment(async () => [other(1)]), null);
+  await assert.rejects(findMarkedComment(async () => { throw new Error('GitHub answered 502'); }), /502/);
+  await assert.rejects(findMarkedComment(async () => ({ message: 'Bad credentials' })), /not a list/);
+});

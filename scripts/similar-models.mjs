@@ -3,13 +3,15 @@
 // it made before. The issue body is read from the event file as data.
 // Needs GITHUB_EVENT_PATH, GITHUB_REPOSITORY and GITHUB_TOKEN (issues: write).
 import { readFile } from 'node:fs/promises';
-import { modelIndex, similarModels, proposalText, comment, MARKER } from './lib/similar.mjs';
+import { modelIndex, similarModels, proposalText, comment, findMarkedComment } from './lib/similar.mjs';
 import { readSnapshot } from './lib/nodes.mjs';
 
 const event = JSON.parse(await readFile(process.env.GITHUB_EVENT_PATH, 'utf8'));
 const issue = event.issue;
-const text = proposalText(issue?.body);
-if (!text.trim()) { console.log('not a model proposal from the form; nothing to do'); process.exit(0); }
+const form = proposalText(issue?.body);
+if (!form.trim()) { console.log('not a model proposal from the form; nothing to do'); process.exit(0); }
+// The title often names the proposed type (for example "Model: Facility"), so it is searched too.
+const text = `${issue?.title ?? ''}\n${form}`;
 
 const catalog = await (await fetch('https://datamodels.jp/catalog.json', { signal: AbortSignal.timeout(15000) })).json();
 const results = similarModels(text, modelIndex(catalog, await readSnapshot()));
@@ -19,8 +21,11 @@ console.log(body);
 const api = (path, init = {}) => fetch(`https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}${path}`, {
   ...init, headers: { authorization: `Bearer ${process.env.GITHUB_TOKEN}`, accept: 'application/vnd.github+json', 'content-type': 'application/json' },
 });
-const comments = await (await api(`/issues/${issue.number}/comments?per_page=100`)).json();
-const mine = Array.isArray(comments) ? comments.find((c) => c.user?.type === 'Bot' && c.body?.startsWith(MARKER)) : null;
+const mine = await findMarkedComment(async (page) => {
+  const res = await api(`/issues/${issue.number}/comments?per_page=100&page=${page}`);
+  if (!res.ok) throw new Error(`GitHub answered ${res.status} to the comment list: ${await res.text()}`);
+  return res.json();
+});
 const res = mine
   ? await api(`/issues/comments/${mine.id}`, { method: 'PATCH', body: JSON.stringify({ body }) })
   : await api(`/issues/${issue.number}/comments`, { method: 'POST', body: JSON.stringify({ body }) });
