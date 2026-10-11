@@ -79,4 +79,4 @@ Decide before you publish: the base URL is part of every IRI.
 
 Hash IRIs work through the redirect: the part after `#` stays in the browser, so `https://w3id.org/my-org-models/ns/road#RoadPatrol` opens the right row of the page.
 
-Once the site is there, go on with [Adding models](/en/toolkit/models).
+Once the site is there, go on with [Your site's models](/en/toolkit/models).

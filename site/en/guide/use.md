@@ -110,7 +110,7 @@ curl -G "$BROKER/ngsi-ld/v1/entities" \
 
 Put the @context in the body and send `application/ld+json`, or leave it out and send `application/json` with a `Link` header (the model page shows it). Brokers with several tenants take the tenant in the `NGSILD-Tenant` header; authentication differs from broker to broker.
 
-**Your own data in the normalized form.** The "Try it" tab on a model page switches what you write between the two forms, and for a CSV list `datamodels convert … --normalized` from [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) does it ([Converting data](/en/guide/mapping)). To do it in your own code, follow the rules below.
+**Your own data in the normalized form.** The "Try it" tab on a model page switches what you write between the two forms, and for a CSV list `datamodels convert … --normalized` from [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) does it ([Converting your data](/en/toolkit/convert)). To do it in your own code, follow the rules below.
 
 <details class="rules">
 <summary>The rules, from key-values to normalized</summary>

@@ -110,7 +110,7 @@ curl -G "$BROKER/ngsi-ld/v1/entities" \
 
 @context の渡し方は 2 通りです。ボディに入れて `application/ld+json` で送るか、ボディには入れずに `application/json` と `Link` ヘッダーで送ります。ヘッダーはモデルのページにあります。複数のテナントを持つブローカーでは `NGSILD-Tenant` ヘッダーでテナントを指定します。認証の方法はブローカーごとに違います。
 
-**自分のデータを normalized にする。** モデルのページの「試す」タブでは、入力したデータを 2 つの形で切り替えて見られます。CSV の一覧なら、[datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) の `datamodels convert … --normalized` で変換できます（[データを変換する](/guide/mapping)）。自分のコードで変換するときは、次の決まりに従ってください。
+**自分のデータを normalized にする。** モデルのページの「試す」タブでは、入力したデータを 2 つの形で切り替えて見られます。CSV の一覧なら、[datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) の `datamodels convert … --normalized` で変換できます（[データを変換する](/toolkit/convert)）。自分のコードで変換するときは、次の決まりに従ってください。
 
 <details class="rules">
 <summary>key-values から normalized への決まり</summary>

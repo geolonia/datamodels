@@ -1,9 +1,9 @@
 ---
-title: Adding models
+title: Your site's models
 description: Add models to your own site with the add and extend commands of datamodels-toolkit, and write their attributes
 ---
 
-# Adding models
+# Your site's models
 
 This page adds models to a subject of your node and writes their attributes. No node yet? Start with [Starting a site](/en/toolkit/start).
 

@@ -4,8 +4,8 @@ layout: home
 hero:
   # The headline carries the page; the mark and name are in the navigation (docs/brand.md).
   name: ''
-  # HTML: the break and the unbreakable phrase keep 「変わらない URL で」 on one line; 「データモデル」 and the full stop (the mark's dot) are red.
-  text: 日本で使える<br><span class="accent">データモデル</span>を、<span class="nowrap">変わらない URL で<span class="dot">。</span></span>
+  # HTML: 「ずっと変わらない」 and 「URL で。」 never break inside, so a narrow screen breaks between them; 「データモデル」 and the full stop (the mark's dot) are red.
+  text: 日本で使える<br><span class="accent">データモデル</span>を、<span class="nowrap">ずっと変わらない</span> <span class="nowrap">URL で<span class="dot">。</span></span>
   tagline: JSON Schema、JSON-LD の @context、語彙の形で公開しています。JSON のままでも、Linked Data としても、どの NGSI-LD ブローカーでも使えます。
   # Records from many systems linked to the shared definitions; one branch adds its own attribute (#167).
   image:
@@ -28,6 +28,10 @@ features:
     details: 自治体標準オープンデータセット、EEI、国土地理院の避難所データなど、すでに使っている標準があれば、対応するモデルを探せます。
     link: /guide/standards
     linkText: 対応している標準
+  - title: データを変換する
+    details: CSV の一覧を、モデルのエンティティに変換します。1 件ずつ、モデルの JSON Schema で検証します。
+    link: /toolkit/convert
+    linkText: データを変換する
   - title: 複製せず、拡張する
     details: Smart Data Models、NGSI-LD、schema.org の型や属性で合うものはそのまま使います。独自の属性はその上に足せます。
     link: /guide/extend
@@ -36,6 +40,10 @@ features:
     details: 正式公開後は、バージョン付きで公開した @context・JSON Schema・語彙を変更も削除もしません。リンクはずっと使えます。
     link: /guide/urls
     linkText: URL とバージョン
+  - title: 自分のモデルを公開する
+    details: 自分たちだけが使うモデルは、自分のサイトに変わらない URL で公開できます。オープンソースのツールキットで作れます。
+    link: /toolkit/
+    linkText: ツールキット
   - title: みんなで育てる
     details: よくある用途のモデルを、使う人と一緒に改善していきます。ご提案をお待ちしています。
     link: /guide/contribute

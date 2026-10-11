@@ -10,7 +10,7 @@ description: How to use the catalog's models, add attributes, URLs and versions,
 - [Tutorial: from a CSV file to a map](/en/guide/tutorial): one real open-data file converted into a model, loaded into a broker, queried and shown on a map, step by step.
 - [Using the models](/en/guide/use): validate JSON with the catalog models, send it to an NGSI-LD broker, and use it as linked data.
   - [GeonicDB](/en/guide/geonicdb): register a model in GeonicDB, then create and query entities.
-- [Converting data](/en/guide/mapping): convert data that follows a standard into a model, with its mapping file.
+- [Mapping files](/en/guide/mapping): which field of a standard matches which attribute of a model. Where to find them and what they say.
 - [Adding attributes](/en/guide/extend): add attributes of your own to a model without copying it.
 - [Extension builder](/en/guide/builder): make the files for your own attributes in the browser.
 - [Your own names](/en/guide/names): use your own names for attributes and types without changing the model.
@@ -32,3 +32,4 @@ description: How to use the catalog's models, add attributes, URLs and versions,
 - [Standards covered](/en/guide/standards): the standards the models map, such as the municipal standard open datasets or EEI, each with its model.
 - [URLs and versions](/en/guide/urls): which URL to use, what never changes, versions and deprecation.
 - [Other data model catalogs](/en/guide/catalogs): catalogs of data models in the world and in Japan, worth checking before you propose.
+- [Data model sites](/en/guide/sites): the sites that publish their own data models and that datamodels.jp knows, one row each, with the catalog models they build on.

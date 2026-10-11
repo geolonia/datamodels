@@ -1,11 +1,11 @@
 ---
-title: 一覧を変換する
+title: データを変換する
 description: datamodels-toolkit の convert で、CSV の一覧を、モデルの対応表を使ってカタログのモデルのエンティティに変換する
 ---
 
-# 一覧を変換する
+# データを変換する
 
-`datamodels convert` は、CSV の一覧をこのカタログのモデルのエンティティに変換し、それぞれをモデルの JSON Schema で検証します。変換の規則は、モデルの対応表（マッピングファイル）に書いてあります。対応表の仕組みは[データを変換する](/guide/mapping)にあります。
+`datamodels convert` は、CSV の一覧をこのカタログのモデルのエンティティに変換し、それぞれをモデルの JSON Schema で検証します。変換の規則は、モデルの対応表（マッピングファイル）に書いてあります。対応表の仕組みは[対応表](/guide/mapping)のガイドにあります。
 
 ```bash
 npx github:geolonia/datamodels-toolkit#v0.3.3 convert \

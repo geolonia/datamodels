@@ -1,11 +1,11 @@
 ---
-title: Converting a list
+title: Converting your data
 description: Convert a CSV list into entities of a catalog model with the convert command of datamodels-toolkit and the model's mapping file
 ---
 
-# Converting a list
+# Converting your data
 
-`datamodels convert` turns a CSV list into entities of a model of this catalog and checks each one against the model's JSON Schema. The rules for the conversion are in the model's mapping file; [Converting data](/en/guide/mapping) explains mapping files.
+`datamodels convert` turns a CSV list into entities of a model of this catalog and checks each one against the model's JSON Schema. The rules for the conversion are in the model's mapping file; [Mapping files](/en/guide/mapping) explains them.
 
 ```bash
 npx github:geolonia/datamodels-toolkit#v0.3.3 convert \

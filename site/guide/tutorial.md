@@ -172,6 +172,6 @@ jq '.[2] | .id += "-test" | .capacity = {type: "Property", value: 500}' \
 
 次のステップ：
 
-- **自分のデータを使う：** 対応表の仕組みは[データを変換する](/guide/mapping)、対応表がある標準の一覧は[対応している標準](/guide/standards)にあります。
+- **自分のデータを使う：** 変換の手順は[データを変換する](/toolkit/convert)、対応表の仕組みは[対応表](/guide/mapping)、対応表がある標準の一覧は[対応している標準](/guide/standards)にあります。
 - **モデルに自分の属性を足す：**[属性を足す](/guide/extend)を参照してください。
 - **CLI の代わりに curl で同じ手順を試す、ブローカーについてもっと知る：**[GeonicDB で使う](/guide/geonicdb)を参照してください。

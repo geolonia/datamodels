@@ -10,6 +10,6 @@ site/adapters/
 site/en/adapters/
 site/guide/standards.md
 site/en/guide/standards.md
-site/toolkit/sites.md
-site/en/toolkit/sites.md
+site/guide/sites.md
+site/en/guide/sites.md
 nodes.snapshot.json.tmp

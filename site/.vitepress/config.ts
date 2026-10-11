@@ -18,8 +18,10 @@ function addVPreToInlineCode(md: MarkdownIt) {
     orig(tokens, idx, options, env, self).replace(/^<code/, '<code v-pre')
 }
 
-// Guides in groups: for people who use the models, for people who add to the catalog, and for people
-// whose models belong elsewhere (the steps for that are in the Toolkit section).
+// Guides explain the catalog and need no command: using the models, adding to the catalog, its rules,
+// and pages to look things up in. Everything done with the datamodels command is in the Toolkit section.
+// In groups: for people who use the models, for people who add to the catalog, for people whose models
+// belong elsewhere (the steps for that are in the Toolkit section), and reference.
 // One level only; the one exception is GeonicDB, the product-specific page, under the generic "Using the models".
 const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.SidebarItem[] => {
   const ja = lang === 'ja'
@@ -31,7 +33,7 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
       items: [
         page('チュートリアル', 'Tutorial', 'tutorial'),
         page('使い方', 'Using the models', 'use', [{ text: 'GeonicDB', link: `${prefix}/guide/geonicdb` }]),
-        page('データを変換する', 'Converting data', 'mapping'),
+        page('対応表', 'Mapping files', 'mapping'),
         page('属性を足す', 'Adding attributes', 'extend'),
         page('拡張ビルダー', 'Extension builder', 'builder'),
         page('独自の名前で使う', 'Your own names', 'names'),
@@ -61,39 +63,36 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
         page('対応している標準', 'Standards covered', 'standards'),
         page('URL とバージョン', 'URLs and versions', 'urls'),
         page('他のデータモデルカタログ', 'Other data model catalogs', 'catalogs'),
+        // Generated from nodes.snapshot.json (scripts/lib/site.mjs).
+        page('データモデルのサイト', 'Data model sites', 'sites'),
       ],
     },
   ]
 }
 
-// The Toolkit section: datamodels-toolkit (the datamodels command), one page per task.
+// The Toolkit section documents datamodels-toolkit (the datamodels command), one page per task.
 // The command reference stays with the toolkit (--help and its README).
 const toolkitPages = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.SidebarItem[] => {
   const ja = lang === 'ja'
   const page = (jaText: string, enText: string, slug: string): DefaultTheme.SidebarItem =>
     ({ text: ja ? jaText : enText, link: `${prefix}/toolkit/${slug}` })
-  // In groups, as the guides: publishing your own site (in the order of the work), working with
-  // data in the models' shape, and pages to look things up in. The landing page lists the same groups.
+  // In groups, as the guides: publishing your own site (in the order of the work), and converting
+  // your own data into the models (the adapters' export joins it later). Pages to look things up in
+  // are guides. The landing page lists the same groups.
   return [
     {
       text: ja ? '自分のサイトを公開する' : 'Publish your site',
       items: [
         page('サイトを始める', 'Starting a site', 'start'),
-        page('モデルを足す', 'Adding models', 'models'),
+        page('サイトのモデル', "Your site's models", 'models'),
         page('検査とビルド', 'Checking and building', 'check'),
         page('バージョン', 'Versions', 'versions'),
       ],
     },
     {
-      text: ja ? 'データを扱う' : 'Work with data',
+      text: ja ? '自分のデータ' : 'Your data',
       items: [
-        page('一覧を変換する', 'Converting a list', 'convert'),
-      ],
-    },
-    {
-      text: ja ? '参照' : 'Reference',
-      items: [
-        page('データモデルのサイト', 'Data model sites', 'sites'),
+        page('データを変換する', 'Converting your data', 'convert'),
       ],
     },
   ]
