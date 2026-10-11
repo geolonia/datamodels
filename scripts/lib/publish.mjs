@@ -113,11 +113,19 @@ export function termRedirects(subject) {
 }
 
 /**
+ * The top of catalog.json, before its models. nodes: the nodes datamodels.jp
+ * knows (nodes.yaml, [{ url, index }]), listed so that tools starting here find
+ * them, as every node lists the nodes it knows (docs/node.md, section 3).
+ */
+export const catalogHead = (nodes = []) => ({ formatVersion: 1, generatedAt: new Date().toISOString(), ...CATALOG_LICENSE, ...(nodes.length ? { nodes: nodes.map(({ url, index }) => ({ url, index })) } : {}) });
+
+/**
  * adapters: modules discovered under adapters/ by build.mjs (the core never
  * imports them). Each may add one file per model, listed in catalog.json.
+ * nodes: the known nodes, for catalogHead.
  */
-export async function publishModels(subjects, adapters = []) {
-  const catalog = { formatVersion: 1, generatedAt: new Date().toISOString(), ...CATALOG_LICENSE, models: [] };
+export async function publishModels(subjects, adapters = [], { nodes = [] } = {}) {
+  const catalog = { ...catalogHead(nodes), models: [] };
   const redirects = ['', '# Generated: type and attribute IRIs resolve to their documentation.'];
   // Exact versions get their own Cache-Control rule (scripts/lib/cache.mjs).
   const exactPaths = [];

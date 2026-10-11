@@ -1,11 +1,26 @@
 ---
 title: Your site's models
-description: Add models to your own site with the add and extend commands of datamodels-toolkit, and write their attributes
+description: Look for an existing model with the search command of datamodels-toolkit, add models to your own site with add and extend, and write their attributes
 ---
 
 # Your site's models
 
 This page adds models to a subject of your node and writes their attributes. No node yet? Start with [Starting a site](/en/toolkit/start).
+
+## Look for an existing model first {#search}
+
+Before you make a new model, check whether one already exists that you can use as it is or extend. `search` looks through the models of datamodels.jp and of the sites it links to, for words in the type name, title, attributes and description. It finds Japanese and English words.
+
+```bash
+npx github:geolonia/datamodels-toolkit#v0.3.6 search 避難
+npx github:geolonia/datamodels-toolkit#v0.3.6 search road closure --json
+```
+
+Each line is one model: its subject and type, title, site, and page URL. With `--json`, the output also has the type IRI, schema, `@context` and index (`catalog.json`) of each model; use it from scripts and AI agents.
+
+`nodes` lists the sites it can reach, with their name, address, licence and number of models. Both commands can start at another site's `catalog.json` with `--index`, and follow more or fewer links with `--depth`.
+
+To build on a model you found, use [extend](#extend).
 
 ## A new model {#add}
 

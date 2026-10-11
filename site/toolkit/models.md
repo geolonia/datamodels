@@ -1,11 +1,26 @@
 ---
 title: サイトのモデル
-description: datamodels-toolkit の add と extend で、自分のサイトにモデルを足し、属性を書く手順
+description: datamodels-toolkit の search で既にあるモデルを探し、add と extend で自分のサイトにモデルを足し、属性を書く手順
 ---
 
 # サイトのモデル
 
 ノードのサブジェクトにモデルを足し、属性を書きます。ノードがまだ無いときは、[サイトを始める](/toolkit/start)から始めてください。
+
+## 先に既にあるモデルを探す {#search}
+
+新しいモデルを作る前に、そのまま使えるモデルや拡張できるモデルが既にないかを探します。`search` は、datamodels.jp と、datamodels.jp がリンクしているサイトのモデルから、型の名前、タイトル、属性、説明に言葉を含むものを探します。日本語でも英語でも探せます。
+
+```bash
+npx github:geolonia/datamodels-toolkit#v0.3.6 search 避難
+npx github:geolonia/datamodels-toolkit#v0.3.6 search road closure --json
+```
+
+1 行に 1 つのモデルが、サブジェクトと型、タイトル、サイト、ページの URL の順に並びます。`--json` を付けると、型の IRI、スキーマ、`@context`、索引（`catalog.json`）も出力します。スクリプトや AI エージェントから使うときは、こちらを使います。
+
+`nodes` は、たどれるサイトを、名前、アドレス、ライセンス、モデルの数とともに並べます。どちらのコマンドも、`--index` で別のサイトの `catalog.json` から始められ、`--depth` でたどるリンクの数を変えられます。
+
+見つかったモデルを土台にするときは、[extend](#extend) を使います。
 
 ## 新しいモデル {#add}
 

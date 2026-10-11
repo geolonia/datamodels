@@ -28,7 +28,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.5 --help
 ### 自分のサイトを公開する {#publish}
 
 - [サイトを始める](/toolkit/start)：`init` でノードを作り、GitHub Pages と自分のドメインで公開します。
-- [サイトのモデル](/toolkit/models)：`add` と `extend` でモデルを足し、属性を書きます。
+- [サイトのモデル](/toolkit/models)：`search` で既にあるモデルを探し、`add` と `extend` でモデルを足し、属性を書きます。
 - [検査とビルド](/toolkit/check)：`check` と `build`、公開する GitHub Action です。
 - [バージョン](/toolkit/versions)：公開したモデルを `bump` で変え、`upgrade` で新しいツールキットに移ります。
 

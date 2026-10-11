@@ -27,6 +27,30 @@
       "format": "uri",
       "description": "The licence terms of the catalog files and pages."
     },
+    "nodes": {
+      "type": "array",
+      "description": "Other data model nodes that datamodels.jp knows (nodes.yaml, reviewed in a pull request): each by its base URL and the URL of its catalog.json. Tools find the network of nodes by following these links (docs/node.md, section 5).",
+      "items": {
+        "type": "object",
+        "required": [
+          "url",
+          "index"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "The node's base URL."
+          },
+          "index": {
+            "type": "string",
+            "format": "uri",
+            "description": "The node's catalog.json."
+          }
+        }
+      }
+    },
     "models": {
       "type": "array",
       "items": {
