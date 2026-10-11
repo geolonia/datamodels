@@ -1,0 +1,45 @@
+name: Similar models
+
+# When a model proposal is opened or edited (the issue form), comment the
+# catalog's and the known nodes' models that may already cover it (#224),
+# or update the comment made before. scripts/similar-models.mjs reads the issue
+# from the event file as data; nothing from the issue reaches a shell command.
+on:
+  issues:
+    types: [opened, edited]
+
+permissions: {}
+
+concurrency:
+  group: similar-models-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+jobs:
+  comment:
+    name: Comment similar models
+    # Only proposals from the form (its "What to model" heading).
+    if: contains(github.event.issue.body, 'What to model')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Comment
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/similar-models.mjs

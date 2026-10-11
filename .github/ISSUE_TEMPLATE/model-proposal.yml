@@ -7,6 +7,9 @@ body:
       value: |
         日本語でも英語でも構いません。モデルは既存の標準やガイドラインに基づくものだけを公開します（[貢献する](https://datamodels.jp/guide/contribute)）。
         Japanese or English are both fine. The catalog publishes models that rest on an existing standard or guideline ([Contributing](https://datamodels.jp/en/guide/contribute)).
+
+        開いた後、似ているモデルを自動でコメントします。使える・拡張できるモデルがないか確かめてください。
+        After you open it, a comment lists similar models that already exist: check whether one of them can be used or extended.
   - type: textarea
     id: what
     attributes:
