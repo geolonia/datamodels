@@ -23,8 +23,8 @@ fields:
   medicalInstitutionType:
     to: 医療機関の種類 (medicalType)
     note:
-      ja: "病院 → hospital、有床診療所 → clinicWithBeds、無床診療所 → clinicWithoutBeds。変換ツールにはまだこの変換が無い"
-      en: "病院 → hospital, 有床診療所 → clinicWithBeds, 無床診療所 → clinicWithoutBeds; the converter has no transform for this yet"
+      ja: "病院 → hospital、有床診療所 → clinicWithBeds、無床診療所 → clinicWithoutBeds。この列は変換しない（2026-10-12 の決定）。中央区の一覧は定義書の一覧に無い「一般診療所」「歯科診療所」「企業内診療所」で書いていて、変換するとすべての行が無効になる"
+      en: "病院 → hospital, 有床診療所 → clinicWithBeds, 無床診療所 → clinicWithoutBeds. This column is not converted (decided 2026-10-12): Chuo City's list writes 一般診療所, 歯科診療所 and 企業内診療所, which the definition sheet does not list, so converting it would make every row invalid"
   address: { to: "所在地_* (fullAddress, prefecture, city, streetAddress, cityBlock), 建物名等(方書) (buildingNameEtc), 町字ID (streetAddressId)", note: { ja: 詳細は JapaneseAddress の対応表, en: see the JapaneseAddress table }, via: common/JapaneseAddress/jichitai-opendata-address }
   location: { to: "緯度 (latitude), 経度 (longitude)", note: { ja: "[経度, 緯度] の点", en: "a point [longitude, latitude]" }, via: common/Geometry/jichitai-opendata-location }
   operatorName: { to: 法人の名称 (legalEntityName), column: 法人の名称 }
@@ -38,7 +38,9 @@ fields:
   disasterBaseClass:
     to: 災害拠点分類 (disasterClassification)
     note:
-      ja: "基幹災害医療センター → core、地域災害医療センター → regional、救護所 → firstAidStation。定義書の値の一覧と記入例は「期間災害医療センター」と書いているが、基幹の誤りと読む。変換ツールにはまだこの変換が無い"
-      en: "基幹災害医療センター → core, 地域災害医療センター → regional, 救護所 → firstAidStation. The definition sheet's value list and example write 期間災害医療センター, read as a typo for 基幹. The converter has no transform for this yet"
+      ja: "基幹災害医療センター → core、地域災害医療センター → regional、救護所 → firstAidStation。定義書の値の一覧と記入例は「期間災害医療センター」と書いているが、基幹の誤りと読み、これも core にする"
+      en: "基幹災害医療センター → core, 地域災害医療センター → regional, 救護所 → firstAidStation. The definition sheet's value list and example write 期間災害医療センター, read as a typo for 基幹, so it is core too"
+    column: 災害拠点分類
+    values: { 基幹災害医療センター: core, 期間災害医療センター: core, 地域災害医療センター: regional, 救護所: firstAidStation }
   url: { to: URL (url), column: URL }
   remarks: { to: 備考 (remarks), column: 備考 }
