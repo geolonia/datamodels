@@ -24,9 +24,17 @@ The examples in this section use this release. All commands and options are in `
 
 ## Pages {#pages}
 
+### Publish your site {#publish}
+
 - [Starting a site](/en/toolkit/start): start a node with `init`, and publish it on GitHub Pages and your own domain.
 - [Adding models](/en/toolkit/models): add models with `add` and `extend`, and write their attributes.
 - [Checking and building](/en/toolkit/check): `check`, `build`, and the GitHub Action that publishes.
 - [Versions](/en/toolkit/versions): change a published model with `bump`, and move to a newer toolkit with `upgrade`.
+
+### Work with data {#data}
+
 - [Converting a list](/en/toolkit/convert): convert a CSV list into entities of a model with `convert`.
+
+### Reference {#reference}
+
 - [Data model sites](/en/toolkit/sites): the nodes datamodels.jp knows, and their models.
