@@ -37,19 +37,11 @@ fields:
 - `standard`：標準の名前、リンク、ライセンス、短い説明。
 - `fields`：モデルの属性ごとに 1 行。`to` は標準の対応する項目、`note` は補足です。`to: null` は標準に当たる項目が無いことを示します。
 
-## 一覧を変換する
+## 変換の規則 {#convert}
 
-行には変換の仕方も書けます。`column`（CSV の列）、`transform`（`integer`、`flag`、`split` など）、固定の値 `value`、`via`（住所など入れ子の値を別の対応表で作る）です。`convert.id` はエンティティの ID の付け方です。
+行には変換の仕方も書けます。`column`（CSV の列）、`transform`（`integer`、`flag`、`split` など）、固定の値 `value`、`via`（住所など入れ子の値を別の対応表で作る）です。`convert.id` はエンティティの ID の付け方です。`to` だけの行は、説明のための行です。
 
-[datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) の `datamodels convert` がこの規則を読みます。CSV の一覧をモデルのエンティティに変換し、それぞれをモデルの JSON Schema で検証します。
-
-```bash
-npx github:geolonia/datamodels-toolkit convert \
-  disaster/EvacuationSite jichitai-opendata-site \
-  092011_evacuation_space.csv --out sites.json
-```
-
-NGSI-LD の normalized 形式にするときは `--normalized` を付けます。`to` だけの行は、説明のための行です。その項目は、注記に沿って自分で変換してください。
+[datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) の `datamodels convert` がこの規則を読み、CSV の一覧をモデルのエンティティに変換します。使い方は[一覧を変換する](/toolkit/convert)にあります。
 
 ## 対応表を足す
 

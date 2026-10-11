@@ -70,6 +70,17 @@ function openTarget() {
   el.scrollIntoView()
 }
 
+// /guide/own-site was split into the Toolkit pages and redirects to /toolkit/start
+// (public/_redirects), which keeps most of its anchors. The browser keeps the
+// fragment through the redirect: the sections that went to another page follow.
+// A Map, so a fragment such as #constructor finds nothing (no inherited keys).
+const MOVED_ANCHORS = new Map([['add', 'models#add'], ['check', 'check'], ['versions', 'versions']])
+function followMovedAnchor() {
+  const start = /^(\/en)?\/toolkit\/start(\.html)?$/.exec(location.pathname)
+  const to = start && MOVED_ANCHORS.get(location.hash.slice(1))
+  if (to) location.replace(`${start[1] ?? ''}/toolkit/${to}`)
+}
+
 export default {
   extends: DefaultTheme,
   enhanceApp({ app, router }) {
@@ -78,6 +89,7 @@ export default {
       const after = router.onAfterRouteChange
       router.onAfterRouteChange = (to) => { after?.(to); setTimeout(openTarget) }
       setTimeout(openTarget)
+      followMovedAnchor()
     }
     app.component('ModelIndex', ModelIndex)
     // Pan and zoom for the relationship graph on every model page.

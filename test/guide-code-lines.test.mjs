@@ -13,7 +13,7 @@ const width = (s) => [...s].reduce((n, c) => n + (/[ᄀ-ᅟ⺀-꓏가-힣豈-﫿
 
 async function pages() {
   const out = [];
-  for (const dir of ['site/guide', 'site/en/guide']) {
+  for (const dir of ['site/guide', 'site/en/guide', 'site/toolkit', 'site/en/toolkit']) {
     for (const f of await readdir(join(ROOT, dir))) if (f.endsWith('.md')) out.push(join(dir, f));
   }
   return out;

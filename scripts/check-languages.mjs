@@ -21,11 +21,11 @@ import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ROOT } from './lib/models.mjs';
-import { GENERATED_GUIDES } from './lib/site.mjs';
+import { GENERATED_PAGES } from './lib/site.mjs';
 import { reportFailures } from './lib/ci-summary.mjs';
 
 // Generated pages are checked through their generator, not here.
-const GENERATED = new Set(GENERATED_GUIDES.map((g) => `guide/${g}.md`));
+const GENERATED = new Set(GENERATED_PAGES.map((page) => `${page}.md`));
 const OWN_CODE = '<!-- languages: own code -->';
 // The reason is on the same line: an empty one does not count.
 const ONE_LANGUAGE = /^One language only:[ \t]*\S/m;

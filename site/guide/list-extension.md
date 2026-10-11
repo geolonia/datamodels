@@ -53,7 +53,7 @@ Issue は公開されます。API キー、パスワード、トークン、ロ�
 
 GTT プロジェクトの Redmine 用プラグインは、課題を Task のエンティティとして NGSI-LD ブローカーに送ります。Task には課題のカテゴリーの属性が無いので、GTT は `category` を 1 つ足しました。
 
-- GTT は、自分のサイト [models.gtt-project.org](https://models.gtt-project.org/models/redmine/Issue/) で公開しています。サイトはツールキットで作りました（[自分のサイトで公開する](/guide/own-site)）。@context の [redmine/v0.jsonld](https://models.gtt-project.org/context/redmine/v0.jsonld) は、カタログの task の @context を取り込み、`category` を足しています。また、GTT はモデルを Redmine の言葉で `Issue` と呼んでいます。@context で `Issue` を Task の IRI に結び付けているので、ほかの人から見ればエンティティは Task のままです。
+- GTT は、自分のサイト [models.gtt-project.org](https://models.gtt-project.org/models/redmine/Issue/) で公開しています。サイトは[ツールキット](/toolkit/)で作りました。@context の [redmine/v0.jsonld](https://models.gtt-project.org/context/redmine/v0.jsonld) は、カタログの task の @context を取り込み、`category` を足しています。また、GTT はモデルを Redmine の言葉で `Issue` と呼んでいます。@context で `Issue` を Task の IRI に結び付けているので、ほかの人から見ればエンティティは Task のままです。
 - GTT が [#189](https://github.com/geolonia/datamodels/issues/189) で登録し、[#190](https://github.com/geolonia/datamodels/pull/190) でカタログに入りました。
 - [Task のページ](/models/task/Task/#extensions)に載っています。
 

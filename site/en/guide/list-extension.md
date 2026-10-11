@@ -53,7 +53,7 @@ Your entry is shown as you reported it. datamodels.jp does not check whether the
 
 GTT Project's plugin for Redmine sends issues to NGSI-LD brokers as Task entities. Task has no attribute for the issue category, so GTT added one: `category`.
 
-- GTT publishes it on its own data model node, [models.gtt-project.org](https://models.gtt-project.org/models/redmine/Issue/), made with the toolkit ([Publishing on your own site](/en/guide/own-site)). Its @context, [redmine/v0.jsonld](https://models.gtt-project.org/context/redmine/v0.jsonld), takes the catalog's task @context and adds `category`. GTT also names the model with Redmine's word, `Issue`: in its @context the name `Issue` stands for Task's IRI, so the entities are still Tasks to everyone else.
+- GTT publishes it on its own data model node, [models.gtt-project.org](https://models.gtt-project.org/models/redmine/Issue/), made with the [toolkit](/en/toolkit/). Its @context, [redmine/v0.jsonld](https://models.gtt-project.org/context/redmine/v0.jsonld), takes the catalog's task @context and adds `category`. GTT also names the model with Redmine's word, `Issue`: in its @context the name `Issue` stands for Task's IRI, so the entities are still Tasks to everyone else.
 - GTT reported it in [#189](https://github.com/geolonia/datamodels/issues/189), and [#190](https://github.com/geolonia/datamodels/pull/190) added it to the catalog.
 - It is now listed on the [Task page](/en/models/task/Task/#extensions).
 

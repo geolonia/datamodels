@@ -25,7 +25,7 @@ description: How to use the catalog's models, add attributes, URLs and versions,
 ## Publish your own models
 
 - [Your own data models](/en/guide/own-models): where to publish a model that does not belong in this catalog: your own site, or Smart Data Models.
-- [Publishing on your own site](/en/guide/own-site): publish your models with fixed URLs on GitHub Pages, step by step.
+- [Toolkit](/en/toolkit/): publish your models with fixed URLs on a site of your own, step by step, and convert CSV lists.
 
 ## Reference
 

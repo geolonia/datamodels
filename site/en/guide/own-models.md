@@ -32,10 +32,10 @@ Your own site publishes the same kinds of files as this catalog: `catalog.json`,
 
 A node is static files. GitHub Pages hosts it for free, and you need no server. The [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) makes the files and the workflow that publishes them.
 
-- Steps: [Publishing on your own site](/en/guide/own-site).
+- Steps: the [Toolkit](/en/toolkit/) section, starting with [Starting a site](/en/toolkit/start).
 - An example: [models.geolonia.com](https://models.geolonia.com), the models of Geolonia projects.
 
-A model on your site can build on a model of this catalog ([`extend`](/en/guide/own-site#add)). It names the model it extends, and the toolkit checks that it keeps that model's names and meanings.
+A model on your site can build on a model of this catalog ([`extend`](/en/toolkit/models#extend)). It names the model it extends, and the toolkit checks that it keeps that model's names and meanings.
 
 ## Smart Data Models {#smart-data-models}
 

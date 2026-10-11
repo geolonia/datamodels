@@ -11,7 +11,7 @@ const GUIDES = [
   ['tutorial', 'Tutorial: from a CSV file to a map', 'one real open-data CSV converted into a catalog model, loaded into GeonicDB, queried and shown on a map, step by step'],
   ['use', 'Using the models', 'validate JSON, send it to an NGSI-LD broker, use it as linked data'],
   ['geonicdb', 'Use with GeonicDB', 'register a catalog model in GeonicDB, then create and query entities'],
-  ['mapping', 'Converting data', 'convert data that follows a standard into a model with its mapping file (datamodels convert)'],
+  ['mapping', 'Converting data', 'mapping files: which field of a standard matches which attribute of a model, and the rules to convert a list'],
   ['extend', 'Adding attributes', 'add attributes of your own to a catalog model without copying it, and where to host the result'],
   ['builder', 'Extension builder', 'build the @context and JSON Schema for your own attributes on a catalog model, in the browser'],
   ['names', 'Your own names', 'use your own attribute and type names with JSON-LD aliases, without changing the model'],
@@ -21,8 +21,18 @@ const GUIDES = [
   ['list-extension', 'Listing your extension', 'list the attributes you added to a model under "Extended by" on its page: the issue form, field by field'],
   ['report-catalog', 'Telling us about another catalog', 'report a missing catalog of data models or vocabularies: the issue form, field by field'],
   ['own-models', 'Your own data models', 'where to publish a model that does not belong in this catalog: your own site (a node) or Smart Data Models'],
-  ['own-site', 'Publishing on your own site', 'publish your own models with fixed URLs on GitHub Pages with datamodels-toolkit: init, add, check, build, your domain'],
   ['catalogs', 'Other data model catalogs', 'catalogs and standards used globally and in Japan, and how this catalog relates to them'],
+];
+
+// The Toolkit section, in the order of its sidebar ('' is its landing page). The
+// generated page of data model sites is under Optional.
+const TOOLKIT = [
+  ['', 'Toolkit', 'datamodels-toolkit, the datamodels command and GitHub Action: publish your own models with fixed URLs on a site of your own, convert CSV lists into models'],
+  ['start', 'Starting a site', 'start a node with init, publish it on GitHub Pages and your own domain, a permanent w3id.org address'],
+  ['models', 'Adding models', 'add a model with add, or start from a catalog model with extend, and write its attributes'],
+  ['check', 'Checking and building', 'check and build a node, and the GitHub Action that checks pull requests and publishes'],
+  ['versions', 'Versions', 'change a published model: bump and release keep the old version online; upgrade moves the node to a newer toolkit'],
+  ['convert', 'Converting a list', 'convert a CSV list into entities of a catalog model with its mapping file (datamodels convert)'],
 ];
 
 const exists = (path) => access(path).then(() => true, () => false);
@@ -35,6 +45,10 @@ export async function llmsTxt(subjects) {
   txt += `## Guides\n\n`;
   for (const [slug, title, what] of GUIDES) {
     if (await exists(join(ROOT, 'site', 'en', 'guide', `${slug}.md`))) txt += `- [${title}](${BASE_URL}/en/guide/${slug}): ${what}\n`;
+  }
+  txt += `\n## Toolkit\n\n`;
+  for (const [slug, title, what] of TOOLKIT) {
+    if (await exists(join(ROOT, 'site', 'en', 'toolkit', `${slug || 'index'}.md`))) txt += `- [${title}](${BASE_URL}/en/toolkit/${slug}): ${what}\n`;
   }
   txt += `\n`;
   for (const subject of subjects) {
@@ -54,7 +68,7 @@ export async function llmsTxt(subjects) {
   txt += `## Optional\n\n`;
   txt += `- [catalog.json](${BASE_URL}/catalog.json): every model with its type IRI, context, schema, vocabulary, example, page (Japanese and English), mapping and adapter URLs, its attributes (type, required, IRI) and the licence (CC0-1.0)\n`;
   txt += `- [Standards covered](${BASE_URL}/en/guide/standards): every external standard a model is mapped to (EEI, the municipal standard open datasets, GSI, GIF and more), with a link to each field-by-field table\n`;
-  txt += `- [Data model sites](${BASE_URL}/en/guide/nodes): other sites that publish their own data models with datamodels-toolkit, their models, and which catalog models they build on\n`;
+  txt += `- [Data model sites](${BASE_URL}/en/toolkit/sites): other sites that publish their own data models with datamodels-toolkit, their models, and which catalog models they build on\n`;
   txt += `- [AI and agents](${BASE_URL}/en/ai): how AI is used to make this site, and what agents can use\n`;
   txt += `- [Source repository](https://github.com/geolonia/datamodels): schemas, mappings to other standards, notes\n`;
   txt += `- [Licences](${BASE_URL}/LICENSE-CONTENT): machine-readable files CC0 1.0, prose CC BY 4.0, code Apache-2.0\n`;

@@ -19,3 +19,13 @@
 /models/standards /guide/standards 301
 /en/models/standards/ /en/guide/standards 301
 /en/models/standards /en/guide/standards 301
+
+# The toolkit pages moved from the guides to their own section, Toolkit, on 2026-10-11 (#226).
+# "Publishing on your own site" was split into one page per task; its old URL opens the first,
+# where #before, #init, #publish, #domain and #w3id still are (the theme sends #add, #check and
+# #versions on to their pages). The footer of every node built with datamodels-toolkit links
+# /guide/own-site or /en/guide/own-site, and published nodes keep it: keep these lines.
+/guide/own-site /toolkit/start 301
+/en/guide/own-site /en/toolkit/start 301
+/guide/nodes /toolkit/sites 301
+/en/guide/nodes /en/toolkit/sites 301

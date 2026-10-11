@@ -32,10 +32,10 @@ description: このカタログに合わないデータモデルの公開先：�
 
 ノードは静的なファイルだけでできているので、サーバーは要りません。GitHub Pages なら無料で公開できます。ファイルと、公開のためのワークフローは [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) が作ります。
 
-- 手順：[自分のサイトで公開する](/guide/own-site)
+- 手順：[ツールキット](/toolkit/)のセクション（最初は[サイトを始める](/toolkit/start)）
 - 例：[models.geolonia.com](https://models.geolonia.com)（Geolonia のプロジェクトのモデル）
 
-自分のサイトのモデルは、このカタログのモデルを土台にできます（[`extend`](/guide/own-site#add)）。土台にしたモデルを書いておくと、その名前と意味を変えていないかをツールキットが検査します。
+自分のサイトのモデルは、このカタログのモデルを土台にできます（[`extend`](/toolkit/models#extend)）。土台にしたモデルを書いておくと、その名前と意味を変えていないかをツールキットが検査します。
 
 ## Smart Data Models {#smart-data-models}
 

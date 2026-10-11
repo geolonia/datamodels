@@ -37,19 +37,11 @@ fields:
 - `standard`: the standard, its link, its licence and a short note.
 - `fields`: one row per attribute of the model. `to` names the matching field of the standard, `note` explains, and `to: null` means the standard has no counterpart.
 
-## Converting a list
+## Conversion rules {#convert}
 
-A row can also say how to convert: `column` (the column of the CSV), `transform` (for example `integer`, `flag`, `split`), a constant `value`, or `via` (build a nested value, such as an address, with another mapping file). `convert.id` names the entities.
+A row can also say how to convert: `column` (the column of the CSV), `transform` (for example `integer`, `flag`, `split`), a constant `value`, or `via` (build a nested value, such as an address, with another mapping file). `convert.id` names the entities. Rows with only `to` are documentation.
 
-The converter `datamodels convert` from [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) reads these rules. It turns a CSV list into entities of the model and checks each one against the model's JSON Schema:
-
-```bash
-npx github:geolonia/datamodels-toolkit convert \
-  disaster/EvacuationSite jichitai-opendata-site \
-  092011_evacuation_space.csv --out sites.json
-```
-
-Add `--normalized` for the NGSI-LD normalized form. Rows with only `to` are documentation: convert those fields yourself, following the note.
+The converter `datamodels convert` from [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) reads these rules and turns a CSV list into entities of the model. How to use it: [Converting a list](/en/toolkit/convert).
 
 ## Adding a mapping
 
