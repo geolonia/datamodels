@@ -7,7 +7,7 @@ description: With datamodels-toolkit, publish your own data models with fixed UR
 
 [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) is an open-source command-line tool and GitHub Action. The command is `datamodels`. With it you can:
 
-- Publish your own data models with fixed URLs on a site of your own, a node. The site has `catalog.json`, the `@context`, JSON Schemas, a vocabulary, examples, and a page for every type and attribute. An example: [models.geolonia.com](https://models.geolonia.com).
+- Publish your own data models with fixed URLs on a site of your own, a node. The site has `catalog.json`, the `@context`, JSON Schemas, a vocabulary, examples, and a page for every type and attribute. An example: [models.gtt-project.org](https://models.gtt-project.org/), the models of the GTT plugin for Redmine.
 - Convert a CSV list into entities of a model of this catalog.
 
 Not sure yet whether you need a site of your own? See [Your own data models](/en/guide/own-models).

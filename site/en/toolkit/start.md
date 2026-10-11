@@ -7,7 +7,7 @@ description: Start a site of your own for your data models (a node) with the ini
 
 This page starts a site of your own for your data models, a node, and publishes it: from the first command to your own domain. Not sure yet whether you need one? See [Your own data models](/en/guide/own-models).
 
-The result looks like [models.geolonia.com](https://models.geolonia.com): `catalog.json`, the `@context`, JSON Schemas, a vocabulary, examples, and a page for every type and attribute.
+The result looks like [models.gtt-project.org](https://models.gtt-project.org/): `catalog.json`, the `@context`, JSON Schemas, a vocabulary, examples, and a page for every type and attribute.
 
 ## What you need {#before}
 

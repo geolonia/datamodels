@@ -7,7 +7,7 @@ description: datamodels-toolkit で、自分のデータモデルを変わらな
 
 [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) は、オープンソースのコマンドラインツールと GitHub Action です。コマンドの名前は `datamodels` です。次のことができます。
 
-- 自分のデータモデルを、自分のサイト（ノード）で変わらない URL で公開します。サイトには `catalog.json`、`@context`、JSON Schema、語彙、例、型と属性ごとの説明のページがそろいます。例は [models.geolonia.com](https://models.geolonia.com) です。
+- 自分のデータモデルを、自分のサイト（ノード）で変わらない URL で公開します。サイトには `catalog.json`、`@context`、JSON Schema、語彙、例、型と属性ごとの説明のページがそろいます。例は [models.gtt-project.org](https://models.gtt-project.org/)（Redmine の GTT プラグインのモデル）です。
 - CSV の一覧を、このカタログのモデルのエンティティに変換します。
 
 自分のサイトが要るかどうかは、[自分のデータモデル](/guide/own-models)で確かめてください。
