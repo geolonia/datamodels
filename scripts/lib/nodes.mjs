@@ -31,6 +31,9 @@ export async function readNodeList(file = NODES_FILE) {
   });
 }
 
+/** Whether a response is a node index at all: an object with a models list. Otherwise the previous entry is kept. */
+export const isIndex = (catalog) => Boolean(catalog) && typeof catalog === 'object' && Array.isArray(catalog.models);
+
 /** What the snapshot keeps of one node's catalog.json: only the fields the pages show, cleaned. */
 export function nodeEntry(node, catalog, fetchedAt) {
   const models = (Array.isArray(catalog?.models) ? catalog.models : []).map((m) => ({

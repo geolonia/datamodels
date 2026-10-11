@@ -332,7 +332,7 @@ function modelPage(lang, prefix, subject, model) {
     md += '\n';
   }
   // Models of other sites built on this one, from their indexes (scripts/lib/nodes.mjs).
-  const others = isValue ? [] : builtOn(allNodes, mu.typeIri);
+  const others = builtOn(allNodes, mu.typeIri);
   if (others.length) {
     md += `## ${l.builtOn} {#built-on}\n\n${l.builtOnNote(`${prefix}/guide/nodes`)}\n\n| ${l.site} | ${l.model} | ${l.relation} |\n|---|---|---|\n`;
     for (const o of others) {
@@ -450,12 +450,13 @@ export function nodesPage(lang, prefix, nodes) {
     md += `| ${n.read} | ${plainCell(node.fetchedAt)} |\n\n| ${n.model} | ${n.name} | ${n.stage} | ${n.buildsOn} |\n|---|---|---|---|\n`;
     for (const m of node.models ?? []) {
       const name = m.title?.[lang] ?? Object.values(m.title ?? {})[0] ?? '';
-      const target = m.aliasOf ? ['alias', m.aliasOf] : m.subClassOf ? ['subclass', m.subClassOf] : m.extends?.[0] ? ['extends', m.extends[0].typeIri] : null;
-      let on = '';
-      if (target) {
-        const found = allSubjects.map((s) => modelForIri(s, target[1], { ownerOnly: true })).find(Boolean);
-        on = `${n.how[target[0]]} ${found ? modelLink(prefix, found) : `[${code(target[1])}](${target[1]})`}`;
-      }
+      // Every model it builds on: the alias or superclass, then each extended type not named already.
+      const targets = [...(m.aliasOf ? [['alias', m.aliasOf]] : []), ...(m.subClassOf ? [['subclass', m.subClassOf]] : [])];
+      for (const e of m.extends ?? []) if (!targets.some(([, iri]) => iri === e.typeIri)) targets.push(['extends', e.typeIri]);
+      const on = targets.map(([how, iri]) => {
+        const found = allSubjects.map((s) => modelForIri(s, iri, { ownerOnly: true })).find(Boolean);
+        return `${n.how[how]} ${found ? modelLink(prefix, found) : `[${code(iri)}](${iri})`}`;
+      }).join('<br>');
       md += `| ${m.pageUrl ? `[${code(m.type)}](${m.pageUrl})` : code(m.type)} | ${plainCell(name)} | ${plainCell(m.status)} | ${on} |\n`;
     }
     md += '\n';

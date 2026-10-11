@@ -2,8 +2,8 @@
 // nodes.snapshot.json, keeping only what the pages show. A node that does not
 // answer keeps its previous entry, so a short outage never removes it. Commit the
 // result in a pull request: the diff is what datamodels.jp will show.
-import { writeFile } from 'node:fs/promises';
-import { readNodeList, readSnapshot, nodeEntry, SNAPSHOT_FILE } from './lib/nodes.mjs';
+import { writeFile, rename } from 'node:fs/promises';
+import { readNodeList, readSnapshot, nodeEntry, isIndex, SNAPSHOT_FILE } from './lib/nodes.mjs';
 
 const TIMEOUT = 15000;
 const previous = new Map((await readSnapshot()).nodes.map((n) => [n.index, n]));
@@ -13,7 +13,9 @@ for (const node of await readNodeList()) {
   try {
     const res = await fetch(node.index, { signal: AbortSignal.timeout(TIMEOUT), headers: { accept: 'application/json' } });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const entry = nodeEntry(node, await res.json(), new Date().toISOString().slice(0, 10));
+    const catalog = await res.json();
+    if (!isIndex(catalog)) throw new Error('not a node index (no models list)');
+    const entry = nodeEntry(node, catalog, new Date().toISOString().slice(0, 10));
     nodes.push(entry);
     console.error(`${node.index}: ${entry.models.length} model(s)`);
   } catch (e) {
@@ -23,5 +25,7 @@ for (const node of await readNodeList()) {
     console.error(`${node.index}: not read (${e.cause?.code ?? e.message})${old ? `; kept the entry of ${old.fetchedAt}` : '; left out'}`);
   }
 }
-await writeFile(SNAPSHOT_FILE, `${JSON.stringify({ nodes }, null, 2)}\n`);
+// Written next to the snapshot, then renamed over it: an interrupted run never leaves half a file.
+await writeFile(`${SNAPSHOT_FILE}.tmp`, `${JSON.stringify({ nodes }, null, 2)}\n`);
+await rename(`${SNAPSHOT_FILE}.tmp`, SNAPSHOT_FILE);
 console.error(`${SNAPSHOT_FILE}: ${nodes.length} node(s)${failed ? `, ${failed} not read` : ''}`);
