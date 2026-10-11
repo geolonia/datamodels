@@ -1,0 +1,454 @@
+{
+  "@context": {
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "label": {
+      "@id": "rdfs:label",
+      "@container": "@language"
+    },
+    "comment": {
+      "@id": "rdfs:comment",
+      "@container": "@language"
+    },
+    "subClassOf": {
+      "@id": "rdfs:subClassOf",
+      "@type": "@id"
+    },
+    "isDefinedBy": {
+      "@id": "rdfs:isDefinedBy",
+      "@type": "@id"
+    },
+    "seeAlso": {
+      "@id": "rdfs:seeAlso",
+      "@type": "@id"
+    },
+    "versionInfo": "owl:versionInfo"
+  },
+  "@graph": [
+    {
+      "@id": "https://datamodels.jp/ns/facility/",
+      "@type": "owl:Ontology",
+      "label": {
+        "ja": "施設",
+        "en": "Facilities"
+      },
+      "comment": {
+        "ja": "自治体が自治体標準オープンデータセットとして公開する、施設の一覧のデータです。名称、所在地、位置、連絡先、利用できる時間など、データセットに共通する項目を基本の型 Facility にまとめ、AED、公衆トイレ、医療機関のような施設の種類ごとに、そのデータセットだけの項目を持つ下位の型を定めます。GIF のコアデータモデル「施設」に対応しています。",
+        "en": "Lists of facilities that municipalities publish as 自治体標準オープンデータセット. The base type Facility holds what the datasets share (name, address, location, contact, opening hours); a subtype per kind of facility, such as AEDs, public toilets and medical institutions, adds the columns of its own dataset. It corresponds to GIF's core data model 施設 (facility)."
+      },
+      "versionInfo": "1.0.0",
+      "seeAlso": "https://datamodels.jp/context/facility/v1.0.0.jsonld"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/AEDLocation",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "AED の設置場所",
+        "en": "AED location"
+      },
+      "comment": {
+        "ja": "AED（自動体外式除細動器）1 台の設置場所のデータです。自治体が「AED設置箇所一覧」（自治体標準オープンデータセット 08）として公開する一覧の 1 行にあたります。Facility の下位の型で、建物の中での設置位置、小児用の設備の有無、一般の人が使えるかどうかを足しています。",
+        "en": "Where one AED (automated external defibrillator) is installed: one row of the list a municipality publishes as 自治体標準オープンデータセット dataset 08 (AED設置箇所一覧). A subtype of Facility that adds the position in the building, equipment for children, and whether the public can use it."
+      },
+      "subClassOf": "https://datamodels.jp/ns/facility/Facility",
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/AEDLocation/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/Facility",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "施設",
+        "en": "Facility"
+      },
+      "comment": {
+        "ja": "自治体がオープンデータの一覧で公開する施設 1 か所のデータです。自治体標準オープンデータセットの施設のデータセットに共通する項目（名称、所在地、位置、公開する自治体、運営する組織、連絡先、利用できる時間）を持ちます。GIF のコアデータモデル「施設」に対応します。AED や公衆トイレなどの施設の種類ごとに、そのデータセットだけの項目を足した下位の型があります。",
+        "en": "One facility that a municipality lists in its open data. It has what the facility datasets of the 自治体標準オープンデータセット share: name, address, location, the publishing municipality, the operator, contact and opening hours. It corresponds to GIF's core data model 施設 (facility). Subtypes per kind of facility, such as AEDs and public toilets, add the columns of their own dataset."
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/Facility/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/MedicalInstitution",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "医療機関",
+        "en": "Medical institution"
+      },
+      "comment": {
+        "ja": "病院または診療所 1 か所のデータです。自治体が「医療機関一覧」（自治体標準オープンデータセット 10）として公開する一覧の 1 行にあたります。Facility の下位の型で、医療機関の種類、医療機関コード、診療科目、病床数、災害時の医療での役割（災害拠点分類）、時間外の対応を足しています。診療日と診療時間は openingHoursSpecification に入ります。",
+        "en": "One hospital or clinic: one row of the list a municipality publishes as 自治体標準オープンデータセット dataset 10 (医療機関一覧). A subtype of Facility that adds the kind of institution, the medical institution code, clinical departments, number of beds, its role in disaster medical care (災害拠点分類) and after-hours care. Consultation days and hours go into openingHoursSpecification."
+      },
+      "subClassOf": "https://datamodels.jp/ns/facility/Facility",
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/MedicalInstitution/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/PublicToilet",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "公衆トイレ",
+        "en": "Public toilet"
+      },
+      "comment": {
+        "ja": "公衆トイレ 1 か所のデータです。自治体が「公衆トイレ一覧」（自治体標準オープンデータセット 13）として公開する一覧の 1 行にあたります。Facility の下位の型で、設置位置、種類ごとのトイレの数、バリアフリートイレ、車椅子使用者用、乳幼児用、オストメイト用の設備を足しています。",
+        "en": "One public toilet: one row of the list a municipality publishes as 自治体標準オープンデータセット dataset 13 (公衆トイレ一覧). A subtype of Facility that adds the installation location, the number of toilets by kind, and barrier-free, wheelchair, baby-care and ostomate facilities."
+      },
+      "subClassOf": "https://datamodels.jp/ns/facility/Facility",
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/PublicToilet/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/afterHoursCare",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "afterHoursCare"
+      },
+      "comment": {
+        "ja": "診療時間外の対応（文章）",
+        "en": "What the institution does outside its consultation hours, in words"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/MedicalInstitution/#afterHoursCare"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/babyCareToilet",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "babyCareToilet"
+      },
+      "comment": {
+        "ja": "おむつ交換台やベビーチェアなど、乳幼児用の設備を備えたトイレがあれば true",
+        "en": "true when there is a toilet with equipment for babies, such as a changing table or a baby seat"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/PublicToilet/#babyCareToilet"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/barrierFreeToilets",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "barrierFreeToilets"
+      },
+      "comment": {
+        "ja": "バリアフリートイレの数。公共交通移動等円滑化基準の第 13 条第 2 項に合うトイレか、自治体が多目的トイレやバリアフリートイレとして定めるものです。",
+        "en": "Number of barrier-free toilets: toilets that meet Art. 13(2) of the barrier-free standard for public transport, or that the municipality defines as multipurpose or barrier-free toilets"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/PublicToilet/#barrierFreeToilets"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/corporateNumber",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "corporateNumber"
+      },
+      "comment": {
+        "ja": "AED を設置した組織の法人番号（国税庁、13 桁）",
+        "en": "Corporate number (13 digits, National Tax Agency) of the organisation that installed the AED"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/AEDLocation/#corporateNumber"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/disasterBaseClass",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "disasterBaseClass"
+      },
+      "comment": {
+        "ja": "災害時の医療での役割（災害拠点分類）。core（基幹災害医療センター）、regional（地域災害医療センター）、firstAidStation（救護所）",
+        "en": "The institution's role in disaster medical care: core (core disaster base hospital), regional (regional disaster base hospital), firstAidStation (first-aid station)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/MedicalInstitution/#disasterBaseClass"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/externalFacilityId",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "externalFacilityId"
+      },
+      "comment": {
+        "ja": "自治体の一覧での ID（自治体とデータセットの中で一意）。localGovernmentCode と合わせると、全国で一意になります。",
+        "en": "The facility's ID in the municipality's list (unique within the municipality and the dataset). Together with localGovernmentCode it is unique nationwide"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/AEDLocation/#externalFacilityId"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/femaleJapaneseStyleToilets",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "femaleJapaneseStyleToilets"
+      },
+      "comment": {
+        "ja": "女性トイレの和式の数",
+        "en": "Number of Japanese-style (squat) toilets in the women's toilet"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/PublicToilet/#femaleJapaneseStyleToilets"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/femaleWesternStyleToilets",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "femaleWesternStyleToilets"
+      },
+      "comment": {
+        "ja": "女性トイレの洋式の数",
+        "en": "Number of Western-style (sitting) toilets in the women's toilet"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/PublicToilet/#femaleWesternStyleToilets"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/installationLocation",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "installationLocation"
+      },
+      "comment": {
+        "ja": "建物や敷地の中で AED がある場所（例：1階事務室）",
+        "en": "Where in the building or site the AED is, for example 1階事務室"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/AEDLocation/#installationLocation"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/maleJapaneseStyleToilets",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "maleJapaneseStyleToilets"
+      },
+      "comment": {
+        "ja": "男性トイレの和式の数",
+        "en": "Number of Japanese-style (squat) toilets in the men's toilet"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/PublicToilet/#maleJapaneseStyleToilets"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/maleUrinals",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "maleUrinals"
+      },
+      "comment": {
+        "ja": "男性トイレの小便器の数",
+        "en": "Number of urinals in the men's toilet"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/PublicToilet/#maleUrinals"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/maleWesternStyleToilets",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "maleWesternStyleToilets"
+      },
+      "comment": {
+        "ja": "男性トイレの洋式の数",
+        "en": "Number of Western-style (sitting) toilets in the men's toilet"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/PublicToilet/#maleWesternStyleToilets"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/medicalDepartments",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "medicalDepartments"
+      },
+      "comment": {
+        "ja": "診療科目。公開者が書いたとおりの名前です（例：内科、整形外科）。",
+        "en": "Clinical departments, as written by the publisher, for example 内科 or 整形外科"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/MedicalInstitution/#medicalDepartments"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/medicalInstitutionCode",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "medicalInstitutionCode"
+      },
+      "comment": {
+        "ja": "医療機関コード。データセットのとおりに書きます（定義書の記入例は 10 桁）。",
+        "en": "Medical institution code, as the dataset gives it (the example in the definition sheet has 10 digits)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/MedicalInstitution/#medicalInstitutionCode"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/medicalInstitutionType",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "medicalInstitutionType"
+      },
+      "comment": {
+        "ja": "医療機関の種類。hospital（病院、20 床以上）、clinicWithBeds（有床診療所、1〜19 床）、clinicWithoutBeds（無床診療所）",
+        "en": "Kind of medical institution: hospital (20 beds or more), clinicWithBeds (1 to 19 beds), clinicWithoutBeds (no beds)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/MedicalInstitution/#medicalInstitutionType"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/numberOfBeds",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "numberOfBeds"
+      },
+      "comment": {
+        "ja": "病床数",
+        "en": "Number of beds"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/MedicalInstitution/#numberOfBeds"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/operatorName",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "operatorName"
+      },
+      "comment": {
+        "ja": "AED を設置した組織の名称（データセットの「団体名」）",
+        "en": "Name of the organisation that installed the AED (団体名 in the dataset)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/AEDLocation/#operatorName"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/ostomateToilet",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "ostomateToilet"
+      },
+      "comment": {
+        "ja": "オストメイト用の設備を備えたトイレがあれば true",
+        "en": "true when there is a toilet for ostomates"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/PublicToilet/#ostomateToilet"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/pediatricSupport",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "pediatricSupport"
+      },
+      "comment": {
+        "ja": "小児用パッドなど、子ども向けの設備があれば true",
+        "en": "true when equipment for children, such as paediatric pads, is there"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/AEDLocation/#pediatricSupport"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/remarks",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "remarks"
+      },
+      "comment": {
+        "ja": "備考",
+        "en": "Remarks"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/AEDLocation/#remarks"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/restrictedAccess",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "restrictedAccess"
+      },
+      "comment": {
+        "ja": "立ち入りが制限された区域にあり、一般の人が使えなければ true（データセットの「外部利用不可」）",
+        "en": "true when the AED is in a restricted area and not available to the general public (外部利用不可 in the dataset)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/AEDLocation/#restrictedAccess"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/totalFemaleToilets",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "totalFemaleToilets"
+      },
+      "comment": {
+        "ja": "女性トイレの総数",
+        "en": "Number of toilets in the women's toilet"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/PublicToilet/#totalFemaleToilets"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/totalMaleToilets",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "totalMaleToilets"
+      },
+      "comment": {
+        "ja": "男性トイレの総数（小便器を含む）",
+        "en": "Number of toilets in the men's toilet, urinals included"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/PublicToilet/#totalMaleToilets"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/totalUnisexToilets",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "totalUnisexToilets"
+      },
+      "comment": {
+        "ja": "男女共用トイレの総数",
+        "en": "Number of all-gender toilets"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/PublicToilet/#totalUnisexToilets"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/unisexJapaneseStyleToilets",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "unisexJapaneseStyleToilets"
+      },
+      "comment": {
+        "ja": "男女共用トイレの和式の数",
+        "en": "Number of all-gender Japanese-style (squat) toilets"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/PublicToilet/#unisexJapaneseStyleToilets"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/unisexWesternStyleToilets",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "unisexWesternStyleToilets"
+      },
+      "comment": {
+        "ja": "男女共用トイレの洋式の数",
+        "en": "Number of all-gender Western-style (sitting) toilets"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/PublicToilet/#unisexWesternStyleToilets"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/facility/wheelchairToilet",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "wheelchairToilet"
+      },
+      "comment": {
+        "ja": "車椅子使用者用のトイレがあれば true",
+        "en": "true when there is a toilet for wheelchair users"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/facility/",
+      "seeAlso": "https://datamodels.jp/models/facility/PublicToilet/#wheelchairToilet"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+# Correspondence between PublicToilet and sheet 13 of the Digital Agency's
+# 自治体標準オープンデータセット (data item definition sheet A).
+standard:
+  name:
+    ja: 自治体標準オープンデータセット・データ項目定義書A（20260801版）シート「13.公衆トイレ一覧」（デジタル庁）
+    en: "Municipal standard open dataset, data item definition sheet A (2026-08-01), sheet '13. public toilets' (Digital Agency)"
+  url: https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test
+  license:
+    ja: "公共データ利用規約（第1.0版）（PDL1.0、CC BY 4.0 と互換）"
+    en: "Public Data License (Version 1.0) (PDL1.0), compatible with CC BY 4.0"
+  note:
+    ja: "このモデルが表す一覧そのもの。項目名は日本語名（英語名）で示す。定義書では、女性トイレ数（和式）から男女共用トイレ総数までの 3 項目の英語名が 1 つずつずれている（例：女性トイレ数（和式）が urinalFemaleToilet）ので、日本語名で対応させる。住所、位置、利用時間の列は、JapaneseAddress、Geometry、OpeningHours の対応表のとおり。このデータセットには連絡先、法人番号、URL が無い。入れていない列：地方公共団体名、高度の種別・高度の値、画像とそのライセンス。"
+    en: "The list this model represents. Columns are given as the Japanese name (English item name). In the definition sheet the English names of three items, 女性トイレ数（和式） to 男女共用トイレ総数, are shifted by one (女性トイレ数（和式） is urinalFemaleToilet, for example), so the Japanese names are what counts. The address, location and hours columns map as in the JapaneseAddress, Geometry and OpeningHours tables. This dataset has no contact, corporate number or URL. Columns left out: 地方公共団体名, 高度の種別 and 高度の値, 画像 with its licence."
+# How the converter (datamodels convert, geolonia/datamodels-toolkit) names the entities it makes from this list.
+convert:
+  id: "urn:ngsi-ld:PublicToilet:{localGovernmentCode}-{externalFacilityId}"
+fields:
+  localGovernmentCode: { to: 全国地方公共団体コード (localGovernmentCode), note: { ja: 一覧を公開する自治体。所在地の自治体は address.localGovernmentCode（所在地_全国地方公共団体コード）, en: "the publishing municipality; the municipality the facility lies in is address.localGovernmentCode (所在地_全国地方公共団体コード)" }, column: 全国地方公共団体コード, transform: code6 }
+  externalFacilityId: { to: ID (identifier), column: ID }
+  name: { to: 名称 (name), note: { ja: 駅や公園など、トイレがある施設の名称のことがある, en: "can be the name of the station, park or other place where the toilet is" }, column: 名称 }
+  nameKana: { to: 名称_カナ (nameKana), column: 名称_カナ }
+  nameEn: { to: 名称_英語 (nameEn), note: { ja: ほかのデータセットの「名称_英字」と同じ, en: the 名称_英字 of the other datasets }, column: 名称_英語 }
+  address: { to: "所在地_* (fullAddress, prefecture, city, streetAddress, cityBlock), 建物名等(方書) (buildingNameEtc), 町字ID (streetAddressId)", note: { ja: 詳細は JapaneseAddress の対応表, en: see the JapaneseAddress table }, via: common/JapaneseAddress/jichitai-opendata-address }
+  location: { to: "緯度 (latitude), 経度 (longitude)", note: { ja: "[経度, 緯度] の点", en: "a point [longitude, latitude]" }, via: common/Geometry/jichitai-opendata-location }
+  installationLocation: { to: 設置位置 (installationLocation), note: { ja: 名称と設置位置で 1 つのトイレを区別する, en: a toilet is identified by name and installation location }, column: 設置位置 }
+  totalMaleToilets: { to: 男性トイレ総数 (totalMaleToilet), column: 男性トイレ総数, transform: integer }
+  maleUrinals: { to: 男性トイレ数（小便器） (urinalMaleToilet), column: 男性トイレ数（小便器）, transform: integer }
+  maleJapaneseStyleToilets: { to: 男性トイレ数（和式） (japaneseStyleMaleToilet), column: 男性トイレ数（和式）, transform: integer }
+  maleWesternStyleToilets: { to: 男性トイレ数（洋式） (westernStyleMaleToilet), column: 男性トイレ数（洋式）, transform: integer }
+  totalFemaleToilets: { to: 女性トイレ総数 (totalFemaleToilet), column: 女性トイレ総数, transform: integer }
+  femaleJapaneseStyleToilets: { to: 女性トイレ数（和式） (urinalFemaleToilet), note: { ja: 定義書の英語名がずれている, en: the English name in the definition sheet is shifted }, column: 女性トイレ数（和式）, transform: integer }
+  femaleWesternStyleToilets: { to: 女性トイレ数（洋式） (japaneseStyleFemaleToilet), note: { ja: 定義書の英語名がずれている, en: the English name in the definition sheet is shifted }, column: 女性トイレ数（洋式）, transform: integer }
+  totalUnisexToilets: { to: 男女共用トイレ総数 (westernStyleFemaleToilet), note: { ja: 定義書の英語名がずれている, en: the English name in the definition sheet is shifted }, column: 男女共用トイレ総数, transform: integer }
+  unisexJapaneseStyleToilets: { to: 男女共用トイレ数（和式） (japaneseStyleUnisexToilet), column: 男女共用トイレ数（和式）, transform: integer }
+  unisexWesternStyleToilets: { to: 男女共用トイレ数（洋式） (westernStyleUnisexToilet), column: 男女共用トイレ数（洋式）, transform: integer }
+  barrierFreeToilets: { to: バリアフリートイレ数 (numberOfmMultipurposeToilet), column: バリアフリートイレ数, transform: integer }
+  wheelchairToilet: { to: 車椅子使用者用トイレ有無 (multipurposeToilet), note: { ja: 「有」なら true、「無」なら false。変換ツールにはまだこの変換が無い, en: "有 is true, 無 is false; the converter has no transform for this yet" } }
+  babyCareToilet: { to: 乳幼児用設備設置トイレ有無 (babyCareToilet), note: { ja: 「有」なら true、「無」なら false。変換ツールにはまだこの変換が無い, en: "有 is true, 無 is false; the converter has no transform for this yet" } }
+  ostomateToilet: { to: オストメイト設置トイレ有無 (toiletForOstomates), note: { ja: 「有」なら true、「無」なら false。変換ツールにはまだこの変換が無い, en: "有 is true, 無 is false; the converter has no transform for this yet" } }
+  openingHoursSpecification: { to: "利用開始時間 (startTime), 利用終了時間 (endTime), 利用可能時間特記事項 (dateTimeRemarks)", note: { ja: 詳細は OpeningHours の対応表 jichitai-opendata-toilet-hours, en: see the OpeningHours table jichitai-opendata-toilet-hours }, via: common/OpeningHours/jichitai-opendata-toilet-hours }
+  remarks: { to: 備考 (remarks), column: 備考 }
+  operatorName: { to: null, note: { ja: このデータセットには無い, en: not in this dataset } }
+  corporateNumber: { to: null, note: { ja: このデータセットには無い, en: not in this dataset } }
+  contactPoint: { to: null, note: { ja: このデータセットには無い, en: not in this dataset } }
+  url: { to: null, note: { ja: このデータセットには無い, en: not in this dataset } }

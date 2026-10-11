@@ -1,0 +1,60 @@
+title:
+  ja: "AED の設置場所"
+  en: "AED location"
+description:
+  ja: "AED（自動体外式除細動器）1 台の設置場所のデータです。自治体が「AED設置箇所一覧」（自治体標準オープンデータセット 08）として公開する一覧の 1 行にあたります。Facility の下位の型で、建物の中での設置位置、小児用の設備の有無、一般の人が使えるかどうかを足しています。"
+  en: "Where one AED (automated external defibrillator) is installed: one row of the list a municipality publishes as 自治体標準オープンデータセット dataset 08 (AED設置箇所一覧). A subtype of Facility that adds the position in the building, equipment for children, and whether the public can use it."
+status: draft
+tags:
+  - facility
+  - disaster-response
+  - municipality
+attributes:
+  name:
+    ja: "AED が設置されている建物などの名称"
+    en: "Name of the building or place where the AED is installed"
+  nameKana:
+    ja: "名称のカナ表記（全角カタカナ）"
+    en: "Name in full-width katakana"
+  nameEn:
+    ja: "名称の英語表記"
+    en: "Name in English"
+  externalFacilityId:
+    ja: "自治体の一覧での ID（自治体とデータセットの中で一意）。localGovernmentCode と合わせると、全国で一意になります。"
+    en: "The facility's ID in the municipality's list (unique within the municipality and the dataset). Together with localGovernmentCode it is unique nationwide"
+  localGovernmentCode:
+    ja: "一覧を公開する自治体の全国地方公共団体コード（検査数字を含む 6 桁）"
+    en: "Local government code (6 digits including the check digit) of the municipality that publishes the list"
+  address:
+    ja: "所在地（JapaneseAddress）。その localGovernmentCode は所在地の自治体のもので、公開する自治体とは違うことがあります。"
+    en: "Address of the facility (JapaneseAddress). Its localGovernmentCode is that of the municipality the facility lies in, which can differ from the publisher"
+  location:
+    ja: "位置（点）"
+    en: "Location (a point)"
+  installationLocation:
+    ja: "建物や敷地の中で AED がある場所（例：1階事務室）"
+    en: "Where in the building or site the AED is, for example 1階事務室"
+  operatorName:
+    ja: "AED を設置した組織の名称（データセットの「団体名」）"
+    en: "Name of the organisation that installed the AED (団体名 in the dataset)"
+  corporateNumber:
+    ja: "AED を設置した組織の法人番号（国税庁、13 桁）"
+    en: "Corporate number (13 digits, National Tax Agency) of the organisation that installed the AED"
+  contactPoint:
+    ja: "連絡先（ContactPoint）：電話番号、内線番号、FAX 番号、メールアドレス、問い合わせフォーム、そのほかの連絡手段、郵便番号"
+    en: "How to get in touch (ContactPoint): telephone, extension, fax, e-mail, web form, other channels, postal code"
+  openingHoursSpecification:
+    ja: "利用できる時間（OpeningHours）：曜日、開始時刻、終了時刻、特記事項"
+    en: "When the facility can be used (OpeningHours): weekdays, opening and closing time, remarks"
+  url:
+    ja: "施設についてのウェブページ"
+    en: "Web page about the facility"
+  remarks:
+    ja: "備考"
+    en: "Remarks"
+  pediatricSupport:
+    ja: "小児用パッドなど、子ども向けの設備があれば true"
+    en: "true when equipment for children, such as paediatric pads, is there"
+  restrictedAccess:
+    ja: "立ち入りが制限された区域にあり、一般の人が使えなければ true（データセットの「外部利用不可」）"
+    en: "true when the AED is in a restricted area and not available to the general public (外部利用不可 in the dataset)"

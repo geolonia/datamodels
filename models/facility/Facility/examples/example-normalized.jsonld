@@ -1,0 +1,86 @@
+{
+  "@context": [
+    "https://datamodels.jp/context/facility/v1.jsonld",
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
+  ],
+  "id": "urn:ngsi-ld:Facility:131016-131016F00001",
+  "type": "Facility",
+  "name": {
+    "type": "Property",
+    "value": "千代田区役所"
+  },
+  "nameKana": {
+    "type": "Property",
+    "value": "チヨダクヤクショ"
+  },
+  "externalFacilityId": {
+    "type": "Property",
+    "value": "131016F00001"
+  },
+  "localGovernmentCode": {
+    "type": "Property",
+    "value": "131016"
+  },
+  "address": {
+    "type": "Property",
+    "value": {
+      "addressCountry": "JP",
+      "postalCode": "102-8688",
+      "addressRegion": "東京都",
+      "addressLocality": "千代田区",
+      "machiaza": "九段南",
+      "chome": "1",
+      "banchi": "2",
+      "go": "1",
+      "residentialIndication": true,
+      "localGovernmentCode": "131016",
+      "abrMachiazaId": "0008001",
+      "addressText": "東京都千代田区九段南1丁目2番1号"
+    }
+  },
+  "location": {
+    "type": "GeoProperty",
+    "value": {
+      "type": "Point",
+      "coordinates": [
+        139.75354,
+        35.693947
+      ]
+    }
+  },
+  "operatorName": {
+    "type": "Property",
+    "value": "千代田区"
+  },
+  "corporateNumber": {
+    "type": "Property",
+    "value": "8000020131016"
+  },
+  "contactPoint": {
+    "type": "Property",
+    "value": {
+      "telephone": "03-3264-2111",
+      "otherChannels": "千代田区コールセンター 03-3264-3910（年中無休、8:00〜21:00）",
+      "postalCode": "102-8688"
+    }
+  },
+  "openingHoursSpecification": {
+    "type": "Property",
+    "value": {
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "opens": "08:30",
+      "closes": "17:00",
+      "description": "祝日・年末年始（12月29日〜1月3日）を除く。一部の窓口は開庁時間が異なる。"
+    }
+  },
+  "url": {
+    "type": "Property",
+    "value": "https://www.city.chiyoda.lg.jp/"
+  }
+}

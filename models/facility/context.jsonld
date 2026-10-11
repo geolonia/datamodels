@@ -1,0 +1,43 @@
+{
+  "@context": [
+    "https://datamodels.jp/context/common/v1.0.0.jsonld",
+    {
+      "facility": "https://datamodels.jp/ns/facility/",
+      "disaster": "https://datamodels.jp/ns/disaster/",
+      "AEDLocation": "facility:AEDLocation",
+      "Facility": "facility:Facility",
+      "MedicalInstitution": "facility:MedicalInstitution",
+      "PublicToilet": "facility:PublicToilet",
+      "afterHoursCare": "facility:afterHoursCare",
+      "babyCareToilet": "facility:babyCareToilet",
+      "barrierFreeToilets": "facility:barrierFreeToilets",
+      "corporateNumber": "facility:corporateNumber",
+      "disasterBaseClass": "facility:disasterBaseClass",
+      "externalFacilityId": "facility:externalFacilityId",
+      "femaleJapaneseStyleToilets": "facility:femaleJapaneseStyleToilets",
+      "femaleWesternStyleToilets": "facility:femaleWesternStyleToilets",
+      "installationLocation": "facility:installationLocation",
+      "maleJapaneseStyleToilets": "facility:maleJapaneseStyleToilets",
+      "maleUrinals": "facility:maleUrinals",
+      "maleWesternStyleToilets": "facility:maleWesternStyleToilets",
+      "medicalDepartments": "facility:medicalDepartments",
+      "medicalInstitutionCode": "facility:medicalInstitutionCode",
+      "medicalInstitutionType": "facility:medicalInstitutionType",
+      "name": "https://uri.etsi.org/ngsi-ld/name",
+      "nameEn": "disaster:nameEn",
+      "nameKana": "disaster:nameKana",
+      "numberOfBeds": "facility:numberOfBeds",
+      "operatorName": "facility:operatorName",
+      "ostomateToilet": "facility:ostomateToilet",
+      "pediatricSupport": "facility:pediatricSupport",
+      "remarks": "facility:remarks",
+      "restrictedAccess": "facility:restrictedAccess",
+      "totalFemaleToilets": "facility:totalFemaleToilets",
+      "totalMaleToilets": "facility:totalMaleToilets",
+      "totalUnisexToilets": "facility:totalUnisexToilets",
+      "unisexJapaneseStyleToilets": "facility:unisexJapaneseStyleToilets",
+      "unisexWesternStyleToilets": "facility:unisexWesternStyleToilets",
+      "wheelchairToilet": "facility:wheelchairToilet"
+    }
+  ]
+}

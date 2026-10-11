@@ -1,0 +1,32 @@
+{
+  "id": "urn:ngsi-ld:PublicToilet:131016-131016C00008",
+  "type": "PublicToilet",
+  "name": "和泉橋",
+  "externalFacilityId": "131016C00008",
+  "localGovernmentCode": "131016",
+  "address": {
+    "addressCountry": "JP",
+    "addressRegion": "東京都",
+    "addressLocality": "千代田区",
+    "machiaza": "神田佐久間町",
+    "chome": "1",
+    "banchi": "11",
+    "localGovernmentCode": "131016",
+    "addressText": "東京都千代田区神田佐久間町1-11"
+  },
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      139.774738,
+      35.697264
+    ]
+  },
+  "maleUrinals": 3,
+  "maleJapaneseStyleToilets": 1,
+  "maleWesternStyleToilets": 1,
+  "femaleJapaneseStyleToilets": 1,
+  "femaleWesternStyleToilets": 1,
+  "barrierFreeToilets": 1,
+  "babyCareToilet": true,
+  "ostomateToilet": false
+}

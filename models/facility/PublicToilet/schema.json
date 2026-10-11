@@ -1,0 +1,296 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://datamodels.jp/schema/facility/PublicToilet/v1.0.0.json",
+  "title": "PublicToilet",
+  "description": "One public toilet: one row of the list a municipality publishes as 自治体標準オープンデータセット dataset 13 (公衆トイレ一覧), with the numbers of toilets by kind",
+  "x-subclass-of": "https://datamodels.jp/ns/facility/Facility",
+  "x-version": "1.0.0",
+  "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
+  "x-model-tags": "facility, municipality, Japan",
+  "x-derived-from": "https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uri",
+      "description": "Entity id (URN)"
+    },
+    "type": {
+      "type": "string",
+      "const": "PublicToilet",
+      "description": "Entity type"
+    },
+    "@context": {
+      "description": "JSON-LD context of the entity, optional: a context URL or a list of context URLs",
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "minItems": 1
+        }
+      ]
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the facility (名称)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://uri.etsi.org/ngsi-ld/name"
+    },
+    "nameKana": {
+      "type": "string",
+      "description": "Name in full-width katakana (名称_カナ)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/disaster/nameKana"
+    },
+    "nameEn": {
+      "type": "string",
+      "description": "Name in English (名称_英字 or 名称_英語)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/disaster/nameEn"
+    },
+    "externalFacilityId": {
+      "type": "string",
+      "description": "The facility's ID in the municipality's list (ID; unique within the municipality and the dataset). Together with localGovernmentCode it identifies the facility nationwide",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/facility/externalFacilityId"
+    },
+    "localGovernmentCode": {
+      "type": "string",
+      "pattern": "^\\d{6}$",
+      "description": "Local government code of the municipality that publishes the list (全国地方公共団体コード, 6 digits)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/common/localGovernmentCode"
+    },
+    "address": {
+      "$ref": "https://datamodels.jp/schema/common/JapaneseAddress/v1.0.0.json",
+      "description": "Address of the facility, as a JapaneseAddress value (common subject). Its localGovernmentCode is the code of the municipality the facility lies in, which can differ from the publisher's",
+      "x-ngsi": {
+        "type": "Property",
+        "model": "https://datamodels.jp/ns/common/JapaneseAddress"
+      },
+      "x-iri": "https://schema.org/address"
+    },
+    "location": {
+      "$ref": "https://datamodels.jp/schema/common/Geometry/v1.0.0.json",
+      "properties": {
+        "type": {
+          "const": "Point"
+        }
+      },
+      "description": "Where the facility is, as a point (緯度, 経度)",
+      "x-ngsi": {
+        "type": "GeoProperty",
+        "model": "https://datamodels.jp/ns/common/Geometry"
+      },
+      "x-iri": "https://uri.etsi.org/ngsi-ld/location"
+    },
+    "installationLocation": {
+      "type": "string",
+      "description": "Where the toilet is, for example at which exit of a station (設置位置). The dataset identifies a toilet by name and installation location",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/facility/installationLocation"
+    },
+    "operatorName": {
+      "type": "string",
+      "description": "Name of the organisation that runs the facility or, for equipment such as an AED, installed it (団体名, 法人の名称)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/facility/operatorName"
+    },
+    "corporateNumber": {
+      "type": "string",
+      "pattern": "^\\d{13}$",
+      "description": "Corporate number (法人番号, 13 digits, National Tax Agency) of the organisation that runs the facility or installed the equipment",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/facility/corporateNumber"
+    },
+    "contactPoint": {
+      "$ref": "https://datamodels.jp/schema/common/ContactPoint/v1.0.0.json",
+      "description": "How to get in touch, as a ContactPoint value (common subject): telephone, extension, fax, e-mail, web form, other channels, postal code",
+      "x-ngsi": {
+        "type": "Property",
+        "model": "https://datamodels.jp/ns/common/ContactPoint"
+      },
+      "x-iri": "https://schema.org/contactPoint"
+    },
+    "openingHoursSpecification": {
+      "$ref": "https://datamodels.jp/schema/common/OpeningHours/v1.0.0.json",
+      "description": "When the facility can be used, as an OpeningHours value (common subject): weekdays, opening and closing time, remarks",
+      "x-ngsi": {
+        "type": "Property",
+        "model": "https://datamodels.jp/ns/common/OpeningHours"
+      },
+      "x-iri": "https://schema.org/openingHoursSpecification"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Web page about the facility (URL)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://schema.org/url"
+    },
+    "remarks": {
+      "type": "string",
+      "description": "Remarks (備考)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/facility/remarks"
+    },
+    "totalMaleToilets": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of toilets in the men's toilet, urinals included (男性トイレ総数)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/facility/totalMaleToilets"
+    },
+    "maleUrinals": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of urinals in the men's toilet (男性トイレ数（小便器）)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/facility/maleUrinals"
+    },
+    "maleJapaneseStyleToilets": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of Japanese-style (squat) toilets in the men's toilet (男性トイレ数（和式）)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/facility/maleJapaneseStyleToilets"
+    },
+    "maleWesternStyleToilets": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of Western-style (sitting) toilets in the men's toilet (男性トイレ数（洋式）)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/facility/maleWesternStyleToilets"
+    },
+    "totalFemaleToilets": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of toilets in the women's toilet (女性トイレ総数)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/facility/totalFemaleToilets"
+    },
+    "femaleJapaneseStyleToilets": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of Japanese-style (squat) toilets in the women's toilet (女性トイレ数（和式）)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/facility/femaleJapaneseStyleToilets"
+    },
+    "femaleWesternStyleToilets": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of Western-style (sitting) toilets in the women's toilet (女性トイレ数（洋式）)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/facility/femaleWesternStyleToilets"
+    },
+    "totalUnisexToilets": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of all-gender toilets (男女共用トイレ総数)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/facility/totalUnisexToilets"
+    },
+    "unisexJapaneseStyleToilets": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of all-gender Japanese-style (squat) toilets (男女共用トイレ数（和式）)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/facility/unisexJapaneseStyleToilets"
+    },
+    "unisexWesternStyleToilets": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of all-gender Western-style (sitting) toilets (男女共用トイレ数（洋式）)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/facility/unisexWesternStyleToilets"
+    },
+    "barrierFreeToilets": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of barrier-free toilets: toilets that meet Art. 13(2) of the MLIT barrier-free standard for public transport, or that the municipality defines as multipurpose or barrier-free toilets (バリアフリートイレ数)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/facility/barrierFreeToilets"
+    },
+    "wheelchairToilet": {
+      "type": "boolean",
+      "description": "true when there is a toilet for wheelchair users (車椅子使用者用トイレ有無: 有 → true, 無 → false)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/facility/wheelchairToilet"
+    },
+    "babyCareToilet": {
+      "type": "boolean",
+      "description": "true when there is a toilet with equipment for babies, such as a baby changing table or seat (乳幼児用設備設置トイレ有無: 有 → true, 無 → false)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/facility/babyCareToilet"
+    },
+    "ostomateToilet": {
+      "type": "boolean",
+      "description": "true when there is a toilet for ostomates (オストメイト設置トイレ有無: 有 → true, 無 → false)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/facility/ostomateToilet"
+    }
+  },
+  "required": [
+    "id",
+    "type",
+    "name",
+    "localGovernmentCode",
+    "externalFacilityId"
+  ],
+  "additionalProperties": false
+}

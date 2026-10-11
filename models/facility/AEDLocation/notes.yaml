@@ -1,0 +1,10 @@
+notes:
+  - ja: "デジタル庁の自治体標準オープンデータセット、データ項目定義書 A（2026-08-01、2026-10-11 に確認）のシート「08 AED設置箇所一覧」（https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test）に基づいています。項目ごとの対応は mapping/jichitai-opendata-aed.yaml にあります。"
+    en: Built on the Digital Agency's 自治体標準オープンデータセット, data item definition sheet A (2026-08-01, checked 2026-10-11), sheet 08 AED設置箇所一覧 (https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test). Field by field in mapping/jichitai-opendata-aed.yaml.
+  - ja: "Facility の下位の型（x-subclass-of）です。足しているのは、このデータセットだけの列（設置位置、小児対応設備の有無、外部利用不可）です。1 件は施設ではなく、AED 1 台の設置場所です。名称は、AED がある建物などの名称です。定義書では、利用可能曜日と時間は、決まっている施設に設置されていれば必須です。決まっていなければ空欄にし、特記事項に「○○小学校の利用可能曜日に従う」のように書きます。"
+    en: "A subtype (x-subclass-of) of Facility that adds the columns of this dataset only: installation position, equipment for children, not for public use. One record is where one AED is, not a facility; the name is that of the building or place. The definition sheet requires the weekdays and hours when the building has fixed hours; otherwise they stay empty and the remarks say, for example, that the AED follows the hours of a school."
+  - ja: "「小児対応設備の有無」は「有」か「無」、「外部利用不可」はその文字か空欄です。どちらも真偽値（pediatricSupport、restrictedAccess）にしています。変換ツール（datamodels convert）には、まだ「有」「無」を読む変換がありません。"
+    en: "小児対応設備の有無 is 有 or 無, and 外部利用不可 is that word or empty; both become booleans (pediatricSupport, restrictedAccess). The converter (datamodels convert) has no transform for 有 and 無 yet."
+  - ja: "検討した上流（2026-10-11）：Smart Data Models にも schema.org にも、AED の設置場所の型はありません。GIF のコアデータモデル「設備」が近く、データセットの共通語彙基盤の列は「設備」を参照しています。"
+    en: "Upstream considered (2026-10-11): neither Smart Data Models nor schema.org has a type for an AED location. GIF's core data model 設備 (equipment) is close; the dataset's reference column points to it."
+license: CC0 1.0 (machine-readable files), CC BY 4.0 (prose); see /LICENSE-CONTENT.md
