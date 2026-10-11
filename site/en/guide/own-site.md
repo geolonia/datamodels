@@ -30,7 +30,7 @@ cd my-models
 - **Licence:** `CC0-1.0` lets anyone use the models without conditions, like this catalog.
 - **The first subject:** a group of models that share one `@context`, for example `road`. Its name is part of the IRIs too.
 
-It writes `node.yaml` (the settings), `models/road/` (the subject), a README, `LICENSE`, the workflow that publishes the node, and a Dependabot configuration that proposes new toolkit releases. In an existing repository, it adds only the files that are missing.
+It writes `node.yaml` (the settings), `models/road/` (the subject), a README, `LICENSE` (the licence text for CC0-1.0 and CC-BY-4.0; for another licence, add the text yourself), the workflow that publishes the node, and a Dependabot configuration that proposes new toolkit releases. In an existing repository, it adds only the files that are missing.
 
 With the [GitHub CLI](https://cli.github.com/) (`gh`), add `--github my-org/my-models`: `init` then also creates that public repository, pushes the files and turns on GitHub Pages ([step 4](#publish)).
 
@@ -102,7 +102,8 @@ Your IRIs contain your domain, so they last as long as you keep the domain. If t
 Decide before you publish: the base URL is part of every IRI.
 
 1. Choose a name: lower-case letters, digits and hyphens, not a generic word, for example `my-org-models`.
-2. Open a pull request to [perma-id/w3id.org](https://github.com/perma-id/w3id.org) that adds `ids/my-org-models/.htaccess` with your contact and the redirect:
+2. In [step 1](#init), give `https://w3id.org/my-org-models` as the base URL, and publish the node at your domain ([steps 4](#publish) and [5](#domain)). The site itself stays there; every link and IRI the node publishes goes through w3id.org, so they work once the redirect is in place.
+3. Open a pull request to [perma-id/w3id.org](https://github.com/perma-id/w3id.org) that adds `ids/my-org-models/.htaccess` with your contact and the redirect:
 
    ```apache
    # # /my-org-models/
@@ -120,8 +121,7 @@ Decide before you publish: the base URL is part of every IRI.
    RewriteRule ^(.*)$ https://models.example.org/$1 [R=302,L]
    ```
 
-   The rule keeps the path, so `https://w3id.org/my-org-models/ns/road` opens `https://models.example.org/ns/road`, and every IRI and file of the node works through it. Use 302, not 301: browsers keep a 301 forever, so you could not move the node later. Read [Creating an identifier](https://w3id.org/docs/guides/create-an-id) before you open the pull request.
-3. In [step 1](#init), give `https://w3id.org/my-org-models` as the base URL. The site itself stays on GitHub Pages at your domain ([steps 4](#publish) and [5](#domain)); every link and IRI the node publishes goes through w3id.org.
+   The rule keeps the path, so `https://w3id.org/my-org-models/ns/road` opens `https://models.example.org/ns/road`, and every IRI and file of the node works through it. Use 302, not 301: browsers keep a 301 forever, so you could not move the node later. The reviewers check that the target is online, which is why the node is published first. Read [Creating an identifier](https://w3id.org/docs/guides/create-an-id) before you open the pull request.
 
 Hash IRIs work through the redirect: the part after `#` stays in the browser, so `https://w3id.org/my-org-models/ns/road#RoadPatrol` opens the right row of the page.
 

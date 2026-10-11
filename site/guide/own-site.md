@@ -30,7 +30,7 @@ cd my-models
 - **ライセンス：** `CC0-1.0` なら、だれでも条件なしにモデルを使えます（このカタログと同じです）。
 - **最初のサブジェクト：** 1 つの `@context` を共有するモデルのまとまりです（例：`road`）。この名前も IRI に入ります。
 
-`init` は、設定の `node.yaml`、サブジェクトの `models/road/`、README、`LICENSE`、公開用のワークフローを書き出します。ツールキットの新しいリリースを提案する Dependabot の設定も書き出します。既存のリポジトリで実行すると、足りないファイルだけを足します。
+`init` は、設定の `node.yaml`、サブジェクトの `models/road/`、README、`LICENSE`、公開用のワークフローを書き出します。`LICENSE` に条文が入るのは CC0-1.0 と CC-BY-4.0 で、ほかのライセンスでは自分で条文を置きます。ツールキットの新しいリリースを提案する Dependabot の設定も書き出します。既存のリポジトリで実行すると、足りないファイルだけを足します。
 
 [GitHub CLI](https://cli.github.com/)（`gh`）があれば、`--github my-org/my-models` を付けて実行できます。`init` がその名前で公開リポジトリを作り、ファイルを push して GitHub Pages を有効にします（[手順 4](#publish)）。
 
@@ -102,7 +102,8 @@ IRI には自分のドメインが入るので、IRI が使えるのはドメイ
 公開する前に決めてください。ベース URL は、すべての IRI に入ります。
 
 1. 名前を決めます。小文字の英字、数字、ハイフンで、一般的な単語は避けます（例：`my-org-models`）。
-2. [perma-id/w3id.org](https://github.com/perma-id/w3id.org) に、`ids/my-org-models/.htaccess` を足す Pull Request を開きます。連絡先と転送の規則を書きます。
+2. [手順 1](#init) で、ベース URL に `https://w3id.org/my-org-models` を指定し、ノードを自分のドメインで公開します（[手順 4](#publish)、[手順 5](#domain)）。サイト自体はそこに置いたままです。ノードが公開するリンクと IRI はすべて w3id.org を通るので、転送ができた時点で使えるようになります。
+3. [perma-id/w3id.org](https://github.com/perma-id/w3id.org) に、`ids/my-org-models/.htaccess` を足す Pull Request を開きます。連絡先と転送の規則を書きます。
 
    ```apache
    # # /my-org-models/
@@ -120,8 +121,7 @@ IRI には自分のドメインが入るので、IRI が使えるのはドメイ
    RewriteRule ^(.*)$ https://models.example.org/$1 [R=302,L]
    ```
 
-   この規則はパスをそのまま渡します。たとえば `https://w3id.org/my-org-models/ns/road` は `https://models.example.org/ns/road` を開きます。ノードのすべての IRI とファイルが、転送を通して使えます。301 ではなく 302 を使ってください。ブラウザーは 301 をずっと覚えるので、あとでノードを移せなくなります。Pull Request を開く前に、[Creating an identifier](https://w3id.org/docs/guides/create-an-id)（英語）を読んでください。
-3. [手順 1](#init) で、ベース URL に `https://w3id.org/my-org-models` を指定します。サイト自体は、自分のドメインの GitHub Pages に置いたままです（[手順 4](#publish)、[手順 5](#domain)）。ノードが公開するリンクと IRI は、すべて w3id.org を通ります。
+   この規則はパスをそのまま渡します。たとえば `https://w3id.org/my-org-models/ns/road` は `https://models.example.org/ns/road` を開きます。ノードのすべての IRI とファイルが、転送を通して使えます。301 ではなく 302 を使ってください。ブラウザーは 301 をずっと覚えるので、あとでノードを移せなくなります。レビューでは転送先が公開されているかを確かめるので、ノードを先に公開しておきます。Pull Request を開く前に、[Creating an identifier](https://w3id.org/docs/guides/create-an-id)（英語）を読んでください。
 
 ハッシュ IRI も転送を通して使えます。`#` から後ろはブラウザーに残るので、`https://w3id.org/my-org-models/ns/road#RoadPatrol` は、ページの該当する行を開きます。
 
