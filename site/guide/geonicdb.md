@@ -80,7 +80,7 @@ geonic entities list --type RoadRestriction \
 :::
 
 - 登録すると `201 Created`、同じ型名のモデルが既にあれば `409` が返ります。登録したモデルを変えるときは `PATCH /custom-data-models/<型名>` か `geonic models update <型名> @model.json` を使います。
-- **型付きの日時：** normalized の例では、日時を `{"@type": "DateTime", "@value": "…"}` の形で書いています。ただし、GeonicDB のモデルの検査は、今のところ文字列しか受け付けません。そのため手順 2 では、[jq](https://jqlang.org/) で文字列に直しています（[#185](https://github.com/geolonia/datamodels/issues/185)）。自分のデータでは、`"validFrom": {"type": "Property", "value": "2026-07-08T09:00:00+09:00"}` のように文字列で送れます。
+- **型付きの日時：** normalized の例では、日時を `{"@type": "DateTime", "@value": "…"}` の形で書いています。GeonicDB v0.21.0 のモデルの検査は、文字列しか受け付けません。それより後のバージョンは型付きの日時も受け付けますが、Task と Milestone の `start`・`due`、Project の `start`・`end` は別です。これらは日付だけの値も取るので、文字列として検査されます。そのため手順 2 では、[jq](https://jqlang.org/) で文字列に直しています。この方法は、どのバージョンでも使えます（[#185](https://github.com/geolonia/datamodels/issues/185)）。自分のデータでは、`"validFrom": {"type": "Property", "value": "2026-07-08T09:00:00+09:00"}` のように文字列で送れます。
 - **GeonicDB CLI：** [geonicdb-cli](https://github.com/geolonia/geonicdb-cli)（`npm install -g @geolonia/geonicdb-cli`）。`geonic auth login` でテナント管理者としてログインすれば、API キーもポリシーも要りません。保存したログイン情報は `--api-key` より優先されるので、API キーで使うときは、先に `geonic auth logout` を実行してください。どのコマンドも、`--dry-run` を付けると、実際には送らずにリクエストの内容を表示します。
 - 自分のデータを送るときは、@context をボディに入れて（`application/ld+json`）送るか、`application/json` と `Link` ヘッダーで送ります。両方を同時には使いません。テナントは `NGSILD-Tenant` ヘッダーで指定します（[マルチテナンシー](https://docs.geonicdb.com/ja/core-concepts/multi-tenancy)）。
 
