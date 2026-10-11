@@ -1,0 +1,39 @@
+{
+  "id": "urn:ngsi-ld:MedicalInstitution:131016-131016M00001",
+  "type": "MedicalInstitution",
+  "name": "三井記念病院",
+  "nameKana": "ミツイキネンビョウイン",
+  "externalFacilityId": "131016M00001",
+  "localGovernmentCode": "131016",
+  "address": {
+    "addressCountry": "JP",
+    "addressRegion": "東京都",
+    "addressLocality": "千代田区",
+    "machiaza": "神田和泉町",
+    "banchi": "1",
+    "localGovernmentCode": "131016",
+    "addressText": "東京都千代田区神田和泉町1番地"
+  },
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      139.77597,
+      35.699192
+    ]
+  },
+  "operatorName": "社会福祉法人三井記念病院",
+  "corporateNumber": "6010005001053",
+  "contactPoint": {
+    "telephone": "03-3862-9111",
+    "postalCode": "101-8643"
+  },
+  "medicalInstitutionType": "hospital",
+  "medicalDepartments": [
+    "内科",
+    "循環器内科",
+    "外科",
+    "麻酔科"
+  ],
+  "numberOfBeds": 482,
+  "disasterBaseClass": "regional"
+}

@@ -49,6 +49,13 @@ export const STANDARDS = [
     'JapaneseAddress/jichitai-opendata-address': { ja: '所在地の項目', en: 'Location columns' },
     'EvacuationShelter/jichitai-opendata-shelter': { ja: '03 指定緊急避難場所一覧', en: '03 Designated emergency evacuation sites' },
     'EvacuationSite/jichitai-opendata-site': { ja: '03 指定緊急避難場所一覧', en: '03 Designated emergency evacuation sites' },
+    'AEDLocation/jichitai-opendata-aed': { ja: '08 AED設置箇所一覧', en: '08 AED locations' },
+    'MedicalInstitution/jichitai-opendata-medical': { ja: '10 医療機関一覧', en: '10 Medical institutions' },
+    'PublicToilet/jichitai-opendata-toilet': { ja: '13 公衆トイレ一覧', en: '13 Public toilets' },
+    'ContactPoint/jichitai-opendata-contact': { ja: '連絡先の項目', en: 'Contact columns' },
+    'OpeningHours/jichitai-opendata-hours': { ja: '利用可能曜日・時間の項目', en: 'Weekday and hours columns' },
+    'OpeningHours/jichitai-opendata-medical-hours': { ja: '10 医療機関一覧の診療曜日・時間', en: '10 Medical institutions, consultation days and hours' },
+    'OpeningHours/jichitai-opendata-toilet-hours': { ja: '13 公衆トイレ一覧の利用時間', en: '13 Public toilets, hours' },
   } },
   { id: 'eei', name: { ja: '災害対応基本共有情報（EEI）第1.1版（内閣府）', en: 'Essential Elements of Information (EEI) version 1.1 (Cabinet Office)' }, parts: {
     'RoadRestriction/eei': { ja: '05 通行止め情報（規制情報）', en: '05 Road closures and restrictions' },
@@ -66,6 +73,9 @@ export const STANDARDS = [
   } },
   { id: 'gif', name: { ja: 'デジタル庁 GIF コアデータモデル', en: 'Digital Agency GIF core data model' }, parts: {
     'JapaneseAddress/gif-address': { ja: '住所', en: 'Address' },
+    'ContactPoint/gif-contact-point': { ja: '連絡先', en: 'Contact point' },
+    'Facility/gif-facility': { ja: '施設', en: 'Facility' },
+    'OpeningHours/gif-facility-hours': { ja: '施設の利用可能曜日・時刻', en: 'Facility, available days and times' },
   } },
   { id: 'cao-hinanjo-guideline', name: { ja: '避難所運営等避難生活支援のためのガイドライン（内閣府）', en: 'Guideline for shelter operation and evacuation-life support (Cabinet Office)' }, parts: {
     'EvacuationShelter/cao-hinanjo-guideline': { ja: 'チェックリスト（令和6年12月改定）', en: 'Checklist (revised December 2024)' },

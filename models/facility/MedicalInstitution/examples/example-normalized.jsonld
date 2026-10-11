@@ -1,0 +1,82 @@
+{
+  "@context": [
+    "https://datamodels.jp/context/facility/v1.jsonld",
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
+  ],
+  "id": "urn:ngsi-ld:MedicalInstitution:131016-131016M00001",
+  "type": "MedicalInstitution",
+  "name": {
+    "type": "Property",
+    "value": "三井記念病院"
+  },
+  "nameKana": {
+    "type": "Property",
+    "value": "ミツイキネンビョウイン"
+  },
+  "externalFacilityId": {
+    "type": "Property",
+    "value": "131016M00001"
+  },
+  "localGovernmentCode": {
+    "type": "Property",
+    "value": "131016"
+  },
+  "address": {
+    "type": "Property",
+    "value": {
+      "addressCountry": "JP",
+      "addressRegion": "東京都",
+      "addressLocality": "千代田区",
+      "machiaza": "神田和泉町",
+      "banchi": "1",
+      "localGovernmentCode": "131016",
+      "addressText": "東京都千代田区神田和泉町1番地"
+    }
+  },
+  "location": {
+    "type": "GeoProperty",
+    "value": {
+      "type": "Point",
+      "coordinates": [
+        139.77597,
+        35.699192
+      ]
+    }
+  },
+  "operatorName": {
+    "type": "Property",
+    "value": "社会福祉法人三井記念病院"
+  },
+  "corporateNumber": {
+    "type": "Property",
+    "value": "6010005001053"
+  },
+  "contactPoint": {
+    "type": "Property",
+    "value": {
+      "telephone": "03-3862-9111",
+      "postalCode": "101-8643"
+    }
+  },
+  "medicalInstitutionType": {
+    "type": "Property",
+    "value": "hospital"
+  },
+  "medicalDepartments": {
+    "type": "Property",
+    "value": [
+      "内科",
+      "循環器内科",
+      "外科",
+      "麻酔科"
+    ]
+  },
+  "numberOfBeds": {
+    "type": "Property",
+    "value": 482
+  },
+  "disasterBaseClass": {
+    "type": "Property",
+    "value": "regional"
+  }
+}

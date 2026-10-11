@@ -1,0 +1,27 @@
+# Correspondence between Facility and the Digital Agency's GIF core data model
+# 施設 (facility), as defined in 438_コアデータモデル_DMD.xlsx.
+standard:
+  name:
+    ja: デジタル庁 GIF コアデータモデル「施設」
+    en: Digital Agency GIF core data model "Facility"
+  url: https://github.com/digital-go-jp/GIF/tree/main/430_%E3%82%B3%E3%82%A2%E3%83%87%E3%83%BC%E3%82%BF%E3%83%A2%E3%83%87%E3%83%AB
+  license:
+    ja: "スキーマは CC BY 4.0、リポジトリは CC0 1.0"
+    en: "CC BY 4.0 (schema), CC0 1.0 (repository)"
+  note:
+    ja: "GIF の施設は、基礎項目（ID、種別情報、名称とそのカナ・英字、通称、説明、施設住所、アクセス方法、駐車場有無、連絡先情報）と、実装データモデルで使う拡張項目（利用時間、料金、収容人数、アクセシビリティ情報など）を持つ。自治体標準オープンデータセットの施設のデータセットは、列ごとにこれを参照している。"
+    en: "GIF's facility has basic items (ID, type information, the name with kana and English, an alternate name, a description, the facility address, access, parking, contact information) and extended items for implementation models (hours, fees, capacity, accessibility and more). The facility datasets of the 自治体標準オープンデータセット reference it column by column."
+fields:
+  externalFacilityId: { to: ID (id), note: { ja: "GIF は施設を一意に識別する ID。データセットでは、自治体の中で一意の ID と全国地方公共団体コードの組み合わせ", en: "in GIF an ID that identifies the facility; in the datasets an ID unique within the municipality, used together with the local government code" } }
+  name: { to: 名称 (name) }
+  nameKana: { to: 名称(カナ) (nameKana), note: { ja: GIF では必須, en: required in GIF } }
+  nameEn: { to: 名称(英字) (nameEn) }
+  address: { to: 施設住所 (facilityAddress), note: { ja: GIF の住所。JapaneseAddress の対応表 gif-address を参照, en: "GIF's address; see JapaneseAddress's gif-address table" } }
+  location: { to: "施設住所 > 代表点の緯度、代表点の経度 (latitudeOfRepresentativePoint, longitudeOfRepresentativePoint)", note: { ja: GIF の住所の拡張項目。データセットでは「緯度」「経度」の列, en: "extended items of GIF's address; the 緯度 and 経度 columns in the datasets" } }
+  contactPoint: { to: 連絡先情報 (contactPointInformation), note: { ja: GIF の連絡先。ContactPoint の対応表 gif-contact-point を参照, en: "GIF's contact point; see ContactPoint's gif-contact-point table" } }
+  openingHoursSpecification: { to: "利用可能曜日、開始時刻、終了時刻、利用可能日時説明 (availableDay, startTime, endTime, availabileDateTimeDescription)", note: { ja: 拡張項目。OpeningHours の対応表 gif-facility-hours を参照, en: "extended items; see OpeningHours's gif-facility-hours table" } }
+  localGovernmentCode: { to: null, note: { ja: GIF の施設には無い。データセットでは、データを公開する団体の全国地方公共団体コード, en: "not in GIF's facility; in the datasets the code of the publishing government" } }
+  operatorName: { to: null, note: { ja: "GIF の施設には運営者の項目が無い。GIF のコアデータモデル「法人」の商号または名称（tradeName）にあたる", en: "GIF's facility has no operator item; it is the 商号または名称 (tradeName) of GIF's core data model 法人 (corporation)" } }
+  corporateNumber: { to: null, note: { ja: "GIF のコアデータモデル「法人」の法人番号（legalEntityNumber）にあたる", en: "the 法人番号 (legalEntityNumber) of GIF's core data model 法人 (corporation)" } }
+  url: { to: null, note: { ja: GIF の施設の基礎項目には無い。データセットでは「URL」の列, en: "not among GIF's basic facility items; the URL column in the datasets" } }
+  remarks: { to: null, note: { ja: GIF の施設には無い。データセットでは「備考」の列, en: "not in GIF's facility; the 備考 column in the datasets" } }

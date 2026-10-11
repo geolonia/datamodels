@@ -1,0 +1,50 @@
+title:
+  ja: "施設"
+  en: "Facility"
+description:
+  ja: "自治体がオープンデータの一覧で公開する施設 1 か所のデータです。自治体標準オープンデータセットの施設のデータセットに共通する項目（名称、所在地、位置、公開する自治体、運営する組織、連絡先、利用できる時間）を持ちます。GIF のコアデータモデル「施設」に対応します。AED や公衆トイレなどの施設の種類ごとに、そのデータセットだけの項目を足した下位の型があります。"
+  en: "One facility that a municipality lists in its open data. It has what the facility datasets of the 自治体標準オープンデータセット share: name, address, location, the publishing municipality, the operator, contact and opening hours. It corresponds to GIF's core data model 施設 (facility). Subtypes per kind of facility, such as AEDs and public toilets, add the columns of their own dataset."
+status: draft
+tags:
+  - facility
+  - municipality
+attributes:
+  name:
+    ja: "施設の名称"
+    en: "Name of the facility"
+  nameKana:
+    ja: "名称のカナ表記（全角カタカナ）"
+    en: "Name in full-width katakana"
+  nameEn:
+    ja: "名称の英語表記"
+    en: "Name in English"
+  externalFacilityId:
+    ja: "自治体の一覧での ID（自治体とデータセットの中で一意）。localGovernmentCode と合わせると、全国で一意になります。"
+    en: "The facility's ID in the municipality's list (unique within the municipality and the dataset). Together with localGovernmentCode it is unique nationwide"
+  localGovernmentCode:
+    ja: "一覧を公開する自治体の全国地方公共団体コード（検査数字を含む 6 桁）"
+    en: "Local government code (6 digits including the check digit) of the municipality that publishes the list"
+  address:
+    ja: "所在地（JapaneseAddress）。その localGovernmentCode は所在地の自治体のもので、公開する自治体とは違うことがあります。"
+    en: "Address of the facility (JapaneseAddress). Its localGovernmentCode is that of the municipality the facility lies in, which can differ from the publisher"
+  location:
+    ja: "位置（点）"
+    en: "Location (a point)"
+  operatorName:
+    ja: "施設を運営する組織の名称。AED のような設備では、設置した組織です（データセットの「団体名」「法人の名称」）。"
+    en: "Name of the organisation that runs the facility or, for equipment such as an AED, installed it (団体名, 法人の名称 in the datasets)"
+  corporateNumber:
+    ja: "施設を運営する組織、または設備を設置した組織の法人番号（国税庁、13 桁）"
+    en: "Corporate number (13 digits, National Tax Agency) of the organisation that runs the facility or installed the equipment"
+  contactPoint:
+    ja: "連絡先（ContactPoint）：電話番号、内線番号、FAX 番号、メールアドレス、問い合わせフォーム、そのほかの連絡手段、郵便番号"
+    en: "How to get in touch (ContactPoint): telephone, extension, fax, e-mail, web form, other channels, postal code"
+  openingHoursSpecification:
+    ja: "利用できる時間（OpeningHours）：曜日、開始時刻、終了時刻、特記事項"
+    en: "When the facility can be used (OpeningHours): weekdays, opening and closing time, remarks"
+  url:
+    ja: "施設についてのウェブページ"
+    en: "Web page about the facility"
+  remarks:
+    ja: "備考"
+    en: "Remarks"
