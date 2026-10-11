@@ -1,0 +1,68 @@
+{
+  "nodes": [
+    {
+      "url": "https://models.gtt-project.org/",
+      "index": "https://models.gtt-project.org/catalog.json",
+      "fetchedAt": "2026-10-11",
+      "publisher": {
+        "name": {
+          "en": "GTT Project"
+        },
+        "url": "https://gtt-project.org/"
+      },
+      "license": "CC0-1.0",
+      "models": [
+        {
+          "type": "Issue",
+          "typeIri": "https://datamodels.jp/ns/task/Task",
+          "pageUrl": "https://models.gtt-project.org/models/redmine/Issue/",
+          "title": {
+            "en": "Issue"
+          },
+          "status": "experimental",
+          "aliasOf": "https://datamodels.jp/ns/task/Task",
+          "extends": [
+            {
+              "typeIri": "https://datamodels.jp/ns/task/Task",
+              "version": "1.0.0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "url": "https://dkastl.github.io/models/",
+      "index": "https://dkastl.github.io/models/catalog.json",
+      "fetchedAt": "2026-10-11",
+      "publisher": {
+        "name": {
+          "en": "Daniel Kastl"
+        },
+        "url": "https://github.com/dkastl"
+      },
+      "license": "CC0-1.0",
+      "models": [
+        {
+          "type": "Activity",
+          "typeIri": "https://dkastl.github.io/models/ns/activity#Activity",
+          "pageUrl": "https://dkastl.github.io/models/models/activity/Activity/",
+          "title": {
+            "en": "Activity"
+          },
+          "status": "experimental",
+          "extends": []
+        },
+        {
+          "type": "Peak",
+          "typeIri": "https://dkastl.github.io/models/ns/activity#Peak",
+          "pageUrl": "https://dkastl.github.io/models/models/activity/Peak/",
+          "title": {
+            "en": "Peak"
+          },
+          "status": "experimental",
+          "extends": []
+        }
+      ]
+    }
+  ]
+}
