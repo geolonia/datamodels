@@ -71,14 +71,30 @@ const toolkitPages = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideb
   const ja = lang === 'ja'
   const page = (jaText: string, enText: string, slug: string): DefaultTheme.SidebarItem =>
     ({ text: ja ? jaText : enText, link: `${prefix}/toolkit/${slug}` })
-  // Few pages, in the order of the work: no groups.
+  // In groups, as the guides: publishing your own site (in the order of the work), working with
+  // data in the models' shape, and pages to look things up in. The landing page lists the same groups.
   return [
-    page('サイトを始める', 'Starting a site', 'start'),
-    page('モデルを足す', 'Adding models', 'models'),
-    page('検査とビルド', 'Checking and building', 'check'),
-    page('バージョン', 'Versions', 'versions'),
-    page('一覧を変換する', 'Converting a list', 'convert'),
-    page('データモデルのサイト', 'Data model sites', 'sites'),
+    {
+      text: ja ? '自分のサイトを公開する' : 'Publish your site',
+      items: [
+        page('サイトを始める', 'Starting a site', 'start'),
+        page('モデルを足す', 'Adding models', 'models'),
+        page('検査とビルド', 'Checking and building', 'check'),
+        page('バージョン', 'Versions', 'versions'),
+      ],
+    },
+    {
+      text: ja ? 'データを扱う' : 'Work with data',
+      items: [
+        page('一覧を変換する', 'Converting a list', 'convert'),
+      ],
+    },
+    {
+      text: ja ? '参照' : 'Reference',
+      items: [
+        page('データモデルのサイト', 'Data model sites', 'sites'),
+      ],
+    },
   ]
 }
 

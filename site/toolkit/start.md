@@ -7,7 +7,7 @@ description: datamodels-toolkit の init で自分のデータモデルのサイ
 
 自分のデータモデルを公開するサイト（ノード）を作り、自分のドメインで公開するまでを順に説明します。そもそも自分のサイトが要るかどうかは、[自分のデータモデル](/guide/own-models)で確かめてください。
 
-できあがるのは [models.geolonia.com](https://models.geolonia.com) のようなサイトです。`catalog.json`、`@context`、JSON Schema、語彙、例、型と属性ごとの説明のページがそろいます。
+できあがるのは [models.gtt-project.org](https://models.gtt-project.org/) のようなサイトです。`catalog.json`、`@context`、JSON Schema、語彙、例、型と属性ごとの説明のページがそろいます。
 
 ## 用意するもの {#before}
 

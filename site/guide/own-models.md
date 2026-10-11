@@ -33,7 +33,7 @@ description: このカタログに合わないデータモデルの公開先：�
 ノードは静的なファイルだけでできているので、サーバーは要りません。GitHub Pages なら無料で公開できます。ファイルと、公開のためのワークフローは [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) が作ります。
 
 - 手順：[ツールキット](/toolkit/)のセクション（最初は[サイトを始める](/toolkit/start)）
-- 例：[models.geolonia.com](https://models.geolonia.com)（Geolonia のプロジェクトのモデル）
+- 例：[models.gtt-project.org](https://models.gtt-project.org/)（Redmine の GTT プラグインのモデル）
 
 自分のサイトのモデルは、このカタログのモデルを土台にできます（[`extend`](/toolkit/models#extend)）。土台にしたモデルを書いておくと、その名前と意味を変えていないかをツールキットが検査します。
 

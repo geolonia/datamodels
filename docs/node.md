@@ -19,7 +19,7 @@
 
 ## Words
 
-- **Node:** a site that publishes data models at a base URL it controls, for example `https://models.geolonia.com/`. datamodels.jp is a node; so is models.gtt-project.org.
+- **Node:** a site that publishes data models at a base URL it controls, for example `https://models.example.org/`. datamodels.jp is a node; so is models.gtt-project.org.
 - **Model:** one entity or value type with its attributes, as on datamodels.jp: a JSON Schema, the terms in an @context, and the classes and properties in a vocabulary.
 - **Index:** the node's `catalog.json`, the one file a machine reads to learn everything the node publishes.
 
@@ -67,27 +67,27 @@ The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.
   "formatVersion": 1,
   "generatedAt": "2026-10-10T00:00:00Z",
   "publisher": {
-    "name": { "ja": "株式会社 Geolonia", "en": "Geolonia Inc." },
-    "url": "https://geolonia.com/"
+    "name": { "ja": "例の会社", "en": "Example Inc." },
+    "url": "https://example.org/"
   },
   "license": "CC0-1.0",
-  "licenseUrl": "https://models.geolonia.com/LICENSE",
+  "licenseUrl": "https://models.example.org/LICENSE",
   "nodes": [
     { "url": "https://datamodels.jp/", "index": "https://datamodels.jp/catalog.json" }
   ],
   "models": [
     {
       "type": "RoadPatrol",
-      "typeIri": "https://models.geolonia.com/ns/road#RoadPatrol",
+      "typeIri": "https://models.example.org/ns/road#RoadPatrol",
       "subject": "road",
       "version": "0.1.0",
       "status": "experimental",
       "title": { "ja": "道路パトロール", "en": "Road patrol" },
       "description": { "ja": "…", "en": "…" },
-      "contextUrl": "https://models.geolonia.com/context/road/v0.1.0.jsonld",
-      "schemaUrl": "https://models.geolonia.com/schema/road/RoadPatrol/v0.1.0.json",
-      "vocabularyUrl": "https://models.geolonia.com/vocab/road/v0.1.0.jsonld",
-      "pageUrl": "https://models.geolonia.com/road/RoadPatrol/",
+      "contextUrl": "https://models.example.org/context/road/v0.1.0.jsonld",
+      "schemaUrl": "https://models.example.org/schema/road/RoadPatrol/v0.1.0.json",
+      "vocabularyUrl": "https://models.example.org/vocab/road/v0.1.0.jsonld",
+      "pageUrl": "https://models.example.org/road/RoadPatrol/",
       "extends": [
         {
           "typeIri": "https://datamodels.jp/ns/task/Task",
