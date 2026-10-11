@@ -13,7 +13,7 @@ import { graphSvg, graphTitle } from './graph.mjs';
 import { listReleases } from './releases.mjs';
 import { standardsPage } from './standards.mjs';
 import { standardLicense } from './mapping-check.mjs';
-import { builtOn, nodeName } from './nodes.mjs';
+import { builtOn, nodeName, shownByNode } from './nodes.mjs';
 
 const SITE = join(ROOT, 'site');
 const rel = (url) => url.slice(BASE_URL.length);
@@ -86,7 +86,7 @@ export const issueLinks = (s) => s.replace(/(^|[\s(（、，。])#(\d+)\b/g, '$1
 let allSubjects = [];
 // Adapters discovered by build.mjs (the core never imports them): only whether one serves a model.
 let allAdapters = [];
-// The known nodes (nodes.snapshot.json), for "Built on by other sites" and the sites page.
+// The known nodes (nodes.snapshot.json), for "Built on by others" and the sites page.
 let allNodes = { nodes: [] };
 /** The URL table's "Adapters" row, or '' when no adapter serves the model. Product-neutral: it links the model's entry on /adapters/, which names the products and their files. */
 /** The sentence under "Using this model" that links the model's adapter files, or '' without any. No product names. */
@@ -181,12 +181,11 @@ const M = {
     standards: '参照している標準', standardsNote: 'このモデルが対応している標準と、項目ごとの対応です。開くと対応表が見られます。',
     fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く', standardLicence: 'この標準のライセンス', mappingFile: (file, guide) => `この標準のデータを変換するための対応表（YAML）: ${file}（使い方は${guide('データを変換する')}）`, notesTitle: '注記',
     sourceFiles: (href) => `ソースファイル（注記、対応表）は [GitHub](${href}) にあります。`,
-    extensions: '拡張している組織', organization: '組織', addedTerms: '足した属性', inlineContext: 'データの中に記述', dataLink: 'データ',
-    extensionsNote: (form) => `このモデルに属性を足して使っている組織です。持ち主が登録したもので、datamodels.jp は内容を確認していません。同じ意味の属性が要るときは、ここにある名前を使えます。自分の拡張は[フォーム](${form})から登録できます。`,
-    reportExtension: (form, guide) => `このモデルを拡張したら、[フォームで登録してください](${form})。ほかの組織が同じ名前を使えます（[フォームの書き方](${guide})）。`,
-    builtOn: 'ほかのサイトのモデル', site: 'サイト', model: 'モデル', relation: '関係',
-    builtOnNote: (sites) => `このモデルをもとにした、ほかのサイトのモデルです。各サイトの索引（catalog.json）から読み、取り込むときに確認しています。モデルの内容は datamodels.jp では確認していません。サイトの一覧：[データモデルのサイト](${sites})`,
-    how: { alias: '別の名前の同じ型', subclass: '下位の型', extends: '拡張' }, versionOf: (v) => `（v${v}）`,
+    addedTerms: '足した属性', inlineContext: 'データの中に記述', dataLink: 'データ',
+    reportExtension: (form, guide, toolkit, sites) => `このモデルを拡張して[ツールキット](${toolkit})のサイトで公開しているなら、サイトが[サイトの一覧](${sites})に載ると、このページにも載ります。サイトが無いときは、[フォームで登録してください](${form})。ほかの組織が同じ名前を使えます（[フォームの書き方](${guide})）。`,
+    builtOn: 'このモデルをもとにしたもの', who: 'サイト・組織', model: 'モデル', relation: '関係', listed: '登録された拡張',
+    builtOnNote: (sites, form) => `このモデルをもとにした、ほかのサイトのモデルと、組織が登録した拡張です。サイトのモデルは各サイトの索引（catalog.json）から読み、取り込むときに確認しています。拡張は持ち主の申告のまま載せています。モデルと属性の内容は、どちらも datamodels.jp では確認していません。同じ意味の属性が要るときは、ここにある名前を使えます。サイトの一覧は[データモデルのサイト](${sites})にあります。自分のサイトが無い組織は、拡張を[フォーム](${form})から登録できます。`,
+    how: { alias: '別の名前の同じ型', subclass: '下位の型', extends: '属性を追加' }, versionOf: (v) => `（v${v}）`,
   },
   en: {
     kind: 'Kind', entity: 'entity', valueKind: 'value type: used inside an attribute, not as an entity of its own',
@@ -199,12 +198,11 @@ const M = {
     standards: 'Referenced standards', standardsNote: 'The standards this model corresponds to, field by field. Open one to see its table.',
     fieldsMapped: (n, total) => `${n} of ${total} fields`, openStandard: 'Open the standard', standardLicence: 'Licence of this standard', mappingFile: (file, guide) => `Mapping file (YAML) for converting data from this standard: ${file} (how: ${guide('Converting data')})`, notesTitle: 'Notes',
     sourceFiles: (href) => `The source files (notes, mapping tables) are on [GitHub](${href}).`,
-    extensions: 'Extended by', organization: 'Organisation', addedTerms: 'Added attributes', inlineContext: 'inside the data', dataLink: 'data',
-    extensionsNote: (form) => `Organisations that added attributes to this model. Their owners listed them; datamodels.jp does not review the content. If you need an attribute with the same meaning, you can use a name listed here. List your own with the [form](${form}).`,
-    reportExtension: (form, guide) => `Extended this model? [List your extension](${form}) so others can reuse your names ([how to fill in the form](${guide})).`,
-    builtOn: 'Built on by other sites', site: 'Site', model: 'Model', relation: 'Relation',
-    builtOnNote: (sites) => `Models on other sites that build on this one. They are read from each site's index (catalog.json) and reviewed when they are taken in; datamodels.jp does not review the models themselves. All sites: [Data model sites](${sites}).`,
-    how: { alias: 'same type, another name', subclass: 'subtype', extends: 'extends' }, versionOf: (v) => ` (v${v})`,
+    addedTerms: 'Added attributes', inlineContext: 'inside the data', dataLink: 'data',
+    reportExtension: (form, guide, toolkit, sites) => `Extended this model? If you publish it on a site made with the [toolkit](${toolkit}), it shows on this page once your site is on the [list of sites](${sites}). Without a site, [list your extension](${form}) so others can reuse your names ([how to fill in the form](${guide})).`,
+    builtOn: 'Built on by others', who: 'Site or organisation', model: 'Model', relation: 'Relation', listed: 'listed extension',
+    builtOnNote: (sites, form) => `Models on other sites that build on this one, and extensions that organisations listed. Site models are read from each site's index (catalog.json) and reviewed when they are taken in; extensions are listed as their owners reported them. datamodels.jp does not review the models or attributes themselves. If you need an attribute with the same meaning, you can use a name listed here. All sites: [Data model sites](${sites}). An organisation without a site of its own can list its extension with the [form](${form}).`,
+    how: { alias: 'same type, another name', subclass: 'subtype', extends: 'added attributes' }, versionOf: (v) => ` (v${v})`,
   },
 };
 // The issue form for listing an extension, with the model filled in.
@@ -274,7 +272,7 @@ function modelPage(lang, prefix, subject, model) {
   else {
     // One line per task; the Link header last, with its code block (wraps, custom.css).
     md += `- ${t.useGuide(`${prefix}/guide/use`)}\n- ${t.extendThis(`${prefix}/guide/builder?model=${subject.name}/${model.type}`)}\n`;
-    md += `- ${l.reportExtension(extensionForm(subject, model), `${prefix}/guide/list-extension`)}\n`;
+    md += `- ${l.reportExtension(extensionForm(subject, model), `${prefix}/guide/list-extension`, `${prefix}/toolkit/`, `${prefix}/toolkit/sites`)}\n`;
     const adapters = adapterLine(lang, prefix, subject, model, allAdapters);
     if (adapters) md += `- ${adapters.trim()}\n`;
     md += `- ${l.linkHeaderIntro}\n\n  \`\`\`http\n  Link: <${u.contextAlias}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"\n  \`\`\`\n\n`;
@@ -318,29 +316,33 @@ function modelPage(lang, prefix, subject, model) {
     }
     md += `</div>\n\n`;
   }
-  // Extensions by other organisations, as their owners listed them (scripts/lib/extensions.mjs):
-  // one row each, so a reader who needs the same attribute finds a name to reuse.
-  if (model.extensions?.length) {
-    md += `## ${l.extensions} {#extensions}\n\n${l.extensionsNote(extensionForm(subject, model))}\n\n| ${l.organization} | ${l.addedTerms} | @context |\n|---|---|---|\n`;
-    for (const ext of model.extensions) {
-      const org = ext.url ? `[${plainCell(ext.organization[lang])}](${ext.url})` : plainCell(ext.organization[lang]);
-      const data = ext.data ? `<br><small>[${l.dataLink}](${ext.data})</small>` : '';
-      const terms = Object.entries(ext.terms).map(([name, x]) => `${code(name)}: ${plainCell(x.description[lang])}<br><span class="iri">${code(x.iri)}</span>`).join('<br>');
-      const context = typeof ext.context === 'string' ? `[${code(ext.context)}](${ext.context})` : `*${l.inlineContext}*`;
-      md += `| <a id="extension-${ext.name}"></a>${org}${data} | ${terms} | ${context} |\n`;
-    }
-    md += '\n';
-  }
-  // Models of other sites built on this one, from their indexes (scripts/lib/nodes.mjs).
+  // Built on by others: one table for the models of other sites (their indexes, scripts/lib/nodes.mjs)
+  // and the extensions organisations listed (extensions/*.yaml, scripts/lib/extensions.mjs), so a reader
+  // who needs the same attribute finds a name to reuse. An extension the site of a node already shows
+  // is left out (shownByNode): the node's own data is the current one.
   const others = builtOn(allNodes, mu.typeIri);
-  if (others.length) {
-    md += `## ${l.builtOn} {#built-on}\n\n${l.builtOnNote(`${prefix}/toolkit/sites`)}\n\n| ${l.site} | ${l.model} | ${l.relation} |\n|---|---|---|\n`;
+  const listed = (model.extensions ?? []).filter((ext) => !shownByNode(ext, others));
+  if (others.length || listed.length) {
+    // The heading had two anchors before the sections were merged (#extensions, #built-on); the old one stays as an element.
+    md += `<div id="extensions" class="old-anchor"></div>\n\n## ${l.builtOn} {#built-on}\n\n${l.builtOnNote(`${prefix}/toolkit/sites`, extensionForm(subject, model))}\n\n`;
+    md += `<div class="built-on">\n\n| ${l.who} | ${l.model} | ${l.relation} | ${l.addedTerms} |\n|---|---|---|---|\n`;
+    // Text from outside (node indexes, reported extensions): plain cells; a description in the page's language, else the first one there is.
+    const said = (texts) => plainCell(texts?.[lang] ?? Object.values(texts ?? {})[0] ?? '');
+    const terms = (list) => list.map((x) => `${code(x.name)}: ${said(x.description)}<br><span class="iri">${code(x.iri)}</span>`).join('<br>');
+    const contextLink = (url) => `<br><small>@context: [${code(url)}](${url})</small>`;
     for (const o of others) {
       const site = `[${plainCell(nodeName(o.node, lang))}](${o.node.url})`;
-      const model = o.model.pageUrl ? `[${code(o.model.type)}](${o.model.pageUrl})` : code(o.model.type);
-      md += `| ${site} | ${model} | ${l.how[o.how]}${o.version ? l.versionOf(o.version) : ''} |\n`;
+      const name = o.model.pageUrl ? `[${code(o.model.type)}](${o.model.pageUrl})` : code(o.model.type);
+      md += `| ${site} | ${name}${o.model.contextUrl ? contextLink(o.model.contextUrl) : ''} | ${l.how[o.how]}${o.version ? l.versionOf(o.version) : ''} | ${terms(o.model.added ?? [])} |\n`;
     }
-    md += '\n';
+    for (const ext of listed) {
+      const org = ext.url ? `[${plainCell(ext.organization[lang])}](${ext.url})` : plainCell(ext.organization[lang]);
+      const data = ext.data ? `<br><small>[${l.dataLink}](${ext.data})</small>` : '';
+      const context = typeof ext.context === 'string' ? contextLink(ext.context) : `<br><small>@context: *${l.inlineContext}*</small>`;
+      const added = Object.entries(ext.terms).map(([name, x]) => ({ name, ...x }));
+      md += `| <a id="extension-${ext.name}"></a>${org} | *${l.listed}*${context}${data} | ${l.how.extends}${l.versionOf(ext.version)} | ${terms(added)} |\n`;
+    }
+    md += '\n</div>\n\n';
   }
   const notes = model.notes?.notes ?? [];
   if (notes.length) md += `## ${l.notesTitle} {#notes}\n\n${notes.map((n) => `- ${issueLinks(mdText(n[lang]))}`).join('\n')}\n\n`;
@@ -425,42 +427,33 @@ export async function generateSitePages(subjects, adapters = [], nodes = { nodes
 const NODES = {
   ja: {
     title: 'データモデルのサイト', description: 'datamodels-toolkit で自分のデータモデルを公開している、datamodels.jp が知っているサイトの一覧',
-    intro: (own) => `自分のサイト（ノード）でデータモデルを公開していて、datamodels.jp が知っているサイトです。サイトのモデルはこのカタログの一部ではなく、datamodels.jp は内容を確認していません。それぞれのサイトが自分のモデルを決めます。多くの人に役立つモデルは、カタログに提案できます。自分のサイトの作り方は[サイトを始める](${own})にあります。`,
+    intro: (own) => `自分のサイト（ノード）でデータモデルを公開していて、datamodels.jp が知っているサイトです。1 行に 1 つのサイトで、モデルの数と、このカタログのどのモデルをもとにしているかを示します。サイトのモデルはこのカタログの一部ではなく、datamodels.jp は内容を確認していません。それぞれのサイトが自分のモデルを決めます。多くの人に役立つモデルは、カタログに提案できます。自分のサイトの作り方は[サイトを始める](${own})にあります。`,
+    perModel: 'サイトのモデルは、それぞれのサイトで見られます。このカタログのモデルをもとにしたモデルは、そのモデルのページの「このモデルをもとにしたもの」にも、足した属性と一緒に載ります。',
     add: (issue) => `自分のサイトを載せたいときは、[Issue](${issue}) で知らせてください。各サイトの catalog.json から読み、取り込むときに確認しています。`,
-    none: 'まだありません。', site: 'サイト', index: '索引', licence: 'ライセンス', read: '読んだ日', model: 'モデル', name: '名前', stage: '段階', buildsOn: 'もとにしたモデル',
-    how: { alias: '同じ型', subclass: '下位の型', extends: '拡張' },
+    none: 'まだありません。', site: 'サイト', licence: 'ライセンス', models: 'モデルの数', buildsOn: 'もとにしたカタログのモデル', read: '読んだ日',
   },
   en: {
     title: 'Data model sites', description: 'Sites that publish their own data models with datamodels-toolkit and that datamodels.jp knows',
-    intro: (own) => `Sites of their own (nodes) that publish data models and that datamodels.jp knows. Their models are not part of this catalog, and datamodels.jp does not review them: each site decides about its own. A model that is useful to many can be proposed to the catalog. How to make a site: [Starting a site](${own}).`,
+    intro: (own) => `Sites of their own (nodes) that publish data models and that datamodels.jp knows: one row per site, with how many models it has and which catalog models they build on. Their models are not part of this catalog, and datamodels.jp does not review them: each site decides about its own. A model that is useful to many can be proposed to the catalog. How to make a site: [Starting a site](${own}).`,
+    perModel: 'Each site shows its own models. A model built on a catalog model is also listed on that model\'s page, under "Built on by others", with the attributes it adds.',
     add: (issue) => `To have your site listed, tell us in an [issue](${issue}). The sites are read from their catalog.json and reviewed when they are taken in.`,
-    none: 'None yet.', site: 'Site', index: 'Index', licence: 'Licence', read: 'Read on', model: 'Model', name: 'Name', stage: 'Stage', buildsOn: 'Builds on',
-    how: { alias: 'same type as', subclass: 'subtype of', extends: 'extends' },
+    none: 'None yet.', site: 'Site', licence: 'Licence', models: 'Models', buildsOn: 'Builds on (catalog models)', read: 'Read on',
   },
 };
 
-/** The sites page (/toolkit/sites): every known node and its models, from nodes.snapshot.json. */
+/** The sites page (/toolkit/sites): one row per known node, from nodes.snapshot.json; its models are on its own site. */
 export function nodesPage(lang, prefix, nodes) {
   const n = NODES[lang];
-  let md = front(n.title, n.description);
+  // One table and no sections: no outline column.
+  let md = front(n.title, n.description).replace(/\n---\n\n$/, '\naside: false\n---\n\n');
   md += `# ${n.title}\n\n${n.intro(`${prefix}/toolkit/start`)}\n\n${n.add('https://github.com/geolonia/datamodels/issues/new')}\n\n`;
   if (!nodes.nodes?.length) return `${md}${n.none}\n`;
+  md += `| ${n.site} | ${n.licence} | ${n.models} | ${n.buildsOn} | ${n.read} |\n|---|---|---|---|---|\n`;
   for (const node of nodes.nodes) {
-    md += `## ${plainCell(nodeName(node, lang))}\n\n| | |\n|---|---|\n| ${n.site} | [${code(node.url)}](${node.url}) |\n| ${n.index} | [${code(node.index)}](${node.index}) |\n`;
-    if (node.license) md += `| ${n.licence} | ${plainCell(node.license)} |\n`;
-    md += `| ${n.read} | ${plainCell(node.fetchedAt)} |\n\n| ${n.model} | ${n.name} | ${n.stage} | ${n.buildsOn} |\n|---|---|---|---|\n`;
-    for (const m of node.models ?? []) {
-      const name = m.title?.[lang] ?? Object.values(m.title ?? {})[0] ?? '';
-      // Every model it builds on: the alias or superclass, then each extended type not named already.
-      const targets = [...(m.aliasOf ? [['alias', m.aliasOf]] : []), ...(m.subClassOf ? [['subclass', m.subClassOf]] : [])];
-      for (const e of m.extends ?? []) if (!targets.some(([, iri]) => iri === e.typeIri)) targets.push(['extends', e.typeIri]);
-      const on = targets.map(([how, iri]) => {
-        const found = allSubjects.map((s) => modelForIri(s, iri, { ownerOnly: true })).find(Boolean);
-        return `${n.how[how]} ${found ? modelLink(prefix, found) : `[${code(iri)}](${iri})`}`;
-      }).join('<br>');
-      md += `| ${m.pageUrl ? `[${code(m.type)}](${m.pageUrl})` : code(m.type)} | ${plainCell(name)} | ${plainCell(m.status)} | ${on} |\n`;
-    }
-    md += '\n';
+    // Every catalog model one of its models builds on (alias, superclass or extended type), once, in the order met.
+    const iris = [...new Set((node.models ?? []).flatMap((m) => [m.aliasOf, m.subClassOf, ...(m.extends ?? []).map((e) => e.typeIri)]).filter(Boolean))];
+    const on = iris.map((iri) => allSubjects.map((s) => modelForIri(s, iri, { ownerOnly: true })).find(Boolean)).filter(Boolean).map((found) => modelLink(prefix, found));
+    md += `| [${plainCell(nodeName(node, lang))}](${node.url}) | ${plainCell(node.license)} | ${(node.models ?? []).length} | ${on.join(', ') || '—'} | ${plainCell(node.fetchedAt)} |\n`;
   }
-  return md;
+  return `${md}\n${n.perModel}\n`;
 }

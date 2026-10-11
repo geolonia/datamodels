@@ -5,7 +5,9 @@ description: Show the attributes you added to a model on its page, so others can
 
 # Listing your extension
 
-Did your organisation add attributes to a model of this catalog? Then you can show them on the model page, under "Extended by". When someone else needs an attribute with the same meaning, they can use your name instead of making a new one, and your data and theirs fit together.
+Did your organisation add attributes to a model of this catalog? Then you can show them on the model page, under "Built on by others". When someone else needs an attribute with the same meaning, they can use your name instead of making a new one, and your data and theirs fit together.
+
+Do you publish your models on a site of your own, made with the [toolkit](/en/toolkit/)? Then you need no form: once your site is on the list of [Data model sites](/en/toolkit/sites), its models and the attributes they add show on the model page by themselves. The form is for an extension without a site of its own.
 
 You fill in a form. It costs nothing, you need no programming, and nobody judges your attributes. You need a GitHub account.
 
@@ -45,7 +47,7 @@ Then click "Create".
 
 1. A maintainer checks that you speak for the organisation, and may ask you a question in the issue.
 2. A maintainer, or you, adds the entry to the catalog with a pull request. Automatic checks catch mistakes, for example a name that clashes with an attribute of the model or an NGSI-LD core term, or an IRI under datamodels.jp. They do not check that the domain is yours. All checks are listed in [Contributing](/en/guide/contribute#listing-an-extension).
-3. When it is merged, your organisation appears under "Extended by" on the model page and in `catalog.json`, within minutes.
+3. When it is merged, your organisation appears under "Built on by others" on the model page and in `catalog.json`, within minutes.
 
 Your entry is shown as you reported it. datamodels.jp does not check whether the attributes are well designed. To change or remove an entry later, say so in a new [issue](https://github.com/geolonia/datamodels/issues).
 
@@ -54,8 +56,8 @@ Your entry is shown as you reported it. datamodels.jp does not check whether the
 GTT Project's plugin for Redmine sends issues to NGSI-LD brokers as Task entities. Task has no attribute for the issue category, so GTT added one: `category`.
 
 - GTT publishes it on its own data model node, [models.gtt-project.org](https://models.gtt-project.org/models/redmine/Issue/), made with the [toolkit](/en/toolkit/). Its @context, [redmine/v0.jsonld](https://models.gtt-project.org/context/redmine/v0.jsonld), takes the catalog's task @context and adds `category`. GTT also names the model with Redmine's word, `Issue`: in its @context the name `Issue` stands for Task's IRI, so the entities are still Tasks to everyone else.
-- GTT reported it in [#189](https://github.com/geolonia/datamodels/issues/189), and [#190](https://github.com/geolonia/datamodels/pull/190) added it to the catalog.
-- It is now listed on the [Task page](/en/models/task/Task/#extensions).
+- GTT listed it with the form in [#189](https://github.com/geolonia/datamodels/issues/189), before its site was on the list, and [#190](https://github.com/geolonia/datamodels/pull/190) added it to the catalog.
+- Now that GTT's site is on the list of [Data model sites](/en/toolkit/sites), the [Task page](/en/models/task/Task/#built-on) shows what the site publishes. The entry from the form was removed, so the extension does not show twice.
 
 ## Useful for everyone? {#propose}
 

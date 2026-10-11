@@ -315,6 +315,14 @@
 .vp-doc .attributes .iri { display: inline-block; margin-top: 4px; font-size: 12px; }
 .vp-doc .attributes .iri code { font-size: 12px; color: var(--vp-c-text-2); background: none; padding: 0; overflow-wrap: anywhere; }
 .vp-doc .attributes tr:has(a[id]:target) td { background: var(--vp-c-brand-soft); }
+/* Built on by others (modelPage): the added attributes' IRIs small, as in the attributes table; a row a
+ * link points to (#extension-<name>) is highlighted. The old anchor of the section (#extensions) is an
+ * empty element above the heading, kept clear of the top bar like the heading itself. */
+.vp-doc .built-on .iri { display: inline-block; margin-top: 4px; font-size: 12px; }
+.vp-doc .built-on .iri code { font-size: 12px; color: var(--vp-c-text-2); background: none; padding: 0; overflow-wrap: anywhere; }
+.vp-doc .built-on a[id] { scroll-margin-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 24px); }
+.vp-doc .built-on tr:has(a[id]:target) td { background: var(--vp-c-brand-soft); }
+.vp-doc .old-anchor { scroll-margin-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 24px); }
 /* Required attributes: a star after the name, explained under the table. */
 .vp-doc .attributes .req { margin-left: 2px; color: var(--vp-c-brand-1); font-weight: 700; }
 /* Referenced standards: one box, a row per standard that opens to its table. */

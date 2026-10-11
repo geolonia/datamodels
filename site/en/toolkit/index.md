@@ -29,4 +29,4 @@ The examples in this section use this release. All commands and options are in `
 - [Checking and building](/en/toolkit/check): `check`, `build`, and the GitHub Action that publishes.
 - [Versions](/en/toolkit/versions): change a published model with `bump`, and move to a newer toolkit with `upgrade`.
 - [Converting a list](/en/toolkit/convert): convert a CSV list into entities of a model with `convert`.
-- [Data model sites](/en/toolkit/sites): the nodes datamodels.jp knows, and their models.
+- [Data model sites](/en/toolkit/sites): the nodes datamodels.jp knows, one row each, with the catalog models they build on.
