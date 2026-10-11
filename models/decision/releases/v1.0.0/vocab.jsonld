@@ -34,7 +34,7 @@
         "en": "Decision"
       },
       "comment": {
-        "ja": "自動判定（AI などのモデルによる判定）の記録。何について、どの規則と版で、どのモデルが、何と答え、どの行動になったか、人がどう確認したか。来歴は W3C PROV-O に基づく。",
+        "ja": "自動判定（AI などのモデルによる判定）の記録です。判定の対象と、使った規則とその版、答えたモデルとその答え、結果の行動、人による確認を残します。来歴は W3C の PROV-O に基づいています。",
         "en": "Records of automated decisions (made with an AI or other model): what was decided about, with which rules and version, by which model, the answers and the resulting action, and how a person checked it. Provenance is based on W3C PROV-O."
       },
       "versionInfo": "1.0.0",
@@ -48,7 +48,7 @@
         "en": "Decision"
       },
       "comment": {
-        "ja": "1 件のエンティティについての自動判定 1 件。規則の集まりの問いへのモデルの答え（確率付き）と、その結果の行動。",
+        "ja": "1 件のエンティティについての、1 件の自動判定です。規則の集まりが出す問いへのモデルの答え（確率付き）と、その結果の行動を持ちます。",
         "en": "One automated decision about one entity: a model's answers to the questions of a rule set, with probabilities, and the resulting action."
       },
       "isDefinedBy": "https://datamodels.jp/ns/decision/",
@@ -61,7 +61,7 @@
         "en": "action"
       },
       "comment": {
-        "ja": "規則が出した行動。次に何が起きるか（例 auto、review、publish、urgent）。値は規則の集まりが定める",
+        "ja": "規則が出した行動。次に何が起きるかを表します（例：auto、review、publish、urgent）。値は規則の集まりが定めます。",
         "en": "The action the rules gave, meaning what happens next (for example auto, review, publish, urgent). The values are defined by the rule set"
       },
       "isDefinedBy": "https://datamodels.jp/ns/decision/",
@@ -74,7 +74,7 @@
         "en": "answers"
       },
       "comment": {
-        "ja": "モデルの答え。問いごとに 1 つ、それぞれ確率付き。各要素は name（問いの名前）、type（noul＝はい・いいえ、choice＝選択肢から 1 つ、score＝順序のある段階）、value、probability（value の確率）、choice と score では probabilities（選択肢・段階ごとの確率）",
+        "ja": "モデルの答え。問いごとに 1 つで、それぞれに確率が付きます。各要素は name（問いの名前）、type、value、probability（value の確率）を持ちます。type は noul（はい・いいえ）、choice（選択肢から 1 つ）、score（順序のある段階）のどれかです。choice と score では、probabilities（選択肢や段階ごとの確率）も持ちます。",
         "en": "The model's answers, one per question, each with its probability. Each item has name (the question), type (noul for yes or no, choice for one of a list of options, score for a level on an ordered scale), value, probability (of that value) and, for choice and score, probabilities (per option or level)"
       },
       "isDefinedBy": "https://datamodels.jp/ns/decision/",
@@ -87,7 +87,7 @@
         "en": "corrections"
       },
       "comment": {
-        "ja": "人が直した答え（モデルの正しさを測る正解データ）。各要素は name、value、by（識別子）、at、任意で note",
+        "ja": "人が直した答え（モデルの正しさを測るための正解データ）。各要素は name、value、by（識別子）、at を持ち、note は任意です。",
         "en": "Answers corrected by a person (the ground truth for measuring the model). Each item has name, value, by (an identifier), at and optionally note"
       },
       "isDefinedBy": "https://datamodels.jp/ns/decision/",
@@ -100,7 +100,7 @@
         "en": "externalReference"
       },
       "comment": {
-        "ja": "対象がブローカーのエンティティでないときの参照（例 Issue の URL）",
+        "ja": "対象がブローカーのエンティティでないときの参照（例：Issue の URL）",
         "en": "What the decision is about when it is not an entity in the broker, for example an issue URL"
       },
       "isDefinedBy": "https://datamodels.jp/ns/decision/",
@@ -113,7 +113,7 @@
         "en": "facts"
       },
       "comment": {
-        "ja": "規則の集まりが求めた空間の事実を、この判定のために調べた結果（当たった規則が使ったかどうかは問わない）。モデルではなく空間の演算で求めた値（例 浸水想定区域の中か、最寄りの避難場所までの距離）。各要素は name と missing、求められたときは values（項目ごとの値）と source（出どころ）、求められなかったときは reason（no_location、unavailable、timeout、error）。求められなかった事実を使う規則は当たらない",
+        "ja": "規則の集まりが求めた空間の事実を、この判定のために調べた結果です（当たった規則が使ったかどうかは問いません）。モデルではなく、空間の演算で求めた値です（例：浸水想定区域の中か、最寄りの避難場所までの距離）。各要素は name と missing を持ちます。求められたときは values（項目ごとの値）と source（出どころ）、求められなかったときは reason（no_location、unavailable、timeout、error）も持ちます。求められなかった事実を使う規則は当たりません。",
         "en": "Every spatial fact the rule set asks for, as looked up for this decision (whether or not the matching rule used it), computed by spatial operations, not by the model (for example inside a flood zone, or the distance to the nearest evacuation site). Each item has name and missing, and either values (per field) and source, or, when it could not be looked up, reason (no_location, unavailable, timeout, error). Rules that need a missing fact do not match"
       },
       "isDefinedBy": "https://datamodels.jp/ns/decision/",
@@ -152,7 +152,7 @@
         "en": "policyRule"
       },
       "comment": {
-        "ja": "行動を出した規則。0 から数えた番号を文字列で（\"0\"、\"1\" など）、どの規則にも当たらなかったときは \"default\"。判定の根拠",
+        "ja": "行動を出した規則。0 から数えた番号を文字列で書き（\"0\"、\"1\" など）、どの規則にも当たらなかったときは \"default\" です。判定の根拠になります。",
         "en": "Which rule gave the action: its index from 0 as text (\"0\", \"1\", ...), or \"default\" when no rule matched. The reason for the result"
       },
       "isDefinedBy": "https://datamodels.jp/ns/decision/",
@@ -204,7 +204,7 @@
         "en": "reviewedBy"
       },
       "comment": {
-        "ja": "確認した人。アカウント、役割、チームの識別子で、個人名は入れない",
+        "ja": "確認した人。アカウント、役割、チームの識別子で、個人名は入れません。",
         "en": "Who resolved the check, as an account, role or team identifier, not a personal name"
       },
       "isDefinedBy": "https://datamodels.jp/ns/decision/",
@@ -217,7 +217,7 @@
         "en": "reviewStatus"
       },
       "comment": {
-        "ja": "人による確認の状態。pending（確認待ち）か resolved（確認済み）。確認を求めないときは省く",
+        "ja": "人による確認の状態：pending（確認待ち）か resolved（確認済み）。確認を求めないときは省きます。",
         "en": "State of the check by a person, pending or resolved. Absent when no check was asked"
       },
       "isDefinedBy": "https://datamodels.jp/ns/decision/",
