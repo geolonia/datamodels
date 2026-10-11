@@ -17,7 +17,7 @@ There are three ways, depending on your list:
 
 ## Your list follows a standard {#standard}
 
-If your list follows a standard that has a mapping file in the catalog, such as the municipal standard open datasets or GSI's data, that mapping file converts it as it is. [Mapping files](/en/guide/mapping) explains how they work.
+If your list follows a standard that has a mapping file with conversion rules in the catalog, such as the municipal standard open datasets or GSI's data, that mapping file converts it as it is. A mapping file without conversion rules only documents the standard; for such a list, make a mapping of your own (below). [Mapping files](/en/guide/mapping) explains how they work.
 
 ```bash
 npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
@@ -43,8 +43,8 @@ A list that follows no standard needs a mapping of your own: a YAML file that sa
 
 1. `mapping` writes a first version. Columns that fit are filled in; attributes without a matching column say TODO.
 2. Fill in the TODOs: write the column, or delete the row when your list has nothing for it. Also decide how the entities get their ids (`convert.id`).
-3. `convert --check` checks the first 20 rows. Fix and check again until every row is valid.
-4. Convert without `--check`.
+3. `convert --check` checks the first 20 rows. Fix and check again until they are valid, then check the whole list with `--rows` set to its number of rows.
+4. Convert without `--check`. Rows that are still invalid are left out and listed, and the exit code is 1.
 
 ```bash
 # 1. a first mapping
@@ -83,7 +83,7 @@ An AI agent can fill in the TODOs with you. The [agent skill](https://github.com
 
 An example prompt:
 
-> Convert my-list.csv into disaster/EvacuationSite from datamodels.jp. Make a mapping with `datamodels mapping`, look at the first rows of the CSV to fill in the TODOs, and fix it until `--check` says every row is valid. Don't make up values that are not in the list, and ask me about any column whose meaning is unclear.
+> Convert my-list.csv into disaster/EvacuationSite from datamodels.jp. Make a mapping with `datamodels mapping`, look at the first rows of the CSV to fill in the TODOs, and fix it until `--check --rows` with the number of rows in the CSV says every row is valid. Don't make up values that are not in the list, and ask me about any column whose meaning is unclear.
 
 Keep the finished mapping: it is the record of how the list was converted.
 

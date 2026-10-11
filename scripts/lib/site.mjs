@@ -329,9 +329,9 @@ function modelPage(lang, prefix, subject, model) {
       for (const [field, m] of Object.entries(map.fields ?? {})) md += `| ${model.schema.properties?.[field] ? `<a href="#${field}">${code(field)}</a>` : code(field)} | ${m.to ? code(m.to) : `*${t.none}*`} | ${cellText(mdText(m.note?.[lang] ?? ''))} |\n`;
       // Under the table: the same table as a file a converter reads, and the standard's licence.
       const file = `${rel(mu.mapping)}${map.name}.yaml`;
-      // "For converting data" only when the file has conversion rules (a column, value or via, or
+      // "For converting data" only when the file has conversion rules (a column, value, via or transform, or
       // convert.id); most mapping files only document the correspondence (/guide/rules#mapping).
-      const converts = Boolean(map.convert) || Object.values(map.fields ?? {}).some((m) => m && (m.column !== undefined || m.value !== undefined || m.via !== undefined));
+      const converts = Boolean(map.convert) || Object.values(map.fields ?? {}).some((m) => m && (m.column !== undefined || m.value !== undefined || m.via !== undefined || m.transform !== undefined));
       md += `\n<p class="licence">${l.mappingFile(`<a href="${file}">${map.name}.yaml</a>`, (text) => `<a href="${prefix}/guide/mapping">${text}</a>`, converts)}</p>\n`;
       const licence = standardLicense(map.standard, lang);
       if (licence) md += `<p class="licence">${l.standardLicence}: ${licence}</p>\n`;

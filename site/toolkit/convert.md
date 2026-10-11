@@ -17,7 +17,7 @@ description: datamodels-toolkit の convert で、手元の CSV の一覧をカ�
 
 ## 一覧が標準に従っているとき {#standard}
 
-自治体標準オープンデータセットや国土地理院のデータなど、カタログに対応表がある標準に従った一覧は、その対応表でそのまま変換できます。対応表の仕組みは[対応表](/guide/mapping)にあります。
+自治体標準オープンデータセットや国土地理院のデータなど、カタログに変換ルール付きの対応表がある標準に従った一覧は、その対応表でそのまま変換できます。変換ルールの無い対応表は標準との対応を説明するだけなので、その一覧には自分の対応表を作ります（次の節）。対応表の仕組みは[対応表](/guide/mapping)にあります。
 
 ```bash
 npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
@@ -43,8 +43,8 @@ npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
 
 1. `mapping` で下書きを作ります。合う列は埋まり、列が見つからない属性には TODO が付きます。
 2. TODO を埋めます。列名を書くか、一覧に無い項目なら行ごと消します。エンティティの ID の付け方（`convert.id`）も決めます。
-3. `convert --check` で、最初の 20 行を検査します。直しては検査し、すべての行が有効になるまで繰り返します。
-4. `--check` を外して変換します。
+3. `convert --check` で、最初の 20 行を検査します。直しては検査し、有効になったら、`--rows` に一覧の行数を指定して全体を検査します。
+4. `--check` を外して変換します。それでも無効な行は出力から外れて一覧に示され、終了コードは 1 です。
 
 ```bash
 # 1. 下書きを作る
@@ -83,7 +83,7 @@ TODO を埋める作業は、AI エージェントにも頼めます。datamodel
 
 依頼の例です。
 
-> my-list.csv を datamodels.jp の disaster/EvacuationSite に変換したい。`datamodels mapping` で対応表を作り、CSV の先頭の行を見て TODO を埋めて、`--check` ですべての行が有効になるまで直して。一覧に無い値は作らず、意味のはっきりしない列は私に聞いて。
+> my-list.csv を datamodels.jp の disaster/EvacuationSite に変換したい。`datamodels mapping` で対応表を作り、CSV の先頭の行を見て TODO を埋めて、CSV の行数を `--rows` に指定した `--check` で、すべての行が有効になるまで直して。一覧に無い値は作らず、意味のはっきりしない列は私に聞いて。
 
 できた対応表は、変換の記録として残しておきます。
 
