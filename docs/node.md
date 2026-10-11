@@ -19,7 +19,7 @@
 
 ## Words
 
-- **Node:** a site that publishes data models at a base URL it controls, for example `https://models.geolonia.com/`. datamodels.jp is a node; so is gtt-project.org.
+- **Node:** a site that publishes data models at a base URL it controls, for example `https://models.geolonia.com/`. datamodels.jp is a node; so is models.gtt-project.org.
 - **Model:** one entity or value type with its attributes, as on datamodels.jp: a JSON Schema, the terms in an @context, and the classes and properties in a vocabulary.
 - **Index:** the node's `catalog.json`, the one file a machine reads to learn everything the node publishes.
 
@@ -51,7 +51,7 @@ A **subject** groups models that share one @context and one vocabulary, as on da
 
 Every type and attribute a node defines has an IRI under the node's own domain, and opening it in a browser leads to a page that explains it. Two forms work on a static host:
 
-- **Hash IRIs**, `https://example.org/ns/<subject>#<Term>`: the part before `#` is one page (or the vocabulary) that has an anchor per term. Works on any static host without redirects. gtt-project.org uses this form.
+- **Hash IRIs**, `https://example.org/ns/<subject>#<Term>`: the part before `#` is one page (or the vocabulary) that has an anchor per term. Works on any static host without redirects. Nodes made with datamodels-toolkit use this form by default, for example models.gtt-project.org.
 - **Slash IRIs**, `https://example.org/ns/<subject>/<Term>`: needs a page per term, or a redirect to the model page. datamodels.jp uses this form, and answers JSON-LD clients with the vocabulary (content negotiation, #196); a static host cannot do that, but [w3id.org](https://w3id.org/) in front can.
 
 **Default: hash IRIs** for nodes on GitHub Pages and other static hosts; slash IRIs are an option for nodes behind w3id.org or on a server that can redirect. A node chooses one form per subject and keeps it: an IRI is a name, and published data uses it forever.

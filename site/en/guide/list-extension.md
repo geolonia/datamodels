@@ -19,7 +19,7 @@ You fill in a form. It costs nothing, you need no programming, and nobody judges
 New to these words?
 
 - An **attribute** is one item in your data, such as `name` or `category`.
-- An **IRI** is a web address that names an attribute, so that everyone means the same thing by it. Use an address under your own domain, for example `https://gtt-project.org/ns/fiware#category`.
+- An **IRI** is a web address that names an attribute, so that everyone means the same thing by it. Use an address under your own domain, for example `https://models.gtt-project.org/ns/redmine#category`.
 - The **@context** is a short file that connects each attribute name to its IRI. [Adding attributes](/en/guide/extend) shows how to write one, and the [extension builder](/en/guide/builder) makes it for you.
 
 ## Fill in the form {#form}
@@ -30,10 +30,10 @@ Open the form from the model page with the link "List your extension": the model
 |---|---|---|
 | Model you extended | The subject and the type, with a `/` between them | `task/Task` |
 | Organisation | Your organisation's name in Japanese and in English | `GTT プロジェクト / GTT Project` |
-| Added attributes | One line per attribute: name, IRI, meaning (Japanese / English), separated by commas | `category, https://gtt-project.org/ns/fiware#category, 課題のカテゴリー名 / The issue category name` |
-| @context | The URL of your @context, or the @context you write inside your data | `https://gtt-project.org/ns/fiware-task.jsonld` |
+| Added attributes | One line per attribute: name, IRI, meaning (Japanese / English), separated by commas | `category, https://models.gtt-project.org/ns/redmine#category, Redmine の課題のカテゴリー名 / The Redmine issue category name` |
+| @context | The URL of your @context, or the @context you write inside your data | `https://models.gtt-project.org/context/redmine/v0.jsonld` |
 | Version it builds on | The version of the subject, shown on the subject page | `1.0.0` |
-| Organisation or project page (optional) | A page about your organisation or about the extension | `https://gtt-project.org/ns/fiware.html#task-profile` |
+| Organisation or project page (optional) | A page about your organisation or about the extension | `https://models.gtt-project.org/models/redmine/Task/` |
 | Public data (optional) | Where people can see your data, if it is public | (empty) |
 | Consent | Tick both boxes: you speak for the organisation, and the text may be reused by anyone (CC0 1.0) | both ticked |
 
@@ -53,7 +53,7 @@ Your entry is shown as you reported it. datamodels.jp does not check whether the
 
 GTT Project's plugin for Redmine sends issues to NGSI-LD brokers as Task entities. Task has no attribute for the issue category, so GTT added one: `category`.
 
-- Its @context, [fiware-task.jsonld](https://gtt-project.org/ns/fiware-task.jsonld), takes the catalog's task @context and adds `category`.
+- GTT publishes it on its own data model node, [models.gtt-project.org](https://models.gtt-project.org/models/redmine/Task/), made with the toolkit ([Publishing on your own site](/en/guide/own-site)). Its @context, [redmine/v0.jsonld](https://models.gtt-project.org/context/redmine/v0.jsonld), takes the catalog's task @context and adds `category`.
 - GTT reported it in [#189](https://github.com/geolonia/datamodels/issues/189), and [#190](https://github.com/geolonia/datamodels/pull/190) added it to the catalog.
 - It is now listed on the [Task page](/en/models/task/Task/#extensions).
 

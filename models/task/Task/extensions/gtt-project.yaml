@@ -1,10 +1,10 @@
-# Reported in https://github.com/geolonia/datamodels/issues/189
+# Reported in https://github.com/geolonia/datamodels/issues/189; moved to GTT's data model node on 2026-10-11.
 organization: { ja: GTT プロジェクト, en: GTT Project }
-url: https://gtt-project.org/ns/fiware.html#task-profile
+url: https://models.gtt-project.org/models/redmine/Task/
 version: 1.0.0
 since: 2026-10
-context: https://gtt-project.org/ns/fiware-task.jsonld
+context: https://models.gtt-project.org/context/redmine/v0.jsonld
 terms:
   category:
-    iri: https://gtt-project.org/ns/fiware#category
-    description: { ja: 課題のカテゴリー名, en: The issue category name }
+    iri: https://models.gtt-project.org/ns/redmine#category
+    description: { ja: Redmine の課題のカテゴリー名, en: The Redmine issue category name }
