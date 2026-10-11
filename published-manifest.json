@@ -21,6 +21,6 @@
     "vocab/decision/v1.0.0.jsonld": "947e6cada19cfea05b0ec77c52dcebdff91afbb3b389715bc1f1f7b781c648d1",
     "vocab/disaster/v1.0.0.jsonld": "1a3d481d2a3ef3b1f39fdd2ce05799febd31944d4189c5283ee4c3e73e2e4ce7",
     "vocab/task/v1.0.0.jsonld": "52b89b2e2f24966b066da3415dd7cacec3af91da09db33c8e85fdeab6558b2cf",
-    "vocab/transportation/v1.0.0.jsonld": "c135027870eb300edb4fdeaa10bc55d207e3a3debbb9de9433b03175a7611b27"
+    "vocab/transportation/v1.0.0.jsonld": "e51b5ead9ad90d48aa03e2f3481faf4a4563a292529f74a6abcf51ec45a03690"
   }
 }
