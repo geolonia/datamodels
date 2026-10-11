@@ -33,7 +33,7 @@ description: モデルに足した属性をモデルのページに載せ、ほ�
 | 足した属性 | 1 行に 1 つ：名前、IRI、意味（日本語 / 英語）をカンマで区切って | `category, https://models.gtt-project.org/ns/redmine#category, Redmine の課題のカテゴリー名 / The Redmine issue category name` |
 | @context | @context の URL、またはデータの中に書いている @context | `https://models.gtt-project.org/context/redmine/v0.jsonld` |
 | 基にしたバージョン | サブジェクトのバージョン。サブジェクトのページにあります | `1.0.0` |
-| 組織またはプロジェクトのページ（任意） | 組織または拡張について書いたページ | `https://models.gtt-project.org/models/redmine/Task/` |
+| 組織またはプロジェクトのページ（任意） | 組織または拡張について書いたページ | `https://models.gtt-project.org/models/redmine/Issue/` |
 | 公開しているデータ（任意） | データを公開していれば、その場所 | （空） |
 | 公開の同意 | 2 つともチェック：組織を代表していること、内容を誰でも再利用できること（CC0 1.0） | 両方チェック |
 
@@ -53,7 +53,7 @@ Issue は公開されます。API キー、パスワード、トークン、ロ�
 
 GTT プロジェクトの Redmine 用プラグインは、課題を Task のエンティティとして NGSI-LD ブローカーに送ります。Task には課題のカテゴリーの属性が無いので、GTT は `category` を 1 つ足しました。
 
-- GTT は、自分のサイト [models.gtt-project.org](https://models.gtt-project.org/models/redmine/Task/) で公開しています。サイトはツールキットで作りました（[自分のサイトで公開する](/guide/own-site)）。@context の [redmine/v0.jsonld](https://models.gtt-project.org/context/redmine/v0.jsonld) は、カタログの task の @context を取り込み、`category` を足しています。
+- GTT は、自分のサイト [models.gtt-project.org](https://models.gtt-project.org/models/redmine/Issue/) で公開しています。サイトはツールキットで作りました（[自分のサイトで公開する](/guide/own-site)）。@context の [redmine/v0.jsonld](https://models.gtt-project.org/context/redmine/v0.jsonld) は、カタログの task の @context を取り込み、`category` を足しています。また、GTT はモデルを Redmine の言葉で `Issue` と呼んでいます。@context で `Issue` を Task の IRI に結び付けているので、ほかの人から見ればエンティティは Task のままです。
 - GTT が [#189](https://github.com/geolonia/datamodels/issues/189) で登録し、[#190](https://github.com/geolonia/datamodels/pull/190) でカタログに入りました。
 - [Task のページ](/models/task/Task/#extensions)に載っています。
 
