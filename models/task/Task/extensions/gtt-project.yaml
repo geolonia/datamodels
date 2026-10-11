@@ -1,6 +1,6 @@
 # Reported in https://github.com/geolonia/datamodels/issues/189; moved to GTT's data model node on 2026-10-11.
 organization: { ja: GTT プロジェクト, en: GTT Project }
-url: https://models.gtt-project.org/models/redmine/Task/
+url: https://models.gtt-project.org/models/redmine/Issue/
 version: 1.0.0
 since: 2026-10
 context: https://models.gtt-project.org/context/redmine/v0.jsonld
