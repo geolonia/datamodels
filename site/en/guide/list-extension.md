@@ -30,7 +30,7 @@ Open the form from the model page with the link "List your extension": the model
 |---|---|---|
 | Model you extended | The subject and the type, with a `/` between them | `task/Task` |
 | Organisation | Your organisation's name in Japanese and in English | `GTT プロジェクト / GTT Project` |
-| Added attributes | One line per attribute: name, IRI, meaning (Japanese / English), separated by commas | `category, https://models.gtt-project.org/ns/redmine#category, 課題のカテゴリー名 / The Redmine issue category name` |
+| Added attributes | One line per attribute: name, IRI, meaning (Japanese / English), separated by commas | `category, https://models.gtt-project.org/ns/redmine#category, Redmine の課題のカテゴリー名 / The Redmine issue category name` |
 | @context | The URL of your @context, or the @context you write inside your data | `https://models.gtt-project.org/context/redmine/v0.jsonld` |
 | Version it builds on | The version of the subject, shown on the subject page | `1.0.0` |
 | Organisation or project page (optional) | A page about your organisation or about the extension | `https://models.gtt-project.org/models/redmine/Task/` |
