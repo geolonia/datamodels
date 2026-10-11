@@ -77,7 +77,7 @@ const toolkitPages = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideb
   const page = (jaText: string, enText: string, slug: string): DefaultTheme.SidebarItem =>
     ({ text: ja ? jaText : enText, link: `${prefix}/toolkit/${slug}` })
   // In groups, as the guides: publishing your own site (in the order of the work), and converting
-  // your own data into the models (the adapters' export joins it later). Pages to look things up in
+  // your own data into the models and out to other tools. Pages to look things up in
   // are guides. The landing page lists the same groups.
   return [
     {
@@ -93,6 +93,7 @@ const toolkitPages = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideb
       text: ja ? '自分のデータ' : 'Your data',
       items: [
         page('データを変換する', 'Converting your data', 'convert'),
+        page('他のツールに書き出す', 'Exporting to other tools', 'export'),
       ],
     },
   ]

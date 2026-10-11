@@ -1,6 +1,6 @@
 ---
 title: Toolkit
-description: With datamodels-toolkit, publish your own data models with fixed URLs on a site of your own, and convert CSV lists into models
+description: With datamodels-toolkit, publish your own data models with fixed URLs on a site of your own, convert CSV lists into models, and export models for other tools
 ---
 
 # Toolkit
@@ -9,6 +9,7 @@ description: With datamodels-toolkit, publish your own data models with fixed UR
 
 - Publish your own data models with fixed URLs on a site of your own, a node. The site has `catalog.json`, the `@context`, JSON Schemas, a vocabulary, examples, and a page for every type and attribute. An example: [models.gtt-project.org](https://models.gtt-project.org/), the models of the GTT plugin for Redmine. Other sites: [Data model sites](/en/guide/sites).
 - Convert a CSV list into entities of a model of this catalog.
+- Export a model as files for a spreadsheet, an AI model or PostgreSQL.
 
 Not sure yet whether you need a site of your own? See [Your own data models](/en/guide/own-models).
 
@@ -17,7 +18,7 @@ Not sure yet whether you need a site of your own? See [Your own data models](/en
 You need [Node.js](https://nodejs.org/) 24 or later. The commands run a release from GitHub with `npx`; there is nothing to install.
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.3 --help
+npx github:geolonia/datamodels-toolkit#v0.3.4 --help
 ```
 
 The examples in this section use this release. All commands and options are in `--help` and the [README](https://github.com/geolonia/datamodels-toolkit#readme). This section explains them task by task.
@@ -34,3 +35,4 @@ The examples in this section use this release. All commands and options are in `
 ### Your data {#data}
 
 - [Converting your data](/en/toolkit/convert): convert a CSV list into entities of a model with `convert`.
+- [Exporting to other tools](/en/toolkit/export): make a CSV template, a Table Schema, a structured output schema for AI and a PostgreSQL / PostGIS table from a model with `export`.

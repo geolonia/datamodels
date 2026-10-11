@@ -116,11 +116,12 @@ expect(r.ok, `catalog.json: ${r.status}`);
 if (r.ok) {
   const c = await r.json();
   expect(c.formatVersion === 1 && Array.isArray(c.models), 'catalog.json: unexpected shape');
-  // Adapter files are listed per model in the catalog; each must be served as JSON.
+  // Adapter files are listed per model in the catalog; each must be served with the type of its extension (public/_headers).
+  const adapterType = (url) => (url.endsWith('.csv') ? 'text/csv' : url.endsWith('.sql') ? 'application/sql' : 'application/json');
   for (const m of c.models ?? []) for (const [name, url] of Object.entries(m.adapters ?? {})) {
     firstAdapterUrl ??= url;
     const ar = await head(url);
-    expect(ar.status === 200 && h(ar, 'content-type').startsWith('application/json'), `${name} adapter ${url}: ${ar.status} ${h(ar, 'content-type')}`);
+    expect(ar.status === 200 && h(ar, 'content-type').startsWith(adapterType(url)), `${name} adapter ${url}: ${ar.status} ${h(ar, 'content-type')}`);
   }
   // Mapping files are listed per model too; each must be served as YAML.
   for (const m of c.models ?? []) for (const url of m.mappingUrls ?? []) {

@@ -93,7 +93,7 @@ https://datamodels.jp/examples/<subject>/<Type>/example.json                exam
 https://datamodels.jp/examples/<subject>/<Type>/example-normalized.jsonld  and NGSI-LD normalized (entity types)
 https://datamodels.jp/ns/<subject>/<Term>                 type and attribute IRIs, redirect to the page
 https://datamodels.jp/catalog.json                        machine-readable index (catalog.schema.json)
-https://datamodels.jp/adapters/<name>/<subject>/<Type>.json  adapter output
+https://datamodels.jp/adapters/<name>/<subject>/<Type>.<ext>  adapter output (.json, .csv, .tableschema.json, .ai.json, .sql)
 ```
 
 Contract:
@@ -168,7 +168,7 @@ Every validator rule has a test proving that it fires.
 
 ## Adapters
 
-An adapter turns catalog models into files a particular broker or tool consumes, under `/adapters/<name>/`, listed per model in `catalog.json`. The core discovers adapters at build time and never imports them; an adapter may add files but cannot change a context, schema or IRI. Adapter output is regenerated on every build and is not covered by the immutability manifest. The first adapter is GeonicDB (Custom Data Model request bodies, plus a CLI for tenant-specific variants with prefixes, aliases and extra attributes). Other brokers can follow in the same place.
+An adapter turns catalog models into files a particular broker or tool consumes, under `/adapters/<name>/`, listed per model in `catalog.json`. The core discovers adapters at build time and never imports them; an adapter may add files but cannot change a context, schema or IRI. Adapter output is regenerated on every build and is not covered by the immutability manifest. The first adapter is GeonicDB (Custom Data Model request bodies, plus a CLI for tenant-specific variants with prefixes, aliases and extra attributes). Other brokers can follow in the same place. The four generic adapters of datamodels-toolkit (a CSV template, its Table Schema, a structured output schema for AI, a PostgreSQL / PostGIS table) are wrapped in `adapters/` from the pinned toolkit package, so both repositories make the same files (2026-10-12, #226).
 
 Brokers integrate from the other side: GeonicDB, for example, can read `catalog.json` at startup with a bundled fallback, pre-warm its context cache from the listed URLs and offer the models in its console and CLI. That work belongs to each broker's roadmap, not to the catalog.
 
@@ -180,7 +180,7 @@ Decided 2026-09-29 (#121). The site credits Geolonia, which runs the catalog, an
 - A page about a single product sits under "Using the models", after the steps that work with any broker, and says who makes the product. Other products get a page on the same terms when someone contributes one.
 - General pages (the start page, `/guide/use`, `/guide/extend`, `/guide/catalogs` and the others) describe NGSI-LD and brokers in general terms. Where they name a product, they say what was tried with it and what was not tried, and they do not present one product as the only choice.
 - No sales wording, rankings or comparisons between products.
-- Model pages do not name a product. A model that an adapter serves has an "Adapters" row that links its entry on `/adapters/`, which lists every adapter's files (decided 2026-09-30, #123).
+- Model pages do not name a product. A model that an adapter serves has an "Adapters" row that links its entry on `/adapters/`, which lists every adapter's files (decided 2026-09-30, #123). The files of the generic adapters, which name no product, are also linked directly in a "Download" row, as on the toolkit's node pages (2026-10-12, #226).
 
 ## Hosting
 

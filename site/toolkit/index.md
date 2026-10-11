@@ -1,6 +1,6 @@
 ---
 title: ツールキット
-description: datamodels-toolkit で、自分のデータモデルを変わらない URL で自分のサイトに公開し、CSV の一覧をモデルに変換する
+description: datamodels-toolkit で、自分のデータモデルを変わらない URL で自分のサイトに公開し、CSV の一覧をモデルに変換し、モデルを他のツール向けに書き出す
 ---
 
 # ツールキット
@@ -9,6 +9,7 @@ description: datamodels-toolkit で、自分のデータモデルを変わらな
 
 - 自分のデータモデルを、自分のサイト（ノード）で変わらない URL で公開します。サイトには `catalog.json`、`@context`、JSON Schema、語彙、例、型と属性ごとの説明のページがそろいます。例は [models.gtt-project.org](https://models.gtt-project.org/)（Redmine の GTT プラグインのモデル）です。ほかのサイトは[データモデルのサイト](/guide/sites)にあります。
 - CSV の一覧を、このカタログのモデルのエンティティに変換します。
+- モデルから、表計算ソフト、AI、PostgreSQL 向けのファイルを書き出します。
 
 自分のサイトが要るかどうかは、[自分のデータモデル](/guide/own-models)で確かめてください。
 
@@ -17,7 +18,7 @@ description: datamodels-toolkit で、自分のデータモデルを変わらな
 [Node.js](https://nodejs.org/) 24 以降が要ります。コマンドは `npx` で GitHub のリリースから実行するので、インストールは要りません。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.3 --help
+npx github:geolonia/datamodels-toolkit#v0.3.4 --help
 ```
 
 このセクションの例は、このリリースを使います。すべてのコマンドとオプションは、`--help` と [README](https://github.com/geolonia/datamodels-toolkit#readme)（英語）にあります。このセクションでは、作業ごとに使い方を説明します。
@@ -34,3 +35,4 @@ npx github:geolonia/datamodels-toolkit#v0.3.3 --help
 ### 自分のデータ {#data}
 
 - [データを変換する](/toolkit/convert)：`convert` で、CSV の一覧をモデルのエンティティに変換します。
+- [他のツールに書き出す](/toolkit/export)：`export` で、モデルから CSV テンプレート、Table Schema、AI の構造化出力、PostgreSQL / PostGIS のテーブルを作ります。

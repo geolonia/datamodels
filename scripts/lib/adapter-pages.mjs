@@ -9,11 +9,12 @@ const T = {
   ja: {
     title: 'アダプター',
     description: '特定のブローカーやツール向けに、カタログのモデルから生成するファイルの一覧',
-    intro: 'カタログのモデルは特定の製品に依存しません。いくつかのブローカーやツールのために、カタログは各モデルからそのまま読み込めるファイルも作って `/adapters/<name>/` で公開しています（例: GeonicDB にモデルを登録するための定義）。これをアダプターと呼びます。',
+    intro: 'カタログのモデルは特定の製品に依存しません。いくつかのブローカーやツールのために、カタログは各モデルからそのまま読み込めるファイルも作って `/adapters/<name>/` で公開しています（例: 表計算ソフトで使う CSV テンプレート、GeonicDB にモデルを登録するための定義）。これをアダプターと呼びます。',
     rules: [
       'アダプターはファイルを足すだけで、`@context`、スキーマ、IRI は変えません。',
       'アダプターのファイルはカタログと一緒に作り直され、「公開したファイルは変えない」という約束の対象ではありません。あとで同じファイルが要るときは、ファイルを手元に保存し、作られたときのサブジェクトのバージョンも記録してください。',
       '各モデルのアダプターのファイルは `catalog.json` の `adapters` にも載っています。',
+      '製品に依存しないファイル（CSV、Table Schema、AI、PostgreSQL / PostGIS）は、各モデルのページの「ダウンロード」の行にもあります。',
     ],
     adapter: 'アダプター', what: '内容', files: 'ファイル', guide: 'ガイド', perModel: 'モデルごとの一覧', byModel: 'モデルごとのファイル', model: 'モデル',
     more: (href) => `他のブローカーやツール向けのアダプターの候補は [#174](https://github.com/geolonia/datamodels/issues/174) に集めています。追加の仕方は [adapters/README.md](${href}) にあります。`,
@@ -24,11 +25,12 @@ const T = {
   en: {
     title: 'Adapters',
     description: 'Files generated from the catalog models for a particular broker or tool',
-    intro: 'The catalog\'s models do not depend on any product. For some brokers and tools, the catalog also publishes files made from each model that they can load as they are, under `/adapters/<name>/` (for example, a definition to register a model in GeonicDB). These are called adapters.',
+    intro: 'The catalog\'s models do not depend on any product. For some brokers and tools, the catalog also publishes files made from each model that they can load as they are, under `/adapters/<name>/` (for example, a CSV template for a spreadsheet, or a definition to register a model in GeonicDB). These are called adapters.',
     rules: [
       'An adapter only adds files; it does not change a `@context`, a schema or an IRI.',
       'Adapter files are rebuilt with the catalog and are not covered by the promise that published files never change. If you need the exact file later, keep a copy and note the subject version it was made from.',
       'Each model\'s adapter files are also listed under `adapters` in `catalog.json`.',
+      'The files that do not depend on a product (CSV, Table Schema, AI, PostgreSQL / PostGIS) are also on each model page, under "Download".',
     ],
     adapter: 'Adapter', what: 'What it is', files: 'Files', guide: 'Guide', perModel: 'one per model', byModel: 'Files by model', model: 'Model',
     more: (href) => `Candidates for other brokers and tools are collected in [#174](https://github.com/geolonia/datamodels/issues/174); how to add one: [adapters/README.md](${href}).`,
