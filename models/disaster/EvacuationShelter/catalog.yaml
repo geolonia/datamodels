@@ -1,8 +1,8 @@
 title:
-  ja: 避難所運用状況
+  ja: "避難所の運用状況"
   en: Evacuation shelter operation
 description:
-  ja: "避難所1か所の運用状況を表す。避難所そのものの基本情報（名称・位置などのマスタ）は含まず、指定避難所を shelter（DesignatedShelter）か externalShelterId / nationalShelterId で参照して（どれか 1 つは必須）、その上に開設状況と避難者数だけを重ねる。同じ場所の指定緊急避難場所は site で EvacuationSite を参照する。災害対策基本法第49条の7に基づき市町村長が指定する「指定避難所」（同法第49条の4の「指定緊急避難場所」とは別の概念）の運用を想定している。"
+  ja: "避難所 1 か所の運用状況のデータです。避難所そのものの基本情報（名称、位置など）は持ちません。指定避難所は、shelter（DesignatedShelter）、externalShelterId、nationalShelterId のどれかで参照します（どれか 1 つは必須）。そのうえに、開設状況と避難者数だけを重ねます。同じ場所の指定緊急避難場所は、site で EvacuationSite を参照します。災害対策基本法第 49 条の 7 に基づいて市町村長が指定する「指定避難所」の運用を想定しています。同法第 49 条の 4 の「指定緊急避難場所」とは別のものです。"
   en: "Operational overlay for one evacuation shelter. The shelter master data (name, location) is not included: the designated shelter is referenced by shelter (DesignatedShelter) or by externalShelterId / nationalShelterId, and one of the three is required. Only opening status and evacuee counts live here. When the shelter is also a designated emergency evacuation site, site links to its EvacuationSite. Models the operation of a 指定避難所 (designated shelter, Basic Act on Disaster Management Art. 49-7), a distinct legal concept from the 指定緊急避難場所 (designated emergency evacuation site, Art. 49-4)."
 status: draft
 tags:
@@ -10,25 +10,25 @@ tags:
   - municipality
 attributes:
   externalShelterId:
-    ja: "市町村の避難所一覧における ID（市町村内で一意）。localGovernmentCode と合わせて全国で一意になる。DesignatedShelter の externalShelterId と同じ ID。shelter、externalShelterId、nationalShelterId のどれか 1 つは必須"
+    ja: "市町村の避難所一覧での ID（市町村の中で一意）。localGovernmentCode と合わせると全国で一意になります。DesignatedShelter の externalShelterId と同じ ID です。shelter、externalShelterId、nationalShelterId のどれか 1 つは必須です。"
     en: "The shelter's ID in the municipality's own shelter list (unique within it). Together with localGovernmentCode it is unique nationwide; the same ID as DesignatedShelter's externalShelterId. One of shelter, externalShelterId and nationalShelterId is required"
   nationalShelterId:
-    ja: "全国共通避難所・避難場所ID（14文字、国土地理院のデータの「共通ID」）。このモデルでは種別コード 11（一般の指定避難所）か 12（福祉避難所）のものだけ有効。未採番なら、空文字ではなく属性ごと省く。構造と出典は、EvacuationShelter の対応表「全国共通避難所・避難場所ID」（gsi-national-shelter-id）にまとめている。shelter、externalShelterId、nationalShelterId のどれか 1 つは必須"
+    ja: "全国共通避難所・避難場所 ID（14 文字。国土地理院のデータの「共通 ID」）。このモデルで使えるのは、種別コード 11（一般の指定避難所）と 12（福祉避難所）だけです。採番されていなければ、空文字にせず属性ごと省きます。ID の構造と出典は、このモデルの対応表「全国共通避難所・避難場所 ID」（gsi-national-shelter-id）にまとめています。shelter、externalShelterId、nationalShelterId のどれか 1 つは必須です。"
     en: "The nationwide common shelter/evacuation-site ID (14 characters, the '共通ID' of GSI's data). Only type codes 11 (general designated shelter) and 12 (welfare shelter) are valid on this model. When none is assigned, leave the property out rather than send an empty string. Its structure and source are described once, in EvacuationShelter's mapping 'nationwide common shelter/evacuation-site ID' (gsi-national-shelter-id). One of shelter, externalShelterId and nationalShelterId is required"
   localGovernmentCode:
-    ja: 一覧を公開する自治体の全国地方公共団体コード（総務省「全国地方公共団体コード仕様」（平成19年4月1日）に基づく、検査数字を含む6桁）
+    ja: "一覧を公開する自治体の全国地方公共団体コード（総務省の「全国地方公共団体コード仕様」（平成 19 年 4 月 1 日）による、検査数字を含む 6 桁）"
     en: Local government code of the municipality that publishes the shelter list (全国地方公共団体コード per MIC's "全国地方公共団体コード仕様", 2007-04-01; 6 digits including the check digit)
   shelter:
-    ja: "この運用状況が対象とする指定避難所（DesignatedShelter）。shelter、externalShelterId、nationalShelterId のどれか 1 つは必須"
+    ja: "この運用状況が対象とする指定避難所（DesignatedShelter）。shelter、externalShelterId、nationalShelterId のどれか 1 つは必須です。"
     en: "The designated shelter (DesignatedShelter) this operation record is for. One of shelter, externalShelterId and nationalShelterId is required"
   site:
-    ja: 同じ場所にある指定緊急避難場所（EvacuationSite）。避難所が指定緊急避難場所を兼ねるとき
+    ja: "同じ場所にある指定緊急避難場所（EvacuationSite）。避難所が指定緊急避難場所を兼ねるときに使います。"
     en: The designated emergency evacuation site (EvacuationSite) at the same place, when the shelter is also one
   openingStatus:
-    ja: "正規化した開設状況: open（開設中）、closed（未開設・閉鎖）、full（満員）、requested（開設を依頼・指示されたが、開設はまだ確認できていない。公的なコード表や用語集には見当たらない区分）。現場の呼び方は必ず statusLabel にも記載する。値域に合う値がないときは省き、statusLabel だけを送る"
+    ja: "正規化した開設状況：open（開設中）、closed（未開設・閉鎖）、full（満員）、requested（開設を依頼・指示されたが、まだ確認できていない）。requested は、公的なコード表や用語集には見当たらない区分です。現場での呼び方も、必ず statusLabel に書きます。合う値がないときは省き、statusLabel だけを送ります。"
     en: "Normalised opening state: open, closed, full (open but at capacity), requested (opening has been requested/instructed but not yet confirmed open; no public controlled vocabulary defines this state). The local wording always also goes in statusLabel. When no value fits, leave it out and send only statusLabel"
   statusLabel:
-    ja: 開設状況の現場や元のシステムでの呼び方（例 未開設、開設中、満員、依頼中）。openingStatus を省いたときは必須
+    ja: "現場や元のシステムでの開設状況の呼び方（例：未開設、開設中、満員、依頼中）。openingStatus を省いたときは必須です。"
     en: The opening status in the local or source system's wording (e.g. 未開設, 開設中, 満員, 依頼中). Required when openingStatus is left out
   evacueeHouseholds:
     ja: 避難世帯数
