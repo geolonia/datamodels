@@ -79,4 +79,8 @@ Decide before you publish: the base URL is part of every IRI.
 
 Hash IRIs work through the redirect: the part after `#` stays in the browser, so `https://w3id.org/my-org-models/ns/road#RoadPatrol` opens the right row of the page.
 
+## Other hosts {#other-hosts}
+
+A node is plain files, so it can also go on a host other than GitHub Pages. `build` also writes two files that Cloudflare (Pages and Workers) and Netlify read: `_headers`, with the content type of each file and CORS, and `_redirects`, for slash IRIs. The workflows, and what to set up on any other host, are in the [datamodels-toolkit README](https://github.com/geolonia/datamodels-toolkit#other-hosts).
+
 Once the site is there, go on with [Your site's models](/en/toolkit/models).

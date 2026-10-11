@@ -79,4 +79,8 @@ IRI には自分のドメインが入るので、IRI が使えるのはドメイ
 
 ハッシュ IRI も転送を通して使えます。`#` から後ろはブラウザーに残るので、`https://w3id.org/my-org-models/ns/road#RoadPatrol` は、ページの該当する行を開きます。
 
+## GitHub Pages 以外のホスト {#other-hosts}
+
+ノードは静的なファイルなので、GitHub Pages 以外のホストにも置けます。`build` は、Cloudflare（Pages と Workers）と Netlify が読む 2 つのファイルも書き出します。`_headers` はファイルごとの Content-Type と CORS、`_redirects` はスラッシュ IRI の転送です。ワークフローの例と、ほかのホストで設定することは、[datamodels-toolkit の README](https://github.com/geolonia/datamodels-toolkit#other-hosts)（英語）にあります。
+
 サイトができたら、[サイトのモデル](/toolkit/models)に進みます。
