@@ -37,7 +37,13 @@ description: このカタログのモデルが守るルール、独自の型を�
 
 ## 日本の標準との対応表 {#mapping}
 
-モデルに当たるデータが日本の標準にあるとき（例えばデジタル庁の[自治体標準オープンデータセット](https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test)のデータセット）は、対応表（`mapping/*.yaml`）を書きます。自治体が、自分のデータをそのままモデルで使えるようにするためです。例は [EvacuationSite](/models/disaster/EvacuationSite/#mapping-jichitai-opendata-site) です。当たるデータセットがあるかはレビューで確認します（CI では検査しません）。
+対応表（`mapping/*.yaml`）は、モデルと標準の関係を示します。標準に従うデータを、そのままモデルで使えるようにするためです。カタログに置く対応表は、少なくします（2026-10-12 決定）。
+
+- **対応表を置くのは、多くの一覧が従っている公開の標準や形式で、モデルの元になったものだけです。** デジタル庁の[自治体標準オープンデータセット](https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test)、国土地理院のデータ、GIF、EEI のような国の標準です。形式が公開されていて広く使われているシステム（GitHub Issues、Redmine など）も含みます。例は [EvacuationSite](/models/disaster/EvacuationSite/#mapping-jichitai-opendata-site) です。
+- **1 つの組織だけの一覧やシステムには、対応表を置きません。** その対応表は、持ち主が自分で持ちます。下書きは `datamodels mapping` で作れます（[データを変換する](/toolkit/convert#your-own-list)）。
+- **変換の規則は、少しの実例にだけ書きます。** ほとんどの対応表は、モデルと標準の関係を説明するだけです（`to` と `note`）。変換の規則（`column`、`transform`）を足す提案は、その標準に従う一覧を実際に変換するときだけにします。
+
+当たる標準があるか、多くの一覧が従っているかは、レビューで確認します（CI では検査しません）。
 
 ### 標準の新しい版 {#standard-revisions}
 

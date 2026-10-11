@@ -197,7 +197,7 @@ const M = {
     requiredMark: '必須', requiredNote: '* は必須の属性です。', linkHeaderIntro: '本文に @context を書かずに送るときの Link ヘッダー：',
     use: 'このモデルを使う', useValue: (rules) => `他のモデルは、属性の値としてこの値型を参照します。書き方は[モデルのルール](${rules})にあります。`,
     standards: '参照している標準', standardsNote: 'このモデルが対応している標準と、項目ごとの対応です。開くと対応表が見られます。',
-    fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く', standardLicence: 'この標準のライセンス', mappingFile: (file, guide) => `この標準のデータを変換するための対応表（YAML）: ${file}（説明は${guide('対応表')}）`, notesTitle: '注記',
+    fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く', standardLicence: 'この標準のライセンス', mappingFile: (file, guide, converts) => `${converts ? 'この標準のデータを変換するための対応表' : 'この標準との対応表'}（YAML）: ${file}（説明は${guide('対応表')}）`, notesTitle: '注記',
     sourceFiles: (href) => `ソースファイル（注記、対応表）は [GitHub](${href}) にあります。`,
     addedTerms: '足した属性', inlineContext: 'データの中に記述', dataLink: 'データ',
     reportExtension: (form, guide, toolkit, sites) => `このモデルを拡張して[ツールキット](${toolkit})のサイトで公開しているなら、サイトが[サイトの一覧](${sites})に載ると、このページにも載ります。サイトが無いときは、[フォームで登録してください](${form})。ほかの組織が同じ名前を使えます（[フォームの書き方](${guide})）。`,
@@ -214,7 +214,7 @@ const M = {
     requiredMark: 'required', requiredNote: '* required', linkHeaderIntro: 'The Link header, for sending data without @context in the body:',
     use: 'Using this model', useValue: (rules) => `Other models use this value type as the value of an attribute. How: [Rules for models](${rules}).`,
     standards: 'Referenced standards', standardsNote: 'The standards this model corresponds to, field by field. Open one to see its table.',
-    fieldsMapped: (n, total) => `${n} of ${total} fields`, openStandard: 'Open the standard', standardLicence: 'Licence of this standard', mappingFile: (file, guide) => `Mapping file (YAML) for converting data from this standard: ${file} (see ${guide('Mapping files')})`, notesTitle: 'Notes',
+    fieldsMapped: (n, total) => `${n} of ${total} fields`, openStandard: 'Open the standard', standardLicence: 'Licence of this standard', mappingFile: (file, guide, converts) => `${converts ? 'Mapping file (YAML) for converting data from this standard' : 'Mapping file (YAML) for this standard'}: ${file} (see ${guide('Mapping files')})`, notesTitle: 'Notes',
     sourceFiles: (href) => `The source files (notes, mapping tables) are on [GitHub](${href}).`,
     addedTerms: 'Added attributes', inlineContext: 'inside the data', dataLink: 'data',
     reportExtension: (form, guide, toolkit, sites) => `Extended this model? If you publish it on a site made with the [toolkit](${toolkit}), it shows on this page once your site is on the [list of sites](${sites}). Without a site, [list your extension](${form}) so others can reuse your names ([how to fill in the form](${guide})).`,
@@ -329,7 +329,10 @@ function modelPage(lang, prefix, subject, model) {
       for (const [field, m] of Object.entries(map.fields ?? {})) md += `| ${model.schema.properties?.[field] ? `<a href="#${field}">${code(field)}</a>` : code(field)} | ${m.to ? code(m.to) : `*${t.none}*`} | ${cellText(mdText(m.note?.[lang] ?? ''))} |\n`;
       // Under the table: the same table as a file a converter reads, and the standard's licence.
       const file = `${rel(mu.mapping)}${map.name}.yaml`;
-      md += `\n<p class="licence">${l.mappingFile(`<a href="${file}">${map.name}.yaml</a>`, (text) => `<a href="${prefix}/guide/mapping">${text}</a>`)}</p>\n`;
+      // "For converting data" only when the file has conversion rules (a column, value, via or transform, or
+      // convert.id); most mapping files only document the correspondence (/guide/rules#mapping).
+      const converts = Boolean(map.convert) || Object.values(map.fields ?? {}).some((m) => m && (m.column !== undefined || m.value !== undefined || m.via !== undefined || m.transform !== undefined));
+      md += `\n<p class="licence">${l.mappingFile(`<a href="${file}">${map.name}.yaml</a>`, (text) => `<a href="${prefix}/guide/mapping">${text}</a>`, converts)}</p>\n`;
       const licence = standardLicense(map.standard, lang);
       if (licence) md += `<p class="licence">${l.standardLicence}: ${licence}</p>\n`;
       md += '\n</details>\n\n';

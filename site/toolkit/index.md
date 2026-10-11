@@ -18,7 +18,7 @@ description: datamodels-toolkit で、自分のデータモデルを変わらな
 [Node.js](https://nodejs.org/) 24 以降が要ります。コマンドは `npx` で GitHub のリリースから実行するので、インストールは要りません。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.4 --help
+npx github:geolonia/datamodels-toolkit#v0.3.5 --help
 ```
 
 このセクションの例は、このリリースを使います。すべてのコマンドとオプションは、`--help` と [README](https://github.com/geolonia/datamodels-toolkit#readme)（英語）にあります。このセクションでは、作業ごとに使い方を説明します。
@@ -34,5 +34,5 @@ npx github:geolonia/datamodels-toolkit#v0.3.4 --help
 
 ### 自分のデータ {#data}
 
-- [データを変換する](/toolkit/convert)：`convert` で、CSV の一覧をモデルのエンティティに変換します。
+- [データを変換する](/toolkit/convert)：`convert` で、CSV の一覧をモデルのエンティティに変換します。標準の対応表を使うか、`mapping` で自分の対応表を作るか、CSV テンプレートから始めます。
 - [他のツールに書き出す](/toolkit/export)：`export` で、モデルから CSV テンプレート、Table Schema、AI の構造化出力、PostgreSQL / PostGIS のテーブルを作ります。

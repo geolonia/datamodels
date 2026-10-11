@@ -5,7 +5,7 @@ description: What a mapping file says (which field of a standard matches which a
 
 # Mapping files
 
-Many models correspond to a standard that data already follows in Japan, for example a dataset of the municipal standard open datasets, EEI or GSI's shelter data. A **mapping file** says, for one model and one standard, which field of the standard matches which attribute of the model. With it you can convert existing data into the model.
+Many models correspond to a standard that data already follows in Japan, for example a dataset of the municipal standard open datasets, EEI or GSI's shelter data. A **mapping file** says, for one model and one standard, which field of the standard matches which attribute of the model. With it, data that follows the standard fits the model.
 
 ## Where to find them
 
@@ -39,10 +39,12 @@ fields:
 
 ## Conversion rules {#convert}
 
-A row can also say how to convert: `column` (the column of the CSV), `transform` (for example `integer`, `flag`, `split`), a constant `value`, or `via` (build a nested value, such as an address, with another mapping file). `convert.id` names the entities. Rows with only `to` are documentation.
+A row can also say how to convert: `column` (the column of the CSV), `transform` (for example `integer`, `flag`, `split`), a constant `value`, or `via` (build a nested value, such as an address, with another mapping file). `convert.id` names the entities. Rows with only `to` are documentation. Only some mapping files have conversion rules; most only document how the model relates to the standard.
 
 The converter `datamodels convert` from [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) reads these rules and turns a CSV list into entities of the model. How to use it: [Converting your data](/en/toolkit/convert).
 
 ## Adding a mapping
 
-When a standard matches a model and has no mapping file yet, propose one: see [Rules for models](/en/guide/rules#mapping).
+The catalog has mapping files only for published standards that many lists follow. One organisation's own list gets no mapping file in the catalog: convert it with a mapping of your own, kept with the list ([Converting your data](/en/toolkit/convert#your-own-list)).
+
+When a standard matches a model and has no mapping file yet, propose one: see [Rules for models](/en/guide/rules#mapping) for the rules and the form.

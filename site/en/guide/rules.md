@@ -36,7 +36,13 @@ So far, every model in the catalog is the catalog's own type; upstream names are
 
 ## Mapping to Japanese standards {#mapping}
 
-When a Japanese standard has data that matches the model, for example a dataset of the Digital Agency's [自治体標準オープンデータセット](https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test), add a mapping file (`mapping/*.yaml`), so a municipality can fit its data to the model directly. Example: [EvacuationSite](/en/models/disaster/EvacuationSite/#mapping-jichitai-opendata-site). Reviewers check whether such a dataset exists; CI does not.
+A mapping file (`mapping/*.yaml`) says how a model relates to a standard, so that data that follows the standard can be used with the model directly. The catalog keeps its mapping files few (decided 2026-10-12):
+
+- **A mapping file only for a published standard or format that many lists follow and that the model was designed from.** These are national standards such as the Digital Agency's [自治体標準オープンデータセット](https://www.digital.go.jp/resources/open_data/municipal-standard-data-set-test), GSI's data, GIF or EEI, and widely used systems whose format is public (such as GitHub Issues or Redmine). Example: [EvacuationSite](/en/models/disaster/EvacuationSite/#mapping-jichitai-opendata-site).
+- **No mapping file for one organisation's own list or system.** Its owners keep that mapping themselves; `datamodels mapping` writes a first version ([Converting your data](/en/toolkit/convert#your-own-list)).
+- **Conversion rules only in a few worked examples.** Most mapping files only document how the model relates to the standard (`to` and `note`). A proposal adds conversion rules (`column`, `transform`) only when lists that follow the standard are actually converted.
+
+Reviewers check that the standard exists and that many lists follow it; CI does not.
 
 ### New editions of a standard {#standard-revisions}
 

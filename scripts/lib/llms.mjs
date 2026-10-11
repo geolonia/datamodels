@@ -11,7 +11,7 @@ const GUIDES = [
   ['tutorial', 'Tutorial: from a CSV file to a map', 'one real open-data CSV converted into a catalog model, loaded into GeonicDB, queried and shown on a map, step by step'],
   ['use', 'Using the models', 'validate JSON, send it to an NGSI-LD broker, use it as linked data'],
   ['geonicdb', 'Use with GeonicDB', 'register a catalog model in GeonicDB, then create and query entities'],
-  ['mapping', 'Mapping files', 'mapping files: which field of a standard matches which attribute of a model, and the rules to convert a list'],
+  ['mapping', 'Mapping files', 'mapping files: which field of a standard matches which attribute of a model, and the rules to convert a list; the catalog keeps them only for published standards that many lists follow'],
   ['extend', 'Adding attributes', 'add attributes of your own to a catalog model without copying it, and where to host the result'],
   ['builder', 'Extension builder', 'build the @context and JSON Schema for your own attributes on a catalog model, in the browser'],
   ['names', 'Your own names', 'use your own attribute and type names with JSON-LD aliases, without changing the model'],
@@ -32,7 +32,7 @@ const TOOLKIT = [
   ['models', "Your site's models", 'add a model with add, or start from a catalog model with extend, and write its attributes'],
   ['check', 'Checking and building', 'check and build a node, and the GitHub Action that checks pull requests and publishes'],
   ['versions', 'Versions', 'change a published model: bump and release keep the old version online; upgrade moves the node to a newer toolkit'],
-  ['convert', 'Converting your data', 'convert a CSV list into entities of a catalog model with its mapping file (datamodels convert)'],
+  ['convert', 'Converting your data', 'convert your own CSV list into entities of a catalog model (datamodels convert): with the mapping file of a standard the list follows, with a mapping of your own (datamodels mapping, then convert --check; an agent skill helps an AI agent fill it in), or from the CSV template'],
   ['export', 'Exporting to other tools', 'a CSV template, its Table Schema, a strict JSON Schema for the structured output of AI models and a PostgreSQL / PostGIS table from a model (datamodels export); on datamodels.jp each model page has them under Download'],
 ];
 
