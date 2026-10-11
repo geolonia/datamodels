@@ -20,7 +20,7 @@ description: datamodels-toolkit の convert で、手元の CSV の一覧をカ�
 自治体標準オープンデータセットや国土地理院のデータなど、カタログに変換ルール付きの対応表がある標準に従った一覧は、その対応表でそのまま変換できます。変換ルールの無い対応表は標準との対応を説明するだけなので、その一覧には自分の対応表を作ります（次の節）。対応表の仕組みは[対応表](/guide/mapping)にあります。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.6 convert \
   disaster/EvacuationSite jichitai-opendata-site \
   092011_evacuation_space.csv --out sites.json
 ```
@@ -32,7 +32,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
 一覧に無い値は `--set` で渡します。たとえば国土地理院のデータでは、市町村コードがファイル名にしかありません。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.6 convert \
   disaster/EvacuationSite gsi-emergency-site \
   13101_2.csv --set localGovernmentCode=13101
 ```
@@ -48,13 +48,13 @@ npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
 
 ```bash
 # 1. 下書きを作る
-npx github:geolonia/datamodels-toolkit#v0.3.5 mapping \
+npx github:geolonia/datamodels-toolkit#v0.3.6 mapping \
   disaster/EvacuationSite my-list.csv --out my-list.yaml
 # 3. 最初の行を検査する
-npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.6 convert \
   disaster/EvacuationSite my-list.yaml my-list.csv --check
 # 4. 変換する
-npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.6 convert \
   disaster/EvacuationSite my-list.yaml my-list.csv --out entities.json
 ```
 
@@ -79,7 +79,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
 
 ### AI エージェントと埋める {#agent}
 
-TODO を埋める作業は、AI エージェントにも頼めます。datamodels-toolkit の[エージェントスキル](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.5/skills/datamodels)（`skills/datamodels`）が、手順と決まりをエージェントに教えます。一覧に無い値は書かない、意味のはっきりしない列は人に聞く、という決まりです。Claude Code では、このフォルダーをプロジェクトの `.claude/skills/` にコピーします。
+TODO を埋める作業は、AI エージェントにも頼めます。datamodels-toolkit の[エージェントスキル](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.6/skills/datamodels)（`skills/datamodels`）が、手順と決まりをエージェントに教えます。一覧に無い値は書かない、意味のはっきりしない列は人に聞く、という決まりです。Claude Code では、このフォルダーをプロジェクトの `.claude/skills/` にコピーします。
 
 依頼の例です。
 
@@ -92,7 +92,7 @@ TODO を埋める作業は、AI エージェントにも頼めます。datamodel
 新しく一覧を作るなら、モデルの CSV テンプレートに、1 行に 1 件ずつ入力します。対応表は要りません。テンプレートは、モデルのページの**ダウンロード**の行にあります。`export` でも作れます（[他のツールに書き出す](/toolkit/export)）。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.6 convert \
   disaster/EvacuationSite csv-template sites.csv --out entities.json
 ```
 
@@ -122,4 +122,4 @@ npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
 - `--check`、`--rows N`：最初の行だけを検査します（[上の説明](#your-own-list)）。
 - `--site`：対応表とモデルを読むサイトです。既定は datamodels.jp です。公開前の対応表を試すときは、[geolonia/datamodels](https://github.com/geolonia/datamodels) をビルドして（`npm run build`）、`--site dist` を付けます。
 
-実際のオープンデータを変換して地図に表示するまでは、[チュートリアル](/guide/tutorial)で試せます。すべてのオプションは、ツールキットの [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.5#convert)（英語）にあります。
+実際のオープンデータを変換して地図に表示するまでは、[チュートリアル](/guide/tutorial)で試せます。すべてのオプションは、ツールキットの [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.6#convert)（英語）にあります。
