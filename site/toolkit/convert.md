@@ -8,7 +8,7 @@ description: datamodels-toolkit の convert で、CSV の一覧を、モデル�
 `datamodels convert` は、CSV の一覧をこのカタログのモデルのエンティティに変換し、それぞれをモデルの JSON Schema で検証します。変換の規則は、モデルの対応表（マッピングファイル）に書いてあります。対応表の仕組みは[データを変換する](/guide/mapping)にあります。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.2 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.3 convert \
   disaster/EvacuationSite jichitai-opendata-site \
   092011_evacuation_space.csv --out sites.json
 ```

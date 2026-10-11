@@ -18,7 +18,7 @@ The result looks like [models.geolonia.com](https://models.geolonia.com): `catal
 ## 1. Start the node {#init}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.2 init my-models
+npx github:geolonia/datamodels-toolkit#v0.3.3 init my-models
 cd my-models
 ```
 
