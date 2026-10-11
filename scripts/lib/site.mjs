@@ -104,7 +104,10 @@ export function adapterLine(lang, prefix, subject, model, adapters) {
  */
 export function downloadLine(lang, prefix, subject, model, adapters) {
   const t = T[lang];
-  const files = adapters.filter((a) => a.download).map((a) => [a, a.urlFor(subject, model)]).filter(([, url]) => url);
+  // In the toolkit's order (its model pages show the same): the CSV template first, the table last.
+  const order = ['csv', 'table-schema', 'ai', 'postgis'];
+  const rank = (a) => (order.includes(a.name) ? order.indexOf(a.name) : order.length);
+  const files = adapters.filter((a) => a.download).sort((a, b) => rank(a) - rank(b)).map((a) => [a, a.urlFor(subject, model)]).filter(([, url]) => url);
   if (!files.length) return '';
   const links = files.map(([a, url]) => `<a href="${rel(url)}" download>${a.label[lang]}</a>`).join(' · ');
   return `${links}${t.aboutFiles(`[${t.aboutFilesText}](${prefix}/adapters/#${modelAnchor(subject, model)})`)}`;
