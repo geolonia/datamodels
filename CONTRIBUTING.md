@@ -44,7 +44,7 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 
 データを登録するツール（ブローカーの管理画面など）は、利用者のデータから新しいモデルを作ることがあります。それを提案として渡すときは、このリポジトリのモデルと同じ構成のフォルダ（**提案バンドル**）を書き出します。
 
-- `models/<サブジェクト>/<型名>/` に、モデルのファイルを置きます。`catalog.yaml`、`schema.json`、`examples/`、`notes.yaml`、`ADOPTERS.yaml`（使っている組織とおよそのデータ量）です。元になった標準や公開データとの対応があれば、`mapping/` も置きます。`npm run validate:models` で足りない箇所が分かります。
+- `models/<サブジェクト>/<型名>/` に、モデルのファイルを置きます。`catalog.yaml`、`schema.json`、`examples/`、`notes.yaml`、`ADOPTERS.yaml`（使っている組織とおよそのデータ量）です。多くの一覧が従う公開の標準を元にしたモデルなら、その標準との対応表（`mapping/`）も置きます（[モデルのルール](https://datamodels.jp/guide/rules#mapping)）。`npm run validate:models` で足りない箇所が分かります。
 - **ツールは自分で投稿しません。** 人が自分の GitHub アカウントで Pull Request を開き、署名（DCO）を付けます。作者と責任は人に残ります。
 - レビューを経て、他のモデルと同じく `draft` で取り込みます。新しい段階はありません。
 - `ADOPTERS.yaml` の記載は、早めの根拠になります。1 つの組織は 1 回だけ数えるので、`stable` に 2 つの独立した組織が要るという規則は変わりません（2026-10-06 決定、#156）。
@@ -144,7 +144,7 @@ Change the Japanese and English page in the same pull request. `npm run check:la
 
 A tool that registers data (a broker console, for example) may build a new model from a user's data. To hand it in as a proposal, the tool writes out a folder in the same layout as the models in this repository: a **proposal bundle**.
 
-- In `models/<subject>/<Type>/`: `catalog.yaml`, `schema.json`, `examples/`, `mapping/` if the data follows a standard or a published dataset, `notes.yaml`, and `ADOPTERS.yaml` (who uses the model, and roughly how much data). `npm run validate:models` lists what is missing.
+- In `models/<subject>/<Type>/`: `catalog.yaml`, `schema.json`, `examples/`, `mapping/` if the model was designed from a published standard that many lists follow ([Rules for models](https://datamodels.jp/en/guide/rules#mapping)), `notes.yaml`, and `ADOPTERS.yaml` (who uses the model, and roughly how much data). `npm run validate:models` lists what is missing.
 - **Tools never post.** A person opens the pull request under their own GitHub account and signs off the commits (DCO), so authorship and responsibility stay with a person.
 - After review, the model is merged as `draft`, like any other. There is no extra stage.
 - The `ADOPTERS.yaml` entry gives reviewers evidence early. One organisation still counts once, so `stable` still needs two independent organisations (decided 2026-10-06, #156).

@@ -8,13 +8,13 @@ description: With export from datamodels-toolkit, make a CSV template, a Table S
 You can use the data models without an NGSI-LD broker. The toolkit's `export` command makes files from one model:
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.4 export \
+npx github:geolonia/datamodels-toolkit#v0.3.5 export \
   disaster/EvacuationSite --to csv,table-schema,ai,postgis
 ```
 
 | `--to` | File | What it is for |
 |---|---|---|
-| `csv` | `EvacuationSite.csv` | A CSV template: fill in one row per entity in a spreadsheet. |
+| `csv` | `EvacuationSite.csv` | A CSV template: fill in one row per entity in a spreadsheet, then [convert it](/en/toolkit/convert#csv-template). |
 | `table-schema` | `EvacuationSite.tableschema.json` | The [Table Schema](https://datapackage.org/standard/table-schema/) of those columns, to check the filled-in CSV file with `frictionless validate`. |
 | `ai` | `EvacuationSite.ai.json` | A strict JSON Schema for the structured output of an AI model, to extract entities from PDFs or e-mails in the shape of the model. |
 | `postgis` | `EvacuationSite.sql` | A PostgreSQL / PostGIS `CREATE TABLE` with constraints and a spatial index. |

@@ -54,7 +54,7 @@ Three kinds of entries, in decreasing order of preference:
 |---|---|---|---|
 | **Curated global model** | upstream (`https://smartdatamodels.org/dataModel.X/Type`) | none yet | Japanese description, Japanese example values, guidance. No copy. *Planned.* |
 | **Profile of a global model** | upstream for the base type; `https://datamodels.jp/ns/<subject>/...` for added attributes | none yet | A context that imports the upstream context by commit-pinned URL and adds terms. *Planned.* |
-| **Model minted here** | `https://datamodels.jp/ns/<subject>/Type` | `common`, `task`, `disaster`, `transportation` | The full model, with mapping tables to every standard it corresponds to. |
+| **Model minted here** | `https://datamodels.jp/ns/<subject>/Type` | `common`, `task`, `disaster`, `transportation` | The full model, with mapping tables to the published standards it was designed from ([rules](https://datamodels.jp/en/guide/rules#mapping)). |
 
 So far every model is minted here (`"source": "minted"` in `catalog.json`). Upstream IRIs are reused at the attribute level where the meaning matches: `roadName`, `validFrom` and `validTo` from Smart Data Models, `name` from NGSI-LD, and schema.org terms for addresses, authors and others.
 

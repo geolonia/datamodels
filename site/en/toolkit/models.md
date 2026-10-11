@@ -10,7 +10,7 @@ This page adds models to a subject of your node and writes their attributes. No 
 ## A new model {#add}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.4 add road/RoadPatrol
+npx github:geolonia/datamodels-toolkit#v0.3.5 add road/RoadPatrol
 ```
 
 This adds `models/road/RoadPatrol/` with `schema.json`, `catalog.yaml` and `examples/example.json`, and the type `RoadPatrol` to the subject's `@context`. Then [write its attributes](#attributes).
@@ -20,7 +20,7 @@ This adds `models/road/RoadPatrol/` with `schema.json`, `catalog.yaml` and `exam
 To start from a model of this catalog instead, use `extend`. It copies the catalog model's schema, imports its `@context` and records the model it builds on, so `check` keeps its names and meanings. Then add your attributes as [below](#attributes). With `--subclass`, the new model is a subtype with its own IRI.
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.4 extend task/Task road/RoadTask
+npx github:geolonia/datamodels-toolkit#v0.3.5 extend task/Task road/RoadTask
 ```
 
 ## Writing the attributes {#attributes}

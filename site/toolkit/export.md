@@ -8,13 +8,13 @@ description: datamodels-toolkit の export で、モデルから CSV テンプ�
 データモデルは NGSI-LD のブローカーがなくても使えます。datamodels-toolkit の `export` は、1 つのモデルから次のファイルを作ります。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.4 export \
+npx github:geolonia/datamodels-toolkit#v0.3.5 export \
   disaster/EvacuationSite --to csv,table-schema,ai,postgis
 ```
 
 | `--to` | ファイル | 使い方 |
 |---|---|---|
-| `csv` | `EvacuationSite.csv` | CSV テンプレートです。表計算ソフトで 1 行に 1 件ずつ入力します。 |
+| `csv` | `EvacuationSite.csv` | CSV テンプレートです。表計算ソフトで 1 行に 1 件ずつ入力し、[変換](/toolkit/convert#csv-template)します。 |
 | `table-schema` | `EvacuationSite.tableschema.json` | CSV の列の [Table Schema](https://datapackage.org/standard/table-schema/) です。入力した CSV ファイルを `frictionless validate` で検査できます。 |
 | `ai` | `EvacuationSite.ai.json` | AI の構造化出力（strict な JSON Schema）です。PDF やメールから、モデルの形のままエンティティを取り出せます。 |
 | `postgis` | `EvacuationSite.sql` | PostgreSQL / PostGIS の `CREATE TABLE` です。制約と空間インデックス付きのテーブルができます。 |
