@@ -18,32 +18,32 @@ description: datamodels-toolkit で、自分のデータモデルを変わらな
 ## 1. ノードを作る {#init}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.2.1 init my-models
+npx github:geolonia/datamodels-toolkit#v0.3.1 init my-models
 cd my-models
 ```
 
 `init` がいくつか質問します。
 
-- **ベース URL：** ノードを置く場所です（例：`https://models.example.org`）。ノードが公開するすべての IRI に入るので、**公開した後は変えられません**。`https://<アカウント>.github.io/<リポジトリ>` も使えますが、IRI が GitHub のアカウント名に依存します。
+- **ベース URL：** ノードを置く場所です（例：`https://models.example.org`）。ノードが公開するすべての IRI に入るので、**公開した後は変えられません**。`https://<アカウント>.github.io/<リポジトリ>` も使えますが、IRI が GitHub のアカウント名に依存します。ドメインより長く使う IRI にするなら、[w3id.org のアドレス](#w3id)を使います。
 - **言語：** `ja,en` など。1 つでも構いません。
 - **公開者：** 組織の名前とウェブサイトです。
 - **ライセンス：** `CC0-1.0` なら、だれでも条件なしにモデルを使えます（このカタログと同じです）。
 - **最初のサブジェクト：** 1 つの `@context` を共有するモデルのまとまりです（例：`road`）。この名前も IRI に入ります。
 
-`init` は、設定の `node.yaml`、サブジェクトの `models/road/`、README、公開用のワークフローを書き出します。既存のリポジトリで実行すると、足りないファイルだけを足します。
+`init` は、設定の `node.yaml`、サブジェクトの `models/road/`、README、`LICENSE`、公開用のワークフローを書き出します。ツールキットの新しいリリースを提案する Dependabot の設定も書き出します。既存のリポジトリで実行すると、足りないファイルだけを足します。
 
 [GitHub CLI](https://cli.github.com/)（`gh`）があれば、`--github my-org/my-models` を付けて実行できます。`init` がその名前で公開リポジトリを作り、ファイルを push して GitHub Pages を有効にします（[手順 4](#publish)）。
 
 ## 2. モデルを足す {#add}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.2.1 add road/RoadPatrol
+npx github:geolonia/datamodels-toolkit#v0.3.1 add road/RoadPatrol
 ```
 
 このカタログのモデルから始めるときは、`extend` を使います。カタログのモデルのスキーマをコピーし、その `@context` を取り込み、土台にしたモデルを記録します。そのため、`check` が名前と意味を変えていないかを検査できます。そのうえで、下のように自分の属性を足します。`--subclass` を付けると、独自の IRI を持つサブタイプになります。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.2.1 extend task/Task road/RoadTask
+npx github:geolonia/datamodels-toolkit#v0.3.1 extend task/Task road/RoadTask
 ```
 
 `models/road/RoadPatrol/` に `schema.json`、`catalog.yaml`、`examples/example.json` ができます。サブジェクトの `@context` には型 `RoadPatrol` が入ります。属性は、1 つにつき 3 か所に書きます。まず `models/road/RoadPatrol/schema.json` の `properties` に書き、IRI は `x-iri` に入れます。
@@ -74,8 +74,8 @@ attributes:
 ## 3. 検査してビルドする {#check}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.2.1 check
-npx github:geolonia/datamodels-toolkit#v0.2.1 build
+npx github:geolonia/datamodels-toolkit#v0.3.1 check
+npx github:geolonia/datamodels-toolkit#v0.3.1 build
 ```
 
 `check` は、すべてのスキーマと例を検査します。`build` はサイトを `_site/` に書き出すので、`_site/index.html` を開いて確かめられます。GitHub では、Pull Request のたびにワークフローが同じ検査をします。
@@ -95,16 +95,48 @@ npx github:geolonia/datamodels-toolkit#v0.2.1 build
 
 アカウントか組織で[ドメインを確認](https://docs.github.com/ja/pages/configuring-a-custom-domain-for-your-github-pages-site/verifying-your-custom-domain-for-github-pages)しておくと、ほかの人がそのドメインでサイトを公開できなくなります。
 
+## 6. 変わらないアドレス（任意） {#w3id}
+
+IRI には自分のドメインが入るので、IRI が使えるのはドメインを持ち続ける間です。モデルがドメインより長く使われそうなとき（いずれ終わるプロジェクトや、移る予定のあるチームなど）は、[w3id.org](https://w3id.org/) のアドレスを使います。W3C の Permanent Identifier Community Group が運営する、無料の転送サービスです。`https://w3id.org/<名前>/` が、ノードのある場所へ転送します。ノードを移すときは、転送先だけを変えます。
+
+公開する前に決めてください。ベース URL は、すべての IRI に入ります。
+
+1. 名前を決めます。小文字の英字、数字、ハイフンで、一般的な単語は避けます（例：`my-org-models`）。
+2. [perma-id/w3id.org](https://github.com/perma-id/w3id.org) に、`ids/my-org-models/.htaccess` を足す Pull Request を開きます。連絡先と転送の規則を書きます。
+
+   ```apache
+   # # /my-org-models/
+   #
+   # https://w3id.org/my-org-models/ redirects to https://models.example.org/
+   #
+   # ## Contact
+   # This space is administered by:
+   #
+   # Your Name
+   # you@example.org
+   # GitHub username: your-account
+
+   RewriteEngine on
+   RewriteRule ^(.*)$ https://models.example.org/$1 [R=302,L]
+   ```
+
+   この規則はパスをそのまま渡します。たとえば `https://w3id.org/my-org-models/ns/road` は `https://models.example.org/ns/road` を開きます。ノードのすべての IRI とファイルが、転送を通して使えます。301 ではなく 302 を使ってください。ブラウザーは 301 をずっと覚えるので、あとでノードを移せなくなります。Pull Request を開く前に、[Creating an identifier](https://w3id.org/docs/guides/create-an-id)（英語）を読んでください。
+3. [手順 1](#init) で、ベース URL に `https://w3id.org/my-org-models` を指定します。サイト自体は、自分のドメインの GitHub Pages に置いたままです（[手順 4](#publish)、[手順 5](#domain)）。ノードが公開するリンクと IRI は、すべて w3id.org を通ります。
+
+ハッシュ IRI も転送を通して使えます。`#` から後ろはブラウザーに残るので、`https://w3id.org/my-org-models/ns/road#RoadPatrol` は、ページの該当する行を開きます。
+
 ## 公開した後でモデルを変える {#versions}
 
 公開したバージョンは変えられません。`@context` を指定したデータは、その内容を前提にしているからです。`check` は公開済みのファイルと比べ、変わるファイルがあれば失敗します。
 
-変える前に、公開したバージョンをサイトに残す手続きをします。`release` が、その `@context`、語彙、スキーマを `models/road/releases/` に保存するので、コミットしてください。公開済みのファイルと違えば、`release` は止まります。
+変える前に、`bump` で次のバージョンを始めます。`bump` は、公開したバージョンをサイトに残します（その `@context`、語彙、スキーマを `models/road/releases/` に保存します）。そのうえで、`subject.yaml` の `version` とスキーマの URL のバージョンを上げます。公開済みのファイルと違えば止まります。結果をコミットしてください。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.2.1 release road
+npx github:geolonia/datamodels-toolkit#v0.3.1 bump road minor
 ```
 
-そのうえでモデルを変え、`subject.yaml` の `version` を上げます（[URL とバージョン](/guide/urls#versions)）。サイトには両方のバージョンが残ります。
+そのうえでモデルを変えます。サイトには両方のバージョンが残ります。変更にどのレベル（`patch`、`minor`、`major`）が合うかは、[URL とバージョン](/guide/urls#versions)を見てください。
+
+ノードを新しいツールキットに移すには、`upgrade` を実行してコミットします。ワークフローと README のバージョンが変わります。Dependabot も新しいリリースを提案します。
 
 すべてのコマンドとオプション：[datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit#readme)（英語）

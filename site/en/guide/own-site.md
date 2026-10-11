@@ -18,32 +18,32 @@ The result looks like [models.geolonia.com](https://models.geolonia.com): `catal
 ## 1. Start the node {#init}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.2.1 init my-models
+npx github:geolonia/datamodels-toolkit#v0.3.1 init my-models
 cd my-models
 ```
 
 `init` asks a few questions:
 
-- **Base URL:** where the node will be, for example `https://models.example.org`. It is part of every IRI the node publishes, so **choose it once**: you cannot change it after you publish. A `https://<account>.github.io/<repository>` address works too, but then your IRIs depend on the name of your GitHub account.
+- **Base URL:** where the node will be, for example `https://models.example.org`. It is part of every IRI the node publishes, so **choose it once**: you cannot change it after you publish. A `https://<account>.github.io/<repository>` address works too, but then your IRIs depend on the name of your GitHub account. For IRIs that outlive the domain, use a [w3id.org address](#w3id).
 - **Languages:** for example `ja,en`. One is enough.
 - **Publisher:** your organisation's name and website.
 - **Licence:** `CC0-1.0` lets anyone use the models without conditions, like this catalog.
 - **The first subject:** a group of models that share one `@context`, for example `road`. Its name is part of the IRIs too.
 
-It writes `node.yaml` (the settings), `models/road/` (the subject), a README, and the workflow that publishes the node. In an existing repository, it adds only the files that are missing.
+It writes `node.yaml` (the settings), `models/road/` (the subject), a README, `LICENSE`, the workflow that publishes the node, and a Dependabot configuration that proposes new toolkit releases. In an existing repository, it adds only the files that are missing.
 
 With the [GitHub CLI](https://cli.github.com/) (`gh`), add `--github my-org/my-models`: `init` then also creates that public repository, pushes the files and turns on GitHub Pages ([step 4](#publish)).
 
 ## 2. Add a model {#add}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.2.1 add road/RoadPatrol
+npx github:geolonia/datamodels-toolkit#v0.3.1 add road/RoadPatrol
 ```
 
 To start from a model of this catalog instead, use `extend`. It copies the catalog model's schema, imports its `@context` and records the model it builds on, so `check` keeps its names and meanings. Then add your attributes as below. With `--subclass`, the new model is a subtype with its own IRI.
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.2.1 extend task/Task road/RoadTask
+npx github:geolonia/datamodels-toolkit#v0.3.1 extend task/Task road/RoadTask
 ```
 
 This adds `models/road/RoadPatrol/` with `schema.json`, `catalog.yaml` and `examples/example.json`, and the type `RoadPatrol` to the subject's `@context`. Then add each attribute in three places. In `models/road/RoadPatrol/schema.json`, under `properties`, with its IRI in `x-iri`:
@@ -74,8 +74,8 @@ Put a value in `examples/example.json` too (`"route": "A-3"`), and replace the t
 ## 3. Check and build {#check}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.2.1 check
-npx github:geolonia/datamodels-toolkit#v0.2.1 build
+npx github:geolonia/datamodels-toolkit#v0.3.1 check
+npx github:geolonia/datamodels-toolkit#v0.3.1 build
 ```
 
 `check` validates every schema and example. `build` writes the site into `_site/`; open `_site/index.html` to look at it. On GitHub, the workflow runs the same check on every pull request.
@@ -95,16 +95,48 @@ From then on, every push to `main` builds the node and publishes it. Until you s
 
 It is worth [verifying the domain](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/verifying-your-custom-domain-for-github-pages) for your account or organisation, so nobody else can publish a site on it.
 
+## 6. A permanent address (optional) {#w3id}
+
+Your IRIs contain your domain, so they last as long as you keep the domain. If the models may outlive it (a project that ends, a team that moves), take an address from [w3id.org](https://w3id.org/), a free redirect service run by the W3C Permanent Identifier Community Group. `https://w3id.org/<name>/` forwards to wherever the node is; when the node moves, only the redirect changes.
+
+Decide before you publish: the base URL is part of every IRI.
+
+1. Choose a name: lower-case letters, digits and hyphens, not a generic word, for example `my-org-models`.
+2. Open a pull request to [perma-id/w3id.org](https://github.com/perma-id/w3id.org) that adds `ids/my-org-models/.htaccess` with your contact and the redirect:
+
+   ```apache
+   # # /my-org-models/
+   #
+   # https://w3id.org/my-org-models/ redirects to https://models.example.org/
+   #
+   # ## Contact
+   # This space is administered by:
+   #
+   # Your Name
+   # you@example.org
+   # GitHub username: your-account
+
+   RewriteEngine on
+   RewriteRule ^(.*)$ https://models.example.org/$1 [R=302,L]
+   ```
+
+   The rule keeps the path, so `https://w3id.org/my-org-models/ns/road` opens `https://models.example.org/ns/road`, and every IRI and file of the node works through it. Use 302, not 301: browsers keep a 301 forever, so you could not move the node later. Read [Creating an identifier](https://w3id.org/docs/guides/create-an-id) before you open the pull request.
+3. In [step 1](#init), give `https://w3id.org/my-org-models` as the base URL. The site itself stays on GitHub Pages at your domain ([steps 4](#publish) and [5](#domain)); every link and IRI the node publishes goes through w3id.org.
+
+Hash IRIs work through the redirect: the part after `#` stays in the browser, so `https://w3id.org/my-org-models/ns/road#RoadPatrol` opens the right row of the page.
+
 ## Changing a model later {#versions}
 
 A published version must not change: data that names its `@context` relies on it. `check` compares the files with the published ones and fails when a published file would change.
 
-Before you change anything, keep the published version online. `release` saves its `@context`, vocabulary and schemas in `models/road/releases/`; commit them. It refuses when the files differ from the published ones.
+Before you change anything, start the next version with `bump`. It keeps the published version online (its `@context`, vocabulary and schemas go into `models/road/releases/`), then raises the subject's `version` in `subject.yaml` and the version in its schema URLs. It refuses when the files differ from the published ones. Commit the result.
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.2.1 release road
+npx github:geolonia/datamodels-toolkit#v0.3.1 bump road minor
 ```
 
-Then make the change, and raise the subject's `version` in `subject.yaml`, as described in [URLs and versions](/en/guide/urls#versions). The site then has both versions.
+Then make the change. The site has both versions; see [URLs and versions](/en/guide/urls#versions) for which level (`patch`, `minor`, `major`) fits a change.
+
+To move the node to a newer toolkit, run `upgrade` and commit: it changes the version in the workflow and the README. Dependabot also proposes new releases.
 
 All commands and options: [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit#readme).
