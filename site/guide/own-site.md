@@ -137,6 +137,10 @@ npx github:geolonia/datamodels-toolkit#v0.3.1 bump road minor
 
 そのうえでモデルを変えます。サイトには両方のバージョンが残ります。変更にどのレベル（`patch`、`minor`、`major`）が合うかは、[URL とバージョン](/guide/urls#versions)を見てください。
 
-ノードを新しいツールキットに移すには、`upgrade` を実行してコミットします。ワークフローと README のバージョンが変わります。Dependabot も新しいリリースを提案します。
+ノードを新しいツールキットに移すには、`upgrade` を実行してコミットします。ワークフローと README のバージョンが、最新のリリース（`--to` で指定したときはそのリリース）に変わります。Dependabot も新しいリリースを提案します。
+
+```bash
+npx github:geolonia/datamodels-toolkit#v0.3.1 upgrade
+```
 
 すべてのコマンドとオプション：[datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit#readme)（英語）
