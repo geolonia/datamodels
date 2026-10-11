@@ -18,7 +18,7 @@ description: datamodels-toolkit の init で自分のデータモデルのサイ
 ## 1. ノードを作る {#init}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.3 init my-models
+npx github:geolonia/datamodels-toolkit#v0.3.4 init my-models
 cd my-models
 ```
 

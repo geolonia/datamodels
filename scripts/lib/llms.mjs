@@ -27,12 +27,13 @@ const GUIDES = [
 // The Toolkit section, in the order of its sidebar ('' is its landing page). The
 // generated guide of data model sites is under Optional.
 const TOOLKIT = [
-  ['', 'Toolkit', 'datamodels-toolkit, the datamodels command and GitHub Action: publish your own models with fixed URLs on a site of your own, convert CSV lists into models'],
+  ['', 'Toolkit', 'datamodels-toolkit, the datamodels command and GitHub Action: publish your own models with fixed URLs on a site of your own, convert CSV lists into models, export models for other tools'],
   ['start', 'Starting a site', 'start a node with init, publish it on GitHub Pages and your own domain, a permanent w3id.org address'],
   ['models', "Your site's models", 'add a model with add, or start from a catalog model with extend, and write its attributes'],
   ['check', 'Checking and building', 'check and build a node, and the GitHub Action that checks pull requests and publishes'],
   ['versions', 'Versions', 'change a published model: bump and release keep the old version online; upgrade moves the node to a newer toolkit'],
   ['convert', 'Converting your data', 'convert a CSV list into entities of a catalog model with its mapping file (datamodels convert)'],
+  ['export', 'Exporting to other tools', 'a CSV template, its Table Schema, a strict JSON Schema for the structured output of AI models and a PostgreSQL / PostGIS table from a model (datamodels export); on datamodels.jp each model page has them under Download'],
 ];
 
 const exists = (path) => access(path).then(() => true, () => false);
