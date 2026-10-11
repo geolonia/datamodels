@@ -6,6 +6,7 @@ import type MarkdownIt from 'markdown-it'
 import { defineConfig, type DefaultTheme } from 'vitepress'
 import { loadSubjects, subjectUrls, modelUrls, BASE_URL } from '../../scripts/lib/models.mjs'
 import { tokenize } from './search-tokenize.mjs'
+import { endUrlsAtNonAscii } from './linkify.mjs'
 
 const subjects = await loadSubjects()
 const rel = (url: string) => url.slice(BASE_URL.length)
@@ -178,7 +179,12 @@ export default defineConfig({
   lastUpdated: false,
   // Links to the machine files and IRIs are not pages; everything else must resolve.
   ignoreDeadLinks: [/^\/(context|schema|examples|adapters|vocab|catalog|ns|LICENSE-CONTENT|llms\.txt)/],
-  markdown: { config: addVPreToInlineCode },
+  markdown: {
+    config(md) {
+      addVPreToInlineCode(md)
+      endUrlsAtNonAscii(md)
+    },
+  },
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
     ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32.png' }],
