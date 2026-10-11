@@ -18,7 +18,7 @@ description: datamodels-toolkit で、自分のデータモデルを変わらな
 ## 1. ノードを作る {#init}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.1 init my-models
+npx github:geolonia/datamodels-toolkit#v0.3.2 init my-models
 cd my-models
 ```
 
@@ -37,13 +37,13 @@ cd my-models
 ## 2. モデルを足す {#add}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.1 add road/RoadPatrol
+npx github:geolonia/datamodels-toolkit#v0.3.2 add road/RoadPatrol
 ```
 
 このカタログのモデルから始めるときは、`extend` を使います。カタログのモデルのスキーマをコピーし、その `@context` を取り込み、土台にしたモデルを記録します。そのため、`check` が名前と意味を変えていないかを検査できます。そのうえで、下のように自分の属性を足します。`--subclass` を付けると、独自の IRI を持つサブタイプになります。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.1 extend task/Task road/RoadTask
+npx github:geolonia/datamodels-toolkit#v0.3.2 extend task/Task road/RoadTask
 ```
 
 `models/road/RoadPatrol/` に `schema.json`、`catalog.yaml`、`examples/example.json` ができます。サブジェクトの `@context` には型 `RoadPatrol` が入ります。属性は、1 つにつき 3 か所に書きます。まず `models/road/RoadPatrol/schema.json` の `properties` に書き、IRI は `x-iri` に入れます。
@@ -74,8 +74,8 @@ attributes:
 ## 3. 検査してビルドする {#check}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.1 check
-npx github:geolonia/datamodels-toolkit#v0.3.1 build
+npx github:geolonia/datamodels-toolkit#v0.3.2 check
+npx github:geolonia/datamodels-toolkit#v0.3.2 build
 ```
 
 `check` は、すべてのスキーマと例を検査します。`build` はサイトを `_site/` に書き出すので、`_site/index.html` を開いて確かめられます。GitHub では、Pull Request のたびにワークフローが同じ検査をします。
@@ -132,7 +132,7 @@ IRI には自分のドメインが入るので、IRI が使えるのはドメイ
 変える前に、`bump` で次のバージョンを始めます。`bump` は、公開したバージョンをサイトに残します（その `@context`、語彙、スキーマを `models/road/releases/` に保存します）。そのうえで、`subject.yaml` の `version` とスキーマの URL のバージョンを上げます。公開済みのファイルと違えば止まります。結果をコミットしてください。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.1 bump road minor
+npx github:geolonia/datamodels-toolkit#v0.3.2 bump road minor
 ```
 
 そのうえでモデルを変えます。サイトには両方のバージョンが残ります。変更にどのレベル（`patch`、`minor`、`major`）が合うかは、[URL とバージョン](/guide/urls#versions)を見てください。
@@ -140,7 +140,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.1 bump road minor
 ノードを新しいツールキットに移すには、`upgrade` を実行してコミットします。ワークフローと README のバージョンが、最新のリリース（`--to` で指定したときはそのリリース）に変わります。Dependabot も新しいリリースを提案します。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.1 upgrade
+npx github:geolonia/datamodels-toolkit#v0.3.2 upgrade
 ```
 
 すべてのコマンドとオプション：[datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit#readme)（英語）

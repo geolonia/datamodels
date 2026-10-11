@@ -18,7 +18,7 @@ The result looks like [models.geolonia.com](https://models.geolonia.com): `catal
 ## 1. Start the node {#init}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.1 init my-models
+npx github:geolonia/datamodels-toolkit#v0.3.2 init my-models
 cd my-models
 ```
 
@@ -37,13 +37,13 @@ With the [GitHub CLI](https://cli.github.com/) (`gh`), add `--github my-org/my-m
 ## 2. Add a model {#add}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.1 add road/RoadPatrol
+npx github:geolonia/datamodels-toolkit#v0.3.2 add road/RoadPatrol
 ```
 
 To start from a model of this catalog instead, use `extend`. It copies the catalog model's schema, imports its `@context` and records the model it builds on, so `check` keeps its names and meanings. Then add your attributes as below. With `--subclass`, the new model is a subtype with its own IRI.
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.1 extend task/Task road/RoadTask
+npx github:geolonia/datamodels-toolkit#v0.3.2 extend task/Task road/RoadTask
 ```
 
 This adds `models/road/RoadPatrol/` with `schema.json`, `catalog.yaml` and `examples/example.json`, and the type `RoadPatrol` to the subject's `@context`. Then add each attribute in three places. In `models/road/RoadPatrol/schema.json`, under `properties`, with its IRI in `x-iri`:
@@ -74,8 +74,8 @@ Put a value in `examples/example.json` too (`"route": "A-3"`), and replace the t
 ## 3. Check and build {#check}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.1 check
-npx github:geolonia/datamodels-toolkit#v0.3.1 build
+npx github:geolonia/datamodels-toolkit#v0.3.2 check
+npx github:geolonia/datamodels-toolkit#v0.3.2 build
 ```
 
 `check` validates every schema and example. `build` writes the site into `_site/`; open `_site/index.html` to look at it. On GitHub, the workflow runs the same check on every pull request.
@@ -132,7 +132,7 @@ A published version must not change: data that names its `@context` relies on it
 Before you change anything, start the next version with `bump`. It keeps the published version online (its `@context`, vocabulary and schemas go into `models/road/releases/`), then raises the subject's `version` in `subject.yaml` and the version in its schema URLs. It refuses when the files differ from the published ones. Commit the result.
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.1 bump road minor
+npx github:geolonia/datamodels-toolkit#v0.3.2 bump road minor
 ```
 
 Then make the change. The site has both versions; see [URLs and versions](/en/guide/urls#versions) for which level (`patch`, `minor`, `major`) fits a change.
@@ -140,7 +140,7 @@ Then make the change. The site has both versions; see [URLs and versions](/en/gu
 To move the node to a newer toolkit, run `upgrade` and commit: it changes the version in the workflow and the README to the latest release (or the one given with `--to`). Dependabot also proposes new releases.
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.1 upgrade
+npx github:geolonia/datamodels-toolkit#v0.3.2 upgrade
 ```
 
 All commands and options: [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit#readme).
