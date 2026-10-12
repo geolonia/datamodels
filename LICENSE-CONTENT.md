@@ -11,7 +11,7 @@
 | 対象 | ライセンス |
 |---|---|
 | **機械が読むファイル**: JSON Schema（`schema.json`、`/schema/…`）、JSON-LD の context（`context.jsonld`、`/context/…`）、RDFS の語彙（`/vocab/…`）、例（`examples/`、`/examples/…`）、`catalog.yaml`、対応表（`mapping/*.yaml`、`/mapping/…`）、`catalog.json`、アダプターのファイル（`/adapters/…`） | [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/deed.ja) |
-| **文章**: モデルのフォルダの `notes.yaml` と `README.md`、https://datamodels.jp のページ（モデルのページ、サブジェクトのページ、ガイド） | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.ja) |
+| **文章**: モデルのフォルダの `notes.yaml` と `README.md`、https://datamodels.jp のページ（モデルのページ、分野のページ、ガイド） | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/deed.ja) |
 | **コード**: `models/` 以外のすべて（`site/`、`scripts/`、アダプターのコード、CI を含む） | Apache-2.0（リポジトリの `LICENSE`） |
 
 ライセンスはファイル単位で適用されます。機械が読むファイルの中の文章（スキーマのタイトルや説明、語彙のラベルなど）も、そのファイルの一部として CC0 です。

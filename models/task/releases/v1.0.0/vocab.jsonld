@@ -34,7 +34,7 @@
         "en": "Task management"
       },
       "comment": {
-        "ja": "作業を管理するためのデータです。何を、誰が、いつまでに、どのマイルストーンに向けてするかを表します。課題管理システムのチケット、カレンダーの ToDo、自治体の作業指示に共通する部分を扱い、状態と優先度は RFC 8984（JSCalendar）に合わせます。システム固有の呼び方は、エイリアスで使えます。",
+        "ja": "作業を管理するためのデータです。何を、誰が、いつまでに、どのマイルストーンに向けてするかを表します。課題管理システムのチケット、カレンダーの ToDo、自治体の作業指示に共通する部分を扱い、状態と優先度は RFC 8984（JSCalendar）に合わせます。システム固有の呼び方は、別名で使えます。",
         "en": "Data for tracking work: what needs to be done, by whom, by when and for which milestone. It covers what issue trackers, calendar to-dos and municipal work orders have in common; status and priority follow RFC 8984 (JSCalendar). System-specific names can be used with aliases."
       },
       "versionInfo": "1.0.0",
@@ -89,7 +89,7 @@
         "en": "assignee"
       },
       "comment": {
-        "ja": "担当する人、組織、チーム（そのエンティティ。このサブジェクトの外の URN でも構いません）。key-values 形式では、対象が 1 つでも配列です。",
+        "ja": "担当する人、組織、チーム（そのエンティティ。この分野の外の URN でも構いません）。key-values の形では、対象が 1 つでも配列です。",
         "en": "Assignees: person, organisation or team entities, possibly outside this subject. Always an array in the key-values form, even with one target"
       },
       "isDefinedBy": "https://datamodels.jp/ns/task/",
@@ -310,7 +310,7 @@
         "en": "relatedTo"
       },
       "comment": {
-        "ja": "関連するタスク。key-values 形式では、対象が 1 つでも配列です。関係の種類（blocks、precedes、duplicates など）は拡張で表します。",
+        "ja": "関連するタスク。key-values の形では、対象が 1 つでも配列です。関係の種類（blocks、precedes、duplicates など）は拡張で表します。",
         "en": "Related tasks. Always an array in the key-values form, even with one target. The kind of relation (blocks, precedes, duplicates) is left to extensions"
       },
       "isDefinedBy": "https://datamodels.jp/ns/task/",

@@ -12,7 +12,7 @@ body:
     id: model
     attributes:
       label: 拡張したモデル / Model you extended
-      description: サブジェクト/型、例 transportation/RoadRestriction / subject/Type, for example transportation/RoadRestriction
+      description: 分野/型、例 transportation/RoadRestriction / subject/Type, for example transportation/RoadRestriction
     validations:
       required: true
   - type: input
@@ -43,7 +43,7 @@ body:
     id: version
     attributes:
       label: 基にしたバージョン / Version it builds on
-      description: サブジェクトのバージョン、例 1.0.0 / The subject version, for example 1.0.0
+      description: 分野のバージョン、例 1.0.0 / The subject version, for example 1.0.0
     validations:
       required: true
   - type: input

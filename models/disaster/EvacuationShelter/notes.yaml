@@ -1,5 +1,5 @@
 notes:
-  - ja: "高松市の水防本部アプリの Custom Data Model から派生したモデルです（2026 年 9 月。元のソースは非公開）。型名はテナント固有の接頭辞「Saitai」を外して一般化し、属性名はタスク管理のサブジェクトに合わせました。"
+  - ja: "高松市の水防本部アプリの Custom Data Model から派生したモデルです（2026 年 9 月。元のソースは非公開）。型名はテナント固有の接頭辞「Saitai」を外して一般化し、属性名はタスク管理の分野に合わせました。"
     en: Derived from the Custom Data Models of the Takamatsu City flood-prevention headquarters application (September 2026; its source is not public). Type names generalised from the tenant-specific "Saitai" prefix; attribute names aligned with the task subject.
   - ja: "元のアプリからの変更：status は openingStatus にしました（open、closed、full、requested に正規化し、現場の呼び方は statusLabel に残す）。避難者数は整数にしました（元は文字列）。memo は description にしました。requested は、元のアプリの「依頼中」（開設を依頼・指示されたが、まだ確認できていない状態）にあたります。"
     en: "From the source application: status → openingStatus, normalised to open | closed | full | requested, with the local wording in statusLabel; evacuee counts are integers (strings in the source); memo → description. requested covers the application's 依頼中 (opening requested or instructed, not yet confirmed)."
