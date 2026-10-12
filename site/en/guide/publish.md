@@ -61,9 +61,9 @@ sites.csv: shift_jis, 198 row(s), 198 valid EvacuationSite, 0 invalid
 
 ## 3. Publish {#publish}
 
-- **Where:** add `sites.json` to the same dataset as the CSV, as one more resource, with the format JSON. Keep the CSV: people and apps use it. Any file name works; the name of the CSV with `.json` at the end shows which CSV it comes from.
+- **Where:** add `sites.json` to the same dataset as the CSV, as one more resource, with the format JSON. Keep the CSV: people and apps use it. Any file name works; the CSV's name with `.json` instead of `.csv` shows which CSV it comes from.
 - **Licence:** the same licence as your CSV. The JSON is the same data in another form.
-- **Description:** in the description of the resource or the dataset, name the model you used: its page, and the URLs of its JSON Schema and @context. With the JSON Schema, anyone can validate the JSON. The @context is a file that links each attribute name to a name that is unique on the web; people who use the data as linked data read it. Use the version alias (`v1`) in these URLs. It moves only to compatible versions, so your JSON stays valid ([URLs and versions](/en/guide/urls)).
+- **Description:** in the description of the resource or the dataset, name the model you used: its page, and the URLs of its JSON Schema and @context. With the JSON Schema, anyone can validate each entity in the JSON: the file is a list of entities, and the schema describes one. The @context is a file that links each attribute name to a name that is unique on the web; people who use the data as linked data read it. Use the version alias (`v1`) in these URLs. It moves only to compatible versions, so your JSON stays valid ([URLs and versions](/en/guide/urls)).
 - **Updates:** when the CSV changes, convert it again with the same command and replace the JSON, so that both always hold the same data.
 
 An example description:
