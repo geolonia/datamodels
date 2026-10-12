@@ -41,6 +41,7 @@ npm run check            # validate models, build dist/, check immutability, dry
 npm test                 # validator, vocabulary and adapter tests
 npm run site:dev         # local site with generated model pages
 npm run check:live       # verify the deployed site against the URL contract and the manifest
+npm run dist:diff        # build origin/main (or --base <ref>) and this tree, list what differs in dist/; CI shows it on every pull request
 npm run manifest:record  # snapshot the current version and record its hashes (maintainers, last step before merging)
 npm run new-model -- <subject> <Type> [--value]   # scaffold a model; the validator lists the TODOs left
 npm run rerecord -- <subject> [...]               # pre-release only, maintainers: correct the current version in place
