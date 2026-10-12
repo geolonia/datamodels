@@ -60,7 +60,7 @@ Terms a node reuses (from datamodels.jp, another node, NGSI-LD, schema.org) keep
 
 ## 3. The index (`catalog.json`)
 
-The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.json) ([schema](https://datamodels.jp/catalog.schema.json)), with fewer required fields and three additions. A tool written for the node format can also read datamodels.jp's `catalog.json`, which carries every field a node requires (except `publisher`, which it will add). The other way round does not work yet: `catalog.schema.json` requires more fields and knows neither the additions nor `experimental`. Adopting this format means extending that schema, with the toolkit library (geolonia/datamodels-toolkit#10).
+The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.json) ([schema](https://datamodels.jp/catalog.schema.json)), with fewer required fields and three additions. A tool written for the node format can also read datamodels.jp's `catalog.json`, which carries every field a node requires, `publisher` included. The other way round works only in part: `catalog.schema.json` now describes `publisher`, `nodes` and `experimental`, but not yet `extends`, and it requires more fields for each model (the attributes, sample properties and page URL, among others). Describing `extends` there completes the format, with the toolkit library (geolonia/datamodels-toolkit#10).
 
 ```json
 {
@@ -129,7 +129,8 @@ The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.
 
 - A node's index is always at `/catalog.json`.
 - Every page of a node links to it: `<link rel="alternate" type="application/json" href="/catalog.json">`.
-- `nodes` and `extends` link indexes to each other. datamodels.jp keeps a list of the nodes it knows (`nodes.yaml`); a node asks to be listed with the issue form `site-listing.yml`. `npm run nodes` reads their indexes into a snapshot (`nodes.snapshot.json`) that is reviewed in a pull request; the site shows the nodes (/guide/sites, one row each) and, on each catalog model's page, the node models built on it (their `extends`, `aliasOf`, `subClassOf`), with their @context and the attributes they add. Added means: an attribute in the node's `attributes` whose IRI no catalog model it builds on has; `npm run nodes` records them in the snapshot. The same section holds the extensions listed with the form (`extensions/*.yaml`); one that a node already shows is shown once, from the node.
+- `nodes` and `extends` link indexes to each other. datamodels.jp keeps a list of the nodes it knows (`nodes.yaml`) and lists them under `nodes` in its own `catalog.json`; a node asks to be listed with the issue form `site-listing.yml`. `npm run nodes` reads their indexes into a snapshot (`nodes.snapshot.json`) that is reviewed in a pull request; the site shows the nodes (/guide/sites, one row each) and, on each catalog model's page, the node models built on it (their `extends`, `aliasOf`, `subClassOf`), with their @context and the attributes they add. Added means: an attribute in the node's `attributes` whose IRI no catalog model it builds on has; `npm run nodes` records them in the snapshot. The same section holds the extensions listed with the form (`extensions/*.yaml`); one that a node already shows is shown once, from the node.
+- `npm run nodes` also reports the nodes that the known nodes link to but `nodes.yaml` does not list yet, to propose in a pull request. The toolkit's `datamodels nodes` follows the same links from any index, and `datamodels search` finds models across the nodes it reaches (#222).
 - A node that is down or gone is skipped; nobody's build fails because of it.
 
 ## 6. DCAT

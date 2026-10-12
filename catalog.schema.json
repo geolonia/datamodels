@@ -18,6 +18,29 @@
       "type": "string",
       "format": "date-time"
     },
+    "publisher": {
+      "type": "object",
+      "description": "Who publishes the catalog: a name per language and a URL, as in the node format (docs/node.md).",
+      "required": [
+        "name",
+        "url"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
     "license": {
       "type": "string",
       "description": "SPDX identifier of the licence of catalog.json and of every file it lists (schemas, contexts, vocabularies, examples, mapping files, adapter files): CC0-1.0. The prose of the pages is CC BY 4.0; see licenseUrl."
@@ -26,6 +49,30 @@
       "type": "string",
       "format": "uri",
       "description": "The licence terms of the catalog files and pages."
+    },
+    "nodes": {
+      "type": "array",
+      "description": "Other data model nodes that datamodels.jp knows (nodes.yaml, reviewed in a pull request): each by its base URL and the URL of its catalog.json. Tools find the network of nodes by following these links (docs/node.md, section 5).",
+      "items": {
+        "type": "object",
+        "required": [
+          "url",
+          "index"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "The node's base URL."
+          },
+          "index": {
+            "type": "string",
+            "format": "uri",
+            "description": "The node's catalog.json."
+          }
+        }
+      }
     },
     "models": {
       "type": "array",

@@ -20,6 +20,7 @@ import { spawnSync } from 'node:child_process';
 import { build as vitepressBuild } from 'vitepress';
 import { generatePages } from './generate-pages.mjs';
 import { publishModels } from './lib/publish.mjs';
+import { readNodeList } from './lib/nodes.mjs';
 import { llmsTxt } from './lib/llms.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -42,7 +43,7 @@ await rm(out, { recursive: true, force: true });
 await vitepressBuild(site, { outDir: out });
 
 await cp(src, out, { recursive: true });
-const published = await publishModels(subjects, adapters);
+const published = await publishModels(subjects, adapters, { nodes: await readNodeList() });
 await writeFile(join(out, 'llms.txt'), await llmsTxt(subjects));
 
 // The hosting contract depends on these files being served. Fail loudly

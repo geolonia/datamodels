@@ -18,7 +18,7 @@ Such a model still needs what the catalog gives its models: a fixed URL for the 
 | | This catalog | Your own site | Smart Data Models |
 |---|---|---|---|
 | For | Models many organisations in Japan share | Your project or organisation | The FIWARE community worldwide |
-| Who decides | A small group, in issues and pull requests ([Contributing](/en/guide/contribute)) | You | The Smart Data Models maintainers |
+| Who decides | A small group, in issues and pull requests ([who decides](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md#stages-and-who-decides)) | You | The Smart Data Models maintainers |
 | Languages | Japanese and English | Your choice; one is enough | English |
 | Address | datamodels.jp | Your domain | smartdatamodels.org |
 
@@ -45,4 +45,4 @@ A model on your site can build on a model of this catalog ([`extend`](/en/toolki
 
 ## Later: from your site to this catalog {#later}
 
-When a model on your site turns out useful to others in Japan, propose it here like any other model ([Contributing](/en/guide/contribute)). How such a model moves, and what happens to its old IRIs, is not decided yet ([#200](https://github.com/geolonia/datamodels/issues/200)). Until then, data that uses your site's IRIs keeps working: your site stays where it is.
+When a model on your site turns out useful to others in Japan, propose it here like any other model ([Contributing](/en/guide/contribute#model-proposal)). How such a model moves, and what happens to its old IRIs, is not decided yet ([#200](https://github.com/geolonia/datamodels/issues/200)). Until then, data that uses your site's IRIs keeps working: your site stays where it is.

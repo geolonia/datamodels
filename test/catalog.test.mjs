@@ -6,7 +6,8 @@ import { join } from 'node:path';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { loadSubjects, modelUrls, BASE_URL, ROOT } from '../scripts/lib/models.mjs';
-import { catalogEntry, attributeEntries, CATALOG_LICENSE } from '../scripts/lib/publish.mjs';
+import { catalogEntry, attributeEntries, catalogHead, CATALOG_LICENSE } from '../scripts/lib/publish.mjs';
+import { readNodeList } from '../scripts/lib/nodes.mjs';
 
 const subjects = await loadSubjects();
 const schema = JSON.parse(await readFile(join(ROOT, 'catalog.schema.json'), 'utf8'));
@@ -21,6 +22,18 @@ test('the catalog validates, with its licence', () => {
   assert.equal(catalog.licenseUrl, `${BASE_URL}/LICENSE-CONTENT`);
   for (const field of ['license', 'licenseUrl']) assert.ok(schema.properties[field], `${field} is in catalog.schema.json`);
   for (const field of ['pageUrlEn', 'exampleUrls', 'mappingUrls']) assert.ok(schema.properties.models.items.properties[field], `${field} is in catalog.schema.json`);
+});
+
+test('the catalog lists the nodes of nodes.yaml, so tools that start here find them (#222)', async () => {
+  const nodes = await readNodeList();
+  assert.ok(nodes.length, 'nodes.yaml lists a node');
+  const catalog = { ...catalogHead(nodes), models: models.map((x) => x.entry) };
+  assert.ok(validate(catalog), ajv.errorsText(validate.errors));
+  assert.deepEqual(catalog.nodes, nodes.map(({ url, index }) => ({ url, index })));
+  assert.deepEqual(Object.keys(catalog), ['formatVersion', 'generatedAt', 'publisher', 'license', 'licenseUrl', 'nodes', 'models']);
+  assert.deepEqual(catalog.publisher, { name: { ja: '株式会社Geolonia', en: 'Geolonia Inc.' }, url: 'https://geolonia.com/' });
+  // No nodes, no empty list.
+  assert.equal(catalogHead([]).nodes, undefined);
 });
 
 test('every model lists its Japanese and English pages and its example files', () => {

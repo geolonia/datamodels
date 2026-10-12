@@ -206,7 +206,7 @@ const M = {
     fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く', standardLicence: 'この標準のライセンス', mappingFile: (file, guide, converts) => `${converts ? 'この標準のデータを変換するための対応表' : 'この標準との対応表'}（YAML）: ${file}（説明は${guide('対応表')}）`, notesTitle: '注記',
     sourceFiles: (href) => `ソースファイル（注記、対応表）は [GitHub](${href}) にあります。`,
     addedTerms: '足した属性', inlineContext: 'データの中に記述', dataLink: 'データ',
-    reportExtension: (form, guide, toolkit, sites) => `このモデルを拡張して[ツールキット](${toolkit})のサイトで公開しているなら、サイトが[サイトの一覧](${sites})に載ると、このページにも載ります。サイトが無いときは、[フォームで登録してください](${form})。ほかの組織が同じ名前を使えます（[フォームの書き方](${guide})）。`,
+    reportExtension: (form, guide, toolkit, sites) => `このモデルを拡張して[ツールキット](${toolkit})のサイトで公開しているなら、サイトが[サイトの一覧](${sites})に載ると、このページにも載ります。サイトが無いときは、[フォームで登録してください](${form})。ほかの組織が同じ名前を使えます（[進め方](${guide})）。`,
     builtOn: 'このモデルをもとにしたもの', who: 'サイト・組織', model: 'モデル', relation: '関係', listed: '登録された拡張',
     builtOnNote: (sites, form) => `このモデルをもとにした、ほかのサイトのモデルと、組織が登録した拡張です。サイトのモデルは各サイトの索引（catalog.json）から読み、取り込むときに確認しています。拡張は持ち主の申告のまま載せています。モデルと属性の内容は、どちらも datamodels.jp では確認していません。同じ意味の属性が要るときは、ここにある名前を使えます。サイトの一覧は[データモデルのサイト](${sites})にあります。自分のサイトが無い組織は、拡張を[フォーム](${form})から登録できます。`,
     how: { alias: '別の名前の同じ型', subclass: '下位の型', extends: '属性を追加' }, versionOf: (v) => `（v${v}）`,
@@ -223,7 +223,7 @@ const M = {
     fieldsMapped: (n, total) => `${n} of ${total} fields`, openStandard: 'Open the standard', standardLicence: 'Licence of this standard', mappingFile: (file, guide, converts) => `${converts ? 'Mapping file (YAML) for converting data from this standard' : 'Mapping file (YAML) for this standard'}: ${file} (see ${guide('Mapping files')})`, notesTitle: 'Notes',
     sourceFiles: (href) => `The source files (notes, mapping tables) are on [GitHub](${href}).`,
     addedTerms: 'Added attributes', inlineContext: 'inside the data', dataLink: 'data',
-    reportExtension: (form, guide, toolkit, sites) => `Extended this model? If you publish it on a site made with the [toolkit](${toolkit}), it shows on this page once your site is on the [list of sites](${sites}). Without a site, [list your extension](${form}) so others can reuse your names ([how to fill in the form](${guide})).`,
+    reportExtension: (form, guide, toolkit, sites) => `Extended this model? If you publish it on a site made with the [toolkit](${toolkit}), it shows on this page once your site is on the [list of sites](${sites}). Without a site, [list your extension](${form}) so others can reuse your names ([how it works](${guide})).`,
     builtOn: 'Built on by others', who: 'Site or organisation', model: 'Model', relation: 'Relation', listed: 'listed extension',
     builtOnNote: (sites, form) => `Models on other sites that build on this one, and extensions that organisations listed. Site models are read from each site's index (catalog.json) and reviewed when they are taken in; extensions are listed as their owners reported them. datamodels.jp does not review the models or attributes themselves. If you need an attribute with the same meaning, you can use a name listed here. All sites: [Data model sites](${sites}). An organisation without a site of its own can list its extension with the [form](${form}).`,
     how: { alias: 'same type, another name', subclass: 'subtype', extends: 'added attributes' }, versionOf: (v) => ` (v${v})`,
@@ -302,7 +302,7 @@ function modelPage(lang, prefix, subject, model) {
   else {
     // One line per task; the Link header last, with its code block (wraps, custom.css).
     md += `- ${t.useGuide(`${prefix}/guide/use`)}\n- ${t.extendThis(`${prefix}/guide/builder?model=${subject.name}/${model.type}`)}\n`;
-    md += `- ${l.reportExtension(extensionForm(subject, model), `${prefix}/guide/list-extension`, `${prefix}/toolkit/`, `${prefix}/guide/sites`)}\n`;
+    md += `- ${l.reportExtension(extensionForm(subject, model), `${prefix}/guide/contribute#extension`, `${prefix}/toolkit/`, `${prefix}/guide/sites`)}\n`;
     const adapters = adapterLine(lang, prefix, subject, model, allAdapters);
     if (adapters) md += `- ${adapters.trim()}\n`;
     md += `- ${l.linkHeaderIntro}\n\n  \`\`\`http\n  Link: <${u.contextAlias}>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"\n  \`\`\`\n\n`;
@@ -319,7 +319,7 @@ function modelPage(lang, prefix, subject, model) {
     md += `${l.files}: ${files}${norm ? ` · ${t.playground(playgroundUrl(norm))}` : ''}\n\n`;
   }
   // Invite corrections where readers notice them: an issue titled after the type, or the proposal form.
-  md += `::: tip ${t.improveTitle}\n${t.improve(`${repo}/issues/new?title=${encodeURIComponent(`${model.type}: `)}`, `${repo}/issues/new?template=model-proposal.yml`, `${prefix}/guide/contribute`)} ${l.sourceFiles(`${repo}/tree/main/models/${subject.name}/${model.type}`)}\n:::\n\n`;
+  md += `::: tip ${t.improveTitle}\n${t.improve(`${repo}/issues/new?title=${encodeURIComponent(`${model.type}: `)}`, `${repo}/issues/new?template=model-proposal.yml`, `${prefix}/guide/contribute#model-proposal`)} ${l.sourceFiles(`${repo}/tree/main/models/${subject.name}/${model.type}`)}\n:::\n\n`;
   // The standards behind the model, one folded row each (custom.css .standards),
   // for readers who want to know where it comes from. A link to #mapping-<name>
   // opens its row (theme/index.ts).
@@ -466,7 +466,7 @@ const NODES = {
     title: 'データモデルのサイト', description: 'datamodels-toolkit で自分のデータモデルを公開している、datamodels.jp が知っているサイトの一覧',
     intro: (own) => `自分のサイト（ノード）でデータモデルを公開していて、datamodels.jp が知っているサイトです。1 行に 1 つのサイトで、モデルの数と、このカタログのどのモデルをもとにしているかを示します。サイトのモデルはこのカタログの一部ではなく、datamodels.jp は内容を確認していません。それぞれのサイトが自分のモデルを決めます。多くの人に役立つモデルは、カタログに提案できます。自分のサイトの作り方は[サイトを始める](${own})にあります。`,
     perModel: 'サイトのモデルは、それぞれのサイトで見られます。このカタログのモデルをもとにしたモデルは、そのモデルのページの「このモデルをもとにしたもの」にも、足した属性と一緒に載ります。',
-    add: (issue) => `自分のサイトを載せたいときは、[登録のフォーム](${issue})で知らせてください。各サイトの catalog.json から読み、取り込むときに確認しています。`,
+    add: (guide) => `各行は、サイトの catalog.json から読んでいます。自分のサイトを載せる手順は[貢献する](${guide})にあります。`,
     // Sites build on the catalog's models (the same diagram as on /guide/own-models).
     diagram: '<svg class="flow-diagram" viewBox="0 0 460 216" role="img" aria-label="datamodels.jp はカタログのモデルと、データモデルのサイトの一覧を公開します。models.gtt-project.org の Issue は、カタログの Task をもとにしています。自分のサイトのモデルも、カタログのモデルをもとにできます。どのサイトも catalog.json を公開します。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="sites-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box main" x="10" y="8" width="440" height="58" rx="10"/><text class="t" x="230" y="33">datamodels.jp</text><text class="s" x="230" y="53">カタログのモデル（Task など）と、サイトの一覧</text><rect class="box" x="10" y="150" width="210" height="58" rx="10"/><text class="t m" x="115" y="175">models.gtt-project.org</text><text class="s" x="115" y="194">Issue、catalog.json</text><rect class="box d" x="240" y="150" width="210" height="58" rx="10"/><text class="t" x="345" y="175">自分のサイト</text><text class="s" x="345" y="194">自分のモデル、catalog.json</text><line class="a" x1="115" y1="150" x2="115" y2="68" marker-end="url(#sites-ah)"/><text class="l" x="125" y="104">Issue は Task をもとにする</text><line class="a d" x1="345" y1="150" x2="345" y2="68" marker-end="url(#sites-ah)"/><text class="l e" x="335" y="128">もとにできる</text></svg>',
     none: 'まだありません。', site: 'サイト', licence: 'ライセンス', models: 'モデルの数', buildsOn: 'もとにしたカタログのモデル', read: '読んだ日',
@@ -475,7 +475,7 @@ const NODES = {
     title: 'Data model sites', description: 'Sites that publish their own data models with datamodels-toolkit and that datamodels.jp knows',
     intro: (own) => `Sites of their own (nodes) that publish data models and that datamodels.jp knows: one row per site, with how many models it has and which catalog models they build on. Their models are not part of this catalog, and datamodels.jp does not review them: each site decides about its own. A model that is useful to many can be proposed to the catalog. How to make a site: [Starting a site](${own}).`,
     perModel: 'Each site shows its own models. A model built on a catalog model is also listed on that model\'s page, under "Built on by others", with the attributes it adds.',
-    add: (issue) => `To have your site listed, use the [listing form](${issue}). The sites are read from their catalog.json and reviewed when they are taken in.`,
+    add: (guide) => `Each row is read from the site's catalog.json; to add your site, see [Contributing](${guide}).`,
     // Sites build on the catalog's models (the same diagram as on /guide/own-models).
     diagram: '<svg class="flow-diagram" viewBox="0 0 460 216" role="img" aria-label="datamodels.jp publishes the catalog\'s models and the list of data model sites. Issue on models.gtt-project.org builds on the catalog\'s Task. A model on your own site can build on a catalog model too. Every site publishes a catalog.json." xmlns="http://www.w3.org/2000/svg"><defs><marker id="sites-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box main" x="10" y="8" width="440" height="58" rx="10"/><text class="t" x="230" y="33">datamodels.jp</text><text class="s" x="230" y="53">Catalog models (Task and others) and the list of sites</text><rect class="box" x="10" y="150" width="210" height="58" rx="10"/><text class="t m" x="115" y="175">models.gtt-project.org</text><text class="s" x="115" y="194">Issue, catalog.json</text><rect class="box d" x="240" y="150" width="210" height="58" rx="10"/><text class="t" x="345" y="175">Your site</text><text class="s" x="345" y="194">Your models, catalog.json</text><line class="a" x1="115" y1="150" x2="115" y2="68" marker-end="url(#sites-ah)"/><text class="l" x="125" y="104">Issue builds on Task</text><line class="a d" x1="345" y1="150" x2="345" y2="68" marker-end="url(#sites-ah)"/><text class="l e" x="335" y="128">can build on it too</text></svg>',
     none: 'None yet.', site: 'Site', licence: 'Licence', models: 'Models', buildsOn: 'Builds on (catalog models)', read: 'Read on',
@@ -487,7 +487,7 @@ export function nodesPage(lang, prefix, nodes) {
   const n = NODES[lang];
   // One table and no sections: no outline column.
   let md = front(n.title, n.description).replace(/\n---\n\n$/, '\naside: false\n---\n\n');
-  md += `# ${n.title}\n\n${n.intro(`${prefix}/toolkit/start`)}\n\n${n.add('https://github.com/geolonia/datamodels/issues/new?template=site-listing.yml')}\n\n`;
+  md += `# ${n.title}\n\n${n.intro(`${prefix}/toolkit/start`)}\n\n${n.add(`${prefix}/guide/contribute#site-listing`)}\n\n`;
   if (!nodes.nodes?.length) return `${md}${n.none}\n`;
   md += `${n.diagram}\n\n`;
   md += `| ${n.site} | ${n.licence} | ${n.models} | ${n.buildsOn} | ${n.read} |\n|---|---|---|---|---|\n`;

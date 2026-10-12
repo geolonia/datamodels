@@ -27,3 +27,24 @@ test('the model page fills in the extension form\'s model field, and the catalog
   assert.ok(ext.body.some((b) => b.id === 'model'), 'model pages link ?model=<subject>/<Type>');
   assert.ok(Object.fromEntries(forms)['catalog-report.yml']);
 });
+
+test('every issue form has its own section on Contributing, in both languages, and the merged pages redirect to theirs', async () => {
+  const pages = await Promise.all(['site/guide/contribute.md', 'site/en/guide/contribute.md'].map((p) => readFile(join(ROOT, p), 'utf8')));
+  // Each section has an explicit {#id} and links its form.
+  const sections = { 'model-proposal.yml': 'model-proposal', 'extension-report.yml': 'extension', 'site-listing.yml': 'site-listing', 'catalog-report.yml': 'catalog' };
+  for (const [f] of forms) {
+    const id = sections[f];
+    assert.ok(id, `${f}: give the form a section on Contributing (and an entry here)`);
+    for (const page of pages) {
+      const section = page.split(new RegExp(`^## .*\\{#${id}\\}$`, 'm'))[1]?.split(/^## /m)[0];
+      assert.ok(section, `${f}: no section {#${id}}`);
+      assert.ok(section.includes(`(https://github.com/geolonia/datamodels/issues/new?template=${f})`), `${f}: the section {#${id}} links its form`);
+    }
+  }
+  const redirects = (await readFile(join(ROOT, 'public', '_redirects'), 'utf8')).split('\n').map((l) => l.trim().split(/\s+/));
+  const target = (from) => redirects.find(([x]) => x === from)?.slice(1).join(' ');
+  for (const [old, id] of [['list-extension', 'extension'], ['report-catalog', 'catalog']]) {
+    assert.equal(target(`/guide/${old}`), `/guide/contribute#${id} 301`);
+    assert.equal(target(`/en/guide/${old}`), `/en/guide/contribute#${id} 301`);
+  }
+});

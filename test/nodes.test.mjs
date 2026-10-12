@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { nodeEntry, builtOn, readNodeList, cleanText, cleanUrl, isIndex, catalogAttributeIris, shownByNode } from '../scripts/lib/nodes.mjs';
+import { nodeEntry, builtOn, readNodeList, cleanText, cleanUrl, isIndex, catalogAttributeIris, shownByNode, unlistedNodes } from '../scripts/lib/nodes.mjs';
 import { loadSubjects } from '../scripts/lib/models.mjs';
 import { renderModelPage, nodesPage } from '../scripts/lib/site.mjs';
 
@@ -80,6 +80,23 @@ test('builtOn finds aliases, subtypes and extensions of a type IRI', () => {
   assert.deepEqual(builtOn({ nodes: [] }, TASK), []);
 });
 
+test('npm run nodes reports the nodes the known nodes link to that nodes.yaml does not list (#222)', () => {
+  const A = { url: 'https://a.example.org/', index: 'https://a.example.org/catalog.json' };
+  const B = { url: 'https://b.example.org/', index: 'https://b.example.org/catalog.json' };
+  const read = [
+    { node: A, catalog: { nodes: [{ url: 'https://datamodels.jp/', index: 'https://datamodels.jp/catalog.json' }, B, { url: 'https://new.example.org/', index: 'https://NEW.example.org/catalog.json' }, { index: 'not a url' }], models: [] } },
+    { node: B, catalog: { models: [{ type: 'X', extends: [{ typeIri: 'https://new.example.org/ns#Y', version: '1.0.0', index: 'https://new.example.org/catalog.json' }, { index: 'https://other.example.org/catalog.json' }] }] } },
+  ];
+  assert.deepEqual(unlistedNodes([A, B], read), [
+    { index: 'https://new.example.org/catalog.json', from: [A.index, B.index] },
+    { index: 'https://other.example.org/catalog.json', from: [B.index] },
+  ]);
+  assert.deepEqual(unlistedNodes([A, B], [{ node: A, catalog: {} }]), []);
+  // A #fragment is never sent: catalog.json#models is the listed index, and a new one is reported once, without it.
+  const withFragments = [{ node: A, catalog: { nodes: [{ index: 'https://b.example.org/catalog.json#models' }, { index: 'https://new.example.org/catalog.json#x' }, { index: 'https://new.example.org/catalog.json' }], models: [] } }];
+  assert.deepEqual(unlistedNodes([A, B], withFragments), [{ index: 'https://new.example.org/catalog.json', from: [A.index] }]);
+});
+
 test('nodes.yaml needs a url and an index for every node', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'datamodels-nodes-'));
   const file = join(dir, 'nodes.yaml');
@@ -129,8 +146,9 @@ test('the Task page lists the models of other sites built on it, with what they 
   assert.doesNotMatch(page, /Ride/, 'no table of every model');
   assert.match(page, /^<svg class="flow-diagram" [^\n]*<\/svg>\n\n\| Site \|/m, 'the diagram on one line, above the table');
   assert.match(nodesPage('ja', '', { nodes: [] }), /まだありません。/);
-  // Both languages send a site to the listing form, not to a blank issue.
-  for (const p of [page, nodesPage('ja', '', snapshot)]) assert.ok(p.includes('(https://github.com/geolonia/datamodels/issues/new?template=site-listing.yml)'), 'the site-listing form');
+  // Both languages send a site to its section of Contributing, which links the listing form.
+  assert.ok(page.includes('(/en/guide/contribute#site-listing)'), 'the site-listing section, in English');
+  assert.ok(nodesPage('ja', '', snapshot).includes('(/guide/contribute#site-listing)'), 'the site-listing section, in Japanese');
   assert.doesNotMatch(nodesPage('ja', '', { nodes: [] }), /<svg/, 'no diagram without sites');
   const own = { nodes: [nodeEntry(NODE, { models: [{ type: 'Ride', typeIri: 'https://models.example.org/ns/x#Ride' }] }, '2026-10-11')] };
   assert.match(nodesPage('en', '/en', own), /\| 1 \| — \| 2026-10-11 \|/, 'a site that builds on no catalog model');

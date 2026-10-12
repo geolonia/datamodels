@@ -36,6 +36,13 @@
 /toolkit/sites /guide/sites 301
 /en/toolkit/sites /en/guide/sites 301
 
+# The pages that asked readers to send something were merged into Contributing on 2026-10-12: one section
+# per issue form. "Listing your extension" and "Telling us about another catalog" open their section.
+/guide/list-extension /guide/contribute#extension 301
+/en/guide/list-extension /en/guide/contribute#extension 301
+/guide/report-catalog /guide/contribute#catalog 301
+/en/guide/report-catalog /en/guide/contribute#catalog 301
+
 # The lists by model of the generic adapter files were removed on 2026-10-12: each model page has the
 # files under "Download", and /adapters/ explains each file in its own section. /adapters/geonicdb/ stays.
 /adapters/csv/ /adapters/#csv 301

@@ -18,7 +18,7 @@ description: このカタログに合わないデータモデルの公開先：�
 | | このカタログ | 自分のサイト | Smart Data Models |
 |---|---|---|---|
 | 向いているモデル | 日本の多くの組織で共有するモデル | 自分のプロジェクトや組織のモデル | 世界の FIWARE コミュニティ向けのモデル |
-| 決める人 | 小さなグループ（Issue と Pull Request で。[貢献する](/guide/contribute)） | 自分 | Smart Data Models のメンテナー |
+| 決める人 | 小さなグループ（Issue と Pull Request で。[決め方](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md#段階と決め方)） | 自分 | Smart Data Models のメンテナー |
 | 言語 | 日本語と英語 | 自由（1 つでよい） | 英語 |
 | アドレス | datamodels.jp | 自分のドメイン | smartdatamodels.org |
 
@@ -45,4 +45,4 @@ description: このカタログに合わないデータモデルの公開先：�
 
 ## あとからこのカタログへ {#later}
 
-自分のサイトのモデルが日本のほかの組織にも役立つとわかったら、ほかのモデルと同じように提案してください（[貢献する](/guide/contribute)）。モデルをどう移すか、古い IRI をどう扱うかは、まだ決まっていません（[#200](https://github.com/geolonia/datamodels/issues/200)）。それまでも、自分のサイトはそのまま残るので、その IRI を使っているデータは動き続けます。
+自分のサイトのモデルが日本のほかの組織にも役立つとわかったら、ほかのモデルと同じように提案してください（[貢献する](/guide/contribute#model-proposal)）。モデルをどう移すか、古い IRI をどう扱うかは、まだ決まっていません（[#200](https://github.com/geolonia/datamodels/issues/200)）。それまでも、自分のサイトはそのまま残るので、その IRI を使っているデータは動き続けます。

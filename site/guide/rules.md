@@ -5,7 +5,7 @@ description: このカタログのモデルが守るルール、独自の型を�
 
 # モデルのルール
 
-このページは、カタログにモデルを足したり変えたりする人向けです。提案の仕方と決め方は[貢献する](/guide/contribute)にあります。
+このページは、カタログにモデルを足したり変えたりする人向けです。提案の仕方は[貢献する](/guide/contribute)に、決め方は [CONTRIBUTING.md](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md#段階と決め方) にあります。
 
 ## まず使い回し、足りないものだけ定義する
 

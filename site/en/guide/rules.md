@@ -5,7 +5,7 @@ description: The rules for models in this catalog, when to define a new type, ma
 
 # Rules for models
 
-This page is for people who add or change models in the catalog. How to propose and who decides is in [Contributing](/en/guide/contribute).
+This page is for people who add or change models in the catalog. How to propose is in [Contributing](/en/guide/contribute); who decides is in [CONTRIBUTING.md](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md#stages-and-who-decides).
 
 ## Reuse first, define only what is missing
 
