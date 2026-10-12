@@ -36,5 +36,5 @@ Data written with `responsibleTeam` means exactly the same as data written with 
 
 ## Related
 
-- [Adding attributes](/en/guide/extend): when you need to **add** attributes
+- [Which page do I need?](/en/guide/#which): when aliases are not enough
 - [Use with GeonicDB](/en/guide/geonicdb): what registering does, your own attributes, registering under your own names

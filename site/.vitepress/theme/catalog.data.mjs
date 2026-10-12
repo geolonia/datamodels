@@ -1,7 +1,7 @@
 // Build-time data for the extension builder (ExtensionBuilder.vue): every
 // entity model with its schema and URLs, and the protected NGSI-LD core terms.
 // VitePress runs this in Node at build time and bundles the result with the
-// component, so only the builder page carries it.
+// component, so only the page with the builder (/guide/extend) carries it.
 import { readFileSync } from 'node:fs'
 import { loadSubjects, subjectUrls, modelUrls, attributesOf, resolveContextTerms, CORE_CONTEXT_FIXTURE } from '../../../scripts/lib/models.mjs'
 import { resolveContextDocument } from '../../../scripts/lib/releases.mjs'

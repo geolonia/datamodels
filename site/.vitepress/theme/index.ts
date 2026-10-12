@@ -2,7 +2,7 @@
 // filterable model list (ModelIndex.vue, used on /models/), the example
 // playground on model pages (ExamplePlayground.vue), pan and zoom for the
 // relationship graphs (GraphViewer.vue), the extension builder
-// (ExtensionBuilder.vue, on /guide/builder) and a
+// (ExtensionBuilder.vue, on /guide/extend) and a
 // pre-release banner above the navigation on every page. Remove the banner
 // (and --vp-layout-top-height in custom.css) at the official launch.
 // The 404 page (NotFound, below) speaks the language of the address.
@@ -134,7 +134,7 @@ export default {
     app.component('ExampleTabs', ExampleTabs)
     // Only model pages use it: its code stays out of the chunk every page loads.
     app.component('ExamplePlayground', defineAsyncComponent(() => import('./ExamplePlayground.vue')))
-    // Only /guide/builder uses it: its code and model data stay out of the chunk every page loads.
+    // Only /guide/extend uses it: its code and model data stay out of the chunk every page loads.
     app.component('ExtensionBuilder', defineAsyncComponent(() => import('./ExtensionBuilder.vue')))
   },
   Layout() {

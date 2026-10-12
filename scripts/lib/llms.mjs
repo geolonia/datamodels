@@ -8,21 +8,20 @@ import { subjectUrls, modelUrls, BASE_URL, ROOT } from './models.mjs';
 // Guides in the order of the sidebar (site/.vitepress/config.ts), after their
 // index ('' is the index page); one whose English page does not exist is left out.
 const GUIDES = [
-  ['', 'Guides', 'the index of the guides, in groups: using the models, adding to the catalog, models outside the catalog, reference'],
+  ['', 'Guides', 'the index of the guides, with a diagram of which page to read, in groups: using a model, adapting a model (more attributes, your own names), adding to the catalog, models outside the catalog, reference'],
   ['tutorial', 'Tutorial: from a CSV file to a map', 'one real open-data CSV converted into a catalog model, loaded into GeonicDB, queried and shown on a map, step by step'],
   ['use', 'Using the models', 'validate JSON, send it to an NGSI-LD broker, use it as linked data'],
   ['csv', 'Using a spreadsheet (CSV)', "fill in a model's CSV template, check it with frictionless validate against its Table Schema, and convert it into NGSI-LD entities (datamodels convert ... csv-template)"],
   ['postgis', 'Using PostgreSQL / PostGIS', "load a model's PostgreSQL / PostGIS table (constraints, spatial index, column comments with IRIs), insert a row and query by distance"],
   ['ai-extraction', 'Extracting data with AI', "give a model's AI schema to an AI model (OpenAI response_format json_schema, or a Claude tool's input_schema) to extract entities from an e-mail or a PDF, then add id and type and check against the JSON Schema"],
   ['geonicdb', 'Use with GeonicDB', 'register a catalog model in GeonicDB, then create and query entities'],
-  ['mapping', 'Mapping files', 'which field of a standard matches which attribute of a model, and the rules to convert a list; the catalog keeps them only for published standards that many lists follow'],
-  ['extend', 'Adding attributes', 'add attributes of your own to a catalog model without copying it, and where to host the result'],
-  ['builder', 'Extension builder', 'build the @context and JSON Schema for your own attributes on a catalog model, in the browser'],
+  ['extend', 'Adding attributes', 'add attributes of your own to a catalog model without copying it (an extension), and where to host the result; its extension builder makes the @context and JSON Schema in the browser'],
   ['names', 'Your own names', 'use your own attribute and type names with JSON-LD aliases, without changing the model'],
-  ['urls', 'URLs and versions', 'which URL to use, what never changes, versions and deprecation'],
   ['contribute', 'Contributing', 'how to take part: one section per issue form (propose a model or attributes, list an extension, list a data model site, tell us about another catalog) with what happens next; changing the files yourself follows CONTRIBUTING.md on GitHub'],
   ['rules', 'Rules for models', 'when to define a new type, the rules, mapping to standards, writing examples'],
   ['own-models', 'Your own data models', 'where to publish a model that does not belong in this catalog: your own site (a node) or Smart Data Models'],
+  ['mapping', 'Mapping files', 'which field of a standard matches which attribute of a model, and the rules to convert a list; the catalog keeps them only for published standards that many lists follow'],
+  ['urls', 'URLs and versions', 'which URL to use, what never changes, versions and deprecation'],
   ['catalogs', 'Other data model catalogs', 'catalogs and standards used globally and in Japan, and how this catalog relates to them'],
 ];
 

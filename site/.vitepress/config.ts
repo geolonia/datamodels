@@ -20,8 +20,10 @@ function addVPreToInlineCode(md: MarkdownIt) {
 
 // Guides explain the catalog and need no command: using the models, adding to the catalog, its rules,
 // and pages to look things up in. Everything done with the datamodels command is in the Toolkit section.
-// In groups: for people who use the models, for people who add to the catalog, for people whose models
-// belong elsewhere (the steps for that are in the Toolkit section), and reference.
+// In groups (#251): for people who use a model as it is, for people who adapt one (more attributes,
+// their own names), for people who add to the catalog, for people whose models belong elsewhere
+// (the steps for that are in the Toolkit section), and reference. The Guides index has a diagram
+// that picks the group.
 // One level only; the one exception is GeonicDB, the product-specific page, under the generic "Using the models".
 const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.SidebarItem[] => {
   const ja = lang === 'ja'
@@ -29,7 +31,7 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
     ({ text: ja ? jaText : enText, link: `${prefix}/guide/${slug}`, ...(items ? { items } : {}) })
   return [
     {
-      text: ja ? 'モデルを使う' : 'Use the models',
+      text: ja ? 'モデルを使う' : 'Use a model',
       items: [
         page('チュートリアル', 'Tutorial', 'tutorial'),
         // Its sub-pages start collapsed and open on this page or one of them.
@@ -43,9 +45,13 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
           ]),
           collapsed: true,
         },
-        page('対応表', 'Mapping files', 'mapping'),
+      ],
+    },
+    {
+      text: ja ? 'モデルを合わせる' : 'Adapt a model',
+      items: [
+        // The extension builder is a section of this page (#builder).
         page('属性を足す', 'Adding attributes', 'extend'),
-        page('拡張ビルダー', 'Extension builder', 'builder'),
         page('独自の名前で使う', 'Your own names', 'names'),
       ],
     },
@@ -70,6 +76,7 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
       text: ja ? '参照' : 'Reference',
       items: [
         page('対応している標準', 'Standards covered', 'standards'),
+        page('対応表', 'Mapping files', 'mapping'),
         page('URL とバージョン', 'URLs and versions', 'urls'),
         page('他のデータモデルカタログ', 'Other data model catalogs', 'catalogs'),
         // Generated from nodes.snapshot.json (scripts/lib/site.mjs).

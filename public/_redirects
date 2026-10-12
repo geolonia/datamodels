@@ -61,3 +61,8 @@
 /adapters/postgis /adapters/#postgis 301
 /en/adapters/postgis/ /en/adapters/#postgis 301
 /en/adapters/postgis /en/adapters/#postgis 301
+
+# The guides were split into "Use a model" and "Adapt a model" on 2026-10-12 (#251). The extension builder
+# became a section of "Adding attributes" ({#builder}). Model pages built before then link /guide/builder?model=...
+/guide/builder /guide/extend#builder 301
+/en/guide/builder /en/guide/extend#builder 301

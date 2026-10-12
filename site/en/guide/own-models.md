@@ -24,7 +24,7 @@ Such a model still needs what the catalog gives its models: a fixed URL for the 
 
 Not sure? Start on your own site. You can propose a model to this catalog later ([below](#later)).
 
-Only missing a few attributes in a model of this catalog? Then you need no model of your own: see [Adding attributes](/en/guide/extend).
+If a model of this catalog fits with a small change, you need no model of your own ([Which page do I need?](/en/guide/#which)).
 
 ## Your own site {#own-site}
 
