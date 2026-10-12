@@ -25,6 +25,14 @@ test('subclasses carry rdfs:subClassOf to the task types', () => {
   assert.equal(node(v, 'https://datamodels.jp/ns/probe/ReportProbe').subClassOf, 'https://datamodels.jp/ns/task/Task');
 });
 
+test('common value types are subclasses of their schema.org types', () => {
+  const v = buildVocabulary(byName('common'));
+  assert.equal(node(v, 'https://datamodels.jp/ns/common/ContactPoint').subClassOf, 'https://schema.org/ContactPoint');
+  assert.equal(node(v, 'https://datamodels.jp/ns/common/JapaneseAddress').subClassOf, 'https://schema.org/PostalAddress');
+  assert.equal(node(v, 'https://datamodels.jp/ns/common/OpeningHours').subClassOf, 'https://schema.org/OpeningHoursSpecification');
+  assert.equal(v['@context'].subClassOf['@id'], 'rdfs:subClassOf');
+});
+
 test('an alias owns no class; the aliased type is defined by its own subject', () => {
   const v = buildVocabulary(byName('disaster'));
   assert.equal(v['@graph'].some((n) => n['@id'] === 'https://datamodels.jp/ns/task/Project'), false);

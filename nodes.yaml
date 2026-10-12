@@ -4,5 +4,5 @@
 # request, so what they publish is reviewed before it appears on datamodels.jp.
 - url: https://models.gtt-project.org/
   index: https://models.gtt-project.org/catalog.json
-- url: https://dkastl.github.io/models/
-  index: https://dkastl.github.io/models/catalog.json
+- url: https://models.geolonia.com/
+  index: https://models.geolonia.com/catalog.json

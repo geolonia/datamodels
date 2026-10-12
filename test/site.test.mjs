@@ -60,3 +60,20 @@ test('model text shows <tags> and {{ braces }} as written; Markdown and code spa
   // The front matter keeps plain text (VitePress escapes meta tags itself); the body has no raw tag.
   assert.doesNotMatch(page.slice(page.indexOf('\n---\n') + 5), /<owner>|<b>bold/);
 });
+
+test('a subclass of a schema.org type links the external IRI; a catalog parent links its page', () => {
+  const common = subjects.find((s) => s.name === 'common');
+  for (const [type, parent] of [['ContactPoint', 'https://schema.org/ContactPoint'], ['JapaneseAddress', 'https://schema.org/PostalAddress'], ['OpeningHours', 'https://schema.org/OpeningHoursSpecification']]) {
+    const model = common.models.find((m) => m.type === type);
+    const en = renderModelPage('en', '/en', subjects, common, model);
+    const row = en.split('\n').find((l) => l.startsWith('| Subclass of |'));
+    assert.ok(row, `${type}: no Subclass of row`);
+    assert.ok(row.includes(`](<${parent}>)`), `${type}: ${row}`);
+    assert.doesNotMatch(row, /\]\(\/en\/models\//, `${type}: links a catalog page`);
+    assert.match(en, /<Badge type="info" text="subclass" \/>/);
+    assert.ok(renderModelPage('ja', '', subjects, common, model).includes(`](<${parent}>) のサブクラスです。親はこのカタログの外の型`), type);
+  }
+  const facility = subjects.find((s) => s.name === 'facility');
+  const toilet = renderModelPage('en', '/en', subjects, facility, facility.models.find((m) => m.type === 'PublicToilet'));
+  assert.match(toilet, /^\| Subclass of \| A subclass of \[Facility\]\(\/en\/models\/facility\/Facility\/\)/m);
+});

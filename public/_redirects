@@ -35,3 +35,22 @@
 # and the toolkit's skill link /en/toolkit/sites: keep these lines.
 /toolkit/sites /guide/sites 301
 /en/toolkit/sites /en/guide/sites 301
+
+# The lists by model of the generic adapter files were removed on 2026-10-12: each model page has the
+# files under "Download", and /adapters/ explains each file in its own section. /adapters/geonicdb/ stays.
+/adapters/csv/ /adapters/#csv 301
+/adapters/csv /adapters/#csv 301
+/en/adapters/csv/ /en/adapters/#csv 301
+/en/adapters/csv /en/adapters/#csv 301
+/adapters/table-schema/ /adapters/#table-schema 301
+/adapters/table-schema /adapters/#table-schema 301
+/en/adapters/table-schema/ /en/adapters/#table-schema 301
+/en/adapters/table-schema /en/adapters/#table-schema 301
+/adapters/ai/ /adapters/#ai 301
+/adapters/ai /adapters/#ai 301
+/en/adapters/ai/ /en/adapters/#ai 301
+/en/adapters/ai /en/adapters/#ai 301
+/adapters/postgis/ /adapters/#postgis 301
+/adapters/postgis /adapters/#postgis 301
+/en/adapters/postgis/ /en/adapters/#postgis 301
+/en/adapters/postgis /en/adapters/#postgis 301
