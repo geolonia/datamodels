@@ -240,7 +240,7 @@ print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))
 
 ## 他のツールで使う {#other-tools}
 
-NGSI-LD を読まないツール向けのファイルも、各モデルのページの**ダウンロード**の行にあります。それぞれの手順を、1 つの例で示しています。
+NGSI-LD を読まないツール向けのファイルも、エンティティのモデルのページ（Geometry などの値型を除く）の**ダウンロード**の行にあります。それぞれの手順を、1 つの例で示しています。
 
 - [表計算ソフトで使う](/guide/csv)：CSV テンプレートに入力し、`frictionless validate` で検査して、エンティティに変換します。
 - [PostgreSQL / PostGIS で使う](/guide/postgis)：制約付きのテーブルを作り、行を入れて、距離で検索します。

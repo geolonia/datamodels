@@ -233,7 +233,7 @@ Each subject also publishes a vocabulary (`/vocab/<subject>/v1.0.0.jsonld`, RDFS
 
 ## With other tools {#other-tools}
 
-Each model page also has files for tools that do not read NGSI-LD, in its **Download** row. Short recipes, each with one worked example:
+The page of each entity model (not of value types such as Geometry) also has files for tools that do not read NGSI-LD, in its **Download** row. Short recipes, each with one worked example:
 
 - [Spreadsheet / CSV](/en/guide/csv): fill in the CSV template, check it with `frictionless validate`, and convert it into entities.
 - [PostgreSQL / PostGIS](/en/guide/postgis): create the model's table with its constraints, add a row, and query by distance.

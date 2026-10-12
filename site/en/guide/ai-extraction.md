@@ -56,13 +56,13 @@ jq -n --slurpfile s EvacuationSite.ai.json --rawfile text notice.txt '{
 curl -sS https://api.anthropic.com/v1/messages \
   -H "x-api-key: $ANTHROPIC_API_KEY" -H "anthropic-version: 2023-06-01" \
   -H "Content-Type: application/json" --data @request.json \
-  | jq '.content[] | select(.type == "tool_use") | .input' > site.json
+  | jq -e 'first(.content[] | select(.type == "tool_use") | .input)' > site.json
 ```
 
 :::
 
 - **OpenAI API:** the file is the `json_schema` of `response_format` as it is, with `strict: true`. The answer has every attribute, with `null` where the text says nothing.
-- **Claude API:** the `schema` is the `input_schema` of a tool, and the answer is the tool's input. Claude's strict mode (`"strict": true` on the tool) takes at most 16 properties that may be `null` per request. EvacuationSite has more, so the example leaves strict out; the answer then usually follows the schema, and step 3 checks it. For a smaller model, or after you remove the attributes you do not need, add `"strict": true`.
+- **Claude API:** the `schema` is the `input_schema` of a tool, and the answer is the tool's input. The model in the example does not accept a forced `tool_choice`, so the system prompt asks for the tool; when the answer has no tool call, `jq -e` stops with an error, and you send the request again. Claude's strict mode (`"strict": true` on the tool) takes at most 16 properties that may be `null` per request. EvacuationSite has more, so the example leaves strict out; the answer then usually follows the schema, and step 3 checks it. For a smaller model, or after you remove the attributes you do not need, add `"strict": true`.
 - To get several sites from one text, put the schema into a list: `{"type": "object", "properties": {"sites": {"type": "array", "items": …}}}`, with `required` and `additionalProperties: false` as in the file.
 
 Read the providers' notes on structured outputs before you rely on them: [OpenAI](https://developers.openai.com/api/docs/guides/structured-outputs#supported-schemas), [Claude](https://platform.claude.com/docs/en/build-with-claude/structured-outputs).

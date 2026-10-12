@@ -20,6 +20,8 @@ docker run -d --name postgis -e POSTGRES_HOST_AUTH_METHOD=trust \
 until docker logs postgis 2>&1 | grep -q "init process complete"; do
   sleep 1
 done
+# そのあと、動き続けるサーバーが接続を受け付けるまで待つ。
+until docker exec postgis pg_isready -U postgres -q; do sleep 1; done
 ```
 
 `POSTGRES_HOST_AUTH_METHOD=trust` では、パスワードなしで誰でも接続できます。自分のコンピューターでの試験だけに使ってください。
