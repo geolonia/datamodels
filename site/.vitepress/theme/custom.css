@@ -401,6 +401,9 @@
 /* The h2 has no top padding here, so its anchor (#) moves back up to the text. */
 .vp-doc h2 .header-anchor { top: 0; }
 .flow-diagram .t.m { font-family: var(--vp-font-family-mono); font-size: 14px; }
+/* A link that is a line of text, not a box (the "which page" diagram on /guide/). */
+.flow-diagram a .k { fill: var(--vp-c-brand-1); font-weight: 600; }
+.vp-doc .flow-diagram a:hover .k { text-decoration: underline; }
 
 /* All URLs (guide/urls): the URL and its description share the width. */
 .vp-doc .url-list td:first-child { width: 50%; }

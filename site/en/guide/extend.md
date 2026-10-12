@@ -1,19 +1,26 @@
 ---
 title: Adding attributes
-description: Add attributes of your own to a catalog model without copying it, and where to host the result
+description: Add attributes of your own to a catalog model without copying it, and where to host the result; the extension builder makes the files in the browser
 ---
 
 # Adding attributes
 
 Often a catalog model fits, but your system needs a few more attributes. You do not need a new model, and you do not copy the catalog: you publish a small @context of your own that takes the catalog's @context and adds only your attributes. This is called an **extension** (technically, a profile of the model).
 
-::: tip The easiest way
-The [extension builder](/en/guide/builder) writes both files in the browser: your @context, and a JSON Schema that checks the catalog's attributes and yours.
-:::
-
 <svg class="flow-diagram" viewBox="0 0 460 330" role="img" aria-label="Your data names your @context. Your @context imports the catalog's @context, so the catalog attributes keep their meaning, and adds your own attributes, named under your own domain." xmlns="http://www.w3.org/2000/svg"><defs><marker id="ext-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="20" y="8" width="420" height="56" rx="10"/><text class="t" x="230.0" y="32">Your data</text><text class="s" x="230.0" y="51">a RoadRestriction with patrolRoute</text><line class="a" x1="230.0" y1="64" x2="230.0" y2="104" marker-end="url(#ext-ah)"/><text class="l" x="240.0" y="89">its @context</text><rect class="box main" x="20" y="106" width="420" height="128" rx="10"/><text class="t" x="230.0" y="130">Your @context (on your domain)</text><rect class="box" x="36" y="146" width="186" height="72" rx="10"/><text class="t" x="129.0" y="170">imports the catalog</text><text class="s" x="129.0" y="189">roadName, address …</text><rect class="box" x="238" y="146" width="186" height="72" rx="10"/><text class="t" x="331.0" y="170">adds yours</text><text class="s" x="331.0" y="189">patrolRoute</text><line class="a" x1="129" y1="218" x2="129" y2="262" marker-end="url(#ext-ah)"/><line class="a" x1="331" y1="218" x2="331" y2="262" marker-end="url(#ext-ah)"/><rect class="box" x="20" y="264" width="200" height="58" rx="10"/><text class="t" x="120.0" y="288">datamodels.jp</text><text class="s" x="120.0" y="307">the catalog's meaning</text><rect class="box" x="240" y="264" width="200" height="58" rx="10"/><text class="t" x="340.0" y="288">your namespace</text><text class="s" x="340.0" y="307">example.com/ns/acme/</text></svg>
 
-If no catalog model fits at all, propose one ([Contributing](/en/guide/contribute#model-proposal)). If only the names differ from how you call things, see [Your own names](/en/guide/names).
+If only the names differ, or no model fits, the [diagram in the Guides](/en/guide/#which) shows which page to read.
+
+## Extension builder {#builder}
+
+The easiest way is the extension builder. Pick the model and enter your attributes; you get two files:
+
+- **@context**: imports the catalog `@context` by URL and defines only your attributes, so the catalog attributes keep their meaning. It is written as in [the next section](#writing-a-profile).
+- **JSON Schema**: validates the catalog attributes and yours. It is a copy of the catalog schema at one version, so it does not follow new minor versions of the catalog ([When the catalog gets new attributes](#updates)).
+
+Use a namespace under a domain you control. If an attribute would be useful to many systems, please propose it to the catalog (link below the builder). What you enter stays on this page and is not sent anywhere, except when you open the link to the proposal form: to fill in the form, it sends to GitHub the model's type and, for each attribute you named, its name, NGSI-LD type, value type and format, whether it is required, and your description.
+
+<ExtensionBuilder lang="en" />
 
 ## Writing the @context {#writing-a-profile}
 
@@ -65,7 +72,7 @@ The catalog does not host your @context. You can list your extension on the mode
 
 ## When the catalog gets new attributes {#updates}
 
-Your @context takes the catalog's @context by its version alias (`v1.jsonld`), so new catalog attributes work in your data at once. The JSON Schema does not follow by itself: build it again with the extension builder.
+Your @context takes the catalog's @context by its version alias (`v1.jsonld`), so new catalog attributes work in your data at once. The JSON Schema does not follow by itself: build it again with the [extension builder](#builder).
 
 ## Starting from a Smart Data Models model
 

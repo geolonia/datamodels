@@ -301,7 +301,7 @@ function modelPage(lang, prefix, subject, model) {
   if (isValue) md += `${l.useValue(`${prefix}/guide/use#validate`)}\n\n`;
   else {
     // One line per task; the Link header last, with its code block (wraps, custom.css).
-    md += `- ${t.useGuide(`${prefix}/guide/use`)}\n- ${t.extendThis(`${prefix}/guide/builder?model=${subject.name}/${model.type}`)}\n`;
+    md += `- ${t.useGuide(`${prefix}/guide/use`)}\n- ${t.extendThis(`${prefix}/guide/extend?model=${subject.name}/${model.type}#builder`)}\n`;
     md += `- ${l.reportExtension(extensionForm(subject, model), `${prefix}/guide/contribute#extension`, `${prefix}/toolkit/`, `${prefix}/guide/sites`)}\n`;
     const adapters = adapterLine(lang, prefix, subject, model, allAdapters);
     if (adapters) md += `- ${adapters.trim()}\n`;
