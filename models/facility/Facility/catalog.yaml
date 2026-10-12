@@ -3,7 +3,7 @@ title:
   en: "Facility"
 description:
   ja: "自治体がオープンデータの一覧で公開する施設 1 か所のデータです。自治体標準オープンデータセットの施設のデータセットに共通する項目（名称、所在地、位置、公開する自治体、運営する組織、連絡先、利用できる時間）を持ちます。GIF のコアデータモデル「施設」に対応します。AED や公衆トイレなどの施設の種類ごとに、そのデータセットだけの項目を足した下位の型があります。"
-  en: "One facility that a municipality lists in its open data. It has what the facility datasets of the 自治体標準オープンデータセット share: name, address, location, the publishing municipality, the operator, contact and opening hours. It corresponds to GIF's core data model 施設 (facility). Subtypes per kind of facility, such as AEDs and public toilets, add the columns of their own dataset."
+  en: "One facility that a municipality lists in its open data. It has what the facility datasets of the 自治体標準オープンデータセット (municipal standard open datasets) share: name, address, location, the publishing municipality, the operator, contact and opening hours. It corresponds to GIF's core data model 施設 (facility). Subtypes per kind of facility, such as AEDs and public toilets, add the columns of their own dataset."
 status: draft
 tags:
   - facility

@@ -35,7 +35,7 @@
       },
       "comment": {
         "ja": "自治体が自治体標準オープンデータセットとして公開する、施設の一覧のデータです。名称、所在地、位置、連絡先、利用できる時間など、データセットに共通する項目を基本の型 Facility にまとめ、AED、公衆トイレ、医療機関のような施設の種類ごとに、そのデータセットだけの項目を持つ下位の型を定めます。GIF のコアデータモデル「施設」に対応しています。",
-        "en": "Lists of facilities that municipalities publish as 自治体標準オープンデータセット. The base type Facility holds what the datasets share (name, address, location, contact, opening hours); a subtype per kind of facility, such as AEDs, public toilets and medical institutions, adds the columns of its own dataset. It corresponds to GIF's core data model 施設 (facility)."
+        "en": "Lists of facilities that municipalities publish as 自治体標準オープンデータセット (municipal standard open datasets). The base type Facility holds what the datasets share (name, address, location, contact, opening hours); a subtype per kind of facility, such as AEDs, public toilets and medical institutions, adds the columns of its own dataset. It corresponds to GIF's core data model 施設 (facility)."
       },
       "versionInfo": "1.0.0",
       "seeAlso": "https://datamodels.jp/context/facility/v1.0.0.jsonld"
@@ -49,7 +49,7 @@
       },
       "comment": {
         "ja": "AED（自動体外式除細動器）1 台の設置場所のデータです。自治体が「AED設置箇所一覧」（自治体標準オープンデータセット 08）として公開する一覧の 1 行にあたります。Facility の下位の型で、建物の中での設置位置、小児用の設備の有無、一般の人が使えるかどうかを足しています。",
-        "en": "Where one AED (automated external defibrillator) is installed: one row of the list a municipality publishes as 自治体標準オープンデータセット dataset 08 (AED設置箇所一覧). A subtype of Facility that adds the position in the building, equipment for children, and whether the public can use it."
+        "en": "Where one AED (automated external defibrillator) is installed: one row of the list a municipality publishes as 自治体標準オープンデータセット (municipal standard open datasets) dataset 08 (AED設置箇所一覧). A subtype of Facility that adds the position in the building, equipment for children, and whether the public can use it."
       },
       "subClassOf": "https://datamodels.jp/ns/facility/Facility",
       "isDefinedBy": "https://datamodels.jp/ns/facility/",
@@ -64,7 +64,7 @@
       },
       "comment": {
         "ja": "自治体がオープンデータの一覧で公開する施設 1 か所のデータです。自治体標準オープンデータセットの施設のデータセットに共通する項目（名称、所在地、位置、公開する自治体、運営する組織、連絡先、利用できる時間）を持ちます。GIF のコアデータモデル「施設」に対応します。AED や公衆トイレなどの施設の種類ごとに、そのデータセットだけの項目を足した下位の型があります。",
-        "en": "One facility that a municipality lists in its open data. It has what the facility datasets of the 自治体標準オープンデータセット share: name, address, location, the publishing municipality, the operator, contact and opening hours. It corresponds to GIF's core data model 施設 (facility). Subtypes per kind of facility, such as AEDs and public toilets, add the columns of their own dataset."
+        "en": "One facility that a municipality lists in its open data. It has what the facility datasets of the 自治体標準オープンデータセット (municipal standard open datasets) share: name, address, location, the publishing municipality, the operator, contact and opening hours. It corresponds to GIF's core data model 施設 (facility). Subtypes per kind of facility, such as AEDs and public toilets, add the columns of their own dataset."
       },
       "isDefinedBy": "https://datamodels.jp/ns/facility/",
       "seeAlso": "https://datamodels.jp/models/facility/Facility/"
@@ -78,7 +78,7 @@
       },
       "comment": {
         "ja": "病院または診療所 1 か所のデータです。自治体が「医療機関一覧」（自治体標準オープンデータセット 10）として公開する一覧の 1 行にあたります。Facility の下位の型で、医療機関の種類、医療機関コード、診療科目、病床数、災害時の医療での役割（災害拠点分類）、時間外の対応を足しています。診療日と診療時間は openingHoursSpecification に入ります。",
-        "en": "One hospital or clinic: one row of the list a municipality publishes as 自治体標準オープンデータセット dataset 10 (医療機関一覧). A subtype of Facility that adds the kind of institution, the medical institution code, clinical departments, number of beds, its role in disaster medical care (災害拠点分類) and after-hours care. Consultation days and hours go into openingHoursSpecification."
+        "en": "One hospital or clinic: one row of the list a municipality publishes as 自治体標準オープンデータセット (municipal standard open datasets) dataset 10 (医療機関一覧). A subtype of Facility that adds the kind of institution, the medical institution code, clinical departments, number of beds, its role in disaster medical care (災害拠点分類) and after-hours care. Consultation days and hours go into openingHoursSpecification."
       },
       "subClassOf": "https://datamodels.jp/ns/facility/Facility",
       "isDefinedBy": "https://datamodels.jp/ns/facility/",
@@ -93,7 +93,7 @@
       },
       "comment": {
         "ja": "公衆トイレ 1 か所のデータです。自治体が「公衆トイレ一覧」（自治体標準オープンデータセット 13）として公開する一覧の 1 行にあたります。Facility の下位の型で、設置位置、種類ごとのトイレの数、バリアフリートイレ、車椅子使用者用、乳幼児用、オストメイト用の設備を足しています。",
-        "en": "One public toilet: one row of the list a municipality publishes as 自治体標準オープンデータセット dataset 13 (公衆トイレ一覧). A subtype of Facility that adds the installation location, the number of toilets by kind, and barrier-free, wheelchair, baby-care and ostomate facilities."
+        "en": "One public toilet: one row of the list a municipality publishes as 自治体標準オープンデータセット (municipal standard open datasets) dataset 13 (公衆トイレ一覧). A subtype of Facility that adds the installation location, the number of toilets by kind, and barrier-free, wheelchair, baby-care and ostomate facilities."
       },
       "subClassOf": "https://datamodels.jp/ns/facility/Facility",
       "isDefinedBy": "https://datamodels.jp/ns/facility/",

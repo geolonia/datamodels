@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://datamodels.jp/schema/facility/MedicalInstitution/v1.0.0.json",
   "title": "MedicalInstitution",
-  "description": "One hospital or clinic: one row of the list a municipality publishes as 自治体標準オープンデータセット dataset 10 (医療機関一覧)",
+  "description": "One hospital or clinic: one row of the list a municipality publishes as 自治体標準オープンデータセット (municipal standard open datasets) dataset 10 (医療機関一覧)",
   "x-subclass-of": "https://datamodels.jp/ns/facility/Facility",
   "x-version": "1.0.0",
   "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
