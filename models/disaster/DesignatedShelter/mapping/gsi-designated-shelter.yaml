@@ -25,5 +25,5 @@ fields:
   targetEvacuees: { to: 受入対象者, column: 受入対象者 }
   description: { to: 備考, column: 備考 }
   externalShelterId: { to: null, note: { ja: このデータには無い（NO は一覧の行番号）。nationalShelterId で識別する, en: "not in this data (NO is the row number); nationalShelterId identifies the shelter" } }
-  localGovernmentCode: { to: null, note: { ja: ファイル名の市町村コード（5桁）から導く。検査数字を足して6桁にする（--set localGovernmentCode=13101）, en: "derive from the 5-digit municipality code in the file name, adding the check digit (--set localGovernmentCode=13101)" }, transform: code6 }
+  localGovernmentCode: { to: null, note: { ja: ファイル名の市町村コード（5桁）から導く。検査数字を足して6桁にする（--set localGovernmentCode=131016）, en: "derive from the 5-digit municipality code in the file name, adding the check digit (--set localGovernmentCode=131016)" }, transform: code6 }
   maxCapacity: { to: null, note: { ja: このデータには無い, en: not in this data } }

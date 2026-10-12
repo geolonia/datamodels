@@ -22,11 +22,13 @@ const L = {
     search: 'モデル名・属性名・説明で絞り込む', subject: '分野', kind: '種類', status: '段階', all: 'すべて',
     type: '型', name: '名前', entity: 'エンティティ', value: '値型', count: (n: number, all: number) => `${all} 件中 ${n} 件`,
     none: '当てはまるモデルはありません。', models: (n: number) => `${n} モデル`, statusLabel: { draft: 'ドラフト', experimental: '試行', stable: '安定', deprecated: '非推奨' },
+    stages: '/guide/rules#stages', stagesTitle: '段階の意味',
   },
   en: {
     search: 'Filter by model, attribute or description', subject: 'Subject', kind: 'Kind', status: 'Stage', all: 'All',
     type: 'Type', name: 'Name', entity: 'entity', value: 'value type', count: (n: number, all: number) => `${n} of ${all} models`,
     none: 'No model matches.', models: (n: number) => (n === 1 ? '1 model' : `${n} models`), statusLabel: { draft: 'draft', experimental: 'experimental', stable: 'stable', deprecated: 'deprecated' },
+    stages: '/en/guide/rules#stages', stagesTitle: 'What the stages mean',
   },
 }[props.lang]
 
@@ -88,7 +90,7 @@ const badgeType = (s: Row['status']) => (s === 'stable' ? 'tip' : s === 'depreca
             <td>{{ m.title }}</td>
             <td><a :href="m.subjectHref">{{ m.subjectTitle }}</a></td>
             <td>{{ L[m.kind] }}</td>
-            <td><Badge :type="badgeType(m.status)" :text="L.statusLabel[m.status]" /></td>
+            <td><a class="stage-link" :href="L.stages" :title="L.stagesTitle"><Badge :type="badgeType(m.status)" :text="L.statusLabel[m.status]" /></a></td>
           </tr>
           <tr v-if="!shown.length"><td colspan="5">{{ L.none }}</td></tr>
         </tbody>

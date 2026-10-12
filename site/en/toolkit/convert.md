@@ -19,7 +19,7 @@ There are three ways, depending on your list:
 
 ## Your list follows a standard {#standard}
 
-If your list follows a standard that has a mapping file with conversion rules in the catalog, such as the municipal standard open datasets or the data of the Geospatial Information Authority of Japan (GSI), that mapping file converts it as it is. A mapping file without conversion rules only documents the standard; for such a list, make a mapping of your own (below). [Mapping files](/en/guide/mapping) explains how they work.
+If your list follows a standard that has a mapping file with conversion rules in the catalog, such as the municipal standard open datasets or the data of the Geospatial Information Authority of Japan (GSI), that mapping file converts it as it is. [Mapping files](/en/guide/mapping) explains how they work.
 
 ```bash
 npx @geolonia/datamodels@0.3.10 convert \

@@ -1,11 +1,21 @@
 ---
 title: Rules for models
-description: The rules for models in this catalog, when to define a new type, mapping to standards, and how to write examples
+description: What the catalog accepts, the rules for models in this catalog, when to define a new type, mapping to standards, how to write examples, and the stages of a model (draft and others)
 ---
 
 # Rules for models
 
-This page is for people who add or change models in the catalog. How to propose is in [Contributing](/en/guide/contribute); who decides is in [CONTRIBUTING.md](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md#stages-and-who-decides).
+This page is for people who add or change models in the catalog. How to propose is in [Contributing](/en/guide/contribute); who decides is in [CONTRIBUTING.md](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md#stages-and-who-decides). What "draft" and the other labels on a model page mean: [Stages](#stages).
+
+## What the catalog accepts {#accepts}
+
+The catalog only publishes models that meet all three of these:
+
+- **Built on an existing standard:** government or municipal guidelines, Smart Data Models, GIF, an RFC or similar. Record the upstream types you considered, and why they did not fit, in `notes.yaml`.
+- **Real data:** the model describes data that exists today, not a hypothetical use case.
+- **Product-neutral:** no product-specific annotations or type names. Files for particular products come from the [adapters](/en/adapters/).
+
+A model that only one project or organisation uses can go on your own site ([Your own data models](/en/guide/own-models)).
 
 ## Reuse first, define only what is missing
 
@@ -21,7 +31,7 @@ Using upstream where it fits does not mean bending everything to fit. Some upstr
 - the upstream type depends on a specific product or region;
 - adding attributes is not enough and the meaning would have to change (changing meaning is not allowed, so a new type is the honest option).
 
-Write the upstream types you looked at, and why they did not fit, in the model's `notes.yaml`, so nobody repeats the same work.
+Write the upstream types you looked at, and why they did not fit, in the model's `notes.yaml`, so nobody repeats the same work. A dated record of a change goes under `history`, not `notes`; the model page folds it away below the notes.
 
 So far, every model in the catalog is the catalog's own type; upstream names are used for some attributes. Each model's notes and [issue #16](https://github.com/geolonia/datamodels/issues/16) record why.
 
@@ -58,3 +68,21 @@ Every entity model has two examples (in the key-values form and the normalized f
 - **References**: a reference to another catalog type points at that type's example (Task's `project` is the Project example). References to the same type (`parent`, `relatedTo`) and to types the catalog does not define (`Person`, `Team`) are free. CI checks this.
 - **URLs**: source-system URLs use an example domain such as `tracker.example.jp`.
 - **Times**: local Japanese times carry `+09:00`.
+
+## Stages {#stages}
+
+Each model page shows the model's stage. A model is added as a draft when its pull request is merged; the table says what each stage means.
+
+| Stage | Meaning |
+|---|---|
+| Draft (`draft`) | Reviewed and in the catalog. It does not yet have implementations from two different organisations. It may still change in new versions before it is stable. For production use, we suggest waiting until it is stable. |
+| Experimental (`experimental`) | A model in use, to learn from. It may be replaced by another model. Rare in this catalog. |
+| Stable (`stable`) | Used by two different organisations in their own systems. |
+| Deprecated (`deprecated`) | Not for new data. It stays published, and its URLs do not change. The model page names the replacement, if there is one. |
+
+Whatever the stage, a published version never changes (from the official launch). A model changes through new versions ([URLs and versions](/en/guide/urls)).
+
+To become stable, a model needs two implementations from different organisations in its `ADOPTERS.yaml`. Each entry gives `name`, `organization` and a `url` (a public repository, documentation or a contact). CI checks that two organisations are listed. The reviewer of the pull request that sets `stable` checks that they are real and independent.
+
+- An implementation by Geolonia, which runs the catalog, counts as one on the same terms. The other must come from a different organisation.
+- One organisation counts once, whatever the customer or project. `organization` names the organisation that built it.

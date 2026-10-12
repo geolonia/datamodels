@@ -41,7 +41,7 @@ fields:
 
 ## Conversion rules {#convert}
 
-Only some mapping files have conversion rules; most only document how the model relates to the standard. A row with rules says how to fill its attribute:
+Only some mapping files have conversion rules ([which standards have a mapping](/en/guide/rules#mapping)). A row with rules says how to fill its attribute:
 
 - `column`: the column of the CSV, or a list of columns for a transform that reads several.
 - `transform`: how to read the column ([Transforms](#transforms)). Without one, the text is taken as it is.
@@ -134,6 +134,6 @@ convert:
 
 ## Adding a mapping
 
-The catalog has mapping files only for published standards that many lists follow. One organisation's own list gets no mapping file in the catalog: convert it with a mapping of your own, kept with the list ([Converting your data](/en/toolkit/convert#your-own-list)).
+Which standards get a mapping file: [Rules for models](/en/guide/rules#mapping). Convert a list of your own with a mapping of your own ([Converting your data](/en/toolkit/convert#your-own-list)).
 
-When a standard matches a model and has no mapping file yet, propose one in an [issue](https://github.com/geolonia/datamodels/issues/new) ([Contributing](/en/guide/contribute)). Which standards get a mapping file: [Rules for models](/en/guide/rules#mapping).
+When a standard matches a model and has no mapping file yet, propose one in an [issue](https://github.com/geolonia/datamodels/issues/new) ([Contributing](/en/guide/contribute)).

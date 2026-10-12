@@ -41,7 +41,7 @@ A model on your site can build on a model of this catalog ([`extend`](/en/toolki
 
 ## Smart Data Models {#smart-data-models}
 
-[Smart Data Models](https://smartdatamodels.org/) is the catalog of the FIWARE community, run by FIWARE, TM Forum, IUDX (India Urban Data Exchange) and OASC (Open & Agile Smart Cities). It has over 900 models for smart cities, agriculture, energy and more, in English, and its own way to contribute on GitHub. It is a good place for a model that is not about Japan. This catalog builds on it ([Other data model catalogs](/en/guide/catalogs)).
+A model that is not about Japan fits better in [Smart Data Models](https://smartdatamodels.org/), the catalog this one builds on ([Other data model catalogs](/en/guide/catalogs)).
 
 ## Later: from your site to this catalog {#later}
 

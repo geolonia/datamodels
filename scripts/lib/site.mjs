@@ -41,7 +41,7 @@ const T = {
     deprecatedNote: (link) => `このモデルは非推奨です。${link ? `代わりに ${link} を使ってください。` : ''}公開済みのファイルと URL はそのまま残ります。`, valueType: '値型', fields: 'フィールド', versions: 'バージョン', current: '現行',
     forPrograms: 'プログラムからは、同じ一覧を [catalog.json](/catalog.json) で読めます。',
     intro: 'モデルは分野ごとにまとめています。分野を開くか、名前・属性・説明で探してください。',
-    statusLabel: { draft: 'ドラフト', experimental: '試行', stable: '安定', deprecated: '非推奨' },
+    statusLabel: { draft: 'ドラフト', experimental: '試行', stable: '安定', deprecated: '非推奨' }, stagesTitle: '段階の意味',
     sourceLabel: { minted: 'このカタログで定義', profile: '上流モデルの日本向け拡張', global: '上流（Smart Data Models）' },
     subject: '分野', mappingField: 'このモデル', mappingTo: '対応先', mappingNote: '備考', none: '対応なし',
     alias: '別名', aliasNote: (link) => `${link} と同じ型です（IRI が同一）。名称だけがこの分野の言い方に合わせてあり、属性も必須項目も同じです。ブローカーでは同じ型として保存・照合されます。`,
@@ -64,7 +64,7 @@ const T = {
     deprecatedNote: (link) => `This model is deprecated.${link ? ` Use ${link} instead.` : ''} Its published files and URLs stay as they are.`, valueType: 'value type', fields: 'Fields', versions: 'Versions', current: 'current',
     forPrograms: 'Programs can read the same list from [catalog.json](/catalog.json).',
     intro: 'Models are grouped by subject. Open a subject, or search by name, attribute or description.',
-    statusLabel: { draft: 'draft', experimental: 'experimental', stable: 'stable', deprecated: 'deprecated' },
+    statusLabel: { draft: 'draft', experimental: 'experimental', stable: 'stable', deprecated: 'deprecated' }, stagesTitle: 'What the stages mean',
     sourceLabel: { minted: 'defined in this catalog', profile: 'Japanese extension of an upstream model', global: 'upstream (Smart Data Models)' },
     subject: 'Subject', mappingField: 'This model', mappingTo: 'Maps to', mappingNote: 'Note', none: 'no counterpart',
     alias: 'alias', aliasNote: (link) => `The same type as ${link} (identical IRI). Only the name follows this subject's wording; attributes and required fields are the same. A broker stores and matches both names as one type.`,
@@ -77,7 +77,8 @@ const badge = (type, text) => `<Badge type="${type}" text="${text}" />`;
 // Label colours carry a meaning (custom.css): green (tip) ready to use, amber (warning)
 // may still change, red (danger) careful, grey (info) just information.
 const stageBadgeType = { stable: 'tip', draft: 'warning', experimental: 'warning', deprecated: 'danger' };
-const statusBadge = (lang, status) => badge(stageBadgeType[status] ?? 'info', T[lang].statusLabel[status] ?? status);
+// The badge links the stages on the Rules page, where each one is explained.
+const statusBadge = (lang, prefix, status) => `<a class="stage-link" href="${prefix}/guide/rules#stages" title="${T[lang].stagesTitle}">${badge(stageBadgeType[status] ?? 'info', T[lang].statusLabel[status] ?? status)}</a>`;
 // The description is the page's meta and share-preview text, which shows no Markdown.
 export const plainText = (s) => String(s ?? '')
   .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/`([^`]*)`/g, '$1').replace(/\*\*([^*]+)\*\*/g, '$1')
@@ -203,7 +204,7 @@ const M = {
     requiredMark: '必須', requiredNote: '* は必須の属性です。', linkHeaderIntro: '本文に @context を書かずに送るときの Link ヘッダー：',
     use: 'このモデルを使う', useValue: (use) => `他のモデルは、属性の値としてこの値型を参照します。その属性を持つデータを検証すると、この値型のスキーマも読み込まれます（[JSON を検証する](${use})）。`,
     standards: '参照している標準', standardsNote: 'このモデルが対応している標準と、項目ごとの対応です。開くと対応表が見られます。',
-    fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く', standardLicence: 'この標準のライセンス', mappingFile: (file, guide, converts) => `${converts ? 'この標準のデータを変換するための対応表' : 'この標準との対応表'}（YAML）: ${file}（説明は${guide('対応表')}）`, notesTitle: '注記',
+    fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く', standardLicence: 'この標準のライセンス', mappingFile: (file, guide, converts) => `${converts ? 'この標準のデータを変換するための対応表' : 'この標準との対応表'}（YAML）: ${file}（説明は${guide('対応表')}）`, notesTitle: '注記', historyTitle: (n) => `変更の記録（${n} 件）`,
     sourceFiles: (href) => `ソースファイル（注記、対応表）は [GitHub](${href}) にあります。`,
     addedTerms: '足した属性', inlineContext: 'データの中に記述', dataLink: 'データ',
     reportExtension: (form, guide, toolkit, sites) => `このモデルを拡張して[ツールキット](${toolkit})のサイトで公開しているなら、サイトが[サイトの一覧](${sites})に載ると、このページにも載ります。サイトが無いときは、[フォームで登録してください](${form})。ほかの組織が同じ名前を使えます（[進め方](${guide})）。`,
@@ -220,7 +221,7 @@ const M = {
     requiredMark: 'required', requiredNote: '* required', linkHeaderIntro: 'The Link header, for sending data without @context in the body:',
     use: 'Using this model', useValue: (use) => `Other models use this value type as the value of an attribute. Checking data that has such an attribute reads this schema too ([Validate JSON](${use})).`,
     standards: 'Referenced standards', standardsNote: 'The standards this model corresponds to, field by field. Open one to see its table.',
-    fieldsMapped: (n, total) => `${n} of ${total} fields`, openStandard: 'Open the standard', standardLicence: 'Licence of this standard', mappingFile: (file, guide, converts) => `${converts ? 'Mapping file (YAML) for converting data from this standard' : 'Mapping file (YAML) for this standard'}: ${file} (see ${guide('Mapping files')})`, notesTitle: 'Notes',
+    fieldsMapped: (n, total) => `${n} of ${total} fields`, openStandard: 'Open the standard', standardLicence: 'Licence of this standard', mappingFile: (file, guide, converts) => `${converts ? 'Mapping file (YAML) for converting data from this standard' : 'Mapping file (YAML) for this standard'}: ${file} (see ${guide('Mapping files')})`, notesTitle: 'Notes', historyTitle: (n) => `Change history (${n})`,
     sourceFiles: (href) => `The source files (notes, mapping tables) are on [GitHub](${href}).`,
     addedTerms: 'Added attributes', inlineContext: 'inside the data', dataLink: 'data',
     reportExtension: (form, guide, toolkit, sites) => `Extended this model? If you publish it on a site made with the [toolkit](${toolkit}), it shows on this page once your site is on the [list of sites](${sites}). Without a site, [list your extension](${form}) so others can reuse your names ([how it works](${guide})).`,
@@ -253,7 +254,7 @@ function modelPage(lang, prefix, subject, model) {
   const playground = !isValue && model.examples['example.json'] && model.examples['example-normalized.jsonld'];
   // "<" escaped so no text can close the script block.
   if (playground) md += `<script setup>\nconst playground = ${JSON.stringify(playgroundData(lang, subject, model)).replaceAll('<', '\\u003c')}\n</script>\n\n`;
-  md += `# ${model.type} ${statusBadge(lang, model.catalog.status ?? 'draft')}${isValue ? ` ${badge('info', t.valueType)}` : ''}${aliasOf ? ` ${badge('info', t.alias)}` : ''}${subclassOf || subclassOfExternal ? ` ${badge('info', t.subclass)}` : ''}\n\n`;
+  md += `# ${model.type} ${statusBadge(lang, prefix, model.catalog.status ?? 'draft')}${isValue ? ` ${badge('info', t.valueType)}` : ''}${aliasOf ? ` ${badge('info', t.alias)}` : ''}${subclassOf || subclassOfExternal ? ` ${badge('info', t.subclass)}` : ''}\n\n`;
   // Deprecation is the one notice nobody may miss; everything else is in the table.
   if ((model.catalog.status ?? 'draft') === 'deprecated') {
     // supersededBy is a type IRI of this catalog (link its page) or any other URL.
@@ -377,8 +378,13 @@ function modelPage(lang, prefix, subject, model) {
     }
     md += '\n</div>\n\n';
   }
+  // Design notes first; the dated change history (notes.yaml `history`) is folded away below them.
   const notes = model.notes?.notes ?? [];
-  if (notes.length) md += `## ${l.notesTitle} {#notes}\n\n${notes.map((n) => `- ${issueLinks(mdText(n[lang]))}`).join('\n')}\n\n`;
+  const history = model.notes?.history ?? [];
+  const list = (items) => items.map((n) => `- ${issueLinks(mdText(n[lang]))}`).join('\n');
+  if (notes.length || history.length) md += `## ${l.notesTitle} {#notes}\n\n`;
+  if (notes.length) md += `${list(notes)}\n\n`;
+  if (history.length) md += `<details class="rules" id="history"><summary>${l.historyTitle(history.length)}</summary>\n\n${list(history)}\n\n</details>\n\n`;
   return md;
 }
 
@@ -389,7 +395,7 @@ async function subjectPage(lang, prefix, subject) {
   md += `| | |\n|---|---|\n| ${t.subject} | ${code(subject.name)} ${badge('info', t.sourceLabel[subject.source] ?? subject.source)} |\n| ${t.version} | ${code(subject.version)} |\n`;
   md += `| ${t.context} | [${code(u.contextAlias)}](${rel(u.contextAlias)}) |\n| ${t.namespace} | ${code(u.namespace)} |\n| ${t.vocabulary} | [${code(rel(u.vocabExact))}](${rel(u.vocabExact)}) |\n\n<small>${t.urlNote('#versions', `${prefix}/guide/urls`, false)}</small>\n\n`;
   md += `## ${t.models} {#models}\n\n| ${t.type} | ${t.name} | ${t.stage} |\n|---|---|---|\n`;
-  for (const m of subject.models) md += `| [${m.type}](${prefix}${rel(modelUrls(subject, m).page)}) | ${m.catalog.title?.[lang] ?? ''} | ${statusBadge(lang, m.catalog.status ?? 'draft')}${m.kind === 'value' ? ` ${badge('info', t.valueType)}` : ''}${m.schema['x-alias-of'] ? ` ${badge('info', t.alias)}` : ''}${m.schema['x-subclass-of'] ? ` ${badge('info', t.subclass)}` : ''} |\n`;
+  for (const m of subject.models) md += `| [${m.type}](${prefix}${rel(modelUrls(subject, m).page)}) | ${m.catalog.title?.[lang] ?? ''} | ${statusBadge(lang, prefix, m.catalog.status ?? 'draft')}${m.kind === 'value' ? ` ${badge('info', t.valueType)}` : ''}${m.schema['x-alias-of'] ? ` ${badge('info', t.alias)}` : ''}${m.schema['x-subclass-of'] ? ` ${badge('info', t.subclass)}` : ''} |\n`;
   const releases = await listReleases(subject);
   if (releases.length) {
     // In a div (custom.css .versions): the version and the @context URL stay on one line, the schema list wraps.
@@ -464,20 +470,16 @@ export async function generateSitePages(subjects, adapters = [], nodes = { nodes
 const NODES = {
   ja: {
     title: 'データモデルのサイト', description: 'datamodels-toolkit で自分のデータモデルを公開している、datamodels.jp が知っているサイトの一覧',
-    intro: (own) => `自分のサイト（ノード）でデータモデルを公開していて、datamodels.jp が知っているサイトです。1 行に 1 つのサイトで、モデルの数と、このカタログのどのモデルをもとにしているかを示します。サイトのモデルはこのカタログの一部ではなく、datamodels.jp は内容を確認していません。それぞれのサイトが自分のモデルを決めます。多くの人に役立つモデルは、カタログに提案できます。自分のサイトの作り方は[サイトを始める](${own})にあります。`,
+    intro: (own, guide) => `自分のサイト（ノード）でデータモデルを公開していて、datamodels.jp が知っているサイトです。1 行に 1 つのサイトで、モデルの数と、このカタログのどのモデルをもとにしているかを示します。サイトのモデルはこのカタログの一部ではなく、datamodels.jp は内容を確認していません。それぞれのサイトが自分のモデルを決めます。多くの人に役立つモデルは、カタログに提案できます。サイトとカタログの関係は、[自分のデータモデル](${guide})の図にあります。自分のサイトの作り方は[サイトを始める](${own})にあります。`,
     perModel: 'サイトのモデルは、それぞれのサイトで見られます。このカタログのモデルをもとにしたモデルは、そのモデルのページの「このモデルをもとにしたもの」にも、足した属性と一緒に載ります。',
     add: (guide) => `各行は、サイトの catalog.json から読んでいます。自分のサイトを載せる手順は[貢献する](${guide})にあります。`,
-    // Sites build on the catalog's models (the same diagram as on /guide/own-models).
-    diagram: '<svg class="flow-diagram" viewBox="0 0 460 216" role="img" aria-label="datamodels.jp はカタログのモデルと、データモデルのサイトの一覧を公開します。models.gtt-project.org の Issue は、カタログの Task をもとにしています。自分のサイトのモデルも、カタログのモデルをもとにできます。どのサイトも catalog.json を公開します。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="sites-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box main" x="10" y="8" width="440" height="58" rx="10"/><text class="t" x="230" y="33">datamodels.jp</text><text class="s" x="230" y="53">カタログのモデル（Task など）と、サイトの一覧</text><rect class="box" x="10" y="150" width="210" height="58" rx="10"/><text class="t m" x="115" y="175">models.gtt-project.org</text><text class="s" x="115" y="194">Issue、catalog.json</text><rect class="box d" x="240" y="150" width="210" height="58" rx="10"/><text class="t" x="345" y="175">自分のサイト</text><text class="s" x="345" y="194">自分のモデル、catalog.json</text><line class="a" x1="115" y1="150" x2="115" y2="68" marker-end="url(#sites-ah)"/><text class="l" x="125" y="104">Issue は Task をもとにする</text><line class="a d" x1="345" y1="150" x2="345" y2="68" marker-end="url(#sites-ah)"/><text class="l e" x="335" y="128">もとにできる</text></svg>',
     none: 'まだありません。', site: 'サイト', licence: 'ライセンス', models: 'モデルの数', buildsOn: 'もとにしたカタログのモデル', read: '読んだ日',
   },
   en: {
     title: 'Data model sites', description: 'Sites that publish their own data models with datamodels-toolkit and that datamodels.jp knows',
-    intro: (own) => `Sites of their own (nodes) that publish data models and that datamodels.jp knows: one row per site, with how many models it has and which catalog models they build on. Their models are not part of this catalog, and datamodels.jp does not review them: each site decides about its own. A model that is useful to many can be proposed to the catalog. How to make a site: [Starting a site](${own}).`,
+    intro: (own, guide) => `Sites of their own (nodes) that publish data models and that datamodels.jp knows: one row per site, with how many models it has and which catalog models they build on. Their models are not part of this catalog, and datamodels.jp does not review them: each site decides about its own. A model that is useful to many can be proposed to the catalog. How the sites and the catalog fit together: the diagram in [Your own data models](${guide}). How to make a site: [Starting a site](${own}).`,
     perModel: 'Each site shows its own models. A model built on a catalog model is also listed on that model\'s page, under "Built on by others", with the attributes it adds.',
     add: (guide) => `Each row is read from the site's catalog.json; to add your site, see [Contributing](${guide}).`,
-    // Sites build on the catalog's models (the same diagram as on /guide/own-models).
-    diagram: '<svg class="flow-diagram" viewBox="0 0 460 216" role="img" aria-label="datamodels.jp publishes the catalog\'s models and the list of data model sites. Issue on models.gtt-project.org builds on the catalog\'s Task. A model on your own site can build on a catalog model too. Every site publishes a catalog.json." xmlns="http://www.w3.org/2000/svg"><defs><marker id="sites-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box main" x="10" y="8" width="440" height="58" rx="10"/><text class="t" x="230" y="33">datamodels.jp</text><text class="s" x="230" y="53">Catalog models (Task and others) and the list of sites</text><rect class="box" x="10" y="150" width="210" height="58" rx="10"/><text class="t m" x="115" y="175">models.gtt-project.org</text><text class="s" x="115" y="194">Issue, catalog.json</text><rect class="box d" x="240" y="150" width="210" height="58" rx="10"/><text class="t" x="345" y="175">Your site</text><text class="s" x="345" y="194">Your models, catalog.json</text><line class="a" x1="115" y1="150" x2="115" y2="68" marker-end="url(#sites-ah)"/><text class="l" x="125" y="104">Issue builds on Task</text><line class="a d" x1="345" y1="150" x2="345" y2="68" marker-end="url(#sites-ah)"/><text class="l e" x="335" y="128">can build on it too</text></svg>',
     none: 'None yet.', site: 'Site', licence: 'Licence', models: 'Models', buildsOn: 'Builds on (catalog models)', read: 'Read on',
   },
 };
@@ -487,9 +489,8 @@ export function nodesPage(lang, prefix, nodes) {
   const n = NODES[lang];
   // One table and no sections: no outline column.
   let md = front(n.title, n.description).replace(/\n---\n\n$/, '\naside: false\n---\n\n');
-  md += `# ${n.title}\n\n${n.intro(`${prefix}/toolkit/start`)}\n\n${n.add(`${prefix}/guide/contribute#site-listing`)}\n\n`;
+  md += `# ${n.title}\n\n${n.intro(`${prefix}/toolkit/start`, `${prefix}/guide/own-models#own-site`)}\n\n${n.add(`${prefix}/guide/contribute#site-listing`)}\n\n`;
   if (!nodes.nodes?.length) return `${md}${n.none}\n`;
-  md += `${n.diagram}\n\n`;
   md += `| ${n.site} | ${n.licence} | ${n.models} | ${n.buildsOn} | ${n.read} |\n|---|---|---|---|---|\n`;
   for (const node of nodes.nodes) {
     // Every catalog model one of its models builds on (alias, superclass or extended type), once, in the order met.

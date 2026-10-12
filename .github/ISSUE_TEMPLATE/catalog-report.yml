@@ -57,7 +57,7 @@ body:
     id: models
     attributes:
       label: 関係する datamodels.jp のモデル（任意） / Related models of datamodels.jp (optional)
-      description: サブジェクト/型、例 transportation/RoadRestriction / subject/Type, for example transportation/RoadRestriction
+      description: 分野/型、例 transportation/RoadRestriction / subject/Type, for example transportation/RoadRestriction
   - type: input
     id: index
     attributes:

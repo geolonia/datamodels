@@ -21,11 +21,11 @@ Issue は誰でも読めます。パスワード、API キー、トークン、�
 
 新しいモデルや、モデルを使う多くの人に役立つ属性は、モデルの提案フォームで提案します。スキーマを書く必要はありません。
 
-カタログに載せるのは、既存の標準（国のガイドライン、Smart Data Models、RFC など）に基づき、いま実際にあるデータを表すモデルだけです。詳しくは[モデルのルール](/guide/rules)にあります。自分のプロジェクトだけで使うモデルは、自分のサイトで公開できます（[自分のデータモデル](/guide/own-models)）。自分たちのためだけに属性を足すときや、名前だけを変えるときは、提案は要りません（[どのページを読むか](/guide/#which)）。
+カタログに載せるモデルの条件は、[モデルのルール](/guide/rules#accepts)にあります。既存の標準に基づき、実際のデータがあることなどです。自分のプロジェクトだけで使うモデルは、自分のサイトで公開できます（[自分のデータモデル](/guide/own-models)）。自分たちのためだけに属性を足すときや、名前だけを変えるときは、提案は要りません（[どのページを読むか](/guide/#which)）。
 
 フォームには、1 件のデータが何を表すか、そのデータをいま誰がどのくらい持っているか、基にする標準を書きます。合う標準が無ければ、その理由を書きます。分かれば、ほかにそのモデルを使いそうな組織と、データの例も書きます。Issue を開くと、似ているモデルが自動でコメントされます。そのまま使えるモデルや、拡張できるモデルがないか確かめてください。
 
-そのあと：まず Issue で提案について話し合います。次に、提案した人かメンテナーが Pull Request でモデルを書きます（[自分でファイルを変える](#pull-requests)）。自分でコードを書けなくても構いません。取り込まれると、モデルはドラフトとして公開されます。別々の 2 つの組織が自分のシステムで使うと、安定になります（[段階と決め方](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md#段階と決め方)）。
+そのあと：まず Issue で提案について話し合います。次に、提案した人かメンテナーが Pull Request でモデルを書きます（[自分でファイルを変える](#pull-requests)）。自分でコードを書けなくても構いません。取り込まれると、モデルはドラフトとして公開されます。別々の 2 つの組織が自分のシステムで使うと、安定になります（[段階](/guide/rules#stages)）。
 
 <svg class="flow-diagram" viewBox="0 0 460 120" role="img" aria-label="モデルは、提案（Issue）、ドラフト（カタログに入る）、安定（独立した 2 つの実装）、非推奨（新規には使わない。公開は続く）と進みます。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="lc-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="10" y="10" width="104" height="58" rx="10"/><text class="t" x="62.0" y="35">提案</text><text class="s" x="62.0" y="55">Issue</text><line class="a" x1="114" y1="39" x2="120" y2="39" marker-end="url(#lc-ah)"/><rect class="box" x="122" y="10" width="104" height="58" rx="10"/><text class="t" x="174.0" y="35">ドラフト</text><text class="s" x="174.0" y="55">カタログに入る</text><line class="a" x1="226" y1="39" x2="232" y2="39" marker-end="url(#lc-ah)"/><rect class="box main" x="234" y="10" width="104" height="58" rx="10"/><text class="t" x="286.0" y="35">安定</text><text class="s" x="286.0" y="55">安心して使える</text><line class="a" x1="338" y1="39" x2="344" y2="39" marker-end="url(#lc-ah)"/><rect class="box" x="346" y="10" width="104" height="58" rx="10"/><text class="t" x="398.0" y="35">非推奨</text><text class="s" x="398.0" y="55">公開は続く</text><text class="s" x="118.0" y="92">レビュー・マージ</text><text class="s" x="230.0" y="92">2 つの組織が実装</text><text class="s" x="342.0" y="92">新規には使わない</text></svg>
 
@@ -63,4 +63,4 @@ Issue は誰でも読めます。パスワード、API キー、トークン、�
 
 ## 自分でファイルを変える {#pull-requests}
 
-依頼を送るだけなら、上のフォームで足ります。Pull Request でカタログのファイルを自分で変えるときは、GitHub の [CONTRIBUTING.md](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md) に従ってください。Pull Request の手順、モデルの段階、署名（DCO）を説明しています。貢献した内容は、カタログの[ライセンス](/LICENSE-CONTENT)で公開します。モデルのファイルは CC0 1.0、文章は CC BY 4.0、コードは Apache-2.0 です。
+依頼を送るだけなら、上のフォームで足ります。Pull Request でカタログのファイルを自分で変えるときは、GitHub の [CONTRIBUTING.md](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md) に従ってください。Pull Request の手順、決め方、署名（DCO）を説明しています。貢献した内容は、カタログの[ライセンス](/LICENSE-CONTENT)で公開します。

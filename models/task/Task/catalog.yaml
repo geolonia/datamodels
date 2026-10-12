@@ -23,7 +23,7 @@ attributes:
     ja: "親タスク（RFC 8984 relatedTo parent）"
     en: "Parent task (RFC 8984 relatedTo parent)"
   relatedTo:
-    ja: "関連するタスク。key-values 形式では、対象が 1 つでも配列です。関係の種類（blocks、precedes、duplicates など）は拡張で表します。"
+    ja: "関連するタスク。key-values の形では、対象が 1 つでも配列です。関係の種類（blocks、precedes、duplicates など）は拡張で表します。"
     en: "Related tasks. Always an array in the key-values form, even with one target. The kind of relation (blocks, precedes, duplicates) is left to extensions"
   refersTo:
     ja: "このタスクが対象とするエンティティ（通報、設備、道路など）"
@@ -41,7 +41,7 @@ attributes:
     ja: "優先度 0〜9。1 が最高、9 が最低で、0 は未定義です（RFC 8984）。"
     en: "Priority 0 to 9: 1 highest, 9 lowest, 0 undefined (RFC 8984)"
   assignee:
-    ja: "担当する人、組織、チーム（そのエンティティ。このサブジェクトの外の URN でも構いません）。key-values 形式では、対象が 1 つでも配列です。"
+    ja: "担当する人、組織、チーム（そのエンティティ。この分野の外の URN でも構いません）。key-values の形では、対象が 1 つでも配列です。"
     en: "Assignees: person, organisation or team entities, possibly outside this subject. Always an array in the key-values form, even with one target"
   author:
     ja: "作成者（人、組織、チームのエンティティ）"

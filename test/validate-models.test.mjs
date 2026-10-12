@@ -294,6 +294,9 @@ test('a note with one language, or cut at a comma, fails', async () => {
   await withMutatedModels((d) => writeFile(join(d, 'task', 'Task', 'notes.yaml'), 'notes:\n  - { ja: 上流なし, en: none, really }\nlicense: CC BY 4.0\n'), NOTES_PROBLEM);
 });
 
+test('a history entry with one language fails, like a note', () =>
+  withMutatedModels((d) => writeFile(join(d, 'task', 'Task', 'notes.yaml'), 'notes:\n  - { ja: 上流なし, en: none }\nhistory:\n  - en: Added\nlicense: CC BY 4.0\n'), /history must be a list of \{ ja, en \}/));
+
 test('two instances of a multi-valued attribute without datasetId fail', () =>
   withMutatedModels((d) => editJson(join(d, 'task', 'Task', 'examples', 'example-normalized.jsonld'), (e) => { e.assignee = [{ type: 'Relationship', object: 'urn:ngsi-ld:Team:a' }, { type: 'Relationship', object: 'urn:ngsi-ld:Team:b' }]; }),
     /only one instance of a multi-valued attribute may omit datasetId/));

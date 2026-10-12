@@ -287,9 +287,12 @@ for (const subject of subjects) {
     }
 
     // notes.yaml renders as a bullet list, in the page's language (#119): each note is { ja, en }.
-    if (model.notes != null && (typeof model.notes !== 'object' || Array.isArray(model.notes))) fail(`${mwhere}/notes.yaml`, 'root value must be a mapping with notes and license');
+    if (model.notes != null && (typeof model.notes !== 'object' || Array.isArray(model.notes))) fail(`${mwhere}/notes.yaml`, 'root value must be a mapping with notes, history and license');
     const notes = (model.notes && typeof model.notes === 'object' && !Array.isArray(model.notes)) ? model.notes : {};
-    if (notes.notes !== undefined && (!Array.isArray(notes.notes) || notes.notes.some((n) => !bilingual(n)))) fail(`${mwhere}/notes.yaml`, 'notes must be a list of { ja, en }, each non-empty and nothing else (quote a text that contains ": " or a comma)');
+    // notes: the design notes; history: the dated changes, folded away on the page.
+    for (const key of ['notes', 'history']) {
+      if (notes[key] !== undefined && (!Array.isArray(notes[key]) || notes[key].some((n) => !bilingual(n)))) fail(`${mwhere}/notes.yaml`, `${key} must be a list of { ja, en }, each non-empty and nothing else (quote a text that contains ": " or a comma)`);
+    }
     if (notes.license !== undefined && typeof notes.license !== 'string') fail(`${mwhere}/notes.yaml`, 'license must be a string');
 
     // Correspondence tables render on the model page: every field must be one of the model's.

@@ -17,7 +17,7 @@ attributes:
     ja: "道路法第 3 条の道路の種類：expressway（高速自動車国道）、nationalRoad（一般国道）、prefecturalRoad（都道府県道）、municipalRoad（市町村道）、other（農道、林道、私道など、道路法の道路でないもの）。自動車専用道路は道路の種類ではなく指定なので、その道路の種類を入れます。"
     en: "Road class by the Road Act (Art. 3): expressway, nationalRoad, prefecturalRoad, municipalRoad, or other for a road outside the Act (farm, forest or private road). A motorway designation (自動車専用道路) is not a class: give the class of the road it is on"
   address:
-    ja: "住所（common サブジェクトの値型 JapaneseAddress）"
+    ja: "住所（分野 common の値型 JapaneseAddress）"
     en: Address, as a JapaneseAddress value from the common subject
   location:
     ja: "規制区間。点（単独の地点）、線（区間）、面（区域）の GeoJSON ジオメトリです。警察庁「交通規制情報（拡張版標準フォーマット）」の点規制、線規制、面規制にあたります。"

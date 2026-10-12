@@ -24,11 +24,11 @@
     "schema/task/Project/v1.0.0.json": "bbcac92732688bda365a0f63fc7bc0a51c363aae05deb7ce12970b552986e353",
     "schema/task/Task/v1.0.0.json": "b11d6e5fe4a0d10f93340930067f9f8db9554c6c4d310c9abc0006952cc0cda8",
     "schema/transportation/RoadRestriction/v1.0.0.json": "3e56446b573899fe58b110e9f409c20232edb49d6e28a664fac559bae1d23e5a",
-    "vocab/common/v1.0.0.jsonld": "da2a42cc04997e4382269bcd1a6c2875a441e51063d0fddd9a0c1cdc3f84d019",
+    "vocab/common/v1.0.0.jsonld": "c62613aa3a9045f2811560ee5f26719b3cba901b8a4fbdea4d1dc143cbe02b58",
     "vocab/decision/v1.0.0.jsonld": "873a6c9bd9ba916ad68e55f1ac7f17c4cbad966aa76dd9f93ce72786b47a7143",
-    "vocab/disaster/v1.0.0.jsonld": "fdb2b11d2fd723cf8468f9c2bf8d2a07a5c83b651db98740eca6cefe5e93d063",
+    "vocab/disaster/v1.0.0.jsonld": "e38ebe0ec0772d3464e883ab7e8ad172cf6637967d0946ee10bc0d46fa46ddcc",
     "vocab/facility/v1.0.0.jsonld": "f589235b6c2b0858182bb4e90058d6ab599db6caf12a0fadd453ffc91bb3166c",
-    "vocab/task/v1.0.0.jsonld": "f2e6e5305666c1e52057b20982664d0372fe1f9c1891781f9bd589b071690bc9",
+    "vocab/task/v1.0.0.jsonld": "cd2030ba7a8190ce20cac83ccdb547d4aa892602e81e69ea582197a21f5c6605",
     "vocab/transportation/v1.0.0.jsonld": "e51b5ead9ad90d48aa03e2f3481faf4a4563a292529f74a6abcf51ec45a03690"
   }
 }

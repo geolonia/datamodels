@@ -144,12 +144,13 @@ test('the Task page lists the models of other sites built on it, with what they 
   assert.match(page, /^\| \[Example bOrg\/b\]\(https:\/\/models\.example\.org\/\) \| CC0-1\.0 \| 3 \| \[Task\]\(\/en\/models\/task\/Task\/\) \| 2026-10-11 \|$/m, 'Issue and Patrol both build on Task: named once');
   assert.doesNotMatch(page, /^## /m, 'no section per site');
   assert.doesNotMatch(page, /Ride/, 'no table of every model');
-  assert.match(page, /^<svg class="flow-diagram" [^\n]*<\/svg>\n\n\| Site \|/m, 'the diagram on one line, above the table');
+  // The diagram of sites and the catalog is on /guide/own-models only; the page links it.
+  assert.doesNotMatch(page, /<svg/, 'no diagram of its own');
+  assert.ok(page.includes('(/en/guide/own-models#own-site)'), 'links the diagram');
   assert.match(nodesPage('ja', '', { nodes: [] }), /まだありません。/);
   // Both languages send a site to its section of Contributing, which links the listing form.
   assert.ok(page.includes('(/en/guide/contribute#site-listing)'), 'the site-listing section, in English');
   assert.ok(nodesPage('ja', '', snapshot).includes('(/guide/contribute#site-listing)'), 'the site-listing section, in Japanese');
-  assert.doesNotMatch(nodesPage('ja', '', { nodes: [] }), /<svg/, 'no diagram without sites');
   const own = { nodes: [nodeEntry(NODE, { models: [{ type: 'Ride', typeIri: 'https://models.example.org/ns/x#Ride' }] }, '2026-10-11')] };
   assert.match(nodesPage('en', '/en', own), /\| 1 \| — \| 2026-10-11 \|/, 'a site that builds on no catalog model');
   // Every catalog model a site builds on, in the order met.

@@ -56,7 +56,7 @@ node adapters/geonicdb/export.mjs <subject> [--type T] [--type-prefix P | --type
 
 **Pre-release exception, until the official launch** (launch plan #30): the published files of a subject's **current** version, `v1.0.0` included, may be corrected in place. Change the source; a maintainer then runs `npm run rerecord -- <subject>` (it deletes that version's `releases/` snapshot and its entries in `published-manifest.json`, then records again), and the pull request says so. Recording writes only the current version's snapshot, so an older release is never corrected this way: its snapshot is the only copy, and deleting it would drop the release from the site. `npm run check:live` then confirms the deployed bytes. CI lists such corrections in the job summary (`npm run check:manifest-base` compares the manifest with main's). The exception, the pre-release banner on the site, and the 5-minute cache on exact versions (instead of one year, immutable) end at the official launch: `"prerelease"` in `published-manifest.json` is set to `false`, after which the same check fails on any changed or removed entry and `rerecord` refuses to run.
 
-Every model starts as `status: draft`. It becomes `stable` once two independent implementations are recorded in its `ADOPTERS.yaml`: each entry gives `name`, `organization` and a `url` (public repository, documentation or a contact). CI checks that at least two different organisations with a url are listed; the reviewer of the pull request that sets `stable` checks that they are real and independent (#38). Geolonia, which runs the catalog, may be one of the two; the other must be a different organisation (#125). A model may also be marked `experimental`: in use, to learn from, and possibly replaced; this will be rare (#200).
+Every model starts as `status: draft`. The stages, and what a model needs to become `stable` (#38, #125, #200): [Stages](https://datamodels.jp/en/guide/rules#stages) on the site.
 
 Contributions in Japanese or English are welcome as issues or pull requests; see [CONTRIBUTING.md](CONTRIBUTING.md) for the rules, the steps and the sign-off (DCO).
 
@@ -70,7 +70,7 @@ npx github:geolonia/datamodels-toolkit convert disaster/EvacuationSite jichitai-
 
 It reads the mapping files from datamodels.jp (`/mapping/<subject>/<Type>/<name>.yaml`). To try a mapping before it is published, build this repository and add `--site dist`. A list that follows no standard in the catalog is converted with its owner's own mapping file, which `datamodels mapping` starts ([Converting your data](https://datamodels.jp/en/toolkit/convert)).
 
-The catalog keeps mapping files only for published standards that many lists follow, and conversion rules only in a few worked examples ([Rules for models](https://datamodels.jp/en/guide/rules#mapping), decided 2026-10-12).
+Which standards get a mapping file, and which mapping files have conversion rules: [Rules for models](https://datamodels.jp/en/guide/rules#mapping).
 
 The conversion rules in a mapping file are part of this catalog, and the validator checks their structure:
 - A row with `column` (one column or a list), an optional `transform`, a constant `value`, or `via` (build a nested value with another mapping, such as `common/JapaneseAddress/jichitai-opendata-address`) is converted.
@@ -84,10 +84,4 @@ Cloudflare Workers Builds deploys `main`; the dashboard settings, the Browser In
 
 ## Licences
 
-| Path | Licence |
-|---|---|
-| `models/**` machine-readable files (schemas, `@context`, vocabularies, examples, `catalog.yaml`, mappings), and the published `catalog.json`, `/mapping/**` and `/adapters/**` files | [CC0 1.0](LICENSE-CONTENT.md) |
-| `models/**` prose (`notes.yaml`, `README.md`) and the site's pages | [CC BY 4.0](LICENSE-CONTENT.md) |
-| everything else, including the adapter code in `adapters/` | [Apache-2.0](LICENSE) |
-
-Content copied from a CC BY source (Smart Data Models, the GIF core data model schema) keeps CC BY 4.0 and is listed in the model folder's `LICENSE.md`; today nothing is copied, upstream standards are mapped and their IRIs reused. Material from the Digital Agency's 自治体標準オープンデータセット (公共データ利用規約 PDL1.0, compatible with CC BY 4.0) is credited to its source in the mapping files. Decided on 2026-09-28 ([#83](https://github.com/geolonia/datamodels/issues/83)).
+Machine-readable model files are CC0 1.0, prose is CC BY 4.0, and code (including the adapter code in `adapters/`) is [Apache-2.0](LICENSE). Which file falls under which, credit, and content from other sources: [LICENSE-CONTENT.md](LICENSE-CONTENT.md).
