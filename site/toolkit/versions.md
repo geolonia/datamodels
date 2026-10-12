@@ -32,7 +32,7 @@ Try again when the site answers, or release with --offline to skip the compariso
 
 `bump` が最初に行う保存は、`release` だけでも実行できます。今のバージョンを `models/road/releases/` に保存し、バージョンは上げません。公開した後、ソースを変える前に実行して、結果をコミットします。`check` は、まだ保存していない公開済みのバージョンを知らせます。`build` は、保存したすべてのバージョンを今のバージョンと並べて公開します。保存したバージョンは、そのまま残ります。
 
-オンラインでは、`release` はまず公開済みのファイルと比べます。公開した後にソースが変わっていれば、止まります。そのときは、ソースを元に戻し（git などで）、`release` を実行してから、新しいバージョンで変更します。
+そのバージョンのスナップショットが既にあれば、`release` はソースをスナップショットと比べるだけで、何も変えません。無ければ、オンラインでは、まず公開済みのファイルと比べます。公開した後にソースが変わっていれば、止まります。そのときは、ソースを元に戻し（git などで）、`release` を実行してから、新しいバージョンで変更します。読めないファイルがあるときも止まります。ただし、サイトの答えが 404（未公開）なら止まりません。
 
 ```bash
 npx @geolonia/datamodels@0.3.10 release road
@@ -69,4 +69,4 @@ npx @geolonia/datamodels@0.3.10 check --base origin/main --all-released
 npx @geolonia/datamodels@0.3.10 upgrade
 ```
 
-`upgrade` は、リリースを GitHub の API から読みます。`.github/workflows/` では、Action をリリースのコミットの SHA で固定し、タグをコメントに書きます。GitHub から実行する形の `npx` の行は、npm の形に書き換えます。`npx github:geolonia/datamodels-toolkit#vX.Y.Z` は、`npx @geolonia/datamodels@X.Y.Z` になります。
+`upgrade` は、リリースを GitHub の API から読みます。`.github/workflows/` では、Action をリリースのコミットの SHA で固定し、タグをコメントに書きます。GitHub から実行する形の `npx` の行は、npm の形に書き換えます。`npx github:geolonia/datamodels-toolkit#vX.Y.Z` は、`npx @geolonia/datamodels@X.Y.Z` になります。これは v0.3.8 以降の場合です。`--to` がそれより古ければ、GitHub の形になります。

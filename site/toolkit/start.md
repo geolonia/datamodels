@@ -44,7 +44,7 @@ npx @geolonia/datamodels@0.3.10 init my-models \
   --license CC0-1.0 --subject road --yes
 ```
 
-[GitHub CLI](https://cli.github.com/)（`gh`）があれば、`--github my-org/my-models` を付けて実行できます。`init` がその名前で公開リポジトリを作り、ファイルを push して GitHub Pages を有効にします（[手順 2](#publish)）。そのリポジトリが既にフォルダーのリモートなら、リモートはそのままにして、Pages を GitHub Actions から公開する設定だけをします。
+[GitHub CLI](https://cli.github.com/)（`gh`）があれば、`--github my-org/my-models` を付けて実行できます。`init` がその名前で公開リポジトリを作り、ファイルを push して GitHub Pages を有効にします（[手順 2](#publish)）。そのリポジトリが既にフォルダーのリモートなら、リモートはそのままにして、Pages を GitHub Actions から公開する設定だけをします。リモートが別のリポジトリなら、止まります。リモートが無いときは、フォルダーにほかのファイルやコミットしていない変更があるか、`main` 以外のブランチにいると止まります。コミットするのは、`init` が書いたファイルだけです。
 
 ## 2. GitHub Pages で公開する {#publish}
 

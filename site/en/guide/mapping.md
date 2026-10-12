@@ -72,7 +72,7 @@ The converter `datamodels convert` from [datamodels-toolkit](https://github.com/
 | `transform` | Columns | What it makes |
 |---|---|---|
 | (none) or `text` | 1 | The text as it is. Empty is no value. |
-| `code6` | 1 | A 6-digit local government code. It repairs a lost leading zero or a missing check digit, when the check digit proves it. |
+| `code6` | 1 | A 6-digit local government code, checked against its check digit. Of 5 digits, it restores a lost leading zero when that gives a valid code, else adds the check digit; when both are possible, it is a problem. Of 4 digits, it adds both. |
 | `number` | 1 | A number. |
 | `integer` | 1 | A whole number. It also takes `1,200` and `1200人`. |
 | `numbers` | 2 or more | A list of numbers. |
@@ -89,7 +89,7 @@ The converter `datamodels convert` from [datamodels-toolkit](https://github.com/
 | `machiazaId` | 1 | The 7-digit town id of the Address Base Registry, without its hyphen. |
 | `nationalShelterType` | 1 | `general` or `welfare`, from the type code in a 全国共通避難所・避難場所 ID. |
 
-No transform guesses. A text outside the forms it knows is a problem of the row, named with its column and the text: for example `不明` for `yesno`, `月～金（祝日を除く）` or `第2土曜` for `weekdays`, and `25:00` or `9時半` for `time`.
+No transform guesses. Without `values`, `text` and `split` take any text, and `municipality` leaves out a value that is not a municipality name and lists it as a repair. With any other transform, a text outside the forms it knows is a problem of the row, named with its column and the text: for example `不明` for `yesno`, `月～金（祝日を除く）` or `第2土曜` for `weekdays`, and `25:00` or `9時半` for `time`.
 
 #### weekdays {#weekdays}
 
@@ -112,7 +112,7 @@ medicalInstitutionType:
 ```
 
 - It works without a transform, with `split` (for each item of the list) and with `yesno` (instead of its words, for example `values: { 外部利用不可: true, "": false }`).
-- An empty cell is no value, unless `values` has an entry for `""`.
+- An empty cell is no value. Without a transform and with `yesno`, an entry for `""` gives it a value, when the file has the column. With `split`, an empty cell stays no value.
 - A text that `values` does not have is a problem of the row. It is never taken as it is.
 
 ### Opening hours of 0:00 to 0:00 {#all-day}
@@ -129,7 +129,7 @@ convert:
 
 - `convert.allDay` applies to the opening hours that the mapping builds, and to those of every mapping it reaches through `via`. When more than one of them says it, the outermost one wins. So a mapping of your own decides it for the catalog's OpeningHours mapping, without a change to that file.
 - Each row it applies to is listed as a repair.
-- The meaning belongs to one list, so the catalog's mapping files leave it out. To convert such a list, use a [mapping of your own](/en/toolkit/convert#your-own-list).
+- The meaning belongs to one list. In the mapping files of a catalog or node, `check` allows only `convert.id` under `convert`, so `allDay` works only in a mapping of your own. To convert such a list, use a [mapping of your own](/en/toolkit/convert#your-own-list).
 - The same time at another hour, such as `9:00` to `9:00`, is always a problem of the row: no convention says what it means.
 
 ## Adding a mapping

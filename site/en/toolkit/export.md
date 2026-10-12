@@ -21,7 +21,7 @@ npx @geolonia/datamodels@0.3.10 export \
 
 Every file keeps the model's attribute names and IRIs, so the data converts to the NGSI-LD form and back. The files, named `<Type>.<ext>`, go into the `--out` folder (default: the current folder).
 
-Models of your own site work too: give the site's folder (default: the current folder). When the site has no such model, `export` reads it from another site's `catalog.json`: `--index`, by default the first node in `node.yaml`, else datamodels.jp. A type IRI works in place of `<subject>/<Type>`.
+Models of your own site work too: give the site's folder (default: the current folder). With `--index`, `export` reads the model from that `catalog.json` and does not read your site at all. Without it, when your site has no such model, `export` reads it from the first node in `node.yaml`, else datamodels.jp. A type IRI works in place of `<subject>/<Type>`.
 
 ```bash
 npx @geolonia/datamodels@0.3.10 export road/RoadPatrol my-models --to postgis
@@ -32,9 +32,9 @@ npx @geolonia/datamodels@0.3.10 export road/RoadPatrol my-models --to postgis
 The CSV template, its Table Schema and the SQL table split a model the same way:
 
 - One column per attribute, with the attribute's name (`hazardTypes`); in SQL in snake_case (`hazard_types`). `id` is the first column, and the primary key in SQL. There is no `type` column: every row is an entity of the model.
-- The location: in the CSV file `longitude` and `latitude` (WGS 84). A model that allows other shapes than a point also has a `location` column for a GeoJSON geometry. In SQL, `geometry(<type>, 4326)`, with the type the model allows: `Point`, or `Geometry` for any shape.
+- The location: in the CSV file `longitude` and `latitude` (WGS 84). A model that allows other shapes than a point also has a `location` column for a GeoJSON geometry. In SQL, `geometry(<type>, 4326)`: with one allowed shape, that type (such as `Point` or `Polygon`); with several, `Geometry` and a `CHECK` for the allowed shapes.
 - A value made of plain fields, such as `address` (JapaneseAddress), becomes one column per field: `address.postalCode` in the CSV file, `address_postal_code` in SQL, each with its own rules. So a spreadsheet can fill each field, and SQL can check and index it.
-- A list of plain values is one column, with the values separated by `;` (a Table Schema `list`). In SQL it is an array, such as `text[]`, whose values are checked.
+- A list of plain values is one column, with the values separated by `;` (a Table Schema `list`). In SQL it is an array, such as `text[]`. SQL checks only its allowed values, its minimum length, duplicates and empty (NULL) items.
 - Anything else, such as the answers of a Decision, is JSON in one column. The Table Schema checks it with the attribute's JSON Schema (its `jsonSchema` constraint). In SQL it is a `jsonb` column, which PostgreSQL does not check against the schema.
 - A rule on several attributes, such as "at least one of externalSiteId and nationalShelterId", is a `CHECK` in SQL, and a sentence in the descriptions of the Table Schema and the AI schema. Other rules, such as if/then, stay in the JSON Schema; the files say so.
 
@@ -54,9 +54,9 @@ The AI schema keeps to what the structured outputs of both OpenAI and Anthropic 
 
 - Every object has `additionalProperties: false` and lists every property in `required`. An optional attribute may be `null` instead.
 - No `$ref`: the value types are written out.
-- `anyOf` instead of `oneOf`. `allOf`, `not` and if/then rules become a note in the description.
+- `anyOf` instead of `oneOf`. An attribute with `allOf`, `not`, if/then, `patternProperties`, `dependentSchemas` or a `$ref` left inside it has no strict form, so the model has no AI file. On the model, an "at least one of" rule becomes a sentence in the description, and any other rule on several attributes a link: `More rules: <schema URL>`.
 - Only the formats `date-time`, `date`, `time`, `duration`, `email`, `hostname`, `ipv4`, `ipv6` and `uuid`.
-- Patterns without lookarounds.
+- Patterns without `(?`: a pattern with a lookaround or a non-capturing group goes into the description.
 - No `minimum`, `maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `minLength`, `maxLength`, `maxItems` or `uniqueItems`; `minItems` only 0 or 1.
 
 What it leaves out goes into the description, for example "(minimum 0; maximum 9)". `id` and `type` are not in it: your application sets them ([Extracting data with AI](/en/guide/ai-extraction#entity)). The descriptions are in English.

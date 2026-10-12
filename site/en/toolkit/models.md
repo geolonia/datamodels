@@ -25,9 +25,9 @@ disaster/EvacuationShelter  避難所の運用状況 / Evacuation shelter operat
 4 of 18 models in 3 node(s) match
 ```
 
-Each line is one model: its subject and type, its titles, the site (the name of its publisher), and its page. The best 10 are listed; `--limit` changes the number. With `--json`, the output also has the type IRI, version, schema, `@context` and index (`catalog.json`) of each model; use it from scripts and AI agents. `extend` and `export` take that index as `--index`.
+Each line is one model: its subject and type, its titles, the site (the name of its publisher), and its page. The best 10 are listed; `--limit` changes the number. With `--json`, the output also has the type IRI, version, schema, `@context` and index (`catalog.json`) of each model; use it from scripts and AI agents. `extend` and `export` take that index as `--index`: for them it must be the URL of the `catalog.json` itself, not the address of a node.
 
-A word counts most in the type name, then in the title, the attribute names and the descriptions, and a rare word counts more than a common one. English words need 3 letters or more. Japanese is matched by pairs of characters that contain a kanji or katakana, so `避難` finds 指定避難所; a word in hiragana only, such as `ひなん`, finds nothing. Value types, such as an address, are listed too.
+A word counts most in the type name, then in the title, the attribute names and the descriptions, and a rare word counts more than a common one. English words need 3 letters or more. Japanese is matched by pairs of characters that contain a kanji or katakana, so `避難` finds 指定避難所; a word in hiragana only, such as `ひなん`, is not searched for. Alone, it is a usage error (exit code 2, "nothing to search for"). Value types, such as an address, are listed too.
 
 `nodes` lists the sites it can reach, with their name, address, licence, number of models, and the site that links to them:
 
@@ -54,7 +54,7 @@ To build on a model you found, use [extend](#extend).
 npx @geolonia/datamodels@0.3.10 add road/RoadPatrol
 ```
 
-This adds `models/road/RoadPatrol/` with `schema.json`, `catalog.yaml`, `examples/example.json` and `notes.yaml` (the notes: sources, decisions and their reasons), and the type `RoadPatrol` to the subject's `@context`. The schema of an entity type has `id` and `type`, and `catalog.yaml` has a title and a description in each language of the node. The new model builds and passes `check` at once. Then [write its attributes](#attributes).
+This adds `models/road/RoadPatrol/` with `schema.json`, `catalog.yaml`, `examples/example.json` and `notes.yaml` (the notes: sources, decisions and their reasons), and the type `RoadPatrol` to the subject's `@context`. The schema of an entity type has `id` and `type`, and `catalog.yaml` has a title and a description in each language of the node. The new model builds and passes `check` at once. On a subject whose current version is already released, run [`bump`](/en/toolkit/versions#bump) before `add`: `add` changes that version's sources, and `build` and `check` then stop. Then [write its attributes](#attributes).
 
 For a value type, a structure used inside attributes (like an address), add `--value`:
 

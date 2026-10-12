@@ -165,7 +165,7 @@ Keeps the current version of a subject online: a snapshot of its `@context`, voc
 | `[dir]` | `.` | The node |
 | `--offline` | | Do not compare the snapshot with the published files |
 
-A snapshot that exists is kept (exit code 0). Exit code 1 when the sources changed since they were published, or when the site does not answer; `--offline` skips that comparison.
+When the version already has a snapshot, `release` compares the sources with it and changes nothing. Exit code 1 when the sources differ from the snapshot or from the published files, or when a published file cannot be read (any answer but 404); `--offline` skips the comparison with the published files.
 
 ## bump {#bump}
 
@@ -190,7 +190,7 @@ Exit code 1 when the release fails, as for `release`, or the level is not one of
 datamodels upgrade [dir] [--to <vX.Y.Z>]
 ```
 
-Moves the node to a release of the toolkit. The Action in `.github/workflows/` is pinned to the release's commit SHA, with the tag as a comment. The `npx` lines in the Markdown files at the top of the node run that release; the older form `npx github:geolonia/datamodels-toolkit#vX.Y.Z` becomes the npm form. Steps: [Moving to a newer toolkit](/en/toolkit/versions#upgrade).
+Moves the node to a release of the toolkit. The Action in `.github/workflows/` is pinned to the release's commit SHA, with the tag as a comment. The `npx` lines in the Markdown files at the top of the node run that release; from v0.3.8 on, the older form `npx github:geolonia/datamodels-toolkit#vX.Y.Z` becomes the npm form, and an older release gets the GitHub form. Steps: [Moving to a newer toolkit](/en/toolkit/versions#upgrade).
 
 | Argument or option | Default | What it is |
 |---|---|---|
@@ -254,6 +254,6 @@ Writes files made from one entity model for other tools. Steps: [Exporting to ot
 | `[dir]` | `.` | A node. Without `--index`, its own model is used when it has one |
 | `--to <adapters>` | (required) | One or more of `csv`, `table-schema`, `ai`, `postgis`, comma-separated |
 | `--out <dir>` | `.` | Where to write the files, named `<Type>.<ext>` |
-| `--index <URL>` | the first node in `node.yaml`, else `https://datamodels.jp/catalog.json` | The `catalog.json` to read the model from, when the node does not have it |
+| `--index <URL>` | the first node in `node.yaml`, else `https://datamodels.jp/catalog.json` | The `catalog.json` to read the model from. When given, the node is not read; without it, the default is used only when the node does not have the model |
 
 A missing or unknown `--to` is a usage error. Exit code 1 when the model cannot be read or is a value type, or a file cannot be written.

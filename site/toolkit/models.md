@@ -25,9 +25,9 @@ disaster/EvacuationShelter  避難所の運用状況 / Evacuation shelter operat
 4 of 18 models in 3 node(s) match
 ```
 
-1 行に 1 つのモデルが、分野と型、タイトル、サイト（公開している人や組織の名前）、ページの URL の順に並びます。上位の 10 件を出力します。件数は `--limit` で変えられます。`--json` を付けると、型の IRI、バージョン、スキーマ、`@context`、索引（`catalog.json`）も出力します。スクリプトや AI エージェントから使うときは、こちらを使います。この索引は、`extend` と `export` の `--index` に渡せます。
+1 行に 1 つのモデルが、分野と型、タイトル、サイト（公開している人や組織の名前）、ページの URL の順に並びます。上位の 10 件を出力します。件数は `--limit` で変えられます。`--json` を付けると、型の IRI、バージョン、スキーマ、`@context`、索引（`catalog.json`）も出力します。スクリプトや AI エージェントから使うときは、こちらを使います。この索引は、`extend` と `export` の `--index` に渡せます。この 2 つでは、ノードのアドレスではなく、`catalog.json` そのものの URL を渡します。
 
-言葉は、型の名前に含まれるときがいちばん重く、タイトル、属性の名前、説明の順に軽くなります。めったに出ない言葉ほど重く数えます。英語の言葉は 3 文字以上が対象です。日本語は、漢字かカタカナを含む 2 文字ずつの組で比べます。`避難` で指定避難所が見つかりますが、`ひなん` のようにひらがなだけの言葉では見つかりません。住所などの値の型も結果に入ります。
+言葉は、型の名前に含まれるときがいちばん重く、タイトル、属性の名前、説明の順に軽くなります。めったに出ない言葉ほど重く数えます。英語の言葉は 3 文字以上が対象です。日本語は、漢字かカタカナを含む 2 文字ずつの組で比べます。`避難` で指定避難所が見つかります。`ひなん` のようにひらがなだけの言葉は、検索に使いません。そのような言葉だけなら、使い方の誤り（終了コード 2、「nothing to search for」）です。住所などの値の型も結果に入ります。
 
 `nodes` は、たどれるサイトを、名前、アドレス、ライセンス、モデルの数、リンク元のサイトとともに並べます。
 
@@ -54,7 +54,7 @@ Geolonia Inc.  https://models.geolonia.com/  CC0-1.0  1 model  (linked from Geol
 npx @geolonia/datamodels@0.3.10 add road/RoadPatrol
 ```
 
-`models/road/RoadPatrol/` に `schema.json`、`catalog.yaml`、`examples/example.json`、`notes.yaml` ができます。`notes.yaml` は、出典や決めたことと、その理由を書く注記です。分野の `@context` には型 `RoadPatrol` が入ります。エンティティの型のスキーマには `id` と `type` があり、`catalog.yaml` にはノードの言語ごとのタイトルと説明があります。できたモデルは、そのままビルドでき、`check` も通ります。続けて、[属性を書きます](#attributes)。
+`models/road/RoadPatrol/` に `schema.json`、`catalog.yaml`、`examples/example.json`、`notes.yaml` ができます。`notes.yaml` は、出典や決めたことと、その理由を書く注記です。分野の `@context` には型 `RoadPatrol` が入ります。エンティティの型のスキーマには `id` と `type` があり、`catalog.yaml` にはノードの言語ごとのタイトルと説明があります。できたモデルは、そのままビルドでき、`check` も通ります。分野の今のバージョンがリリース済みなら、`add` の前に [`bump`](/toolkit/versions#bump) を実行します。`add` がそのバージョンのソースを変え、`build` と `check` が止まるからです。続けて、[属性を書きます](#attributes)。
 
 住所のように属性の中で使う値の型は、`--value` を付けて作ります。
 

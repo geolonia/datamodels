@@ -32,7 +32,7 @@ Then make the change. The site has both versions; see [URLs and versions](/en/gu
 
 The first thing `bump` does, keeping the version, is also a command of its own: `release`. It saves the current version into `models/road/releases/` and does not raise the version. Run it once a version is published, before you change its sources, and commit the result. `check` notes a published version that is not saved yet. `build` publishes every saved version next to the current one. A saved version is kept as it is.
 
-Online, `release` first compares the files with the published ones. When the sources changed after publishing, it refuses: restore them (for example with git), release, and then make the change in a new version.
+When the version already has a snapshot, `release` compares the sources with it instead, and changes nothing. Otherwise, online, `release` first compares the files with the published ones. When the sources changed after publishing, it refuses: restore them (for example with git), release, and then make the change in a new version. A file it cannot read also stops it, unless the site answers 404 (not published).
 
 ```bash
 npx @geolonia/datamodels@0.3.10 release road
@@ -69,4 +69,4 @@ To move the node to a newer toolkit, run `upgrade` and commit: it changes the ve
 npx @geolonia/datamodels@0.3.10 upgrade
 ```
 
-`upgrade` reads the release from the GitHub API. In `.github/workflows/`, it pins the Action to the release's commit SHA, with the tag as a comment. An `npx` line that ran the toolkit from GitHub (`npx github:geolonia/datamodels-toolkit#vX.Y.Z`) becomes the npm form (`npx @geolonia/datamodels@X.Y.Z`).
+`upgrade` reads the release from the GitHub API. In `.github/workflows/`, it pins the Action to the release's commit SHA, with the tag as a comment. An `npx` line that ran the toolkit from GitHub (`npx github:geolonia/datamodels-toolkit#vX.Y.Z`) becomes the npm form (`npx @geolonia/datamodels@X.Y.Z`). This holds for v0.3.8 and later; with an older `--to`, the lines get the GitHub form.

@@ -69,11 +69,11 @@ About the first version that `mapping` writes:
 - It reads the CSV header, and up to the first 50 rows of a column to tell a column of true and false (or 有 and 無) from one of 1 and 0. No value of your list goes into the file.
 - It has one row per attribute, per field of a value (`address.postalCode`) and for the location, as the CSV template splits them. Required attributes come first.
 - A column fills a row when its name is the attribute's, also when written otherwise (`postal_code`, `Postal Code`), or the attribute's Japanese or English name in the catalog. The columns that the catalog's mapping files read for the attribute are clues too, with their transform. Longitude and latitude columns (`lng`, `経度`, …) become the location.
-- A column that only shares part of the Japanese name is marked as a guess, to check. When two columns fit equally well, the row stays a TODO and lists both as candidates.
+- A column that only shares part of the Japanese name is marked as a guess, to check. When two columns fit equally well, the row stays a TODO and lists both as candidates. When one column fits two rows equally well, both rows stay TODOs.
 - A row without a column says `# TODO: which column?` (`# TODO：どの列？` when the header is Japanese).
-- `transform` follows the attribute's type: `integer` or `number` for a number, `split` for a list, `weekdays` for days of the week, `time` for a time, `geometry` for the location, `code6` for a local government code. A boolean gets `flag`, `boolean` when the column holds true and false, or `yesno` when it holds 有 and 無 or the other words of `yesno`. A rule taken from a catalog mapping keeps its `values`.
+- `transform` follows the attribute's type: `integer` or `number` for a number, `split` for a list, `weekdays` for days of the week, `time` for a time, `geometry` for the location, `json` for a value kept as JSON, `code6` for a local government code. A boolean gets `flag`, `boolean` when the column holds true and false, or `yesno` when it holds 有 and 無 or the other words of `yesno`. A rule taken from a catalog mapping keeps its `values`.
 - A value whose fields include a list, such as the opening hours, gets one row per field (`openingHoursSpecification.dayOfWeek`, `openingHoursSpecification.opens`). The CSV template keeps such a value as one JSON column.
-- `convert.id` comes from a catalog mapping of the model when the columns it needs are there; otherwise it is a TODO.
+- A CSV column named `id` becomes `id: { column: "id" }`: the entity id as it is, without a template. Otherwise `convert.id` comes from a catalog mapping of the model when the columns it needs are there, else it is a TODO.
 - A model with opening hours gets a TODO under `convert:`: what 0:00 to 0:00 means in your list ([Opening hours of 0:00 to 0:00](/en/guide/mapping#all-day)). Delete it when the list has no such hours.
 - The CSV columns that no row reads are listed at the end, as a comment.
 - Every row has a comment of one line, in Japanese when the CSV header is Japanese.
@@ -127,7 +127,7 @@ Whichever way you convert, the results work the same:
 
 - It detects UTF-8 and Shift_JIS.
 - A column that the mapping reads but the CSV does not have is listed as "not in the file, so left empty", and that attribute stays empty. Without the column of a required attribute, the rows are invalid.
-- It repairs only what it can prove, such as a local government code that lost its leading zero or lacks its check digit (the check digit decides). It lists every repair on standard error.
+- It repairs only known forms, such as a local government code that lost its leading zero or lacks its check digit ([`code6`](/en/guide/mapping#transforms)). It lists every repair on standard error.
 - Invalid rows are left out and listed by line. Rows that get the same id are invalid, and so is an id in exponent form, such as `1.31E+11`: a spreadsheet rounded the number and its digits are lost.
 - The exit code is 1 when a row is invalid or a file cannot be read, and 2 for a usage error.
 
