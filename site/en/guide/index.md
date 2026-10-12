@@ -17,6 +17,7 @@ First check whether a catalog model fits your data. If it does not fit as it is,
 
 - [Tutorial: from a CSV file to a map](/en/guide/tutorial): one real open-data file converted into a model, loaded into a broker, queried and shown on a map, step by step.
 - [Using the models](/en/guide/use): validate JSON with the catalog models, send it to an NGSI-LD broker, and use it as linked data.
+  - [Adapters](/en/adapters/): what each file in a model page's Download row is, how to use it and where to get it.
   - [Using a spreadsheet (CSV)](/en/guide/csv): fill in the CSV template, check it with frictionless and convert it into entities.
   - [Using PostgreSQL / PostGIS](/en/guide/postgis): create a model's table, add a row and query by distance.
   - [Extracting data with AI](/en/guide/ai-extraction): take entities out of an e-mail or a PDF with the AI schema.
