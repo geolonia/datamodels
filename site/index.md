@@ -32,7 +32,7 @@ features:
     link: /guide/standards
     linkText: 対応している標準
   - title: データを変換する
-    details: CSV の一覧を、モデルのエンティティに変換します。1 件ずつ、モデルの JSON Schema で検査します。
+    details: CSV の一覧を、モデルのエンティティに変換します。1 件ずつ、モデルの JSON Schema で検証します。
     link: /toolkit/convert
     linkText: データを変換する
   - title: 複製せず、拡張する

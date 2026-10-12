@@ -5,7 +5,7 @@ description: カタログのモデルで JSON を検証し、NGSI-LD ブロー�
 
 # 使い方
 
-各モデルのページには、**@context**（各属性の意味）、**JSON Schema**（正しいデータの形）、**例**の 3 つがあります。どれも普通の URL で公開しているので、特定の製品がなくても使えます。データの中では、エイリアスの URL（`…/v1.jsonld`、`…/v1.json`）を使います。使い分けは[URL とバージョン](/guide/urls)で説明しています。
+各モデルのページには、**@context**（各属性の意味）、**JSON Schema**（正しいデータの形）、**例**の 3 つがあります。どれも普通の URL で公開しているので、特定の製品がなくても使えます。モデルは**分野**ごとにまとまっています。分野は、関係するモデルのまとまりで、名前空間とバージョンを持ちます（`disaster`、`transportation` など）。データの中では、**バージョンの別名**の URL（`…/v1.jsonld`、`…/v1.json`）を使います。互換性のある最新のバージョンを指す URL です。使い分けは[URL とバージョン](/guide/urls)で、言葉の意味は[用語](/guide/#terms)で説明しています。
 
 使い方は 3 通りです。どれか 1 つだけでも、組み合わせても使えます。
 
@@ -21,7 +21,7 @@ NGSI-LD を読まないツール（表計算ソフト、AI、PostgreSQL）向け
 
 ## JSON を検証する {#validate}
 
-JSON Schema で確認するのは、属性名と値だけのシンプルな形（*key-values* と呼びます）のデータです。住所やジオメトリなど、ほかのスキーマを参照している部分も、自動で取得して確認します。
+JSON Schema で確認するのは、属性名と値だけの単純な形のデータです。この形を *key-values の形*と呼びます。住所やジオメトリなど、ほかのスキーマを参照している部分も、自動で取得して確認します。
 
 ::: code-group
 
@@ -47,7 +47,7 @@ console.log(validate(entity) ? 'valid' : validate.errors);
 
 ```python [Python]
 # pip install "jsonschema[format]" requests
-# （[format] がないと URI と日時の形式を検査しない）
+# （[format] がないと URI と日時の形式を検証しない）
 import requests
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
@@ -87,7 +87,7 @@ check-jsonschema --schemafile "$BASE/schema/$MODEL/v1.0.0.json" entity.json
 
 ## NGSI-LD ブローカーに送る {#broker}
 
-NGSI-LD のブローカーには、通常は *normalized* の形で送ります。normalized では、各属性が自分の種類も示します。値を持つ Property なのか、別のエンティティを指す Relationship なのか、といった種類です。モデルのページには両方の形の例があるので、normalized の例はそのまま送れます。
+NGSI-LD のブローカーには、通常は *normalized の形*で送ります。この形では、各属性が自分の種類も示します。値を持つ Property なのか、別のエンティティを指す Relationship なのか、といった種類です。モデルのページには両方の形の例があるので、normalized の例はそのまま送れます。
 
 ```bash
 BROKER=http://localhost:1026   # ブローカーの URL
@@ -112,10 +112,10 @@ curl -G "$BROKER/ngsi-ld/v1/entities" \
 
 @context の渡し方は 2 通りです。ボディに入れて `application/ld+json` で送るか、ボディには入れずに `application/json` と `Link` ヘッダーで送ります。ヘッダーはモデルのページにあります。複数のテナントを持つブローカーでは `NGSILD-Tenant` ヘッダーでテナントを指定します。認証の方法はブローカーごとに違います。
 
-**自分のデータを normalized にする。** モデルのページの「試す」タブでは、入力したデータを 2 つの形で切り替えて見られます。CSV の一覧なら、[datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) の `datamodels convert … --normalized` で変換できます（[データを変換する](/toolkit/convert)）。自分のコードで変換するときは、次の決まりに従ってください。
+**自分のデータを normalized の形にする。** モデルのページの「試す」タブでは、入力したデータを 2 つの形で切り替えて見られます。CSV の一覧なら、[datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) の `datamodels convert … --normalized` で変換できます（[データを変換する](/toolkit/convert)）。自分のコードで変換するときは、次の決まりに従ってください。
 
 <details class="rules">
-<summary>key-values から normalized への決まり</summary>
+<summary>key-values の形から normalized の形への決まり</summary>
 
 - `id` と `type` はそのままにします。
 - 各属性は、モデルのページの属性の表にある NGSI-LD の型で包みます。
@@ -125,12 +125,12 @@ curl -G "$BROKER/ngsi-ld/v1/entities" \
   - JsonProperty：`{ "type": "JsonProperty", "json": … }`。
   - VocabProperty：`{ "type": "VocabProperty", "vocab": … }`。
 
-  JsonProperty と VocabProperty は、key-values の形でもメンバーを残します（`{ "json": … }`、`{ "vocab": … }`）。JSON Schema が表すのは中の値です。key-values のデータをスキーマで検証するときは、このメンバーを外してください。この 2 つは NGSI-LD 1.8 の型です。使う前に、ブローカーが対応しているかを確かめてください。
+  JsonProperty と VocabProperty は、key-values の形でもメンバーを残します（`{ "json": … }`、`{ "vocab": … }`）。JSON Schema が表すのは中の値です。key-values の形のデータをスキーマで検証するときは、このメンバーを外してください。この 2 つは NGSI-LD 1.8 の型です。使う前に、ブローカーが対応しているかを確かめてください。
 - 日時の Property（スキーマの `format: date-time`）の値は `{ "@type": "DateTime", "@value": … }` にします。日付の Property（`format: date`）は `{ "@type": "Date", "@value": … }` です。日付でも日時でもよい Property（モデルのページで「日付または日時」）は、値に合わせます。`2026-07-11` なら Date、`2026-07-11T09:00:00+09:00` なら DateTime です。
 - 複数の値を持つ属性（属性の表で「複数可」と示すもの。Task の `assignee` など）は、値ごとに 1 つのインスタンスを並べた配列にし、それぞれに `datasetId` を付けます。カタログの例は `urn:ngsi-ld:dataset:<属性名>:<番号>` の形を使っています。
-- `@context` にはサブジェクトのエイリアスと NGSI-LD のコアコンテキストを並べます。
+- `@context` には、分野の @context のバージョンの別名と、NGSI-LD のコアコンテキストを並べます。
 
-たとえば、次の key-values の Task があります。
+たとえば、次の key-values の形の Task があります。
 
 ```json
 {
@@ -143,7 +143,7 @@ curl -G "$BROKER/ngsi-ld/v1/entities" \
 }
 ```
 
-これを normalized にすると、次のようになります。
+これを normalized の形にすると、次のようになります。
 
 ```json
 {
@@ -178,9 +178,9 @@ curl -G "$BROKER/ngsi-ld/v1/entities" \
 
 @context を付けると、普通の JSON が JSON-LD になります。各属性には、世界で一意の名前（IRI）が付きます。カタログ独自の IRI（`https://datamodels.jp/ns/...`）か、取り入れている標準（schema.org、Smart Data Models）の IRI です。JSON-LD は、Linked Data のツールが使う RDF に変換できます。`id` と `type` を JSON-LD の `@id` と `@type` として扱うため、NGSI-LD の core context も並べます。
 
-名前が違っても、IRI が同じなら意味は同じです。ほかの組織が自分の名前（エイリアス）で書いたデータも、同じ IRI になります（[独自の名前で使う](/guide/names)）。
+名前が違っても、IRI が同じなら意味は同じです。ほかの組織が自分の名前（別名）で書いたデータも、同じ IRI になります（[独自の名前で使う](/guide/names)）。
 
-<svg class="flow-diagram" viewBox="0 0 460 250" role="img" aria-label="自分のデータの restrictionStatus は、カタログの @context で IRI https://datamodels.jp/ns/transportation/restrictionStatus になります。ほかの組織のデータの roadStatus も、エイリアスを定義した自分の @context で同じ IRI になります。違う名前が 1 つの意味で出会います。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="ld-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="10" y="8" width="210" height="56" rx="10"/><text class="t m" x="115" y="32">restrictionStatus</text><text class="s" x="115" y="51">自分のデータ</text><rect class="box" x="240" y="8" width="210" height="56" rx="10"/><text class="t m" x="345" y="32">roadStatus</text><text class="s" x="345" y="51">ほかの組織のデータ</text><line class="a" x1="115" y1="64" x2="115" y2="94" marker-end="url(#ld-ah)"/><line class="a" x1="345" y1="64" x2="345" y2="94" marker-end="url(#ld-ah)"/><rect class="box" x="10" y="96" width="210" height="56" rx="10"/><text class="t" x="115" y="120">カタログの @context</text><text class="s" x="115" y="139">datamodels.jp が公開</text><rect class="box" x="240" y="96" width="210" height="56" rx="10"/><text class="t" x="345" y="120">自分の @context</text><text class="s" x="345" y="139">エイリアスを定義</text><line class="a" x1="115" y1="152" x2="196" y2="182" marker-end="url(#ld-ah)"/><line class="a" x1="345" y1="152" x2="264" y2="182" marker-end="url(#ld-ah)"/><rect class="box main" x="10" y="184" width="440" height="58" rx="10"/><text class="t" x="230" y="208">同じ意味（世界で一意の IRI）</text><text class="s" x="230" y="227">https://datamodels.jp/ns/transportation/restrictionStatus</text></svg>
+<svg class="flow-diagram" viewBox="0 0 460 250" role="img" aria-label="自分のデータの restrictionStatus は、カタログの @context で IRI https://datamodels.jp/ns/transportation/restrictionStatus になります。ほかの組織のデータの roadStatus も、別名を定義した自分の @context で同じ IRI になります。違う名前が 1 つの意味で出会います。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="ld-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="10" y="8" width="210" height="56" rx="10"/><text class="t m" x="115" y="32">restrictionStatus</text><text class="s" x="115" y="51">自分のデータ</text><rect class="box" x="240" y="8" width="210" height="56" rx="10"/><text class="t m" x="345" y="32">roadStatus</text><text class="s" x="345" y="51">ほかの組織のデータ</text><line class="a" x1="115" y1="64" x2="115" y2="94" marker-end="url(#ld-ah)"/><line class="a" x1="345" y1="64" x2="345" y2="94" marker-end="url(#ld-ah)"/><rect class="box" x="10" y="96" width="210" height="56" rx="10"/><text class="t" x="115" y="120">カタログの @context</text><text class="s" x="115" y="139">datamodels.jp が公開</text><rect class="box" x="240" y="96" width="210" height="56" rx="10"/><text class="t" x="345" y="120">自分の @context</text><text class="s" x="345" y="139">別名を定義</text><line class="a" x1="115" y1="152" x2="196" y2="182" marker-end="url(#ld-ah)"/><line class="a" x1="345" y1="152" x2="264" y2="182" marker-end="url(#ld-ah)"/><rect class="box main" x="10" y="184" width="440" height="58" rx="10"/><text class="t" x="230" y="208">同じ意味（世界で一意の IRI）</text><text class="s" x="230" y="227">https://datamodels.jp/ns/transportation/restrictionStatus</text></svg>
 
 ::: code-group
 
@@ -240,13 +240,13 @@ print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))
 <urn:ngsi-ld:RoadRestriction:0001> <https://smartdatamodels.org/dataModel.Transportation/roadName> "靖国通り" .
 ```
 
-各サブジェクトは、語彙（`/vocab/<サブジェクト>/v1.0.0.jsonld`、RDFS）も公開しています。語彙には、型と属性の名前と説明が日本語と英語で入っています。ほかの語彙から取り入れた属性（schema.org の `address` など）の説明は、それぞれの提供元にあります。
+各分野は、語彙（`/vocab/<subject>/v1.0.0.jsonld`、RDFS）も公開しています。語彙には、型と属性の名前と説明が日本語と英語で入っています。ほかの語彙から取り入れた属性（schema.org の `address` など）の説明は、それぞれの提供元にあります。
 
 ## 他のツールで使う {#other-tools}
 
 NGSI-LD を読まないツール向けのファイルも、エンティティのモデルのページ（Geometry などの値型を除く）の**ダウンロード**の行にあります。それぞれの手順を、1 つの例で示しています。
 
-- [表計算ソフト（CSV）で使う](/guide/csv)：CSV テンプレートに入力し、`frictionless validate` で検査して、エンティティに変換します。
+- [表計算ソフト（CSV）で使う](/guide/csv)：CSV テンプレートに入力し、`frictionless validate` で検証して、エンティティに変換します。
 - [PostgreSQL / PostGIS で使う](/guide/postgis)：制約付きのテーブルを作り、行を入れて、距離で検索します。
 - [AI でデータを取り出す](/guide/ai-extraction)：AI 用のスキーマを AI モデルに渡し、メールや PDF からエンティティを取り出します。
 

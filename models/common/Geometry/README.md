@@ -7,8 +7,8 @@ A GeoJSON geometry (RFC 7946) as the value of a GeoProperty such as location: Po
 location などの GeoProperty の値として使う GeoJSON ジオメトリ（RFC 7946）。点・線・面とその複数形、または GeometryCollection。座標は経度・緯度（・高さ）の順で WGS 84。
 
 - IRI: `https://datamodels.jp/ns/common/Geometry`
-- Context: `https://datamodels.jp/context/common/v1.jsonld` (alias), `https://datamodels.jp/context/common/v1.0.0.jsonld` (exact)
-- Schema: `https://datamodels.jp/schema/common/Geometry/v1.json` (alias), `https://datamodels.jp/schema/common/Geometry/v1.0.0.json` (exact)
+- Context: `https://datamodels.jp/context/common/v1.jsonld` (version alias), `https://datamodels.jp/context/common/v1.0.0.jsonld` (exact)
+- Schema: `https://datamodels.jp/schema/common/Geometry/v1.json` (version alias), `https://datamodels.jp/schema/common/Geometry/v1.0.0.json` (exact)
 - Page: https://datamodels.jp/models/common/Geometry/
 
 Files follow the Smart Data Models layout: `schema.json`, `catalog.yaml` (Japanese and English descriptions), `examples/`, `notes.yaml`, `ADOPTERS.yaml`.

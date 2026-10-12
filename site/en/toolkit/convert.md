@@ -122,7 +122,7 @@ Whichever way you convert, the results work the same:
 ## Options {#options}
 
 - `--out file.json`: write to a file (default: standard output).
-- `--normalized`: the NGSI-LD normalized form instead of key-values, with the subject's `@context` and the NGSI-LD core context.
+- `--normalized`: the NGSI-LD normalized form instead of the key-values form, with the subject's `@context` and the NGSI-LD core context.
 - `--set attribute=value`: a value the list does not carry ([example above](#standard)).
 - `--check`, `--rows N`: check the first rows only ([above](#your-own-list)).
 - `--site`: the site to read the mapping files and models from (default: datamodels.jp). To try a mapping before it is published, build [geolonia/datamodels](https://github.com/geolonia/datamodels) (`npm run build`) and add `--site dist`.

@@ -9,8 +9,8 @@ How to get in touch with a facility or an organisation, as the value of a contac
 Subclass of `https://schema.org/ContactPoint` (x-subclass-of).
 
 - IRI: `https://datamodels.jp/ns/common/ContactPoint`
-- Context: `https://datamodels.jp/context/common/v1.jsonld` (alias), `https://datamodels.jp/context/common/v1.0.0.jsonld` (exact)
-- Schema: `https://datamodels.jp/schema/common/ContactPoint/v1.json` (alias), `https://datamodels.jp/schema/common/ContactPoint/v1.0.0.json` (exact)
+- Context: `https://datamodels.jp/context/common/v1.jsonld` (version alias), `https://datamodels.jp/context/common/v1.0.0.jsonld` (exact)
+- Schema: `https://datamodels.jp/schema/common/ContactPoint/v1.json` (version alias), `https://datamodels.jp/schema/common/ContactPoint/v1.0.0.json` (exact)
 - Page: https://datamodels.jp/models/common/ContactPoint/
 
 Files follow the Smart Data Models layout: `schema.json`, `catalog.yaml` (Japanese and English descriptions), `examples/`, `mapping/`, `notes.yaml`, `ADOPTERS.yaml`.

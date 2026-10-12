@@ -15,15 +15,15 @@ description: どの URL を使うか、何が変わらないか、バージョ�
 
 | 用途 | URL |
 |---|---|
-| 保存するデータの `@context`、`Link` ヘッダー | エイリアス `/context/<subject>/v1.jsonld` |
+| 保存するデータの `@context`、`Link` ヘッダー | バージョンの別名 `/context/<subject>/v1.jsonld` |
 | 監査、他のブローカーでの結果の再現 | 正確なバージョン `/context/<subject>/v1.0.0.jsonld` |
-| 検査 | `/schema/<subject>/<Type>/v1.json`（エイリアス）または `v1.0.0.json` |
+| 検証 | `/schema/<subject>/<Type>/v1.json`（バージョンの別名）または `v1.0.0.json` |
 
-エイリアスが指す先は、互換性のあるバージョンにしか変わらないので、通常はエイリアスで十分です。監査や結果の再現が要るときは正確なバージョンを使ってください。
+バージョンの別名が指す先は、互換性のあるバージョンにしか変わらないので、通常はこれで十分です。監査や結果の再現が要るときは正確なバージョンを使ってください。
 
-サーバーやブローカーは、取得したファイルをキャッシュして使い回せます。エイリアスのキャッシュ期間は 5 分なので、互換性のある新しいバージョンは 5 分以内に行き渡ります。正確なバージョンは中身が変わらないので、1 年です（正式公開から。それまでは 5 分）。
+サーバーやブローカーは、取得したファイルをキャッシュして使い回せます。バージョンの別名のキャッシュ期間は 5 分なので、互換性のある新しいバージョンは 5 分以内に行き渡ります。正確なバージョンは中身が変わらないので、1 年です（正式公開から。それまでは 5 分）。
 
-<svg class="flow-diagram" viewBox="0 0 460 160" role="img" aria-label="エイリアス v1.jsonld は常に最新の 1.x（ここでは v1.2.0）を指します。v1.0.0、v1.1.0、v1.2.0 は公開されたまま変わりません。互換性のない変更は v2.0.0 になり、エイリアス v2.jsonld を持ちます。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="ver-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="10" y="92" width="100" height="44" rx="8"/><text class="t m" x="60" y="119">v1.0.0</text><rect class="box" x="120" y="92" width="100" height="44" rx="8"/><text class="t m" x="170" y="119">v1.1.0</text><rect class="box" x="230" y="92" width="100" height="44" rx="8"/><text class="t m" x="280" y="119">v1.2.0</text><rect class="box" x="350" y="92" width="100" height="44" rx="8"/><text class="t m" x="400" y="119">v2.0.0</text><text class="s" x="175" y="154">公開したバージョン: 変わらない</text><rect class="box main" x="190" y="8" width="120" height="40" rx="8"/><text class="t m" x="250" y="33">v1.jsonld</text><line class="a" x1="270" y1="48" x2="280" y2="90" marker-end="url(#ver-ah)"/><text class="l e" x="182" y="33">エイリアス: 最新の 1.x</text><rect class="box" x="350" y="8" width="100" height="40" rx="8"/><text class="t m" x="400" y="33">v2.jsonld</text><line class="a" x1="400" y1="48" x2="400" y2="90" marker-end="url(#ver-ah)"/><text class="s" x="400" y="154">互換性のない変更</text></svg>
+<svg class="flow-diagram" viewBox="0 0 460 160" role="img" aria-label="バージョンの別名 v1.jsonld は常に最新の 1.x（ここでは v1.2.0）を指します。v1.0.0、v1.1.0、v1.2.0 は公開されたまま変わりません。互換性のない変更は v2.0.0 になり、バージョンの別名 v2.jsonld を持ちます。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="ver-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="10" y="92" width="100" height="44" rx="8"/><text class="t m" x="60" y="119">v1.0.0</text><rect class="box" x="120" y="92" width="100" height="44" rx="8"/><text class="t m" x="170" y="119">v1.1.0</text><rect class="box" x="230" y="92" width="100" height="44" rx="8"/><text class="t m" x="280" y="119">v1.2.0</text><rect class="box" x="350" y="92" width="100" height="44" rx="8"/><text class="t m" x="400" y="119">v2.0.0</text><text class="s" x="175" y="154">公開したバージョン: 変わらない</text><rect class="box main" x="190" y="8" width="120" height="40" rx="8"/><text class="t m" x="250" y="33">v1.jsonld</text><line class="a" x1="270" y1="48" x2="280" y2="90" marker-end="url(#ver-ah)"/><text class="l e" x="182" y="33">バージョンの別名: 最新の 1.x</text><rect class="box" x="350" y="8" width="100" height="40" rx="8"/><text class="t m" x="400" y="33">v2.jsonld</text><line class="a" x1="400" y1="48" x2="400" y2="90" marker-end="url(#ver-ah)"/><text class="s" x="400" y="154">互換性のない変更</text></svg>
 
 ## 約束
 
@@ -33,15 +33,15 @@ description: どの URL を使うか、何が変わらないか、バージョ�
 
 ## バージョン {#versions}
 
-バージョンはサブジェクト（分野ごとのモデルのまとまり）ごとに 1 つで、`@context`、語彙、JSON Schema が同じ番号になります（例：`transportation` の 1.0.0）。番号は [Semantic Versioning](https://semver.org/lang/ja/) に従います。
+バージョンは分野ごとに 1 つで、`@context`、語彙、JSON Schema が同じ番号になります（例：`transportation` の 1.0.0）。番号は [Semantic Versioning](https://semver.org/lang/ja/) に従います。
 
 | 変更 | 上げる番号 | 例 |
 |---|---|---|
-| 意味も検査も変わらない修正 | パッチ（1.0.**1**） | スキーマの説明文の誤字 |
+| 意味も検証も変わらない修正 | パッチ（1.0.**1**） | スキーマの説明文の誤字 |
 | 互換性のある追加 | マイナー（1.**1**.0） | 任意の属性やモデルを足す、値の一覧に値を足す |
 | 互換性のない変更 | メジャー（**2**.0.0） | 属性の名前や型を変える、属性や値を消す、任意の属性を必須にする |
 
-新しいバージョンを出しても古いものは残ります。`v1.0.0` は同じ URL のままで、エイリアス `v1` が最新の 1.x を指します。値の一覧に値を足すのはマイナーです。ただし、すべての値に対応するコードは新しい値を知っておく必要があるので、Pull Request とモデルの注記に書きます。
+新しいバージョンを出しても古いものは残ります。`v1.0.0` は同じ URL のままで、バージョンの別名 `v1` が最新の 1.x を指します。値の一覧に値を足すのはマイナーです。ただし、すべての値に対応するコードは新しい値を知っておく必要があるので、Pull Request とモデルの注記に書きます。
 
 ## 非推奨 {#deprecation}
 
@@ -55,13 +55,13 @@ description: どの URL を使うか、何が変わらないか、バージョ�
 | URL | 内容 |
 |---|---|
 | `/context/<subject>/vX.Y.Z.jsonld` | @context（不変） |
-| `/context/<subject>/vX.jsonld` | エイリアス（最新の X.y.z） |
+| `/context/<subject>/vX.jsonld` | バージョンの別名（最新の X.y.z） |
 | `/schema/<subject>/<Type>/vX.Y.Z.json` | JSON Schema（不変） |
-| `/schema/<subject>/<Type>/vX.json` | エイリアス |
+| `/schema/<subject>/<Type>/vX.json` | バージョンの別名 |
 | `/vocab/<subject>/vX.Y.Z.jsonld` | 語彙（RDFS: クラス、サブクラス関係、日英ラベル。不変） |
-| `/vocab/<subject>/vX.jsonld` | エイリアス |
-| `/examples/<subject>/<Type>/example.json` | 例（key-values） |
-| `/examples/<subject>/<Type>/example-normalized.jsonld` | 例（NGSI-LD normalized。値型には無い） |
+| `/vocab/<subject>/vX.jsonld` | バージョンの別名 |
+| `/examples/<subject>/<Type>/example.json` | 例（key-values の形） |
+| `/examples/<subject>/<Type>/example-normalized.jsonld` | 例（normalized の形。値型には無い） |
 | `/ns/<subject>/<Term>` | 型・属性の IRI（ページにリダイレクト。JSON-LD のクライアントには語彙） |
 | `/mapping/<subject>/<Type>/<name>.yaml` | 対応表（他の標準との対応と変換の規則。バージョンなし。URL は変わらず、内容はその時点のモデルに合わせる） |
 | `/adapters/<name>/<subject>/<Type>.<拡張子>` | アダプターのファイル：CSV テンプレート（`.csv`）、Table Schema（`.tableschema.json`）、AI 用の構造化出力（`.ai.json`）、PostgreSQL / PostGIS のテーブル（`.sql`）、GeonicDB の Custom Data Model 定義（`.json`） |

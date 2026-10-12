@@ -21,22 +21,22 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 - **既存の標準に基づく**: 国や自治体のガイドライン、Smart Data Models、GIF、RFC などに基づくモデルだけを公開します。検討した上流の型と、採用しなかった理由は `notes.yaml` に書きます。
 - **実際のデータがある**: 架空のユースケースではなく、いま存在するデータを表すこと。
 - **製品に依存しない**: 特定の製品向けの注釈や型名は入れません（製品向けのファイルは `adapters/` が作ります）。
-- 書き方の詳細は[モデルのルール](https://datamodels.jp/guide/rules)にあります（独自の型を作るとき、予約語、エイリアスとサブクラス、状態の属性、標準との対応表、例の書き方）。
+- 書き方の詳細は[モデルのルール](https://datamodels.jp/guide/rules)にあります（独自の型を作るとき、予約語、別名とサブクラス、状態の属性、標準との対応表、例の書き方）。
 
 ## 段階と決め方
 
 - **提案**（Issue）→ **ドラフト**（`draft`、マージされたモデル）→ **安定**（`stable`）→ **非推奨**（`deprecated`）。非推奨になったモデルも公開をやめず、URL は変わりません。
 - **試行**（`experimental`）は、必要なときだけ使う段階です。実際に使いながら学ぶためのモデルで、別のモデルに置き換わることがあります。データモデルのネットワークのほかのノードと同じ段階で（#200）、datamodels.jp で使うことは少ないはずです（2026-10-10 決定）。
 - **安定**になるには、`ADOPTERS.yaml` に別々の組織による 2 つの実装が必要です。各項目に `name`、`organization`、`url`（公開リポジトリ、ドキュメント、連絡先）を書きます。CI は組織が 2 つあるかを検査し、安定にする Pull Request のレビュアーが、実在し独立しているかを確認します。カタログを運営する Geolonia の実装も、同じ条件（`url` を含む）で 1 つとして数えます。もう 1 つは別の組織の実装です。同じ組織は、顧客や案件が違っても 1 つとして数え、`organization` には実装した組織の名前を書きます。
-- 通常の Pull Request はメンテナーがレビューしてマージします。新しいサブジェクト（分野ごとのモデルのまとまり）、メジャーバージョン、安定への昇格は、小さなグループが決めます。メンバーは Hal、宮内さん、大橋さん、Daniel で、その Pull Request や Issue の上で決めます。
+- 通常の Pull Request はメンテナーがレビューしてマージします。新しい分野、メジャーバージョン、安定への昇格は、小さなグループが決めます。メンバーは Hal、宮内さん、大橋さん、Daniel で、その Pull Request や Issue の上で決めます。
 
 ## Pull Request の手順
 
 1. リポジトリをフォークして、ブランチを作ります。
-2. `npm ci` を実行します。新しいモデルなら、`npm run new-model -- <サブジェクト> <型名>` でひな形を作り、TODO の箇所を埋めます。構成は Smart Data Models と同じです（`schema.json`、`catalog.yaml`、`examples/`、`notes.yaml`）。
+2. `npm ci` を実行します。新しいモデルなら、`npm run new-model -- <subject> <Type>` でひな形を作り、TODO の箇所を埋めます。構成は Smart Data Models と同じです（`schema.json`、`catalog.yaml`、`examples/`、`notes.yaml`）。
 3. `npm run validate:models` が、足りない箇所を一覧にします。最後に `npm run check` と `npm test` が通ることを確認します。
 4. すべてのコミットに `git commit -s` で署名（Signed-off-by）を付けて、Pull Request を送ります。
-5. CI（スキーマ、例、`@context` の展開、予約語、バージョンの検証と自動レビュー。このリポジトリ内のブランチならプレビュー URL も）の結果を見て、レビューに答えます。
+5. CI（スキーマ、例、`@context` の展開、予約語、バージョンの検査と自動レビュー。このリポジトリ内のブランチならプレビュー URL も）の結果を見て、レビューに答えます。
 
 公開済みのバージョンの記録（スナップショットとマニフェスト）はメンテナーが行います。正式公開前（プレリリース）は、現行バージョンをその場で修正できます。
 
@@ -48,7 +48,7 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 
 データを登録するツール（ブローカーの管理画面など）は、利用者のデータから新しいモデルを作ることがあります。それを提案として渡すときは、このリポジトリのモデルと同じ構成のフォルダ（**提案バンドル**）を書き出します。
 
-- `models/<サブジェクト>/<型名>/` に、モデルのファイルを置きます。`catalog.yaml`、`schema.json`、`examples/`、`notes.yaml`、`ADOPTERS.yaml`（使っている組織とおよそのデータ量）です。多くの一覧が従う公開の標準を元にしたモデルなら、その標準との対応表（`mapping/`）も置きます（[モデルのルール](https://datamodels.jp/guide/rules#mapping)）。`npm run validate:models` で足りない箇所が分かります。
+- `models/<subject>/<Type>/` に、モデルのファイルを置きます。`catalog.yaml`、`schema.json`、`examples/`、`notes.yaml`、`ADOPTERS.yaml`（使っている組織とおよそのデータ量）です。多くの一覧が従う公開の標準を元にしたモデルなら、その標準との対応表（`mapping/`）も置きます（[モデルのルール](https://datamodels.jp/guide/rules#mapping)）。`npm run validate:models` で足りない箇所が分かります。
 - **ツールは自分で投稿しません。** 人が自分の GitHub アカウントで Pull Request を開き、署名（DCO）を付けます。作者と責任は人に残ります。
 - レビューを経て、他のモデルと同じく `draft` で取り込みます。新しい段階はありません。
 - `ADOPTERS.yaml` の記載は、早めの根拠になります。1 つの組織は 1 回だけ数えるので、`stable` に 2 つの独立した組織が要るという規則は変わりません（2026-10-06 決定、#156）。
@@ -58,14 +58,14 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 拡張の登録フォームで届いた拡張は、次の手順でモデルのページの「このモデルをもとにしたもの」と `catalog.json` に入ります。ツールキットで作った自分のサイトで公開している拡張は、サイトを `nodes.yaml` に載せれば、`npm run nodes` で読んだ内容が同じ欄に載ります。サイトとフォームの両方に同じ拡張があるときは、サイトの内容を 1 回だけ載せます（拡張のページか @context の URL がサイトの URL で始まるとき、同じとみなします）。
 
 1. 持ち主が [拡張の登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml) に記入します（モデルのページからはモデル名が入った状態で開きます）。使う場面とそのあとの流れは「[拡張を載せる](https://datamodels.jp/guide/contribute#extension)」にあります。
-2. メンテナーか持ち主が、`models/<サブジェクト>/<型名>/extensions/<名前>.yaml` を足す Pull Request を開きます（署名付き）。
-3. CI が形を検査します。IRI が datamodels.jp のアドレスでないこと（自分のドメインかどうかは検査しない）、名前がモデルの属性や NGSI-LD のコアの用語と重ならないこと。@context をデータの中に書く場合は、サブジェクトの @context を取り込み、各用語を書いた IRI で定義していること。
+2. メンテナーか持ち主が、`models/<subject>/<Type>/extensions/<name>.yaml` を足す Pull Request を開きます（署名付き）。
+3. CI が形を検査します。IRI が datamodels.jp のアドレスでないこと（自分のドメインかどうかは検査しない）、名前がモデルの属性や NGSI-LD のコアの用語と重ならないこと。@context をデータの中に書く場合は、分野の @context を取り込み、各用語を書いた IRI で定義していること。
 4. レビューで確かめるのは、登録した人がその組織を代表していることだけです。内容は確認せず、持ち主の申告のまま載せます。アクセス情報（キー、トークン、ログイン URL）は載せません。
 
 ```yaml
 organization: { ja: 和歌山県, en: Wakayama Prefecture }
 url: https://www.pref.wakayama.lg.jp/        # 任意
-version: 1.0.0                               # 基にしたサブジェクトのバージョン
+version: 1.0.0                               # 基にした分野のバージョン
 context:                                     # URL、またはデータの中に書く @context
   - https://datamodels.jp/context/transportation/v1.jsonld
   - { detour: https://www.pref.wakayama.lg.jp/ns/road/detour }

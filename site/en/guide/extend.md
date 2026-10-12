@@ -5,7 +5,7 @@ description: Add attributes of your own to a catalog model without copying it, a
 
 # Adding attributes
 
-Often a catalog model fits, but your system needs a few more attributes. You do not need a new model, and you do not copy the catalog: you publish a small @context of your own that takes the catalog's @context and adds only your attributes. This is called a **profile**.
+Often a catalog model fits, but your system needs a few more attributes. You do not need a new model, and you do not copy the catalog: you publish a small @context of your own that takes the catalog's @context and adds only your attributes. This is called an **extension** (technically, a profile of the model).
 
 ::: tip The easiest way
 The [extension builder](/en/guide/builder) writes both files in the browser: your @context, and a JSON Schema that checks the catalog's attributes and yours.
@@ -65,11 +65,11 @@ The catalog does not host your @context. You can list your extension on the mode
 
 ## When the catalog gets new attributes {#updates}
 
-Your @context takes the catalog by its alias (`v1.jsonld`), so new catalog attributes work in your data at once. The JSON Schema does not follow by itself: build it again with the extension builder.
+Your @context takes the catalog's @context by its version alias (`v1.jsonld`), so new catalog attributes work in your data at once. The JSON Schema does not follow by itself: build it again with the extension builder.
 
 ## Starting from a Smart Data Models model
 
-It works the same way. Take the upstream @context by an address pinned to a commit, not `master` (`https://raw.githubusercontent.com/smart-data-models/dataModel.<Domain>/<commit>/context.jsonld`), so the meaning of your data does not change when upstream changes.
+It works the same way. Take the upstream @context by an address pinned to a commit, not `master` (`https://raw.githubusercontent.com/smart-data-models/dataModel.<Subject>/<commit>/context.jsonld`), so the meaning of your data does not change when upstream changes.
 
 ## Useful beyond your project?
 

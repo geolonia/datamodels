@@ -27,7 +27,7 @@ const L = {
     typeMismatch: (k: string, got: string, want: string) => `${k}: ${got} になっていますが、このモデルでは ${want} です。`,
     fixFirst: '切り替える前に JSON の書式エラーを直してください。', loadFailed: 'スキーマの検証を読み込めませんでした: ',
     attribute: '属性', iri: 'IRI', origin: '出どころ', none: '属性がまだありません。',
-    origins: { subject: 'このサブジェクト', core: 'NGSI-LD コア', other: (s: string) => `サブジェクト ${s}`, upstream: (h: string) => `上流（${h}）` },
+    origins: { subject: 'この分野', core: 'NGSI-LD コア', other: (s: string) => `分野 ${s}`, upstream: (h: string) => `上流（${h}）` },
     unknown: 'このモデルに無い属性。NGSI-LD の既定のコンテキストに展開され、カタログの意味は付きません。',
   },
   en: {

@@ -84,7 +84,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.8 convert \
   --normalized --out sites.jsonld
 ```
 
-`--normalized` writes the same data in the form the NGSI-LD standard uses to send it, and adds an **@context**. The @context works like a dictionary: it tells the broker that `name` here means `https://uri.etsi.org/ngsi-ld/name` and `hazardTypes` means `https://datamodels.jp/ns/disaster/hazardTypes`. These full names (**IRIs**) are unique on the whole web, so two systems never mix up two different meanings of "name".
+`--normalized` writes the same data in the normalized form, the form the NGSI-LD standard uses to send it, and adds an **@context**. The @context works like a dictionary: it tells the broker that `name` here means `https://uri.etsi.org/ngsi-ld/name` and `hazardTypes` means `https://datamodels.jp/ns/disaster/hazardTypes`. These full names (**IRIs**) are unique on the whole web, so two systems never mix up two different meanings of "name".
 
 ## 3. Register the model and load the data {#load}
 
@@ -125,13 +125,13 @@ geonic entities list --type EvacuationSite --context $C --key-values \
   --coords '[139.8986,36.5592]' --attrs name
 ```
 
-Five sites, among them 東小学校 and 駅東公園. `--key-values` asks for the simple form you saw in step 2.
+Five sites, among them 東小学校 and 駅東公園. `--key-values` asks for the key-values form, the simple form you saw first in step 2.
 
 **Try without `--context`:** the same question finds nothing. Without the dictionary, the broker does not know that `EvacuationSite` means `https://datamodels.jp/ns/disaster/EvacuationSite`.
 
 ## 5. Show it on a map {#map}
 
-Map tools read **GeoJSON**. Get all sites in the simple form and turn them into GeoJSON with jq:
+Map tools read **GeoJSON**. Get all sites in the key-values form and turn them into GeoJSON with jq:
 
 ```bash
 geonic entities list --type EvacuationSite --context $C --key-values \

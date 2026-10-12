@@ -9,8 +9,8 @@ One public toilet: one row of the list a municipality publishes as 自治体標�
 Subclass of `https://datamodels.jp/ns/facility/Facility` (x-subclass-of).
 
 - Type IRI: `https://datamodels.jp/ns/facility/PublicToilet`
-- Context: `https://datamodels.jp/context/facility/v1.jsonld` (alias), `https://datamodels.jp/context/facility/v1.0.0.jsonld` (exact)
-- Schema: `https://datamodels.jp/schema/facility/PublicToilet/v1.json` (alias), `https://datamodels.jp/schema/facility/PublicToilet/v1.0.0.json` (exact)
+- Context: `https://datamodels.jp/context/facility/v1.jsonld` (version alias), `https://datamodels.jp/context/facility/v1.0.0.jsonld` (exact)
+- Schema: `https://datamodels.jp/schema/facility/PublicToilet/v1.json` (version alias), `https://datamodels.jp/schema/facility/PublicToilet/v1.0.0.json` (exact)
 - Page: https://datamodels.jp/models/facility/PublicToilet/
 
 Files follow the Smart Data Models layout: `schema.json`, `catalog.yaml` (Japanese and English descriptions), `examples/`, `mapping/`, `notes.yaml`, `ADOPTERS.yaml`. Writing examples: https://datamodels.jp/guide/rules#examples

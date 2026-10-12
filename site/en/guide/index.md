@@ -5,6 +5,8 @@ description: How to use the catalog's models, add attributes, URLs and versions,
 
 # Guides
 
+What the words on this site mean is in [Terms](#terms).
+
 ## Use the models
 
 - [Tutorial: from a CSV file to a map](/en/guide/tutorial): one real open-data file converted into a model, loaded into a broker, queried and shown on a map, step by step.
@@ -34,3 +36,21 @@ description: How to use the catalog's models, add attributes, URLs and versions,
 - [URLs and versions](/en/guide/urls): which URL to use, what never changes, versions and deprecation.
 - [Other data model catalogs](/en/guide/catalogs): catalogs of data models in the world and in Japan, worth checking before you propose.
 - [Data model sites](/en/guide/sites): the sites that publish their own data models and that datamodels.jp knows, one row each, with the catalog models they build on.
+
+## Terms {#terms}
+
+The site uses these words with these meanings:
+
+- **model**: which attributes one kind of data (a type) has, and what they mean. Published as an @context, a JSON Schema and examples.
+- **entity**: one record of data. One evacuation site is one entity.
+- **attribute**: one item of an entity, such as its name, its location or the hazards it covers.
+- **subject**: a group of related models with its own namespace and versions, such as `disaster` or `transportation`. URLs and commands write it as `<subject>`.
+- **@context**: a file that works like a dictionary: it links short names (such as `hazardTypes`) to IRIs.
+- **IRI**: a name for a type or an attribute that is unique on the whole web, such as `https://datamodels.jp/ns/disaster/hazardTypes`.
+- **key-values form**: plain JSON with attribute names and their values. The JSON Schema validates data in this form.
+- **normalized form**: the form you send to an NGSI-LD broker. Each attribute also says its kind, such as Property or Relationship.
+- **validation**: checking that data follows a JSON Schema or similar rules.
+- **mapping file**: a file that says which field of a standard or of your own list matches which attribute of a model ([Mapping files](/en/guide/mapping)).
+- **extension**: a small @context you publish to add your own attributes to a catalog model; technically, a profile of the model ([Adding attributes](/en/guide/extend)). The toolkit's `extend` command is something else: it makes a new model on your own site that builds on a catalog model.
+- **alias**: your own name for a catalog type or attribute, with the same meaning ([Your own names](/en/guide/names)).
+- **version alias**: a URL with only the major version, such as `v1.jsonld`. It points to the latest compatible version ([URLs and versions](/en/guide/urls)).

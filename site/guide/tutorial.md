@@ -21,7 +21,7 @@ FIWARE のコンテキストブローカーを初めて試す人のためのチ�
 
 ここに datamodels.jp の**モデル**が加わります。モデルは、型ごとに、どんな属性をどんな意味で持つかを決めたものです。2 つの市が同じモデルを使えば、データの形がそろい、同じアプリを両方の市で使えます。
 
-<svg class="flow-diagram" viewBox="0 0 460 412" role="img" aria-label="宇都宮市の CSV ファイルを EvacuationSite モデルのエンティティに変換し、コンテキストブローカーに入れ、検索して地図に表示する" xmlns="http://www.w3.org/2000/svg"><defs><marker id="tut-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="20" y="8" width="420" height="58" rx="10"/><text class="t" x="230.0" y="33">sites.csv</text><text class="s" x="230.0" y="53">宇都宮市の一覧（1 行が 1 か所）</text><rect class="box" x="20" y="121" width="420" height="58" rx="10"/><text class="t" x="230.0" y="146">198 のエンティティ</text><text class="s" x="230.0" y="166">カタログのモデル EvacuationSite</text><rect class="box main" x="20" y="234" width="420" height="58" rx="10"/><text class="t" x="230.0" y="259">コンテキストブローカー（GeonicDB）</text><text class="s" x="230.0" y="279">保存し、モデルで検査する</text><rect class="box" x="20" y="347" width="420" height="58" rx="10"/><text class="t" x="230.0" y="372">検索と地図</text><text class="s" x="230.0" y="392">「洪水の避難場所」「駅の近く」</text><line class="a" x1="230" y1="68" x2="230" y2="119" marker-end="url(#tut-ah)"/><text class="l" x="240" y="98">① 変換</text><line class="a" x1="230" y1="181" x2="230" y2="232" marker-end="url(#tut-ah)"/><text class="l" x="240" y="211">② 投入</text><line class="a" x1="230" y1="294" x2="230" y2="345" marker-end="url(#tut-ah)"/><text class="l" x="240" y="324">③ 検索、④ 地図</text></svg>
+<svg class="flow-diagram" viewBox="0 0 460 412" role="img" aria-label="宇都宮市の CSV ファイルを EvacuationSite モデルのエンティティに変換し、コンテキストブローカーに入れ、検索して地図に表示する" xmlns="http://www.w3.org/2000/svg"><defs><marker id="tut-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="20" y="8" width="420" height="58" rx="10"/><text class="t" x="230.0" y="33">sites.csv</text><text class="s" x="230.0" y="53">宇都宮市の一覧（1 行が 1 か所）</text><rect class="box" x="20" y="121" width="420" height="58" rx="10"/><text class="t" x="230.0" y="146">198 のエンティティ</text><text class="s" x="230.0" y="166">カタログのモデル EvacuationSite</text><rect class="box main" x="20" y="234" width="420" height="58" rx="10"/><text class="t" x="230.0" y="259">コンテキストブローカー（GeonicDB）</text><text class="s" x="230.0" y="279">保存し、モデルで検証する</text><rect class="box" x="20" y="347" width="420" height="58" rx="10"/><text class="t" x="230.0" y="372">検索と地図</text><text class="s" x="230.0" y="392">「洪水の避難場所」「駅の近く」</text><line class="a" x1="230" y1="68" x2="230" y2="119" marker-end="url(#tut-ah)"/><text class="l" x="240" y="98">① 変換</text><line class="a" x1="230" y1="181" x2="230" y2="232" marker-end="url(#tut-ah)"/><text class="l" x="240" y="211">② 投入</text><line class="a" x1="230" y1="294" x2="230" y2="345" marker-end="url(#tut-ah)"/><text class="l" x="240" y="324">③ 検索、④ 地図</text></svg>
 
 ## 用意するもの {#before}
 
@@ -61,7 +61,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.8 convert \
   disaster/EvacuationSite jichitai-opendata-site sites.csv --out sites.json
 ```
 
-**何が起きたか：** CSV の 1 行が 1 つのエンティティになり、1 件ずつモデルで検査されました。変換ツールは、自動で直した箇所も表示します。たとえば、表計算ソフトで先頭の 0 が落ちた地方公共団体コード（`92011 → 092011`）です。198 か所すべてが有効でした。`sites.json` の最初の 1 件を見てみましょう。ここでは、住所や電話番号など、一部の属性を省いています。
+**何が起きたか：** CSV の 1 行が 1 つのエンティティになり、1 件ずつモデルで検証されました。変換ツールは、自動で直した箇所も表示します。たとえば、表計算ソフトで先頭の 0 が落ちた地方公共団体コード（`92011 → 092011`）です。198 か所すべてが有効でした。`sites.json` の最初の 1 件を見てみましょう。ここでは、住所や電話番号など、一部の属性を省いています。
 
 ```json
 {
@@ -88,7 +88,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.8 convert \
 
 ## 3. モデルを登録し、データを入れる {#load}
 
-まず、ブローカーにモデルを登録します。登録すると、ブローカーは EvacuationSite を受け取るたびにモデルで検査し、合わないデータを受け付けなくなります。そのあとで、ファイルのデータを入れます。
+まず、ブローカーにモデルを登録します。登録すると、ブローカーは EvacuationSite を受け取るたびにモデルで検証し、合わないデータを受け付けなくなります。そのあとで、ファイルのデータを入れます。
 
 ```bash
 BASE=https://datamodels.jp
@@ -125,13 +125,13 @@ geonic entities list --type EvacuationSite --context $C --key-values \
   --coords '[139.8986,36.5592]' --attrs name
 ```
 
-東小学校や駅東公園など、5 か所が見つかります。`--key-values` は、手順 2 で見た単純な形で返すように指定するオプションです。
+東小学校や駅東公園など、5 か所が見つかります。`--key-values` は、手順 2 で最初に見た単純な形（key-values の形）で返すように指定するオプションです。
 
 **`--context` を外して試してみてください：** 同じ検索でも、何も見つかりません。辞書が無いと、`EvacuationSite` が `https://datamodels.jp/ns/disaster/EvacuationSite` のことだと、ブローカーには分からないからです。
 
 ## 5. 地図に表示する {#map}
 
-地図のツールは **GeoJSON** を読み込みます。すべての避難場所を単純な形で取り出し、jq で GeoJSON に変換します。
+地図のツールは **GeoJSON** を読み込みます。すべての避難場所を key-values の形で取り出し、jq で GeoJSON に変換します。
 
 ```bash
 geonic entities list --type EvacuationSite --context $C --key-values \
@@ -146,7 +146,7 @@ jq '{type: "FeatureCollection", features: map({type: "Feature",
 
 ブローカーから直接データを読む Web 地図を作りたい場合は、[geonicdb-workshop](https://github.com/geolonia/geonicdb-workshop) のテンプレートから始められます。
 
-## 6. モデルによる検査を確かめる {#check}
+## 6. モデルによる検証を確かめる {#check}
 
 手順 3 でモデルを登録したので、ブローカーはモデルに合わないデータを受け付けません。問題のある避難場所を 2 件送って、確かめてみましょう。
 
@@ -163,7 +163,7 @@ jq '.[2] | .id += "-test" | .capacity = {type: "Property", value: 500}' \
 
 大勢の人や多くのアプリが同じブローカーに書き込んでも、これでデータの品質が保たれます。
 
-ただし、制約が 1 つあります。`hazardTypes` のようなリストについて、GeonicDB は、リストであることだけを検査し、中の値を検査しません。そのため、`["typhoon"]` を持つ避難場所も保存されてしまいます。手順 2 の変換では中の値も検査しているので、登録する前の時点で検査できています。詳しくは[登録したモデルが検査すること](/guide/geonicdb#checks)を参照してください。
+ただし、制約が 1 つあります。`hazardTypes` のようなリストについて、GeonicDB は、リストであることだけを検証し、中の値を検証しません。そのため、`["typhoon"]` を持つ避難場所も保存されてしまいます。手順 2 の変換では中の値も検証しているので、登録する前の時点で検証できています。詳しくは[登録したモデルが検証すること](/guide/geonicdb#checks)を参照してください。
 
 ## できたこと {#done}
 

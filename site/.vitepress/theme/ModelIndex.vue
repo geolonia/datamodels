@@ -19,7 +19,7 @@ const props = defineProps<{ models: Row[]; cards: Card[]; lang: 'ja' | 'en' }>()
 
 const L = {
   ja: {
-    search: 'モデル名・属性名・説明で絞り込む', subject: 'サブジェクト', kind: '種類', status: '段階', all: 'すべて',
+    search: 'モデル名・属性名・説明で絞り込む', subject: '分野', kind: '種類', status: '段階', all: 'すべて',
     type: '型', name: '名前', entity: 'エンティティ', value: '値型', count: (n: number, all: number) => `${all} 件中 ${n} 件`,
     none: '当てはまるモデルはありません。', models: (n: number) => `${n} モデル`, statusLabel: { draft: 'ドラフト', experimental: '試行', stable: '安定', deprecated: '非推奨' },
   },

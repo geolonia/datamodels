@@ -7,7 +7,7 @@ description: datamodels.jp の作成での AI の使い方と、AI エージェ�
 
 ## このサイトの作り方
 
-モデル、注記、ページの多くは AI の支援を受けて下書きしています。カタログに何を入れるかは人が決めます。新しいサブジェクト、メジャーバージョン、モデルの安定への昇格は、小さなグループが該当する Issue や Pull Request で決めます（[決め方](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md#段階と決め方)）。公開の前に、CI がすべてのモデルと例をスキーマとカタログのルールで検査します。サイト内のリンクの先にページが無ければ、ビルドは失敗します。ページの中の位置（`#` から後ろ）までは検査しません。
+モデル、注記、ページの多くは AI の支援を受けて下書きしています。カタログに何を入れるかは人が決めます。新しい分野、メジャーバージョン、モデルの安定への昇格は、小さなグループが該当する Issue や Pull Request で決めます（[決め方](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md#段階と決め方)）。公開の前に、CI がすべてのモデルと例をスキーマとカタログのルールで検査します。サイト内のリンクの先にページが無ければ、ビルドは失敗します。ページの中の位置（`#` から後ろ）までは検査しません。
 
 間違いを見つけたら、[Issue で知らせてください](https://github.com/geolonia/datamodels/issues)。
 
@@ -17,7 +17,7 @@ description: datamodels.jp の作成での AI の使い方と、AI エージェ�
 
 - **入口:** [/llms.txt](/llms.txt)。ガイドとすべてのモデルの短い一覧（英語）です。
 - **すべてのモデルとその URL:** [catalog.json](/catalog.json)。
-- **作ったデータの確認:** モデルの JSON Schema（`/schema/<subject>/<Type>/v1.json`）で検査できます。例（`/examples/…`）は、そのまま使える正しいデータです。
+- **作ったデータの確認:** モデルの JSON Schema（`/schema/<subject>/<Type>/v1.json`）で検証できます。例（`/examples/…`）は、そのまま使える正しいデータです。
 - **意味:** `https://datamodels.jp/ns/` の下にある型と属性の IRI を開くと、それぞれの説明のページが表示されます。
 - **変わらない URL:** 公開したバージョンは変わりません（[URL とバージョン](/guide/urls)）。引用した URL は、ずっと同じ内容を指します。ただし正式公開までのプレリリース中は、公開済みのバージョンも直接修正することがあります。
 

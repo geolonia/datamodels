@@ -15,7 +15,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.8 export \
 | `--to` | ファイル | 使い方 |
 |---|---|---|
 | `csv` | `EvacuationSite.csv` | CSV テンプレートです。表計算ソフトで 1 行に 1 件ずつ入力し、[変換](/toolkit/convert#csv-template)します。 |
-| `table-schema` | `EvacuationSite.tableschema.json` | CSV の列の [Table Schema](https://datapackage.org/standard/table-schema/) です。入力した CSV ファイルを `frictionless validate` で検査できます。 |
+| `table-schema` | `EvacuationSite.tableschema.json` | CSV の列の [Table Schema](https://datapackage.org/standard/table-schema/) です。入力した CSV ファイルを `frictionless validate` で検証できます。 |
 | `ai` | `EvacuationSite.ai.json` | AI の構造化出力（strict な JSON Schema）です。PDF やメールから、モデルの形のままエンティティを取り出せます。 |
 | `postgis` | `EvacuationSite.sql` | PostgreSQL / PostGIS の `CREATE TABLE` です。制約と空間インデックス付きのテーブルができます。 |
 
@@ -25,7 +25,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.8 export \
 
 コマンドを使わなくても、datamodels.jp の各モデルのページの**ダウンロード**の行から、これらのファイルを取れます。例は[指定緊急避難場所（EvacuationSite）](/models/disaster/EvacuationSite/)です。ファイルごとの説明は[アダプター](/adapters/#downloads)にあります。
 
-これらのファイルはサイトと一緒に作り直されます。「公開したファイルは変えない」という約束の対象ではありません。あとで同じファイルが要るときは、ファイルを保存し、作ったときのサブジェクトのバージョンも記録してください。
+これらのファイルはサイトと一緒に作り直されます。「公開したファイルは変えない」という約束の対象ではありません。あとで同じファイルが要るときは、ファイルを保存し、作ったときの分野のバージョンも記録してください。
 
 ## AI の構造化出力 {#ai}
 

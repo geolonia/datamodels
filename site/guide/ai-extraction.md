@@ -1,13 +1,13 @@
 ---
 title: AI でデータを取り出す
-description: モデルの AI 用スキーマを AI モデルに渡してメールや PDF からエンティティを取り出し、答えを検査して NGSI-LD のエンティティにする
+description: モデルの AI 用スキーマを AI モデルに渡してメールや PDF からエンティティを取り出し、答えを検証して NGSI-LD のエンティティにする
 ---
 
 # AI でデータを取り出す
 
 エンティティのモデルの多くは、ページの**ダウンロード**の行に **AI 用の構造化出力**があります。AI モデルの構造化出力が受け付ける JSON Schema で、説明は英語です。メールや PDF などの文書と合わせて AI モデルへ送ると、モデルの属性の形で答えが返ります。このページでは、短いお知らせの文から[指定緊急避難場所（EvacuationSite）](/models/disaster/EvacuationSite/)を取り出します。OpenAI の API と Claude の API の両方の例を示します。
 
-<svg class="flow-diagram" viewBox="0 0 460 398" role="img" aria-label="文書と AI 用のスキーマを AI モデルに送ると、モデルの形の JSON が返ります。id と type を足して JSON Schema で検査し、NGSI-LD のエンティティにします。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="ai-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="20" y="8" width="420" height="58" rx="10"/><text class="t" x="230" y="33">文書と AI 用のスキーマ</text><text class="s" x="230" y="53">メールや PDF と EvacuationSite.ai.json</text><line class="a" x1="230" y1="68" x2="230" y2="114" marker-end="url(#ai-ah)"/><text class="l" x="242" y="95">① API に送る</text><rect class="box main" x="20" y="116" width="420" height="58" rx="10"/><text class="t" x="230" y="141">AI モデル</text><text class="s" x="230" y="161">スキーマの形で答える</text><line class="a" x1="230" y1="176" x2="230" y2="222" marker-end="url(#ai-ah)"/><text class="l" x="242" y="203">② 答えの JSON</text><rect class="box" x="20" y="224" width="420" height="58" rx="10"/><text class="t m" x="230" y="249">site.json</text><text class="s" x="230" y="269">属性だけ。id と type は無い</text><line class="a" x1="230" y1="284" x2="230" y2="330" marker-end="url(#ai-ah)"/><text class="l" x="242" y="311">③ id と type を足して検査</text><rect class="box" x="20" y="332" width="420" height="58" rx="10"/><text class="t" x="230" y="357">NGSI-LD のエンティティ</text><text class="s" x="230" y="377">key-values の形</text></svg>
+<svg class="flow-diagram" viewBox="0 0 460 398" role="img" aria-label="文書と AI 用のスキーマを AI モデルに送ると、モデルの形の JSON が返ります。id と type を足して JSON Schema で検証し、NGSI-LD のエンティティにします。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="ai-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="20" y="8" width="420" height="58" rx="10"/><text class="t" x="230" y="33">文書と AI 用のスキーマ</text><text class="s" x="230" y="53">メールや PDF と EvacuationSite.ai.json</text><line class="a" x1="230" y1="68" x2="230" y2="114" marker-end="url(#ai-ah)"/><text class="l" x="242" y="95">① API に送る</text><rect class="box main" x="20" y="116" width="420" height="58" rx="10"/><text class="t" x="230" y="141">AI モデル</text><text class="s" x="230" y="161">スキーマの形で答える</text><line class="a" x1="230" y1="176" x2="230" y2="222" marker-end="url(#ai-ah)"/><text class="l" x="242" y="203">② 答えの JSON</text><rect class="box" x="20" y="224" width="420" height="58" rx="10"/><text class="t m" x="230" y="249">site.json</text><text class="s" x="230" y="269">属性だけ。id と type は無い</text><line class="a" x1="230" y1="284" x2="230" y2="330" marker-end="url(#ai-ah)"/><text class="l" x="242" y="311">③ id と type を足して検証</text><rect class="box" x="20" y="332" width="420" height="58" rx="10"/><text class="t" x="230" y="357">NGSI-LD のエンティティ</text><text class="s" x="230" y="377">key-values の形</text></svg>
 
 ## 1. スキーマと文書 {#input}
 
@@ -69,7 +69,7 @@ curl -sS https://api.anthropic.com/v1/messages \
 
 構造化出力を使う前に、各社の説明を読んでください（[OpenAI](https://developers.openai.com/api/docs/guides/structured-outputs#supported-schemas)、[Claude](https://platform.claude.com/docs/en/build-with-claude/structured-outputs)）。
 
-## 3. 答えを検査してエンティティにする {#entity}
+## 3. 答えを検証してエンティティにする {#entity}
 
 答えには属性だけが入っています。空の属性を除き、AI が `id` や `type` を入れていたら消して、自分の `id` と `type` を足します。
 
@@ -80,7 +80,7 @@ jq 'walk(if type == "object" then with_entries(select(.value != null)) else . en
   site.json > entity.json
 ```
 
-次に、`entity.json` をモデルの JSON Schema で検査します。
+次に、`entity.json` をモデルの JSON Schema で検証します。
 
 ```bash
 # pipx install check-jsonschema（または uvx check-jsonschema …）
@@ -92,7 +92,7 @@ check-jsonschema --schemafile \
 ok -- validation done
 ```
 
-Node.js や Python で検査する方法は、[JSON を検証する](/guide/use#validate)にあります。strict モードでも、答えの形が保証されるだけです。AI 用のスキーマは、一部の決まり（最小値や、複数の属性にまたがる決まり）を説明に書くだけにしています。strict を外したときは、形も保証されません。JSON Schema はこれらをすべて確かめます。ただし、内容が正しいかまでは確かめられません。AI モデルがコードや数を読み違えることもあるので、保存する前に文書と見比べてください。
+Node.js や Python で検証する方法は、[JSON を検証する](/guide/use#validate)にあります。strict モードでも、答えの形が保証されるだけです。AI 用のスキーマは、一部の決まり（最小値や、複数の属性にまたがる決まり）を説明に書くだけにしています。strict を外したときは、形も保証されません。JSON Schema はこれらをすべて確かめます。ただし、内容が正しいかまでは確かめられません。AI モデルがコードや数を読み違えることもあるので、保存する前に文書と見比べてください。
 
 これで `entity.json` は key-values の形のエンティティです。NGSI-LD ブローカーに送るには、@context 付きの normalized の形にします（[NGSI-LD ブローカーに送る](/guide/use#broker)）。
 
