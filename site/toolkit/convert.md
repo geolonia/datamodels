@@ -134,7 +134,7 @@ npx @geolonia/datamodels@0.3.10 convert \
 ## オプション {#options}
 
 - `--out file.json`：ファイルに書きます。省略すると標準出力に出します。
-- `--normalized`：key-values の形ではなく、NGSI-LD の normalized の形にします。分野の `@context` と NGSI-LD のコアの context が付きます。
+- `--normalized`：key-values の形ではなく、NGSI-LD の [normalized の形](/guide/normalized)にします。分野の `@context` と NGSI-LD のコアの context が付きます。
 - `--set 属性=値`：一覧に無い値を渡します（[上の例](#standard)）。
 - `--check`、`--rows N`：最初の行だけを検証します（[上の説明](#your-own-list)）。
 - `--site URL|フォルダー`：カタログ、対応表、モデルを読むサイトです。既定は datamodels.jp です。サイトと同じ構成のフォルダーも指定できます。公開前の対応表を試すときは、[geolonia/datamodels](https://github.com/geolonia/datamodels) をビルドして（`npm run build`）、`--site dist` を付けます。

@@ -112,75 +112,11 @@ curl -G "$BROKER/ngsi-ld/v1/entities" \
 
 Put the @context in the body and send `application/ld+json`, or leave it out and send `application/json` with a `Link` header (the model page shows it). Brokers with several tenants take the tenant in the `NGSILD-Tenant` header; authentication differs from broker to broker.
 
-**Your own data in the normalized form.** The "Try it" tab on a model page switches what you write between the two forms, and for a CSV list `datamodels convert … --normalized` from [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) does it ([Converting your data](/en/toolkit/convert)). To do it in your own code, follow the rules below.
-
-<details class="rules">
-<summary>The rules, from the key-values form to the normalized form</summary>
-
-- `id` and `type` stay as they are.
-- Wrap each attribute in the NGSI-LD type that the attribute table on the model page gives:
-  - Property: `{ "type": "Property", "value": … }`.
-  - Relationship: `{ "type": "Relationship", "object": … }`.
-  - GeoProperty: `{ "type": "GeoProperty", "value": … }`.
-  - JsonProperty: `{ "type": "JsonProperty", "json": … }`.
-  - VocabProperty: `{ "type": "VocabProperty", "vocab": … }`.
-
-  In key-values form, a JsonProperty and a VocabProperty keep their member: `{ "json": … }`, `{ "vocab": … }`. The JSON Schema describes the value inside, so remove that member before you validate key-values data against the schema. Both are NGSI-LD 1.8 types: check that your broker supports them before you use a model that has them.
-- The value of a date-time Property (`format: date-time` in the schema) becomes `{ "@type": "DateTime", "@value": … }`, and that of a date Property (`format: date`) `{ "@type": "Date", "@value": … }`. A Property that takes either ("date or date-time" on the model page) follows its value: `2026-07-11` is a Date, `2026-07-11T09:00:00+09:00` a DateTime.
-- A multi-valued attribute (marked "(multiple)" in the attribute table; for example `assignee` on Task) becomes an array with one instance per value, each with a `datasetId`. The catalog's examples use the form `urn:ngsi-ld:dataset:<attribute>:<n>`.
-- The `@context` lists the version alias of the subject's @context and the NGSI-LD core context.
-
-For example, this key-values Task
-
-```json
-{
-  "id": "urn:ngsi-ld:Task:1234",
-  "type": "Task",
-  "name": "靖国通りのアンダーパスの冠水を確認する",
-  "progress": "in-process",
-  "due": "2026-07-08T12:00:00+09:00",
-  "assignee": ["urn:ngsi-ld:Team:field-team-a"]
-}
-```
-
-is, in normalized form:
-
-```json
-{
-  "@context": [
-    "https://datamodels.jp/context/task/v1.jsonld",
-    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
-  ],
-  "id": "urn:ngsi-ld:Task:1234",
-  "type": "Task",
-  "name": {
-    "type": "Property",
-    "value": "靖国通りのアンダーパスの冠水を確認する"
-  },
-  "progress": { "type": "Property", "value": "in-process" },
-  "due": {
-    "type": "Property",
-    "value": { "@type": "DateTime", "@value": "2026-07-08T12:00:00+09:00" }
-  },
-  "assignee": [
-    {
-      "type": "Relationship",
-      "object": "urn:ngsi-ld:Team:field-team-a",
-      "datasetId": "urn:ngsi-ld:dataset:assignee:1"
-    }
-  ]
-}
-```
-
-</details>
+To put your own data into the normalized form, see [The normalized form](/en/guide/normalized): the rules, with an example.
 
 ## Use it as linked data {#linked-data}
 
-Adding the @context turns plain JSON into JSON-LD. Every attribute then has a globally unique name, an IRI: the catalog's own (`https://datamodels.jp/ns/...`) or those of the standards it borrows from (schema.org, Smart Data Models). JSON-LD converts to RDF, the format of linked data tools. The NGSI-LD core context is listed too, so that `id` and `type` become JSON-LD's `@id` and `@type`.
-
-Names can differ: the same IRI means the same thing. Data that another organisation writes under its own names (aliases) reaches the same IRIs ([Your own names](/en/guide/names)).
-
-<svg class="flow-diagram" viewBox="0 0 460 250" role="img" aria-label="In your data, restrictionStatus becomes the IRI https://datamodels.jp/ns/transportation/restrictionStatus through the catalog's @context. In another organisation's data, roadStatus becomes the same IRI through their own @context, which defines an alias. Different names meet at one meaning." xmlns="http://www.w3.org/2000/svg"><defs><marker id="ld-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="10" y="8" width="210" height="56" rx="10"/><text class="t m" x="115" y="32">restrictionStatus</text><text class="s" x="115" y="51">Your data</text><rect class="box" x="240" y="8" width="210" height="56" rx="10"/><text class="t m" x="345" y="32">roadStatus</text><text class="s" x="345" y="51">Another organisation's data</text><line class="a" x1="115" y1="64" x2="115" y2="94" marker-end="url(#ld-ah)"/><line class="a" x1="345" y1="64" x2="345" y2="94" marker-end="url(#ld-ah)"/><rect class="box" x="10" y="96" width="210" height="56" rx="10"/><text class="t" x="115" y="120">The catalog's @context</text><text class="s" x="115" y="139">published by datamodels.jp</text><rect class="box" x="240" y="96" width="210" height="56" rx="10"/><text class="t" x="345" y="120">Their own @context</text><text class="s" x="345" y="139">defines an alias</text><line class="a" x1="115" y1="152" x2="196" y2="182" marker-end="url(#ld-ah)"/><line class="a" x1="345" y1="152" x2="264" y2="182" marker-end="url(#ld-ah)"/><rect class="box main" x="10" y="184" width="440" height="58" rx="10"/><text class="t" x="230" y="208">One meaning (a global IRI)</text><text class="s" x="230" y="227">https://datamodels.jp/ns/transportation/restrictionStatus</text></svg>
+Adding the @context turns plain JSON into JSON-LD, which converts to RDF, the format of linked data tools. Every attribute then has a globally unique name (an IRI), so data written under other names means the same when the IRI is the same ([Your own names](/en/guide/names)).
 
 ::: code-group
 

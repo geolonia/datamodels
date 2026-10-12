@@ -94,7 +94,7 @@ ok -- validation done
 
 Node.js や Python で検証する方法は、[JSON を検証する](/guide/use#validate)にあります。strict モードでも、答えの形が保証されるだけです。AI 用のスキーマは、一部の決まり（最小値や、複数の属性にまたがる決まり）を説明に書くだけにしています。strict を外したときは、形も保証されません。JSON Schema はこれらをすべて確かめます。ただし、内容が正しいかまでは確かめられません。AI モデルがコードや数を読み違えることもあるので、保存する前に文書と見比べてください。
 
-これで `entity.json` は key-values の形のエンティティです。NGSI-LD ブローカーに送るには、@context 付きの normalized の形にします（[NGSI-LD ブローカーに送る](/guide/use#broker)）。
+これで `entity.json` は key-values の形のエンティティです。NGSI-LD ブローカーに送るには、@context 付きの normalized の形にします（[normalized の形](/guide/normalized)）。
 
 ## 自分のモデル {#own-models}
 

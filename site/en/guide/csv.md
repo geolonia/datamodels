@@ -103,7 +103,7 @@ sites.csv: utf-8, 1 row(s), 1 valid EvacuationSite, 0 invalid
 ]
 ```
 
-This is the key-values form. Add `--normalized` to get the normalized form that an NGSI-LD broker takes, with the @context ([Send it to an NGSI-LD broker](/en/guide/use#broker)). More about the columns of the template: [Converting your data](/en/toolkit/convert#csv-template).
+This is the key-values form. Add `--normalized` to get the normalized form that an NGSI-LD broker takes, with the @context ([The normalized form](/en/guide/normalized)). More about the columns of the template: [Converting your data](/en/toolkit/convert#csv-template).
 
 ## Your own models {#own-models}
 

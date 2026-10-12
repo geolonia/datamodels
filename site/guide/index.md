@@ -43,6 +43,7 @@ description: カタログのモデルの使い方と自治体の一覧の公開�
 
 - [対応している標準](/guide/standards)：自治体標準オープンデータセットや災害対応基本共有情報（EEI）など、モデルが対応している標準と、対応するモデルの一覧です。
 - [対応表](/guide/mapping)：標準のどの項目がモデルのどの属性に当たるかを示すファイルです。ある場所と、書いてあることを説明します。
+- [normalized の形](/guide/normalized)：エンティティの key-values の形と normalized の形、一方を他方にする決まりを、例と共に説明します。
 - [URL とバージョン](/guide/urls)：どの URL を使うか、何が変わらないか、バージョンと非推奨について説明します。
 - [他のデータモデルカタログ](/guide/catalogs)：提案の前に確かめておきたい、国内外のデータモデルのカタログです。
 - [データモデルのサイト](/guide/sites)：自分のデータモデルを公開している、datamodels.jp が知っているサイトの一覧です。1 行に 1 つのサイトで、もとにしたカタログのモデルが分かります。
@@ -57,8 +58,8 @@ description: カタログのモデルの使い方と自治体の一覧の公開�
 - **分野**：関係するモデルのまとまりです。名前空間とバージョンを持ちます（`disaster`、`transportation` など）。URL やコマンドでは `<subject>` と書きます。
 - **@context**：短い名前（`hazardTypes` など）を IRI に結び付ける、辞書のようなファイルです。
 - **IRI**：型や属性に付けた、Web 全体で一意の名前です（`https://datamodels.jp/ns/disaster/hazardTypes` など）。
-- **key-values の形**：属性名と値だけの、単純な JSON の形です。JSON Schema は、この形のデータを検証します。
-- **normalized の形**：NGSI-LD ブローカーに送る形です。各属性が、Property や Relationship などの種類も示します。
+- **key-values の形**：属性名と値だけの、単純な JSON の形です。JSON Schema は、この形のデータを検証します（[normalized の形](/guide/normalized)）。
+- **normalized の形**：NGSI-LD ブローカーに送る形です。各属性が、Property や Relationship などの種類も示します（[normalized の形](/guide/normalized)）。
 - **検証**：データが JSON Schema などの決まりに合っているかを確かめることです。CI やツールキットの `check` がカタログやサイトのファイルを確かめることは、「検査」と呼びます。
 - **対応表**：標準や手元の一覧のどの項目が、モデルのどの属性に当たるかを書いたファイルです（[対応表](/guide/mapping)）。
 - **拡張**：カタログのモデルに自分の属性を足すために公開する、小さな @context です。技術的には、モデルのプロファイルです（[属性を足す](/guide/extend)）。ツールキットの `extend` は別のもので、カタログのモデルをもとに、自分のサイトに新しいモデルを作ります。
