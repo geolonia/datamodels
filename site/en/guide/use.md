@@ -230,3 +230,13 @@ Part of the output, in N-Quads: RDF written as plain text, one statement per lin
 ```
 
 Each subject also publishes a vocabulary (`/vocab/<subject>/v1.0.0.jsonld`, RDFS) with the Japanese and English names and descriptions of its types and attributes. Attributes borrowed from other vocabularies, such as schema.org's `address`, are described by their own publishers.
+
+## With other tools {#other-tools}
+
+Each model page also has files for tools that do not read NGSI-LD, in its **Download** row. Short recipes, each with one worked example:
+
+- [Spreadsheet / CSV](/en/guide/csv): fill in the CSV template, check it with `frictionless validate`, and convert it into entities.
+- [PostgreSQL / PostGIS](/en/guide/postgis): create the model's table with its constraints, add a row, and query by distance.
+- [Extracting with AI](/en/guide/ai-extraction): give the AI schema to an AI model to take an entity out of an e-mail or a PDF.
+
+To make these files for the models of your own site, see [Exporting to other tools](/en/toolkit/export).
