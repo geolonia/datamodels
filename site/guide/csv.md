@@ -43,7 +43,8 @@ curl -sSfO "$BASE/table-schema/disaster/EvacuationSite.tableschema.json"
 [frictionless](https://framework.frictionlessdata.io/) は、Table Schema に照らして各セルを確認します。型、パターン、使える値、必須のセルが埋まっているかを見ます。macOS（Homebrew）や新しい Debian と Ubuntu の Python では、`pip install` がエラーになります。そのため、[pipx](https://pipx.pypa.io/) か [uv](https://docs.astral.sh/uv/) の `uvx` を使います。
 
 ```bash
-pipx install frictionless   # または uvx frictionless …、pip install frictionless
+pipx install frictionless
+# または uvx frictionless …、仮想環境（python -m venv）の中なら pip install
 frictionless validate sites.csv --schema EvacuationSite.tableschema.json
 ```
 

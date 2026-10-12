@@ -43,7 +43,8 @@ A list such as `hazardTypes` is split at `;`, and `longitude` and `latitude` mak
 [frictionless](https://framework.frictionlessdata.io/) checks every cell against the Table Schema: the type, the pattern, the allowed values, and whether a required cell is filled in. On macOS (Homebrew) and recent Debian and Ubuntu, `pip install` stops with an error, so use [pipx](https://pipx.pypa.io/) or `uvx` from [uv](https://docs.astral.sh/uv/).
 
 ```bash
-pipx install frictionless   # or: uvx frictionless …, pip install frictionless
+pipx install frictionless
+# or: uvx frictionless …, or pip install in a virtual environment (python -m venv)
 frictionless validate sites.csv --schema EvacuationSite.tableschema.json
 ```
 
