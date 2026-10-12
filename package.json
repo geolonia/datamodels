@@ -26,6 +26,7 @@
     "export:geonicdb": "node adapters/geonicdb/export.mjs",
     "build:deploy": "npm run build && npm run check:immutability",
     "check:live": "node scripts/check-live.mjs",
+    "dist:diff": "node scripts/dist-diff.mjs",
     "site:dev": "node scripts/generate-pages.mjs && vitepress dev site"
   },
   "devDependencies": {

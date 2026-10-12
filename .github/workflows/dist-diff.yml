@@ -1,0 +1,44 @@
+name: Compare dist
+
+# Builds the site for the pull request's base and for the pull request, and
+# lists in the job summary which files of dist/ are added, removed or changed
+# (scripts/dist-diff.mjs, #226). Informational: content changes are meant to
+# change dist/, so differences never fail the pull request. A pull request that
+# should not change the site shows "No differences".
+on:
+  pull_request:
+
+permissions: {}
+
+concurrency:
+  group: dist-diff-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  diff:
+    name: Compare dist/ with the base
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # The merge commit and its first parent, the base.
+          fetch-depth: 2
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # Exit 1 means "dist/ differs", 2 a failed build; neither fails the job.
+      - name: Compare dist/
+        continue-on-error: true
+        run: npm run dist:diff -- --base HEAD^1
