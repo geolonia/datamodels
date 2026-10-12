@@ -44,7 +44,7 @@ npx @geolonia/datamodels@0.3.10 init my-models \
   --license CC0-1.0 --subject road --yes
 ```
 
-With the [GitHub CLI](https://cli.github.com/) (`gh`), add `--github my-org/my-models`: `init` then also creates that public repository, pushes the files and turns on GitHub Pages ([step 2](#publish)). In a folder whose remote is already that repository, it keeps the remote and only sets Pages to deploy from GitHub Actions. A remote to another repository is refused. Without a remote, it commits only the files `init` wrote, and pushes them. In a folder that is not a git repository yet, it stops when the folder has other files. In a git repository, it stops on uncommitted changes or a branch other than `main`; files you already committed are pushed with their history.
+With the [GitHub CLI](https://cli.github.com/) (`gh`), add `--github my-org/my-models`: `init` then also creates that public repository, pushes the files and turns on GitHub Pages ([step 2](#publish)). In a folder whose remote is already that repository, it keeps the remote and only sets Pages to deploy from GitHub Actions. A remote to another repository is refused. Without a remote, it commits only the files `init` wrote, and pushes them. In a folder that is not a git repository yet, it stops when the folder has other files. In a git repository without a remote, it stops on uncommitted changes or a branch other than `main`; files you already committed are pushed with their history.
 
 ## 2. Publish on GitHub Pages {#publish}
 
