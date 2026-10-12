@@ -40,7 +40,11 @@ npx @geolonia/datamodels@0.3.10 release road
 
 ## 公開したバージョンを守る仕組み {#never-changes}
 
-`release` と `bump` が `models/<subject>/releases/vX.Y.Z/` に書くスナップショットは、公開したすべてのバージョンの中身をそのまま持っています。これが、何を公開したかの記録です。次の 3 つの検査が、スナップショットを守ります。
+`release` と `bump` が `models/<subject>/releases/vX.Y.Z/` に書くスナップショットは、公開したすべてのバージョンの中身をそのまま持っています。これが、何を公開したかの記録です。
+
+<svg class="flow-diagram" viewBox="0 0 460 250" role="img" aria-label="models/road/releases/v1.0.0/ のスナップショットは、サイトの /context/road/v1.0.0.jsonld にそのままコピーされます。models/road/ のソース（今のバージョン v1.1.0）は、build で /context/road/v1.1.0.jsonld になります。v1.1.0 をリリースすると、スナップショット releases/v1.1.0/ ができ、ソースはそれと比べられます。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="rel-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="10" y="8" width="210" height="56" rx="10"/><text class="t m" x="115" y="32">releases/v1.0.0/</text><text class="s" x="115" y="52">公開済みのスナップショット</text><rect class="box d" x="240" y="8" width="210" height="56" rx="10"/><text class="t m" x="345" y="32">releases/v1.1.0/</text><text class="s" x="345" y="52">v1.1.0 をリリースした後</text><line class="a d" x1="345" y1="64" x2="345" y2="96"/><text class="l e" x="335" y="84">ソースと比べる</text><rect class="box" x="240" y="96" width="210" height="56" rx="10"/><text class="t m" x="345" y="120">models/road/</text><text class="s" x="345" y="140">ソース（今の v1.1.0）</text><line class="a" x1="115" y1="64" x2="115" y2="182" marker-end="url(#rel-ah)"/><text class="l" x="125" y="128">そのままコピー</text><line class="a" x1="345" y1="152" x2="345" y2="182" marker-end="url(#rel-ah)"/><text class="l" x="355" y="172">build</text><rect class="box main" x="10" y="184" width="440" height="58" rx="10"/><text class="t" x="230" y="208">サイトで公開</text><text class="s" x="115" y="228">/context/road/v1.0.0.jsonld</text><text class="s" x="345" y="228">/context/road/v1.1.0.jsonld</text></svg>
+
+次の 3 つの検査が、スナップショットを守ります。
 
 - リリース済みの今のバージョンのソースがスナップショットと違えば、`build` と `check` が止まります。
 - オンラインでは、`check` が正確なバージョンごとに、サイトが配信するファイルと比べます。

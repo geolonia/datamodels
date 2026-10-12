@@ -88,7 +88,11 @@ npx @geolonia/datamodels@0.3.10 extend task/Task road/RoadTask
 
 ## 属性を書く {#attributes}
 
-属性は、1 つにつき 3 か所に書きます（例は `add` で作った `RoadPatrol` です）。まず `models/road/RoadPatrol/schema.json` の `properties` に書き、IRI は `x-iri` に入れます。
+属性は、1 つにつき 3 か所に書きます（例は `add` で作った `RoadPatrol` です）。
+
+<svg class="flow-diagram" viewBox="0 0 460 280" role="img" aria-label="1 つの属性を 3 つのファイルに書きます。schema.json では、x-iri が route に IRI https://models.example.org/ns/road#route を与えます。context.jsonld では、route が road:route になり、同じ IRI に展開されます。catalog.yaml は、名前で結び付けて route に日本語と英語の説明を与えます。語彙は、その説明で IRI を説明します。check は、x-iri が @context で展開した IRI と同じかを検査します。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="at-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="10" y="8" width="210" height="56" rx="10"/><text class="t m" x="115" y="32">schema.json</text><text class="s" x="115" y="52">"x-iri": "…/ns/road#route"</text><rect class="box" x="240" y="8" width="210" height="56" rx="10"/><text class="t m" x="345" y="32">context.jsonld</text><text class="s" x="345" y="52">"route": "road:route"</text><line class="a" x1="115" y1="64" x2="196" y2="94" marker-end="url(#at-ah)"/><line class="a" x1="345" y1="64" x2="264" y2="94" marker-end="url(#at-ah)"/><rect class="box main" x="10" y="96" width="440" height="58" rx="10"/><text class="t" x="230" y="120">1 つの IRI</text><text class="s" x="230" y="139">https://models.example.org/ns/road#route</text><rect class="box" x="10" y="184" width="180" height="56" rx="10"/><text class="t m" x="100" y="208">catalog.yaml</text><text class="s" x="100" y="228">route の説明（ja、en）</text><rect class="box" x="270" y="184" width="180" height="56" rx="10"/><text class="t" x="360" y="208">語彙</text><text class="s" x="360" y="228">IRI とその説明</text><line class="a" x1="360" y1="154" x2="360" y2="182" marker-end="url(#at-ah)"/><line class="a" x1="190" y1="212" x2="268" y2="212" marker-end="url(#at-ah)"/><text class="s" x="229" y="204">名前で</text><text class="s" x="230" y="268">check は、x-iri が @context で展開した IRI と同じかを検査</text></svg>
+
+まず `models/road/RoadPatrol/schema.json` の `properties` に書き、IRI は `x-iri` に入れます。
 
 ```json
 "route": {
