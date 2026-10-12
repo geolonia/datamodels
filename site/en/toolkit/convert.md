@@ -22,7 +22,7 @@ There are three ways, depending on your list:
 If your list follows a standard that has a mapping file with conversion rules in the catalog, such as the municipal standard open datasets or GSI's data, that mapping file converts it as it is. A mapping file without conversion rules only documents the standard; for such a list, make a mapping of your own (below). [Mapping files](/en/guide/mapping) explains how they work.
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.6 convert \
   disaster/EvacuationSite jichitai-opendata-site \
   092011_evacuation_space.csv --out sites.json
 ```
@@ -34,7 +34,7 @@ Only some mapping files have conversion rules (`column`, `transform`). The other
 `--set` gives a value that the list does not carry. In GSI's data, for example, the municipality code is only in the file name:
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.6 convert \
   disaster/EvacuationSite gsi-emergency-site \
   13101_2.csv --set localGovernmentCode=13101
 ```
@@ -50,13 +50,13 @@ A list that follows no standard needs a mapping of your own: a YAML file that sa
 
 ```bash
 # 1. a first mapping
-npx github:geolonia/datamodels-toolkit#v0.3.5 mapping \
+npx github:geolonia/datamodels-toolkit#v0.3.6 mapping \
   disaster/EvacuationSite my-list.csv --out my-list.yaml
 # 3. check the first rows
-npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.6 convert \
   disaster/EvacuationSite my-list.yaml my-list.csv --check
 # 4. convert
-npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.6 convert \
   disaster/EvacuationSite my-list.yaml my-list.csv --out entities.json
 ```
 
@@ -81,7 +81,7 @@ The last line sums it up, for example `18 of 20 rows valid`. The exit code is 0 
 
 ### With an AI agent {#agent}
 
-An AI agent can fill in the TODOs with you. The [agent skill](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.5/skills/datamodels) of datamodels-toolkit (`skills/datamodels`) gives it the steps and the rules: never invent values, and ask about unclear columns. For Claude Code, copy the folder into your project's `.claude/skills/`.
+An AI agent can fill in the TODOs with you. The [agent skill](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.6/skills/datamodels) of datamodels-toolkit (`skills/datamodels`) gives it the steps and the rules: never invent values, and ask about unclear columns. For Claude Code, copy the folder into your project's `.claude/skills/`.
 
 An example prompt:
 
@@ -94,7 +94,7 @@ Keep the finished mapping: it is the record of how the list was converted.
 For a new list, fill in the model's CSV template, one row per entity. No mapping is needed. The template is on the model page under **Download**, and `export` makes it too ([Exporting to other tools](/en/toolkit/export)).
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.6 convert \
   disaster/EvacuationSite csv-template sites.csv --out entities.json
 ```
 
@@ -124,4 +124,4 @@ Whichever way you convert, the results work the same:
 - `--check`, `--rows N`: check the first rows only ([above](#your-own-list)).
 - `--site`: the site to read the mapping files and models from (default: datamodels.jp). To try a mapping before it is published, build [geolonia/datamodels](https://github.com/geolonia/datamodels) (`npm run build`) and add `--site dist`.
 
-The [tutorial](/en/guide/tutorial) converts real open data and shows it on a map, step by step. All options are in the toolkit's [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.5#convert).
+The [tutorial](/en/guide/tutorial) converts real open data and shows it on a map, step by step. All options are in the toolkit's [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.6#convert).

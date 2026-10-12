@@ -13,6 +13,6 @@ standard:
     en: "The public toilet list has no weekday column, only the start and end of the hours."
 fields:
   dayOfWeek: { to: null, note: { ja: このデータセットには無い。曜日による違いは特記事項に書かれる, en: "not in this dataset; differences by weekday are in the remarks" } }
-  opens: { to: 利用開始時間 (startTime), column: 利用開始時間 }
-  closes: { to: 利用終了時間 (endTime), column: 利用終了時間 }
+  opens: { to: 利用開始時間 (startTime), column: 利用開始時間, transform: time }
+  closes: { to: 利用終了時間 (endTime), column: 利用終了時間, transform: time }
   description: { to: 利用可能時間特記事項 (dateTimeRemarks), column: 利用可能時間特記事項 }

@@ -15,8 +15,10 @@ fields:
   dayOfWeek:
     to: 診療曜日 (serviceDay)
     note:
-      ja: "火水木金土日（または 234567）を曜日の名前の配列にする。変換ツールにはまだこの変換が無い"
-      en: "turn 火水木金土日 (or 234567) into the array of day names; the converter has no transform for this yet"
-  opens: { to: 診療開始時間 (startTime), column: 診療開始時間 }
-  closes: { to: 診療終了時間 (endTime), column: 診療終了時間 }
+      ja: "火水木金土日（または 234567）を曜日の名前の配列にする"
+      en: "turn 火水木金土日 (or 234567) into the array of day names"
+    column: 診療曜日
+    transform: weekdays
+  opens: { to: 診療開始時間 (startTime), column: 診療開始時間, transform: time }
+  closes: { to: 診療終了時間 (endTime), column: 診療終了時間, transform: time }
   description: { to: 診療日時特記事項 (dateTimeRemarks), column: 診療日時特記事項 }

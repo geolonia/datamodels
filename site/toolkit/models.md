@@ -10,7 +10,7 @@ description: datamodels-toolkit の add と extend で、自分のサイトに�
 ## 新しいモデル {#add}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.5 add road/RoadPatrol
+npx github:geolonia/datamodels-toolkit#v0.3.6 add road/RoadPatrol
 ```
 
 `models/road/RoadPatrol/` に `schema.json`、`catalog.yaml`、`examples/example.json` ができます。サブジェクトの `@context` には型 `RoadPatrol` が入ります。続けて、[属性を書きます](#attributes)。
@@ -20,7 +20,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.5 add road/RoadPatrol
 このカタログのモデルから始めるときは、`extend` を使います。カタログのモデルのスキーマをコピーし、その `@context` を取り込み、土台にしたモデルを記録します。そのため、`check` が名前と意味を変えていないかを検査できます。そのうえで、[下のように](#attributes)自分の属性を足します。`--subclass` を付けると、独自の IRI を持つサブタイプになります。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.5 extend task/Task road/RoadTask
+npx github:geolonia/datamodels-toolkit#v0.3.6 extend task/Task road/RoadTask
 ```
 
 ## 属性を書く {#attributes}
