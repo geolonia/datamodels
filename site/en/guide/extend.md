@@ -18,7 +18,7 @@ The easiest way is the extension builder. Pick the model and enter your attribut
 - **@context**: imports the catalog `@context` by URL and defines only your attributes, so the catalog attributes keep their meaning. It is written as in [the next section](#writing-a-profile).
 - **JSON Schema**: validates the catalog attributes and yours. It is a copy of the catalog schema at one version, so it does not follow new minor versions of the catalog ([When the catalog gets new attributes](#updates)).
 
-Use a namespace under a domain you control. If an attribute would be useful to many systems, please propose it to the catalog (link below the builder). What you enter stays on this page and is not sent anywhere, except when you open the link to the proposal form: that sends the attribute names and descriptions you entered to GitHub, to fill in the form.
+Use a namespace under a domain you control. If an attribute would be useful to many systems, please propose it to the catalog (link below the builder). What you enter stays on this page and is not sent anywhere, except when you open the link to the proposal form: to fill in the form, it sends to GitHub the model's type and, for each attribute you named, its name, NGSI-LD type, value type and format, whether it is required, and your description.
 
 <ExtensionBuilder lang="en" />
 
