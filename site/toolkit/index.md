@@ -15,10 +15,10 @@ description: datamodels-toolkit で、自分のデータモデルを変わらな
 
 ## 実行する {#run}
 
-[Node.js](https://nodejs.org/) 24 以降が要ります。コマンドは `npx` で GitHub のリリースから実行するので、インストールは要りません。
+[Node.js](https://nodejs.org/) 24 以降が要ります。コマンドは npm のパッケージ [`@geolonia/datamodels`](https://www.npmjs.com/package/@geolonia/datamodels) のリリースを `npx` で実行するので、インストールは要りません。自分のプロジェクトに入れるときは `npm install --save-dev @geolonia/datamodels@0.3.10` で追加し、`npx datamodels …` で実行します。0.3.8 より前のリリースは npm に無く、GitHub から実行します。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.8 --help
+npx @geolonia/datamodels@0.3.10 --help
 ```
 
 初めて実行すると、`npx` がパッケージをダウンロードしてよいかを尋ねます（`Need to install the following packages: … Ok to proceed? (y)`）。`y` を入力して進めます。
