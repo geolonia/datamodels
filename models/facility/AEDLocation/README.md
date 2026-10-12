@@ -9,8 +9,8 @@ AED（自動体外式除細動器）1 台の設置場所のデータです。自
 Subclass of `https://datamodels.jp/ns/facility/Facility` (x-subclass-of).
 
 - Type IRI: `https://datamodels.jp/ns/facility/AEDLocation`
-- Context: `https://datamodels.jp/context/facility/v1.jsonld` (alias), `https://datamodels.jp/context/facility/v1.0.0.jsonld` (exact)
-- Schema: `https://datamodels.jp/schema/facility/AEDLocation/v1.json` (alias), `https://datamodels.jp/schema/facility/AEDLocation/v1.0.0.json` (exact)
+- Context: `https://datamodels.jp/context/facility/v1.jsonld` (version alias), `https://datamodels.jp/context/facility/v1.0.0.jsonld` (exact)
+- Schema: `https://datamodels.jp/schema/facility/AEDLocation/v1.json` (version alias), `https://datamodels.jp/schema/facility/AEDLocation/v1.0.0.json` (exact)
 - Page: https://datamodels.jp/models/facility/AEDLocation/
 
 Files follow the Smart Data Models layout: `schema.json`, `catalog.yaml` (Japanese and English descriptions), `examples/`, `mapping/`, `notes.yaml`, `ADOPTERS.yaml`. Writing examples: https://datamodels.jp/guide/rules#examples

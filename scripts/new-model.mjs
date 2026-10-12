@@ -96,8 +96,8 @@ const readme = `# ${type}
 TODO 日本語の名前 / TODO English name${isValue ? ' (value type)' : ''}
 
 - ${isValue ? 'IRI' : 'Type IRI'}: \`${mu.typeIri}\`
-- Context: \`${u.contextAlias}\` (alias), \`${u.contextExact}\` (exact)
-- Schema: \`${mu.schemaAlias}\` (alias), \`${mu.schemaExact}\` (exact)
+- Context: \`${u.contextAlias}\` (version alias), \`${u.contextExact}\` (exact)
+- Schema: \`${mu.schemaAlias}\` (version alias), \`${mu.schemaExact}\` (exact)
 - Page: ${mu.page}
 
 Files follow the Smart Data Models layout: \`schema.json\`, \`catalog.yaml\` (Japanese and English descriptions), \`examples/\`, \`notes.yaml\`, \`ADOPTERS.yaml\`. Writing examples: https://datamodels.jp/guide/rules#examples

@@ -9,8 +9,8 @@ address 属性の値として使う日本の住所。意味が同じ項目は sc
 Subclass of `https://schema.org/PostalAddress` (x-subclass-of).
 
 - IRI: `https://datamodels.jp/ns/common/JapaneseAddress`
-- Context: `https://datamodels.jp/context/common/v1.jsonld` (alias), `https://datamodels.jp/context/common/v1.0.0.jsonld` (exact)
-- Schema: `https://datamodels.jp/schema/common/JapaneseAddress/v1.json` (alias), `https://datamodels.jp/schema/common/JapaneseAddress/v1.0.0.json` (exact)
+- Context: `https://datamodels.jp/context/common/v1.jsonld` (version alias), `https://datamodels.jp/context/common/v1.0.0.jsonld` (exact)
+- Schema: `https://datamodels.jp/schema/common/JapaneseAddress/v1.json` (version alias), `https://datamodels.jp/schema/common/JapaneseAddress/v1.0.0.json` (exact)
 - Page: https://datamodels.jp/models/common/JapaneseAddress/
 
 Files follow the Smart Data Models layout: `schema.json` (key-values representation, with `x-ngsi`, `x-iri` and optional `x-personal-data` annotations), `catalog.yaml` (Japanese and English descriptions), `examples/`, `mapping/` where a corresponding standard exists, `notes.yaml`, `ADOPTERS.yaml`.
