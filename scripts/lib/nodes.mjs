@@ -32,6 +32,10 @@ export async function readNodeList(file = NODES_FILE) {
   });
 }
 
+// An index URL to compare: without its #fragment, which is never sent in the request, so
+// catalog.json#models and catalog.json are one index (as the toolkit reads them).
+const indexKey = (u) => cleanUrl(u)?.replace(/#.*$/, '') || null;
+
 /**
  * The indexes that the known nodes link to (their `nodes`, and the `extends` of
  * their models) but nodes.yaml does not list (#222): nodes to propose for it,
@@ -39,13 +43,13 @@ export async function readNodeList(file = NODES_FILE) {
  * Returns [{ index, from: [index, …] }]; datamodels.jp's own index is never one.
  */
 export function unlistedNodes(list, read, self = 'https://datamodels.jp/catalog.json') {
-  const listed = new Set([self, ...list.map((n) => n.index)].map(cleanUrl));
+  const listed = new Set([self, ...list.map((n) => n.index)].map(indexKey));
   const found = new Map();
   for (const { node, catalog } of read) {
     const links = [
       ...(Array.isArray(catalog?.nodes) ? catalog.nodes.map((n) => n?.index) : []),
       ...(Array.isArray(catalog?.models) ? catalog.models.flatMap((m) => (Array.isArray(m?.extends) ? m.extends.map((e) => e?.index) : [])) : []),
-    ].map(cleanUrl).filter(Boolean);
+    ].map(indexKey).filter(Boolean);
     for (const index of links) {
       if (listed.has(index)) continue;
       if (!found.has(index)) found.set(index, new Set());

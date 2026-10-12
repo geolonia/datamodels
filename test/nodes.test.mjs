@@ -92,6 +92,9 @@ test('npm run nodes reports the nodes the known nodes link to that nodes.yaml do
     { index: 'https://other.example.org/catalog.json', from: [B.index] },
   ]);
   assert.deepEqual(unlistedNodes([A, B], [{ node: A, catalog: {} }]), []);
+  // A #fragment is never sent: catalog.json#models is the listed index, and a new one is reported once, without it.
+  const withFragments = [{ node: A, catalog: { nodes: [{ index: 'https://b.example.org/catalog.json#models' }, { index: 'https://new.example.org/catalog.json#x' }, { index: 'https://new.example.org/catalog.json' }], models: [] } }];
+  assert.deepEqual(unlistedNodes([A, B], withFragments), [{ index: 'https://new.example.org/catalog.json', from: [A.index] }]);
 });
 
 test('nodes.yaml needs a url and an index for every node', async () => {
