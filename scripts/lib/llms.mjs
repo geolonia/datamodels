@@ -30,7 +30,7 @@ const GUIDES = [
 const TOOLKIT = [
   ['', 'Toolkit', 'datamodels-toolkit, the datamodels command and GitHub Action: publish your own models with fixed URLs on a site of your own, convert CSV lists into models, export models for other tools'],
   ['start', 'Starting a site', 'start a node with init, publish it on GitHub Pages and your own domain, a permanent w3id.org address'],
-  ['models', "Your site's models", 'add a model with add, or start from a catalog model with extend, and write its attributes'],
+  ['models', "Your site's models", 'find an existing model in datamodels.jp and the sites it links to with search (and list those sites with nodes), add a model with add, or start from a catalog model with extend, and write its attributes'],
   ['check', 'Checking and building', 'check and build a node, and the GitHub Action that checks pull requests and publishes'],
   ['versions', 'Versions', 'change a published model: bump and release keep the old version online; upgrade moves the node to a newer toolkit'],
   ['convert', 'Converting your data', 'convert your own CSV list into entities of a catalog model (datamodels convert): with the mapping file of a standard the list follows, with a mapping of your own (datamodels mapping, then convert --check; an agent skill helps an AI agent fill it in), or from the CSV template'],
