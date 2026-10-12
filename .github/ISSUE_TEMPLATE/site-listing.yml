@@ -1,0 +1,51 @@
+name: サイトの登録 / List your data model site
+description: 自分のデータモデルのサイトを「データモデルのサイト」の一覧に載せる / Put your data model site on the list of data model sites
+title: "Site: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        datamodels-toolkit で作った自分のサイト（ノード）を、[データモデルのサイト](https://datamodels.jp/guide/sites)の一覧に載せます。載せるのは、サイトの catalog.json から読んだ名前、URL、ライセンス、モデルの数と、もとにしたカタログのモデルです。サイトのモデルがカタログのモデルをもとにしていれば、そのモデルのページの「このモデルをもとにしたもの」にも出ます。プルリクエストで確認してから載せます。モデルの中身は確認しません。日本語でも英語でも構いません。
+        This puts your own site (a node) made with datamodels-toolkit on the [list of data model sites](https://datamodels.jp/en/guide/sites). What is listed is read from the site's catalog.json: its name, URL, licence, number of models and the catalog models it builds on. If a model of your site builds on a catalog model, that model's page shows it under "Built on by others" too. The listing is added in a reviewed pull request; the models themselves are not reviewed. Japanese or English are both fine.
+
+        **載せないもの / Never include:** API キー、トークン、ログイン URL などのアクセス情報 / credentials or access details (API keys, tokens, login URLs).
+  - type: input
+    id: url
+    attributes:
+      label: サイトの URL / Site URL
+      description: サイトのベース URL / The base URL of the site
+      placeholder: https://models.example.org/
+    validations:
+      required: true
+  - type: input
+    id: index
+    attributes:
+      label: catalog.json の URL / URL of catalog.json
+      description: 誰でも読める URL / A public URL
+      placeholder: https://models.example.org/catalog.json
+    validations:
+      required: true
+  - type: input
+    id: name
+    attributes:
+      label: 名前（日本語と英語） / Name (Japanese and English)
+      description: catalog.json の publisher と同じ名前。一覧ではこの名前を使います / The publisher name in catalog.json; the list uses it
+      placeholder: 例 GTT プロジェクト / GTT Project
+    validations:
+      required: true
+  - type: textarea
+    id: about
+    attributes:
+      label: サイトの内容（任意） / What the site is for (optional)
+      description: どんなモデルを、何のために公開しているか、1〜2 文で / Which models it publishes, and for what, in one or two sentences
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: 公開の同意 / Consent to list
+      options:
+        - label: このサイトを運営している、または運営者の代わりに申請しています / I run this site, or I ask on behalf of the people who run it
+          required: true
+        - label: サイトの名前、URL、ライセンスと、catalog.json に載っているモデルを、datamodels.jp のページと catalog.json に載せることに同意します / I agree that datamodels.jp lists the site's name, URL, licence and the models in its catalog.json, on its pages and in its own catalog.json
+          required: true
+        - label: サイトが移ったり閉じたりしたときは、Issue で知らせます / I will tell you in an issue when the site moves or closes
+          required: true

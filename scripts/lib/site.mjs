@@ -456,14 +456,14 @@ const NODES = {
     title: 'データモデルのサイト', description: 'datamodels-toolkit で自分のデータモデルを公開している、datamodels.jp が知っているサイトの一覧',
     intro: (own) => `自分のサイト（ノード）でデータモデルを公開していて、datamodels.jp が知っているサイトです。1 行に 1 つのサイトで、モデルの数と、このカタログのどのモデルをもとにしているかを示します。サイトのモデルはこのカタログの一部ではなく、datamodels.jp は内容を確認していません。それぞれのサイトが自分のモデルを決めます。多くの人に役立つモデルは、カタログに提案できます。自分のサイトの作り方は[サイトを始める](${own})にあります。`,
     perModel: 'サイトのモデルは、それぞれのサイトで見られます。このカタログのモデルをもとにしたモデルは、そのモデルのページの「このモデルをもとにしたもの」にも、足した属性と一緒に載ります。',
-    add: (issue) => `自分のサイトを載せたいときは、[Issue](${issue}) で知らせてください。各サイトの catalog.json から読み、取り込むときに確認しています。`,
+    add: (issue) => `自分のサイトを載せたいときは、[登録のフォーム](${issue})で知らせてください。各サイトの catalog.json から読み、取り込むときに確認しています。`,
     none: 'まだありません。', site: 'サイト', licence: 'ライセンス', models: 'モデルの数', buildsOn: 'もとにしたカタログのモデル', read: '読んだ日',
   },
   en: {
     title: 'Data model sites', description: 'Sites that publish their own data models with datamodels-toolkit and that datamodels.jp knows',
     intro: (own) => `Sites of their own (nodes) that publish data models and that datamodels.jp knows: one row per site, with how many models it has and which catalog models they build on. Their models are not part of this catalog, and datamodels.jp does not review them: each site decides about its own. A model that is useful to many can be proposed to the catalog. How to make a site: [Starting a site](${own}).`,
     perModel: 'Each site shows its own models. A model built on a catalog model is also listed on that model\'s page, under "Built on by others", with the attributes it adds.',
-    add: (issue) => `To have your site listed, tell us in an [issue](${issue}). The sites are read from their catalog.json and reviewed when they are taken in.`,
+    add: (issue) => `To have your site listed, use the [listing form](${issue}). The sites are read from their catalog.json and reviewed when they are taken in.`,
     none: 'None yet.', site: 'Site', licence: 'Licence', models: 'Models', buildsOn: 'Builds on (catalog models)', read: 'Read on',
   },
 };
@@ -473,7 +473,7 @@ export function nodesPage(lang, prefix, nodes) {
   const n = NODES[lang];
   // One table and no sections: no outline column.
   let md = front(n.title, n.description).replace(/\n---\n\n$/, '\naside: false\n---\n\n');
-  md += `# ${n.title}\n\n${n.intro(`${prefix}/toolkit/start`)}\n\n${n.add('https://github.com/geolonia/datamodels/issues/new')}\n\n`;
+  md += `# ${n.title}\n\n${n.intro(`${prefix}/toolkit/start`)}\n\n${n.add('https://github.com/geolonia/datamodels/issues/new?template=site-listing.yml')}\n\n`;
   if (!nodes.nodes?.length) return `${md}${n.none}\n`;
   md += `| ${n.site} | ${n.licence} | ${n.models} | ${n.buildsOn} | ${n.read} |\n|---|---|---|---|---|\n`;
   for (const node of nodes.nodes) {
