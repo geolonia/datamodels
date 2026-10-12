@@ -21,7 +21,7 @@ const GUIDES = [
   ['contribute', 'Contributing', 'how to take part: one section per issue form (propose a model or attributes, list an extension, list a data model site, tell us about another catalog) with what happens next; changing the files yourself follows CONTRIBUTING.md on GitHub'],
   ['rules', 'Rules for models', 'what the catalog accepts, when to define a new type, the rules, mapping to standards, writing examples, the stages of a model'],
   ['own-models', 'Your own data models', 'where to publish a model that does not belong in this catalog: your own site (a node) or Smart Data Models'],
-  ['mapping', 'Mapping files', 'which field of a standard matches which attribute of a model, and the rules to convert a list; the catalog keeps them only for published standards that many lists follow'],
+  ['mapping', 'Mapping files', 'which field of a standard matches which attribute of a model, and the rules to convert a list'],
   ['urls', 'URLs and versions', 'which URL to use, what never changes, versions and deprecation'],
   ['catalogs', 'Other data model catalogs', 'catalogs and standards used globally and in Japan, and how this catalog relates to them'],
 ];

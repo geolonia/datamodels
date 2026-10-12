@@ -69,7 +69,7 @@ npx github:geolonia/datamodels-toolkit convert disaster/EvacuationSite jichitai-
 
 It reads the mapping files from datamodels.jp (`/mapping/<subject>/<Type>/<name>.yaml`). To try a mapping before it is published, build this repository and add `--site dist`. A list that follows no standard in the catalog is converted with its owner's own mapping file, which `datamodels mapping` starts ([Converting your data](https://datamodels.jp/en/toolkit/convert)).
 
-The catalog keeps mapping files only for published standards that many lists follow, and conversion rules only in a few worked examples ([Rules for models](https://datamodels.jp/en/guide/rules#mapping), decided 2026-10-12).
+Which standards get a mapping file, and which mapping files have conversion rules: [Rules for models](https://datamodels.jp/en/guide/rules#mapping).
 
 The conversion rules in a mapping file are part of this catalog, and the validator checks their structure:
 - A row with `column` (one column or a list), an optional `transform`, a constant `value`, or `via` (build a nested value with another mapping, such as `common/JapaneseAddress/jichitai-opendata-address`) is converted.

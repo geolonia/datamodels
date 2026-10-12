@@ -41,7 +41,7 @@ description: このカタログに合わないデータモデルの公開先：�
 
 ## Smart Data Models {#smart-data-models}
 
-[Smart Data Models](https://smartdatamodels.org/) は FIWARE コミュニティのカタログで、このカタログの土台です（[他のデータモデルカタログ](/guide/catalogs)）。モデルは英語で書き、GitHub での独自の貢献の手順があります。日本に関係しないモデルなら、こちらが向いています。
+日本に関係しないモデルなら、このカタログの土台の [Smart Data Models](https://smartdatamodels.org/) が向いています（[他のデータモデルカタログ](/guide/catalogs)）。
 
 ## あとからこのカタログへ {#later}
 

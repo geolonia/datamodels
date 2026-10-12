@@ -41,7 +41,7 @@ A model on your site can build on a model of this catalog ([`extend`](/en/toolki
 
 ## Smart Data Models {#smart-data-models}
 
-[Smart Data Models](https://smartdatamodels.org/) is the catalog of the FIWARE community, and this catalog builds on it ([Other data model catalogs](/en/guide/catalogs)). Its models are in English, and it has its own way to contribute on GitHub. It is a good place for a model that is not about Japan.
+A model that is not about Japan fits better in [Smart Data Models](https://smartdatamodels.org/), the catalog this one builds on ([Other data model catalogs](/en/guide/catalogs)).
 
 ## Later: from your site to this catalog {#later}
 

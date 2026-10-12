@@ -71,7 +71,7 @@ Every entity model has two examples (in the key-values form and the normalized f
 
 ## Stages {#stages}
 
-Each model page shows the model's stage. A proposal (an issue) becomes a draft when it is merged, and moves on to stable and then deprecated.
+Each model page shows the model's stage. A model is added as a draft when its pull request is merged; the table says what each stage means.
 
 | Stage | Meaning |
 |---|---|
