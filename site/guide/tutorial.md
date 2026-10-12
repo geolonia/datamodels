@@ -30,7 +30,7 @@ FIWARE のコンテキストブローカーを初めて試す人のためのチ�
 - **GeonicDB CLI**（`geonic`）。GeonicDB をコマンドで操作するツールです。インストールして、最初に一度だけログインします。
 
 ```bash
-npm install -g @geolonia/geonicdb-cli
+npm install -g @geolonia/geonicdb-cli@0.26.1
 geonic config set url "https://<your-deployment>.geonicdb.jp"
 geonic auth login --tenant "<your-tenant>"
 ```
@@ -57,11 +57,11 @@ curl -sSfL -o sites.csv "$HOST/$SET/$FILE/092011_evacuation_space_sanitized_new.
 ブローカーに登録できるのは、CSV ファイルではなくエンティティです。この避難場所に当たるカタログのモデルは [EvacuationSite](/models/disaster/EvacuationSite/) です。このモデルには、どの列をどの属性にするかを書いた**対応表**（`jichitai-opendata-site`）が用意されています。そのため、変換のコードを自分で書く必要はありません。
 
 ```bash
-npx github:geolonia/datamodels-toolkit convert disaster/EvacuationSite \
-  jichitai-opendata-site sites.csv --out sites.json
+npx github:geolonia/datamodels-toolkit#v0.3.7 convert \
+  disaster/EvacuationSite jichitai-opendata-site sites.csv --out sites.json
 ```
 
-**何が起きたか：** CSV の 1 行が 1 つのエンティティになり、1 件ずつモデルで検査されました。変換ツールは、自動で直した箇所も表示します。たとえば、表計算ソフトで先頭の 0 が落ちた地方公共団体コード（`92011 → 092011`）です。198 か所すべてが有効でした。`sites.json` の最初の 1 件を見てみましょう。
+**何が起きたか：** CSV の 1 行が 1 つのエンティティになり、1 件ずつモデルで検査されました。変換ツールは、自動で直した箇所も表示します。たとえば、表計算ソフトで先頭の 0 が落ちた地方公共団体コード（`92011 → 092011`）です。198 か所すべてが有効でした。`sites.json` の最初の 1 件を見てみましょう。ここでは、住所や電話番号など、一部の属性を省いています。
 
 ```json
 {
@@ -79,11 +79,12 @@ npx github:geolonia/datamodels-toolkit convert disaster/EvacuationSite \
 続いて、ブローカーに登録するための形にも変換します。
 
 ```bash
-npx github:geolonia/datamodels-toolkit convert disaster/EvacuationSite \
-  jichitai-opendata-site sites.csv --normalized --out sites.jsonld
+npx github:geolonia/datamodels-toolkit#v0.3.7 convert \
+  disaster/EvacuationSite jichitai-opendata-site sites.csv \
+  --normalized --out sites.jsonld
 ```
 
-`--normalized` を付けると、同じデータを NGSI-LD の正規の形（normalized）で書き出し、**@context** を付けます。@context は辞書のようなものです。たとえば、`name` が `https://uri.etsi.org/ngsi-ld/name` を指すことをブローカーに伝えます。`hazardTypes` は `https://datamodels.jp/ns/disaster/hazardTypes` を指します。この完全な名前（**IRI**）は Web 全体で一意なので、別々のシステムが、意味の違う「name」を取り違えることはありません。
+`--normalized` を付けると、同じデータを、ブローカーが受け取る NGSI-LD の normalized の形で書き出し、**@context** を付けます。@context は辞書のようなものです。たとえば、`name` が `https://uri.etsi.org/ngsi-ld/name` を指すことをブローカーに伝えます。`hazardTypes` は `https://datamodels.jp/ns/disaster/hazardTypes` を指します。この完全な名前（**IRI**）は Web 全体で一意なので、別々のシステムが、意味の違う「name」を取り違えることはありません。
 
 ## 3. モデルを登録し、データを入れる {#load}
 
@@ -162,7 +163,7 @@ jq '.[2] | .id += "-test" | .capacity = {type: "Property", value: 500}' \
 
 大勢の人や多くのアプリが同じブローカーに書き込んでも、これでデータの品質が保たれます。
 
-ただし、制約が 1 つあります。`hazardTypes` のようなリストについて、GeonicDB は、リストであることだけを検査し、中の値を検査しません。そのため、`["typhoon"]` を持つ避難場所も保存されてしまいます。手順 2 の変換では中の値も検査しているので、登録する前の時点で検証できています。詳しくは[登録したモデルが検査すること](/guide/geonicdb#checks)を参照してください。
+ただし、制約が 1 つあります。`hazardTypes` のようなリストについて、GeonicDB は、リストであることだけを検査し、中の値を検査しません。そのため、`["typhoon"]` を持つ避難場所も保存されてしまいます。手順 2 の変換では中の値も検査しているので、登録する前の時点で検査できています。詳しくは[登録したモデルが検査すること](/guide/geonicdb#checks)を参照してください。
 
 ## できたこと {#done}
 

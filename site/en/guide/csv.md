@@ -1,9 +1,9 @@
 ---
-title: Using a spreadsheet
+title: Using a spreadsheet (CSV)
 description: Fill in a model's CSV template, check it with frictionless validate against its Table Schema, and turn it into NGSI-LD entities
 ---
 
-# Using a spreadsheet
+# Using a spreadsheet (CSV)
 
 The page of every entity model has a **CSV template** and its **Table Schema** in the **Download** row (value types such as Geometry have none). With them, people who work in a spreadsheet can make data in the shape of a model without writing JSON. This page fills in the template of [designated emergency evacuation site (EvacuationSite)](/en/models/disaster/EvacuationSite/), checks it, and turns it into NGSI-LD entities.
 
@@ -23,7 +23,7 @@ curl -sSfO "$BASE/table-schema/disaster/EvacuationSite.tableschema.json"
 
 ## 2. Fill in the template {#fill}
 
-Open `EvacuationSite.csv` in a spreadsheet. Its first row has one column per attribute; the attribute table on the model page says what each one means. Add one row per site, leave the cells you do not know empty, and save the file as `sites.csv` in UTF-8 (in Excel: "CSV UTF-8"). This row has two mistakes on purpose, for the next steps to find:
+Open `EvacuationSite.csv` in a spreadsheet. Its first row has one column per attribute; the attribute table on the model page says what each one means. Add one row per site, leave the cells you do not know empty, and save the file as `sites.csv` in UTF-8 (in Excel: "CSV UTF-8"). This row has two mistakes on purpose, for the next steps to find. The name, address, location and hazards are those of 都立一橋高校 in the data of designated emergency evacuation sites of the Geospatial Information Authority of Japan (GSI) for Chiyoda City; the ward's number `13101-0012` is made up for the example.
 
 | Column | Value |
 |---|---|
@@ -33,17 +33,17 @@ Open `EvacuationSite.csv` in a spreadsheet. Its first row has one column per att
 | `localGovernmentCode` | `13101` |
 | `address.addressText` | `東京都千代田区東神田1-12-13` |
 | `longitude`, `latitude` | `139.7810002`, `35.6945488` |
-| `hazardTypes` | `earthquake;fire` |
+| `hazardTypes` | `stormSurge;earthquake;内水氾濫` |
 | `alsoDesignatedShelter` | `true` |
 
-A list such as `hazardTypes` is split at `;`, and `longitude` and `latitude` make the location. Keep every column of the template, also the empty ones: the Table Schema expects all of them, in this order.
+A list such as `hazardTypes` is split at `;`, and `longitude` and `latitude` make the location. Keep every column of the template, also the empty ones: the Table Schema expects all of them, in this order. If you only use `convert`, you can delete the columns you do not use ([Converting your data](/en/toolkit/convert#csv-template)).
 
 ## 3. Check it with frictionless {#validate}
 
-[frictionless](https://framework.frictionlessdata.io/) checks every cell against the Table Schema: the type, the pattern, the allowed values, and whether a required cell is filled in.
+[frictionless](https://framework.frictionlessdata.io/) checks every cell against the Table Schema: the type, the pattern, the allowed values, and whether a required cell is filled in. On macOS (Homebrew) and recent Debian and Ubuntu, `pip install` stops with an error, so use [pipx](https://pipx.pypa.io/) or `uvx` from [uv](https://docs.astral.sh/uv/).
 
 ```bash
-pip install frictionless   # or: pipx install frictionless
+pipx install frictionless   # or: uvx frictionless …, pip install frictionless
 frictionless validate sites.csv --schema EvacuationSite.tableschema.json
 ```
 
@@ -75,10 +75,10 @@ npx github:geolonia/datamodels-toolkit#v0.3.7 convert \
 
 ```text
 sites.csv: utf-8, 1 row(s), 0 valid EvacuationSite, 1 invalid
-  line 2: data/hazardTypes/1 must be equal to one of the allowed values
+  line 2: data/hazardTypes/2 must be equal to one of the allowed values
 ```
 
-The JSON Schema checks what the Table Schema cannot: the values inside a list, and rules on several columns, such as "externalSiteId or nationalShelterId". `fire` is not a hazard type of this model; the attribute table lists them. Change it to `inlandFlood` and run `convert` again:
+The JSON Schema checks what the Table Schema cannot: the values inside a list, and rules on several columns, such as "externalSiteId or nationalShelterId". A hazard is written as the English value in the attribute table, so the Japanese `内水氾濫` is not allowed. Change it to `inlandFlood` and run `convert` again:
 
 ```text
 sites.csv: utf-8, 1 row(s), 1 valid EvacuationSite, 0 invalid
@@ -96,13 +96,13 @@ sites.csv: utf-8, 1 row(s), 1 valid EvacuationSite, 0 invalid
     "localGovernmentCode": "131016",
     "address": { "addressText": "東京都千代田区東神田1-12-13" },
     "location": { "type": "Point", "coordinates": [139.7810002, 35.6945488] },
-    "hazardTypes": ["earthquake", "inlandFlood"],
+    "hazardTypes": ["stormSurge", "earthquake", "inlandFlood"],
     "alsoDesignatedShelter": true
   }
 ]
 ```
 
-This is the key-values form. Add `--normalized` to get the form an NGSI-LD broker takes, with the @context ([Sending to an NGSI-LD broker](/en/guide/use#broker)). More about the columns of the template: [Converting your data](/en/toolkit/convert#csv-template).
+This is the key-values form. Add `--normalized` to get the form an NGSI-LD broker takes, with the @context ([Send it to an NGSI-LD broker](/en/guide/use#broker)). More about the columns of the template: [Converting your data](/en/toolkit/convert#csv-template).
 
 ## Your own models {#own-models}
 
