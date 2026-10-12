@@ -3,8 +3,9 @@
 // playground on model pages (ExamplePlayground.vue), pan and zoom for the
 // relationship graphs (GraphViewer.vue), the extension builder
 // (ExtensionBuilder.vue, on /guide/builder) and a
-// pre-release banner above the navigation on every page, and the 404 page in both languages. Remove the banner
+// pre-release banner above the navigation on every page. Remove the banner
 // (and --vp-layout-top-height in custom.css) at the official launch.
+// The 404 page (NotFound, below) speaks the language of the address.
 // Without VitePress' Inter: the site uses IBM Plex (below) and the system fonts for Japanese.
 import DefaultTheme from 'vitepress/theme-without-fonts'
 import { defineAsyncComponent, defineComponent, h, onMounted, onBeforeUnmount, ref } from 'vue'
