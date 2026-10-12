@@ -23,8 +23,10 @@ fields:
   medicalInstitutionType:
     to: 医療機関の種類 (medicalType)
     note:
-      ja: "病院 → hospital、有床診療所 → clinicWithBeds、無床診療所 → clinicWithoutBeds。この列は変換しない（2026-10-12 の決定）。中央区の一覧は定義書の一覧に無い「一般診療所」「歯科診療所」「企業内診療所」で書いていて、変換するとすべての行が無効になる"
-      en: "病院 → hospital, 有床診療所 → clinicWithBeds, 無床診療所 → clinicWithoutBeds. This column is not converted (decided 2026-10-12): Chuo City's list writes 一般診療所, 歯科診療所 and 企業内診療所, which the definition sheet does not list, so converting it would make every row invalid"
+      ja: "定義書の 3 つ：病院 → hospital、有床診療所 → clinicWithBeds、無床診療所 → clinicWithoutBeds。定義書には無いが実際の一覧にある書き方（中央区、中野区、新宿区、2026-10-12 に確認）：診療所と一般診療所 → clinic（病床の有無を書かない診療所）、歯科診療所 → dentalClinic、企業内診療所 → clinic（企業が主に社員のために設ける診療所で、医療法の上では診療所）。これ以外の書き方は、その行の問題として報告される"
+      en: "The definition sheet's three: 病院 → hospital, 有床診療所 → clinicWithBeds, 無床診療所 → clinicWithoutBeds. Texts the sheet does not list but real lists use (Chuo, Nakano and Shinjuku, checked 2026-10-12): 診療所 and 一般診療所 → clinic (a clinic, beds not stated), 歯科診療所 → dentalClinic, 企業内診療所 → clinic (a clinic a company runs mainly for its staff; under the Medical Care Act it is a clinic). Any other text is reported as a problem of the row"
+    column: 医療機関の種類
+    values: { 病院: hospital, 有床診療所: clinicWithBeds, 無床診療所: clinicWithoutBeds, 診療所: clinic, 一般診療所: clinic, 企業内診療所: clinic, 歯科診療所: dentalClinic }
   address: { to: "所在地_* (fullAddress, prefecture, city, streetAddress, cityBlock), 建物名等(方書) (buildingNameEtc), 町字ID (streetAddressId)", note: { ja: 詳細は JapaneseAddress の対応表, en: see the JapaneseAddress table }, via: common/JapaneseAddress/jichitai-opendata-address }
   location: { to: "緯度 (latitude), 経度 (longitude)", note: { ja: "[経度, 緯度] の点", en: "a point [longitude, latitude]" }, via: common/Geometry/jichitai-opendata-location }
   operatorName: { to: 法人の名称 (legalEntityName), column: 法人の名称 }
