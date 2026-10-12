@@ -23,7 +23,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.8 --help
 
 初めて実行すると、`npx` がパッケージをダウンロードしてよいかを尋ねます（`Need to install the following packages: … Ok to proceed? (y)`）。`y` を入力して進めます。
 
-このセクションの例は、このリリースを使います。すべてのコマンドとオプションは、`--help` と [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.8#readme)（英語）にあります。このセクションでは、作業ごとに使い方を説明します。
+このセクションの例は、このリリースを使います。このセクションでは、作業ごとに使い方を説明します。すべてのコマンドとオプションは、`--help` と[コマンドリファレンス](/toolkit/reference)にあります。
 
 ## ページ {#pages}
 
@@ -33,8 +33,14 @@ npx github:geolonia/datamodels-toolkit#v0.3.8 --help
 - [サイトのモデル](/toolkit/models)：`search` で既にあるモデルを探し、`add` と `extend` でモデルを足し、属性を書きます。
 - [検査とビルド](/toolkit/check)：`check` と `build`、公開する GitHub Action です。
 - [バージョン](/toolkit/versions)：公開したモデルを `bump` で変え、`upgrade` で新しいツールキットに移ります。
+- [GitHub Pages 以外のホスト](/toolkit/hosts)：Cloudflare Pages や Netlify などの静的ホストでノードを公開します。
 
 ### 自分のデータ {#data}
 
 - [データを変換する](/toolkit/convert)：`convert` で、CSV の一覧をモデルのエンティティに変換します。標準の対応表を使うか、`mapping` で自分の対応表を作るか、CSV テンプレートから始めます。
 - [他のツールに書き出す](/toolkit/export)：`export` で、モデルから CSV テンプレート、Table Schema、AI の構造化出力、PostgreSQL / PostGIS のテーブルを作ります。
+
+### 参照 {#reference}
+
+- [コマンドリファレンス](/toolkit/reference)：すべてのコマンドの引数、オプション、既定値、終了コードです。
+- [ノードとビルド](/toolkit/node)：ノードが持つもの、`node.yaml`、`build` が書き出すものです。
