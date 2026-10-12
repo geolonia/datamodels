@@ -18,7 +18,7 @@ When lists use the same model, app developers can read the list of every city wi
 The other words are explained in [Terms](/en/guide/#terms).
 
 ::: warning Pre-release
-The catalog is not officially launched yet. Until then, published files may still be corrected. Read [URLs and versions](/en/guide/urls) before you use them in production data.
+The catalog is not officially launched yet, and until then published files may still be corrected ([URLs and versions](/en/guide/urls)). Try the steps now, but publish the JSON on your portal only after the official launch.
 :::
 
 ## 1. Check that your list follows the standard {#standard}
