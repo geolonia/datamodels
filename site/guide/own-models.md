@@ -37,6 +37,8 @@ description: このカタログに合わないデータモデルの公開先：�
 
 自分のサイトのモデルは、このカタログのモデルを土台にできます（[`extend`](/toolkit/models#extend)）。土台にしたモデルを書いておくと、その名前と意味を変えていないかをツールキットが検査します。
 
+<svg class="flow-diagram" viewBox="0 0 460 216" role="img" aria-label="datamodels.jp はカタログのモデルと、データモデルのサイトの一覧を公開します。models.gtt-project.org の Issue は、カタログの Task をもとにしています。自分のサイトのモデルも、カタログのモデルをもとにできます。どのサイトも catalog.json を公開します。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="site-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box main" x="10" y="8" width="440" height="58" rx="10"/><text class="t" x="230" y="33">datamodels.jp</text><text class="s" x="230" y="53">カタログのモデル（Task など）と、サイトの一覧</text><rect class="box" x="10" y="150" width="210" height="58" rx="10"/><text class="t m" x="115" y="175">models.gtt-project.org</text><text class="s" x="115" y="194">Issue、catalog.json</text><rect class="box d" x="240" y="150" width="210" height="58" rx="10"/><text class="t" x="345" y="175">自分のサイト</text><text class="s" x="345" y="194">自分のモデル、catalog.json</text><line class="a" x1="115" y1="150" x2="115" y2="68" marker-end="url(#site-ah)"/><text class="l" x="125" y="104">Issue は Task をもとにする</text><line class="a d" x1="345" y1="150" x2="345" y2="68" marker-end="url(#site-ah)"/><text class="l e" x="335" y="128">もとにできる</text></svg>
+
 ## Smart Data Models {#smart-data-models}
 
 [Smart Data Models](https://smartdatamodels.org/) は FIWARE コミュニティのカタログで、FIWARE、TM Forum、IUDX、OASC が運営しています。スマートシティ、農業、エネルギーなどの 900 以上のモデルがあり、英語で書かれていて、GitHub での独自の貢献の手順があります。日本に関係しないモデルなら、こちらが向いています。このカタログも Smart Data Models を土台にしています（[他のデータモデルカタログ](/guide/catalogs)）。

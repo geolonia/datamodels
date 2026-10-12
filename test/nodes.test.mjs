@@ -141,7 +141,11 @@ test('the Task page lists the models of other sites built on it, with what they 
   assert.match(page, /^\| \[Example bOrg\/b\]\(https:\/\/models\.example\.org\/\) \| CC0-1\.0 \| 3 \| \[Task\]\(\/en\/models\/task\/Task\/\) \| 2026-10-11 \|$/m, 'Issue and Patrol both build on Task: named once');
   assert.doesNotMatch(page, /^## /m, 'no section per site');
   assert.doesNotMatch(page, /Ride/, 'no table of every model');
+  assert.match(page, /^<svg class="flow-diagram" [^\n]*<\/svg>\n\n\| Site \|/m, 'the diagram on one line, above the table');
   assert.match(nodesPage('ja', '', { nodes: [] }), /まだありません。/);
+  // Both languages send a site to the listing form, not to a blank issue.
+  for (const p of [page, nodesPage('ja', '', snapshot)]) assert.ok(p.includes('(https://github.com/geolonia/datamodels/issues/new?template=site-listing.yml)'), 'the site-listing form');
+  assert.doesNotMatch(nodesPage('ja', '', { nodes: [] }), /<svg/, 'no diagram without sites');
   const own = { nodes: [nodeEntry(NODE, { models: [{ type: 'Ride', typeIri: 'https://models.example.org/ns/x#Ride' }] }, '2026-10-11')] };
   assert.match(nodesPage('en', '/en', own), /\| 1 \| — \| 2026-10-11 \|/, 'a site that builds on no catalog model');
   // Every catalog model a site builds on, in the order met.

@@ -7,6 +7,8 @@ description: 標準のどの項目がモデルのどの属性に当たるかを�
 
 多くのモデルは、日本のデータがすでに従っている標準（自治体標準オープンデータセット、EEI、国土地理院の避難所データなど）に対応しています。**対応表**（マッピングファイル）は、1 つのモデルと 1 つの標準について、標準のどの項目がモデルのどの属性に当たるかを示します。標準に従うデータを、モデルに合わせて使えます。
 
+<svg class="flow-diagram" viewBox="0 0 460 104" role="img" aria-label="標準の列「想定収容人数」は、対応表の 1 行（column と transform）を通って、モデルの属性 maxCapacity になります。文字列の &quot;120&quot; は整数の 120 になります。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="mp-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="10" y="8" width="130" height="58" rx="10"/><text class="t" x="75" y="32">想定収容人数</text><text class="s" x="75" y="51">標準の列</text><line class="a" x1="140" y1="37" x2="163" y2="37" marker-end="url(#mp-ah)"/><rect class="box main" x="165" y="8" width="130" height="58" rx="10"/><text class="t" x="230" y="32">対応表の 1 行</text><text class="s" x="230" y="51">column、transform</text><line class="a" x1="295" y1="37" x2="318" y2="37" marker-end="url(#mp-ah)"/><rect class="box" x="320" y="8" width="130" height="58" rx="10"/><text class="t m" x="385" y="32">maxCapacity</text><text class="s" x="385" y="51">モデルの属性</text><text class="s" x="75" y="92">"120"（文字列）</text><text class="s" x="230" y="92">transform: integer</text><text class="s" x="385" y="92">120（整数）</text></svg>
+
 ## どこにあるか
 
 - モデルのページの**参照している標準**：標準ごとに 1 行で、開くと対応表が見られます。YAML のファイルは表の下にリンクがあります。

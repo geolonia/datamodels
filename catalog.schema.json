@@ -402,7 +402,7 @@
           "subClassOf": {
             "type": "string",
             "format": "uri",
-            "description": "Present when this type is a subclass of another catalog type: own IRI, attributes with the same name share the parent IRIs, parent required attributes stay required."
+            "description": "Present when this type is a subclass of another type: own IRI. When the parent is a catalog type, attributes with the same name share the parent IRIs and parent required attributes stay required. The parent may also be a type of schema.org, Smart Data Models or the NGSI-LD core."
           },
           "adapters": {
             "type": "object",

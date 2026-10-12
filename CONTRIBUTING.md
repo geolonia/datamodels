@@ -55,7 +55,7 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 
 ### 拡張を一覧に載せる
 
-モデルに属性を足して使っている組織は、その拡張をモデルのページの「このモデルをもとにしたもの」と `catalog.json` に載せられます。同じ意味の属性に、ほかの組織が同じ名前を使えるようにするためです。ツールキットで作った自分のサイトで公開している拡張は、サイトを `nodes.yaml` に載せれば、`npm run nodes` で読んだ内容が同じ欄に載ります。フォームは、自分のサイトが無い組織のためのものです。サイトとフォームの両方に同じ拡張があるときは、サイトの内容を 1 回だけ載せます（拡張のページか @context の URL がサイトの URL で始まるとき、同じとみなします）。
+モデルに属性を足して使っている組織は、その拡張をモデルのページの「このモデルをもとにしたもの」と `catalog.json` に載せられます。同じ意味の属性に、ほかの組織が同じ名前を使えるようにするためです。ツールキットで作った自分のサイトで公開している拡張は、サイトを `nodes.yaml` に載せれば、`npm run nodes` で読んだ内容が同じ欄に載ります。フォームは、自分のサイトが無い組織のためのものです。サイトを一覧に載せるには、[サイトの登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=site-listing.yml)を使います。サイトとフォームの両方に同じ拡張があるときは、サイトの内容を 1 回だけ載せます（拡張のページか @context の URL がサイトの URL で始まるとき、同じとみなします）。
 
 1. 持ち主が [拡張の登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml) に記入します（モデルのページからはモデル名が入った状態で開きます）。書き方は「[拡張を載せる](https://datamodels.jp/guide/list-extension)」にあります。
 2. メンテナーか持ち主が、`models/<サブジェクト>/<型名>/extensions/<名前>.yaml` を足す Pull Request を開きます（署名付き）。
@@ -155,7 +155,7 @@ Report another catalog of data models or vocabularies with the [catalog form](ht
 
 ### Listing an extension
 
-An organisation that added attributes to a model can list its extension on the model page ("Built on by others") and in `catalog.json`, so others who need an attribute with the same meaning can reuse the name. An extension published on a site of its own, made with the toolkit, needs no listing: once the site is in `nodes.yaml`, `npm run nodes` reads it into the same section. The form is for organisations without a site. When a site and a listed extension are the same, the section shows the site's data once (they are the same when the extension's page or @context URL starts with the site's URL).
+An organisation that added attributes to a model can list its extension on the model page ("Built on by others") and in `catalog.json`, so others who need an attribute with the same meaning can reuse the name. An extension published on a site of its own, made with the toolkit, needs no listing: once the site is in `nodes.yaml`, `npm run nodes` reads it into the same section. The form is for organisations without a site. To put a site on the list, use the [site listing form](https://github.com/geolonia/datamodels/issues/new?template=site-listing.yml). When a site and a listed extension are the same, the section shows the site's data once (they are the same when the extension's page or @context URL starts with the site's URL).
 
 1. The owner fills in the [extension form](https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml) (from a model page it opens with the model filled in). Step by step: "[Listing your extension](https://datamodels.jp/en/guide/list-extension)".
 2. A maintainer or the owner opens a pull request that adds `models/<subject>/<Type>/extensions/<name>.yaml` (signed off).

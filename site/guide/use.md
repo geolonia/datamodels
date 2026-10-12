@@ -178,6 +178,10 @@ curl -G "$BROKER/ngsi-ld/v1/entities" \
 
 @context を付けると、普通の JSON が JSON-LD になります。各属性には、世界で一意の名前（IRI）が付きます。カタログ独自の IRI（`https://datamodels.jp/ns/...`）か、取り入れている標準（schema.org、Smart Data Models）の IRI です。JSON-LD は、Linked Data のツールが使う RDF に変換できます。`id` と `type` を JSON-LD の `@id` と `@type` として扱うため、NGSI-LD の core context も並べます。
 
+名前が違っても、IRI が同じなら意味は同じです。ほかの組織が自分の名前（エイリアス）で書いたデータも、同じ IRI になります（[独自の名前で使う](/guide/names)）。
+
+<svg class="flow-diagram" viewBox="0 0 460 250" role="img" aria-label="自分のデータの restrictionStatus は、カタログの @context で IRI https://datamodels.jp/ns/transportation/restrictionStatus になります。ほかの組織のデータの roadStatus も、エイリアスを定義した自分の @context で同じ IRI になります。違う名前が 1 つの意味で出会います。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="ld-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="10" y="8" width="210" height="56" rx="10"/><text class="t m" x="115" y="32">restrictionStatus</text><text class="s" x="115" y="51">自分のデータ</text><rect class="box" x="240" y="8" width="210" height="56" rx="10"/><text class="t m" x="345" y="32">roadStatus</text><text class="s" x="345" y="51">ほかの組織のデータ</text><line class="a" x1="115" y1="64" x2="115" y2="94" marker-end="url(#ld-ah)"/><line class="a" x1="345" y1="64" x2="345" y2="94" marker-end="url(#ld-ah)"/><rect class="box" x="10" y="96" width="210" height="56" rx="10"/><text class="t" x="115" y="120">カタログの @context</text><text class="s" x="115" y="139">datamodels.jp が公開</text><rect class="box" x="240" y="96" width="210" height="56" rx="10"/><text class="t" x="345" y="120">自分の @context</text><text class="s" x="345" y="139">エイリアスを定義</text><line class="a" x1="115" y1="152" x2="196" y2="182" marker-end="url(#ld-ah)"/><line class="a" x1="345" y1="152" x2="264" y2="182" marker-end="url(#ld-ah)"/><rect class="box main" x="10" y="184" width="440" height="58" rx="10"/><text class="t" x="230" y="208">同じ意味（世界で一意の IRI）</text><text class="s" x="230" y="227">https://datamodels.jp/ns/transportation/restrictionStatus</text></svg>
+
 ::: code-group
 
 ```js [Node.js]
@@ -237,3 +241,13 @@ print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))
 ```
 
 各サブジェクトは、語彙（`/vocab/<サブジェクト>/v1.0.0.jsonld`、RDFS）も公開しています。語彙には、型と属性の名前と説明が日本語と英語で入っています。ほかの語彙から取り入れた属性（schema.org の `address` など）の説明は、それぞれの提供元にあります。
+
+## 他のツールで使う {#other-tools}
+
+NGSI-LD を読まないツール向けのファイルも、エンティティのモデルのページ（Geometry などの値型を除く）の**ダウンロード**の行にあります。それぞれの手順を、1 つの例で示しています。
+
+- [表計算ソフトで使う](/guide/csv)：CSV テンプレートに入力し、`frictionless validate` で検査して、エンティティに変換します。
+- [PostgreSQL / PostGIS で使う](/guide/postgis)：制約付きのテーブルを作り、行を入れて、距離で検索します。
+- [AI でデータを取り出す](/guide/ai-extraction)：AI 用のスキーマを AI モデルに渡し、メールや PDF からエンティティを取り出します。
+
+自分のサイトのモデルでこれらのファイルを作るには、[他のツールに書き出す](/toolkit/export)を見てください。

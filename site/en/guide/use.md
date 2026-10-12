@@ -171,6 +171,10 @@ is, in normalized form:
 
 Adding the @context turns plain JSON into JSON-LD. Every attribute then has a globally unique name, an IRI: the catalog's own (`https://datamodels.jp/ns/...`) or those of the standards it borrows from (schema.org, Smart Data Models). JSON-LD converts to RDF, the format of linked data tools. The NGSI-LD core context is listed too, so that `id` and `type` become JSON-LD's `@id` and `@type`.
 
+Names can differ: the same IRI means the same thing. Data that another organisation writes under its own names (aliases) reaches the same IRIs ([Your own names](/en/guide/names)).
+
+<svg class="flow-diagram" viewBox="0 0 460 250" role="img" aria-label="In your data, restrictionStatus becomes the IRI https://datamodels.jp/ns/transportation/restrictionStatus through the catalog's @context. In another organisation's data, roadStatus becomes the same IRI through their own @context, which defines an alias. Different names meet at one meaning." xmlns="http://www.w3.org/2000/svg"><defs><marker id="ld-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="10" y="8" width="210" height="56" rx="10"/><text class="t m" x="115" y="32">restrictionStatus</text><text class="s" x="115" y="51">Your data</text><rect class="box" x="240" y="8" width="210" height="56" rx="10"/><text class="t m" x="345" y="32">roadStatus</text><text class="s" x="345" y="51">Another organisation's data</text><line class="a" x1="115" y1="64" x2="115" y2="94" marker-end="url(#ld-ah)"/><line class="a" x1="345" y1="64" x2="345" y2="94" marker-end="url(#ld-ah)"/><rect class="box" x="10" y="96" width="210" height="56" rx="10"/><text class="t" x="115" y="120">The catalog's @context</text><text class="s" x="115" y="139">published by datamodels.jp</text><rect class="box" x="240" y="96" width="210" height="56" rx="10"/><text class="t" x="345" y="120">Their own @context</text><text class="s" x="345" y="139">defines an alias</text><line class="a" x1="115" y1="152" x2="196" y2="182" marker-end="url(#ld-ah)"/><line class="a" x1="345" y1="152" x2="264" y2="182" marker-end="url(#ld-ah)"/><rect class="box main" x="10" y="184" width="440" height="58" rx="10"/><text class="t" x="230" y="208">One meaning (a global IRI)</text><text class="s" x="230" y="227">https://datamodels.jp/ns/transportation/restrictionStatus</text></svg>
+
 ::: code-group
 
 ```js [Node.js]
@@ -230,3 +234,13 @@ Part of the output, in N-Quads: RDF written as plain text, one statement per lin
 ```
 
 Each subject also publishes a vocabulary (`/vocab/<subject>/v1.0.0.jsonld`, RDFS) with the Japanese and English names and descriptions of its types and attributes. Attributes borrowed from other vocabularies, such as schema.org's `address`, are described by their own publishers.
+
+## With other tools {#other-tools}
+
+The page of each entity model (not of value types such as Geometry) also has files for tools that do not read NGSI-LD, in its **Download** row. Short recipes, each with one worked example:
+
+- [Spreadsheet / CSV](/en/guide/csv): fill in the CSV template, check it with `frictionless validate`, and convert it into entities.
+- [PostgreSQL / PostGIS](/en/guide/postgis): create the model's table with its constraints, add a row, and query by distance.
+- [Extracting with AI](/en/guide/ai-extraction): give the AI schema to an AI model to take an entity out of an e-mail or a PDF.
+
+To make these files for the models of your own site, see [Exporting to other tools](/en/toolkit/export).

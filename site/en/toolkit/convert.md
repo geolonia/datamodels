@@ -15,12 +15,14 @@ There are three ways, depending on your list:
 | Any other CSV | [Make your own mapping](#your-own-list) | your own |
 | Not made yet | [Fill in the CSV template](#csv-template) | none |
 
+<svg class="flow-diagram" viewBox="0 0 460 258" role="group" aria-label="Three ways from a list to NGSI-LD entities: a list that follows a standard with the catalog's mapping, any other CSV with your own mapping, the CSV template with no mapping. convert turns each into entities, each checked against the JSON Schema." xmlns="http://www.w3.org/2000/svg"><defs><marker id="cv-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><a href="#standard"><rect class="box" x="10" y="8" width="140" height="56" rx="10"/><text class="t" x="80" y="32">Standard list</text><text class="s" x="80" y="51">e.g. municipal data</text><line class="a" x1="80" y1="64" x2="80" y2="92" marker-end="url(#cv-ah)"/><rect class="box" x="10" y="94" width="140" height="56" rx="10"/><text class="t" x="80" y="118">Catalog mapping</text><text class="s" x="80" y="137">use as it is</text></a><a href="#your-own-list"><rect class="box" x="160" y="8" width="140" height="56" rx="10"/><text class="t" x="230" y="32">Any other CSV</text><text class="s" x="230" y="51">your own list</text><line class="a" x1="230" y1="64" x2="230" y2="92" marker-end="url(#cv-ah)"/><rect class="box" x="160" y="94" width="140" height="56" rx="10"/><text class="t" x="230" y="118">Your mapping</text><text class="s" x="230" y="137">draft with mapping</text></a><a href="#csv-template"><rect class="box" x="310" y="8" width="140" height="56" rx="10"/><text class="t" x="380" y="32">CSV template</text><text class="s" x="380" y="51">a list you start</text><line class="a" x1="380" y1="64" x2="380" y2="92" marker-end="url(#cv-ah)"/><rect class="box" x="310" y="94" width="140" height="56" rx="10"/><text class="t" x="380" y="118">No mapping</text><text class="s" x="380" y="137">column = attribute</text></a><line class="a" x1="80" y1="150" x2="150" y2="190" marker-end="url(#cv-ah)"/><line class="a" x1="230" y1="150" x2="230" y2="190" marker-end="url(#cv-ah)"/><line class="a" x1="380" y1="150" x2="310" y2="190" marker-end="url(#cv-ah)"/><text class="l" x="240" y="176">convert</text><rect class="box main" x="10" y="192" width="440" height="58" rx="10"/><text class="t" x="230" y="216">NGSI-LD entities</text><text class="s" x="230" y="235">each checked against the model's JSON Schema</text></svg>
+
 ## Your list follows a standard {#standard}
 
 If your list follows a standard that has a mapping file with conversion rules in the catalog, such as the municipal standard open datasets or GSI's data, that mapping file converts it as it is. A mapping file without conversion rules only documents the standard; for such a list, make a mapping of your own (below). [Mapping files](/en/guide/mapping) explains how they work.
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.6 convert \
   disaster/EvacuationSite jichitai-opendata-site \
   092011_evacuation_space.csv --out sites.json
 ```
@@ -32,7 +34,7 @@ Only some mapping files have conversion rules (`column`, `transform`). The other
 `--set` gives a value that the list does not carry. In GSI's data, for example, the municipality code is only in the file name:
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.6 convert \
   disaster/EvacuationSite gsi-emergency-site \
   13101_2.csv --set localGovernmentCode=13101
 ```
@@ -48,13 +50,13 @@ A list that follows no standard needs a mapping of your own: a YAML file that sa
 
 ```bash
 # 1. a first mapping
-npx github:geolonia/datamodels-toolkit#v0.3.5 mapping \
+npx github:geolonia/datamodels-toolkit#v0.3.6 mapping \
   disaster/EvacuationSite my-list.csv --out my-list.yaml
 # 3. check the first rows
-npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.6 convert \
   disaster/EvacuationSite my-list.yaml my-list.csv --check
 # 4. convert
-npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.6 convert \
   disaster/EvacuationSite my-list.yaml my-list.csv --out entities.json
 ```
 
@@ -79,7 +81,7 @@ The last line sums it up, for example `18 of 20 rows valid`. The exit code is 0 
 
 ### With an AI agent {#agent}
 
-An AI agent can fill in the TODOs with you. The [agent skill](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.5/skills/datamodels) of datamodels-toolkit (`skills/datamodels`) gives it the steps and the rules: never invent values, and ask about unclear columns. For Claude Code, copy the folder into your project's `.claude/skills/`.
+An AI agent can fill in the TODOs with you. The [agent skill](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.6/skills/datamodels) of datamodels-toolkit (`skills/datamodels`) gives it the steps and the rules: never invent values, and ask about unclear columns. For Claude Code, copy the folder into your project's `.claude/skills/`.
 
 An example prompt:
 
@@ -92,7 +94,7 @@ Keep the finished mapping: it is the record of how the list was converted.
 For a new list, fill in the model's CSV template, one row per entity. No mapping is needed. The template is on the model page under **Download**, and `export` makes it too ([Exporting to other tools](/en/toolkit/export)).
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.6 convert \
   disaster/EvacuationSite csv-template sites.csv --out entities.json
 ```
 
@@ -122,4 +124,4 @@ Whichever way you convert, the results work the same:
 - `--check`, `--rows N`: check the first rows only ([above](#your-own-list)).
 - `--site`: the site to read the mapping files and models from (default: datamodels.jp). To try a mapping before it is published, build [geolonia/datamodels](https://github.com/geolonia/datamodels) (`npm run build`) and add `--site dist`.
 
-The [tutorial](/en/guide/tutorial) converts real open data and shows it on a map, step by step. All options are in the toolkit's [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.5#convert).
+The [tutorial](/en/guide/tutorial) converts real open data and shows it on a map, step by step. All options are in the toolkit's [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.6#convert).

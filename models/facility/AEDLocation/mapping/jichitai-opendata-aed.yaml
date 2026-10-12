@@ -27,7 +27,7 @@ fields:
   corporateNumber: { to: 法人番号 (legalEntityNumber), note: { ja: AED の設置主体の法人番号, en: the corporate number of the organisation that installed the AED }, column: 法人番号 }
   contactPoint: { to: "電話番号 (contactPointPhoneNumber) … 郵便番号 (contactPointPostalCode)", note: { ja: 詳細は ContactPoint の対応表, en: see the ContactPoint table }, via: common/ContactPoint/jichitai-opendata-contact }
   openingHoursSpecification: { to: "利用可能曜日 (serviceDay), 開始時間 (startTime), 終了時間 (endTime), 利用可能日時特記事項 (dateTimeRemarks)", note: { ja: "詳細は OpeningHours の対応表。設置場所の施設の時間に従うときは、曜日と時間が空欄で、特記事項にそう書かれる", en: "see the OpeningHours table. When the AED follows the hours of the building, the weekday and time columns are empty and the remarks say so" }, via: common/OpeningHours/jichitai-opendata-hours }
-  pediatricSupport: { to: 小児対応設備の有無 (pediatricSupport), note: { ja: 「有」なら true、「無」なら false。変換ツールにはまだこの変換が無い, en: "有 is true, 無 is false; the converter has no transform for this yet" } }
-  restrictedAccess: { to: 外部利用不可 (notForPublic), note: { ja: 「外部利用不可」と書かれていれば true、空欄なら false。変換ツールにはまだこの変換が無い, en: "true when the column says 外部利用不可, false when it is empty; the converter has no transform for this yet" } }
+  pediatricSupport: { to: 小児対応設備の有無 (pediatricSupport), note: { ja: 「有」なら true、「無」なら false, en: "有 is true, 無 is false" }, column: 小児対応設備の有無, transform: yesno }
+  restrictedAccess: { to: 外部利用不可 (notForPublic), note: { ja: 「外部利用不可」と書かれていれば true、空欄なら false, en: "true when the column says 外部利用不可, false when it is empty" }, column: 外部利用不可, transform: yesno, values: { 外部利用不可: true, "": false } }
   url: { to: URL (url), column: URL }
   remarks: { to: 備考 (remarks), column: 備考 }

@@ -158,9 +158,11 @@
       "enum": [
         "hospital",
         "clinicWithBeds",
-        "clinicWithoutBeds"
+        "clinicWithoutBeds",
+        "clinic",
+        "dentalClinic"
       ],
-      "description": "Kind of medical institution (医療機関の種類): hospital (病院, 20 beds or more), clinicWithBeds (有床診療所, 1 to 19 beds), clinicWithoutBeds (無床診療所, no beds)",
+      "description": "Kind of medical institution (医療機関の種類): hospital (病院, 20 beds or more), clinicWithBeds (有床診療所, 1 to 19 beds), clinicWithoutBeds (無床診療所, no beds), clinic (診療所, a clinic whose list does not split its kind into with or without beds; a known number of beds is in numberOfBeds), dentalClinic (歯科診療所, a dental clinic)",
       "x-ngsi": {
         "type": "Property"
       },

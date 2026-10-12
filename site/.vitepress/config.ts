@@ -32,7 +32,17 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
       text: ja ? 'モデルを使う' : 'Use the models',
       items: [
         page('チュートリアル', 'Tutorial', 'tutorial'),
-        page('使い方', 'Using the models', 'use', [{ text: 'GeonicDB', link: `${prefix}/guide/geonicdb` }]),
+        // Its sub-pages start collapsed and open on this page or one of them.
+        // The generic recipes (the Download row's files) come first, then a product's page.
+        {
+          ...page('使い方', 'Using the models', 'use', [
+            page('表計算ソフト（CSV）', 'Spreadsheet / CSV', 'csv'),
+            page('PostgreSQL / PostGIS', 'PostgreSQL / PostGIS', 'postgis'),
+            page('AI で取り出す', 'Extracting with AI', 'ai-extraction'),
+            { text: 'GeonicDB', link: `${prefix}/guide/geonicdb` },
+          ]),
+          collapsed: true,
+        },
         page('対応表', 'Mapping files', 'mapping'),
         page('属性を足す', 'Adding attributes', 'extend'),
         page('拡張ビルダー', 'Extension builder', 'builder'),

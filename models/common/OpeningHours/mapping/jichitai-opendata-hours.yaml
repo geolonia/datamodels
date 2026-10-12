@@ -16,8 +16,10 @@ fields:
   dayOfWeek:
     to: 利用可能曜日 (serviceDay)
     note:
-      ja: "月火水木金（または 12345）を曜日の名前の配列にする（月 → Monday … 日 → Sunday）。変換ツールにはまだこの変換が無い"
-      en: "turn 月火水木金 (or 12345) into the array of day names (月 → Monday … 日 → Sunday); the converter has no transform for this yet"
-  opens: { to: 開始時間 (startTime), note: { ja: hh:mm, en: hh:mm }, column: 開始時間 }
-  closes: { to: 終了時間 (endTime), note: { ja: hh:mm, en: hh:mm }, column: 終了時間 }
+      ja: "月火水木金（または 12345）を曜日の名前の配列にする（月 → Monday … 日 → Sunday）。「祝」は PublicHolidays"
+      en: "turn 月火水木金 (or 12345) into the array of day names (月 → Monday … 日 → Sunday); 祝 is PublicHolidays"
+    column: 利用可能曜日
+    transform: weekdays
+  opens: { to: 開始時間 (startTime), note: { ja: "HH:MM。「9:00」は 09:00 になる", en: "HH:MM; 9:00 becomes 09:00" }, column: 開始時間, transform: time }
+  closes: { to: 終了時間 (endTime), note: { ja: "HH:MM。「24:00」はそのまま", en: "HH:MM; 24:00 stays as it is" }, column: 終了時間, transform: time }
   description: { to: 利用可能日時特記事項 (dateTimeRemarks), column: 利用可能日時特記事項 }

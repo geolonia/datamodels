@@ -4,6 +4,7 @@
   "title": "ContactPoint",
   "x-kind": "value",
   "description": "How to get in touch with a facility or an organisation, as the value of a contactPoint Property: telephone, extension, fax, e-mail, web form, other channels and the postal code. Fields follow the contact columns of the 自治体標準オープンデータセット and GIF's core data model 連絡先 (contact point), with schema.org ContactPoint terms where the meaning matches.",
+  "x-subclass-of": "https://schema.org/ContactPoint",
   "x-version": "1.0.0",
   "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
   "x-model-tags": "contact, Japan",
