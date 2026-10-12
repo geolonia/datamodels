@@ -72,7 +72,7 @@ The converter `datamodels convert` from [datamodels-toolkit](https://github.com/
 | `transform` | Columns | What it makes |
 |---|---|---|
 | (none) or `text` | 1 | The text as it is. Empty is no value. |
-| `code6` | 1 | A 6-digit local government code, checked against its check digit. For a 5-digit value, it restores a lost leading zero when that gives a valid code, else adds the check digit; when both are possible, it is a problem. For a 4-digit value, it adds both. |
+| `code6` | 1 | A 6-digit local government code, checked against its check digit. For a 5-digit value, it restores a lost leading zero when that gives a valid code, else adds the check digit when the value starts with a prefecture code (`01` to `47`); when both are possible, it is a problem. For a 4-digit value, it adds both, when the result starts with a prefecture code. Anything else is a problem. |
 | `number` | 1 | A number. |
 | `integer` | 1 | A whole number. It also takes `1,200` and `1200人`. |
 | `numbers` | 2 or more | A list of numbers. |
