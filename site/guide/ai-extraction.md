@@ -69,10 +69,11 @@ curl -sS https://api.anthropic.com/v1/messages \
 
 ## 3. 答えを検査してエンティティにする {#entity}
 
-答えには属性だけが入っています。空の属性を除き、`id` と `type` を足します。
+答えには属性だけが入っています。空の属性を除き、AI が `id` や `type` を入れていたら消して、自分の `id` と `type` を足します。
 
 ```bash
 jq 'walk(if type == "object" then with_entries(select(.value != null)) else . end)
+  | del(.id, .type)
   | {id: "urn:ngsi-ld:EvacuationSite:0012", type: "EvacuationSite"} + .' \
   site.json > entity.json
 ```

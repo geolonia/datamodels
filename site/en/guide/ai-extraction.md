@@ -69,10 +69,11 @@ Read the providers' notes on structured outputs before you rely on them: [OpenAI
 
 ## 3. Check the answer and make an entity {#entity}
 
-The answer has the attributes only. Remove the empty ones and add `id` and `type`:
+The answer has the attributes only. Remove the empty ones, drop any `id` or `type` the AI added, and add your own:
 
 ```bash
 jq 'walk(if type == "object" then with_entries(select(.value != null)) else . end)
+  | del(.id, .type)
   | {id: "urn:ngsi-ld:EvacuationSite:0012", type: "EvacuationSite"} + .' \
   site.json > entity.json
 ```
