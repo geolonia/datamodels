@@ -57,7 +57,7 @@ Open it in a spreadsheet if you like. Each row is one site, with columns such as
 A broker does not take a CSV file. It takes entities. The catalog's model for these sites is [EvacuationSite](/en/models/disaster/EvacuationSite/), and it comes with a **mapping file** (`jichitai-opendata-site`) that says which column becomes which attribute. So the converter needs no code from you:
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.7 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.8 convert \
   disaster/EvacuationSite jichitai-opendata-site sites.csv --out sites.json
 ```
 
@@ -79,7 +79,7 @@ The column 災害種別_洪水 became `"flood"` in `hazardTypes`; the latitude a
 Now convert once more for the broker:
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.7 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.8 convert \
   disaster/EvacuationSite jichitai-opendata-site sites.csv \
   --normalized --out sites.jsonld
 ```
