@@ -33,7 +33,7 @@ description: どの URL を使うか、何が変わらないか、バージョ�
 
 ## バージョン {#versions}
 
-バージョンはサブジェクト（分野ごとのモデルのまとまり）ごとに 1 つで、`@context`、語彙、JSON Schema が同じ番号になります（例：`transportation` の 1.0.0）。番号は [Semantic Versioning](https://semver.org/lang/ja/) に従います。
+バージョンは分野ごとに 1 つで、`@context`、語彙、JSON Schema が同じ番号になります（例：`transportation` の 1.0.0）。番号は [Semantic Versioning](https://semver.org/lang/ja/) に従います。
 
 | 変更 | 上げる番号 | 例 |
 |---|---|---|

@@ -5,7 +5,7 @@ description: datamodels-toolkit の search で既にあるモデルを探し、a
 
 # サイトのモデル
 
-ノードのサブジェクトにモデルを足し、属性を書きます。ノードがまだ無いときは、[サイトを始める](/toolkit/start)から始めてください。
+ノードの分野にモデルを足し、属性を書きます。ノードがまだ無いときは、[サイトを始める](/toolkit/start)から始めてください。
 
 ## 先に既にあるモデルを探す {#search}
 
@@ -25,7 +25,7 @@ disaster/EvacuationShelter  避難所の運用状況 / Evacuation shelter operat
 4 of 18 models in 3 node(s) match
 ```
 
-1 行に 1 つのモデルが、サブジェクトと型、タイトル、サイト（公開している人や組織の名前）、ページの URL の順に並びます。上位の 10 件を出力します。件数は `--limit` で変えられます。`--json` を付けると、型の IRI、バージョン、スキーマ、`@context`、索引（`catalog.json`）も出力します。スクリプトや AI エージェントから使うときは、こちらを使います。
+1 行に 1 つのモデルが、分野と型、タイトル、サイト（公開している人や組織の名前）、ページの URL の順に並びます。上位の 10 件を出力します。件数は `--limit` で変えられます。`--json` を付けると、型の IRI、バージョン、スキーマ、`@context`、索引（`catalog.json`）も出力します。スクリプトや AI エージェントから使うときは、こちらを使います。
 
 `nodes` は、たどれるサイトを、名前、アドレス、ライセンス、モデルの数、リンク元のサイトとともに並べます。
 
@@ -50,7 +50,7 @@ Geolonia Inc.  https://models.geolonia.com/  CC0-1.0  1 model  (linked from Geol
 npx github:geolonia/datamodels-toolkit#v0.3.7 add road/RoadPatrol
 ```
 
-`models/road/RoadPatrol/` に `schema.json`、`catalog.yaml`、`examples/example.json`、`notes.yaml` ができます。`notes.yaml` は、出典や決めたことと、その理由を書く注記です。サブジェクトの `@context` には型 `RoadPatrol` が入ります。続けて、[属性を書きます](#attributes)。
+`models/road/RoadPatrol/` に `schema.json`、`catalog.yaml`、`examples/example.json`、`notes.yaml` ができます。`notes.yaml` は、出典や決めたことと、その理由を書く注記です。分野の `@context` には型 `RoadPatrol` が入ります。続けて、[属性を書きます](#attributes)。
 
 ## カタログのモデルから始める {#extend}
 
@@ -60,7 +60,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.7 add road/RoadPatrol
 npx github:geolonia/datamodels-toolkit#v0.3.7 extend task/Task road/RoadTask
 ```
 
-`extend` も、`add` と同じ 4 つのファイルを書き出します。サブジェクトの `context.jsonld` の `@context` は、取り込んだ @context の URL と、このノードの用語を並べたリストになります。
+`extend` も、`add` と同じ 4 つのファイルを書き出します。分野の `context.jsonld` の `@context` は、取り込んだ @context の URL と、このノードの用語を並べたリストになります。
 
 ## 属性を書く {#attributes}
 

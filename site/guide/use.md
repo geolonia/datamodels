@@ -240,7 +240,7 @@ print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))
 <urn:ngsi-ld:RoadRestriction:0001> <https://smartdatamodels.org/dataModel.Transportation/roadName> "靖国通り" .
 ```
 
-各サブジェクトは、語彙（`/vocab/<サブジェクト>/v1.0.0.jsonld`、RDFS）も公開しています。語彙には、型と属性の名前と説明が日本語と英語で入っています。ほかの語彙から取り入れた属性（schema.org の `address` など）の説明は、それぞれの提供元にあります。
+各分野は、語彙（`/vocab/<subject>/v1.0.0.jsonld`、RDFS）も公開しています。語彙には、型と属性の名前と説明が日本語と英語で入っています。ほかの語彙から取り入れた属性（schema.org の `address` など）の説明は、それぞれの提供元にあります。
 
 ## 他のツールで使う {#other-tools}
 

@@ -26,7 +26,7 @@ const fence = (obj) => '```json\n' + JSON.stringify(obj, null, 2) + '\n```';
 
 const T = {
   ja: {
-    models: 'データモデル', overview: '概要', subjects: 'サブジェクト', attributes: '属性', exampleNote: (href) => `例の多くは架空のシナリオ（東京都千代田区の大雨対応）です。地名とコードは実在のものですが、出来事・人・チームは架空です。公開されている一覧の実際の行を写した例もあり、そのときは注記に出典があります。書き方は[例の書き方](${href})にあります。`,
+    models: 'データモデル', overview: '概要', subjects: '分野', attributes: '属性', exampleNote: (href) => `例の多くは架空のシナリオ（東京都千代田区の大雨対応）です。地名とコードは実在のものですが、出来事・人・チームは架空です。公開されている一覧の実際の行を写した例もあり、そのときは注記に出典があります。書き方は[例の書き方](${href})にあります。`,
     linkHeader: 'Link ヘッダー', type: '型', name: '名前', stage: '段階', typeIri: '型 IRI', useGuide: (href) => `データの検証とブローカーへの送り方は[使い方](${href})にあります。`, context: '@context',
     urlNote: (versions, guide, withSchema) => `この @context${withSchema ? ' と JSON Schema' : ''} の URL は、常に互換性のある最新版を指します。<br>内容が変わらない URL は[バージョン](${versions})にあります。詳しくは[URL とバージョン](${guide})を見てください。`, schema: 'JSON Schema',
     adapters: 'アダプター', adaptersLine: (link) => `特定のブローカーやツールにそのまま読み込めるファイルも、このモデルから作っています：${link}`,
@@ -40,11 +40,11 @@ const T = {
     improveTitle: '改善の提案', improve: (issue, form, guide) => `属性が足りない、説明がおかしいと思ったら、[Issue で知らせてください](${issue})。新しい属性やモデルは[提案フォーム](${form})から提案できます。進め方は[貢献する](${guide})にあります。`,
     deprecatedNote: (link) => `このモデルは非推奨です。${link ? `代わりに ${link} を使ってください。` : ''}公開済みのファイルと URL はそのまま残ります。`, valueType: '値型', fields: 'フィールド', versions: 'バージョン', current: '現行',
     forPrograms: 'プログラムからは、同じ一覧を [catalog.json](/catalog.json) で読めます。',
-    intro: 'モデルは分野（サブジェクト）ごとにまとめています。分野を開くか、名前・属性・説明で探してください。',
+    intro: 'モデルは分野ごとにまとめています。分野を開くか、名前・属性・説明で探してください。',
     statusLabel: { draft: 'ドラフト', experimental: '試行', stable: '安定', deprecated: '非推奨' },
     sourceLabel: { minted: 'このカタログで定義', profile: '上流モデルの日本向け拡張', global: '上流（Smart Data Models）' },
-    subject: 'サブジェクト', mappingField: 'このモデル', mappingTo: '対応先', mappingNote: '備考', none: '対応なし',
-    alias: 'エイリアス', aliasNote: (link) => `${link} と同じ型です（IRI が同一）。名称だけがこのサブジェクトの言い方に合わせてあり、属性も必須項目も同じです。ブローカーでは同じ型として保存・照合されます。`,
+    subject: '分野', mappingField: 'このモデル', mappingTo: '対応先', mappingNote: '備考', none: '対応なし',
+    alias: 'エイリアス', aliasNote: (link) => `${link} と同じ型です（IRI が同一）。名称だけがこの分野の言い方に合わせてあり、属性も必須項目も同じです。ブローカーでは同じ型として保存・照合されます。`,
     subclass: 'サブクラス', subclassNote: (link) => `${link} のサブクラスです。同じ名前の属性は親と同じ IRI になり、親の必須項目はここでも必須なので、親の属性を読むコードはこの型もそのまま読めます。型そのものは別なので、親の型で検索するクライアントは語彙の rdfs:subClassOf をたどって初めてこの型を見つけます。`,
     subclassExternalNote: (link) => `${link} のサブクラスです。親はこのカタログの外の型で、この型はそれより狭いか、項目を足しています。意味が合う項目は親の語彙の IRI を使います。関係は語彙に rdfs:subClassOf として書いてあります。`,
   },
