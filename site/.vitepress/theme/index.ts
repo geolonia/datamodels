@@ -3,7 +3,7 @@
 // playground on model pages (ExamplePlayground.vue), pan and zoom for the
 // relationship graphs (GraphViewer.vue), the extension builder
 // (ExtensionBuilder.vue, on /guide/builder) and a
-// pre-release banner above the navigation on every page. Remove the banner
+// pre-release banner above the navigation on every page, and the 404 page in both languages. Remove the banner
 // (and --vp-layout-top-height in custom.css) at the official launch.
 // Without VitePress' Inter: the site uses IBM Plex (below) and the system fonts for Japanese.
 import DefaultTheme from 'vitepress/theme-without-fonts'
@@ -58,6 +58,41 @@ const SourceLine = defineComponent({
   },
 })
 
+// The page for an address with no page (404.html), in the page's language. VitePress' notFound
+// options give one link only; this page links the start page, the model list and the search.
+const NOT_FOUND = {
+  ja: {
+    title: 'ページが見つかりません',
+    text: 'このアドレスのページはありません。アドレスが間違っているか、モデルの名前が変わったのかもしれません。',
+    home: ['トップページ', '/'], models: ['データモデル一覧', '/models/'], search: 'サイト内を検索',
+  },
+  en: {
+    title: 'Page not found',
+    text: 'There is no page at this address. The address may be wrong, or a model may have a new name.',
+    home: ['Start page', '/en/'], models: ['Data models', '/en/models/'], search: 'Search the site',
+  },
+}
+const NotFound = defineComponent({
+  setup() {
+    const { lang } = useData()
+    // Opens the same search as the button in the navigation.
+    const search = () => document.querySelector<HTMLButtonElement>('.VPNavBarSearch button')?.click()
+    return () => {
+      const t = lang.value === 'ja' ? NOT_FOUND.ja : NOT_FOUND.en
+      return h('div', { class: 'not-found' }, [
+        h('p', { class: 'not-found-code' }, '404'),
+        h('h1', { class: 'not-found-title' }, t.title),
+        h('p', null, t.text),
+        h('ul', { class: 'not-found-links' }, [
+          h('li', null, h('a', { href: t.home[1] }, t.home[0])),
+          h('li', null, h('a', { href: t.models[1] }, t.models[0])),
+          h('li', null, h('button', { type: 'button', onClick: search }, t.search)),
+        ]),
+      ])
+    }
+  },
+})
+
 // A link into a folded section (<details>, a referenced standard on a model
 // page: #mapping-<name>) opens it and scrolls to it. Browsers do not all open
 // a closed <details> for a fragment.
@@ -102,6 +137,6 @@ export default {
     app.component('ExtensionBuilder', defineAsyncComponent(() => import('./ExtensionBuilder.vue')))
   },
   Layout() {
-    return h(DefaultTheme.Layout, null, { 'layout-top': () => h(PrereleaseBanner), 'doc-before': () => h(SourceLine) })
+    return h(DefaultTheme.Layout, null, { 'layout-top': () => h(PrereleaseBanner), 'doc-before': () => h(SourceLine), 'not-found': () => h(NotFound) })
   },
 }

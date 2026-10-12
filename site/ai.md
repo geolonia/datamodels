@@ -7,7 +7,7 @@ description: datamodels.jp の作成での AI の使い方と、AI エージェ�
 
 ## このサイトの作り方
 
-モデル、注記、ページの多くは AI の支援を受けて下書きしています。カタログに何を入れるかは人が決めます。新しいサブジェクト、メジャーバージョン、モデルの安定への昇格は、小さなグループが該当する Issue や Pull Request で決めます（[決め方](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md#段階と決め方)）。公開の前に、CI がすべてのモデルと例をスキーマとカタログのルールで検査し、サイト内のリンクが切れていればビルドが失敗します。
+モデル、注記、ページの多くは AI の支援を受けて下書きしています。カタログに何を入れるかは人が決めます。新しいサブジェクト、メジャーバージョン、モデルの安定への昇格は、小さなグループが該当する Issue や Pull Request で決めます（[決め方](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md#段階と決め方)）。公開の前に、CI がすべてのモデルと例をスキーマとカタログのルールで検査します。サイト内のリンクの先にページが無ければ、ビルドは失敗します。ページの中の位置（`#` から後ろ）までは検査しません。
 
 間違いを見つけたら、[Issue で知らせてください](https://github.com/geolonia/datamodels/issues)。
 
