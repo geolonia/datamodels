@@ -8,7 +8,7 @@ description: With export from datamodels-toolkit, make a CSV template, a Table S
 You can use the data models without an NGSI-LD broker. The toolkit's `export` command makes files from one model:
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.8 export \
+npx @geolonia/datamodels@0.3.10 export \
   disaster/EvacuationSite --to csv,table-schema,ai,postgis
 ```
 

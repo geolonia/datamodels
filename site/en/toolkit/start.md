@@ -18,7 +18,7 @@ The result looks like [models.gtt-project.org](https://models.gtt-project.org/):
 ## 1. Start the node {#init}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.8 init my-models
+npx @geolonia/datamodels@0.3.10 init my-models
 cd my-models
 ```
 
