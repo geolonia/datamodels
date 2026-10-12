@@ -103,7 +103,7 @@ sites.csv: utf-8, 1 row(s), 1 valid EvacuationSite, 0 invalid
 ]
 ```
 
-これは key-values の形です。`--normalized` を付けると、NGSI-LD ブローカーが受け取る normalized の形で、@context 付きで書き出します（[NGSI-LD ブローカーに送る](/guide/use#broker)）。テンプレートの列について詳しくは、[データを変換する](/toolkit/convert#csv-template)を見てください。
+これは key-values の形です。`--normalized` を付けると、NGSI-LD ブローカーが受け取る normalized の形で、@context 付きで書き出します（[normalized の形](/guide/normalized)）。テンプレートの列について詳しくは、[データを変換する](/toolkit/convert#csv-template)を見てください。
 
 ## 自分のモデル {#own-models}
 

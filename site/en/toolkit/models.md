@@ -88,7 +88,11 @@ There are two kinds:
 
 ## Writing the attributes {#attributes}
 
-Add each attribute in three places; the example is the `RoadPatrol` made with `add`. In `models/road/RoadPatrol/schema.json`, under `properties`, with its IRI in `x-iri`:
+Add each attribute in three places; the example is the `RoadPatrol` made with `add`.
+
+<svg class="flow-diagram" viewBox="0 0 460 280" role="img" aria-label="One attribute in three files. In schema.json, x-iri gives route the IRI https://models.example.org/ns/road#route. In context.jsonld, route maps to road:route, which expands to the same IRI. catalog.yaml gives route its Japanese and English text, joined by the name, and the vocabulary describes the IRI with that text. check verifies that x-iri equals what the @context expands the name to." xmlns="http://www.w3.org/2000/svg"><defs><marker id="at-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="10" y="8" width="210" height="56" rx="10"/><text class="t m" x="115" y="32">schema.json</text><text class="s" x="115" y="52">"x-iri": "…/ns/road#route"</text><rect class="box" x="240" y="8" width="210" height="56" rx="10"/><text class="t m" x="345" y="32">context.jsonld</text><text class="s" x="345" y="52">"route": "road:route"</text><line class="a" x1="115" y1="64" x2="196" y2="94" marker-end="url(#at-ah)"/><line class="a" x1="345" y1="64" x2="264" y2="94" marker-end="url(#at-ah)"/><rect class="box main" x="10" y="96" width="440" height="58" rx="10"/><text class="t" x="230" y="120">One IRI</text><text class="s" x="230" y="139">https://models.example.org/ns/road#route</text><rect class="box" x="10" y="184" width="180" height="56" rx="10"/><text class="t m" x="100" y="208">catalog.yaml</text><text class="s" x="100" y="228">route: ja and en text</text><rect class="box" x="270" y="184" width="180" height="56" rx="10"/><text class="t" x="360" y="208">The vocabulary</text><text class="s" x="360" y="228">the IRI, with that text</text><line class="a" x1="360" y1="154" x2="360" y2="182" marker-end="url(#at-ah)"/><line class="a" x1="190" y1="212" x2="268" y2="212" marker-end="url(#at-ah)"/><text class="s" x="229" y="204">by name</text><text class="s" x="230" y="268">check: x-iri must equal what the @context expands route to</text></svg>
+
+In `models/road/RoadPatrol/schema.json`, under `properties`, with its IRI in `x-iri`:
 
 ```json
 "route": {

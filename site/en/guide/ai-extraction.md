@@ -94,7 +94,7 @@ ok -- validation done
 
 To check it from Node.js or Python, see [Validate JSON](/en/guide/use#validate). Strict mode keeps the shape of the answer, but the AI schema leaves some rules (minimums, rules on several attributes) to its descriptions, and without strict mode nothing is guaranteed. The JSON Schema checks them all. It cannot check the facts: a model can still misread a code or a number, so compare the values with the document before you store them.
 
-`entity.json` is now a key-values entity. To send it to an NGSI-LD broker, put it into the normalized form with the @context ([Send it to an NGSI-LD broker](/en/guide/use#broker)).
+`entity.json` is now a key-values entity. To send it to an NGSI-LD broker, put it into the normalized form with the @context ([The normalized form](/en/guide/normalized)).
 
 ## Your own models {#own-models}
 

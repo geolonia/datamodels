@@ -40,7 +40,11 @@ npx @geolonia/datamodels@0.3.10 release road
 
 ## How a published version is kept {#never-changes}
 
-The release snapshots in `models/<subject>/releases/vX.Y.Z/`, written by `release` and `bump`, hold the bytes of every published version: they are the record of what was published. Three checks guard them:
+The release snapshots in `models/<subject>/releases/vX.Y.Z/`, written by `release` and `bump`, hold the bytes of every published version: they are the record of what was published.
+
+<svg class="flow-diagram" viewBox="0 0 460 250" role="img" aria-label="The snapshot in models/road/releases/v1.0.0/ is copied byte for byte to /context/road/v1.0.0.jsonld on the site. The sources in models/road/, at the current version v1.1.0, are built to /context/road/v1.1.0.jsonld. Once v1.1.0 is released, its snapshot releases/v1.1.0/ is written, and the sources are checked against it." xmlns="http://www.w3.org/2000/svg"><defs><marker id="rel-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="10" y="8" width="210" height="56" rx="10"/><text class="t m" x="115" y="32">releases/v1.0.0/</text><text class="s" x="115" y="52">a released version (snapshot)</text><rect class="box d" x="240" y="8" width="210" height="56" rx="10"/><text class="t m" x="345" y="32">releases/v1.1.0/</text><text class="s" x="345" y="52">once v1.1.0 is released</text><line class="a d" x1="345" y1="64" x2="345" y2="96"/><text class="l e" x="335" y="84">checked against</text><rect class="box" x="240" y="96" width="210" height="56" rx="10"/><text class="t m" x="345" y="120">models/road/</text><text class="s" x="345" y="140">the sources, current v1.1.0</text><line class="a" x1="115" y1="64" x2="115" y2="182" marker-end="url(#rel-ah)"/><text class="l" x="125" y="128">byte for byte</text><line class="a" x1="345" y1="152" x2="345" y2="182" marker-end="url(#rel-ah)"/><text class="l" x="355" y="172">build</text><rect class="box main" x="10" y="184" width="440" height="58" rx="10"/><text class="t" x="230" y="208">On the site</text><text class="s" x="115" y="228">/context/road/v1.0.0.jsonld</text><text class="s" x="345" y="228">/context/road/v1.1.0.jsonld</text></svg>
+
+Three checks guard them:
 
 - `build` and `check` stop when the sources of the released current version differ from its snapshot.
 - Online, `check` compares each exact version with the file the site serves.
