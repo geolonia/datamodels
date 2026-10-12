@@ -165,7 +165,7 @@ Keeps the current version of a subject online: a snapshot of its `@context`, voc
 | `[dir]` | `.` | The node |
 | `--offline` | | Do not compare the snapshot with the published files |
 
-When the version already has a snapshot, `release` compares the sources with it and changes nothing. Exit code 1 when the sources differ from the snapshot or from the published files, or when a published file cannot be read (any answer but 404); `--offline` skips the comparison with the published files.
+When the version already has a snapshot, `release` compares the sources with it and changes nothing. Exit code 1 when the sources differ from the snapshot or from the published files, or when a published file cannot be read (an HTTP error other than 404, which means not published, or a failed read); `--offline` skips the comparison with the published files.
 
 ## bump {#bump}
 

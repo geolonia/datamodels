@@ -62,7 +62,7 @@ npx @geolonia/datamodels@0.3.10 convert \
   disaster/EvacuationSite my-list.yaml my-list.csv --out entities.json
 ```
 
-Give `convert` your file as a path (`./my-list.yaml`) or a name that ends in `.yaml` or `.yml`. Any other name is read as the name of a mapping file in the catalog. Your mapping follows the [conversion rules](/en/guide/mapping#convert) of the catalog's. In `via` it may name a catalog mapping, or another file of your own, relative to the folder of your mapping (`address.yaml`): a via that ends in `.yaml` or `.yml` is a file.
+Give `convert` your file as a path (`./my-list.yaml`) or a name that ends in `.yaml` or `.yml`. Any other name is read as the name of a mapping file in the catalog. Your mapping follows the same [conversion rules](/en/guide/mapping#convert) as the catalog's mapping files. In `via` it may name a catalog mapping, or another file of your own, relative to the folder of your mapping (`address.yaml`): a via that ends in `.yaml` or `.yml` is a file.
 
 About the first version that `mapping` writes:
 
