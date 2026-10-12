@@ -31,6 +31,7 @@ export function externalParentProblem(iri) {
   if (!['http:', 'https:'].includes(url.protocol) || url.href !== iri) return 'is not an absolute http(s) IRI';
   if (!EXTERNAL_PARENT_NAMESPACES.some((ns) => iri.startsWith(ns))) return `is outside the known vocabularies (${EXTERNAL_PARENT_NAMESPACES.join(', ')}); add the namespace to EXTERNAL_PARENT_NAMESPACES in scripts/lib/models.mjs if it is right`;
   // Class names start with a capital (schema.org ContactPoint, not the property contactPoint).
+  // Only the form: a misspelled class name (ContcatPoint) passes, so open the IRI before adding it.
   if (!/^[A-Z]/.test(url.pathname.split('/').pop() ?? '')) return 'does not name a class (a class name starts with a capital letter)';
   return null;
 }
