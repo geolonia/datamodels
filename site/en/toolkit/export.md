@@ -35,7 +35,7 @@ The CSV template, its Table Schema and the SQL table split a model the same way:
 - The location: in the CSV file `longitude` and `latitude` (WGS 84). A model that allows other shapes than a point also has a `location` column for a GeoJSON geometry. In SQL, `geometry(<type>, 4326)`, with the type the model allows: `Point`, or `Geometry` for any shape.
 - A value made of plain fields, such as `address` (JapaneseAddress), becomes one column per field: `address.postalCode` in the CSV file, `address_postal_code` in SQL, each with its own rules. So a spreadsheet can fill each field, and SQL can check and index it.
 - A list of plain values is one column, with the values separated by `;` (a Table Schema `list`). In SQL it is an array, such as `text[]`, whose values are checked.
-- Anything else, such as the answers of a Decision, is JSON in one column, checked with the attribute's JSON Schema (the `jsonSchema` constraint of Table Schema; `jsonb` in SQL).
+- Anything else, such as the answers of a Decision, is JSON in one column. The Table Schema checks it with the attribute's JSON Schema (its `jsonSchema` constraint). In SQL it is a `jsonb` column, which PostgreSQL does not check against the schema.
 - A rule on several attributes, such as "at least one of externalSiteId and nationalShelterId", is a `CHECK` in SQL, and a sentence in the descriptions of the Table Schema and the AI schema. Other rules, such as if/then, stay in the JSON Schema; the files say so.
 
 The Table Schema follows version 2 of the standard. Its titles and descriptions are in the first language of the catalog (Japanese for datamodels.jp), and the other languages are under `x-translations`. Each column's IRI is in `x-iri`; `x-typeIri`, `x-schema` and `x-context` name the model. The catalog has no short labels, so a title is the start of the description, when that is short.
@@ -54,10 +54,10 @@ The AI schema keeps to what the structured outputs of both OpenAI and Anthropic 
 
 - Every object has `additionalProperties: false` and lists every property in `required`. An optional attribute may be `null` instead.
 - No `$ref`: the value types are written out.
-- `anyOf` instead of `oneOf`.
+- `anyOf` instead of `oneOf`. `allOf`, `not` and if/then rules become a note in the description.
 - Only the formats `date-time`, `date`, `time`, `duration`, `email`, `hostname`, `ipv4`, `ipv6` and `uuid`.
 - Patterns without lookarounds.
-- No `minimum`, `maximum`, `minLength`, `maxLength`, `maxItems` or `uniqueItems`; `minItems` only 0 or 1.
+- No `minimum`, `maximum`, `exclusiveMinimum`, `exclusiveMaximum`, `minLength`, `maxLength`, `maxItems` or `uniqueItems`; `minItems` only 0 or 1.
 
 What it leaves out goes into the description, for example "(minimum 0; maximum 9)". `id` and `type` are not in it: your application sets them ([Extracting data with AI](/en/guide/ai-extraction#entity)). The descriptions are in English.
 

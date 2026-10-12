@@ -35,7 +35,7 @@ CSV テンプレート、その Table Schema、SQL のテーブルは、モデ�
 - 位置は、CSV では `longitude` と `latitude`（WGS 84）の 2 列です。点以外の形も許すモデルには、GeoJSON のジオメトリを書く `location` の列もあります。SQL では `geometry(<type>, 4326)` で、型はモデルが許すものです（`Point`、どの形でもよければ `Geometry`）。
 - 住所（`address`、JapaneseAddress）のように単純な項目からなる値は、項目ごとに 1 列です。CSV では `address.postalCode`、SQL では `address_postal_code` で、項目ごとに規則が付きます。そのため、表計算ソフトで項目ごとに入力でき、SQL で項目ごとに検査やインデックスができます。
 - 単純な値のリストは 1 列で、値を `;` で区切ります（Table Schema の `list`）。SQL では `text[]` などの配列で、各値を検査します。
-- それ以外の値（Decision の回答など）は、1 列の JSON です。属性の JSON Schema で検査します（Table Schema の `jsonSchema` の制約、SQL の `jsonb`）。
+- それ以外の値（Decision の回答など）は、1 列の JSON です。Table Schema では、属性の JSON Schema で検証します（`jsonSchema` の制約）。SQL では `jsonb` の列で、PostgreSQL はスキーマでは検証しません。
 - 「externalSiteId と nationalShelterId の少なくとも一方」のように複数の属性にまたがる規則は、SQL では `CHECK` です。Table Schema と AI 用スキーマでは、説明の文になります。if/then などのほかの規則は JSON Schema にだけあり、各ファイルにそう書いてあります。
 
 Table Schema は、規格のバージョン 2 に従います。タイトルと説明はカタログの最初の言語（datamodels.jp では日本語）で、ほかの言語は `x-translations` にあります。各列の IRI は `x-iri` にあります。`x-typeIri`、`x-schema`、`x-context` は、モデルを示します。カタログには短い見出しが無いので、説明が短ければ、その書き出しをタイトルにします。
@@ -54,10 +54,10 @@ AI 用スキーマは、OpenAI と Anthropic の両方の構造化出力が受�
 
 - どのオブジェクトも `additionalProperties: false` で、すべてのプロパティを `required` に並べます。省略できる属性は、代わりに `null` を許します。
 - `$ref` は使いません。値の型は展開して書きます。
-- `oneOf` の代わりに `anyOf` を使います。
+- `oneOf` の代わりに `anyOf` を使います。`allOf`、`not`、if/then の決まりは、説明文に書きます。
 - 形式（`format`）は、`date-time`、`date`、`time`、`duration`、`email`、`hostname`、`ipv4`、`ipv6`、`uuid` だけです。
 - パターンには先読みと後読みを使いません。
-- `minimum`、`maximum`、`minLength`、`maxLength`、`maxItems`、`uniqueItems` は使いません。`minItems` は 0 か 1 だけです。
+- `minimum`、`maximum`、`exclusiveMinimum`、`exclusiveMaximum`、`minLength`、`maxLength`、`maxItems`、`uniqueItems` は使いません。`minItems` は 0 か 1 だけです。
 
 書けなかった規則は、「(minimum 0; maximum 9)」のように説明に入れます。`id` と `type` はスキーマに入りません。アプリケーションで付けます（[AI でデータを取り出す](/guide/ai-extraction#entity)）。説明は英語です。
 
