@@ -31,6 +31,10 @@ features:
     details: 自治体標準オープンデータセット、災害対応基本共有情報（EEI）、国土地理院の避難所データなど、すでに使っている標準があれば、対応するモデルを探せます。
     link: /guide/standards
     linkText: 対応している標準
+  - title: 自治体の一覧を公開する
+    details: 避難場所や AED の設置場所など、CSV で公開している一覧を、モデルに合った JSON にして、CSV の隣に公開します。
+    link: /guide/publish
+    linkText: 一覧を公開する
   - title: データを変換する
     details: CSV の一覧を、モデルのエンティティに変換します。1 件ずつ、モデルの JSON Schema で検証します。
     link: /toolkit/convert

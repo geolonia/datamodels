@@ -127,4 +127,4 @@ Whichever way you convert, the results work the same:
 - `--check`, `--rows N`: check the first rows only ([above](#your-own-list)).
 - `--site`: the site to read the mapping files and models from (default: datamodels.jp). To try a mapping before it is published, build [geolonia/datamodels](https://github.com/geolonia/datamodels) (`npm run build`) and add `--site dist`.
 
-The [tutorial](/en/guide/tutorial) converts real open data and shows it on a map, step by step. All options are in the toolkit's [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.8#convert).
+The [tutorial](/en/guide/tutorial) converts real open data and shows it on a map, step by step. [Publishing your list](/en/guide/publish) says how to publish a converted list as open data. All options are in the toolkit's [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.8#convert).

@@ -31,6 +31,10 @@ features:
     details: Already use a Japanese standard, such as the municipal standard open datasets, the Essential Elements of Information (EEI), or the shelter data of the Geospatial Information Authority of Japan (GSI)? Find the model that matches it.
     link: /en/guide/standards
     linkText: Standards covered
+  - title: Publish your city's list
+    details: Turn a CSV list you publish, such as evacuation sites or AED locations, into JSON that follows a model, and publish it next to the CSV.
+    link: /en/guide/publish
+    linkText: Publishing your list
   - title: Convert your data
     details: Turn a CSV list into entities of a model, each checked against the model's JSON Schema.
     link: /en/toolkit/convert

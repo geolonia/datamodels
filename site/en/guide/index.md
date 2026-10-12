@@ -1,6 +1,6 @@
 ---
 title: Guides
-description: How to use the catalog's models, how to adapt one (more attributes, your own names), how to contribute, how to publish your own models, URLs and versions
+description: How to use the catalog's models and publish a municipality's list, how to adapt one (more attributes, your own names), how to contribute, how to publish your own models, URLs and versions
 ---
 
 # Guides
@@ -15,7 +15,8 @@ First check whether a catalog model fits your data. If it does not fit as it is,
 
 ## Use a model
 
-- [Tutorial: from a CSV file to a map](/en/guide/tutorial): one real open-data file converted into a model, loaded into a broker, queried and shown on a map, step by step.
+- [Tutorial: from a CSV file to a map](/en/guide/tutorial): one real open-data file converted into a model, step by step. An optional second part loads it into a broker, queries it and shows it on a map.
+- [Publishing your list](/en/guide/publish): convert a municipality's CSV list into JSON that follows a model, and publish it as open data next to the CSV.
 - [Using the models](/en/guide/use): validate JSON with the catalog models, send it to an NGSI-LD broker, and use it as linked data.
   - [Using a spreadsheet (CSV)](/en/guide/csv): fill in the CSV template, check it with frictionless and convert it into entities.
   - [Using PostgreSQL / PostGIS](/en/guide/postgis): create a model's table, add a row and query by distance.

@@ -34,6 +34,8 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
       text: ja ? 'モデルを使う' : 'Use a model',
       items: [
         page('チュートリアル', 'Tutorial', 'tutorial'),
+        // For a municipality with a CSV list: what to publish after convert, and where (#251).
+        page('一覧を公開する', 'Publishing your list', 'publish'),
         // Its sub-pages start collapsed and open on this page or one of them.
         // The generic recipes (the Download row's files) come first, then a product's page.
         {

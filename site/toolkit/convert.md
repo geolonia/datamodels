@@ -127,4 +127,4 @@ npx github:geolonia/datamodels-toolkit#v0.3.8 convert \
 - `--check`、`--rows N`：最初の行だけを検証します（[上の説明](#your-own-list)）。
 - `--site`：対応表とモデルを読むサイトです。既定は datamodels.jp です。公開前の対応表を試すときは、[geolonia/datamodels](https://github.com/geolonia/datamodels) をビルドして（`npm run build`）、`--site dist` を付けます。
 
-実際のオープンデータを変換して地図に表示するまでは、[チュートリアル](/guide/tutorial)で試せます。すべてのオプションは、ツールキットの [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.8#convert)（英語）にあります。
+実際のオープンデータを変換して地図に表示するまでは、[チュートリアル](/guide/tutorial)で試せます。変換した一覧をオープンデータとして公開する方法は、[一覧を公開する](/guide/publish)にあります。すべてのオプションは、ツールキットの [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.8#convert)（英語）にあります。
