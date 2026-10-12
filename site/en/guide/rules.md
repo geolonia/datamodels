@@ -75,7 +75,7 @@ Each model page shows the model's stage. A proposal (an issue) becomes a draft w
 
 | Stage | Meaning |
 |---|---|
-| Draft (`draft`) | Reviewed and in the catalog. You can use it. It does not yet have implementations from two different organisations. |
+| Draft (`draft`) | Reviewed and in the catalog. It does not yet have implementations from two different organisations. It may still change in new versions before it is stable. For production use, we suggest waiting until it is stable. |
 | Experimental (`experimental`) | A model in use, to learn from. It may be replaced by another model. Rare in this catalog. |
 | Stable (`stable`) | Used by two different organisations in their own systems. |
 | Deprecated (`deprecated`) | Not for new data. It stays published, and its URLs do not change. The model page names the replacement, if there is one. |
