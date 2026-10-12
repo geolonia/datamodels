@@ -23,8 +23,10 @@ fields:
   medicalInstitutionType:
     to: 医療機関の種類 (medicalType)
     note:
-      ja: "病院 → hospital、有床診療所 → clinicWithBeds、無床診療所 → clinicWithoutBeds。変換ツールにはまだこの変換が無い"
-      en: "病院 → hospital, 有床診療所 → clinicWithBeds, 無床診療所 → clinicWithoutBeds; the converter has no transform for this yet"
+      ja: "定義書の 3 つ：病院 → hospital、有床診療所 → clinicWithBeds、無床診療所 → clinicWithoutBeds。定義書には無いが実際の一覧にある書き方（中央区、中野区、新宿区、2026-10-12 に確認）：診療所と一般診療所 → clinic（病床の有無を書かない診療所）、歯科診療所 → dentalClinic、企業内診療所 → clinic（企業が主に社員のために設ける診療所で、医療法の上では診療所）。これ以外の書き方は、その行の問題として報告される"
+      en: "The definition sheet's three: 病院 → hospital, 有床診療所 → clinicWithBeds, 無床診療所 → clinicWithoutBeds. Texts the sheet does not list but real lists use (Chuo, Nakano and Shinjuku, checked 2026-10-12): 診療所 and 一般診療所 → clinic (a clinic, beds not stated), 歯科診療所 → dentalClinic, 企業内診療所 → clinic (a clinic a company runs mainly for its staff; under the Medical Care Act it is a clinic). Any other text is reported as a problem of the row"
+    column: 医療機関の種類
+    values: { 病院: hospital, 有床診療所: clinicWithBeds, 無床診療所: clinicWithoutBeds, 診療所: clinic, 一般診療所: clinic, 企業内診療所: clinic, 歯科診療所: dentalClinic }
   address: { to: "所在地_* (fullAddress, prefecture, city, streetAddress, cityBlock), 建物名等(方書) (buildingNameEtc), 町字ID (streetAddressId)", note: { ja: 詳細は JapaneseAddress の対応表, en: see the JapaneseAddress table }, via: common/JapaneseAddress/jichitai-opendata-address }
   location: { to: "緯度 (latitude), 経度 (longitude)", note: { ja: "[経度, 緯度] の点", en: "a point [longitude, latitude]" }, via: common/Geometry/jichitai-opendata-location }
   operatorName: { to: 法人の名称 (legalEntityName), column: 法人の名称 }
@@ -38,7 +40,9 @@ fields:
   disasterBaseClass:
     to: 災害拠点分類 (disasterClassification)
     note:
-      ja: "基幹災害医療センター → core、地域災害医療センター → regional、救護所 → firstAidStation。定義書の値の一覧と記入例は「期間災害医療センター」と書いているが、基幹の誤りと読む。変換ツールにはまだこの変換が無い"
-      en: "基幹災害医療センター → core, 地域災害医療センター → regional, 救護所 → firstAidStation. The definition sheet's value list and example write 期間災害医療センター, read as a typo for 基幹. The converter has no transform for this yet"
+      ja: "基幹災害医療センター → core、地域災害医療センター → regional、救護所 → firstAidStation。定義書の値の一覧と記入例は「期間災害医療センター」と書いているが、基幹の誤りと読み、これも core にする"
+      en: "基幹災害医療センター → core, 地域災害医療センター → regional, 救護所 → firstAidStation. The definition sheet's value list and example write 期間災害医療センター, read as a typo for 基幹, so it is core too"
+    column: 災害拠点分類
+    values: { 基幹災害医療センター: core, 期間災害医療センター: core, 地域災害医療センター: regional, 救護所: firstAidStation }
   url: { to: URL (url), column: URL }
   remarks: { to: 備考 (remarks), column: 備考 }

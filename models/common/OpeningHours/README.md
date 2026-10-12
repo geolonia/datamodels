@@ -6,6 +6,8 @@ When a facility can be used, as the value of an openingHoursSpecification Proper
 
 施設を利用できる曜日と時間です。openingHoursSpecification 属性の値として使います。項目は、自治体標準オープンデータセットの「利用可能曜日」「開始時間」「終了時間」「特記事項」の列に合わせています。
 
+Subclass of `https://schema.org/OpeningHoursSpecification` (x-subclass-of).
+
 - IRI: `https://datamodels.jp/ns/common/OpeningHours`
 - Context: `https://datamodels.jp/context/common/v1.jsonld` (alias), `https://datamodels.jp/context/common/v1.0.0.jsonld` (exact)
 - Schema: `https://datamodels.jp/schema/common/OpeningHours/v1.json` (alias), `https://datamodels.jp/schema/common/OpeningHours/v1.0.0.json` (exact)

@@ -34,9 +34,9 @@ fields:
   unisexJapaneseStyleToilets: { to: 男女共用トイレ数（和式） (japaneseStyleUnisexToilet), column: 男女共用トイレ数（和式）, transform: integer }
   unisexWesternStyleToilets: { to: 男女共用トイレ数（洋式） (westernStyleUnisexToilet), column: 男女共用トイレ数（洋式）, transform: integer }
   barrierFreeToilets: { to: バリアフリートイレ数 (numberOfmMultipurposeToilet), column: バリアフリートイレ数, transform: integer }
-  wheelchairToilet: { to: 車椅子使用者用トイレ有無 (multipurposeToilet), note: { ja: 「有」なら true、「無」なら false。変換ツールにはまだこの変換が無い, en: "有 is true, 無 is false; the converter has no transform for this yet" } }
-  babyCareToilet: { to: 乳幼児用設備設置トイレ有無 (babyCareToilet), note: { ja: 「有」なら true、「無」なら false。変換ツールにはまだこの変換が無い, en: "有 is true, 無 is false; the converter has no transform for this yet" } }
-  ostomateToilet: { to: オストメイト設置トイレ有無 (toiletForOstomates), note: { ja: 「有」なら true、「無」なら false。変換ツールにはまだこの変換が無い, en: "有 is true, 無 is false; the converter has no transform for this yet" } }
+  wheelchairToilet: { to: 車椅子使用者用トイレ有無 (multipurposeToilet), note: { ja: 「有」なら true、「無」なら false, en: "有 is true, 無 is false" }, column: 車椅子使用者用トイレ有無, transform: yesno }
+  babyCareToilet: { to: 乳幼児用設備設置トイレ有無 (babyCareToilet), note: { ja: 「有」なら true、「無」なら false, en: "有 is true, 無 is false" }, column: 乳幼児用設備設置トイレ有無, transform: yesno }
+  ostomateToilet: { to: オストメイト設置トイレ有無 (toiletForOstomates), note: { ja: 「有」なら true、「無」なら false, en: "有 is true, 無 is false" }, column: オストメイト設置トイレ有無, transform: yesno }
   openingHoursSpecification: { to: "利用開始時間 (startTime), 利用終了時間 (endTime), 利用可能時間特記事項 (dateTimeRemarks)", note: { ja: 詳細は OpeningHours の対応表 jichitai-opendata-toilet-hours, en: see the OpeningHours table jichitai-opendata-toilet-hours }, via: common/OpeningHours/jichitai-opendata-toilet-hours }
   remarks: { to: 備考 (remarks), column: 備考 }
   operatorName: { to: null, note: { ja: このデータセットには無い, en: not in this dataset } }

@@ -10,6 +10,9 @@ import { subjectUrls, modelUrls, BASE_URL, ROOT } from './models.mjs';
 const GUIDES = [
   ['tutorial', 'Tutorial: from a CSV file to a map', 'one real open-data CSV converted into a catalog model, loaded into GeonicDB, queried and shown on a map, step by step'],
   ['use', 'Using the models', 'validate JSON, send it to an NGSI-LD broker, use it as linked data'],
+  ['csv', 'Using a spreadsheet', "fill in a model's CSV template, check it with frictionless validate against its Table Schema, and convert it into NGSI-LD entities (datamodels convert ... csv-template)"],
+  ['postgis', 'Using PostgreSQL / PostGIS', "load a model's PostgreSQL / PostGIS table (constraints, spatial index, column comments with IRIs), insert a row and query by distance"],
+  ['ai-extraction', 'Extracting data with AI', "give a model's AI schema to an AI model (OpenAI response_format json_schema, or a Claude tool's input_schema) to extract entities from an e-mail or a PDF, then add id and type and check against the JSON Schema"],
   ['geonicdb', 'Use with GeonicDB', 'register a catalog model in GeonicDB, then create and query entities'],
   ['mapping', 'Mapping files', 'mapping files: which field of a standard matches which attribute of a model, and the rules to convert a list; the catalog keeps them only for published standards that many lists follow'],
   ['extend', 'Adding attributes', 'add attributes of your own to a catalog model without copying it, and where to host the result'],
@@ -68,6 +71,7 @@ export async function llmsTxt(subjects) {
   }
   txt += `## Optional\n\n`;
   txt += `- [catalog.json](${BASE_URL}/catalog.json): every model with its type IRI, context, schema, vocabulary, example, page (Japanese and English), mapping and adapter URLs, its attributes (type, required, IRI) and the licence (CC0-1.0)\n`;
+  txt += `- [Adapters](${BASE_URL}/en/adapters/): the files made from each model for particular tools and brokers (a CSV template, its Table Schema, a strict JSON Schema for AI structured output, a PostgreSQL / PostGIS table, GeonicDB Custom Data Models): what each file is, how to use it and where to get it. The generic files are under Download on each model page and under \`adapters\` in catalog.json\n`;
   txt += `- [Standards covered](${BASE_URL}/en/guide/standards): every external standard a model is mapped to (EEI, the municipal standard open datasets, GSI, GIF and more), with a link to each field-by-field table\n`;
   txt += `- [Data model sites](${BASE_URL}/en/guide/sites): other sites that publish their own data models with datamodels-toolkit: one row per site, with its licence, how many models it has and which catalog models they build on. Each catalog model page lists the site models and listed extensions built on it, with the attributes they add and their IRIs ("Built on by others")\n`;
   txt += `- [AI and agents](${BASE_URL}/en/ai): how AI is used to make this site, and what agents can use\n`;

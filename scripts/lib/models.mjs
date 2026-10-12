@@ -17,6 +17,25 @@ export const CORE_TERMS = new Set(Object.keys(JSON.parse(readFileSync(CORE_CONTE
 
 const SEMVER = /^\d+\.\d+\.\d+$/;
 
+/** True when an IRI is in this catalog's namespace (a type the catalog must define). */
+export const isCatalogIri = (iri) => typeof iri === 'string' && iri.startsWith(`${BASE_URL}/ns/`);
+// Vocabularies outside the catalog whose types x-subclass-of may name. A short
+// list on purpose: a typo in an external IRI cannot be checked by fetching it,
+// so an unknown namespace fails instead. Add a namespace here when a model
+// really needs it.
+export const EXTERNAL_PARENT_NAMESPACES = ['https://schema.org/', 'https://smartdatamodels.org/', 'https://uri.etsi.org/ngsi-ld/'];
+/** Why an x-subclass-of target outside the catalog is not accepted, or null when it is. */
+export function externalParentProblem(iri) {
+  let url;
+  try { url = new URL(iri); } catch { return 'is not an absolute IRI'; }
+  if (!['http:', 'https:'].includes(url.protocol) || url.href !== iri) return 'is not an absolute http(s) IRI';
+  if (!EXTERNAL_PARENT_NAMESPACES.some((ns) => iri.startsWith(ns))) return `is outside the known vocabularies (${EXTERNAL_PARENT_NAMESPACES.join(', ')}); add the namespace to EXTERNAL_PARENT_NAMESPACES in scripts/lib/models.mjs if it is right`;
+  // Class names start with a capital (schema.org ContactPoint, not the property contactPoint).
+  // Only the form: a misspelled class name (ContcatPoint) passes, so open the IRI before adding it.
+  if (!/^[A-Z]/.test(url.pathname.split('/').pop() ?? '')) return 'does not name a class (a class name starts with a capital letter)';
+  return null;
+}
+
 async function readJson(file) { return JSON.parse(await readFile(file, 'utf8')); }
 async function readYaml(file) { return YAML.parse(await readFile(file, 'utf8')); }
 async function isDir(p) { try { return (await stat(p)).isDirectory(); } catch { return false; } }

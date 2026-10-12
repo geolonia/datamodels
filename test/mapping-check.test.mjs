@@ -44,7 +44,10 @@ test('conversion rules are checked: columns, the form of transform names, flags 
   for (const bad of [3, '', 'Upper case']) assert.deepEqual(rule({ column: 'a', transform: bad }), ['progress: transform must be a transform name such as code6 (the converter checks which names exist)'], String(bad));
   assert.deepEqual(rule({ transform: 'flags' }), ['progress: transform flags needs values as column: value']);
   assert.deepEqual(rule({ transform: 'flags', values: ['flood'] }), ['progress: transform flags needs values as column: value']);
-  assert.deepEqual(rule({ column: 'a', values: { a: 'b' } }), ['progress: values is only for transform flags']);
+  assert.deepEqual(rule({ column: 'a', values: { a: 'b' } }), []);
+  assert.deepEqual(rule({ column: 'a', transform: 'yesno', values: { a: true, '': false } }), []);
+  for (const column of [undefined, ['a', 'b']]) assert.deepEqual(rule({ column, values: { a: 'b' } }), ['progress: values needs exactly one column to read the texts from'], JSON.stringify(column));
+  for (const bad of [{}, ['b'], 'b', { a: null }, { a: ['b'] }]) assert.deepEqual(rule({ column: 'a', values: bad }), ['progress: values must give each text of the column its value, such as { 病院: hospital }'], JSON.stringify(bad));
   assert.deepEqual(rule({ column: 'a', transform: 'numbers' }), ['progress: transform numbers needs at least two columns']);
   assert.deepEqual(rule({ via: 'common/Geometry/nothing' }), ['progress: via must name a mapping file as subject/Type/name, got "common/Geometry/nothing"']);
   assert.deepEqual(rule({ column: 'a', value: 'b' }), ['progress: use one of column, value and via']);

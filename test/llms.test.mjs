@@ -46,3 +46,7 @@ test('every English guide and toolkit page is listed', async () => {
     }
   }
 });
+
+test('the adapters page is listed, as the explanation of the files and where to get them', () => {
+  assert.match(txt, /- \[Adapters\]\(https:\/\/datamodels\.jp\/en\/adapters\/\): .*how to use it and where to get it/);
+});

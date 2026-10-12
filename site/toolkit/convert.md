@@ -15,12 +15,14 @@ description: datamodels-toolkit の convert で、手元の CSV の一覧をカ�
 | それ以外の CSV | [自分の対応表を作る](#your-own-list) | 自分で作る |
 | これから作る | [CSV テンプレートに入力する](#csv-template) | 要らない |
 
+<svg class="flow-diagram" viewBox="0 0 460 258" role="group" aria-label="一覧から NGSI-LD のエンティティへの 3 つの方法。標準に従う一覧はカタログの対応表で、それ以外の CSV は自分の対応表で、CSV テンプレートは対応表なしで、convert で変換し、1 件ずつ JSON Schema で検証します。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="cv-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><a href="#standard"><rect class="box" x="10" y="8" width="140" height="56" rx="10"/><text class="t" x="80" y="32">標準に従う一覧</text><text class="s" x="80" y="51">自治体標準など</text><line class="a" x1="80" y1="64" x2="80" y2="92" marker-end="url(#cv-ah)"/><rect class="box" x="10" y="94" width="140" height="56" rx="10"/><text class="t" x="80" y="118">カタログの対応表</text><text class="s" x="80" y="137">そのまま使う</text></a><a href="#your-own-list"><rect class="box" x="160" y="8" width="140" height="56" rx="10"/><text class="t" x="230" y="32">それ以外の CSV</text><text class="s" x="230" y="51">自分の一覧</text><line class="a" x1="230" y1="64" x2="230" y2="92" marker-end="url(#cv-ah)"/><rect class="box" x="160" y="94" width="140" height="56" rx="10"/><text class="t" x="230" y="118">自分の対応表</text><text class="s" x="230" y="137">mapping で作る</text></a><a href="#csv-template"><rect class="box" x="310" y="8" width="140" height="56" rx="10"/><text class="t" x="380" y="32">CSV テンプレート</text><text class="s" x="380" y="51">これから作る</text><line class="a" x1="380" y1="64" x2="380" y2="92" marker-end="url(#cv-ah)"/><rect class="box" x="310" y="94" width="140" height="56" rx="10"/><text class="t" x="380" y="118">対応表は不要</text><text class="s" x="380" y="137">列が属性になる</text></a><line class="a" x1="80" y1="150" x2="150" y2="190" marker-end="url(#cv-ah)"/><line class="a" x1="230" y1="150" x2="230" y2="190" marker-end="url(#cv-ah)"/><line class="a" x1="380" y1="150" x2="310" y2="190" marker-end="url(#cv-ah)"/><text class="l" x="240" y="176">convert</text><rect class="box main" x="10" y="192" width="440" height="58" rx="10"/><text class="t" x="230" y="216">NGSI-LD のエンティティ</text><text class="s" x="230" y="235">1 件ずつモデルの JSON Schema で検証</text></svg>
+
 ## 一覧が標準に従っているとき {#standard}
 
 自治体標準オープンデータセットや国土地理院のデータなど、カタログに変換ルール付きの対応表がある標準に従った一覧は、その対応表でそのまま変換できます。変換ルールの無い対応表は標準との対応を説明するだけなので、その一覧には自分の対応表を作ります（次の節）。対応表の仕組みは[対応表](/guide/mapping)にあります。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.6 convert \
   disaster/EvacuationSite jichitai-opendata-site \
   092011_evacuation_space.csv --out sites.json
 ```
@@ -32,7 +34,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
 一覧に無い値は `--set` で渡します。たとえば国土地理院のデータでは、市町村コードがファイル名にしかありません。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.6 convert \
   disaster/EvacuationSite gsi-emergency-site \
   13101_2.csv --set localGovernmentCode=13101
 ```
@@ -48,13 +50,13 @@ npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
 
 ```bash
 # 1. 下書きを作る
-npx github:geolonia/datamodels-toolkit#v0.3.5 mapping \
+npx github:geolonia/datamodels-toolkit#v0.3.6 mapping \
   disaster/EvacuationSite my-list.csv --out my-list.yaml
 # 3. 最初の行を検査する
-npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.6 convert \
   disaster/EvacuationSite my-list.yaml my-list.csv --check
 # 4. 変換する
-npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.6 convert \
   disaster/EvacuationSite my-list.yaml my-list.csv --out entities.json
 ```
 
@@ -79,7 +81,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
 
 ### AI エージェントと埋める {#agent}
 
-TODO を埋める作業は、AI エージェントにも頼めます。datamodels-toolkit の[エージェントスキル](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.5/skills/datamodels)（`skills/datamodels`）が、手順と決まりをエージェントに教えます。一覧に無い値は書かない、意味のはっきりしない列は人に聞く、という決まりです。Claude Code では、このフォルダーをプロジェクトの `.claude/skills/` にコピーします。
+TODO を埋める作業は、AI エージェントにも頼めます。datamodels-toolkit の[エージェントスキル](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.6/skills/datamodels)（`skills/datamodels`）が、手順と決まりをエージェントに教えます。一覧に無い値は書かない、意味のはっきりしない列は人に聞く、という決まりです。Claude Code では、このフォルダーをプロジェクトの `.claude/skills/` にコピーします。
 
 依頼の例です。
 
@@ -92,7 +94,7 @@ TODO を埋める作業は、AI エージェントにも頼めます。datamodel
 新しく一覧を作るなら、モデルの CSV テンプレートに、1 行に 1 件ずつ入力します。対応表は要りません。テンプレートは、モデルのページの**ダウンロード**の行にあります。`export` でも作れます（[他のツールに書き出す](/toolkit/export)）。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.6 convert \
   disaster/EvacuationSite csv-template sites.csv --out entities.json
 ```
 
@@ -122,4 +124,4 @@ npx github:geolonia/datamodels-toolkit#v0.3.5 convert \
 - `--check`、`--rows N`：最初の行だけを検査します（[上の説明](#your-own-list)）。
 - `--site`：対応表とモデルを読むサイトです。既定は datamodels.jp です。公開前の対応表を試すときは、[geolonia/datamodels](https://github.com/geolonia/datamodels) をビルドして（`npm run build`）、`--site dist` を付けます。
 
-実際のオープンデータを変換して地図に表示するまでは、[チュートリアル](/guide/tutorial)で試せます。すべてのオプションは、ツールキットの [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.5#convert)（英語）にあります。
+実際のオープンデータを変換して地図に表示するまでは、[チュートリアル](/guide/tutorial)で試せます。すべてのオプションは、ツールキットの [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.6#convert)（英語）にあります。

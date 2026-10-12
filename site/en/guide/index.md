@@ -9,6 +9,9 @@ description: How to use the catalog's models, add attributes, URLs and versions,
 
 - [Tutorial: from a CSV file to a map](/en/guide/tutorial): one real open-data file converted into a model, loaded into a broker, queried and shown on a map, step by step.
 - [Using the models](/en/guide/use): validate JSON with the catalog models, send it to an NGSI-LD broker, and use it as linked data.
+  - [Spreadsheet / CSV](/en/guide/csv): fill in the CSV template, check it with frictionless and convert it into entities.
+  - [PostgreSQL / PostGIS](/en/guide/postgis): create a model's table, add a row and query by distance.
+  - [Extracting with AI](/en/guide/ai-extraction): take entities out of an e-mail or a PDF with the AI schema.
   - [GeonicDB](/en/guide/geonicdb): register a model in GeonicDB, then create and query entities.
 - [Mapping files](/en/guide/mapping): which field of a standard matches which attribute of a model. Where to find them and what they say.
 - [Adding attributes](/en/guide/extend): add attributes of your own to a model without copying it.
