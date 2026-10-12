@@ -11,7 +11,7 @@ summary:
   en: "Facilities municipalities publish in lists: AEDs, public toilets, medical institutions and more"
 description:
   ja: 自治体が自治体標準オープンデータセットとして公開する、施設の一覧のデータです。名称、所在地、位置、連絡先、利用できる時間など、データセットに共通する項目を基本の型 Facility にまとめ、AED、公衆トイレ、医療機関のような施設の種類ごとに、そのデータセットだけの項目を持つ下位の型を定めます。GIF のコアデータモデル「施設」に対応しています。
-  en: "Lists of facilities that municipalities publish as 自治体標準オープンデータセット. The base type Facility holds what the datasets share (name, address, location, contact, opening hours); a subtype per kind of facility, such as AEDs, public toilets and medical institutions, adds the columns of its own dataset. It corresponds to GIF's core data model 施設 (facility)."
+  en: "Lists of facilities that municipalities publish as 自治体標準オープンデータセット (municipal standard open datasets). The base type Facility holds what the datasets share (name, address, location, contact, opening hours); a subtype per kind of facility, such as AEDs, public toilets and medical institutions, adds the columns of its own dataset. It corresponds to GIF's core data model 施設 (facility)."
 source: minted
 origin:
   repository: https://github.com/geolonia/datamodels/issues/104

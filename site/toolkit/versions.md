@@ -15,6 +15,17 @@ description: datamodels-toolkit で、公開したモデルを新しいバージ
 npx github:geolonia/datamodels-toolkit#v0.3.7 bump road minor
 ```
 
+まだ公開していないノードでは、比べるファイルが無いので、`bump` と `release` は止まります。
+
+```text
+road v0.1.0: nothing released, the published files could not be compared:
+  https://models.example.org/context/road/v0.1.0.jsonld: ENOTFOUND
+  …
+Try again when the site answers, or release with --offline to skip the comparison.
+```
+
+そのときは `--offline` を付けて、比べずに保存します（`bump road minor --offline`）。
+
 そのうえでモデルを変えます。サイトには両方のバージョンが残ります。変更にどのレベル（`patch`、`minor`、`major`）が合うかは、[URL とバージョン](/guide/urls#versions)を見てください。
 
 ## バージョンを残すだけ {#release}

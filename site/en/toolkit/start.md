@@ -38,7 +38,17 @@ With the [GitHub CLI](https://cli.github.com/) (`gh`), add `--github my-org/my-m
 
 If you started with `--github`, the repository exists: commit your models and other changes, and push them.
 
-Otherwise, create an empty repository on GitHub and push the folder to its `main` branch. Then, in the repository's **Settings → Pages**, set **Source** to **GitHub Actions**.
+Otherwise, create an empty repository on GitHub (without a README or any other file) and push the folder to its `main` branch, with your repository's name instead of `my-org/my-models`:
+
+```bash
+git init -b main
+git add .
+git commit -m "Start the data model site"
+git remote add origin https://github.com/my-org/my-models.git
+git push -u origin main
+```
+
+Then, in the repository's **Settings → Pages**, set **Source** to **GitHub Actions**.
 
 From then on, every push to `main` builds the node and publishes it. Until you set up your domain, the site is at `https://<account>.github.io/<repository>/`.
 

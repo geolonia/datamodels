@@ -28,6 +28,8 @@ docker exec datamodels-postgis pg_isready -U postgres || docker logs datamodels-
 
 `POSTGRES_HOST_AUTH_METHOD=trust` では、パスワードなしで誰でも接続できます。自分のコンピューターでの試験だけに使ってください。
 
+このイメージは amd64 用だけです。Apple Silicon の Mac では、Docker がエミュレーションで動かします。プラットフォームが違うという警告が出ますが、このページの手順はそのまま動きます。
+
 ## 2. テーブルを作る {#table}
 
 ```bash
@@ -49,7 +51,7 @@ COMMENT
 
 ## 3. 避難場所を入れる {#insert}
 
-`docker exec -it datamodels-postgis psql -U postgres` で SQL のプロンプトを開き、次を実行します。
+`docker exec -it datamodels-postgis psql -U postgres` で SQL のプロンプトを開き、次を実行します。名称、住所、位置、災害の種別は、国土地理院の指定緊急避難場所データ（千代田区）と同じです。区の番号 `13101-0012` は、例のために作った値です。
 
 ```sql
 INSERT INTO evacuation_site (id, name, external_site_id,

@@ -3,7 +3,7 @@ title:
   en: "Opening hours"
 description:
   ja: "施設を利用できる曜日と時間です。openingHoursSpecification 属性の値として使います。曜日、開始時刻、終了時刻と、祝日などの例外を書いた特記事項を持ちます。項目は、自治体標準オープンデータセットの「利用可能曜日」「開始時間」「終了時間」「特記事項」の列に合わせ、schema.org の OpeningHoursSpecification の語を使います。どの項目も任意です。"
-  en: "When a facility can be used, as the value of an openingHoursSpecification Property: the days of the week, the opening and closing time, and remarks on exceptions such as holidays. The fields follow the 利用可能曜日, 開始時間, 終了時間 and 特記事項 columns of the 自治体標準オープンデータセット and use schema.org OpeningHoursSpecification terms. Every field is optional."
+  en: "When a facility can be used, as the value of an openingHoursSpecification Property: the days of the week, the opening and closing time, and remarks on exceptions such as holidays. The fields follow the 利用可能曜日, 開始時間, 終了時間 and 特記事項 columns of the 自治体標準オープンデータセット (municipal standard open datasets) and use schema.org OpeningHoursSpecification terms. Every field is optional."
 status: draft
 tags: [opening-hours, japan, common]
 attributes:

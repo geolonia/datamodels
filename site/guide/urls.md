@@ -17,7 +17,7 @@ description: どの URL を使うか、何が変わらないか、バージョ�
 |---|---|
 | 保存するデータの `@context`、`Link` ヘッダー | エイリアス `/context/<subject>/v1.jsonld` |
 | 監査、他のブローカーでの結果の再現 | 正確なバージョン `/context/<subject>/v1.0.0.jsonld` |
-| バリデーション | `/schema/<subject>/<Type>/v1.json`（エイリアス）または `v1.0.0.json` |
+| 検査 | `/schema/<subject>/<Type>/v1.json`（エイリアス）または `v1.0.0.json` |
 
 エイリアスが指す先は、互換性のあるバージョンにしか変わらないので、通常はエイリアスで十分です。監査や結果の再現が要るときは正確なバージョンを使ってください。
 
@@ -37,7 +37,7 @@ description: どの URL を使うか、何が変わらないか、バージョ�
 
 | 変更 | 上げる番号 | 例 |
 |---|---|---|
-| 意味も検証も変わらない修正 | パッチ（1.0.**1**） | スキーマの説明文の誤字 |
+| 意味も検査も変わらない修正 | パッチ（1.0.**1**） | スキーマの説明文の誤字 |
 | 互換性のある追加 | マイナー（1.**1**.0） | 任意の属性やモデルを足す、値の一覧に値を足す |
 | 互換性のない変更 | メジャー（**2**.0.0） | 属性の名前や型を変える、属性や値を消す、任意の属性を必須にする |
 
@@ -59,11 +59,12 @@ description: どの URL を使うか、何が変わらないか、バージョ�
 | `/schema/<subject>/<Type>/vX.Y.Z.json` | JSON Schema（不変） |
 | `/schema/<subject>/<Type>/vX.json` | エイリアス |
 | `/vocab/<subject>/vX.Y.Z.jsonld` | 語彙（RDFS: クラス、サブクラス関係、日英ラベル。不変） |
+| `/vocab/<subject>/vX.jsonld` | エイリアス |
 | `/examples/<subject>/<Type>/example.json` | 例（key-values） |
 | `/examples/<subject>/<Type>/example-normalized.jsonld` | 例（NGSI-LD normalized。値型には無い） |
 | `/ns/<subject>/<Term>` | 型・属性の IRI（ページにリダイレクト。JSON-LD のクライアントには語彙） |
 | `/mapping/<subject>/<Type>/<name>.yaml` | 対応表（他の標準との対応と変換の規則。バージョンなし。URL は変わらず、内容はその時点のモデルに合わせる） |
-| `/adapters/<name>/<subject>/<Type>.json` | アダプターの出力（例：GeonicDB の Custom Data Model 定義） |
+| `/adapters/<name>/<subject>/<Type>.<拡張子>` | アダプターのファイル：CSV テンプレート（`.csv`）、Table Schema（`.tableschema.json`）、AI 用の構造化出力（`.ai.json`）、PostgreSQL / PostGIS のテーブル（`.sql`）、GeonicDB の Custom Data Model 定義（`.json`） |
 | `/catalog.json` | プログラム向けの全モデルの一覧（/catalog.schema.json に準拠） |
 
 </div>
@@ -73,3 +74,6 @@ description: どの URL を使うか、何が変わらないか、バージョ�
 - `.jsonld`：`application/ld+json`
 - スキーマ：`application/schema+json`
 - 対応表：`application/yaml`
+- CSV テンプレート：`text/csv`
+- SQL のファイル：`application/sql`
+- ほかの `.json`（例のファイル、アダプターのファイル、`catalog.json`）：`application/json`

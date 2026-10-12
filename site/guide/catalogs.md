@@ -11,7 +11,7 @@ description: 世界と日本で使われているデータモデル・語彙の�
 
 | カタログ | 内容 | NGSI-LD での使い方 |
 |---|---|---|
-| [Smart Data Models](https://smartdatamodels.org/) | FIWARE・TM Forum・IUDX・OASC が運営。スマートシティ、農業、エネルギーなど 900 以上のモデル。JSON Schema、`@context`、例、多言語仕様（日本語は機械翻訳） | そのまま使える。このカタログの上流 |
+| [Smart Data Models](https://smartdatamodels.org/) | FIWARE・TM Forum・IUDX（India Urban Data Exchange）・OASC（Open & Agile Smart Cities）が運営。スマートシティ、農業、エネルギーなど 900 以上のモデル。JSON Schema、`@context`、例、多言語仕様（日本語は機械翻訳） | そのまま使える。このカタログの上流 |
 | [ETSI NGSI-LD 仕様（GS CIM 009 V1.8.1）](https://www.etsi.org/deliver/etsi_gs/CIM/001_099/009/01.08.01_60/gs_cim009v010801p.pdf) | NGSI-LD API の仕様書（PDF）。予約語（`location`, `observedAt`, `status` など）を定める core context は [uri.etsi.org](https://uri.etsi.org/ngsi-ld/v1/) にバージョン付きで公開 | 常に暗黙に適用される |
 | [schema.org](https://schema.org/) | Web 全般の語彙。住所（PostalAddress）、組織、イベントなど | 属性の IRI として再利用（Smart Data Models も同様） |
 | [SAREF](https://saref.etsi.org/) | ETSI のスマート機器・エネルギー・建物のオントロジー | NGSI-LD と組み合わせて使われる |

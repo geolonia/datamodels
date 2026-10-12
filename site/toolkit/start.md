@@ -38,7 +38,17 @@ cd my-models
 
 `--github` を付けて始めた場合は、リポジトリができています。モデルなどの変更は、コミットして push してください。
 
-そうでない場合は、GitHub で空のリポジトリを作り、フォルダーをその `main` ブランチに push します。そのうえで、リポジトリの **Settings → Pages** で、**Source** を **GitHub Actions** にします。
+そうでない場合は、GitHub で空のリポジトリ（README などのファイルを足さないもの）を作り、フォルダーをその `main` ブランチに push します。`my-org/my-models` は、作ったリポジトリの名前に替えてください。
+
+```bash
+git init -b main
+git add .
+git commit -m "Start the data model site"
+git remote add origin https://github.com/my-org/my-models.git
+git push -u origin main
+```
+
+そのうえで、リポジトリの **Settings → Pages** で、**Source** を **GitHub Actions** にします。
 
 これで、`main` への push のたびにノードがビルドされ、公開されます。ドメインを設定するまでは、`https://<アカウント>.github.io/<リポジトリ>/` で表示されます。
 

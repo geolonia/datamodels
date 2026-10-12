@@ -26,7 +26,7 @@ const fence = (obj) => '```json\n' + JSON.stringify(obj, null, 2) + '\n```';
 
 const T = {
   ja: {
-    models: 'データモデル', overview: '概要', subjects: 'サブジェクト', attributes: '属性', exampleNote: (href) => `例は架空のシナリオ（東京都千代田区の大雨対応）です。地名とコードは実在のものですが、出来事・人・チームは架空です。書き方は[例の書き方](${href})にあります。`,
+    models: 'データモデル', overview: '概要', subjects: 'サブジェクト', attributes: '属性', exampleNote: (href) => `例の多くは架空のシナリオ（東京都千代田区の大雨対応）です。地名とコードは実在のものですが、出来事・人・チームは架空です。公開されている一覧の実際の行を写した例もあり、そのときは注記に出典があります。書き方は[例の書き方](${href})にあります。`,
     linkHeader: 'Link ヘッダー', type: '型', name: '名前', stage: '段階', typeIri: '型 IRI', useGuide: (href) => `データの検証とブローカーへの送り方は[使い方](${href})にあります。`, context: '@context',
     urlNote: (versions, guide, withSchema) => `この @context${withSchema ? ' と JSON Schema' : ''} の URL は、常に互換性のある最新版を指します。<br>内容が変わらない URL は[バージョン](${versions})にあります。詳しくは[URL とバージョン](${guide})を見てください。`, schema: 'JSON Schema',
     adapters: 'アダプター', adaptersLine: (link) => `特定のブローカーやツールにそのまま読み込めるファイルも、このモデルから作っています：${link}`,
@@ -49,7 +49,7 @@ const T = {
     subclassExternalNote: (link) => `${link} のサブクラスです。親はこのカタログの外の型で、この型はそれより狭いか、項目を足しています。意味が合う項目は親の語彙の IRI を使います。関係は語彙に rdfs:subClassOf として書いてあります。`,
   },
   en: {
-    models: 'Data models', overview: 'Overview', subjects: 'Subjects', attributes: 'Attributes', exampleNote: (href) => `The examples are a fictional scenario (heavy rain in Chiyoda, Tokyo). Place names and codes are real; the events, people and teams are invented. See [writing examples](${href}).`,
+    models: 'Data models', overview: 'Overview', subjects: 'Subjects', attributes: 'Attributes', exampleNote: (href) => `Most examples are a fictional scenario (heavy rain in Chiyoda, Tokyo). Place names and codes are real; the events, people and teams are invented. Some examples copy a real row of a published list instead; their notes name the source. See [writing examples](${href}).`,
     linkHeader: 'Link header', type: 'Type', name: 'Name', stage: 'Stage', typeIri: 'Type IRI', useGuide: (href) => `How to validate data and send it to a broker: [Using the models](${href}).`, context: '@context',
     urlNote: (versions, guide, withSchema) => `${withSchema ? 'These @context and JSON Schema URLs always point' : 'This @context URL always points'} to the latest compatible version.<br>For URLs that never change, see [Versions](${versions}). More in [URLs and versions](${guide}).`, schema: 'JSON Schema',
     adapters: 'Adapters', adaptersLine: (link) => `Files that particular brokers and tools can load as they are, made from this model: ${link}`,
@@ -201,7 +201,7 @@ const M = {
     attribute: '属性', field: 'フィールド', description: '説明', valueCol: '値',
     example: '例', simple: 'シンプル（key-values）', ngsi: 'NGSI-LD（normalized）', tryIt: '試す', files: 'ファイル',
     requiredMark: '必須', requiredNote: '* は必須の属性です。', linkHeaderIntro: '本文に @context を書かずに送るときの Link ヘッダー：',
-    use: 'このモデルを使う', useValue: (rules) => `他のモデルは、属性の値としてこの値型を参照します。書き方は[モデルのルール](${rules})にあります。`,
+    use: 'このモデルを使う', useValue: (use) => `他のモデルは、属性の値としてこの値型を参照します。その属性を持つデータを検査すると、この値型のスキーマも読み込まれます（[JSON を検証する](${use})）。`,
     standards: '参照している標準', standardsNote: 'このモデルが対応している標準と、項目ごとの対応です。開くと対応表が見られます。',
     fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く', standardLicence: 'この標準のライセンス', mappingFile: (file, guide, converts) => `${converts ? 'この標準のデータを変換するための対応表' : 'この標準との対応表'}（YAML）: ${file}（説明は${guide('対応表')}）`, notesTitle: '注記',
     sourceFiles: (href) => `ソースファイル（注記、対応表）は [GitHub](${href}) にあります。`,
@@ -218,7 +218,7 @@ const M = {
     attribute: 'Attribute', field: 'Field', description: 'Description', valueCol: 'Value',
     example: 'Example', simple: 'Simple (key-values)', ngsi: 'NGSI-LD (normalized)', tryIt: 'Try it', files: 'Files',
     requiredMark: 'required', requiredNote: '* required', linkHeaderIntro: 'The Link header, for sending data without @context in the body:',
-    use: 'Using this model', useValue: (rules) => `Other models use this value type as the value of an attribute. How: [Rules for models](${rules}).`,
+    use: 'Using this model', useValue: (use) => `Other models use this value type as the value of an attribute. Checking data that has such an attribute reads this schema too ([Validate JSON](${use})).`,
     standards: 'Referenced standards', standardsNote: 'The standards this model corresponds to, field by field. Open one to see its table.',
     fieldsMapped: (n, total) => `${n} of ${total} fields`, openStandard: 'Open the standard', standardLicence: 'Licence of this standard', mappingFile: (file, guide, converts) => `${converts ? 'Mapping file (YAML) for converting data from this standard' : 'Mapping file (YAML) for this standard'}: ${file} (see ${guide('Mapping files')})`, notesTitle: 'Notes',
     sourceFiles: (href) => `The source files (notes, mapping tables) are on [GitHub](${href}).`,
@@ -298,7 +298,7 @@ function modelPage(lang, prefix, subject, model) {
     if (required.size) md += `<small>${l.requiredNote}</small>\n\n`;
   }
   md += `## ${l.use} {#use}\n\n`;
-  if (isValue) md += `${l.useValue(`${prefix}/guide/rules#rules`)}\n\n`;
+  if (isValue) md += `${l.useValue(`${prefix}/guide/use#validate`)}\n\n`;
   else {
     // One line per task; the Link header last, with its code block (wraps, custom.css).
     md += `- ${t.useGuide(`${prefix}/guide/use`)}\n- ${t.extendThis(`${prefix}/guide/builder?model=${subject.name}/${model.type}`)}\n`;

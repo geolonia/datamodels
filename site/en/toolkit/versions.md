@@ -15,6 +15,17 @@ Before you change anything, start the next version with `bump`. It keeps the pub
 npx github:geolonia/datamodels-toolkit#v0.3.7 bump road minor
 ```
 
+For a node that is not online yet, there is nothing to compare with, so `bump` and `release` stop:
+
+```text
+road v0.1.0: nothing released, the published files could not be compared:
+  https://models.example.org/context/road/v0.1.0.jsonld: ENOTFOUND
+  …
+Try again when the site answers, or release with --offline to skip the comparison.
+```
+
+In that case, add `--offline` to keep the version without the comparison (`bump road minor --offline`).
+
 Then make the change. The site has both versions; see [URLs and versions](/en/guide/urls#versions) for which level (`patch`, `minor`, `major`) fits a change.
 
 ## Only keeping a version {#release}

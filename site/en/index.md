@@ -1,5 +1,8 @@
 ---
 layout: home
+# The browser tab and search results: the name and what it is (titleTemplate: false, no " | datamodels.jp").
+title: "datamodels.jp: data models that work in Japan"
+titleTemplate: false
 
 hero:
   # The headline carries the page; the mark and name are in the navigation (docs/brand.md).
@@ -25,7 +28,7 @@ hero:
 
 features:
   - title: Made for Japan
-    details: Already use a Japanese standard, such as the municipal standard open datasets, EEI or GSI's shelter data? Find the model that matches it.
+    details: Already use a Japanese standard, such as the municipal standard open datasets, the Essential Elements of Information (EEI), or the shelter data of the Geospatial Information Authority of Japan (GSI)? Find the model that matches it.
     link: /en/guide/standards
     linkText: Standards covered
   - title: Convert your data

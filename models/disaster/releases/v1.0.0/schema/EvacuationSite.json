@@ -62,7 +62,7 @@
     },
     "externalSiteId": {
       "type": "string",
-      "description": "The site's ID in the municipality's 指定緊急避難場所一覧 (自治体標準オープンデータセット; unique within the municipality). Together with localGovernmentCode it identifies the site nationwide. Required unless nationalShelterId is given (GSI's data has no municipal ID)",
+      "description": "The site's ID in the municipality's 指定緊急避難場所一覧 (自治体標準オープンデータセット, the municipal standard open datasets; unique within the municipality). Together with localGovernmentCode it identifies the site nationwide. Required unless nationalShelterId is given (GSI's data has no municipal ID)",
       "x-ngsi": {
         "type": "Property"
       },

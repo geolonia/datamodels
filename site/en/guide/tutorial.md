@@ -30,7 +30,7 @@ What datamodels.jp adds is the **model**: the agreed list of attributes for a ty
 - **The GeonicDB CLI** (`geonic`), the command-line tool for GeonicDB. Install it and log in once:
 
 ```bash
-npm install -g @geolonia/geonicdb-cli
+npm install -g @geolonia/geonicdb-cli@0.26.1
 geonic config set url "https://<your-deployment>.geonicdb.jp"
 geonic auth login --tenant "<your-tenant>"
 ```
@@ -57,11 +57,11 @@ Open it in a spreadsheet if you like. Each row is one site, with columns such as
 A broker does not take a CSV file. It takes entities. The catalog's model for these sites is [EvacuationSite](/en/models/disaster/EvacuationSite/), and it comes with a **mapping file** (`jichitai-opendata-site`) that says which column becomes which attribute. So the converter needs no code from you:
 
 ```bash
-npx github:geolonia/datamodels-toolkit convert disaster/EvacuationSite \
-  jichitai-opendata-site sites.csv --out sites.json
+npx github:geolonia/datamodels-toolkit#v0.3.7 convert \
+  disaster/EvacuationSite jichitai-opendata-site sites.csv --out sites.json
 ```
 
-**What happened:** each row became one entity, and each entity was checked against the model. The converter lists what it repaired, for example local government codes that lost their leading zero in the spreadsheet (`92011 → 092011`). All 198 sites are valid. Look at the first one in `sites.json`:
+**What happened:** each row became one entity, and each entity was checked against the model. The converter lists what it repaired, for example local government codes that lost their leading zero in the spreadsheet (`92011 → 092011`). All 198 sites are valid. Look at the first one in `sites.json`, shortened here (the address, the telephone number and a few more attributes are left out):
 
 ```json
 {
@@ -79,8 +79,9 @@ The column 災害種別_洪水 became `"flood"` in `hazardTypes`; the latitude a
 Now convert once more for the broker:
 
 ```bash
-npx github:geolonia/datamodels-toolkit convert disaster/EvacuationSite \
-  jichitai-opendata-site sites.csv --normalized --out sites.jsonld
+npx github:geolonia/datamodels-toolkit#v0.3.7 convert \
+  disaster/EvacuationSite jichitai-opendata-site sites.csv \
+  --normalized --out sites.jsonld
 ```
 
 `--normalized` writes the same data in the form the NGSI-LD standard uses to send it, and adds an **@context**. The @context works like a dictionary: it tells the broker that `name` here means `https://uri.etsi.org/ngsi-ld/name` and `hazardTypes` means `https://datamodels.jp/ns/disaster/hazardTypes`. These full names (**IRIs**) are unique on the whole web, so two systems never mix up two different meanings of "name".
@@ -162,7 +163,7 @@ jq '.[2] | .id += "-test" | .capacity = {type: "Property", value: 500}' \
 
 This is what keeps the data clean when many people and apps write to the same broker.
 
-One limit: for a list such as `hazardTypes`, GeonicDB checks that the value is a list, not the values in it. A site with `["typhoon"]` would be stored. The converter in step 2 checks the values too, which is why it validates before anything is loaded. More in [What a registered model checks](/en/guide/geonicdb#checks).
+One limit: for a list such as `hazardTypes`, GeonicDB checks that the value is a list, not the values in it. A site with `["typhoon"]` would be stored. The converter in step 2 checks the values too, before anything is loaded. More in [What a registered model checks](/en/guide/geonicdb#checks).
 
 ## What you have now {#done}
 

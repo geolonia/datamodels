@@ -3,7 +3,7 @@ title:
   en: "Medical institution"
 description:
   ja: "病院または診療所 1 か所のデータです。自治体が「医療機関一覧」（自治体標準オープンデータセット 10）として公開する一覧の 1 行にあたります。Facility の下位の型で、医療機関の種類、医療機関コード、診療科目、病床数、災害時の医療での役割（災害拠点分類）、時間外の対応を足しています。診療日と診療時間は openingHoursSpecification に入ります。"
-  en: "One hospital or clinic: one row of the list a municipality publishes as 自治体標準オープンデータセット dataset 10 (医療機関一覧). A subtype of Facility that adds the kind of institution, the medical institution code, clinical departments, number of beds, its role in disaster medical care (災害拠点分類) and after-hours care. Consultation days and hours go into openingHoursSpecification."
+  en: "One hospital or clinic: one row of the list a municipality publishes as 自治体標準オープンデータセット (municipal standard open datasets) dataset 10 (医療機関一覧). A subtype of Facility that adds the kind of institution, the medical institution code, clinical departments, number of beds, its role in disaster medical care (災害拠点分類) and after-hours care. Consultation days and hours go into openingHoursSpecification."
 status: draft
 tags:
   - facility
