@@ -12,8 +12,8 @@ This page adds models to a subject of your node and writes their attributes. No 
 Before you make a new model, check whether one already exists that you can use as it is or extend. `search` looks through the models of datamodels.jp and of the sites it links to, for words in the type name, title, attributes and description. It finds Japanese and English words.
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.7 search 避難
-npx github:geolonia/datamodels-toolkit#v0.3.7 search road closure --json
+npx github:geolonia/datamodels-toolkit#v0.3.8 search 避難
+npx github:geolonia/datamodels-toolkit#v0.3.8 search road closure --json
 ```
 
 The result of the first command, shortened:
@@ -30,7 +30,7 @@ Each line is one model: its subject and type, its titles, the site (the name of 
 `nodes` lists the sites it can reach, with their name, address, licence, number of models, and the site that links to them:
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.7 nodes
+npx github:geolonia/datamodels-toolkit#v0.3.8 nodes
 ```
 
 ```text
@@ -47,7 +47,7 @@ To build on a model you found, use [extend](#extend).
 ## A new model {#add}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.7 add road/RoadPatrol
+npx github:geolonia/datamodels-toolkit#v0.3.8 add road/RoadPatrol
 ```
 
 This adds `models/road/RoadPatrol/` with `schema.json`, `catalog.yaml`, `examples/example.json` and `notes.yaml` (the notes: sources, decisions and their reasons), and the type `RoadPatrol` to the subject's `@context`. Then [write its attributes](#attributes).
@@ -57,7 +57,7 @@ This adds `models/road/RoadPatrol/` with `schema.json`, `catalog.yaml`, `example
 To start from a model of this catalog instead, use `extend`. It copies the catalog model's schema, imports its `@context` and records the model it builds on, so `check` keeps its names and meanings. Then add your attributes as [below](#attributes). With `--subclass`, the new model is a subtype with its own IRI.
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.7 extend task/Task road/RoadTask
+npx github:geolonia/datamodels-toolkit#v0.3.8 extend task/Task road/RoadTask
 ```
 
 `extend` writes the same four files as `add`. The `@context` in the subject's `context.jsonld` becomes a list: the URL of the imported @context, then this node's terms.

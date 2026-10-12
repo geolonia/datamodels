@@ -12,7 +12,7 @@ description: datamodels-toolkit で、公開したモデルを新しいバージ
 変える前に、`bump` で次のバージョンを始めます。`bump` は、公開したバージョンをサイトに残します（その `@context`、語彙、スキーマを `models/road/releases/` に保存します）。そのうえで、`subject.yaml` の `version` とスキーマの URL のバージョンを上げます。公開済みのファイルと違えば止まります。結果をコミットしてください。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.7 bump road minor
+npx github:geolonia/datamodels-toolkit#v0.3.8 bump road minor
 ```
 
 まだ公開していないノードでは、比べるファイルが無いので、`bump` と `release` は止まります。
@@ -33,7 +33,7 @@ Try again when the site answers, or release with --offline to skip the compariso
 `bump` が最初に行う保存は、`release` だけでも実行できます。今のバージョンを `models/road/releases/` に保存し、バージョンは上げません。公開した後、ソースを変える前に実行して、結果をコミットします。`check` は、まだ保存していない公開済みのバージョンを知らせます。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.7 release road
+npx github:geolonia/datamodels-toolkit#v0.3.8 release road
 ```
 
 ## 新しいツールキットに移る {#upgrade}
@@ -41,5 +41,5 @@ npx github:geolonia/datamodels-toolkit#v0.3.7 release road
 ノードを新しいツールキットに移すには、`upgrade` を実行してコミットします。ワークフローと README のバージョンが、最新のリリース（`--to` で指定したときはそのリリース）に変わります。Dependabot も新しいリリースを提案します。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.7 upgrade
+npx github:geolonia/datamodels-toolkit#v0.3.8 upgrade
 ```

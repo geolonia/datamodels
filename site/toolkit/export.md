@@ -8,7 +8,7 @@ description: datamodels-toolkit の export で、モデルから CSV テンプ�
 データモデルは NGSI-LD のブローカーがなくても使えます。datamodels-toolkit の `export` は、1 つのモデルから次のファイルを作ります。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.7 export \
+npx github:geolonia/datamodels-toolkit#v0.3.8 export \
   disaster/EvacuationSite --to csv,table-schema,ai,postgis
 ```
 

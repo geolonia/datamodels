@@ -18,12 +18,12 @@ description: datamodels-toolkit で、自分のデータモデルを変わらな
 [Node.js](https://nodejs.org/) 24 以降が要ります。コマンドは `npx` で GitHub のリリースから実行するので、インストールは要りません。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.7 --help
+npx github:geolonia/datamodels-toolkit#v0.3.8 --help
 ```
 
 初めて実行すると、`npx` がパッケージをダウンロードしてよいかを尋ねます（`Need to install the following packages: … Ok to proceed? (y)`）。`y` を入力して進めます。
 
-このセクションの例は、このリリースを使います。すべてのコマンドとオプションは、`--help` と [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.7#readme)（英語）にあります。このセクションでは、作業ごとに使い方を説明します。
+このセクションの例は、このリリースを使います。すべてのコマンドとオプションは、`--help` と [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.8#readme)（英語）にあります。このセクションでは、作業ごとに使い方を説明します。
 
 ## ページ {#pages}
 

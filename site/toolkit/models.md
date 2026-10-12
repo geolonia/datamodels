@@ -12,8 +12,8 @@ description: datamodels-toolkit の search で既にあるモデルを探し、a
 新しいモデルを作る前に、そのまま使えるモデルや拡張できるモデルが既にないかを探します。`search` は、datamodels.jp と、datamodels.jp がリンクしているサイトのモデルから、型の名前、タイトル、属性、説明に言葉を含むものを探します。日本語でも英語でも探せます。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.7 search 避難
-npx github:geolonia/datamodels-toolkit#v0.3.7 search road closure --json
+npx github:geolonia/datamodels-toolkit#v0.3.8 search 避難
+npx github:geolonia/datamodels-toolkit#v0.3.8 search road closure --json
 ```
 
 1 つ目のコマンドの結果の一部です。
@@ -30,7 +30,7 @@ disaster/EvacuationShelter  避難所の運用状況 / Evacuation shelter operat
 `nodes` は、たどれるサイトを、名前、アドレス、ライセンス、モデルの数、リンク元のサイトとともに並べます。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.7 nodes
+npx github:geolonia/datamodels-toolkit#v0.3.8 nodes
 ```
 
 ```text
@@ -47,7 +47,7 @@ Geolonia Inc.  https://models.geolonia.com/  CC0-1.0  1 model  (linked from Geol
 ## 新しいモデル {#add}
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.7 add road/RoadPatrol
+npx github:geolonia/datamodels-toolkit#v0.3.8 add road/RoadPatrol
 ```
 
 `models/road/RoadPatrol/` に `schema.json`、`catalog.yaml`、`examples/example.json`、`notes.yaml` ができます。`notes.yaml` は、出典や決めたことと、その理由を書く注記です。サブジェクトの `@context` には型 `RoadPatrol` が入ります。続けて、[属性を書きます](#attributes)。
@@ -57,7 +57,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.7 add road/RoadPatrol
 このカタログのモデルから始めるときは、`extend` を使います。カタログのモデルのスキーマをコピーし、その `@context` を取り込み、土台にしたモデルを記録します。そのため、`check` が名前と意味を変えていないかを検査できます。そのうえで、[下のように](#attributes)自分の属性を足します。`--subclass` を付けると、独自の IRI を持つサブタイプになります。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.7 extend task/Task road/RoadTask
+npx github:geolonia/datamodels-toolkit#v0.3.8 extend task/Task road/RoadTask
 ```
 
 `extend` も、`add` と同じ 4 つのファイルを書き出します。サブジェクトの `context.jsonld` の `@context` は、取り込んだ @context の URL と、このノードの用語を並べたリストになります。

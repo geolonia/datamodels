@@ -6,8 +6,8 @@ description: Check and build a node with the check and build commands of datamod
 # Checking and building
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.7 check
-npx github:geolonia/datamodels-toolkit#v0.3.7 build
+npx github:geolonia/datamodels-toolkit#v0.3.8 check
+npx github:geolonia/datamodels-toolkit#v0.3.8 build
 ```
 
 `check` validates every schema and example. On GitHub, the workflow runs the same check on every pull request.

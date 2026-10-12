@@ -41,7 +41,7 @@ fields:
 
 ## 変換の規則 {#convert}
 
-行には変換の仕方も書けます。`column`（CSV の列）、`transform`（`integer`、`flag`、`split` など）、固定の値 `value`、`via`（住所など入れ子の値を別の対応表で作る）です。`transform` のすべての種類は、ツールキットの [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.7#convert)（英語）にあります。`convert.id` はエンティティの ID の付け方です。`to` だけの行は、説明のための行です。変換の規則があるのは、一部の対応表だけです。ほとんどの対応表は、モデルと標準の関係を説明するだけです。
+行には変換の仕方も書けます。`column`（CSV の列）、`transform`（`integer`、`flag`、`split` など）、固定の値 `value`、`via`（住所など入れ子の値を別の対応表で作る）です。`transform` のすべての種類は、ツールキットの [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.8#convert)（英語）にあります。`convert.id` はエンティティの ID の付け方です。`to` だけの行は、説明のための行です。変換の規則があるのは、一部の対応表だけです。ほとんどの対応表は、モデルと標準の関係を説明するだけです。
 
 [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) の `datamodels convert` がこの規則を読み、CSV の一覧をモデルのエンティティに変換します。使い方は[データを変換する](/toolkit/convert)にあります。
 
