@@ -3,7 +3,7 @@ name: Compare dist
 # Builds the site for the pull request's base and for the pull request, and
 # lists in the job summary which files of dist/ are added, removed or changed
 # (scripts/dist-diff.mjs, #226). Informational: content changes are meant to
-# change dist/, so differences never fail the pull request. A pull request that
+# change dist/, so differences never fail the pull request; a failed build does. A pull request that
 # should not change the site shows "No differences".
 on:
   pull_request:
@@ -38,7 +38,7 @@ jobs:
       - name: Install
         run: npm ci
 
-      # Exit 1 means "dist/ differs", 2 a failed build; neither fails the job.
+      # Exit 1 means "dist/ differs": informational, the job passes. Exit 2 means
+      # a git or build step failed: the job fails.
       - name: Compare dist/
-        continue-on-error: true
-        run: npm run dist:diff -- --base HEAD^1
+        run: npm run dist:diff -- --base HEAD^1 || [ "$?" -eq 1 ]
