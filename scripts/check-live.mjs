@@ -130,21 +130,28 @@ if (r.ok) {
     expect(mr.status === 200 && h(mr, 'content-type').startsWith('application/yaml'), `mapping ${url}: ${mr.status} ${h(mr, 'content-type')}`);
   }
   expect(firstMappingUrl, 'catalog.json: no model lists a mapping file');
-  // A model page's Adapters row must land on its row on /adapters/ (the id exists there).
+  // A model page's links to /adapters/ (the Download row, the Adapters sentence) must land on a section there.
   const withAdapter = (c.models ?? []).find((m) => Object.keys(m.adapters ?? {}).length);
-  expect(withAdapter?.pageUrl, 'catalog.json: no model lists an adapter, so the Adapters row cannot be checked');
+  expect(withAdapter?.pageUrl, 'catalog.json: no model lists an adapter, so its links to /adapters/ cannot be checked');
   if (withAdapter?.pageUrl) {
     try {
       const [page, index] = await Promise.all([withAdapter.pageUrl, `${BASE_URL}/adapters/`].map(async (u) => { const res = await fetch(swap(u)); return res.ok ? res.text() : ''; }));
-      const anchor = /href="\/adapters\/#([^"]+)"/.exec(page)?.[1];
-      expect(anchor && index.includes(`id="${anchor}"`), `${withAdapter.pageUrl}: the Adapters row links /adapters/#${anchor ?? '(none)'}, which /adapters/ does not have`);
+      const anchors = [...page.matchAll(/href="\/adapters\/#([^"]+)"/g)].map((m) => m[1]);
+      expect(anchors.length, `${withAdapter.pageUrl}: no link to /adapters/`);
+      for (const anchor of anchors) expect(index.includes(`id="${anchor}"`), `${withAdapter.pageUrl}: links /adapters/#${anchor}, which /adapters/ does not have`);
     } catch (e) { failures.push(`${withAdapter.pageUrl}: ${e.message}`); }
   }
-  // The index pages of the adapters named in the catalog, in both languages.
+  // /adapters/ and each adapter's section there, in both languages: a product adapter keeps its list by
+  // model at /adapters/<name>/; the list of a generic one redirects to its section (public/_redirects).
   const names = [...new Set((c.models ?? []).flatMap((m) => Object.keys(m.adapters ?? {})))];
-  for (const prefix of ['', '/en']) for (const path of ['/adapters/', ...names.map((n) => `/adapters/${n}/`)]) {
-    const pr = await head(`${BASE_URL}${prefix}${path}`);
-    expect(pr.status === 200 && h(pr, 'content-type').startsWith('text/html'), `${origin}${prefix}${path}: ${pr.status} ${h(pr, 'content-type')}`);
+  for (const prefix of ['', '/en']) {
+    const pr = await head(`${BASE_URL}${prefix}/adapters/`);
+    expect(pr.status === 200 && h(pr, 'content-type').startsWith('text/html'), `${origin}${prefix}/adapters/: ${pr.status} ${h(pr, 'content-type')}`);
+    for (const n of names) {
+      const r = await head(`${BASE_URL}${prefix}/adapters/${n}/`);
+      const ok = (r.status === 200 && h(r, 'content-type').startsWith('text/html')) || (r.status === 301 && h(r, 'location').endsWith(`${prefix}/adapters/#${n}`));
+      expect(ok, `${origin}${prefix}/adapters/${n}/: ${r.status} ${h(r, 'content-type')} ${h(r, 'location')}`);
+    }
   }
 }
 
