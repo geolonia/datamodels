@@ -41,9 +41,96 @@ fields:
 
 ## Conversion rules {#convert}
 
-A row can also say how to convert: `column` (the column of the CSV), `transform` (for example `integer`, `flag`, `split`; the toolkit's [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.8#convert) lists them all), a constant `value`, or `via` (build a nested value, such as an address, with another mapping file). `convert.id` names the entities. Rows with only `to` are documentation. Only some mapping files have conversion rules; most only document how the model relates to the standard.
+Only some mapping files have conversion rules; most only document how the model relates to the standard. A row with rules says how to fill its attribute:
+
+- `column`: the column of the CSV, or a list of columns for a transform that reads several.
+- `transform`: how to read the column ([Transforms](#transforms)). Without one, the text is taken as it is.
+- `value`: a constant, the same in every row.
+- `via`: build a nested value, such as an address, with another mapping file, for example `common/JapaneseAddress/jichitai-opendata-address`.
+
+A row with only `to` is documentation.
+
+A field name with a dot fills a field of a value: `address.postalCode: { column: 郵便番号 }`. The catalog's mapping files mostly use `via` instead, so that several models share the rules for an address.
+
+`convert.id` is the template of the entity ids:
+
+```yaml
+convert:
+  id: "urn:ngsi-ld:MedicalInstitution:{localGovernmentCode}-{externalFacilityId}"
+```
+
+- `{attribute}` is that attribute's value in the row; `{address.localGovernmentCode}` is a field of a value.
+- Inside a longer id, a value is URL-encoded. A template that is only one value, such as `"{id}"`, takes the value as it is.
+- Without a template, a field `id` with a `column` gives the entity id as it is.
+
+`convert.allDay` says what opening hours of 0:00 to 0:00 mean in the list ([below](#all-day)).
 
 The converter `datamodels convert` from [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) reads these rules and turns a CSV list into entities of the model. How to use it: [Converting your data](/en/toolkit/convert).
+
+### Transforms {#transforms}
+
+| `transform` | Columns | What it makes |
+|---|---|---|
+| (none) or `text` | 1 | The text as it is. Empty is no value. |
+| `code6` | 1 | A 6-digit local government code. It repairs a lost leading zero or a missing check digit, when the check digit proves it. |
+| `number` | 1 | A number. |
+| `integer` | 1 | A whole number. It also takes `1,200` and `1200人`. |
+| `numbers` | 2 or more | A list of numbers. |
+| `flag` | 1 | `1` is true; `0` or empty is false. |
+| `boolean` | 1 | `true` or `false` (also `TRUE`, `True`, `1`, `0`). Empty is no value. |
+| `yesno` | 1 | `有`, `有り`, `あり`, `アリ`, `はい`, `○`, `〇`, `◯` are true; `無`, `無し`, `なし`, `ナシ`, `いいえ`, `×`, `✕` are false. Empty is no value. `values` replaces these words ([values](#values)). |
+| `flags` | from `values` | A list of the values whose column holds `1`: `values: { 洪水: flood, 地震: earthquake }`. |
+| `split` | 1 | A list, split at `;` or `；`. |
+| `weekdays` | 1 | The days of OpeningHours (`Monday` … `Sunday`, `PublicHolidays`), [below](#weekdays). |
+| `time` | 1 | A time as `HH:MM`, [below](#time). |
+| `geometry` | 1 to 3 | Two columns, longitude and latitude, make a GeoJSON Point. One column holds a GeoJSON geometry. With three, the third is the GeoJSON for rows without longitude and latitude. |
+| `json` | 1 | The JSON in the column. |
+| `municipality` | 1 | A municipality name. A value that goes on, such as `宇都宮市中央本町1-29`, is left out and reported. |
+| `machiazaId` | 1 | The 7-digit town id of the Address Base Registry, without its hyphen. |
+| `nationalShelterType` | 1 | `general` or `welfare`, from the type code in a 全国共通避難所・避難場所 ID. |
+
+No transform guesses. A text outside the forms it knows is a problem of the row, named with its column and the text: for example `不明` for `yesno`, `月～金（祝日を除く）` or `第2土曜` for `weekdays`, and `25:00` or `9時半` for `time`.
+
+#### weekdays {#weekdays}
+
+`weekdays` reads `月～金`, `月-金`, `月火水木金`, `月・水・金`, `土日祝`, `月曜日～金曜日`, and `12345` (1 is Monday, 7 Sunday). `平日` is Monday to Friday, and `毎日` the seven days. A range wraps: `金～月` is Friday to Monday. `祝` and `祝日` are `PublicHolidays`, which are in the list only when the text names them.
+
+#### time {#time}
+
+`time` writes `9:00`, `9時` and `9時30分` as `09:00` and `09:30`, with full-width digits made half-width. Seconds are kept (`17:00:30`). Each change is listed as a repair.
+
+It reads the hours 0 to 24. `0:00` becomes `00:00`, the start of the day. `24:00` is kept: the schema allows it as a closing time (the end of the day) but not as an opening time, so a row that opens at 24:00 is invalid. `24:30` and `25:00` are problems.
+
+### values {#values}
+
+`values` turns the texts of one column into the model's values:
+
+```yaml
+medicalInstitutionType:
+  column: 医療機関の種類
+  values: { 病院: hospital, 有床診療所: clinicWithBeds, 無床診療所: clinicWithoutBeds }
+```
+
+- It works without a transform, with `split` (for each item of the list) and with `yesno` (instead of its words, for example `values: { 外部利用不可: true, "": false }`).
+- An empty cell is no value, unless `values` has an entry for `""`.
+- A text that `values` does not have is a problem of the row. It is never taken as it is.
+
+### Opening hours of 0:00 to 0:00 {#all-day}
+
+Lists do not agree on what 0:00 to 0:00 means. schema.org says only that a closing time before the opening time runs into the next day. Google's guidelines for structured data, the most used convention, read `00:00` to `23:59` as open 24 hours, and `00:00` to `00:00` as closed all day. Japanese lists often write `0:00` to `0:00` for "around the clock".
+
+So when a value opens and closes at 0:00, the row has a problem until the mapping says what the list means. This holds for `opens` and `closes` of OpeningHours, from columns or from a JSON value such as the CSV template's, also in a list:
+
+```yaml
+convert:
+  allDay: open      # open all day: written as 00:00 to 23:59
+# allDay: closed    # closed all day: written as 00:00 to 00:00
+```
+
+- `convert.allDay` applies to the opening hours that the mapping builds, and to those of every mapping it reaches through `via`. When more than one of them says it, the outermost one wins. So a mapping of your own decides it for the catalog's OpeningHours mapping, without a change to that file.
+- Each row it applies to is listed as a repair.
+- The meaning belongs to one list, so the catalog's mapping files leave it out. To convert such a list, use a [mapping of your own](/en/toolkit/convert#your-own-list).
+- The same time at another hour, such as `9:00` to `9:00`, is always a problem of the row: no convention says what it means.
 
 ## Adding a mapping
 
