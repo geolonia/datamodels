@@ -41,7 +41,7 @@ const T = {
     deprecatedNote: (link) => `このモデルは非推奨です。${link ? `代わりに ${link} を使ってください。` : ''}公開済みのファイルと URL はそのまま残ります。`, valueType: '値型', fields: 'フィールド', versions: 'バージョン', current: '現行',
     forPrograms: 'プログラムからは、同じ一覧を [catalog.json](/catalog.json) で読めます。',
     intro: 'モデルは分野ごとにまとめています。分野を開くか、名前・属性・説明で探してください。',
-    statusLabel: { draft: 'ドラフト', experimental: '試行', stable: '安定', deprecated: '非推奨' },
+    statusLabel: { draft: 'ドラフト', experimental: '試行', stable: '安定', deprecated: '非推奨' }, stagesTitle: '段階の意味',
     sourceLabel: { minted: 'このカタログで定義', profile: '上流モデルの日本向け拡張', global: '上流（Smart Data Models）' },
     subject: '分野', mappingField: 'このモデル', mappingTo: '対応先', mappingNote: '備考', none: '対応なし',
     alias: '別名', aliasNote: (link) => `${link} と同じ型です（IRI が同一）。名称だけがこの分野の言い方に合わせてあり、属性も必須項目も同じです。ブローカーでは同じ型として保存・照合されます。`,
@@ -64,7 +64,7 @@ const T = {
     deprecatedNote: (link) => `This model is deprecated.${link ? ` Use ${link} instead.` : ''} Its published files and URLs stay as they are.`, valueType: 'value type', fields: 'Fields', versions: 'Versions', current: 'current',
     forPrograms: 'Programs can read the same list from [catalog.json](/catalog.json).',
     intro: 'Models are grouped by subject. Open a subject, or search by name, attribute or description.',
-    statusLabel: { draft: 'draft', experimental: 'experimental', stable: 'stable', deprecated: 'deprecated' },
+    statusLabel: { draft: 'draft', experimental: 'experimental', stable: 'stable', deprecated: 'deprecated' }, stagesTitle: 'What the stages mean',
     sourceLabel: { minted: 'defined in this catalog', profile: 'Japanese extension of an upstream model', global: 'upstream (Smart Data Models)' },
     subject: 'Subject', mappingField: 'This model', mappingTo: 'Maps to', mappingNote: 'Note', none: 'no counterpart',
     alias: 'alias', aliasNote: (link) => `The same type as ${link} (identical IRI). Only the name follows this subject's wording; attributes and required fields are the same. A broker stores and matches both names as one type.`,
@@ -77,7 +77,8 @@ const badge = (type, text) => `<Badge type="${type}" text="${text}" />`;
 // Label colours carry a meaning (custom.css): green (tip) ready to use, amber (warning)
 // may still change, red (danger) careful, grey (info) just information.
 const stageBadgeType = { stable: 'tip', draft: 'warning', experimental: 'warning', deprecated: 'danger' };
-const statusBadge = (lang, status) => badge(stageBadgeType[status] ?? 'info', T[lang].statusLabel[status] ?? status);
+// The badge links the stages on the Rules page, where each one is explained.
+const statusBadge = (lang, prefix, status) => `<a class="stage-link" href="${prefix}/guide/rules#stages" title="${T[lang].stagesTitle}">${badge(stageBadgeType[status] ?? 'info', T[lang].statusLabel[status] ?? status)}</a>`;
 // The description is the page's meta and share-preview text, which shows no Markdown.
 export const plainText = (s) => String(s ?? '')
   .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/`([^`]*)`/g, '$1').replace(/\*\*([^*]+)\*\*/g, '$1')
@@ -253,7 +254,7 @@ function modelPage(lang, prefix, subject, model) {
   const playground = !isValue && model.examples['example.json'] && model.examples['example-normalized.jsonld'];
   // "<" escaped so no text can close the script block.
   if (playground) md += `<script setup>\nconst playground = ${JSON.stringify(playgroundData(lang, subject, model)).replaceAll('<', '\\u003c')}\n</script>\n\n`;
-  md += `# ${model.type} ${statusBadge(lang, model.catalog.status ?? 'draft')}${isValue ? ` ${badge('info', t.valueType)}` : ''}${aliasOf ? ` ${badge('info', t.alias)}` : ''}${subclassOf || subclassOfExternal ? ` ${badge('info', t.subclass)}` : ''}\n\n`;
+  md += `# ${model.type} ${statusBadge(lang, prefix, model.catalog.status ?? 'draft')}${isValue ? ` ${badge('info', t.valueType)}` : ''}${aliasOf ? ` ${badge('info', t.alias)}` : ''}${subclassOf || subclassOfExternal ? ` ${badge('info', t.subclass)}` : ''}\n\n`;
   // Deprecation is the one notice nobody may miss; everything else is in the table.
   if ((model.catalog.status ?? 'draft') === 'deprecated') {
     // supersededBy is a type IRI of this catalog (link its page) or any other URL.
@@ -389,7 +390,7 @@ async function subjectPage(lang, prefix, subject) {
   md += `| | |\n|---|---|\n| ${t.subject} | ${code(subject.name)} ${badge('info', t.sourceLabel[subject.source] ?? subject.source)} |\n| ${t.version} | ${code(subject.version)} |\n`;
   md += `| ${t.context} | [${code(u.contextAlias)}](${rel(u.contextAlias)}) |\n| ${t.namespace} | ${code(u.namespace)} |\n| ${t.vocabulary} | [${code(rel(u.vocabExact))}](${rel(u.vocabExact)}) |\n\n<small>${t.urlNote('#versions', `${prefix}/guide/urls`, false)}</small>\n\n`;
   md += `## ${t.models} {#models}\n\n| ${t.type} | ${t.name} | ${t.stage} |\n|---|---|---|\n`;
-  for (const m of subject.models) md += `| [${m.type}](${prefix}${rel(modelUrls(subject, m).page)}) | ${m.catalog.title?.[lang] ?? ''} | ${statusBadge(lang, m.catalog.status ?? 'draft')}${m.kind === 'value' ? ` ${badge('info', t.valueType)}` : ''}${m.schema['x-alias-of'] ? ` ${badge('info', t.alias)}` : ''}${m.schema['x-subclass-of'] ? ` ${badge('info', t.subclass)}` : ''} |\n`;
+  for (const m of subject.models) md += `| [${m.type}](${prefix}${rel(modelUrls(subject, m).page)}) | ${m.catalog.title?.[lang] ?? ''} | ${statusBadge(lang, prefix, m.catalog.status ?? 'draft')}${m.kind === 'value' ? ` ${badge('info', t.valueType)}` : ''}${m.schema['x-alias-of'] ? ` ${badge('info', t.alias)}` : ''}${m.schema['x-subclass-of'] ? ` ${badge('info', t.subclass)}` : ''} |\n`;
   const releases = await listReleases(subject);
   if (releases.length) {
     // In a div (custom.css .versions): the version and the @context URL stay on one line, the schema list wraps.

@@ -1,11 +1,11 @@
 ---
 title: Rules for models
-description: The rules for models in this catalog, when to define a new type, mapping to standards, and how to write examples
+description: The rules for models in this catalog, when to define a new type, mapping to standards, how to write examples, and the stages of a model (draft and others)
 ---
 
 # Rules for models
 
-This page is for people who add or change models in the catalog. How to propose is in [Contributing](/en/guide/contribute); who decides is in [CONTRIBUTING.md](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md#stages-and-who-decides).
+This page is for people who add or change models in the catalog. How to propose is in [Contributing](/en/guide/contribute); who decides is in [CONTRIBUTING.md](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md#stages-and-who-decides). What "draft" and the other labels on a model page mean: [Stages](#stages).
 
 ## Reuse first, define only what is missing
 
@@ -58,3 +58,21 @@ Every entity model has two examples (in the key-values form and the normalized f
 - **References**: a reference to another catalog type points at that type's example (Task's `project` is the Project example). References to the same type (`parent`, `relatedTo`) and to types the catalog does not define (`Person`, `Team`) are free. CI checks this.
 - **URLs**: source-system URLs use an example domain such as `tracker.example.jp`.
 - **Times**: local Japanese times carry `+09:00`.
+
+## Stages {#stages}
+
+Each model page shows the model's stage. A proposal (an issue) becomes a draft when it is merged, and moves on to stable and then deprecated.
+
+| Stage | Meaning |
+|---|---|
+| Draft (`draft`) | Reviewed and in the catalog. You can use it. It does not yet have implementations from two different organisations. |
+| Experimental (`experimental`) | A model in use, to learn from. It may be replaced by another model. Rare in this catalog. |
+| Stable (`stable`) | Used by two different organisations in their own systems. |
+| Deprecated (`deprecated`) | Not for new data. It stays published, and its URLs do not change. The model page names the replacement, if there is one. |
+
+Whatever the stage, a published version never changes (from the official launch). A model changes through new versions ([URLs and versions](/en/guide/urls)).
+
+To become stable, a model needs two implementations from different organisations in its `ADOPTERS.yaml`. Each entry gives `name`, `organization` and a `url` (a public repository, documentation or a contact). CI checks that two organisations are listed. The reviewer of the pull request that sets `stable` checks that they are real and independent.
+
+- An implementation by Geolonia, which runs the catalog, counts as one on the same terms. The other must come from a different organisation.
+- One organisation counts once, whatever the customer or project. `organization` names the organisation that built it.

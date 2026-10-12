@@ -381,6 +381,9 @@
 .vp-doc details.rules > summary:focus:not(:focus-visible) { outline: none; }
 .vp-doc details.rules[open] { padding-bottom: 8px; }
 
+/* A stage badge links the stages on the Rules page (scripts/lib/site.mjs, ModelIndex.vue). */
+.stage-link, .vp-doc a.stage-link { text-decoration: none; }
+
 /* A small flow diagram in a guide (an inline SVG with class flow-diagram, e.g. /guide/geonicdb). */
 .vp-doc .flow-diagram { display: block; width: 100%; max-width: 460px; margin: 24px auto; }
 .flow-diagram .box { fill: var(--vp-c-bg-soft); stroke: var(--vp-c-divider); stroke-width: 1.5; }
