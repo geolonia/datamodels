@@ -95,7 +95,7 @@ npx @geolonia/datamodels@0.3.10 build my-models --out public
 
 `build` は、エンティティのモデルごとに [`export`](/toolkit/export) と同じファイルを書き出します。CSV テンプレート、その Table Schema、AI 用のスキーマ、PostgreSQL / PostGIS のテーブルです。`catalog.json` では、datamodels.jp と同じく、モデルの項目の `adapters` に載ります。モデルのページには**ダウンロード**の行があり、ファイルごとのボタンと、datamodels.jp の[アダプター](/adapters/#downloads)への「これらのファイルについて」のリンクが並びます。
 
-- モデルが、ほかのノードのスキーマを参照することがあります。datamodels.jp の JapaneseAddress などです。`build` はこれをオンラインで読みますが、`nodes` にあるノードの `schema/` フォルダーからだけです。ほかの場所にあるときや読めないときは、そのモデルのファイルを書き出さず、`build` がそう知らせます。
+- モデルが、ほかのノードのスキーマを参照することがあります。datamodels.jp の JapaneseAddress などです。`build` はこれをオンラインで読みますが、`nodes` にあるノードの `schema/` フォルダーからだけです。ほかの場所にあるときや読めないときは、そのモデルのほかのツール向けのファイル（CSV テンプレートなど）だけを書き出さず、`build` がそう知らせます。
 - これらのファイルは毎回作り直します。公開したファイルは変えない、という約束には含まれません。
 
 ## ページ {#pages}

@@ -26,7 +26,7 @@ Exit codes:
 |---|---|
 | `0` | Done. |
 | `1` | The command found a problem, or could not read a file or a site. Each command below says when. |
-| `2` | A usage error: an unknown command or option, a missing argument, or a wrong value. The command prints its usage line. |
+| `2` | A usage error: an unknown command or option, a missing argument, or an option value in the wrong form. The command prints its usage line. Some values are checked only later, and then the exit code is 1; each command below says which. |
 
 ## init {#init}
 
