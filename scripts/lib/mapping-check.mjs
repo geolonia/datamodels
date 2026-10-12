@@ -100,6 +100,8 @@ export function mappingProblems(map, schema, mappingNames = null) {
     // values on one column turns its texts into the model's values ({ 病院: hospital }, with yesno
     // { 外部利用不可: true, "": false }); which transforms take them is the converter's to check.
     if (m.values !== undefined && m.transform !== 'flags' && (!m.values || typeof m.values !== 'object' || Array.isArray(m.values) || !Object.keys(m.values).length || Object.values(m.values).some((v) => !['string', 'boolean', 'number'].includes(typeof v)))) out.push(`${field}: values must give each text of the column its value, such as { 病院: hospital }`);
+    // The texts come from one column: with none the converter reads nothing and drops the field.
+    if (m.values !== undefined && m.transform !== 'flags' && cols.length !== 1) out.push(`${field}: values needs exactly one column to read the texts from`);
     if (m.transform === 'numbers' && cols.length < 2) out.push(`${field}: transform numbers needs at least two columns`);
     if (m.via !== undefined && (typeof m.via !== 'string' || (mappingNames && !mappingNames.has(m.via)))) out.push(`${field}: via must name a mapping file as subject/Type/name, got ${JSON.stringify(m.via)}`);
     if ([m.column !== undefined, m.value !== undefined, m.via !== undefined].filter(Boolean).length > 1) out.push(`${field}: use one of column, value and via`);

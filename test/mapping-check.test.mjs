@@ -46,6 +46,7 @@ test('conversion rules are checked: columns, the form of transform names, flags 
   assert.deepEqual(rule({ transform: 'flags', values: ['flood'] }), ['progress: transform flags needs values as column: value']);
   assert.deepEqual(rule({ column: 'a', values: { a: 'b' } }), []);
   assert.deepEqual(rule({ column: 'a', transform: 'yesno', values: { a: true, '': false } }), []);
+  for (const column of [undefined, ['a', 'b']]) assert.deepEqual(rule({ column, values: { a: 'b' } }), ['progress: values needs exactly one column to read the texts from'], JSON.stringify(column));
   for (const bad of [{}, ['b'], 'b', { a: null }, { a: ['b'] }]) assert.deepEqual(rule({ column: 'a', values: bad }), ['progress: values must give each text of the column its value, such as { 病院: hospital }'], JSON.stringify(bad));
   assert.deepEqual(rule({ column: 'a', transform: 'numbers' }), ['progress: transform numbers needs at least two columns']);
   assert.deepEqual(rule({ via: 'common/Geometry/nothing' }), ['progress: via must name a mapping file as subject/Type/name, got "common/Geometry/nothing"']);
