@@ -3,7 +3,7 @@
     {
       "url": "https://models.gtt-project.org/",
       "index": "https://models.gtt-project.org/catalog.json",
-      "fetchedAt": "2026-10-11",
+      "fetchedAt": "2026-10-12",
       "publisher": {
         "name": {
           "en": "GTT Project"
@@ -41,33 +41,25 @@
       ]
     },
     {
-      "url": "https://dkastl.github.io/models/",
-      "index": "https://dkastl.github.io/models/catalog.json",
-      "fetchedAt": "2026-10-11",
+      "url": "https://models.geolonia.com/",
+      "index": "https://models.geolonia.com/catalog.json",
+      "fetchedAt": "2026-10-12",
       "publisher": {
         "name": {
-          "en": "Daniel Kastl"
+          "ja": "Geolonia",
+          "en": "Geolonia"
         },
-        "url": "https://github.com/dkastl"
+        "url": "https://geolonia.com/"
       },
       "license": "CC0-1.0",
       "models": [
         {
-          "type": "Activity",
-          "typeIri": "https://dkastl.github.io/models/ns/activity#Activity",
-          "pageUrl": "https://dkastl.github.io/models/models/activity/Activity/",
+          "type": "HazardArea",
+          "typeIri": "https://models.geolonia.com/ns/smartmap#HazardArea",
+          "pageUrl": "https://models.geolonia.com/models/smartmap/HazardArea/",
           "title": {
-            "en": "Activity"
-          },
-          "status": "experimental",
-          "extends": []
-        },
-        {
-          "type": "Peak",
-          "typeIri": "https://dkastl.github.io/models/ns/activity#Peak",
-          "pageUrl": "https://dkastl.github.io/models/models/activity/Peak/",
-          "title": {
-            "en": "Peak"
+            "ja": "想定区域",
+            "en": "Hazard area"
           },
           "status": "experimental",
           "extends": []

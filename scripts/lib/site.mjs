@@ -8,7 +8,7 @@
 import { mkdir, writeFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 import { attributesOf, subjectUrls, modelUrls, BASE_URL, ROOT, CORE_TERMS, mdText, isCatalogIri } from './models.mjs';
-import { modelAnchor } from './adapter-pages.mjs';
+import { DOWNLOADS_ANCHOR, PRODUCTS_ANCHOR, inDownloadOrder } from './adapter-pages.mjs';
 import { graphSvg, graphTitle } from './graph.mjs';
 import { listReleases } from './releases.mjs';
 import { standardsPage } from './standards.mjs';
@@ -30,7 +30,7 @@ const T = {
     linkHeader: 'Link ヘッダー', type: '型', name: '名前', stage: '段階', typeIri: '型 IRI', useGuide: (href) => `データの検証とブローカーへの送り方は[使い方](${href})にあります。`, context: '@context',
     urlNote: (versions, guide, withSchema) => `この @context${withSchema ? ' と JSON Schema' : ''} の URL は、常に互換性のある最新版を指します。<br>内容が変わらない URL は[バージョン](${versions})にあります。詳しくは[URL とバージョン](${guide})を見てください。`, schema: 'JSON Schema',
     adapters: 'アダプター', adaptersLine: (link) => `特定のブローカーやツールにそのまま読み込めるファイルも、このモデルから作っています：${link}`,
-    downloads: 'ダウンロード', aboutFiles: (link) => `（${link}）`, aboutFilesText: 'これらのファイルについて',
+    downloads: 'ダウンロード', aboutFilesText: 'これらのファイルについて',
     namespace: '名前空間', version: 'バージョン', vocabulary: '語彙',
     tryIt: '例を試す',
     extendThis: (href) => `このモデルに独自の属性を足すときは、[拡張ビルダー](${href})で @context と JSON Schema を作れます。`,
@@ -53,7 +53,7 @@ const T = {
     linkHeader: 'Link header', type: 'Type', name: 'Name', stage: 'Stage', typeIri: 'Type IRI', useGuide: (href) => `How to validate data and send it to a broker: [Using the models](${href}).`, context: '@context',
     urlNote: (versions, guide, withSchema) => `${withSchema ? 'These @context and JSON Schema URLs always point' : 'This @context URL always points'} to the latest compatible version.<br>For URLs that never change, see [Versions](${versions}). More in [URLs and versions](${guide}).`, schema: 'JSON Schema',
     adapters: 'Adapters', adaptersLine: (link) => `Files that particular brokers and tools can load as they are, made from this model: ${link}`,
-    downloads: 'Download', aboutFiles: (link) => ` (${link})`, aboutFilesText: 'about these files',
+    downloads: 'Download', aboutFilesText: 'About these files',
     namespace: 'Namespace', version: 'Version', vocabulary: 'Vocabulary',
     tryIt: 'Try the example',
     extendThis: (href) => `To add attributes of your own to this model, the [extension builder](${href}) writes the @context and JSON Schema.`,
@@ -92,27 +92,31 @@ let allSubjects = [];
 let allAdapters = [];
 // The known nodes (nodes.snapshot.json), for "Built on by others" and the sites page.
 let allNodes = { nodes: [] };
-/** The sentence under "Using this model" that links the model's adapter files, or '' without any. No product names. */
+/**
+ * The sentence under "Using this model" that links the files for particular
+ * products on /adapters/, or '' when no such adapter serves the model. No
+ * product names. The generic files are in the "Download" row instead.
+ */
 export function adapterLine(lang, prefix, subject, model, adapters) {
   const t = T[lang];
-  return adapters.some((a) => a.urlFor(subject, model)) ? `${t.adaptersLine(`[${t.adapters}](${prefix}/adapters/#${modelAnchor(subject, model)})`)}\n\n` : '';
+  return adapters.some((a) => !a.download && a.urlFor(subject, model)) ? `${t.adaptersLine(`[${t.adapters}](${prefix}/adapters/#${PRODUCTS_ANCHOR})`)}\n\n` : '';
 }
 
+// A small download arrow in the buttons of the "Download" row (custom.css .downloads).
+const DOWNLOAD_ICON = '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M8 2v8m-3.5-3.5L8 10l3.5-3.5M3 13h10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
 /**
- * The URL table's "Download" cell: the files of the generic adapters
- * (`download: true`, the toolkit's) for this model, and a link to its entry
- * on /adapters/, which explains them. '' without any. A product's files
+ * The URL table's "Download" cell: one button per file of the generic adapters
+ * (`download: true`, the toolkit's) for this model, and a link to the section
+ * of /adapters/ that explains them. '' without any. A product's files
  * (GeonicDB) are only on /adapters/, so the page stays product-neutral.
  */
 export function downloadLine(lang, prefix, subject, model, adapters) {
   const t = T[lang];
-  // In the toolkit's order (its model pages show the same): the CSV template first, the table last.
-  const order = ['csv', 'table-schema', 'ai', 'postgis'];
-  const rank = (a) => (order.includes(a.name) ? order.indexOf(a.name) : order.length);
-  const files = adapters.filter((a) => a.download).sort((a, b) => rank(a) - rank(b)).map((a) => [a, a.urlFor(subject, model)]).filter(([, url]) => url);
+  const files = inDownloadOrder(adapters.filter((a) => a.download)).map((a) => [a, a.urlFor(subject, model)]).filter(([, url]) => url);
   if (!files.length) return '';
-  const links = files.map(([a, url]) => `<a href="${rel(url)}" download>${a.label[lang]}</a>`).join(' · ');
-  return `${links}${t.aboutFiles(`[${t.aboutFilesText}](${prefix}/adapters/#${modelAnchor(subject, model)})`)}`;
+  const buttons = files.map(([a, url]) => `<a class="download-button" href="${rel(url)}" download title="${url.split('/').pop()}">${DOWNLOAD_ICON}${a.label[lang]}</a>`).join(' ');
+  return `<span class="downloads">${buttons}</span> <span class="about-files">[${t.aboutFilesText}](${prefix}/adapters/#${DOWNLOADS_ANCHOR})</span>`;
 }
 
 /** Everything the example playground (ExamplePlayground.vue) needs for one entity model. */
@@ -463,6 +467,8 @@ const NODES = {
     intro: (own) => `自分のサイト（ノード）でデータモデルを公開していて、datamodels.jp が知っているサイトです。1 行に 1 つのサイトで、モデルの数と、このカタログのどのモデルをもとにしているかを示します。サイトのモデルはこのカタログの一部ではなく、datamodels.jp は内容を確認していません。それぞれのサイトが自分のモデルを決めます。多くの人に役立つモデルは、カタログに提案できます。自分のサイトの作り方は[サイトを始める](${own})にあります。`,
     perModel: 'サイトのモデルは、それぞれのサイトで見られます。このカタログのモデルをもとにしたモデルは、そのモデルのページの「このモデルをもとにしたもの」にも、足した属性と一緒に載ります。',
     add: (issue) => `自分のサイトを載せたいときは、[Issue](${issue}) で知らせてください。各サイトの catalog.json から読み、取り込むときに確認しています。`,
+    // Sites build on the catalog's models (the same diagram as on /guide/own-models).
+    diagram: '<svg class="flow-diagram" viewBox="0 0 460 216" role="img" aria-label="datamodels.jp はカタログのモデルと、データモデルのサイトの一覧を公開します。models.gtt-project.org の Issue は、カタログの Task をもとにしています。自分のサイトのモデルも、カタログのモデルをもとにできます。どのサイトも catalog.json を公開します。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="sites-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box main" x="10" y="8" width="440" height="58" rx="10"/><text class="t" x="230" y="33">datamodels.jp</text><text class="s" x="230" y="53">カタログのモデル（Task など）と、サイトの一覧</text><rect class="box" x="10" y="150" width="210" height="58" rx="10"/><text class="t m" x="115" y="175">models.gtt-project.org</text><text class="s" x="115" y="194">Issue、catalog.json</text><rect class="box d" x="240" y="150" width="210" height="58" rx="10"/><text class="t" x="345" y="175">自分のサイト</text><text class="s" x="345" y="194">自分のモデル、catalog.json</text><line class="a" x1="115" y1="150" x2="115" y2="68" marker-end="url(#sites-ah)"/><text class="l" x="125" y="104">Issue は Task をもとにする</text><line class="a d" x1="345" y1="150" x2="345" y2="68" marker-end="url(#sites-ah)"/><text class="l e" x="335" y="128">もとにできる</text></svg>',
     none: 'まだありません。', site: 'サイト', licence: 'ライセンス', models: 'モデルの数', buildsOn: 'もとにしたカタログのモデル', read: '読んだ日',
   },
   en: {
@@ -470,6 +476,8 @@ const NODES = {
     intro: (own) => `Sites of their own (nodes) that publish data models and that datamodels.jp knows: one row per site, with how many models it has and which catalog models they build on. Their models are not part of this catalog, and datamodels.jp does not review them: each site decides about its own. A model that is useful to many can be proposed to the catalog. How to make a site: [Starting a site](${own}).`,
     perModel: 'Each site shows its own models. A model built on a catalog model is also listed on that model\'s page, under "Built on by others", with the attributes it adds.',
     add: (issue) => `To have your site listed, tell us in an [issue](${issue}). The sites are read from their catalog.json and reviewed when they are taken in.`,
+    // Sites build on the catalog's models (the same diagram as on /guide/own-models).
+    diagram: '<svg class="flow-diagram" viewBox="0 0 460 216" role="img" aria-label="datamodels.jp publishes the catalog\'s models and the list of data model sites. Issue on models.gtt-project.org builds on the catalog\'s Task. A model on your own site can build on a catalog model too. Every site publishes a catalog.json." xmlns="http://www.w3.org/2000/svg"><defs><marker id="sites-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box main" x="10" y="8" width="440" height="58" rx="10"/><text class="t" x="230" y="33">datamodels.jp</text><text class="s" x="230" y="53">Catalog models (Task and others) and the list of sites</text><rect class="box" x="10" y="150" width="210" height="58" rx="10"/><text class="t m" x="115" y="175">models.gtt-project.org</text><text class="s" x="115" y="194">Issue, catalog.json</text><rect class="box d" x="240" y="150" width="210" height="58" rx="10"/><text class="t" x="345" y="175">Your site</text><text class="s" x="345" y="194">Your models, catalog.json</text><line class="a" x1="115" y1="150" x2="115" y2="68" marker-end="url(#sites-ah)"/><text class="l" x="125" y="104">Issue builds on Task</text><line class="a d" x1="345" y1="150" x2="345" y2="68" marker-end="url(#sites-ah)"/><text class="l e" x="335" y="128">can build on it too</text></svg>',
     none: 'None yet.', site: 'Site', licence: 'Licence', models: 'Models', buildsOn: 'Builds on (catalog models)', read: 'Read on',
   },
 };
@@ -481,6 +489,7 @@ export function nodesPage(lang, prefix, nodes) {
   let md = front(n.title, n.description).replace(/\n---\n\n$/, '\naside: false\n---\n\n');
   md += `# ${n.title}\n\n${n.intro(`${prefix}/toolkit/start`)}\n\n${n.add('https://github.com/geolonia/datamodels/issues/new')}\n\n`;
   if (!nodes.nodes?.length) return `${md}${n.none}\n`;
+  md += `${n.diagram}\n\n`;
   md += `| ${n.site} | ${n.licence} | ${n.models} | ${n.buildsOn} | ${n.read} |\n|---|---|---|---|---|\n`;
   for (const node of nodes.nodes) {
     // Every catalog model one of its models builds on (alias, superclass or extended type), once, in the order met.

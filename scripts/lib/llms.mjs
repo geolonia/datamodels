@@ -68,6 +68,7 @@ export async function llmsTxt(subjects) {
   }
   txt += `## Optional\n\n`;
   txt += `- [catalog.json](${BASE_URL}/catalog.json): every model with its type IRI, context, schema, vocabulary, example, page (Japanese and English), mapping and adapter URLs, its attributes (type, required, IRI) and the licence (CC0-1.0)\n`;
+  txt += `- [Adapters](${BASE_URL}/en/adapters/): the files made from each model for particular tools and brokers (a CSV template, its Table Schema, a strict JSON Schema for AI structured output, a PostgreSQL / PostGIS table, GeonicDB Custom Data Models): what each file is, how to use it and where to get it. The generic files are under Download on each model page and under \`adapters\` in catalog.json\n`;
   txt += `- [Standards covered](${BASE_URL}/en/guide/standards): every external standard a model is mapped to (EEI, the municipal standard open datasets, GSI, GIF and more), with a link to each field-by-field table\n`;
   txt += `- [Data model sites](${BASE_URL}/en/guide/sites): other sites that publish their own data models with datamodels-toolkit: one row per site, with its licence, how many models it has and which catalog models they build on. Each catalog model page lists the site models and listed extensions built on it, with the attributes they add and their IRIs ("Built on by others")\n`;
   txt += `- [AI and agents](${BASE_URL}/en/ai): how AI is used to make this site, and what agents can use\n`;

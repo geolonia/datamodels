@@ -26,6 +26,8 @@ test('each adapter has a file for every entity model, at its URL on datamodels.j
   for (const a of generic) {
     assert.equal(a.download, true, `${a.name}: generic`);
     assert.equal(a.guide, '/toolkit/export');
+    assert.ok(a.use.ja && a.use.en, `${a.name}: how to use it, for /adapters/`);
+    assert.equal(a.command, `datamodels export <subject>/<Type> --to ${a.name}`);
     for (const s of subjects) for (const m of s.models) {
       const url = a.urlFor(s, m);
       if (m.kind === 'value') { assert.equal(url, null, `${a.name} ${m.type}`); continue; }
@@ -56,17 +58,22 @@ test('the files use the catalog\'s URLs and both languages', () => {
   assert.equal(JSON.parse(ai.content(s, m)).name, 'EvacuationSite');
 });
 
-test('a model page\'s Download row links the generic files and /adapters/, never a product; value types have none', () => {
+test('a model page\'s Download row has a button per generic file and links /adapters/, never a product; value types have none', () => {
   const adapters = [...generic, geonicdb];
-  for (const [lang, prefix, about] of [['ja', '', 'これらのファイルについて'], ['en', '/en', 'about these files']]) {
+  for (const [lang, prefix, about] of [['ja', '', 'これらのファイルについて'], ['en', '/en', 'About these files']]) {
     for (const s of subjects) for (const m of s.models) {
       const line = downloadLine(lang, prefix, s, m, adapters);
       if (m.kind === 'value') { assert.equal(line, '', `${m.type}`); continue; }
+      let last = -1;
       for (const a of generic) {
         const url = a.urlFor(s, m);
-        if (url) assert.ok(line.includes(`<a href="${url.slice(BASE_URL.length)}" download>${a.label[lang]}</a>`), `${lang} ${m.type} ${a.name}`);
+        if (!url) continue;
+        const at = line.indexOf(`<a class="download-button" href="${url.slice(BASE_URL.length)}" download title="${url.split('/').pop()}">`);
+        assert.ok(at > last, `${lang} ${m.type} ${a.name}: a button, in the order CSV, Table Schema, AI, PostGIS`);
+        assert.ok(line.includes(`</svg>${a.label[lang]}</a>`), `${lang} ${m.type} ${a.name}: label`);
+        last = at;
       }
-      assert.ok(line.includes(`[${about}](${prefix}/adapters/#${`${s.name}-${m.type}`.toLowerCase()})`), `${lang} ${m.type}: about`);
+      assert.ok(line.includes(`[${about}](${prefix}/adapters/#downloads)`), `${lang} ${m.type}: about`);
       assert.doesNotMatch(line, /GeonicDB|geonicdb/, `${lang} ${m.type}: no product`);
     }
     assert.equal(downloadLine(lang, prefix, subjects[1], subjects[1].models[0], [geonicdb]), '', 'only a product adapter: no Download row');
