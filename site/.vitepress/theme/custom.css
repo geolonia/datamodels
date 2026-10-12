@@ -372,6 +372,8 @@
 .flow-diagram .l.e { text-anchor: end; }
 .flow-diagram .a { stroke: var(--vp-c-text-3); stroke-width: 1.5; }
 .flow-diagram .a.d { stroke-dasharray: 4 3; }
+/* A dashed box: something the reader may add (your own site, /guide/own-models). */
+.flow-diagram .box.d { stroke-dasharray: 5 4; }
 .flow-diagram .ah { fill: var(--vp-c-text-3); }
 .flow-diagram a .box { transition: stroke 0.15s; }
 .flow-diagram a:hover .box { stroke: var(--vp-c-brand-1); }
