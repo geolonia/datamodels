@@ -323,6 +323,26 @@
 .vp-doc .built-on a[id] { scroll-margin-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 24px); }
 .vp-doc .built-on tr:has(a[id]:target) td { background: var(--vp-c-brand-soft); }
 .vp-doc .old-anchor { scroll-margin-top: calc(var(--vp-nav-height) + var(--vp-layout-top-height, 0px) + 24px); }
+/* Download row (scripts/lib/site.mjs, downloadLine): one small outlined button per file, ink on
+ * paper like the secondary buttons, red on hover; "About these files" small underneath. */
+.vp-doc .downloads { display: flex; flex-wrap: wrap; gap: 6px; }
+.vp-doc .downloads a.download-button {
+  display: inline-flex; align-items: center; gap: 5px; padding: 2px 10px 2px 8px;
+  font-size: 13px; font-weight: 500; line-height: 22px; white-space: nowrap;
+  color: var(--vp-c-text-1); background: var(--vp-c-bg-elv); border: 1px solid var(--vp-c-border); border-radius: 6px;
+  text-decoration: none; transition: color 0.15s, border-color 0.15s;
+}
+.vp-doc .downloads a.download-button:hover { color: var(--vp-c-brand-1); border-color: var(--vp-c-brand-1); }
+.vp-doc .downloads a.download-button:focus-visible { outline: 2px solid var(--vp-c-brand-1); outline-offset: 1px; }
+.vp-doc .downloads a.download-button svg { flex: none; color: var(--vp-c-text-2); }
+.vp-doc .downloads a.download-button:hover svg { color: inherit; }
+.vp-doc .about-files { display: block; margin-top: 4px; font-size: 13px; }
+/* On a phone the URL table fits the screen instead of scrolling sideways, so no button is cut off:
+ * its URLs may break anywhere (as they do from 768px) and a long button label wraps. */
+@media (max-width: 767px) {
+  .vp-doc table:has(.downloads) td code { overflow-wrap: anywhere; }
+  .vp-doc .downloads a.download-button { white-space: normal; }
+}
 /* Required attributes: a star after the name, explained under the table. */
 .vp-doc .attributes .req { margin-left: 2px; color: var(--vp-c-brand-1); font-weight: 700; }
 /* Referenced standards: one box, a row per standard that opens to its table. */
