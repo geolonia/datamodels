@@ -61,4 +61,4 @@ AI 用スキーマは、OpenAI と Anthropic の両方の構造化出力が受�
 
 書けなかった規則は、「(minimum 0; maximum 9)」のように説明に入れます。`id` と `type` はスキーマに入りません。アプリケーションで付けます（[AI でデータを取り出す](/guide/ai-extraction#entity)）。説明は英語です。
 
-Claude の strict モードでは、null を許すプロパティは 1 回のリクエストで 16 個までです。それより多いモデルでは、`export` がそう知らせます。属性の多いモデルは、strict を付けずに tool の `input_schema` として使うか、要らない属性を除いてください。OpenAI の strict モードでは、そのまま使えます。
+Claude の strict モードでは、union 型（`anyOf` や、`null` を含む型）のパラメーターは 1 回のリクエストで 16 個までです。省略できる属性は 1 つずつ数えます。geometry のように複数の形をとれる値も、ほかの値の中にあるものを含めて数えます。それより多いモデルでは、`export` がそう知らせます。属性の多いモデルは、strict を付けずに tool の `input_schema` として使うか、要らない属性を除いてください。OpenAI の strict モードでは、そのまま使えます。

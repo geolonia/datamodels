@@ -66,7 +66,7 @@ Give `convert` your file as a path (`./my-list.yaml`) or a name that ends in `.y
 
 About the first version that `mapping` writes:
 
-- It reads the CSV header, and the first rows to tell a column of true and false from one of 1 and 0. No value of your list goes into the file.
+- It reads the CSV header, and up to the first 50 rows of a column to tell a column of true and false (or 有 and 無) from one of 1 and 0. No value of your list goes into the file.
 - It has one row per attribute, per field of a value (`address.postalCode`) and for the location, as the CSV template splits them. Required attributes come first.
 - A column fills a row when its name is the attribute's, also when written otherwise (`postal_code`, `Postal Code`), or the attribute's Japanese or English name in the catalog. The columns that the catalog's mapping files read for the attribute are clues too, with their transform. Longitude and latitude columns (`lng`, `経度`, …) become the location.
 - A column that only shares part of the Japanese name is marked as a guess, to check. When two columns fit equally well, the row stays a TODO and lists both as candidates.

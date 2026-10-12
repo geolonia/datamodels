@@ -61,4 +61,4 @@ The AI schema keeps to what the structured outputs of both OpenAI and Anthropic 
 
 What it leaves out goes into the description, for example "(minimum 0; maximum 9)". `id` and `type` are not in it: your application sets them ([Extracting data with AI](/en/guide/ai-extraction#entity)). The descriptions are in English.
 
-Claude's strict mode takes at most 16 nullable properties per request; `export` says so when a model has more. Use the schema of a larger model as a tool's `input_schema` without `strict`, or remove the attributes you do not need. OpenAI's strict mode takes it as it is.
+Claude's strict mode takes at most 16 parameters with a union type (`anyOf`, or a type with `null`) per request. Each optional attribute counts, and so does a value that allows several shapes, such as a geometry, also inside other values. `export` says so when a model has more. Use the schema of a larger model as a tool's `input_schema` without `strict`, or remove the attributes you do not need. OpenAI's strict mode takes it as it is.
