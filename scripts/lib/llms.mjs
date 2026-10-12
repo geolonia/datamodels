@@ -5,16 +5,17 @@ import { access } from 'node:fs/promises';
 import { join } from 'node:path';
 import { subjectUrls, modelUrls, BASE_URL, ROOT } from './models.mjs';
 
-// Guides in the order of the sidebar (site/.vitepress/config.ts); one whose
-// English page does not exist is left out.
+// Guides in the order of the sidebar (site/.vitepress/config.ts), after their
+// index ('' is the index page); one whose English page does not exist is left out.
 const GUIDES = [
+  ['', 'Guides', 'the index of the guides, in groups: using the models, adding to the catalog, models outside the catalog, reference'],
   ['tutorial', 'Tutorial: from a CSV file to a map', 'one real open-data CSV converted into a catalog model, loaded into GeonicDB, queried and shown on a map, step by step'],
   ['use', 'Using the models', 'validate JSON, send it to an NGSI-LD broker, use it as linked data'],
-  ['csv', 'Using a spreadsheet', "fill in a model's CSV template, check it with frictionless validate against its Table Schema, and convert it into NGSI-LD entities (datamodels convert ... csv-template)"],
+  ['csv', 'Using a spreadsheet (CSV)', "fill in a model's CSV template, check it with frictionless validate against its Table Schema, and convert it into NGSI-LD entities (datamodels convert ... csv-template)"],
   ['postgis', 'Using PostgreSQL / PostGIS', "load a model's PostgreSQL / PostGIS table (constraints, spatial index, column comments with IRIs), insert a row and query by distance"],
   ['ai-extraction', 'Extracting data with AI', "give a model's AI schema to an AI model (OpenAI response_format json_schema, or a Claude tool's input_schema) to extract entities from an e-mail or a PDF, then add id and type and check against the JSON Schema"],
   ['geonicdb', 'Use with GeonicDB', 'register a catalog model in GeonicDB, then create and query entities'],
-  ['mapping', 'Mapping files', 'mapping files: which field of a standard matches which attribute of a model, and the rules to convert a list; the catalog keeps them only for published standards that many lists follow'],
+  ['mapping', 'Mapping files', 'which field of a standard matches which attribute of a model, and the rules to convert a list; the catalog keeps them only for published standards that many lists follow'],
   ['extend', 'Adding attributes', 'add attributes of your own to a catalog model without copying it, and where to host the result'],
   ['builder', 'Extension builder', 'build the @context and JSON Schema for your own attributes on a catalog model, in the browser'],
   ['names', 'Your own names', 'use your own attribute and type names with JSON-LD aliases, without changing the model'],
@@ -46,7 +47,7 @@ export async function llmsTxt(subjects) {
   txt += `Every model page is published in Japanese (${BASE_URL}/models/...) and English (${BASE_URL}/en/models/...). Exact versions (v1.0.0) never change; major aliases (v1) follow the latest compatible version. Machine-readable list of every model with all its URLs: ${BASE_URL}/catalog.json.\n\n`;
   txt += `## Guides\n\n`;
   for (const [slug, title, what] of GUIDES) {
-    if (await exists(join(ROOT, 'site', 'en', 'guide', `${slug}.md`))) txt += `- [${title}](${BASE_URL}/en/guide/${slug}): ${what}\n`;
+    if (await exists(join(ROOT, 'site', 'en', 'guide', `${slug || 'index'}.md`))) txt += `- [${title}](${BASE_URL}/en/guide/${slug}): ${what}\n`;
   }
   txt += `\n## Toolkit\n\n`;
   for (const [slug, title, what] of TOOLKIT) {
@@ -69,11 +70,13 @@ export async function llmsTxt(subjects) {
   }
   txt += `## Optional\n\n`;
   txt += `- [catalog.json](${BASE_URL}/catalog.json): every model with its type IRI, context, schema, vocabulary, example, page (Japanese and English), mapping and adapter URLs, its attributes (type, required, IRI) and the licence (CC0-1.0)\n`;
+  txt += `- [GeonicDB Custom Data Models](${BASE_URL}/en/adapters/geonicdb/): the GeonicDB definition of every model, to register it in GeonicDB (see the guide Use with GeonicDB)\n`;
   txt += `- [Adapters](${BASE_URL}/en/adapters/): the files made from each model for particular tools and brokers (a CSV template, its Table Schema, a strict JSON Schema for AI structured output, a PostgreSQL / PostGIS table, GeonicDB Custom Data Models): what each file is, how to use it and where to get it. The generic files are under Download on each model page and under \`adapters\` in catalog.json\n`;
   txt += `- [Standards covered](${BASE_URL}/en/guide/standards): every external standard a model is mapped to (EEI, the municipal standard open datasets, GSI, GIF and more), with a link to each field-by-field table\n`;
   txt += `- [Data model sites](${BASE_URL}/en/guide/sites): other sites that publish their own data models with datamodels-toolkit: one row per site, with its licence, how many models it has and which catalog models they build on. Each catalog model page lists the site models and listed extensions built on it, with the attributes they add and their IRIs ("Built on by others")\n`;
   txt += `- [AI and agents](${BASE_URL}/en/ai): how AI is used to make this site, and what agents can use\n`;
+  txt += `- [About this site](${BASE_URL}/en/about): operator, licences, disclaimer and privacy\n`;
   txt += `- [Source repository](https://github.com/geolonia/datamodels): schemas, mappings to other standards, notes\n`;
-  txt += `- [Licences](${BASE_URL}/LICENSE-CONTENT): machine-readable files CC0 1.0, prose CC BY 4.0, code Apache-2.0\n`;
+  txt += `- [Licences](${BASE_URL}/en/LICENSE-CONTENT): machine-readable files CC0 1.0, prose CC BY 4.0, code Apache-2.0\n`;
   return txt;
 }

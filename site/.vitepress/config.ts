@@ -36,10 +36,10 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
         // The generic recipes (the Download row's files) come first, then a product's page.
         {
           ...page('使い方', 'Using the models', 'use', [
-            page('表計算ソフト（CSV）', 'Spreadsheet / CSV', 'csv'),
-            page('PostgreSQL / PostGIS', 'PostgreSQL / PostGIS', 'postgis'),
-            page('AI で取り出す', 'Extracting with AI', 'ai-extraction'),
-            { text: 'GeonicDB', link: `${prefix}/guide/geonicdb` },
+            page('表計算ソフト（CSV）で使う', 'Using a spreadsheet (CSV)', 'csv'),
+            page('PostgreSQL / PostGIS で使う', 'Using PostgreSQL / PostGIS', 'postgis'),
+            page('AI でデータを取り出す', 'Extracting data with AI', 'ai-extraction'),
+            page('GeonicDB で使う', 'Use with GeonicDB', 'geonicdb'),
           ]),
           collapsed: true,
         },
@@ -58,11 +58,11 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
       ],
     },
     {
-      text: ja ? '自分のモデルを公開する' : 'Publish your own models',
+      text: ja ? 'カタログの外のモデル' : 'Models outside the catalog',
       items: [
         page('自分のデータモデル', 'Your own data models', 'own-models'),
         // The steps are the Toolkit section's: a link there, not a copy.
-        { text: ja ? 'ツールキット' : 'Toolkit', link: `${prefix}/toolkit/` },
+        { text: ja ? '自分のサイトを作る（ツールキット）' : 'Your own site (Toolkit)', link: `${prefix}/toolkit/` },
       ],
     },
     {
@@ -210,7 +210,9 @@ export default defineConfig({
   // Per-page title, description and canonical URL for the same previews.
   transformPageData(pageData) {
     const path = pageData.relativePath.replace(/(^|\/)index\.md$/, '$1').replace(/\.md$/, '');
-    const title = pageData.title && pageData.title !== 'datamodels.jp' ? `${pageData.title} | datamodels.jp` : 'datamodels.jp';
+    // A page with titleTemplate: false (the home pages) has its whole title in its frontmatter.
+    const title = pageData.frontmatter.titleTemplate === false && pageData.title ? pageData.title
+      : pageData.title && pageData.title !== 'datamodels.jp' ? `${pageData.title} | datamodels.jp` : 'datamodels.jp';
     const lang = pageData.relativePath.startsWith('en/') ? 'en' : 'ja';
     const description = pageData.description || pageData.frontmatter.description || DESCRIPTION[lang];
     pageData.frontmatter.head ??= [];

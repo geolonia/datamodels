@@ -36,7 +36,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.8 nodes
 ```text
 Geolonia Inc.  https://datamodels.jp/  CC0-1.0  16 models
 GTT Project  https://models.gtt-project.org/  CC0-1.0  1 model  (linked from Geolonia Inc.)
-Geolonia  https://models.geolonia.com/  CC0-1.0  1 model  (linked from Geolonia Inc.)
+Geolonia Inc.  https://models.geolonia.com/  CC0-1.0  1 model  (linked from Geolonia Inc.)
 3 node(s) within 1 link(s) of https://datamodels.jp/catalog.json
 ```
 
@@ -50,7 +50,7 @@ Geolonia  https://models.geolonia.com/  CC0-1.0  1 model  (linked from Geolonia 
 npx github:geolonia/datamodels-toolkit#v0.3.8 add road/RoadPatrol
 ```
 
-`models/road/RoadPatrol/` に `schema.json`、`catalog.yaml`、`examples/example.json` ができます。サブジェクトの `@context` には型 `RoadPatrol` が入ります。続けて、[属性を書きます](#attributes)。
+`models/road/RoadPatrol/` に `schema.json`、`catalog.yaml`、`examples/example.json`、`notes.yaml` ができます。`notes.yaml` は、出典や決めたことと、その理由を書く注記です。サブジェクトの `@context` には型 `RoadPatrol` が入ります。続けて、[属性を書きます](#attributes)。
 
 ## カタログのモデルから始める {#extend}
 
@@ -59,6 +59,8 @@ npx github:geolonia/datamodels-toolkit#v0.3.8 add road/RoadPatrol
 ```bash
 npx github:geolonia/datamodels-toolkit#v0.3.8 extend task/Task road/RoadTask
 ```
+
+`extend` も、`add` と同じ 4 つのファイルを書き出します。サブジェクトの `context.jsonld` の `@context` は、取り込んだ @context の URL と、このノードの用語を並べたリストになります。
 
 ## 属性を書く {#attributes}
 

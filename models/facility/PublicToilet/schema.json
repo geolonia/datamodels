@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://datamodels.jp/schema/facility/PublicToilet/v1.0.0.json",
   "title": "PublicToilet",
-  "description": "One public toilet: one row of the list a municipality publishes as 自治体標準オープンデータセット dataset 13 (公衆トイレ一覧), with the numbers of toilets by kind",
+  "description": "One public toilet: one row of the list a municipality publishes as 自治体標準オープンデータセット (municipal standard open datasets) dataset 13 (公衆トイレ一覧), with the numbers of toilets by kind",
   "x-subclass-of": "https://datamodels.jp/ns/facility/Facility",
   "x-version": "1.0.0",
   "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",

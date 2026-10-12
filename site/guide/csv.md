@@ -1,9 +1,9 @@
 ---
-title: 表計算ソフトで使う
+title: 表計算ソフト（CSV）で使う
 description: モデルの CSV テンプレートに入力し、Table Schema に照らして frictionless validate で検査し、NGSI-LD のエンティティに変換する
 ---
 
-# 表計算ソフトで使う
+# 表計算ソフト（CSV）で使う
 
 エンティティのモデルのページの**ダウンロード**の行には、**CSV テンプレート**とその **Table Schema** があります（Geometry などの値型にはありません）。これを使うと、表計算ソフトで作業する人も、JSON を書かずにモデルの形のデータを作れます。このページでは、[指定緊急避難場所（EvacuationSite）](/models/disaster/EvacuationSite/)のテンプレートに入力して検査し、NGSI-LD のエンティティに変換します。
 
@@ -23,7 +23,7 @@ curl -sSfO "$BASE/table-schema/disaster/EvacuationSite.tableschema.json"
 
 ## 2. テンプレートに入力する {#fill}
 
-`EvacuationSite.csv` を表計算ソフトで開きます。1 行目には、属性ごとに 1 つの列があります。各列の意味は、モデルのページの属性の表にあります。避難場所 1 か所につき 1 行を足し、分からないセルは空のままにします。`sites.csv` という名前で、UTF-8 で保存してください（Excel では「CSV UTF-8」）。次の行には、後の手順で見つけるために、わざと誤りを 2 つ入れています。
+`EvacuationSite.csv` を表計算ソフトで開きます。1 行目には、属性ごとに 1 つの列があります。各列の意味は、モデルのページの属性の表にあります。避難場所 1 か所につき 1 行を足し、分からないセルは空のままにします。`sites.csv` という名前で、UTF-8 で保存してください（Excel では「CSV UTF-8」）。次の行には、後の手順で見つけるために、わざと誤りを 2 つ入れています。名称、住所、位置、災害の種別は、国土地理院の指定緊急避難場所データ（千代田区）の都立一橋高校の行と同じです。区の番号 `13101-0012` は、例のために作った値です。
 
 | 列 | 値 |
 |---|---|
@@ -33,17 +33,18 @@ curl -sSfO "$BASE/table-schema/disaster/EvacuationSite.tableschema.json"
 | `localGovernmentCode` | `13101` |
 | `address.addressText` | `東京都千代田区東神田1-12-13` |
 | `longitude`、`latitude` | `139.7810002`、`35.6945488` |
-| `hazardTypes` | `earthquake;fire` |
+| `hazardTypes` | `stormSurge;earthquake;内水氾濫` |
 | `alsoDesignatedShelter` | `true` |
 
-`hazardTypes` のような複数の値は `;` で区切ります。`longitude` と `latitude` から位置ができます。テンプレートの列は、空の列も含めてすべて残してください。Table Schema は、すべての列がこの順に並んでいることを前提にしています。
+`hazardTypes` のような複数の値は `;` で区切ります。`longitude` と `latitude` から位置ができます。テンプレートの列は、空の列も含めてすべて残してください。Table Schema は、すべての列がこの順に並んでいることを前提にしています。`convert` だけを使うなら、使わない列を消してもかまいません（[データを変換する](/toolkit/convert#csv-template)）。
 
 ## 3. frictionless で検査する {#validate}
 
-[frictionless](https://framework.frictionlessdata.io/) は、Table Schema に照らして各セルを確認します。型、パターン、使える値、必須のセルが埋まっているかを見ます。
+[frictionless](https://framework.frictionlessdata.io/) は、Table Schema に照らして各セルを確認します。型、パターン、使える値、必須のセルが埋まっているかを見ます。macOS（Homebrew）や新しい Debian と Ubuntu の Python では、`pip install` がエラーになります。そのため、[pipx](https://pipx.pypa.io/) か [uv](https://docs.astral.sh/uv/) の `uvx` を使います。
 
 ```bash
-pip install frictionless   # または pipx install frictionless
+pipx install frictionless
+# または uvx frictionless …、仮想環境（python -m venv）の中なら pip install
 frictionless validate sites.csv --schema EvacuationSite.tableschema.json
 ```
 
@@ -75,10 +76,10 @@ npx github:geolonia/datamodels-toolkit#v0.3.8 convert \
 
 ```text
 sites.csv: utf-8, 1 row(s), 0 valid EvacuationSite, 1 invalid
-  line 2: data/hazardTypes/1 must be equal to one of the allowed values
+  line 2: data/hazardTypes/2 must be equal to one of the allowed values
 ```
 
-JSON Schema は、Table Schema では確かめられないことも検査します。複数の値の中身と、「externalSiteId か nationalShelterId」のような複数の列にまたがる決まりです。`fire` はこのモデルの災害の種別にありません。種別の一覧は属性の表にあります。`inlandFlood` に直して、`convert` をもう一度実行します。
+JSON Schema は、Table Schema では確かめられないことも検査します。複数の値の中身と、「externalSiteId か nationalShelterId」のような複数の列にまたがる決まりです。災害の種別は、属性の表にある英語の値で書きます。日本語の `内水氾濫` は使えません。`inlandFlood` に直して、`convert` をもう一度実行します。
 
 ```text
 sites.csv: utf-8, 1 row(s), 1 valid EvacuationSite, 0 invalid
@@ -96,7 +97,7 @@ sites.csv: utf-8, 1 row(s), 1 valid EvacuationSite, 0 invalid
     "localGovernmentCode": "131016",
     "address": { "addressText": "東京都千代田区東神田1-12-13" },
     "location": { "type": "Point", "coordinates": [139.7810002, 35.6945488] },
-    "hazardTypes": ["earthquake", "inlandFlood"],
+    "hazardTypes": ["stormSurge", "earthquake", "inlandFlood"],
     "alsoDesignatedShelter": true
   }
 ]

@@ -118,7 +118,14 @@ Put the @context in the body and send `application/ld+json`, or leave it out and
 <summary>The rules, from key-values to normalized</summary>
 
 - `id` and `type` stay as they are.
-- Wrap each attribute in the NGSI-LD type that the attribute table on the model page gives: a Property is `{ "type": "Property", "value": … }`, a Relationship `{ "type": "Relationship", "object": … }`, a GeoProperty `{ "type": "GeoProperty", "value": … }`, a JsonProperty `{ "type": "JsonProperty", "json": … }`, a VocabProperty `{ "type": "VocabProperty", "vocab": … }`. In key-values form, a JsonProperty and a VocabProperty keep their member: `{ "json": … }`, `{ "vocab": … }`. The JSON Schema describes the value inside, so remove that member before you validate key-values data against the schema. Both are NGSI-LD 1.8 types: check that your broker supports them before you use a model that has them.
+- Wrap each attribute in the NGSI-LD type that the attribute table on the model page gives:
+  - Property: `{ "type": "Property", "value": … }`.
+  - Relationship: `{ "type": "Relationship", "object": … }`.
+  - GeoProperty: `{ "type": "GeoProperty", "value": … }`.
+  - JsonProperty: `{ "type": "JsonProperty", "json": … }`.
+  - VocabProperty: `{ "type": "VocabProperty", "vocab": … }`.
+
+  In key-values form, a JsonProperty and a VocabProperty keep their member: `{ "json": … }`, `{ "vocab": … }`. The JSON Schema describes the value inside, so remove that member before you validate key-values data against the schema. Both are NGSI-LD 1.8 types: check that your broker supports them before you use a model that has them.
 - The value of a date-time Property (`format: date-time` in the schema) becomes `{ "@type": "DateTime", "@value": … }`, and that of a date Property (`format: date`) `{ "@type": "Date", "@value": … }`. A Property that takes either ("date or date-time" on the model page) follows its value: `2026-07-11` is a Date, `2026-07-11T09:00:00+09:00` a DateTime.
 - A multi-valued attribute (marked "(multiple)" in the attribute table; for example `assignee` on Task) becomes an array with one instance per value, each with a `datasetId`. The catalog's examples use the form `urn:ngsi-ld:dataset:<attribute>:<n>`.
 - The `@context` lists the subject's alias and the NGSI-LD core context.
@@ -239,8 +246,8 @@ Each subject also publishes a vocabulary (`/vocab/<subject>/v1.0.0.jsonld`, RDFS
 
 The page of each entity model (not of value types such as Geometry) also has files for tools that do not read NGSI-LD, in its **Download** row. Short recipes, each with one worked example:
 
-- [Spreadsheet / CSV](/en/guide/csv): fill in the CSV template, check it with `frictionless validate`, and convert it into entities.
-- [PostgreSQL / PostGIS](/en/guide/postgis): create the model's table with its constraints, add a row, and query by distance.
-- [Extracting with AI](/en/guide/ai-extraction): give the AI schema to an AI model to take an entity out of an e-mail or a PDF.
+- [Using a spreadsheet (CSV)](/en/guide/csv): fill in the CSV template, check it with `frictionless validate`, and convert it into entities.
+- [Using PostgreSQL / PostGIS](/en/guide/postgis): create the model's table with its constraints, add a row, and query by distance.
+- [Extracting data with AI](/en/guide/ai-extraction): give the AI schema to an AI model to take an entity out of an e-mail or a PDF.
 
 To make these files for the models of your own site, see [Exporting to other tools](/en/toolkit/export).

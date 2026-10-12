@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://datamodels.jp/schema/facility/Facility/v1.0.0.json",
   "title": "Facility",
-  "description": "A facility that a municipality lists in its open data: what the facility datasets of the 自治体標準オープンデータセット share (name, address, location, publisher, operator, contact, opening hours), after GIF's core data model 施設. Subtypes add the columns of their own dataset",
+  "description": "A facility that a municipality lists in its open data: what the facility datasets of the 自治体標準オープンデータセット (municipal standard open datasets) share (name, address, location, publisher, operator, contact, opening hours), after GIF's core data model 施設. Subtypes add the columns of their own dataset",
   "x-version": "1.0.0",
   "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
   "x-model-tags": "facility, municipality, Japan",

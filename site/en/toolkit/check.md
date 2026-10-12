@@ -10,7 +10,17 @@ npx github:geolonia/datamodels-toolkit#v0.3.8 check
 npx github:geolonia/datamodels-toolkit#v0.3.8 build
 ```
 
-`check` validates every schema and example. `build` writes the site into `_site/`; open `_site/index.html` to look at it. On GitHub, the workflow runs the same check on every pull request.
+`check` validates every schema and example. On GitHub, the workflow runs the same check on every pull request.
+
+For a node that is not online yet, `check` cannot compare the published files, so it notes that. This is not a problem, and the exit code is 0:
+
+```text
+  note: https://models.example.org/context/road/v0.1.0.jsonld: not reachable (ENOTFOUND), not compared
+  …
+.: ok
+```
+
+`build` writes the site into `_site/`. Open `_site/index.html` in a browser to look at the front page. The links between the pages start with the base URL, though, so only the front page opens from your computer.
 
 ## GitHub Action {#action}
 

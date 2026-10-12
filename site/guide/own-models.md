@@ -41,7 +41,7 @@ description: このカタログに合わないデータモデルの公開先：�
 
 ## Smart Data Models {#smart-data-models}
 
-[Smart Data Models](https://smartdatamodels.org/) は FIWARE コミュニティのカタログで、FIWARE、TM Forum、IUDX、OASC が運営しています。スマートシティ、農業、エネルギーなどの 900 以上のモデルがあり、英語で書かれていて、GitHub での独自の貢献の手順があります。日本に関係しないモデルなら、こちらが向いています。このカタログも Smart Data Models を土台にしています（[他のデータモデルカタログ](/guide/catalogs)）。
+[Smart Data Models](https://smartdatamodels.org/) は FIWARE コミュニティのカタログです。FIWARE、TM Forum、IUDX（India Urban Data Exchange）、OASC（Open & Agile Smart Cities）が運営しています。スマートシティ、農業、エネルギーなどの 900 以上のモデルがあり、英語で書かれていて、GitHub での独自の貢献の手順があります。日本に関係しないモデルなら、こちらが向いています。このカタログも Smart Data Models を土台にしています（[他のデータモデルカタログ](/guide/catalogs)）。
 
 ## あとからこのカタログへ {#later}
 

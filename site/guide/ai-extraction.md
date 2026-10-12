@@ -18,8 +18,10 @@ curl -sSfO https://datamodels.jp/adapters/ai/disaster/EvacuationSite.ai.json
 ファイルの中身は `{ name, description, strict, schema }` です。`id` と `type` は入っていません。この 2 つはアプリケーションで決めます。文書は `notice.txt` に入れておきます。たとえば次の文です。
 
 ```text
-都立一橋高校（東京都千代田区東神田1-12-13）を、地震、高潮、内水氾濫の指定緊急避難場所に指定しました。区の番号は 13101-0012 です。指定避難所も兼ねます。
+千代田区（全国地方公共団体コード 131016）は、都立一橋高校（東京都千代田区東神田1-12-13）を、地震、高潮、内水氾濫の指定緊急避難場所に指定しました。区の番号は 13101-0012 です。指定避難所も兼ねます。
 ```
+
+全国地方公共団体コード（`localGovernmentCode`、6 桁）は必須の属性です。文書に無いと、AI モデルが推測して埋めます。文書に書いておくか、答えを受け取った後に自分で入れてください。学校の名称、住所、災害の種別は、国土地理院の指定緊急避難場所データ（千代田区）と同じです。区の番号は、例のために作った値です。
 
 どちらの API も、PDF のファイルをそのまま受け取れます。方法はそれぞれのドキュメントにあります。
 
@@ -78,7 +80,19 @@ jq 'walk(if type == "object" then with_entries(select(.value != null)) else . en
   site.json > entity.json
 ```
 
-次に、[JSON を検証する](/guide/use#validate)と同じ方法で、`entity.json` をモデルの JSON Schema で検査します。strict モードでも、答えの形が保証されるだけです。AI 用のスキーマは、一部の決まり（最小値や、複数の属性にまたがる決まり）を説明に書くだけにしています。strict を外したときは、形も保証されません。JSON Schema はこれらをすべて確かめます。ただし、内容が正しいかまでは確かめられません。AI モデルがコードや数を読み違えることもあるので、保存する前に文書と見比べてください。
+次に、`entity.json` をモデルの JSON Schema で検査します。
+
+```bash
+# pipx install check-jsonschema（または uvx check-jsonschema …）
+check-jsonschema --schemafile \
+  https://datamodels.jp/schema/disaster/EvacuationSite/v1.json entity.json
+```
+
+```text
+ok -- validation done
+```
+
+Node.js や Python で検査する方法は、[JSON を検証する](/guide/use#validate)にあります。strict モードでも、答えの形が保証されるだけです。AI 用のスキーマは、一部の決まり（最小値や、複数の属性にまたがる決まり）を説明に書くだけにしています。strict を外したときは、形も保証されません。JSON Schema はこれらをすべて確かめます。ただし、内容が正しいかまでは確かめられません。AI モデルがコードや数を読み違えることもあるので、保存する前に文書と見比べてください。
 
 これで `entity.json` は key-values の形のエンティティです。NGSI-LD ブローカーに送るには、@context 付きの normalized の形にします（[NGSI-LD ブローカーに送る](/guide/use#broker)）。
 

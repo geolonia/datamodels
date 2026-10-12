@@ -3,7 +3,7 @@ title:
   en: "Public toilet"
 description:
   ja: "公衆トイレ 1 か所のデータです。自治体が「公衆トイレ一覧」（自治体標準オープンデータセット 13）として公開する一覧の 1 行にあたります。Facility の下位の型で、設置位置、種類ごとのトイレの数、バリアフリートイレ、車椅子使用者用、乳幼児用、オストメイト用の設備を足しています。"
-  en: "One public toilet: one row of the list a municipality publishes as 自治体標準オープンデータセット dataset 13 (公衆トイレ一覧). A subtype of Facility that adds the installation location, the number of toilets by kind, and barrier-free, wheelchair, baby-care and ostomate facilities."
+  en: "One public toilet: one row of the list a municipality publishes as 自治体標準オープンデータセット (municipal standard open datasets) dataset 13 (公衆トイレ一覧). A subtype of Facility that adds the installation location, the number of toilets by kind, and barrier-free, wheelchair, baby-care and ostomate facilities."
 status: draft
 tags:
   - facility

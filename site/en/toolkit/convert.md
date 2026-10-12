@@ -19,7 +19,7 @@ There are three ways, depending on your list:
 
 ## Your list follows a standard {#standard}
 
-If your list follows a standard that has a mapping file with conversion rules in the catalog, such as the municipal standard open datasets or GSI's data, that mapping file converts it as it is. A mapping file without conversion rules only documents the standard; for such a list, make a mapping of your own (below). [Mapping files](/en/guide/mapping) explains how they work.
+If your list follows a standard that has a mapping file with conversion rules in the catalog, such as the municipal standard open datasets or the data of the Geospatial Information Authority of Japan (GSI), that mapping file converts it as it is. A mapping file without conversion rules only documents the standard; for such a list, make a mapping of your own (below). [Mapping files](/en/guide/mapping) explains how they work.
 
 ```bash
 npx github:geolonia/datamodels-toolkit#v0.3.8 convert \
@@ -27,17 +27,19 @@ npx github:geolonia/datamodels-toolkit#v0.3.8 convert \
   092011_evacuation_space.csv --out sites.json
 ```
 
-This example converts a municipality's list of designated emergency evacuation sites (指定緊急避難場所一覧, municipal standard open dataset 03) into EvacuationSite entities. The arguments are the model (`<subject>/<Type>`), the name of the mapping file and the CSV file. The model page lists its mapping files under **Referenced standards**, and `catalog.json` lists them as `mappingUrls`.
+This example converts a municipality's list of designated emergency evacuation sites (指定緊急避難場所一覧, municipal standard open dataset 03) into EvacuationSite entities. The CSV is Utsunomiya City's list, the file that step 1 of the [tutorial](/en/guide/tutorial#data) downloads. The arguments are the model (`<subject>/<Type>`), the name of the mapping file and the CSV file. The model page lists its mapping files under **Referenced standards**, and `catalog.json` lists them as `mappingUrls`.
 
 Only some mapping files have conversion rules (`column`, `transform`). The others describe how the model relates to the standard, and do not convert a list on their own ([which standards have a mapping](/en/guide/rules#mapping)). Then make a mapping of your own, [as below](#your-own-list). Rows with only `to` are documentation too: convert those fields yourself, following the note.
 
-`--set` gives a value that the list does not carry. In GSI's data, for example, the municipality code is only in the file name:
+`--set` gives a value that the list does not carry. In GSI's data, for example, the municipality code is only in the file name. The `13101_2.csv` of the example is GSI's file of designated emergency evacuation sites in Chiyoda City ([download](https://hinanmap.gsi.go.jp/hinanjocp/defaultFtpData/csv/13101_2.csv)):
 
 ```bash
 npx github:geolonia/datamodels-toolkit#v0.3.8 convert \
   disaster/EvacuationSite gsi-emergency-site \
-  13101_2.csv --set localGovernmentCode=13101
+  13101_2.csv --set localGovernmentCode=131016
 ```
+
+The local government code has 6 digits, with the check digit at the end. Given the 5 digits `13101`, `convert` adds the check digit and says so.
 
 ## Any other CSV {#your-own-list}
 
@@ -105,13 +107,14 @@ Each column fills the attribute of the same name:
 - `longitude` and `latitude` make a point. A model that allows other shapes also has a `location` column for a GeoJSON geometry.
 - A list is split at `;`, and a boolean is `true` or `false`.
 
-You can delete the columns you do not use; those attributes stay empty.
+You can delete the columns you do not use: `convert` lists them as "not in the file, so left empty", and those attributes stay empty. To check the file with frictionless, though, keep every column ([Using a spreadsheet (CSV)](/en/guide/csv#fill)).
 
 ## Results {#results}
 
 Whichever way you convert, the results work the same:
 
 - It detects UTF-8 and Shift_JIS.
+- A column that the mapping reads but the CSV does not have is listed as "not in the file, so left empty", and that attribute stays empty. Without the column of a required attribute, the rows are invalid.
 - It repairs only what it can prove, such as a local government code that lost its leading zero or lacks its check digit (the check digit decides). It lists every repair on standard error.
 - Invalid rows are left out and listed by line. Rows that get the same id are invalid, and so is an id in exponent form, such as `1.31E+11`: a spreadsheet rounded the number and its digits are lost.
 - The exit code is 1 when a row is invalid or a file cannot be read, and 2 for a usage error.

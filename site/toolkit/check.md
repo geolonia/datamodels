@@ -10,7 +10,17 @@ npx github:geolonia/datamodels-toolkit#v0.3.8 check
 npx github:geolonia/datamodels-toolkit#v0.3.8 build
 ```
 
-`check` は、すべてのスキーマと例を検査します。`build` はサイトを `_site/` に書き出すので、`_site/index.html` を開いて確かめられます。GitHub では、Pull Request のたびにワークフローが同じ検査をします。
+`check` は、すべてのスキーマと例を検査します。GitHub では、Pull Request のたびにワークフローが同じ検査をします。
+
+まだ公開していないノードでは、`check` は公開済みのファイルと比べられません。そのため、次のような注記を出します。問題ではないので、終了コードは 0 です。
+
+```text
+  note: https://models.example.org/context/road/v0.1.0.jsonld: not reachable (ENOTFOUND), not compared
+  …
+.: ok
+```
+
+`build` は、サイトを `_site/` に書き出します。`_site/index.html` をブラウザーで開くと、トップページを確かめられます。ただし、ページの間のリンクはベース URL で始まるアドレスです。そのため、手元で開けるのはトップページだけです。
 
 ## GitHub Action {#action}
 

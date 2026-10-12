@@ -3,7 +3,7 @@
   "$id": "https://datamodels.jp/schema/common/OpeningHours/v1.0.0.json",
   "title": "OpeningHours",
   "x-kind": "value",
-  "description": "When a facility can be used, as the value of an openingHoursSpecification Property: the days of the week, the opening and closing time, and remarks on exceptions such as holidays. Fields follow the 利用可能曜日, 開始時間, 終了時間 and 特記事項 columns of the 自治体標準オープンデータセット, with schema.org OpeningHoursSpecification terms.",
+  "description": "When a facility can be used, as the value of an openingHoursSpecification Property: the days of the week, the opening and closing time, and remarks on exceptions such as holidays. Fields follow the 利用可能曜日, 開始時間, 終了時間 and 特記事項 columns of the 自治体標準オープンデータセット (municipal standard open datasets), with schema.org OpeningHoursSpecification terms.",
   "x-subclass-of": "https://schema.org/OpeningHoursSpecification",
   "x-version": "1.0.0",
   "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",

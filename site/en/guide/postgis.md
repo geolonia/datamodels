@@ -28,6 +28,8 @@ docker exec datamodels-postgis pg_isready -U postgres || docker logs datamodels-
 
 `POSTGRES_HOST_AUTH_METHOD=trust` lets anyone connect without a password: use it only for a test on your own computer.
 
+The image is for amd64 only. On a Mac with Apple Silicon, Docker runs it emulated: it warns that the platform does not match, and the steps on this page work as they are.
+
 ## 2. Create the table {#table}
 
 ```bash
@@ -49,7 +51,7 @@ The columns are the attributes in snake_case: `hazardTypes` becomes `hazard_type
 
 ## 3. Add a site {#insert}
 
-Open a SQL prompt with `docker exec -it datamodels-postgis psql -U postgres` and run:
+Open a SQL prompt with `docker exec -it datamodels-postgis psql -U postgres` and run the following. The name, address, location and hazards are those in the data of designated emergency evacuation sites of the Geospatial Information Authority of Japan (GSI) for Chiyoda City; the ward's number `13101-0012` is made up for the example.
 
 ```sql
 INSERT INTO evacuation_site (id, name, external_site_id,
