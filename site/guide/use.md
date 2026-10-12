@@ -112,75 +112,11 @@ curl -G "$BROKER/ngsi-ld/v1/entities" \
 
 @context の渡し方は 2 通りです。ボディに入れて `application/ld+json` で送るか、ボディには入れずに `application/json` と `Link` ヘッダーで送ります。ヘッダーはモデルのページにあります。複数のテナントを持つブローカーでは `NGSILD-Tenant` ヘッダーでテナントを指定します。認証の方法はブローカーごとに違います。
 
-**自分のデータを normalized の形にする。** モデルのページの「試す」タブでは、入力したデータを 2 つの形で切り替えて見られます。CSV の一覧なら、[datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) の `datamodels convert … --normalized` で変換できます（[データを変換する](/toolkit/convert)）。自分のコードで変換するときは、次の決まりに従ってください。
-
-<details class="rules">
-<summary>key-values の形から normalized の形への決まり</summary>
-
-- `id` と `type` はそのままにします。
-- 各属性は、モデルのページの属性の表にある NGSI-LD の型で包みます。
-  - Property：`{ "type": "Property", "value": … }`。
-  - Relationship：`{ "type": "Relationship", "object": … }`。
-  - GeoProperty：`{ "type": "GeoProperty", "value": … }`。
-  - JsonProperty：`{ "type": "JsonProperty", "json": … }`。
-  - VocabProperty：`{ "type": "VocabProperty", "vocab": … }`。
-
-  JsonProperty と VocabProperty は、key-values の形でもメンバーを残します（`{ "json": … }`、`{ "vocab": … }`）。JSON Schema が表すのは中の値です。key-values の形のデータをスキーマで検証するときは、このメンバーを外してください。この 2 つは NGSI-LD 1.8 の型です。使う前に、ブローカーが対応しているかを確かめてください。
-- 日時の Property（スキーマの `format: date-time`）の値は `{ "@type": "DateTime", "@value": … }` にします。日付の Property（`format: date`）は `{ "@type": "Date", "@value": … }` です。日付でも日時でもよい Property（モデルのページで「日付または日時」）は、値に合わせます。`2026-07-11` なら Date、`2026-07-11T09:00:00+09:00` なら DateTime です。
-- 複数の値を持つ属性（属性の表で「複数可」と示すもの。Task の `assignee` など）は、値ごとに 1 つのインスタンスを並べた配列にし、それぞれに `datasetId` を付けます。カタログの例は `urn:ngsi-ld:dataset:<属性名>:<番号>` の形を使っています。
-- `@context` には、分野の @context のバージョンの別名と、NGSI-LD のコアコンテキストを並べます。
-
-たとえば、次の key-values の形の Task があります。
-
-```json
-{
-  "id": "urn:ngsi-ld:Task:1234",
-  "type": "Task",
-  "name": "靖国通りのアンダーパスの冠水を確認する",
-  "progress": "in-process",
-  "due": "2026-07-08T12:00:00+09:00",
-  "assignee": ["urn:ngsi-ld:Team:field-team-a"]
-}
-```
-
-これを normalized の形にすると、次のようになります。
-
-```json
-{
-  "@context": [
-    "https://datamodels.jp/context/task/v1.jsonld",
-    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
-  ],
-  "id": "urn:ngsi-ld:Task:1234",
-  "type": "Task",
-  "name": {
-    "type": "Property",
-    "value": "靖国通りのアンダーパスの冠水を確認する"
-  },
-  "progress": { "type": "Property", "value": "in-process" },
-  "due": {
-    "type": "Property",
-    "value": { "@type": "DateTime", "@value": "2026-07-08T12:00:00+09:00" }
-  },
-  "assignee": [
-    {
-      "type": "Relationship",
-      "object": "urn:ngsi-ld:Team:field-team-a",
-      "datasetId": "urn:ngsi-ld:dataset:assignee:1"
-    }
-  ]
-}
-```
-
-</details>
+自分のデータを normalized の形にする決まりと例は、[normalized の形](/guide/normalized)にあります。
 
 ## Linked Data として使う {#linked-data}
 
-@context を付けると、普通の JSON が JSON-LD になります。各属性には、世界で一意の名前（IRI）が付きます。カタログ独自の IRI（`https://datamodels.jp/ns/...`）か、取り入れている標準（schema.org、Smart Data Models）の IRI です。JSON-LD は、Linked Data のツールが使う RDF に変換できます。`id` と `type` を JSON-LD の `@id` と `@type` として扱うため、NGSI-LD の core context も並べます。
-
-名前が違っても、IRI が同じなら意味は同じです。ほかの組織が自分の名前（別名）で書いたデータも、同じ IRI になります（[独自の名前で使う](/guide/names)）。
-
-<svg class="flow-diagram" viewBox="0 0 460 250" role="img" aria-label="自分のデータの restrictionStatus は、カタログの @context で IRI https://datamodels.jp/ns/transportation/restrictionStatus になります。ほかの組織のデータの roadStatus も、別名を定義した自分の @context で同じ IRI になります。違う名前が 1 つの意味で出会います。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="ld-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="10" y="8" width="210" height="56" rx="10"/><text class="t m" x="115" y="32">restrictionStatus</text><text class="s" x="115" y="51">自分のデータ</text><rect class="box" x="240" y="8" width="210" height="56" rx="10"/><text class="t m" x="345" y="32">roadStatus</text><text class="s" x="345" y="51">ほかの組織のデータ</text><line class="a" x1="115" y1="64" x2="115" y2="94" marker-end="url(#ld-ah)"/><line class="a" x1="345" y1="64" x2="345" y2="94" marker-end="url(#ld-ah)"/><rect class="box" x="10" y="96" width="210" height="56" rx="10"/><text class="t" x="115" y="120">カタログの @context</text><text class="s" x="115" y="139">datamodels.jp が公開</text><rect class="box" x="240" y="96" width="210" height="56" rx="10"/><text class="t" x="345" y="120">自分の @context</text><text class="s" x="345" y="139">別名を定義</text><line class="a" x1="115" y1="152" x2="196" y2="182" marker-end="url(#ld-ah)"/><line class="a" x1="345" y1="152" x2="264" y2="182" marker-end="url(#ld-ah)"/><rect class="box main" x="10" y="184" width="440" height="58" rx="10"/><text class="t" x="230" y="208">同じ意味（世界で一意の IRI）</text><text class="s" x="230" y="227">https://datamodels.jp/ns/transportation/restrictionStatus</text></svg>
+@context を付けると、普通の JSON が JSON-LD になり、Linked Data のツールが使う RDF に変換できます。各属性には世界で一意の名前（IRI）が付くので、名前が違っても IRI が同じなら意味は同じです（[独自の名前で使う](/guide/names)）。
 
 ::: code-group
 

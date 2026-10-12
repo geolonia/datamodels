@@ -43,6 +43,7 @@ First check whether a catalog model fits your data. If it does not fit as it is,
 
 - [Standards covered](/en/guide/standards): the standards the models map, such as the municipal standard open datasets or the Essential Elements of Information (EEI), each with its model.
 - [Mapping files](/en/guide/mapping): which field of a standard matches which attribute of a model. Where to find them and what they say.
+- [The normalized form](/en/guide/normalized): the key-values and normalized forms of an entity, and the rules to turn one into the other, with an example.
 - [URLs and versions](/en/guide/urls): which URL to use, what never changes, versions and deprecation.
 - [Other data model catalogs](/en/guide/catalogs): catalogs of data models in the world and in Japan, worth checking before you propose.
 - [Data model sites](/en/guide/sites): the sites that publish their own data models and that datamodels.jp knows, one row each, with the catalog models they build on.
@@ -57,8 +58,8 @@ The site uses these words with these meanings:
 - **subject**: a group of related models with its own namespace and versions, such as `disaster` or `transportation`. URLs and commands write it as `<subject>`.
 - **@context**: a file that works like a dictionary: it links short names (such as `hazardTypes`) to IRIs.
 - **IRI**: a name for a type or an attribute that is unique on the whole web, such as `https://datamodels.jp/ns/disaster/hazardTypes`.
-- **key-values form**: plain JSON with attribute names and their values. The JSON Schema validates data in this form.
-- **normalized form**: the form you send to an NGSI-LD broker. Each attribute also says its kind, such as Property or Relationship.
+- **key-values form**: plain JSON with attribute names and their values. The JSON Schema validates data in this form ([The normalized form](/en/guide/normalized)).
+- **normalized form**: the form you send to an NGSI-LD broker. Each attribute also says its kind, such as Property or Relationship ([The normalized form](/en/guide/normalized)).
 - **validation**: checking that data follows a JSON Schema or similar rules.
 - **mapping file**: a file that says which field of a standard or of your own list matches which attribute of a model ([Mapping files](/en/guide/mapping)).
 - **extension**: a small @context you publish to add your own attributes to a catalog model; technically, a profile of the model ([Adding attributes](/en/guide/extend)). The toolkit's `extend` command is something else: it makes a new model on your own site that builds on a catalog model.

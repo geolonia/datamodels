@@ -353,7 +353,7 @@ for (const subject of subjects) {
         const got = inst?.type;
         if (got !== prop['x-ngsi']?.type) fail(`${mwhere}/examples/example-normalized.jsonld`, `attribute "${name}" is a ${got} but schema.json declares ${prop['x-ngsi']?.type}`);
       }
-      // A date or date-time value carries its NGSI-LD type, and the type fits the value (/guide/use).
+      // A date or date-time value carries its NGSI-LD type, and the type fits the value (/guide/normalized).
       const formats = prop['x-ngsi']?.type === 'Property' ? dateFormats(prop) : [];
       for (const inst of formats.length ? instances : []) {
         const v = inst?.value;

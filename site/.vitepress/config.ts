@@ -80,6 +80,7 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
       items: [
         page('対応している標準', 'Standards covered', 'standards'),
         page('対応表', 'Mapping files', 'mapping'),
+        page('normalized の形', 'The normalized form', 'normalized'),
         page('URL とバージョン', 'URLs and versions', 'urls'),
         page('他のデータモデルカタログ', 'Other data model catalogs', 'catalogs'),
         // Generated from nodes.snapshot.json (scripts/lib/site.mjs).

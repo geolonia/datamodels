@@ -22,6 +22,7 @@ const GUIDES = [
   ['rules', 'Rules for models', 'when to define a new type, the rules, mapping to standards, writing examples'],
   ['own-models', 'Your own data models', 'where to publish a model that does not belong in this catalog: your own site (a node) or Smart Data Models'],
   ['mapping', 'Mapping files', 'which field of a standard matches which attribute of a model, and the rules to convert a list; the catalog keeps them only for published standards that many lists follow'],
+  ['normalized', 'The normalized form', 'the key-values and normalized forms of an entity, and the rules to turn key-values into the normalized form that NGSI-LD brokers take (Property, Relationship, GeoProperty, JsonProperty, VocabProperty, typed dates, datasetId for multi-valued attributes, the @context), with a worked Task example'],
   ['urls', 'URLs and versions', 'which URL to use, what never changes, versions and deprecation'],
   ['catalogs', 'Other data model catalogs', 'catalogs and standards used globally and in Japan, and how this catalog relates to them'],
 ];
