@@ -35,9 +35,10 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
       items: [
         page('チュートリアル', 'Tutorial', 'tutorial'),
         // Its sub-pages start collapsed and open on this page or one of them.
-        // The generic recipes (the Download row's files) come first, then a product's page.
+        // What each file of the Download row is (/adapters/), then the recipes that use one, then a product's page.
         {
           ...page('使い方', 'Using the models', 'use', [
+            { text: ja ? 'アダプター' : 'Adapters', link: `${prefix}/adapters/` },
             page('表計算ソフト（CSV）で使う', 'Using a spreadsheet (CSV)', 'csv'),
             page('PostgreSQL / PostGIS で使う', 'Using PostgreSQL / PostGIS', 'postgis'),
             page('AI でデータを取り出す', 'Extracting data with AI', 'ai-extraction'),
@@ -141,14 +142,18 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
     topic(ja ? 'ツールキット' : 'Toolkit', `${prefix}/toolkit/`, true),
     about,
   ]
+  const guides: DefaultTheme.SidebarItem[] = [
+    topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`),
+    ...guideGroups(prefix, lang),
+    topic(ja ? 'データモデル' : 'Data models', `${prefix}/models/`, true),
+    topic(ja ? 'ツールキット' : 'Toolkit', `${prefix}/toolkit/`, true),
+    about,
+  ]
   return {
-    [`${prefix}/guide/`]: [
-      topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`),
-      ...guideGroups(prefix, lang),
-      topic(ja ? 'データモデル' : 'Data models', `${prefix}/models/`, true),
-      topic(ja ? 'ツールキット' : 'Toolkit', `${prefix}/toolkit/`, true),
-      about,
-    ],
+    [`${prefix}/guide/`]: guides,
+    // The adapters page says what each file of a model page's Download row is and how to use it: a guide
+    // (sites built with the toolkit link it as "About these files"), so it keeps the Guides sidebar.
+    [`${prefix}/adapters/`]: guides,
     [`${prefix}/toolkit/`]: [
       topic(ja ? 'ツールキット' : 'Toolkit', `${prefix}/toolkit/`),
       ...toolkitPages(prefix, lang),
@@ -156,9 +161,7 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
       topic(ja ? 'ガイド' : 'Guides', `${prefix}/guide/`, true),
       about,
     ],
-    // The adapter pages list files per model: they belong to the Data models section.
     [`${prefix}/models/`]: modelsSidebar,
-    [`${prefix}/adapters/`]: modelsSidebar,
     // The pages about the site itself: not a topic in the navigation, but no dead end either.
     ...Object.fromEntries([`${prefix}/about`, `${prefix}/LICENSE-CONTENT`, `${prefix}/ai`].map((path) => [path, [
       topic(ja ? 'このサイトについて' : 'About this site', `${prefix}/about`),
@@ -173,8 +176,8 @@ function sidebar(prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sidebar {
 
 const nav = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.NavItem[] => [
   // Every section is a link to a landing page; the sidebar lists its pages.
-  { text: lang === 'ja' ? 'データモデル' : 'Data models', link: `${prefix}/models/`, activeMatch: `^${prefix}/(models|adapters)/` },
-  { text: lang === 'ja' ? 'ガイド' : 'Guides', link: `${prefix}/guide/`, activeMatch: `^${prefix}/guide/` },
+  { text: lang === 'ja' ? 'データモデル' : 'Data models', link: `${prefix}/models/`, activeMatch: `^${prefix}/models/` },
+  { text: lang === 'ja' ? 'ガイド' : 'Guides', link: `${prefix}/guide/`, activeMatch: `^${prefix}/(guide|adapters)/` },
   { text: lang === 'ja' ? 'ツールキット' : 'Toolkit', link: `${prefix}/toolkit/`, activeMatch: `^${prefix}/toolkit/` },
 ]
 
