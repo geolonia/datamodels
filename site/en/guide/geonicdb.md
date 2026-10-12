@@ -103,7 +103,7 @@ It does not check:
 
 ## Your own attributes
 
-If the model fits but you need a few attributes of your own, write a profile @context that adds them ([Adding attributes](/en/guide/extend)), host it, and register a definition that has the catalog's attributes and yours. Your attributes are then checked like the others. If they are useful beyond your project, [propose them](/en/guide/contribute#model-proposal) to the catalog.
+If the model fits but you need a few attributes of your own, write an extension, an @context that adds them ([Adding attributes](/en/guide/extend)), host it, and register a definition that has the catalog's attributes and yours. Your attributes are then checked like the others. If they are useful beyond your project, [propose them](/en/guide/contribute#model-proposal) to the catalog.
 
 The export script below (`adapters/geonicdb/export.mjs`) is in this catalog's repository. Get it first; you need [Node.js](https://nodejs.org/) 24 or later:
 

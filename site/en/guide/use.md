@@ -5,7 +5,7 @@ description: Validate JSON with the catalog models, send it to an NGSI-LD broker
 
 # Using the models
 
-Every model page gives three things: the **@context** (what each attribute means), the **JSON Schema** (what valid data looks like) and **examples**. They are plain URLs, so no particular product is needed. Use the alias URLs (`…/v1.jsonld`, `…/v1.json`) in your data; which URL to use when is in [URLs and versions](/en/guide/urls).
+Every model page gives three things: the **@context** (what each attribute means), the **JSON Schema** (what valid data looks like) and **examples**. They are plain URLs, so no particular product is needed. Models come in **subjects**: a subject is a group of related models with its own namespace and versions, such as `disaster` or `transportation`. Use the **version alias** URLs (`…/v1.jsonld`, `…/v1.json`) in your data: they point to the latest compatible version. Which URL to use when is in [URLs and versions](/en/guide/urls); what the words mean is in [Terms](/en/guide/#terms).
 
 There are three ways to use a model, and you can use one, two or all three:
 
@@ -21,7 +21,7 @@ The examples use [road restriction (RoadRestriction)](/en/models/transportation/
 
 ## Validate JSON {#validate}
 
-The JSON Schema checks data in the simple form: attribute names with plain values (called *key-values*). Parts that refer to other schemas, such as the address or the geometry, are fetched and checked too.
+The JSON Schema checks data in the *key-values form*: attribute names with plain values. Parts that refer to other schemas, such as the address or the geometry, are fetched and checked too.
 
 ::: code-group
 
@@ -87,7 +87,7 @@ When a value is not allowed, the output names the attribute and what is wrong.
 
 ## Send it to an NGSI-LD broker {#broker}
 
-NGSI-LD brokers usually take the *normalized* form, in which each attribute also says what kind it is (a Property with a value, a Relationship pointing to another entity, and so on). Every model page has the example in both forms, so the normalized example can be sent as it is:
+NGSI-LD brokers usually take the *normalized form*, in which each attribute also says what kind it is (a Property with a value, a Relationship pointing to another entity, and so on). Every model page has the example in both forms, so the normalized example can be sent as it is:
 
 ```bash
 BROKER=http://localhost:1026   # your broker's URL
@@ -115,7 +115,7 @@ Put the @context in the body and send `application/ld+json`, or leave it out and
 **Your own data in the normalized form.** The "Try it" tab on a model page switches what you write between the two forms, and for a CSV list `datamodels convert … --normalized` from [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) does it ([Converting your data](/en/toolkit/convert)). To do it in your own code, follow the rules below.
 
 <details class="rules">
-<summary>The rules, from key-values to normalized</summary>
+<summary>The rules, from the key-values form to the normalized form</summary>
 
 - `id` and `type` stay as they are.
 - Wrap each attribute in the NGSI-LD type that the attribute table on the model page gives:
@@ -128,7 +128,7 @@ Put the @context in the body and send `application/ld+json`, or leave it out and
   In key-values form, a JsonProperty and a VocabProperty keep their member: `{ "json": … }`, `{ "vocab": … }`. The JSON Schema describes the value inside, so remove that member before you validate key-values data against the schema. Both are NGSI-LD 1.8 types: check that your broker supports them before you use a model that has them.
 - The value of a date-time Property (`format: date-time` in the schema) becomes `{ "@type": "DateTime", "@value": … }`, and that of a date Property (`format: date`) `{ "@type": "Date", "@value": … }`. A Property that takes either ("date or date-time" on the model page) follows its value: `2026-07-11` is a Date, `2026-07-11T09:00:00+09:00` a DateTime.
 - A multi-valued attribute (marked "(multiple)" in the attribute table; for example `assignee` on Task) becomes an array with one instance per value, each with a `datasetId`. The catalog's examples use the form `urn:ngsi-ld:dataset:<attribute>:<n>`.
-- The `@context` lists the subject's alias and the NGSI-LD core context.
+- The `@context` lists the version alias of the subject's @context and the NGSI-LD core context.
 
 For example, this key-values Task
 

@@ -11,7 +11,7 @@ import { modelUrls, BASE_URL } from './models.mjs';
 const L = {
   ja: {
     agent: '人・組織・チーム', any: '任意のエンティティ', label: '型と関係の図', more: (n) => `ほか ${n} 件の関係`,
-    legend: { rel: 'Relationship（属性名）', value: '値型として使う', alias: 'エイリアス', subclass: 'サブクラス', self: '↻ 同じ型への Relationship', other: '他の分野', more: 'ほか N 件: その型のページに続きがある' },
+    legend: { rel: 'Relationship（属性名）', value: '値型として使う', alias: '別名', subclass: 'サブクラス', self: '↻ 同じ型への Relationship', other: '他の分野', more: 'ほか N 件: その型のページに続きがある' },
   },
   en: {
     agent: 'person, organisation or team', any: 'any entity', label: 'Types and their relationships', more: (n) => `${n} more link${n === 1 ? '' : 's'}`,

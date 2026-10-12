@@ -9,7 +9,7 @@ description: datamodels-toolkit の search で既にあるモデルを探し、a
 
 ## 先に既にあるモデルを探す {#search}
 
-新しいモデルを作る前に、そのまま使えるモデルや拡張できるモデルが既にないかを探します。`search` は、datamodels.jp と、datamodels.jp がリンクしているサイトのモデルから、型の名前、タイトル、属性、説明に言葉を含むものを探します。日本語でも英語でも探せます。
+新しいモデルを作る前に、そのまま使えるモデルや、土台にできるモデルが既にないかを探します。`search` は、datamodels.jp と、datamodels.jp がリンクしているサイトのモデルから、型の名前、タイトル、属性、説明に言葉を含むものを探します。日本語でも英語でも探せます。
 
 ```bash
 npx github:geolonia/datamodels-toolkit#v0.3.7 search 避難
@@ -54,7 +54,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.7 add road/RoadPatrol
 
 ## カタログのモデルから始める {#extend}
 
-このカタログのモデルから始めるときは、`extend` を使います。カタログのモデルのスキーマをコピーし、その `@context` を取り込み、土台にしたモデルを記録します。そのため、`check` が名前と意味を変えていないかを検査できます。そのうえで、[下のように](#attributes)自分の属性を足します。`--subclass` を付けると、独自の IRI を持つサブタイプになります。
+このカタログのモデルから始めるときは、`extend` を使います。名前は似ていますが、[拡張](/guide/extend)とは別のもので、自分のサイトに新しいモデルを作ります。カタログのモデルのスキーマをコピーし、その `@context` を取り込み、土台にしたモデルを記録します。そのため、`check` が名前と意味を変えていないかを検査できます。そのうえで、[下のように](#attributes)自分の属性を足します。`--subclass` を付けると、独自の IRI を持つサブタイプになります。
 
 ```bash
 npx github:geolonia/datamodels-toolkit#v0.3.7 extend task/Task road/RoadTask

@@ -125,13 +125,13 @@ geonic entities list --type EvacuationSite --context $C --key-values \
   --coords '[139.8986,36.5592]' --attrs name
 ```
 
-東小学校や駅東公園など、5 か所が見つかります。`--key-values` は、手順 2 で見た単純な形で返すように指定するオプションです。
+東小学校や駅東公園など、5 か所が見つかります。`--key-values` は、手順 2 で最初に見た単純な形（key-values の形）で返すように指定するオプションです。
 
 **`--context` を外して試してみてください：** 同じ検索でも、何も見つかりません。辞書が無いと、`EvacuationSite` が `https://datamodels.jp/ns/disaster/EvacuationSite` のことだと、ブローカーには分からないからです。
 
 ## 5. 地図に表示する {#map}
 
-地図のツールは **GeoJSON** を読み込みます。すべての避難場所を単純な形で取り出し、jq で GeoJSON に変換します。
+地図のツールは **GeoJSON** を読み込みます。すべての避難場所を key-values の形で取り出し、jq で GeoJSON に変換します。
 
 ```bash
 geonic entities list --type EvacuationSite --context $C --key-values \

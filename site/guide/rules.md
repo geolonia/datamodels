@@ -32,7 +32,7 @@ description: このカタログのモデルが守るルール、独自の型を�
 - NGSI-LD core context の予約語は再定義しません。`status`、`description`、`location`、`createdAt`、`modifiedAt`、`observedAt` などです。CI が弾きます。`status` が要るときは `incidentStatus` のように名前を変えます。
 - モデルは分野でまとめ、地域名・顧客名・案件名ではまとめません。
 - 共通の構造は [common](/models/common/) の値型を使います。住所は [JapaneseAddress](/models/common/JapaneseAddress/)、`location` などの位置は [Geometry](/models/common/Geometry/)、連絡先は [ContactPoint](/models/common/ContactPoint/)、利用できる時間は [OpeningHours](/models/common/OpeningHours/) です。使えるジオメトリを絞るときは `$ref` の横で制約します（DesignatedShelter は点だけ）。
-- 既にある型に名前だけ合わせたいときは、エイリアス（`x-alias-of`）を使います。属性も必須項目も同じです。
+- 既にある型に名前だけ合わせたいときは、別名（`x-alias-of`）を使います。属性も必須項目も同じです。
 - 属性を足したいとき、型を分けたいときは、サブクラス（`x-subclass-of`）を使います。同じ名前の属性は親と同じ意味で、親の必須項目は残ります。CI はどちらも検査します。親は、schema.org、Smart Data Models、NGSI-LD core の型でもかまいません。たとえば common の ContactPoint は、schema.org の ContactPoint のサブクラスです。そのとき CI が検査するのは、IRI がこれらの名前空間にあることと、名前がクラス名のように大文字で始まることだけです。クラスが実在するかは検査しないので、IRI を開いて確かめてください。
 
 ## 日本の標準との対応表 {#mapping}
@@ -51,7 +51,7 @@ description: このカタログのモデルが守るルール、独自の型を�
 
 ## 例の書き方 {#examples}
 
-エンティティのモデルには、例が 2 つあります（key-values と normalized）。Geometry などの値型には、key-values の例が 1 つあります。例はモデルのページに載り、CI が検査します。例はクライアントを作る人のお手本になるので、すべての分野で 1 つのシナリオにそろえています。
+エンティティのモデルには、例が 2 つあります（key-values の形と normalized の形）。Geometry などの値型には、key-values の例が 1 つあります。例はモデルのページに載り、CI が検査します。例はクライアントを作る人のお手本になるので、すべての分野で 1 つのシナリオにそろえています。
 
 - **シナリオ**：架空の出来事として、東京都千代田区の大雨対応（令和 8 年 7 月）を使います。区が災害対応のプロジェクトを立ち上げます。靖国通りのアンダーパスの冠水を確認するタスクがあり、道路が通行止めになり、避難所が開設されます。
 - **実在と架空**：地名、住所、各種コード（全国地方公共団体コード、アドレス・ベース・レジストリの町字 ID など）、座標は実在のものを使います。出来事、人、チーム、システムの番号は架空です。個人名は使わず、`staff-0012` や `field-team-a` のような識別子にします。

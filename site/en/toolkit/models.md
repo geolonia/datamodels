@@ -9,7 +9,7 @@ This page adds models to a subject of your node and writes their attributes. No 
 
 ## Look for an existing model first {#search}
 
-Before you make a new model, check whether one already exists that you can use as it is or extend. `search` looks through the models of datamodels.jp and of the sites it links to, for words in the type name, title, attributes and description. It finds Japanese and English words.
+Before you make a new model, check whether one already exists that you can use as it is or build on. `search` looks through the models of datamodels.jp and of the sites it links to, for words in the type name, title, attributes and description. It finds Japanese and English words.
 
 ```bash
 npx github:geolonia/datamodels-toolkit#v0.3.7 search 避難
@@ -54,7 +54,7 @@ This adds `models/road/RoadPatrol/` with `schema.json`, `catalog.yaml`, `example
 
 ## Starting from a catalog model {#extend}
 
-To start from a model of this catalog instead, use `extend`. It copies the catalog model's schema, imports its `@context` and records the model it builds on, so `check` keeps its names and meanings. Then add your attributes as [below](#attributes). With `--subclass`, the new model is a subtype with its own IRI.
+To start from a model of this catalog instead, use `extend`. Despite its name, it is not an [extension](/en/guide/extend): it makes a new model on your own site. It copies the catalog model's schema, imports its `@context` and records the model it builds on, so `check` keeps its names and meanings. Then add your attributes as [below](#attributes). With `--subclass`, the new model is a subtype with its own IRI.
 
 ```bash
 npx github:geolonia/datamodels-toolkit#v0.3.7 extend task/Task road/RoadTask

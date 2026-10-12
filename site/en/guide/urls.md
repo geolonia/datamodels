@@ -15,15 +15,15 @@ These promises apply **from the official launch**. Until then, published files, 
 
 | Purpose | URL |
 |---|---|
-| `@context` of stored data, `Link` header | alias `/context/<subject>/v1.jsonld` |
+| `@context` of stored data, `Link` header | version alias `/context/<subject>/v1.jsonld` |
 | Audits, reproducing a result on another broker | exact version `/context/<subject>/v1.0.0.jsonld` |
-| Validation | `/schema/<subject>/<Type>/v1.json` (alias) or `v1.0.0.json` |
+| Validation | `/schema/<subject>/<Type>/v1.json` (version alias) or `v1.0.0.json` |
 
-The alias moves only to compatible versions, so it is the right default. Use the exact version when you need to audit or reproduce a result.
+The version alias moves only to compatible versions, so it is the right default. Use the exact version when you need to audit or reproduce a result.
 
-Servers and brokers may keep a copy: the alias for 5 minutes, so a new compatible version reaches everyone within 5 minutes; an exact version for a year, because it never changes (from the official launch; until then also 5 minutes).
+Servers and brokers may keep a copy: the version alias for 5 minutes, so a new compatible version reaches everyone within 5 minutes; an exact version for a year, because it never changes (from the official launch; until then also 5 minutes).
 
-<svg class="flow-diagram" viewBox="0 0 460 160" role="img" aria-label="The alias v1.jsonld always points to the latest 1.x version (here v1.2.0); v1.0.0, v1.1.0 and v1.2.0 stay published and never change. An incompatible change becomes v2.0.0, with its own alias v2.jsonld." xmlns="http://www.w3.org/2000/svg"><defs><marker id="ver-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="10" y="92" width="100" height="44" rx="8"/><text class="t m" x="60" y="119">v1.0.0</text><rect class="box" x="120" y="92" width="100" height="44" rx="8"/><text class="t m" x="170" y="119">v1.1.0</text><rect class="box" x="230" y="92" width="100" height="44" rx="8"/><text class="t m" x="280" y="119">v1.2.0</text><rect class="box" x="350" y="92" width="100" height="44" rx="8"/><text class="t m" x="400" y="119">v2.0.0</text><text class="s" x="175" y="154">published versions: never change</text><rect class="box main" x="190" y="8" width="120" height="40" rx="8"/><text class="t m" x="250" y="33">v1.jsonld</text><line class="a" x1="270" y1="48" x2="280" y2="90" marker-end="url(#ver-ah)"/><text class="l e" x="182" y="33">the alias: latest 1.x</text><rect class="box" x="350" y="8" width="100" height="40" rx="8"/><text class="t m" x="400" y="33">v2.jsonld</text><line class="a" x1="400" y1="48" x2="400" y2="90" marker-end="url(#ver-ah)"/><text class="s" x="400" y="154">incompatible change</text></svg>
+<svg class="flow-diagram" viewBox="0 0 460 160" role="img" aria-label="The version alias v1.jsonld always points to the latest 1.x version (here v1.2.0); v1.0.0, v1.1.0 and v1.2.0 stay published and never change. An incompatible change becomes v2.0.0, with its own version alias v2.jsonld." xmlns="http://www.w3.org/2000/svg"><defs><marker id="ver-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="10" y="92" width="100" height="44" rx="8"/><text class="t m" x="60" y="119">v1.0.0</text><rect class="box" x="120" y="92" width="100" height="44" rx="8"/><text class="t m" x="170" y="119">v1.1.0</text><rect class="box" x="230" y="92" width="100" height="44" rx="8"/><text class="t m" x="280" y="119">v1.2.0</text><rect class="box" x="350" y="92" width="100" height="44" rx="8"/><text class="t m" x="400" y="119">v2.0.0</text><text class="s" x="175" y="154">published versions: never change</text><rect class="box main" x="190" y="8" width="120" height="40" rx="8"/><text class="t m" x="250" y="33">v1.jsonld</text><line class="a" x1="270" y1="48" x2="280" y2="90" marker-end="url(#ver-ah)"/><text class="l e" x="182" y="33">version alias: latest 1.x</text><rect class="box" x="350" y="8" width="100" height="40" rx="8"/><text class="t m" x="400" y="33">v2.jsonld</text><line class="a" x1="400" y1="48" x2="400" y2="90" marker-end="url(#ver-ah)"/><text class="s" x="400" y="154">incompatible change</text></svg>
 
 ## The promises
 
@@ -41,7 +41,7 @@ Each subject has one version number, shared by its `@context`, vocabulary and JS
 | A compatible addition | minor (1.**1**.0) | a new optional attribute or model, a new allowed value |
 | An incompatible change | major (**2**.0.0) | renaming an attribute or changing its type, removing an attribute or a value, making an optional attribute required |
 
-A new version does not replace the old one: `v1.0.0` stays at its URL, and the alias `v1` points to the latest 1.x. A new allowed value is a minor version, but code that handles every value needs to learn it, so the pull request and the model's notes say so.
+A new version does not replace the old one: `v1.0.0` stays at its URL, and the version alias `v1` points to the latest 1.x. A new allowed value is a minor version, but code that handles every value needs to learn it, so the pull request and the model's notes say so.
 
 ## Deprecation {#deprecation}
 
@@ -55,13 +55,13 @@ A new version does not replace the old one: `v1.0.0` stays at its URL, and the a
 | URL | What it is |
 |---|---|
 | `/context/<subject>/vX.Y.Z.jsonld` | @context (immutable) |
-| `/context/<subject>/vX.jsonld` | alias (latest X.y.z) |
+| `/context/<subject>/vX.jsonld` | version alias (latest X.y.z) |
 | `/schema/<subject>/<Type>/vX.Y.Z.json` | JSON Schema (immutable) |
-| `/schema/<subject>/<Type>/vX.json` | alias |
+| `/schema/<subject>/<Type>/vX.json` | version alias |
 | `/vocab/<subject>/vX.Y.Z.jsonld` | vocabulary (RDFS: classes, subclass relations, ja/en labels; immutable) |
-| `/vocab/<subject>/vX.jsonld` | alias |
-| `/examples/<subject>/<Type>/example.json` | example (key-values) |
-| `/examples/<subject>/<Type>/example-normalized.jsonld` | example (NGSI-LD normalized; not for value types) |
+| `/vocab/<subject>/vX.jsonld` | version alias |
+| `/examples/<subject>/<Type>/example.json` | example (key-values form) |
+| `/examples/<subject>/<Type>/example-normalized.jsonld` | example (normalized form; not for value types) |
 | `/ns/<subject>/<Term>` | type and attribute IRIs (redirect to the page; to the vocabulary for JSON-LD clients) |
 | `/mapping/<subject>/<Type>/<name>.yaml` | mapping file (correspondence to another standard and conversion rules; not versioned: the URL stays, the content follows the current model) |
 | `/adapters/<name>/<subject>/<Type>.<ext>` | adapter files: CSV template (`.csv`), Table Schema (`.tableschema.json`), structured output for AI (`.ai.json`), PostgreSQL / PostGIS table (`.sql`), GeonicDB Custom Data Model definition (`.json`) |

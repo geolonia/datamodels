@@ -44,7 +44,7 @@ const oneLine = (s) => s.replace(/\s+/g, ' ').trim();
 export async function llmsTxt(subjects) {
   let txt = `# datamodels.jp\n\n`;
   txt += `> Data models that work in Japan: JSON Schemas (2020-12), JSON-LD @context files and RDFS vocabularies at URLs that never change. Usable as plain JSON, as linked data, and with NGSI-LD brokers. Existing standards (Smart Data Models, the Digital Agency's GIF, RFC 8984) are extended and mapped, not copied.\n\n`;
-  txt += `Every model page is published in Japanese (${BASE_URL}/models/...) and English (${BASE_URL}/en/models/...). Exact versions (v1.0.0) never change; major aliases (v1) follow the latest compatible version. Machine-readable list of every model with all its URLs: ${BASE_URL}/catalog.json.\n\n`;
+  txt += `Every model page is published in Japanese (${BASE_URL}/models/...) and English (${BASE_URL}/en/models/...). Exact versions (v1.0.0) never change; version aliases (v1) follow the latest compatible version. Machine-readable list of every model with all its URLs: ${BASE_URL}/catalog.json.\n\n`;
   txt += `## Guides\n\n`;
   for (const [slug, title, what] of GUIDES) {
     if (await exists(join(ROOT, 'site', 'en', 'guide', `${slug || 'index'}.md`))) txt += `- [${title}](${BASE_URL}/en/guide/${slug}): ${what}\n`;
@@ -58,7 +58,7 @@ export async function llmsTxt(subjects) {
     const su = subjectUrls(subject);
     txt += `## Subject: ${subject.name} (${subject.title.en} / ${subject.title.ja}), version ${subject.version}\n\n`;
     txt += `${oneLine(subject.description.en)}\n\n`;
-    txt += `- [@context](${su.contextAlias}): use this alias in data and Link headers; exact version ${su.contextExact} for audits and reproducing results\n`;
+    txt += `- [@context](${su.contextAlias}): use this version alias in data and Link headers; exact version ${su.contextExact} for audits and reproducing results\n`;
     txt += `- [Vocabulary](${su.vocabExact}): RDFS classes, subclass relations, ja/en labels\n`;
     for (const model of subject.models) {
       const mu = modelUrls(subject, model);
