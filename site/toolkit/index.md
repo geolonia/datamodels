@@ -21,7 +21,7 @@ description: datamodels-toolkit で、自分のデータモデルを変わらな
 npx github:geolonia/datamodels-toolkit#v0.3.7 --help
 ```
 
-このセクションの例は、このリリースを使います。すべてのコマンドとオプションは、`--help` と [README](https://github.com/geolonia/datamodels-toolkit#readme)（英語）にあります。このセクションでは、作業ごとに使い方を説明します。
+このセクションの例は、このリリースを使います。すべてのコマンドとオプションは、`--help` と [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.7#readme)（英語）にあります。このセクションでは、作業ごとに使い方を説明します。
 
 ## ページ {#pages}
 

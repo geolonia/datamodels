@@ -21,7 +21,7 @@ You need [Node.js](https://nodejs.org/) 24 or later. The commands run a release 
 npx github:geolonia/datamodels-toolkit#v0.3.7 --help
 ```
 
-The examples in this section use this release. All commands and options are in `--help` and the [README](https://github.com/geolonia/datamodels-toolkit#readme). This section explains them task by task.
+The examples in this section use this release. All commands and options are in `--help` and the [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.7#readme). This section explains them task by task.
 
 ## Pages {#pages}
 
