@@ -45,7 +45,7 @@ body:
       options:
         - label: このサイトを運営している、または運営者の代わりに申請しています / I run this site, or I ask on behalf of the people who run it
           required: true
-        - label: サイトの名前、URL、ライセンスと、catalog.json に載っているモデルを、datamodels.jp のページと catalog.json に載せることに同意します / I agree that datamodels.jp lists the site's name, URL, licence and the models in its catalog.json, on its pages and in its own catalog.json
+        - label: サイトの名前、URL、ライセンスと、catalog.json に載っているモデルを、datamodels.jp のページに載せることに同意します / I agree that datamodels.jp lists the site's name, URL, licence and the models in its catalog.json on its pages
           required: true
         - label: サイトが移ったり閉じたりしたときは、Issue で知らせます / I will tell you in an issue when the site moves or closes
           required: true
