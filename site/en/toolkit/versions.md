@@ -55,7 +55,7 @@ npx @geolonia/datamodels@0.3.10 check --base origin/main --all-released
 
 ### Before the launch {#prerelease}
 
-Before an official launch, `prerelease: true` in `node.yaml` lets you correct published versions in place: delete the subject's snapshot, change the sources, and run `release <subject> --offline`. A version that should not have been published can be removed as a whole: delete its folder under `releases/`. A release folder without its `context.jsonld` stops the build: a version is removed with its folder, not file by file.
+Before an official launch, `prerelease: true` in `node.yaml` lets you correct published versions in place: delete the subject's snapshot, change the sources, and run `release <subject> --offline`. An earlier version that should not have been published can be removed as a whole: delete its folder under `releases/`. The current version is always built from the sources, so it stays online. A release folder without its `context.jsonld` stops the build: a version is removed with its folder, not file by file.
 
 While the flag is true both in the base branch and in the change, `check --base` notes the corrections and removals instead of failing, in the snapshots and online. Without `--base`, `check` cannot see the base branch, so a changed published file stays a problem.
 

@@ -27,7 +27,7 @@ disaster/EvacuationShelter  避難所の運用状況 / Evacuation shelter operat
 
 Each line is one model: its subject and type, its titles, the site (the name of its publisher), and its page. The best 10 are listed; `--limit` changes the number. With `--json`, the output also has the type IRI, version, schema, `@context` and index (`catalog.json`) of each model; use it from scripts and AI agents. `extend` and `export` take that index as `--index`.
 
-A word counts most in the type name, then in the title, the attribute names and the descriptions, and a rare word counts more than a common one. English words need 3 letters or more. Japanese is matched by pairs of characters, so `避難` finds 指定避難所. Value types, such as an address, are listed too.
+A word counts most in the type name, then in the title, the attribute names and the descriptions, and a rare word counts more than a common one. English words need 3 letters or more. Japanese is matched by pairs of characters that contain a kanji or katakana, so `避難` finds 指定避難所; a word in hiragana only, such as `ひなん`, finds nothing. Value types, such as an address, are listed too.
 
 `nodes` lists the sites it can reach, with their name, address, licence, number of models, and the site that links to them:
 
