@@ -36,7 +36,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.7 nodes
 ```text
 Geolonia Inc.  https://datamodels.jp/  CC0-1.0  16 models
 GTT Project  https://models.gtt-project.org/  CC0-1.0  1 model  (linked from Geolonia Inc.)
-Geolonia  https://models.geolonia.com/  CC0-1.0  1 model  (linked from Geolonia Inc.)
+Geolonia Inc.  https://models.geolonia.com/  CC0-1.0  1 model  (linked from Geolonia Inc.)
 3 node(s) within 1 link(s) of https://datamodels.jp/catalog.json
 ```
 
@@ -50,7 +50,7 @@ To build on a model you found, use [extend](#extend).
 npx github:geolonia/datamodels-toolkit#v0.3.7 add road/RoadPatrol
 ```
 
-This adds `models/road/RoadPatrol/` with `schema.json`, `catalog.yaml` and `examples/example.json`, and the type `RoadPatrol` to the subject's `@context`. Then [write its attributes](#attributes).
+This adds `models/road/RoadPatrol/` with `schema.json`, `catalog.yaml`, `examples/example.json` and `notes.yaml` (the notes: sources, decisions and their reasons), and the type `RoadPatrol` to the subject's `@context`. Then [write its attributes](#attributes).
 
 ## Starting from a catalog model {#extend}
 
@@ -59,6 +59,8 @@ To start from a model of this catalog instead, use `extend`. It copies the catal
 ```bash
 npx github:geolonia/datamodels-toolkit#v0.3.7 extend task/Task road/RoadTask
 ```
+
+`extend` writes the same four files as `add`. The `@context` in the subject's `context.jsonld` becomes a list: the URL of the imported @context, then this node's terms.
 
 ## Writing the attributes {#attributes}
 
