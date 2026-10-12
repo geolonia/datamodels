@@ -91,6 +91,6 @@ Hash IRIs work through the redirect: the part after `#` stays in the browser, so
 
 ## Other hosts {#other-hosts}
 
-A node is plain files, so it can also go on a host other than GitHub Pages. `build` also writes the files that Cloudflare Pages, Cloudflare Workers static assets and Netlify read: always `_headers`, with the content type of each file and CORS, and `_redirects`, with the redirects of slash IRIs, only for a node with slash IRIs. A Worker script does not read these files. The workflows, and what to set up on any other host, are in the [datamodels-toolkit README](https://github.com/geolonia/datamodels-toolkit#other-hosts).
+A node is plain files, so it can also go on a host other than GitHub Pages, such as Cloudflare Pages or Netlify: see [Other hosts](/en/toolkit/hosts).
 
 Once the site is there, go on with [Your site's models](/en/toolkit/models).

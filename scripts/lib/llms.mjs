@@ -34,8 +34,11 @@ const TOOLKIT = [
   ['models', "Your site's models", 'find an existing model in datamodels.jp and the sites it links to with search (and list those sites with nodes), add a model with add, or start from a catalog model with extend, and write its attributes'],
   ['check', 'Checking and building', 'check and build a node, and the GitHub Action that checks pull requests and publishes'],
   ['versions', 'Versions', 'change a published model: bump and release keep the old version online; upgrade moves the node to a newer toolkit'],
+  ['hosts', 'Other hosts', 'publish a node on Cloudflare Pages, Netlify or another static host instead of GitHub Pages: content types, CORS, 404 and redirects (the _headers and _redirects files that build writes), and the workflow jobs'],
   ['convert', 'Converting your data', 'convert your own CSV list into entities of a catalog model (datamodels convert): with the mapping file of a standard the list follows, with a mapping of your own (datamodels mapping, then convert --check; an agent skill helps an AI agent fill it in), or from the CSV template'],
   ['export', 'Exporting to other tools', 'a CSV template, its Table Schema, a strict JSON Schema for the structured output of AI models and a PostgreSQL / PostGIS table from a model (datamodels export); on datamodels.jp each model page has them under Download'],
+  ['reference', 'Command reference', 'every command of datamodels with its arguments, options, defaults and exit codes, linking the task page of each'],
+  ['node', 'The node and build', 'what a node holds (node.yaml and its settings, models/) and what build writes: catalog.json, @contexts, schemas, vocabularies, examples, mapping files, adapter files, llms.txt and the pages; the build library for scripts'],
 ];
 
 const exists = (path) => access(path).then(() => true, () => false);
