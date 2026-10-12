@@ -129,8 +129,9 @@ test('the Task page lists the models of other sites built on it, with what they 
   assert.doesNotMatch(page, /Ride/, 'no table of every model');
   assert.match(page, /^<svg class="flow-diagram" [^\n]*<\/svg>\n\n\| Site \|/m, 'the diagram on one line, above the table');
   assert.match(nodesPage('ja', '', { nodes: [] }), /まだありません。/);
-  // Both languages send a site to the listing form, not to a blank issue.
-  for (const p of [page, nodesPage('ja', '', snapshot)]) assert.ok(p.includes('(https://github.com/geolonia/datamodels/issues/new?template=site-listing.yml)'), 'the site-listing form');
+  // Both languages send a site to its section of Contributing, which links the listing form.
+  assert.ok(page.includes('(/en/guide/contribute#site-listing)'), 'the site-listing section, in English');
+  assert.ok(nodesPage('ja', '', snapshot).includes('(/guide/contribute#site-listing)'), 'the site-listing section, in Japanese');
   assert.doesNotMatch(nodesPage('ja', '', { nodes: [] }), /<svg/, 'no diagram without sites');
   const own = { nodes: [nodeEntry(NODE, { models: [{ type: 'Ride', typeIri: 'https://models.example.org/ns/x#Ride' }] }, '2026-10-11')] };
   assert.match(nodesPage('en', '/en', own), /\| 1 \| — \| 2026-10-11 \|/, 'a site that builds on no catalog model');

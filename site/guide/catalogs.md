@@ -5,7 +5,7 @@ description: 世界と日本で使われているデータモデル・語彙の�
 
 # 他のデータモデルカタログ
 
-このカタログは、他所にあるものを複製せず、参照して拡張します。ここでは、その「他所」をまとめます。NGSI-LD でそのまま使えるものと、対応付けの要るものがあります。ここに無いカタログを知っていれば、[他のカタログの登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=catalog-report.yml)で知らせてください（[書き方](/guide/report-catalog)）。
+このカタログは、他所にあるものを複製せず、参照して拡張します。ここでは、その「他所」をまとめます。NGSI-LD でそのまま使えるものと、対応付けの要るものがあります。ここに無いカタログを知っていれば、「[貢献する](/guide/contribute#catalog)」の手順で知らせてください。
 
 ## 世界
 
@@ -36,4 +36,4 @@ description: 世界と日本で使われているデータモデル・語彙の�
 
 Smart Data Models のサイトの [検索](https://smartdatamodels.org/index.php/list-of-data-models-3/) か、GitHub の [smart-data-models](https://github.com/smart-data-models) 組織で `dataModel.<Subject>` リポジトリを探してください。
 
-見つかったモデルを日本向けに拡張したい場合は [属性を足す](/guide/extend) を、このカタログに載せてほしい場合は [モデルの提案フォーム](https://github.com/geolonia/datamodels/issues/new?template=model-proposal.yml)で提案してください（[提案の流れ](/guide/contribute)）。
+見つかったモデルを日本向けに拡張したい場合は [属性を足す](/guide/extend) を、このカタログに載せてほしい場合は「[貢献する](/guide/contribute#model-proposal)」の手順で提案してください。

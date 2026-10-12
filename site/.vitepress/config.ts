@@ -52,10 +52,9 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
     {
       text: ja ? 'カタログに加わる' : 'Add to the catalog',
       items: [
+        // Every request form (a model, an extension, a site, another catalog) has its section on Contributing.
         page('貢献する', 'Contributing', 'contribute'),
         page('モデルのルール', 'Rules for models', 'rules'),
-        page('拡張を載せる', 'Listing your extension', 'list-extension'),
-        page('他のカタログを知らせる', 'Telling us about another catalog', 'report-catalog'),
       ],
     },
     {
