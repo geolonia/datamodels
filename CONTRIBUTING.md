@@ -14,6 +14,7 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 - **自分のサイトを載せる**: [サイトの登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=site-listing.yml)を使ってください。
 - **他のカタログを知らせる**: [他のカタログの登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=catalog-report.yml)を使ってください。datamodels.jp のモデルを拡張したカタログを機械が読める形で一覧にする方法は、まだ決まっていません（#56）。
 - **モデルの追加・修正**: Pull Request を送ってください（下の手順）。
+- **上流への提案**: 日本以外でも使えるモデルは、Smart Data Models の [incubated](https://github.com/smart-data-models/incubated) に提案できます。フォルダ構成を Smart Data Models と揃えているのはこのためです。正式公開までは提案しません。モデルをまだその場で直すことがあるからです。公開の時に、候補を 1 つの Issue にまとめ、誰がいつ提案するかを決めます（2026-10-03 決定）。
 
 ## モデルのルール
 
@@ -22,15 +23,12 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 - **製品に依存しない**: 特定の製品向けの注釈や型名は入れません（製品向けのファイルは `adapters/` が作ります）。
 - 書き方の詳細は[モデルのルール](https://datamodels.jp/guide/rules)にあります（独自の型を作るとき、予約語、エイリアスとサブクラス、状態の属性、標準との対応表、例の書き方）。
 
-<!-- The site's page (site/guide/contribute.md) has its own introduction and one section per form; it includes from here. -->
-<!-- #region ja -->
 ## 段階と決め方
 
 - **提案**（Issue）→ **ドラフト**（`draft`、マージされたモデル）→ **安定**（`stable`）→ **非推奨**（`deprecated`）。非推奨になったモデルも公開をやめず、URL は変わりません。
 - **試行**（`experimental`）は、必要なときだけ使う段階です。実際に使いながら学ぶためのモデルで、別のモデルに置き換わることがあります。データモデルのネットワークのほかのノードと同じ段階で（#200）、datamodels.jp で使うことは少ないはずです（2026-10-10 決定）。
 - **安定**になるには、`ADOPTERS.yaml` に別々の組織による 2 つの実装が必要です。各項目に `name`、`organization`、`url`（公開リポジトリ、ドキュメント、連絡先）を書きます。CI は組織が 2 つあるかを検査し、安定にする Pull Request のレビュアーが、実在し独立しているかを確認します。カタログを運営する Geolonia の実装も、同じ条件（`url` を含む）で 1 つとして数えます。もう 1 つは別の組織の実装です。同じ組織は、顧客や案件が違っても 1 つとして数え、`organization` には実装した組織の名前を書きます。
 - 通常の Pull Request はメンテナーがレビューしてマージします。新しいサブジェクト（分野ごとのモデルのまとまり）、メジャーバージョン、安定への昇格は、小さなグループが決めます。メンバーは Hal、宮内さん、大橋さん、Daniel で、その Pull Request や Issue の上で決めます。
-- **上流への提案**: 日本以外でも使えるモデルは、Smart Data Models の [incubated](https://github.com/smart-data-models/incubated) に提案できます。フォルダ構成を Smart Data Models と揃えているのはこのためです。正式公開までは提案しません。モデルをまだその場で直すことがあるからです。公開の時に、候補を 1 つの Issue にまとめ、誰がいつ提案するかを決めます（2026-10-03 決定）。
 
 ## Pull Request の手順
 
@@ -98,8 +96,6 @@ since: 2026-10                               # 任意：載せた時期
 
 CC BY の出典（Smart Data Models、GIF のコアスキーマなど）から内容を写したファイルは CC BY 4.0 のままです。そのファイルと出典を、モデルのフォルダの `LICENSE.md` に書いてください。
 
-<!-- #endregion ja -->
-
 ---
 
 # Contributing
@@ -116,6 +112,7 @@ Requests go through issue forms. When to use each form, what it asks and what ha
 - **Listing your own site**: use the [site listing form](https://github.com/geolonia/datamodels/issues/new?template=site-listing.yml).
 - **Telling us about another catalog**: use the [catalog form](https://github.com/geolonia/datamodels/issues/new?template=catalog-report.yml). How catalogs that extend datamodels.jp models are listed for machines is not decided yet (#56).
 - **Adding or changing a model**: open a pull request (steps below).
+- **Proposing upstream**: a model that is useful beyond Japan can be proposed to Smart Data Models via [incubated](https://github.com/smart-data-models/incubated). The folder layout matches Smart Data Models for exactly this. Nothing is proposed before the official launch, while models may still be corrected in place; at the launch, the candidates go into one issue that says who proposes them and when (decided 2026-10-03).
 
 ## Rules for models
 
@@ -124,15 +121,12 @@ Requests go through issue forms. When to use each form, what it asks and what ha
 - **Product-neutral**: no product-specific annotations or type names (files for particular products come from `adapters/`).
 - The details are in [Rules for models](https://datamodels.jp/en/guide/rules): when to define a new type, reserved names, aliases and subclasses, status attributes, mapping to standards, writing examples.
 
-<!-- The site's page (site/en/guide/contribute.md) has its own introduction and one section per form; it includes from here. -->
-<!-- #region en -->
 ## Stages and who decides
 
 - **Proposal** (an issue) → **draft** (a merged model) → **stable** → **deprecated**. A deprecated model stays published; its URLs never change.
 - **Experimental** (`experimental`) is an optional stage: a model in use, to learn from, that may still be replaced. It is the same stage as on the other nodes of the web of data models (#200); on datamodels.jp it will be rare (decided 2026-10-10).
 - **Stable** needs two implementations from different organisations in `ADOPTERS.yaml`. Each entry gives `name`, `organization` and a `url` (public repository, documentation or a contact). CI checks that two organisations are listed; the reviewer of the pull request that sets `stable` checks that they are real and independent. An implementation by Geolonia, which runs the catalog, counts as one on the same terms (with a `url`); the other must come from a different organisation. One organisation counts once, whatever the customer or project, and `organization` names the organisation that built it.
 - Maintainers review and merge ordinary pull requests. New subjects, major versions and promotions to `stable` are decided by a small group (Hal, 宮内さん, 大橋さん, Daniel), in the pull request or issue concerned.
-- **Proposing upstream**: a model that is useful beyond Japan can be proposed to Smart Data Models via [incubated](https://github.com/smart-data-models/incubated). The folder layout matches Smart Data Models for exactly this. Nothing is proposed before the official launch, while models may still be corrected in place; at the launch, the candidates go into one issue that says who proposes them and when (decided 2026-10-03).
 
 ## Pull request steps
 
@@ -193,4 +187,3 @@ The [DCO app](https://github.com/apps/dco) checks that every commit of a pull re
 ## Licences
 
 Machine-readable files (schemas, `@context` files, vocabularies, examples, `catalog.yaml`, mapping files, and the published `catalog.json` and adapter files) are [CC0 1.0](https://github.com/geolonia/datamodels/blob/main/LICENSE-CONTENT.md); prose (notes, the models' READMEs, the site's pages) is [CC BY 4.0](https://github.com/geolonia/datamodels/blob/main/LICENSE-CONTENT.md); code outside `models/` (including `site/`, `scripts/`, the adapter code and CI) is [Apache-2.0](https://github.com/geolonia/datamodels/blob/main/LICENSE). A file that copies content from a CC BY source (Smart Data Models, the GIF core schema) stays CC BY 4.0: name the file and its source in the model folder's `LICENSE.md`.
-<!-- #endregion en -->

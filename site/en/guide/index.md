@@ -20,7 +20,7 @@ description: How to use the catalog's models, add attributes, URLs and versions,
 
 ## Add to the catalog
 
-- [Contributing](/en/guide/contribute): how to take part. The forms to propose a model, list an extension or a site, or tell us about another catalog; stages and who decides; pull request steps.
+- [Contributing](/en/guide/contribute): how to take part. The forms to propose a model, list an extension or a site, or tell us about another catalog, and what happens next.
 - [Rules for models](/en/guide/rules): when to define a new type, the rules, mapping to standards, writing examples.
 
 ## Publish your own models

@@ -7,7 +7,7 @@ description: How AI is used to make datamodels.jp, and what AI agents and tools 
 
 ## How this site is made
 
-Much of the site's content (models, notes and pages) was drafted with AI assistance. People decide what goes into the catalog: a new subject, a new major version or a model becoming stable is decided by a small group, in the issue or pull request concerned ([Contributing](/en/guide/contribute)). Before anything is published, CI checks every model and example against its schema and the catalog's rules, and the build fails on a broken link inside the site.
+Much of the site's content (models, notes and pages) was drafted with AI assistance. People decide what goes into the catalog: a new subject, a new major version or a model becoming stable is decided by a small group, in the issue or pull request concerned ([who decides](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md#stages-and-who-decides)). Before anything is published, CI checks every model and example against its schema and the catalog's rules, and the build fails on a broken link inside the site.
 
 If something is wrong, please [open an issue](https://github.com/geolonia/datamodels/issues).
 
