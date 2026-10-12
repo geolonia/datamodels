@@ -63,4 +63,4 @@ Issue は誰でも読めます。パスワード、API キー、トークン、�
 
 ## 自分でファイルを変える {#pull-requests}
 
-依頼を送るだけなら、上のフォームで足ります。Pull Request でカタログのファイルを自分で変えるときは、GitHub の [CONTRIBUTING.md](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md) に従ってください。Pull Request の手順、モデルの段階、署名（DCO）を説明しています。貢献した内容は、カタログの[ライセンス](/LICENSE-CONTENT)で公開します。モデルのファイルは CC0 1.0、文章は CC BY 4.0、コードは Apache-2.0 です。
+依頼を送るだけなら、上のフォームで足ります。Pull Request でカタログのファイルを自分で変えるときは、GitHub の [CONTRIBUTING.md](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md) に従ってください。Pull Request の手順、モデルの段階、署名（DCO）を説明しています。貢献した内容は、カタログの[ライセンス](/LICENSE-CONTENT)で公開します。

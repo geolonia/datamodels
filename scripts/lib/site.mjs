@@ -464,20 +464,16 @@ export async function generateSitePages(subjects, adapters = [], nodes = { nodes
 const NODES = {
   ja: {
     title: 'データモデルのサイト', description: 'datamodels-toolkit で自分のデータモデルを公開している、datamodels.jp が知っているサイトの一覧',
-    intro: (own) => `自分のサイト（ノード）でデータモデルを公開していて、datamodels.jp が知っているサイトです。1 行に 1 つのサイトで、モデルの数と、このカタログのどのモデルをもとにしているかを示します。サイトのモデルはこのカタログの一部ではなく、datamodels.jp は内容を確認していません。それぞれのサイトが自分のモデルを決めます。多くの人に役立つモデルは、カタログに提案できます。自分のサイトの作り方は[サイトを始める](${own})にあります。`,
+    intro: (own, guide) => `自分のサイト（ノード）でデータモデルを公開していて、datamodels.jp が知っているサイトです。1 行に 1 つのサイトで、モデルの数と、このカタログのどのモデルをもとにしているかを示します。サイトのモデルはこのカタログの一部ではなく、datamodels.jp は内容を確認していません。それぞれのサイトが自分のモデルを決めます。多くの人に役立つモデルは、カタログに提案できます。サイトとカタログの関係は、[自分のデータモデル](${guide})の図にあります。自分のサイトの作り方は[サイトを始める](${own})にあります。`,
     perModel: 'サイトのモデルは、それぞれのサイトで見られます。このカタログのモデルをもとにしたモデルは、そのモデルのページの「このモデルをもとにしたもの」にも、足した属性と一緒に載ります。',
     add: (guide) => `各行は、サイトの catalog.json から読んでいます。自分のサイトを載せる手順は[貢献する](${guide})にあります。`,
-    // Sites build on the catalog's models (the same diagram as on /guide/own-models).
-    diagram: '<svg class="flow-diagram" viewBox="0 0 460 216" role="img" aria-label="datamodels.jp はカタログのモデルと、データモデルのサイトの一覧を公開します。models.gtt-project.org の Issue は、カタログの Task をもとにしています。自分のサイトのモデルも、カタログのモデルをもとにできます。どのサイトも catalog.json を公開します。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="sites-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box main" x="10" y="8" width="440" height="58" rx="10"/><text class="t" x="230" y="33">datamodels.jp</text><text class="s" x="230" y="53">カタログのモデル（Task など）と、サイトの一覧</text><rect class="box" x="10" y="150" width="210" height="58" rx="10"/><text class="t m" x="115" y="175">models.gtt-project.org</text><text class="s" x="115" y="194">Issue、catalog.json</text><rect class="box d" x="240" y="150" width="210" height="58" rx="10"/><text class="t" x="345" y="175">自分のサイト</text><text class="s" x="345" y="194">自分のモデル、catalog.json</text><line class="a" x1="115" y1="150" x2="115" y2="68" marker-end="url(#sites-ah)"/><text class="l" x="125" y="104">Issue は Task をもとにする</text><line class="a d" x1="345" y1="150" x2="345" y2="68" marker-end="url(#sites-ah)"/><text class="l e" x="335" y="128">もとにできる</text></svg>',
     none: 'まだありません。', site: 'サイト', licence: 'ライセンス', models: 'モデルの数', buildsOn: 'もとにしたカタログのモデル', read: '読んだ日',
   },
   en: {
     title: 'Data model sites', description: 'Sites that publish their own data models with datamodels-toolkit and that datamodels.jp knows',
-    intro: (own) => `Sites of their own (nodes) that publish data models and that datamodels.jp knows: one row per site, with how many models it has and which catalog models they build on. Their models are not part of this catalog, and datamodels.jp does not review them: each site decides about its own. A model that is useful to many can be proposed to the catalog. How to make a site: [Starting a site](${own}).`,
+    intro: (own, guide) => `Sites of their own (nodes) that publish data models and that datamodels.jp knows: one row per site, with how many models it has and which catalog models they build on. Their models are not part of this catalog, and datamodels.jp does not review them: each site decides about its own. A model that is useful to many can be proposed to the catalog. How the sites and the catalog fit together: the diagram in [Your own data models](${guide}). How to make a site: [Starting a site](${own}).`,
     perModel: 'Each site shows its own models. A model built on a catalog model is also listed on that model\'s page, under "Built on by others", with the attributes it adds.',
     add: (guide) => `Each row is read from the site's catalog.json; to add your site, see [Contributing](${guide}).`,
-    // Sites build on the catalog's models (the same diagram as on /guide/own-models).
-    diagram: '<svg class="flow-diagram" viewBox="0 0 460 216" role="img" aria-label="datamodels.jp publishes the catalog\'s models and the list of data model sites. Issue on models.gtt-project.org builds on the catalog\'s Task. A model on your own site can build on a catalog model too. Every site publishes a catalog.json." xmlns="http://www.w3.org/2000/svg"><defs><marker id="sites-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box main" x="10" y="8" width="440" height="58" rx="10"/><text class="t" x="230" y="33">datamodels.jp</text><text class="s" x="230" y="53">Catalog models (Task and others) and the list of sites</text><rect class="box" x="10" y="150" width="210" height="58" rx="10"/><text class="t m" x="115" y="175">models.gtt-project.org</text><text class="s" x="115" y="194">Issue, catalog.json</text><rect class="box d" x="240" y="150" width="210" height="58" rx="10"/><text class="t" x="345" y="175">Your site</text><text class="s" x="345" y="194">Your models, catalog.json</text><line class="a" x1="115" y1="150" x2="115" y2="68" marker-end="url(#sites-ah)"/><text class="l" x="125" y="104">Issue builds on Task</text><line class="a d" x1="345" y1="150" x2="345" y2="68" marker-end="url(#sites-ah)"/><text class="l e" x="335" y="128">can build on it too</text></svg>',
     none: 'None yet.', site: 'Site', licence: 'Licence', models: 'Models', buildsOn: 'Builds on (catalog models)', read: 'Read on',
   },
 };
@@ -487,9 +483,8 @@ export function nodesPage(lang, prefix, nodes) {
   const n = NODES[lang];
   // One table and no sections: no outline column.
   let md = front(n.title, n.description).replace(/\n---\n\n$/, '\naside: false\n---\n\n');
-  md += `# ${n.title}\n\n${n.intro(`${prefix}/toolkit/start`)}\n\n${n.add(`${prefix}/guide/contribute#site-listing`)}\n\n`;
+  md += `# ${n.title}\n\n${n.intro(`${prefix}/toolkit/start`, `${prefix}/guide/own-models#own-site`)}\n\n${n.add(`${prefix}/guide/contribute#site-listing`)}\n\n`;
   if (!nodes.nodes?.length) return `${md}${n.none}\n`;
-  md += `${n.diagram}\n\n`;
   md += `| ${n.site} | ${n.licence} | ${n.models} | ${n.buildsOn} | ${n.read} |\n|---|---|---|---|---|\n`;
   for (const node of nodes.nodes) {
     // Every catalog model one of its models builds on (alias, superclass or extended type), once, in the order met.

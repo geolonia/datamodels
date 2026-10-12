@@ -41,7 +41,7 @@ fields:
 
 ## 変換の規則 {#convert}
 
-変換の規則があるのは、一部の対応表だけです。ほとんどの対応表は、モデルと標準の関係を説明するだけです。規則のある行には、属性の値の作り方を書きます。
+変換の規則があるのは、一部の対応表だけです（[対応表を置く標準](/guide/rules#mapping)）。規則のある行には、属性の値の作り方を書きます。
 
 - `column`：CSV の列です。複数の列を読む変換では、列のリストを書きます。
 - `transform`：列の読み方です（[変換の種類](#transforms)）。書かなければ、文字列をそのまま使います。
@@ -134,6 +134,6 @@ convert:
 
 ## 対応表を足す
 
-カタログに対応表を置くのは、多くの一覧が従っている公開の標準だけです。1 つの組織だけの一覧には、カタログの対応表を作りません。自分の対応表を手元に置いて変換します（[データを変換する](/toolkit/convert#your-own-list)）。
+どの標準に対応表を置くかは、[モデルのルール](/guide/rules#mapping)にあります。自分たちだけの一覧は、自分の対応表で変換します（[データを変換する](/toolkit/convert#your-own-list)）。
 
-対応表がまだ無い標準を見つけたら、[Issue](https://github.com/geolonia/datamodels/issues/new) で提案してください（[貢献する](/guide/contribute)）。どの標準に対応表を置くかは、[モデルのルール](/guide/rules#mapping)にあります。
+対応表がまだ無い標準を見つけたら、[Issue](https://github.com/geolonia/datamodels/issues/new) で提案してください（[貢献する](/guide/contribute)）。

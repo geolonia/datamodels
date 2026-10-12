@@ -63,4 +63,4 @@ What happens next: a maintainer looks at the catalog and may ask you a question 
 
 ## Changing the files yourself {#pull-requests}
 
-To send a request, the forms above are all you need. If you change the catalog's files yourself in a pull request, follow [CONTRIBUTING.md](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md) on GitHub: the pull request steps, the stages of a model and the sign-off (DCO). What you contribute is published under the catalog's [licences](/en/LICENSE-CONTENT): CC0 1.0 for the model files, CC BY 4.0 for text and Apache-2.0 for code.
+To send a request, the forms above are all you need. If you change the catalog's files yourself in a pull request, follow [CONTRIBUTING.md](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md) on GitHub: the pull request steps, the stages of a model and the sign-off (DCO). What you contribute is published under the catalog's [licences](/en/LICENSE-CONTENT).

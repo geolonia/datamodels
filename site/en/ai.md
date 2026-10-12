@@ -21,4 +21,4 @@ This site is meant for people and for assistants alike. Search, AI answers and A
 - **Meaning:** every type and attribute IRI under `https://datamodels.jp/ns/` opens its documentation.
 - **Stable URLs:** published versions never change ([URLs and versions](/en/guide/urls)), so a URL you cite stays correct. Until the official launch (pre-release), published versions may still be corrected in place.
 
-Machine-readable files (schemas, @context files, vocabularies, examples) are CC0 1.0; text, such as these pages and the models' notes, is CC BY 4.0. A file that copies content from a CC BY source stays CC BY 4.0; none does today ([Licences](/en/LICENSE-CONTENT)).
+Machine-readable files (schemas, @context files, vocabularies, examples) can be used without conditions. The licences of the text and the code: [Licences](/en/LICENSE-CONTENT).
