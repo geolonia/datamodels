@@ -17,7 +17,7 @@ import addFormats from 'ajv-formats';
 import jsonld from 'jsonld';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { loadSubjects, attributesOf, toKeyValues, unwrapKeyValues, dateFormats, typedDate, NGSI_TYPES, subjectUrls, modelUrls, resolveContextTerms, CORE_CONTEXT_URL, CORE_CONTEXT_FIXTURE } from './lib/models.mjs';
+import { loadSubjects, attributesOf, toKeyValues, unwrapKeyValues, dateFormats, typedDate, NGSI_TYPES, subjectUrls, modelUrls, resolveContextTerms, CORE_CONTEXT_URL, CORE_CONTEXT_FIXTURE, isCatalogIri, externalParentProblem } from './lib/models.mjs';
 import { resolveContextDocument, listReleases } from './lib/releases.mjs';
 import { bilingual, mappingProblems, viaCycles } from './lib/mapping-check.mjs';
 import { reportFailures } from './lib/ci-summary.mjs';
@@ -39,7 +39,8 @@ const mappingsByName = Object.fromEntries(subjects.flatMap((s) => s.models.flatM
 const mappingNames = new Set(Object.keys(mappingsByName));
 for (const cycle of viaCycles(mappingsByName)) { const [sub, type, name] = cycle[0].split('/'); fail(`models/${sub}/${type}/mapping/${name}.yaml`, `via cycle: ${cycle.join(' → ')}`); }
 const seenTypeIris = new Map();
-// Every type that owns its IRI (not an alias), for alias and subclass targets.
+// Every type that owns its IRI (not an alias), for alias and subclass targets in
+// the catalog namespace. A subclass may also name a type of another vocabulary.
 const ownersByIri = new Map();
 for (const subject of subjects) for (const model of subject.models) if (!model.schema['x-alias-of']) ownersByIri.set(modelUrls(subject, model).typeIri, { subject, model });
 
@@ -190,7 +191,11 @@ for (const subject of subjects) {
     } else {
       const prev = seenTypeIris.get(murls.typeIri); if (prev) fail(mwhere, `type IRI ${murls.typeIri} also used by ${prev}`); seenTypeIris.set(murls.typeIri, mwhere);
     }
-    if (subclassOf) {
+    if (subclassOf && !isCatalogIri(subclassOf)) {
+      // A type of another vocabulary (schema.org and others): only the IRI is checked.
+      const problem = externalParentProblem(subclassOf);
+      if (problem) fail(`${mwhere}/schema.json`, `x-subclass-of ${subclassOf} ${problem}`);
+    } else if (subclassOf) {
       // A subclass keeps its own type IRI but shares the parent's attribute IRIs and cannot loosen its requirements.
       const target = ownersByIri.get(subclassOf);
       if (!target) fail(`${mwhere}/schema.json`, `x-subclass-of ${subclassOf} is not a type of this catalog`);

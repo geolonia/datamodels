@@ -344,6 +344,28 @@ test('a subclass that drops a parent-required attribute fails', () =>
   withMutatedModels(async (d) => { await addSubclassProbe(d); await editJson(join(d, 'disaster', 'SubclassProbe', 'schema.json'), (s) => { s.required = s.required.filter((r) => r !== 'name'); }); },
     /subclass of Task: "name" must stay required/));
 
+// A subclass may name a type outside the catalog (common's ContactPoint is a
+// schema.org ContactPoint), but only in a known vocabulary and only a class.
+const setCommonParent = (type, parent) => (d) => editJson(join(d, 'common', type, 'schema.json'), (s) => { s['x-subclass-of'] = parent; });
+
+test('a subclass of a Smart Data Models or NGSI-LD core type is accepted', async () => {
+  await withMutatedModels(setCommonParent('ContactPoint', 'https://smartdatamodels.org/dataModel.PointOfInterest/PointOfInterest'), null, { pass: true });
+  await withMutatedModels(setCommonParent('Geometry', 'https://uri.etsi.org/ngsi-ld/GeoProperty'), null, { pass: true });
+});
+
+test('a subclass of a type outside the known vocabularies fails', () =>
+  withMutatedModels(setCommonParent('ContactPoint', 'https://example.org/ContactPoint'), /ContactPoint\/schema\.json: x-subclass-of https:\/\/example\.org\/ContactPoint is outside the known vocabularies/));
+
+test('a subclass of a schema.org property instead of a class fails', () =>
+  withMutatedModels(setCommonParent('ContactPoint', 'https://schema.org/contactPoint'), /x-subclass-of https:\/\/schema\.org\/contactPoint does not name a class/));
+
+test('a subclass parent that is not an absolute http(s) IRI fails', () =>
+  withMutatedModels(setCommonParent('JapaneseAddress', 'schema:PostalAddress'), /x-subclass-of schema:PostalAddress is not an absolute http\(s\) IRI/));
+
+test('a subclass of a catalog type that does not exist fails', () =>
+  withMutatedModels(async (d) => { await addSubclassProbe(d); await editJson(join(d, 'disaster', 'SubclassProbe', 'schema.json'), (s) => { s['x-subclass-of'] = 'https://datamodels.jp/ns/task/Tsak'; }); },
+    /x-subclass-of https:\/\/datamodels\.jp\/ns\/task\/Tsak is not a type of this catalog/));
+
 test('an alias with a different unknown-attribute policy fails', () =>
   withMutatedModels(async (d) => { await addAliasProbe(d); await editJson(join(d, 'disaster', 'AliasProbe', 'schema.json'), (s) => { s.additionalProperties = true; }); },
     /alias of Project: additionalProperties differs/));

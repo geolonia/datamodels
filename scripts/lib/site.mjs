@@ -7,7 +7,7 @@
 // which point at `#<term>`, keep working with case preserved.
 import { mkdir, writeFile, rm } from 'node:fs/promises';
 import { join } from 'node:path';
-import { attributesOf, subjectUrls, modelUrls, BASE_URL, ROOT, CORE_TERMS, mdText } from './models.mjs';
+import { attributesOf, subjectUrls, modelUrls, BASE_URL, ROOT, CORE_TERMS, mdText, isCatalogIri } from './models.mjs';
 import { modelAnchor } from './adapter-pages.mjs';
 import { graphSvg, graphTitle } from './graph.mjs';
 import { listReleases } from './releases.mjs';
@@ -46,6 +46,7 @@ const T = {
     subject: 'サブジェクト', mappingField: 'このモデル', mappingTo: '対応先', mappingNote: '備考', none: '対応なし',
     alias: 'エイリアス', aliasNote: (link) => `${link} と同じ型です（IRI が同一）。名称だけがこのサブジェクトの言い方に合わせてあり、属性も必須項目も同じです。ブローカーでは同じ型として保存・照合されます。`,
     subclass: 'サブクラス', subclassNote: (link) => `${link} のサブクラスです。同じ名前の属性は親と同じ IRI になり、親の必須項目はここでも必須なので、親の属性を読むコードはこの型もそのまま読めます。型そのものは別なので、親の型で検索するクライアントは語彙の rdfs:subClassOf をたどって初めてこの型を見つけます。`,
+    subclassExternalNote: (link) => `${link} のサブクラスです。親はこのカタログの外の型で、この型はそれより狭いか、項目を足しています。意味が合う項目は親の語彙の IRI を使います。関係は語彙に rdfs:subClassOf として書いてあります。`,
   },
   en: {
     models: 'Data models', overview: 'Overview', subjects: 'Subjects', attributes: 'Attributes', exampleNote: (href) => `The examples are a fictional scenario (heavy rain in Chiyoda, Tokyo). Place names and codes are real; the events, people and teams are invented. See [writing examples](${href}).`,
@@ -68,6 +69,7 @@ const T = {
     subject: 'Subject', mappingField: 'This model', mappingTo: 'Maps to', mappingNote: 'Note', none: 'no counterpart',
     alias: 'alias', aliasNote: (link) => `The same type as ${link} (identical IRI). Only the name follows this subject's wording; attributes and required fields are the same. A broker stores and matches both names as one type.`,
     subclass: 'subclass', subclassNote: (link) => `A subclass of ${link}. Attributes with the same name carry the parent's IRIs and the parent's required attributes stay required, so code that reads the parent's attributes reads this type too. The type itself differs: a client that selects by the parent type finds this one only by following rdfs:subClassOf in the vocabulary.`,
+    subclassExternalNote: (link) => `A subclass of ${link}, a type outside this catalog: this type is narrower or adds fields. Fields whose meaning matches use the parent vocabulary's IRIs. The vocabulary states the relation as rdfs:subClassOf.`,
   },
 };
 
@@ -238,13 +240,16 @@ function modelPage(lang, prefix, subject, model) {
   const desc = model.catalog.description?.[lang] ?? '';
   const isValue = model.kind === 'value';
   const aliasOf = model.schema['x-alias-of'] ? modelForIri(subject, model.schema['x-alias-of'], { ownerOnly: true }) : null;
-  const subclassOf = model.schema['x-subclass-of'] ? modelForIri(subject, model.schema['x-subclass-of'], { ownerOnly: true }) : null;
+  const parentIri = model.schema['x-subclass-of'];
+  // A parent in the catalog links to its page; one of another vocabulary (schema.org) to its own IRI.
+  const subclassOf = parentIri && isCatalogIri(parentIri) ? modelForIri(subject, parentIri, { ownerOnly: true }) : null;
+  const subclassOfExternal = parentIri && !isCatalogIri(parentIri) ? parentIri : null;
   const repo = 'https://github.com/geolonia/datamodels';
   let md = front(`${model.type}`, desc);
   const playground = !isValue && model.examples['example.json'] && model.examples['example-normalized.jsonld'];
   // "<" escaped so no text can close the script block.
   if (playground) md += `<script setup>\nconst playground = ${JSON.stringify(playgroundData(lang, subject, model)).replaceAll('<', '\\u003c')}\n</script>\n\n`;
-  md += `# ${model.type} ${statusBadge(lang, model.catalog.status ?? 'draft')}${isValue ? ` ${badge('info', t.valueType)}` : ''}${aliasOf ? ` ${badge('info', t.alias)}` : ''}${subclassOf ? ` ${badge('info', t.subclass)}` : ''}\n\n`;
+  md += `# ${model.type} ${statusBadge(lang, model.catalog.status ?? 'draft')}${isValue ? ` ${badge('info', t.valueType)}` : ''}${aliasOf ? ` ${badge('info', t.alias)}` : ''}${subclassOf || subclassOfExternal ? ` ${badge('info', t.subclass)}` : ''}\n\n`;
   // Deprecation is the one notice nobody may miss; everything else is in the table.
   if ((model.catalog.status ?? 'draft') === 'deprecated') {
     // supersededBy is a type IRI of this catalog (link its page) or any other URL.
@@ -261,6 +266,7 @@ function modelPage(lang, prefix, subject, model) {
   md += `| ${l.kind} | ${isValue ? l.valueKind : l.entity} |\n`;
   if (aliasOf) md += `| ${l.sameAs} | ${cellText(t.aliasNote(modelLink(prefix, aliasOf)))} |\n`;
   if (subclassOf) md += `| ${l.subclassOf} | ${cellText(t.subclassNote(modelLink(prefix, subclassOf)))} |\n`;
+  if (subclassOfExternal) md += `| ${l.subclassOf} | ${cellText(t.subclassExternalNote(externalLink(subclassOfExternal)))} |\n`;
   md += `| ${isValue ? 'IRI' : t.typeIri} | ${code(mu.typeIri)} |\n`;
   // The aliases only; the fixed URLs of each version are on the subject page (urlNote below the table).
   md += `| ${t.context} | [${code(u.contextAlias)}](${rel(u.contextAlias)}) |\n`;
