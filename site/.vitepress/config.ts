@@ -89,15 +89,16 @@ const guideGroups = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideba
   ]
 }
 
-// The Toolkit section documents datamodels-toolkit (the datamodels command), one page per task.
-// The command reference stays with the toolkit (--help and its README).
+// The Toolkit section is the documentation of datamodels-toolkit (the datamodels command): one page
+// per task, and the pages to look things up in, the command reference among them. The toolkit's README
+// keeps the essentials and links here (decided 2026-10-12, geolonia/datamodels-toolkit#87).
 const toolkitPages = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.SidebarItem[] => {
   const ja = lang === 'ja'
   const page = (jaText: string, enText: string, slug: string): DefaultTheme.SidebarItem =>
     ({ text: ja ? jaText : enText, link: `${prefix}/toolkit/${slug}` })
-  // In groups, as the guides: publishing your own site (in the order of the work), and converting
-  // your own data into the models and out to other tools. Pages to look things up in
-  // are guides. The landing page lists the same groups.
+  // In groups, as the guides: publishing your own site (in the order of the work), converting
+  // your own data into the models and out to other tools, and reference (every command; what a
+  // node holds and what build writes). The landing page lists the same groups.
   return [
     {
       text: ja ? '自分のサイトを公開する' : 'Publish your site',
@@ -106,6 +107,7 @@ const toolkitPages = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideb
         page('サイトのモデル', "Your site's models", 'models'),
         page('検査とビルド', 'Checking and building', 'check'),
         page('バージョン', 'Versions', 'versions'),
+        page('GitHub Pages 以外のホスト', 'Other hosts', 'hosts'),
       ],
     },
     {
@@ -113,6 +115,13 @@ const toolkitPages = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.Sideb
       items: [
         page('データを変換する', 'Converting your data', 'convert'),
         page('他のツールに書き出す', 'Exporting to other tools', 'export'),
+      ],
+    },
+    {
+      text: ja ? '参照' : 'Reference',
+      items: [
+        page('コマンドリファレンス', 'Command reference', 'reference'),
+        page('ノードとビルド', 'The node and build', 'node'),
       ],
     },
   ]
