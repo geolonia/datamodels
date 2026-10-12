@@ -30,9 +30,10 @@ How AI was used to make this site, and what AI agents can use: [AI and agents](/
 
 ## Privacy
 
-- No cookies, no analytics, no third-party scripts, and no forms.
-- The site search runs in your browser and sends nothing. The appearance setting (light or dark) is stored in your browser only.
+- No cookies and no forms on this site (requests go through issue forms on GitHub, see [Contributing](/en/guide/contribute)).
+- One script from outside: Cloudflare Web Analytics, which counts page views and measures how fast pages load. It sets no cookies and stores nothing in your browser, and Cloudflare says it does not track individual visitors across sites. Its script loads from static.cloudflareinsights.com and reports to this site (checked 2026-10-12).
+- The site search runs in your browser and sends nothing. Your settings (light or dark, and how search results are shown) are stored in your browser only.
 - The hosting provider (Cloudflare) processes ordinary access logs (IP address, browser type and similar) as far as needed to deliver the site.
 - See also Geolonia's [privacy policy](https://www.geolonia.com/privacy/) (Japanese).
 
-If analytics or similar tools are ever added, this page will say so first.
+If other analytics or similar tools are ever added, this page will say so first.
