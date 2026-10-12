@@ -2,15 +2,18 @@
 
 [English below](#contributing)
 
-<!-- #region ja -->
 datamodels.jp は、日本で使えるデータモデルを共有の資産として公開するカタログです。企業、自治体、個人を問わず、誰でも提案・修正できます。ルールは全員同じです。日本語でも英語でも構いません。
 
 ## 参加の方法
 
+依頼は Issue フォームで受け付けます。フォームごとの使う場面、書くこと、そのあとの流れは、サイトの「[貢献する](https://datamodels.jp/guide/contribute)」にあります。
+
 - **質問・不具合・アイデア**: [Issue](https://github.com/geolonia/datamodels/issues/new) を開いてください。「この属性の意味が分からない」も歓迎です。
 - **新しいモデルや属性の提案**: [モデルの提案フォーム](https://github.com/geolonia/datamodels/issues/new?template=model-proposal.yml)を使ってください。まだスキーマを書く必要はありません。
+- **拡張を載せる**: [拡張の登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml)を使ってください。
+- **自分のサイトを載せる**: [サイトの登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=site-listing.yml)を使ってください。
+- **他のカタログを知らせる**: [他のカタログの登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=catalog-report.yml)を使ってください。datamodels.jp のモデルを拡張したカタログを機械が読める形で一覧にする方法は、まだ決まっていません（#56）。
 - **モデルの追加・修正**: Pull Request を送ってください（下の手順）。
-- **上流への提案**: 日本以外でも使えるモデルは、Smart Data Models の [incubated](https://github.com/smart-data-models/incubated) に提案できます。フォルダ構成を Smart Data Models と揃えているのはこのためです。正式公開までは提案しません。モデルをまだその場で直すことがあるからです。公開の時に、候補を 1 つの Issue にまとめ、誰がいつ提案するかを決めます（2026-10-03 決定）。
 
 ## モデルのルール
 
@@ -19,12 +22,15 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 - **製品に依存しない**: 特定の製品向けの注釈や型名は入れません（製品向けのファイルは `adapters/` が作ります）。
 - 書き方の詳細は[モデルのルール](https://datamodels.jp/guide/rules)にあります（独自の型を作るとき、予約語、エイリアスとサブクラス、状態の属性、標準との対応表、例の書き方）。
 
+<!-- The site's page (site/guide/contribute.md) has its own introduction and one section per form; it includes from here. -->
+<!-- #region ja -->
 ## 段階と決め方
 
 - **提案**（Issue）→ **ドラフト**（`draft`、マージされたモデル）→ **安定**（`stable`）→ **非推奨**（`deprecated`）。非推奨になったモデルも公開をやめず、URL は変わりません。
 - **試行**（`experimental`）は、必要なときだけ使う段階です。実際に使いながら学ぶためのモデルで、別のモデルに置き換わることがあります。データモデルのネットワークのほかのノードと同じ段階で（#200）、datamodels.jp で使うことは少ないはずです（2026-10-10 決定）。
 - **安定**になるには、`ADOPTERS.yaml` に別々の組織による 2 つの実装が必要です。各項目に `name`、`organization`、`url`（公開リポジトリ、ドキュメント、連絡先）を書きます。CI は組織が 2 つあるかを検査し、安定にする Pull Request のレビュアーが、実在し独立しているかを確認します。カタログを運営する Geolonia の実装も、同じ条件（`url` を含む）で 1 つとして数えます。もう 1 つは別の組織の実装です。同じ組織は、顧客や案件が違っても 1 つとして数え、`organization` には実装した組織の名前を書きます。
 - 通常の Pull Request はメンテナーがレビューしてマージします。新しいサブジェクト（分野ごとのモデルのまとまり）、メジャーバージョン、安定への昇格は、小さなグループが決めます。メンバーは Hal、宮内さん、大橋さん、Daniel で、その Pull Request や Issue の上で決めます。
+- **上流への提案**: 日本以外でも使えるモデルは、Smart Data Models の [incubated](https://github.com/smart-data-models/incubated) に提案できます。フォルダ構成を Smart Data Models と揃えているのはこのためです。正式公開までは提案しません。モデルをまだその場で直すことがあるからです。公開の時に、候補を 1 つの Issue にまとめ、誰がいつ提案するかを決めます（2026-10-03 決定）。
 
 ## Pull Request の手順
 
@@ -49,15 +55,11 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 - レビューを経て、他のモデルと同じく `draft` で取り込みます。新しい段階はありません。
 - `ADOPTERS.yaml` の記載は、早めの根拠になります。1 つの組織は 1 回だけ数えるので、`stable` に 2 つの独立した組織が要るという規則は変わりません（2026-10-06 決定、#156）。
 
-### 他のカタログを知らせる
+### 登録された拡張を取り込む
 
-ほかのデータモデルカタログや語彙は、[他のカタログの登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=catalog-report.yml)で知らせてください。メンテナーが確認して「[他のデータモデルカタログ](https://datamodels.jp/guide/catalogs)」のページに載せます。書き方は「[他のカタログを知らせる](https://datamodels.jp/guide/report-catalog)」にあります。datamodels.jp のモデルを拡張したカタログを機械が読める形で一覧にする方法は、まだ決まっていません（#56）。
+拡張の登録フォームで届いた拡張は、次の手順でモデルのページの「このモデルをもとにしたもの」と `catalog.json` に入ります。ツールキットで作った自分のサイトで公開している拡張は、サイトを `nodes.yaml` に載せれば、`npm run nodes` で読んだ内容が同じ欄に載ります。サイトとフォームの両方に同じ拡張があるときは、サイトの内容を 1 回だけ載せます（拡張のページか @context の URL がサイトの URL で始まるとき、同じとみなします）。
 
-### 拡張を一覧に載せる
-
-モデルに属性を足して使っている組織は、その拡張をモデルのページの「このモデルをもとにしたもの」と `catalog.json` に載せられます。同じ意味の属性に、ほかの組織が同じ名前を使えるようにするためです。ツールキットで作った自分のサイトで公開している拡張は、サイトを `nodes.yaml` に載せれば、`npm run nodes` で読んだ内容が同じ欄に載ります。フォームは、自分のサイトが無い組織のためのものです。サイトを一覧に載せるには、[サイトの登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=site-listing.yml)を使います。サイトとフォームの両方に同じ拡張があるときは、サイトの内容を 1 回だけ載せます（拡張のページか @context の URL がサイトの URL で始まるとき、同じとみなします）。
-
-1. 持ち主が [拡張の登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml) に記入します（モデルのページからはモデル名が入った状態で開きます）。書き方は「[拡張を載せる](https://datamodels.jp/guide/list-extension)」にあります。
+1. 持ち主が [拡張の登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml) に記入します（モデルのページからはモデル名が入った状態で開きます）。使う場面とそのあとの流れは「[拡張を載せる](https://datamodels.jp/guide/contribute#extension)」にあります。
 2. メンテナーか持ち主が、`models/<サブジェクト>/<型名>/extensions/<名前>.yaml` を足す Pull Request を開きます（署名付き）。
 3. CI が形を検査します。IRI が datamodels.jp のアドレスでないこと（自分のドメインかどうかは検査しない）、名前がモデルの属性や NGSI-LD のコアの用語と重ならないこと。@context をデータの中に書く場合は、サブジェクトの @context を取り込み、各用語を書いた IRI で定義していること。
 4. レビューで確かめるのは、登録した人がその組織を代表していることだけです。内容は確認せず、持ち主の申告のまま載せます。アクセス情報（キー、トークン、ログイン URL）は載せません。
@@ -102,15 +104,18 @@ CC BY の出典（Smart Data Models、GIF のコアスキーマなど）から�
 
 # Contributing
 
-<!-- #region en -->
 datamodels.jp publishes data models that work in Japan as a shared, product-neutral resource. Anyone can propose and change models, whether a company, a municipality or an individual, and the same rules apply to everyone. Japanese and English are both welcome.
 
 ## Ways to take part
 
+Requests go through issue forms. When to use each form, what it asks and what happens next: "[Contributing](https://datamodels.jp/en/guide/contribute)" on the site.
+
 - **Questions, bugs, ideas**: open an [issue](https://github.com/geolonia/datamodels/issues/new). "I do not understand this attribute" is welcome too.
 - **Proposing a new model or new attributes**: use the [model proposal form](https://github.com/geolonia/datamodels/issues/new?template=model-proposal.yml). No schema is needed yet.
+- **Listing an extension**: use the [extension form](https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml).
+- **Listing your own site**: use the [site listing form](https://github.com/geolonia/datamodels/issues/new?template=site-listing.yml).
+- **Telling us about another catalog**: use the [catalog form](https://github.com/geolonia/datamodels/issues/new?template=catalog-report.yml). How catalogs that extend datamodels.jp models are listed for machines is not decided yet (#56).
 - **Adding or changing a model**: open a pull request (steps below).
-- **Proposing upstream**: a model that is useful beyond Japan can be proposed to Smart Data Models via [incubated](https://github.com/smart-data-models/incubated). The folder layout matches Smart Data Models for exactly this. Nothing is proposed before the official launch, while models may still be corrected in place; at the launch, the candidates go into one issue that says who proposes them and when (decided 2026-10-03).
 
 ## Rules for models
 
@@ -119,12 +124,15 @@ datamodels.jp publishes data models that work in Japan as a shared, product-neut
 - **Product-neutral**: no product-specific annotations or type names (files for particular products come from `adapters/`).
 - The details are in [Rules for models](https://datamodels.jp/en/guide/rules): when to define a new type, reserved names, aliases and subclasses, status attributes, mapping to standards, writing examples.
 
+<!-- The site's page (site/en/guide/contribute.md) has its own introduction and one section per form; it includes from here. -->
+<!-- #region en -->
 ## Stages and who decides
 
 - **Proposal** (an issue) → **draft** (a merged model) → **stable** → **deprecated**. A deprecated model stays published; its URLs never change.
 - **Experimental** (`experimental`) is an optional stage: a model in use, to learn from, that may still be replaced. It is the same stage as on the other nodes of the web of data models (#200); on datamodels.jp it will be rare (decided 2026-10-10).
 - **Stable** needs two implementations from different organisations in `ADOPTERS.yaml`. Each entry gives `name`, `organization` and a `url` (public repository, documentation or a contact). CI checks that two organisations are listed; the reviewer of the pull request that sets `stable` checks that they are real and independent. An implementation by Geolonia, which runs the catalog, counts as one on the same terms (with a `url`); the other must come from a different organisation. One organisation counts once, whatever the customer or project, and `organization` names the organisation that built it.
 - Maintainers review and merge ordinary pull requests. New subjects, major versions and promotions to `stable` are decided by a small group (Hal, 宮内さん, 大橋さん, Daniel), in the pull request or issue concerned.
+- **Proposing upstream**: a model that is useful beyond Japan can be proposed to Smart Data Models via [incubated](https://github.com/smart-data-models/incubated). The folder layout matches Smart Data Models for exactly this. Nothing is proposed before the official launch, while models may still be corrected in place; at the launch, the candidates go into one issue that says who proposes them and when (decided 2026-10-03).
 
 ## Pull request steps
 
@@ -149,15 +157,11 @@ A tool that registers data (a broker console, for example) may build a new model
 - After review, the model is merged as `draft`, like any other. There is no extra stage.
 - The `ADOPTERS.yaml` entry gives reviewers evidence early. One organisation still counts once, so `stable` still needs two independent organisations (decided 2026-10-06, #156).
 
-### Telling us about another catalog
+### Adding a listed extension
 
-Report another catalog of data models or vocabularies with the [catalog form](https://github.com/geolonia/datamodels/issues/new?template=catalog-report.yml). A maintainer checks it and lists it on the page "[Other data model catalogs](https://datamodels.jp/en/guide/catalogs)". Step by step: "[Telling us about another catalog](https://datamodels.jp/en/guide/report-catalog)". How catalogs that extend datamodels.jp models are listed for machines is not decided yet (#56).
+An extension reported with the extension form gets onto the model page ("Built on by others") and into `catalog.json` in these steps. An extension published on a site of its own, made with the toolkit, needs no listing: once the site is in `nodes.yaml`, `npm run nodes` reads it into the same section. When a site and a listed extension are the same, the section shows the site's data once (they are the same when the extension's page or @context URL starts with the site's URL).
 
-### Listing an extension
-
-An organisation that added attributes to a model can list its extension on the model page ("Built on by others") and in `catalog.json`, so others who need an attribute with the same meaning can reuse the name. An extension published on a site of its own, made with the toolkit, needs no listing: once the site is in `nodes.yaml`, `npm run nodes` reads it into the same section. The form is for organisations without a site. To put a site on the list, use the [site listing form](https://github.com/geolonia/datamodels/issues/new?template=site-listing.yml). When a site and a listed extension are the same, the section shows the site's data once (they are the same when the extension's page or @context URL starts with the site's URL).
-
-1. The owner fills in the [extension form](https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml) (from a model page it opens with the model filled in). Step by step: "[Listing your extension](https://datamodels.jp/en/guide/list-extension)".
+1. The owner fills in the [extension form](https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml) (from a model page it opens with the model filled in). When to use it and what happens next: "[List your extension](https://datamodels.jp/en/guide/contribute#extension)".
 2. A maintainer or the owner opens a pull request that adds `models/<subject>/<Type>/extensions/<name>.yaml` (signed off).
 3. CI checks the form of it: the IRIs are not under datamodels.jp (whether the domain is the owner's is not checked), and the names clash with no attribute of the model and no NGSI-LD core term; an inline @context imports the subject's @context and defines each term with the IRI listed.
 4. The review only checks that the person who reported it represents the organisation. The content is listed as the owner reported it, without review. Access details (keys, tokens, login URLs) are never listed.

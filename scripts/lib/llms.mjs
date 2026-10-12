@@ -19,10 +19,8 @@ const GUIDES = [
   ['builder', 'Extension builder', 'build the @context and JSON Schema for your own attributes on a catalog model, in the browser'],
   ['names', 'Your own names', 'use your own attribute and type names with JSON-LD aliases, without changing the model'],
   ['urls', 'URLs and versions', 'which URL to use, what never changes, versions and deprecation'],
-  ['contribute', 'Contributing', 'propose or change models, stages and who decides'],
+  ['contribute', 'Contributing', 'how to take part: one section per issue form (propose a model or attributes, list an extension, list a data model site, tell us about another catalog) with what happens next; stages and who decides; pull request steps'],
   ['rules', 'Rules for models', 'when to define a new type, the rules, mapping to standards, writing examples'],
-  ['list-extension', 'Listing your extension', 'list the attributes you added to a model under "Built on by others" on its page, for an extension without a site of its own: the issue form, field by field'],
-  ['report-catalog', 'Telling us about another catalog', 'report a missing catalog of data models or vocabularies: the issue form, field by field'],
   ['own-models', 'Your own data models', 'where to publish a model that does not belong in this catalog: your own site (a node) or Smart Data Models'],
   ['catalogs', 'Other data model catalogs', 'catalogs and standards used globally and in Japan, and how this catalog relates to them'],
 ];

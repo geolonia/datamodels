@@ -5,7 +5,7 @@ description: Catalogs of data models and vocabularies used globally and in Japan
 
 # Other data model catalogs
 
-This catalog references and extends what exists elsewhere instead of copying it. This page lists that "elsewhere". Some can be used with NGSI-LD as they are; others need a mapping. Know a catalog that is missing here? Tell us with the [catalog form](https://github.com/geolonia/datamodels/issues/new?template=catalog-report.yml) ([how to fill it in](/en/guide/report-catalog)).
+This catalog references and extends what exists elsewhere instead of copying it. This page lists that "elsewhere". Some can be used with NGSI-LD as they are; others need a mapping. Know a catalog that is missing here? Tell us as [Contributing](/en/guide/contribute#catalog) explains.
 
 ## Global
 
@@ -36,4 +36,4 @@ Which catalog model matches which of these standards: [Standards covered](/en/gu
 
 Use the [search](https://smartdatamodels.org/index.php/list-of-data-models-3/) on the Smart Data Models site or browse the `dataModel.<Subject>` repositories in the [smart-data-models](https://github.com/smart-data-models) GitHub organisation.
 
-To add attributes to a model you found, see [Adding attributes](/en/guide/extend). To have it in this catalog, propose it with the [model proposal form](https://github.com/geolonia/datamodels/issues/new?template=model-proposal.yml) ([how proposals work](/en/guide/contribute)).
+To add attributes to a model you found, see [Adding attributes](/en/guide/extend). To have it in this catalog, propose it as [Contributing](/en/guide/contribute#model-proposal) explains.

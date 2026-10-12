@@ -45,4 +45,4 @@ A model on your site can build on a model of this catalog ([`extend`](/en/toolki
 
 ## Later: from your site to this catalog {#later}
 
-When a model on your site turns out useful to others in Japan, propose it here like any other model ([Contributing](/en/guide/contribute)). How such a model moves, and what happens to its old IRIs, is not decided yet ([#200](https://github.com/geolonia/datamodels/issues/200)). Until then, data that uses your site's IRIs keeps working: your site stays where it is.
+When a model on your site turns out useful to others in Japan, propose it here like any other model ([Contributing](/en/guide/contribute#model-proposal)). How such a model moves, and what happens to its old IRIs, is not decided yet ([#200](https://github.com/geolonia/datamodels/issues/200)). Until then, data that uses your site's IRIs keeps working: your site stays where it is.
