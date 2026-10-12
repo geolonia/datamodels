@@ -10,6 +10,9 @@ import { subjectUrls, modelUrls, BASE_URL, ROOT } from './models.mjs';
 const GUIDES = [
   ['tutorial', 'Tutorial: from a CSV file to a map', 'one real open-data CSV converted into a catalog model, loaded into GeonicDB, queried and shown on a map, step by step'],
   ['use', 'Using the models', 'validate JSON, send it to an NGSI-LD broker, use it as linked data'],
+  ['csv', 'Using a spreadsheet', "fill in a model's CSV template, check it with frictionless validate against its Table Schema, and convert it into NGSI-LD entities (datamodels convert ... csv-template)"],
+  ['postgis', 'Using PostgreSQL / PostGIS', "load a model's PostgreSQL / PostGIS table (constraints, spatial index, column comments with IRIs), insert a row and query by distance"],
+  ['ai-extraction', 'Extracting data with AI', "give a model's AI schema to an AI model (OpenAI response_format json_schema, or a Claude tool's input_schema) to extract entities from an e-mail or a PDF, then add id and type and check against the JSON Schema"],
   ['geonicdb', 'Use with GeonicDB', 'register a catalog model in GeonicDB, then create and query entities'],
   ['mapping', 'Mapping files', 'mapping files: which field of a standard matches which attribute of a model, and the rules to convert a list; the catalog keeps them only for published standards that many lists follow'],
   ['extend', 'Adding attributes', 'add attributes of your own to a catalog model without copying it, and where to host the result'],

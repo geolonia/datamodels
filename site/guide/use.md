@@ -241,3 +241,13 @@ print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))
 ```
 
 各サブジェクトは、語彙（`/vocab/<サブジェクト>/v1.0.0.jsonld`、RDFS）も公開しています。語彙には、型と属性の名前と説明が日本語と英語で入っています。ほかの語彙から取り入れた属性（schema.org の `address` など）の説明は、それぞれの提供元にあります。
+
+## 他のツールで使う {#other-tools}
+
+NGSI-LD を読まないツール向けのファイルも、エンティティのモデルのページ（Geometry などの値型を除く）の**ダウンロード**の行にあります。それぞれの手順を、1 つの例で示しています。
+
+- [表計算ソフトで使う](/guide/csv)：CSV テンプレートに入力し、`frictionless validate` で検査して、エンティティに変換します。
+- [PostgreSQL / PostGIS で使う](/guide/postgis)：制約付きのテーブルを作り、行を入れて、距離で検索します。
+- [AI でデータを取り出す](/guide/ai-extraction)：AI 用のスキーマを AI モデルに渡し、メールや PDF からエンティティを取り出します。
+
+自分のサイトのモデルでこれらのファイルを作るには、[他のツールに書き出す](/toolkit/export)を見てください。

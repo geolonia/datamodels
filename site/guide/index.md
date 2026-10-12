@@ -9,6 +9,9 @@ description: カタログのモデルの使い方、属性の足し方、URL と
 
 - [チュートリアル：CSV ファイルから地図まで](/guide/tutorial)：実際のオープンデータを使って、モデルへの変換、ブローカーへの登録、検索、地図への表示までを順に試します。
 - [使い方](/guide/use)：カタログのモデルで JSON を検証し、NGSI-LD ブローカーに送り、Linked Data として使う方法です。
+  - [表計算ソフトで使う](/guide/csv)：CSV テンプレートに入力し、frictionless で検査して、エンティティに変換します。
+  - [PostgreSQL / PostGIS で使う](/guide/postgis)：モデルのテーブルを作り、行を入れて、距離で検索します。
+  - [AI でデータを取り出す](/guide/ai-extraction)：AI 用のスキーマで、メールや PDF からエンティティを取り出します。
   - [GeonicDB](/guide/geonicdb)：モデルを GeonicDB に登録し、エンティティを作成・検索します。
 - [対応表](/guide/mapping)：標準のどの項目がモデルのどの属性に当たるかを示すファイルです。ある場所と、書いてあることを説明します。
 - [属性を足す](/guide/extend)：モデルを複製せずに、独自の属性を足します。
