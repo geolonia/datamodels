@@ -75,7 +75,7 @@ The first argument is the model to start from: `<subject>/<Type>` as the other s
 `extend`:
 
 - copies the other model's schema at its current version, and imports its `@context` at that exact version into the subject's;
-- takes the titles and attribute descriptions from the other catalog, and adapts its example;
+- takes the attribute descriptions from the other catalog, and adapts its example. The default form also takes the model's title and description; with `--subclass`, they start from the new type's name ("A subtype of …"), for you to write;
 - records the model in `extends` in `catalog.yaml`, so `check` keeps its names and meanings;
 - adds the other site to `nodes` in `node.yaml` when it is not there yet.
 
