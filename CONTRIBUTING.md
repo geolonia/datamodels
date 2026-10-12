@@ -18,10 +18,7 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 
 ## モデルのルール
 
-- **既存の標準に基づく**: 国や自治体のガイドライン、Smart Data Models、GIF、RFC などに基づくモデルだけを公開します。検討した上流の型と、採用しなかった理由は `notes.yaml` に書きます。
-- **実際のデータがある**: 架空のユースケースではなく、いま存在するデータを表すこと。
-- **製品に依存しない**: 特定の製品向けの注釈や型名は入れません（製品向けのファイルは `adapters/` が作ります）。
-- 書き方の詳細は[モデルのルール](https://datamodels.jp/guide/rules)にあります（独自の型を作るとき、予約語、別名とサブクラス、状態の属性、標準との対応表、例の書き方）。
+カタログに載せるモデルの条件と書き方は、サイトの「[モデルのルール](https://datamodels.jp/guide/rules#accepts)」にあります。載せるモデル、独自の型を作るとき、予約語、別名とサブクラス、状態の属性、標準との対応表、例の書き方、段階です。
 
 ## 段階と決め方
 
@@ -108,10 +105,7 @@ Requests go through issue forms. When to use each form, what it asks and what ha
 
 ## Rules for models
 
-- **Built on an existing standard**: the catalog publishes models that rest on government or municipal guidelines, Smart Data Models, GIF, an RFC or similar. Record the upstream types you considered, and why they did not fit, in `notes.yaml`.
-- **Real data**: a model describes data that exists today, not a hypothetical use case.
-- **Product-neutral**: no product-specific annotations or type names (files for particular products come from `adapters/`).
-- The details are in [Rules for models](https://datamodels.jp/en/guide/rules): when to define a new type, reserved names, aliases and subclasses, status attributes, mapping to standards, writing examples.
+What the catalog accepts, and how to write a model: "[Rules for models](https://datamodels.jp/en/guide/rules#accepts)" on the site. It covers what the catalog accepts, when to define a new type, reserved names, aliases and subclasses, status attributes, mapping to standards, writing examples and the stages.
 
 ## Stages and who decides
 

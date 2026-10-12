@@ -19,7 +19,7 @@ const GUIDES = [
   ['extend', 'Adding attributes', 'add attributes of your own to a catalog model without copying it (an extension), and where to host the result; its extension builder makes the @context and JSON Schema in the browser'],
   ['names', 'Your own names', 'use your own attribute and type names with JSON-LD aliases, without changing the model'],
   ['contribute', 'Contributing', 'how to take part: one section per issue form (propose a model or attributes, list an extension, list a data model site, tell us about another catalog) with what happens next; changing the files yourself follows CONTRIBUTING.md on GitHub'],
-  ['rules', 'Rules for models', 'when to define a new type, the rules, mapping to standards, writing examples'],
+  ['rules', 'Rules for models', 'what the catalog accepts, when to define a new type, the rules, mapping to standards, writing examples, the stages of a model'],
   ['own-models', 'Your own data models', 'where to publish a model that does not belong in this catalog: your own site (a node) or Smart Data Models'],
   ['mapping', 'Mapping files', 'which field of a standard matches which attribute of a model, and the rules to convert a list; the catalog keeps them only for published standards that many lists follow'],
   ['urls', 'URLs and versions', 'which URL to use, what never changes, versions and deprecation'],

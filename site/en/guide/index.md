@@ -32,7 +32,7 @@ First check whether a catalog model fits your data. If it does not fit as it is,
 ## Add to the catalog
 
 - [Contributing](/en/guide/contribute): how to take part. The forms to propose a model, list an extension or a site, or tell us about another catalog, and what happens next.
-- [Rules for models](/en/guide/rules): when to define a new type, the rules, mapping to standards, writing examples.
+- [Rules for models](/en/guide/rules): what the catalog accepts, when to define a new type, the rules, mapping to standards, writing examples, and the stages of a model.
 
 ## Models outside the catalog
 

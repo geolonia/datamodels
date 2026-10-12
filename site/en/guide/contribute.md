@@ -21,7 +21,7 @@ For a question, a bug or an idea, open a plain [issue](https://github.com/geolon
 
 Use the model proposal form for a new model, or for new attributes that most users of a model need. You do not need to write a schema.
 
-The catalog only publishes models that rest on an existing standard (a government guideline, Smart Data Models, an RFC and so on) and describe data that exists today. The details are in [Rules for models](/en/guide/rules). A model that only your project needs can go on your own site instead ([Your own data models](/en/guide/own-models)). To add attributes for yourself only, or to change only the names, you need no proposal ([Which page do I need?](/en/guide/#which)).
+What the catalog accepts is in [Rules for models](/en/guide/rules#accepts): among other things, a model rests on an existing standard and describes real data. A model that only your project needs can go on your own site instead ([Your own data models](/en/guide/own-models)). To add attributes for yourself only, or to change only the names, you need no proposal ([Which page do I need?](/en/guide/#which)).
 
 The form asks what one record represents, who holds such data today and roughly how much, and the standard the model rests on (if none fits, say why). If you know them, add a second organisation that would use the model, and a sample record. After you open the issue, a comment lists similar models that already exist: check whether one of them can be used or extended.
 

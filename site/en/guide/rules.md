@@ -1,11 +1,21 @@
 ---
 title: Rules for models
-description: The rules for models in this catalog, when to define a new type, mapping to standards, how to write examples, and the stages of a model (draft and others)
+description: What the catalog accepts, the rules for models in this catalog, when to define a new type, mapping to standards, how to write examples, and the stages of a model (draft and others)
 ---
 
 # Rules for models
 
 This page is for people who add or change models in the catalog. How to propose is in [Contributing](/en/guide/contribute); who decides is in [CONTRIBUTING.md](https://github.com/geolonia/datamodels/blob/main/CONTRIBUTING.md#stages-and-who-decides). What "draft" and the other labels on a model page mean: [Stages](#stages).
+
+## What the catalog accepts {#accepts}
+
+The catalog only publishes models that meet all three of these:
+
+- **Built on an existing standard:** government or municipal guidelines, Smart Data Models, GIF, an RFC or similar. Record the upstream types you considered, and why they did not fit, in `notes.yaml`.
+- **Real data:** the model describes data that exists today, not a hypothetical use case.
+- **Product-neutral:** no product-specific annotations or type names. Files for particular products come from the [adapters](/en/adapters/).
+
+A model that only one project or organisation uses can go on your own site ([Your own data models](/en/guide/own-models)).
 
 ## Reuse first, define only what is missing
 
