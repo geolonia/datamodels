@@ -14,14 +14,16 @@ Docker が必要です。PostGIS を入れた自分の PostgreSQL でも、同�
 ## 1. PostGIS を起動する {#start}
 
 ```bash
-docker run -d --name postgis -e POSTGRES_HOST_AUTH_METHOD=trust \
+docker run -d --name datamodels-postgis -e POSTGRES_HOST_AUTH_METHOD=trust \
   postgis/postgis:16-3.4
-# データベースの準備ができるまで待つ（初回は 10 秒ほど）。
-until docker logs postgis 2>&1 | grep -q "init process complete"; do
+# データベースの準備ができるまで待つ（初回は 10 秒ほど、長くても 2 分）。
+for i in $(seq 120); do
+  docker logs datamodels-postgis 2>&1 | grep -q "init process complete" &&
+    docker exec datamodels-postgis pg_isready -U postgres -q && break
   sleep 1
 done
-# そのあと、動き続けるサーバーが接続を受け付けるまで待つ。
-until docker exec postgis pg_isready -U postgres -q; do sleep 1; done
+# 「accepting connections」なら準備完了。そうでなければ、ログに原因が出る。
+docker exec datamodels-postgis pg_isready -U postgres || docker logs datamodels-postgis
 ```
 
 `POSTGRES_HOST_AUTH_METHOD=trust` では、パスワードなしで誰でも接続できます。自分のコンピューターでの試験だけに使ってください。
@@ -31,7 +33,7 @@ until docker exec postgis pg_isready -U postgres -q; do sleep 1; done
 ```bash
 BASE=https://datamodels.jp/adapters
 curl -sSfO "$BASE/postgis/disaster/EvacuationSite.sql"
-docker exec -i postgis psql -U postgres < EvacuationSite.sql
+docker exec -i datamodels-postgis psql -U postgres < EvacuationSite.sql
 ```
 
 ```text
@@ -47,7 +49,7 @@ COMMENT
 
 ## 3. 避難場所を入れる {#insert}
 
-`docker exec -it postgis psql -U postgres` で SQL のプロンプトを開き、次を実行します。
+`docker exec -it datamodels-postgis psql -U postgres` で SQL のプロンプトを開き、次を実行します。
 
 ```sql
 INSERT INTO evacuation_site (id, name, external_site_id,
@@ -118,7 +120,7 @@ WHERE attrelid = 'evacuation_site'::regclass
 (3 rows)
 ```
 
-IRI はモデルの @context と同じです。そのため、テーブルの行と NGSI-LD のエンティティは、同じ意味のデータとして扱えます。終わったら、`docker rm -f postgis` でコンテナーを削除します。
+IRI はモデルの @context と同じです。そのため、テーブルの行と NGSI-LD のエンティティは、同じ意味のデータとして扱えます。終わったら、`docker rm -f datamodels-postgis` でコンテナーを削除します。
 
 ## 自分のモデル {#own-models}
 

@@ -14,14 +14,16 @@ You need Docker. A PostgreSQL with PostGIS of your own works the same way.
 ## 1. Start PostGIS {#start}
 
 ```bash
-docker run -d --name postgis -e POSTGRES_HOST_AUTH_METHOD=trust \
+docker run -d --name datamodels-postgis -e POSTGRES_HOST_AUTH_METHOD=trust \
   postgis/postgis:16-3.4
-# Wait until the database is ready (about 10 seconds the first time).
-until docker logs postgis 2>&1 | grep -q "init process complete"; do
+# Wait until the database is ready: about 10 seconds the first time, at most 2 minutes.
+for i in $(seq 120); do
+  docker logs datamodels-postgis 2>&1 | grep -q "init process complete" &&
+    docker exec datamodels-postgis pg_isready -U postgres -q && break
   sleep 1
 done
-# Then until the server that stays running accepts connections.
-until docker exec postgis pg_isready -U postgres -q; do sleep 1; done
+# "accepting connections" means ready; otherwise the log says what went wrong.
+docker exec datamodels-postgis pg_isready -U postgres || docker logs datamodels-postgis
 ```
 
 `POSTGRES_HOST_AUTH_METHOD=trust` lets anyone connect without a password: use it only for a test on your own computer.
@@ -31,7 +33,7 @@ until docker exec postgis pg_isready -U postgres -q; do sleep 1; done
 ```bash
 BASE=https://datamodels.jp/adapters
 curl -sSfO "$BASE/postgis/disaster/EvacuationSite.sql"
-docker exec -i postgis psql -U postgres < EvacuationSite.sql
+docker exec -i datamodels-postgis psql -U postgres < EvacuationSite.sql
 ```
 
 ```text
@@ -47,7 +49,7 @@ The columns are the attributes in snake_case: `hazardTypes` becomes `hazard_type
 
 ## 3. Add a site {#insert}
 
-Open a SQL prompt with `docker exec -it postgis psql -U postgres` and run:
+Open a SQL prompt with `docker exec -it datamodels-postgis psql -U postgres` and run:
 
 ```sql
 INSERT INTO evacuation_site (id, name, external_site_id,
@@ -118,7 +120,7 @@ WHERE attrelid = 'evacuation_site'::regclass
 (3 rows)
 ```
 
-The IRIs are the same as in the model's @context, so a row and an NGSI-LD entity of the model mean the same thing. When you are done, remove the container with `docker rm -f postgis`.
+The IRIs are the same as in the model's @context, so a row and an NGSI-LD entity of the model mean the same thing. When you are done, remove the container with `docker rm -f datamodels-postgis`.
 
 ## Your own models {#own-models}
 

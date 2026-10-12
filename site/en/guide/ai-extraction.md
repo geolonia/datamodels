@@ -31,7 +31,7 @@ The requests are built with [jq](https://jqlang.org/), which puts the schema and
 
 ```bash [OpenAI API]
 jq -n --slurpfile s EvacuationSite.ai.json --rawfile text notice.txt '{
-  model: "gpt-5",
+  model: "gpt-6-astra",
   messages: [
     {role: "system", content: "Extract the evacuation site from the text."},
     {role: "user", content: $text}
