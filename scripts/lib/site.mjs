@@ -201,7 +201,7 @@ const M = {
     attribute: '属性', field: 'フィールド', description: '説明', valueCol: '値',
     example: '例', simple: 'シンプル（key-values）', ngsi: 'NGSI-LD（normalized）', tryIt: '試す', files: 'ファイル',
     requiredMark: '必須', requiredNote: '* は必須の属性です。', linkHeaderIntro: '本文に @context を書かずに送るときの Link ヘッダー：',
-    use: 'このモデルを使う', useValue: (use) => `他のモデルは、属性の値としてこの値型を参照します。その属性を持つデータを検査すると、この値型のスキーマも読み込まれます（[JSON を検証する](${use})）。`,
+    use: 'このモデルを使う', useValue: (use) => `他のモデルは、属性の値としてこの値型を参照します。その属性を持つデータを検証すると、この値型のスキーマも読み込まれます（[JSON を検証する](${use})）。`,
     standards: '参照している標準', standardsNote: 'このモデルが対応している標準と、項目ごとの対応です。開くと対応表が見られます。',
     fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く', standardLicence: 'この標準のライセンス', mappingFile: (file, guide, converts) => `${converts ? 'この標準のデータを変換するための対応表' : 'この標準との対応表'}（YAML）: ${file}（説明は${guide('対応表')}）`, notesTitle: '注記',
     sourceFiles: (href) => `ソースファイル（注記、対応表）は [GitHub](${href}) にあります。`,

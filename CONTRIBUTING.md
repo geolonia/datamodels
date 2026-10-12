@@ -36,7 +36,7 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 2. `npm ci` を実行します。新しいモデルなら、`npm run new-model -- <サブジェクト> <型名>` でひな形を作り、TODO の箇所を埋めます。構成は Smart Data Models と同じです（`schema.json`、`catalog.yaml`、`examples/`、`notes.yaml`）。
 3. `npm run validate:models` が、足りない箇所を一覧にします。最後に `npm run check` と `npm test` が通ることを確認します。
 4. すべてのコミットに `git commit -s` で署名（Signed-off-by）を付けて、Pull Request を送ります。
-5. CI（スキーマ、例、`@context` の展開、予約語、バージョンの検証と自動レビュー。このリポジトリ内のブランチならプレビュー URL も）の結果を見て、レビューに答えます。
+5. CI（スキーマ、例、`@context` の展開、予約語、バージョンの検査と自動レビュー。このリポジトリ内のブランチならプレビュー URL も）の結果を見て、レビューに答えます。
 
 公開済みのバージョンの記録（スナップショットとマニフェスト）はメンテナーが行います。正式公開前（プレリリース）は、現行バージョンをその場で修正できます。
 

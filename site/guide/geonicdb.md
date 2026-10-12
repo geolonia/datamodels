@@ -5,13 +5,13 @@ description: カタログのデータモデルを GeonicDB に登録し、エン
 
 # GeonicDB で使う
 
-GeonicDB は、このカタログを運営している Geolonia の NGSI-LD ブローカーです。どのブローカーにも共通の手順は[使い方](/guide/use)にあります。このページでは、GeonicDB ならではの機能を説明します。GeonicDB には**モデルを登録**できます。登録すると、その型のエンティティはすべてモデルで検査されます。
+GeonicDB は、このカタログを運営している Geolonia の NGSI-LD ブローカーです。どのブローカーにも共通の手順は[使い方](/guide/use)にあります。このページでは、GeonicDB ならではの機能を説明します。GeonicDB には**モデルを登録**できます。登録すると、その型のエンティティはすべてモデルで検証されます。
 
-<svg class="flow-diagram" viewBox="0 0 460 300" role="img" aria-label="datamodels.jp のモデルの定義を GeonicDB に登録し、アプリがエンティティを作成すると GeonicDB がモデルで検査し、検索できる" xmlns="http://www.w3.org/2000/svg"><defs><marker id="gdb-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="20" y="8" width="420" height="58" rx="10"/><text class="t" x="230.0" y="33">datamodels.jp</text><text class="s" x="230.0" y="53">モデルの定義（.json）と @context</text><rect class="box main" x="20" y="121" width="420" height="58" rx="10"/><text class="t" x="230.0" y="146">GeonicDB（自分のテナント）</text><text class="s" x="230.0" y="166">登録したモデル: その型のルール</text><rect class="box" x="20" y="234" width="420" height="58" rx="10"/><text class="t" x="230.0" y="259">自分のアプリ</text><text class="s" x="230.0" y="279">エンティティを作成・検索</text><line class="a" x1="110" y1="68" x2="110" y2="119" marker-end="url(#gdb-ah)"/><text class="l" x="120" y="98">① 登録</text><line class="a d" x1="350" y1="119" x2="350" y2="68" marker-end="url(#gdb-ah)"/><text class="l e" x="340" y="98">@context を参照</text><line class="a" x1="110" y1="232" x2="110" y2="181" marker-end="url(#gdb-ah)"/><text class="l" x="120" y="211">② 作成: 検査して保存</text><line class="a" x1="350" y1="181" x2="350" y2="232" marker-end="url(#gdb-ah)"/><text class="l e" x="340" y="211">③ 検索</text></svg>
+<svg class="flow-diagram" viewBox="0 0 460 300" role="img" aria-label="datamodels.jp のモデルの定義を GeonicDB に登録し、アプリがエンティティを作成すると GeonicDB がモデルで検証し、検索できる" xmlns="http://www.w3.org/2000/svg"><defs><marker id="gdb-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="20" y="8" width="420" height="58" rx="10"/><text class="t" x="230.0" y="33">datamodels.jp</text><text class="s" x="230.0" y="53">モデルの定義（.json）と @context</text><rect class="box main" x="20" y="121" width="420" height="58" rx="10"/><text class="t" x="230.0" y="146">GeonicDB（自分のテナント）</text><text class="s" x="230.0" y="166">登録したモデル: その型のルール</text><rect class="box" x="20" y="234" width="420" height="58" rx="10"/><text class="t" x="230.0" y="259">自分のアプリ</text><text class="s" x="230.0" y="279">エンティティを作成・検索</text><line class="a" x1="110" y1="68" x2="110" y2="119" marker-end="url(#gdb-ah)"/><text class="l" x="120" y="98">① 登録</text><line class="a d" x1="350" y1="119" x2="350" y2="68" marker-end="url(#gdb-ah)"/><text class="l e" x="340" y="98">@context を参照</text><line class="a" x1="110" y1="232" x2="110" y2="181" marker-end="url(#gdb-ah)"/><text class="l" x="120" y="211">② 作成: 検証して保存</text><line class="a" x1="350" y1="181" x2="350" y2="232" marker-end="url(#gdb-ah)"/><text class="l e" x="340" y="211">③ 検索</text></svg>
 
 モデルごとに、登録用の定義を `https://datamodels.jp/adapters/geonicdb/<サブジェクト>/<型>.json` で公開しています（[モデルごとの一覧](/adapters/geonicdb/)）。定義にはモデルの @context（`contextUrl`）が入っているので、登録するだけで、GeonicDB でカタログの属性名がそのまま使えます。
 
-登録しなくても使えます。登録したモデルが何を検査し、何を検査しないかは、[下の節](#checks)で説明します。
+登録しなくても使えます。登録したモデルが何を検証し、何を検証しないかは、[下の節](#checks)で説明します。
 
 ## 手順 {#steps}
 
@@ -80,32 +80,32 @@ geonic entities list --type RoadRestriction \
 :::
 
 - 登録すると `201 Created`、同じ型名のモデルが既にあれば `409` が返ります。登録したモデルを変えるときは `PATCH /custom-data-models/<型名>` か `geonic models update <型名> @model.json` を使います。
-- **型付きの日時：** normalized の例では、日時を `{"@type": "DateTime", "@value": "…"}` の形で書いています。GeonicDB のモデルの検査（v0.21.0）は、文字列しか受け付けません。型付きの日時を受け付けるようになっても、Task と Milestone の `start`・`due`、Project の `start`・`end` は文字列のままです。これらは日付だけの値も取るので、モデルでは文字列として定義しています。そのため手順 2 では、[jq](https://jqlang.org/) で文字列に直しています。この方法は、どのバージョンでも使えます（[#185](https://github.com/geolonia/datamodels/issues/185)）。自分のデータでは、`"validFrom": {"type": "Property", "value": "2026-07-08T09:00:00+09:00"}` のように文字列で送れます。
+- **型付きの日時：** normalized の例では、日時を `{"@type": "DateTime", "@value": "…"}` の形で書いています。GeonicDB のモデルの検証（v0.21.0）は、文字列しか受け付けません。型付きの日時を受け付けるようになっても、Task と Milestone の `start`・`due`、Project の `start`・`end` は文字列のままです。これらは日付だけの値も取るので、モデルでは文字列として定義しています。そのため手順 2 では、[jq](https://jqlang.org/) で文字列に直しています。この方法は、どのバージョンでも使えます（[#185](https://github.com/geolonia/datamodels/issues/185)）。自分のデータでは、`"validFrom": {"type": "Property", "value": "2026-07-08T09:00:00+09:00"}` のように文字列で送れます。
 - **GeonicDB CLI：** [geonicdb-cli](https://github.com/geolonia/geonicdb-cli)（`npm install -g @geolonia/geonicdb-cli@0.26.1`）。`geonic auth login` でテナント管理者としてログインすれば、API キーもポリシーも要りません。保存したログイン情報は `--api-key` より優先されるので、API キーで使うときは、先に `geonic auth logout` を実行してください。どのコマンドも、`--dry-run` を付けると、実際には送らずにリクエストの内容を表示します。
 - 自分のデータを送るときは、@context をボディに入れて（`application/ld+json`）送るか、`application/json` と `Link` ヘッダーで送ります。両方を同時には使いません。テナントは `NGSILD-Tenant` ヘッダーで指定します（[マルチテナンシー](https://docs.geonicdb.com/ja/core-concepts/multi-tenancy)）。
 
-## 登録したモデルが検査すること {#checks}
+## 登録したモデルが検証すること {#checks}
 
-GeonicDB は、その型のエンティティを作成・変更するたびに検査します。まとめて送るとき（バッチ）や NGSIv2 で送るときも同じです。
+GeonicDB は、その型のエンティティを作成・変更するたびに検証します。まとめて送るとき（バッチ）や NGSIv2 で送るときも同じです。
 
 - 必須の属性があること
 - 値の型が合っていること（文字列、数値、整数、真偽値、リスト、オブジェクト、GeoJSON、URI、RFC 3339 の日時）と、長さ、最小値・最大値、パターン、許される値のルールを守っていること
 - モデルに無い属性が含まれていないこと（カタログの定義では許していません）
 - 一意でなければならない組み合わせが一意であること（定義で宣言していれば）
 
-検査しないこと：
+検証しないこと：
 
-- リストの中の値（許される値、最低の個数など）。リストであることだけを検査します（カタログの JSON Schema は中の値も検査します。`datamodels convert` の変換時など）。
+- リストの中の値（許される値、最低の個数など）。リストであることだけを検証します（カタログの JSON Schema は中の値も検証します。`datamodels convert` の変換時など）。
 - 属性が Property と Relationship のどちらで送られたか、Relationship がどの型を指しているか。
 - モデルを登録していない型のエンティティ。そのまま保存されます。
-- 型を複数持つエンティティの 2 つめ以降の型。検査するのは 1 つめの型だけです。
+- 型を複数持つエンティティの 2 つめ以降の型。検証するのは 1 つめの型だけです。
 - モデルを登録・変更する前からあるエンティティ。変更の影響は、試しに実行して確かめられます。何も変えずに、モデルに合わなくなるエンティティの数と例が返ります。
   - API：`PATCH /custom-data-models/<型名>?dryRun=true`（GeonicDB v0.17.0 以降）。
   - CLI：`geonic models update <型名> @model.json --api-dry-run`（geonicdb-cli 0.25.0 以降）。
 
 ## 独自の属性
 
-モデルはほぼ合うものの、独自の属性がいくつか要るときは、その属性を足した @context（プロファイル）を作って公開します（[属性を足す](/guide/extend)）。そのうえで、カタログの属性と自分の属性の両方を含む定義を登録します。独自の属性も、ほかの属性と同じように検査されます。ほかの案件でも役に立つ属性なら、カタログに[提案してください](/guide/contribute#model-proposal)。
+モデルはほぼ合うものの、独自の属性がいくつか要るときは、その属性を足した @context（プロファイル）を作って公開します（[属性を足す](/guide/extend)）。そのうえで、カタログの属性と自分の属性の両方を含む定義を登録します。独自の属性も、ほかの属性と同じように検証されます。ほかの案件でも役に立つ属性なら、カタログに[提案してください](/guide/contribute#model-proposal)。
 
 下の書き出しスクリプト（`adapters/geonicdb/export.mjs`）は、このカタログのリポジトリにあります。先にリポジトリを取得します。[Node.js](https://nodejs.org/) 24 以降が要ります。
 
@@ -140,7 +140,7 @@ node adapters/geonicdb/export.mjs transportation \
   --type RoadRestriction --extend ./acme.json --out ./out
 ```
 
-未知の属性を検査せずに受け付けるだけなら、`--allow-additional` で書き出します。
+未知の属性を検証せずに受け付けるだけなら、`--allow-additional` で書き出します。
 
 </details>
 

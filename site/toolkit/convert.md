@@ -5,7 +5,7 @@ description: datamodels-toolkit の convert で、手元の CSV の一覧をカ�
 
 # データを変換する
 
-手元の一覧（CSV）を、このカタログのモデルのエンティティ（NGSI-LD）に変換できます。使うのは datamodels-toolkit の `convert` です。変換したエンティティは、1 件ずつモデルの JSON Schema で検査します。[Node.js](https://nodejs.org/) 24 以降が要ります（[ツールキット](/toolkit/#run)）。
+手元の一覧（CSV）を、このカタログのモデルのエンティティ（NGSI-LD）に変換できます。使うのは datamodels-toolkit の `convert` です。変換したエンティティは、1 件ずつモデルの JSON Schema で検証します。[Node.js](https://nodejs.org/) 24 以降が要ります（[ツールキット](/toolkit/#run)）。
 
 一覧の形に合わせて、次の 3 つの方法があります。
 
@@ -15,7 +15,7 @@ description: datamodels-toolkit の convert で、手元の CSV の一覧をカ�
 | それ以外の CSV | [自分の対応表を作る](#your-own-list) | 自分で作る |
 | これから作る | [CSV テンプレートに入力する](#csv-template) | 要らない |
 
-<svg class="flow-diagram" viewBox="0 0 460 258" role="group" aria-label="一覧から NGSI-LD のエンティティへの 3 つの方法。標準に従う一覧はカタログの対応表で、それ以外の CSV は自分の対応表で、CSV テンプレートは対応表なしで、convert で変換し、1 件ずつ JSON Schema で検査します。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="cv-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><a href="#standard"><rect class="box" x="10" y="8" width="140" height="56" rx="10"/><text class="t" x="80" y="32">標準に従う一覧</text><text class="s" x="80" y="51">自治体標準など</text><line class="a" x1="80" y1="64" x2="80" y2="92" marker-end="url(#cv-ah)"/><rect class="box" x="10" y="94" width="140" height="56" rx="10"/><text class="t" x="80" y="118">カタログの対応表</text><text class="s" x="80" y="137">そのまま使う</text></a><a href="#your-own-list"><rect class="box" x="160" y="8" width="140" height="56" rx="10"/><text class="t" x="230" y="32">それ以外の CSV</text><text class="s" x="230" y="51">自分の一覧</text><line class="a" x1="230" y1="64" x2="230" y2="92" marker-end="url(#cv-ah)"/><rect class="box" x="160" y="94" width="140" height="56" rx="10"/><text class="t" x="230" y="118">自分の対応表</text><text class="s" x="230" y="137">mapping で作る</text></a><a href="#csv-template"><rect class="box" x="310" y="8" width="140" height="56" rx="10"/><text class="t" x="380" y="32">CSV テンプレート</text><text class="s" x="380" y="51">これから作る</text><line class="a" x1="380" y1="64" x2="380" y2="92" marker-end="url(#cv-ah)"/><rect class="box" x="310" y="94" width="140" height="56" rx="10"/><text class="t" x="380" y="118">対応表は不要</text><text class="s" x="380" y="137">列が属性になる</text></a><line class="a" x1="80" y1="150" x2="150" y2="190" marker-end="url(#cv-ah)"/><line class="a" x1="230" y1="150" x2="230" y2="190" marker-end="url(#cv-ah)"/><line class="a" x1="380" y1="150" x2="310" y2="190" marker-end="url(#cv-ah)"/><text class="l" x="240" y="176">convert</text><rect class="box main" x="10" y="192" width="440" height="58" rx="10"/><text class="t" x="230" y="216">NGSI-LD のエンティティ</text><text class="s" x="230" y="235">1 件ずつモデルの JSON Schema で検査</text></svg>
+<svg class="flow-diagram" viewBox="0 0 460 258" role="group" aria-label="一覧から NGSI-LD のエンティティへの 3 つの方法。標準に従う一覧はカタログの対応表で、それ以外の CSV は自分の対応表で、CSV テンプレートは対応表なしで、convert で変換し、1 件ずつ JSON Schema で検証します。" xmlns="http://www.w3.org/2000/svg"><defs><marker id="cv-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><a href="#standard"><rect class="box" x="10" y="8" width="140" height="56" rx="10"/><text class="t" x="80" y="32">標準に従う一覧</text><text class="s" x="80" y="51">自治体標準など</text><line class="a" x1="80" y1="64" x2="80" y2="92" marker-end="url(#cv-ah)"/><rect class="box" x="10" y="94" width="140" height="56" rx="10"/><text class="t" x="80" y="118">カタログの対応表</text><text class="s" x="80" y="137">そのまま使う</text></a><a href="#your-own-list"><rect class="box" x="160" y="8" width="140" height="56" rx="10"/><text class="t" x="230" y="32">それ以外の CSV</text><text class="s" x="230" y="51">自分の一覧</text><line class="a" x1="230" y1="64" x2="230" y2="92" marker-end="url(#cv-ah)"/><rect class="box" x="160" y="94" width="140" height="56" rx="10"/><text class="t" x="230" y="118">自分の対応表</text><text class="s" x="230" y="137">mapping で作る</text></a><a href="#csv-template"><rect class="box" x="310" y="8" width="140" height="56" rx="10"/><text class="t" x="380" y="32">CSV テンプレート</text><text class="s" x="380" y="51">これから作る</text><line class="a" x1="380" y1="64" x2="380" y2="92" marker-end="url(#cv-ah)"/><rect class="box" x="310" y="94" width="140" height="56" rx="10"/><text class="t" x="380" y="118">対応表は不要</text><text class="s" x="380" y="137">列が属性になる</text></a><line class="a" x1="80" y1="150" x2="150" y2="190" marker-end="url(#cv-ah)"/><line class="a" x1="230" y1="150" x2="230" y2="190" marker-end="url(#cv-ah)"/><line class="a" x1="380" y1="150" x2="310" y2="190" marker-end="url(#cv-ah)"/><text class="l" x="240" y="176">convert</text><rect class="box main" x="10" y="192" width="440" height="58" rx="10"/><text class="t" x="230" y="216">NGSI-LD のエンティティ</text><text class="s" x="230" y="235">1 件ずつモデルの JSON Schema で検証</text></svg>
 
 ## 一覧が標準に従っているとき {#standard}
 
@@ -47,14 +47,14 @@ npx github:geolonia/datamodels-toolkit#v0.3.7 convert \
 
 1. `mapping` で下書きを作ります。合う列は埋まり、列が見つからない属性には TODO が付きます。
 2. TODO を埋めます。列名を書くか、一覧に無い項目なら行ごと消します。エンティティの ID の付け方（`convert.id`）も決めます。
-3. `convert --check` で、最初の 20 行を検査します。直しては検査し、有効になったら、`--rows` に一覧の行数を指定して全体を検査します。
+3. `convert --check` で、最初の 20 行を検証します。直しては検証し、有効になったら、`--rows` に一覧の行数を指定して全体を検証します。
 4. `--check` を外して変換します。それでも無効な行は出力から外れて一覧に示され、終了コードは 1 です。
 
 ```bash
 # 1. 下書きを作る
 npx github:geolonia/datamodels-toolkit#v0.3.7 mapping \
   disaster/EvacuationSite my-list.csv --out my-list.yaml
-# 3. 最初の行を検査する
+# 3. 最初の行を検証する
 npx github:geolonia/datamodels-toolkit#v0.3.7 convert \
   disaster/EvacuationSite my-list.yaml my-list.csv --check
 # 4. 変換する
@@ -79,7 +79,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.7 convert \
 - 無効な行と、その最初の 3 つのスキーマの誤り、重複する ID、指数で書かれた ID です。
 - 直したところ（[変換の結果](#results)）です。
 
-最後の行は「`18 of 20 rows valid`」のようなまとめです。検査した行がすべて有効で、対応表に問題がなければ、終了コードは 0 です。
+最後の行は「`18 of 20 rows valid`」のようなまとめです。検証した行がすべて有効で、対応表に問題がなければ、終了コードは 0 です。
 
 ### AI エージェントと埋める {#agent}
 
@@ -107,7 +107,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.7 convert \
 - `longitude` と `latitude` は、点の位置です。点以外の形も許すモデルでは、`location` の列に GeoJSON を書けます。
 - 一覧（リスト）の値は `;` で区切り、真偽値は `true` か `false` で書きます。
 
-使わない列は消してもかまいません。`convert` は消した列を「not in the file, so left empty」と知らせ、その属性は空になります。ただし、frictionless で検査するなら、列はすべて残します（[表計算ソフト（CSV）で使う](/guide/csv#fill)）。
+使わない列は消してもかまいません。`convert` は消した列を「not in the file, so left empty」と知らせ、その属性は空になります。ただし、frictionless で検証するなら、列はすべて残します（[表計算ソフト（CSV）で使う](/guide/csv#fill)）。
 
 ## 変換の結果 {#results}
 
@@ -124,7 +124,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.7 convert \
 - `--out file.json`：ファイルに書きます。省略すると標準出力に出します。
 - `--normalized`：key-values ではなく、NGSI-LD の normalized の形にします。サブジェクトの `@context` と NGSI-LD のコアの context が付きます。
 - `--set 属性=値`：一覧に無い値を渡します（[上の例](#standard)）。
-- `--check`、`--rows N`：最初の行だけを検査します（[上の説明](#your-own-list)）。
+- `--check`、`--rows N`：最初の行だけを検証します（[上の説明](#your-own-list)）。
 - `--site`：対応表とモデルを読むサイトです。既定は datamodels.jp です。公開前の対応表を試すときは、[geolonia/datamodels](https://github.com/geolonia/datamodels) をビルドして（`npm run build`）、`--site dist` を付けます。
 
 実際のオープンデータを変換して地図に表示するまでは、[チュートリアル](/guide/tutorial)で試せます。すべてのオプションは、ツールキットの [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.7#convert)（英語）にあります。

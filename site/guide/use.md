@@ -47,7 +47,7 @@ console.log(validate(entity) ? 'valid' : validate.errors);
 
 ```python [Python]
 # pip install "jsonschema[format]" requests
-# （[format] がないと URI と日時の形式を検査しない）
+# （[format] がないと URI と日時の形式を検証しない）
 import requests
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
@@ -246,7 +246,7 @@ print(jsonld.to_rdf(entity, {"format": "application/n-quads"}))
 
 NGSI-LD を読まないツール向けのファイルも、エンティティのモデルのページ（Geometry などの値型を除く）の**ダウンロード**の行にあります。それぞれの手順を、1 つの例で示しています。
 
-- [表計算ソフト（CSV）で使う](/guide/csv)：CSV テンプレートに入力し、`frictionless validate` で検査して、エンティティに変換します。
+- [表計算ソフト（CSV）で使う](/guide/csv)：CSV テンプレートに入力し、`frictionless validate` で検証して、エンティティに変換します。
 - [PostgreSQL / PostGIS で使う](/guide/postgis)：制約付きのテーブルを作り、行を入れて、距離で検索します。
 - [AI でデータを取り出す](/guide/ai-extraction)：AI 用のスキーマを AI モデルに渡し、メールや PDF からエンティティを取り出します。
 
