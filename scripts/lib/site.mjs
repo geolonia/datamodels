@@ -204,7 +204,7 @@ const M = {
     requiredMark: '必須', requiredNote: '* は必須の属性です。', linkHeaderIntro: '本文に @context を書かずに送るときの Link ヘッダー：',
     use: 'このモデルを使う', useValue: (use) => `他のモデルは、属性の値としてこの値型を参照します。その属性を持つデータを検証すると、この値型のスキーマも読み込まれます（[JSON を検証する](${use})）。`,
     standards: '参照している標準', standardsNote: 'このモデルが対応している標準と、項目ごとの対応です。開くと対応表が見られます。',
-    fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く', standardLicence: 'この標準のライセンス', mappingFile: (file, guide, converts) => `${converts ? 'この標準のデータを変換するための対応表' : 'この標準との対応表'}（YAML）: ${file}（説明は${guide('対応表')}）`, notesTitle: '注記',
+    fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く', standardLicence: 'この標準のライセンス', mappingFile: (file, guide, converts) => `${converts ? 'この標準のデータを変換するための対応表' : 'この標準との対応表'}（YAML）: ${file}（説明は${guide('対応表')}）`, notesTitle: '注記', historyTitle: (n) => `変更の記録（${n} 件）`,
     sourceFiles: (href) => `ソースファイル（注記、対応表）は [GitHub](${href}) にあります。`,
     addedTerms: '足した属性', inlineContext: 'データの中に記述', dataLink: 'データ',
     reportExtension: (form, guide, toolkit, sites) => `このモデルを拡張して[ツールキット](${toolkit})のサイトで公開しているなら、サイトが[サイトの一覧](${sites})に載ると、このページにも載ります。サイトが無いときは、[フォームで登録してください](${form})。ほかの組織が同じ名前を使えます（[進め方](${guide})）。`,
@@ -221,7 +221,7 @@ const M = {
     requiredMark: 'required', requiredNote: '* required', linkHeaderIntro: 'The Link header, for sending data without @context in the body:',
     use: 'Using this model', useValue: (use) => `Other models use this value type as the value of an attribute. Checking data that has such an attribute reads this schema too ([Validate JSON](${use})).`,
     standards: 'Referenced standards', standardsNote: 'The standards this model corresponds to, field by field. Open one to see its table.',
-    fieldsMapped: (n, total) => `${n} of ${total} fields`, openStandard: 'Open the standard', standardLicence: 'Licence of this standard', mappingFile: (file, guide, converts) => `${converts ? 'Mapping file (YAML) for converting data from this standard' : 'Mapping file (YAML) for this standard'}: ${file} (see ${guide('Mapping files')})`, notesTitle: 'Notes',
+    fieldsMapped: (n, total) => `${n} of ${total} fields`, openStandard: 'Open the standard', standardLicence: 'Licence of this standard', mappingFile: (file, guide, converts) => `${converts ? 'Mapping file (YAML) for converting data from this standard' : 'Mapping file (YAML) for this standard'}: ${file} (see ${guide('Mapping files')})`, notesTitle: 'Notes', historyTitle: (n) => `Change history (${n})`,
     sourceFiles: (href) => `The source files (notes, mapping tables) are on [GitHub](${href}).`,
     addedTerms: 'Added attributes', inlineContext: 'inside the data', dataLink: 'data',
     reportExtension: (form, guide, toolkit, sites) => `Extended this model? If you publish it on a site made with the [toolkit](${toolkit}), it shows on this page once your site is on the [list of sites](${sites}). Without a site, [list your extension](${form}) so others can reuse your names ([how it works](${guide})).`,
@@ -378,8 +378,13 @@ function modelPage(lang, prefix, subject, model) {
     }
     md += '\n</div>\n\n';
   }
+  // Design notes first; the dated change history (notes.yaml `history`) is folded away below them.
   const notes = model.notes?.notes ?? [];
-  if (notes.length) md += `## ${l.notesTitle} {#notes}\n\n${notes.map((n) => `- ${issueLinks(mdText(n[lang]))}`).join('\n')}\n\n`;
+  const history = model.notes?.history ?? [];
+  const list = (items) => items.map((n) => `- ${issueLinks(mdText(n[lang]))}`).join('\n');
+  if (notes.length || history.length) md += `## ${l.notesTitle} {#notes}\n\n`;
+  if (notes.length) md += `${list(notes)}\n\n`;
+  if (history.length) md += `<details class="rules" id="history"><summary>${l.historyTitle(history.length)}</summary>\n\n${list(history)}\n\n</details>\n\n`;
   return md;
 }
 

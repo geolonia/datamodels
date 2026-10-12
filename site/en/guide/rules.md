@@ -31,7 +31,7 @@ Using upstream where it fits does not mean bending everything to fit. Some upstr
 - the upstream type depends on a specific product or region;
 - adding attributes is not enough and the meaning would have to change (changing meaning is not allowed, so a new type is the honest option).
 
-Write the upstream types you looked at, and why they did not fit, in the model's `notes.yaml`, so nobody repeats the same work.
+Write the upstream types you looked at, and why they did not fit, in the model's `notes.yaml`, so nobody repeats the same work. A dated record of a change goes under `history`, not `notes`; the model page folds it away below the notes.
 
 So far, every model in the catalog is the catalog's own type; upstream names are used for some attributes. Each model's notes and [issue #16](https://github.com/geolonia/datamodels/issues/16) record why.
 

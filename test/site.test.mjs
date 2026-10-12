@@ -61,6 +61,20 @@ test('model text shows <tags> and {{ braces }} as written; Markdown and code spa
   assert.doesNotMatch(page.slice(page.indexOf('\n---\n') + 5), /<owner>|<b>bold/);
 });
 
+test('the notes section shows the design notes first and folds the change history away', () => {
+  const Milestone = task.models.find((m) => m.type === 'Milestone');
+  const probe = structuredClone(Milestone);
+  probe.notes = { notes: [{ ja: '設計', en: 'Design' }], history: [{ ja: '2026-10-09：追加', en: '2026-10-09: added' }, { ja: '2026-10-10：変更', en: '2026-10-10: changed' }] };
+  const en = renderModelPage('en', '/en', subjects, task, probe);
+  assert.match(en, /## Notes \{#notes\}\n\n- Design\n\n<details class="rules" id="history"><summary>Change history \(2\)<\/summary>\n\n- 2026-10-09: added\n- 2026-10-10: changed\n\n<\/details>/);
+  assert.match(renderModelPage('ja', '', subjects, task, probe), /<summary>変更の記録（2 件）<\/summary>/);
+  // History alone still gets the section; no notes and no history, no section.
+  probe.notes = { history: [{ ja: '追加', en: 'Added' }] };
+  assert.match(renderModelPage('en', '/en', subjects, task, probe), /## Notes \{#notes\}\n\n<details/);
+  probe.notes = {};
+  assert.doesNotMatch(renderModelPage('en', '/en', subjects, task, probe), /\{#notes\}/);
+});
+
 test('a subclass of a schema.org type links the external IRI; a catalog parent links its page', () => {
   const common = subjects.find((s) => s.name === 'common');
   for (const [type, parent] of [['ContactPoint', 'https://schema.org/ContactPoint'], ['JapaneseAddress', 'https://schema.org/PostalAddress'], ['OpeningHours', 'https://schema.org/OpeningHoursSpecification']]) {
