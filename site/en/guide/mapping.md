@@ -41,7 +41,7 @@ fields:
 
 ## Conversion rules {#convert}
 
-A row can also say how to convert: `column` (the column of the CSV), `transform` (for example `integer`, `flag`, `split`; the toolkit's [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.7#convert) lists them all), a constant `value`, or `via` (build a nested value, such as an address, with another mapping file). `convert.id` names the entities. Rows with only `to` are documentation. Only some mapping files have conversion rules; most only document how the model relates to the standard.
+A row can also say how to convert: `column` (the column of the CSV), `transform` (for example `integer`, `flag`, `split`; the toolkit's [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.8#convert) lists them all), a constant `value`, or `via` (build a nested value, such as an address, with another mapping file). `convert.id` names the entities. Rows with only `to` are documentation. Only some mapping files have conversion rules; most only document how the model relates to the standard.
 
 The converter `datamodels convert` from [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) reads these rules and turns a CSV list into entities of the model. How to use it: [Converting your data](/en/toolkit/convert).
 

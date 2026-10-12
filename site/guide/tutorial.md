@@ -57,7 +57,7 @@ curl -sSfL -o sites.csv "$HOST/$SET/$FILE/092011_evacuation_space_sanitized_new.
 ブローカーに登録できるのは、CSV ファイルではなくエンティティです。この避難場所に当たるカタログのモデルは [EvacuationSite](/models/disaster/EvacuationSite/) です。このモデルには、どの列をどの属性にするかを書いた**対応表**（`jichitai-opendata-site`）が用意されています。そのため、変換のコードを自分で書く必要はありません。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.7 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.8 convert \
   disaster/EvacuationSite jichitai-opendata-site sites.csv --out sites.json
 ```
 
@@ -79,7 +79,7 @@ npx github:geolonia/datamodels-toolkit#v0.3.7 convert \
 続いて、ブローカーに登録するための形にも変換します。
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.7 convert \
+npx github:geolonia/datamodels-toolkit#v0.3.8 convert \
   disaster/EvacuationSite jichitai-opendata-site sites.csv \
   --normalized --out sites.jsonld
 ```
