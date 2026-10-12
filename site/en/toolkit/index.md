@@ -18,10 +18,10 @@ Not sure yet whether you need a site of your own? See [Your own data models](/en
 You need [Node.js](https://nodejs.org/) 24 or later. The commands run a release from GitHub with `npx`; there is nothing to install.
 
 ```bash
-npx github:geolonia/datamodels-toolkit#v0.3.7 --help
+npx github:geolonia/datamodels-toolkit#v0.3.8 --help
 ```
 
-The examples in this section use this release. All commands and options are in `--help` and the [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.7#readme). This section explains them task by task.
+The examples in this section use this release. All commands and options are in `--help` and the [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.8#readme). This section explains them task by task.
 
 ## Pages {#pages}
 
