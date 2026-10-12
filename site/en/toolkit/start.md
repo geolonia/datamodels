@@ -25,14 +25,26 @@ cd my-models
 `init` asks a few questions:
 
 - **Base URL:** where the node will be, for example `https://models.example.org`. It is part of every IRI the node publishes, so **choose it once**: you cannot change it after you publish. A `https://<account>.github.io/<repository>` address works too, but then your IRIs depend on the name of your GitHub account. For IRIs that outlive the domain, use a [w3id.org address](#w3id).
+- **IRI form:** `hash` (the default) makes IRIs such as `/ns/road#RoadPatrol`, which work on any static host, GitHub Pages included. `slash` makes `/ns/road/RoadPatrol`, which needs w3id.org or a server that redirects.
 - **Languages:** for example `ja,en`. One is enough.
 - **Publisher:** your organisation's name and website.
 - **Licence:** `CC0-1.0` lets anyone use the models without conditions, like this catalog.
 - **The first subject:** a group of models that share one `@context`, for example `road`. Its name is part of the IRIs too.
 
-It writes `node.yaml` (the settings), `models/road/` (the subject), a README, `LICENSE` (the licence text for CC0-1.0 and CC-BY-4.0; for another licence, add the text yourself), the workflow that publishes the node, and a Dependabot configuration that proposes new toolkit releases. In an existing repository, it adds only the files that are missing.
+It writes `node.yaml` (the settings), `models/road/` (the subject), a README, `.gitignore`, `LICENSE` (the licence text for CC0-1.0 and CC-BY-4.0; for another licence, add the text yourself), the workflow that publishes the node, and a Dependabot configuration that proposes new toolkit releases. A licence file under another name (`LICENSE.md`, `LICENSE.txt`, `COPYING`) counts as `LICENSE`.
 
-With the [GitHub CLI](https://cli.github.com/) (`gh`), add `--github my-org/my-models`: `init` then also creates that public repository, pushes the files and turns on GitHub Pages ([step 2](#publish)).
+It also works in an existing repository, for example one made by a scaffolder: it adds only the files that are missing, never overwrites one, and adds its lines to an existing `.gitignore`. It lists what it added and what it kept.
+
+The options give the answers, so `init` can run in a script or in CI. There it never asks: a missing answer is a usage error. Without an answer, the defaults are hash IRIs, English and CC0-1.0.
+
+```bash
+npx @geolonia/datamodels@0.3.10 init my-models \
+  --base-url https://models.example.org --iris hash --languages ja,en \
+  --publisher "Example Inc." --publisher-url https://example.org/ \
+  --license CC0-1.0 --subject road --yes
+```
+
+With the [GitHub CLI](https://cli.github.com/) (`gh`), add `--github my-org/my-models`: `init` then also creates that public repository, pushes the files and turns on GitHub Pages ([step 2](#publish)). In a folder whose remote is already that repository, it keeps the remote and only sets Pages to deploy from GitHub Actions. A remote to another repository is refused. Without a remote, it commits only the files `init` wrote, and pushes them. In a folder that is not a git repository yet, it stops when the folder has other files. In a git repository without a remote, it stops on uncommitted changes or a branch other than `main`; files you already committed are pushed with their history.
 
 ## 2. Publish on GitHub Pages {#publish}
 

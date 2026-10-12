@@ -25,7 +25,9 @@ disaster/EvacuationShelter  避難所の運用状況 / Evacuation shelter operat
 4 of 18 models in 3 node(s) match
 ```
 
-1 行に 1 つのモデルが、分野と型、タイトル、サイト（公開している人や組織の名前）、ページの URL の順に並びます。上位の 10 件を出力します。件数は `--limit` で変えられます。`--json` を付けると、型の IRI、バージョン、スキーマ、`@context`、索引（`catalog.json`）も出力します。スクリプトや AI エージェントから使うときは、こちらを使います。
+1 行に 1 つのモデルが、分野と型、タイトル、サイト（公開している人や組織の名前）、ページの URL の順に並びます。上位の 10 件を出力します。件数は `--limit` で変えられます。`--json` を付けると、型の IRI、バージョン、スキーマ、`@context`、索引（`catalog.json`）も出力します。スクリプトや AI エージェントから使うときは、こちらを使います。この索引は、`extend` と `export` の `--index` に渡せます。この 2 つでは、ノードのアドレスではなく、`catalog.json` そのものの URL を渡します。
+
+言葉は、型の名前に含まれるときがいちばん重く、タイトル、属性の名前、説明の順に軽くなります。めったに出ない言葉ほど重く数えます。英語の言葉は 3 文字以上が対象で、`data`、`model`、`type` のようなよく使う言葉は除きます。日本語は、漢字かカタカナを含む 2 文字ずつの組で比べます。`避難` で指定避難所が見つかります。`ひなん` のようにひらがなだけの言葉は、検索に使いません。このような言葉やよく使う言葉だけで、探す言葉が残らなければ、使い方の誤りです（終了コード 2、「nothing to search for」）。住所などの値の型も結果に入ります。
 
 `nodes` は、たどれるサイトを、名前、アドレス、ライセンス、モデルの数、リンク元のサイトとともに並べます。
 
@@ -40,7 +42,9 @@ Geolonia Inc.  https://models.geolonia.com/  CC0-1.0  1 model  (linked from Geol
 3 node(s) within 1 link(s) of https://datamodels.jp/catalog.json
 ```
 
-どちらのコマンドも、`--index` で別のサイトの `catalog.json` から始められ、`--depth` でたどるリンクの数（既定は 1）を変えられます。
+どちらのコマンドも、索引から始めます。`--index` には、`catalog.json` かノードのアドレスを指定します（既定は datamodels.jp）。そこからリンクをたどります。たどるのは、`catalog.json` の `nodes` にあるノードと、モデルの `extends` にある索引です。`--depth` は、たどるリンクの数です（既定は 1、最大 5。`0` なら最初の索引だけを読みます）。どの索引も 1 回だけ読むので、戻るリンクは二度たどりません。読む索引は 50 までです。`nodes --json` は、一覧をスクリプト向けの形で出力します。
+
+索引は、https で公開のアドレスからだけ読みます。読めないノードは標準エラー出力で知らせ、飛ばします。終了コードが 1 になるのは、最初の索引を読めないときだけです。
 
 見つかったモデルを土台にするときは、[extend](#extend) を使います。
 
@@ -50,15 +54,35 @@ Geolonia Inc.  https://models.geolonia.com/  CC0-1.0  1 model  (linked from Geol
 npx @geolonia/datamodels@0.3.10 add road/RoadPatrol
 ```
 
-`models/road/RoadPatrol/` に `schema.json`、`catalog.yaml`、`examples/example.json`、`notes.yaml` ができます。`notes.yaml` は、出典や決めたことと、その理由を書く注記です。分野の `@context` には型 `RoadPatrol` が入ります。続けて、[属性を書きます](#attributes)。
+`models/road/RoadPatrol/` に `schema.json`、`catalog.yaml`、`examples/example.json`、`notes.yaml` ができます。`notes.yaml` は、出典や決めたことと、その理由を書く注記です。分野の `@context` には型 `RoadPatrol` が入ります。エンティティの型のスキーマには `id` と `type` があり、`catalog.yaml` にはノードの言語ごとのタイトルと説明があります。できたモデルは、そのままビルドでき、`check` も通ります。分野の今のバージョンがリリース済みなら、`add` の前に [`bump`](/toolkit/versions#bump) を実行します。`add` がそのバージョンのソースを変え、`build` と `check` が止まるからです。続けて、[属性を書きます](#attributes)。
+
+住所のように属性の中で使う値の型は、`--value` を付けて作ります。
+
+```bash
+npx @geolonia/datamodels@0.3.10 add road/Segment --value
+```
 
 ## カタログのモデルから始める {#extend}
 
-このカタログのモデルから始めるときは、`extend` を使います。名前は似ていますが、[拡張](/guide/extend)とは別のもので、自分のサイトに新しいモデルを作ります。カタログのモデルのスキーマをコピーし、その `@context` を取り込み、土台にしたモデルを記録します。そのため、`check` が名前と意味を変えていないかを検査できます。そのうえで、[下のように](#attributes)自分の属性を足します。`--subclass` を付けると、独自の IRI を持つサブタイプになります。
+このカタログのモデルから始めるときは、`extend` を使います。名前は似ていますが、[拡張](/guide/extend)とは別のもので、自分のサイトに新しいモデルを作ります。そのうえで、[下のように](#attributes)自分の属性を足します。
 
 ```bash
 npx @geolonia/datamodels@0.3.10 extend task/Task road/RoadTask
 ```
+
+最初の引数は、土台にするモデルです。相手のサイトの `catalog.json` にある `<subject>/<Type>` か、型の IRI で指定します。`--index` は、その `catalog.json` です（既定は `node.yaml` の最初のノード、無ければ datamodels.jp）。ターミナルで引数なしに実行すると、一覧からモデルを選び、新しいモデルの名前を入力できます。
+
+`extend` は次のことをします。
+
+- 相手のモデルの今のバージョンのスキーマをコピーし、そのバージョンの `@context` を分野の `@context` に取り込みます。
+- 相手のカタログから属性の説明を取り、例を新しいモデルに合わせて書き換えます。既定の形では、モデルのタイトルと説明も取ります。`--subclass` では、新しい型の名前から作るので（"A subtype of …"）、自分で書き直します。
+- 土台にしたモデルを `catalog.yaml` の `extends` に記録します。そのため、`check` が名前と意味を変えていないかを検査できます。
+- 相手のサイトが `node.yaml` の `nodes` に無ければ、足します。
+
+作り方は 2 通りです。
+
+- **既定：** 同じ型に属性を足します。型は相手のモデルの IRI のままです（`x-alias-of`）。
+- **`--subclass`：** 自分の名前空間に独自の型を作り、相手のモデルを親にします（`x-subclass-of`）。
 
 `extend` も、`add` と同じ 4 つのファイルを書き出します。分野の `context.jsonld` の `@context` は、取り込んだ @context の URL と、このノードの用語を並べたリストになります。
 

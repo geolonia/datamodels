@@ -64,7 +64,7 @@ curl -sS https://api.anthropic.com/v1/messages \
 :::
 
 - **OpenAI API**：ファイルをそのまま `response_format` の `json_schema` にします。`strict: true` です。答えにはすべての属性が入り、文書に書いていない属性は `null` になります。
-- **Claude API**：`schema` をツールの `input_schema` にします。答えはツールへの入力として返ります。例のモデルは `tool_choice` でツールの使用を強制できないので、system でツールを使うよう指示しています。答えにツールの呼び出しが無いときは `jq -e` がエラーで止まるので、リクエストを送り直してください。Claude の strict モード（ツールの `"strict": true`）は、`null` になりうるプロパティを 1 回のリクエストで 16 個までしか受け付けません。EvacuationSite はそれより多いので、この例では strict を外しています。この場合、答えはたいていスキーマに従いますが、手順 3 で確かめてください。小さなモデルや、要らない属性を外したスキーマなら、`"strict": true` を付けられます。
+- **Claude API**：`schema` をツールの `input_schema` にします。答えはツールへの入力として返ります。例のモデルは `tool_choice` でツールの使用を強制できないので、system でツールを使うよう指示しています。答えにツールの呼び出しが無いときは `jq -e` がエラーで止まるので、リクエストを送り直してください。Claude の strict モード（ツールの `"strict": true`）は、union 型のパラメーターを 1 回のリクエストで 16 個までしか受け付けません。`null` になりうるプロパティも数えます（[AI の構造化出力](/toolkit/export#ai)）。EvacuationSite はそれより多いので、この例では strict を外しています。この場合、答えはたいていスキーマに従いますが、手順 3 で確かめてください。小さなモデルや、要らない属性を外したスキーマなら、`"strict": true` を付けられます。
 - 1 つの文書から複数の避難場所を取り出すときは、スキーマを配列に入れます。形は `{"type": "object", "properties": {"sites": {"type": "array", "items": …}}}` です。ファイルと同じく、`required` と `additionalProperties: false` も付けます。
 
 構造化出力を使う前に、各社の説明を読んでください（[OpenAI](https://developers.openai.com/api/docs/guides/structured-outputs#supported-schemas)、[Claude](https://platform.claude.com/docs/en/build-with-claude/structured-outputs)）。

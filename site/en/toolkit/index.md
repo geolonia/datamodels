@@ -44,3 +44,19 @@ The examples in this section use this release. This section explains them task b
 
 - [Command reference](/en/toolkit/reference): every command with its arguments, options, defaults and exit codes.
 - [The node and build](/en/toolkit/node): what a node holds, `node.yaml`, and what `build` writes.
+
+## Agent skill {#agent-skill}
+
+The toolkit has a skill for AI agents, [`skills/datamodels`](https://github.com/geolonia/datamodels-toolkit/tree/main/skills/datamodels). It gives an agent the modelling rules of this catalog and the toolkit's way of working: look for a model before you define one, choose between an alias and a subclass, run `bump` before you change a published model, and more. It also has the steps to convert a list of your own with `mapping` and `convert --check` ([With an AI agent](/en/toolkit/convert#agent)). For the models themselves, it sends the agent to [llms.txt](https://datamodels.jp/llms.txt).
+
+The skill is in the toolkit's repository, not in the npm package. For Claude Code, copy the folder from a clone of the repository into your project's `.claude/skills/`, or into `~/.claude/skills/` for all your projects:
+
+```bash
+mkdir -p .claude/skills
+cp -R path/to/datamodels-toolkit/skills/datamodels .claude/skills/
+```
+
+## Problems and questions {#issues}
+
+- A problem with the tool: an [issue in datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit/issues).
+- A question about a model or a mapping file: an [issue in geolonia/datamodels](https://github.com/geolonia/datamodels/issues). The conversion rules live there, in the mapping files.

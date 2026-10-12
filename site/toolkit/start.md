@@ -25,14 +25,26 @@ cd my-models
 `init` がいくつか質問します。
 
 - **ベース URL：** ノードを置く場所です（例：`https://models.example.org`）。ノードが公開するすべての IRI に入るので、**公開した後は変えられません**。`https://<アカウント>.github.io/<リポジトリ>` も使えますが、IRI が GitHub のアカウント名に依存します。ドメインより長く使う IRI にするなら、[w3id.org のアドレス](#w3id)を使います。
+- **IRI の形：** 既定の `hash` では、IRI が `/ns/road#RoadPatrol` のようになります。GitHub Pages を含め、どの静的なホストでも使えます。`slash` では `/ns/road/RoadPatrol` のようになり、w3id.org か転送のできるサーバーが要ります。
 - **言語：** `ja,en` など。1 つでも構いません。
 - **公開者：** 組織の名前とウェブサイトです。
 - **ライセンス：** `CC0-1.0` なら、だれでも条件なしにモデルを使えます（このカタログと同じです）。
 - **最初の分野：** 1 つの `@context` を共有するモデルのまとまりです（例：`road`）。この名前も IRI に入ります。
 
-`init` は、設定の `node.yaml`、分野の `models/road/`、README、`LICENSE`、公開用のワークフローを書き出します。`LICENSE` に条文が入るのは CC0-1.0 と CC-BY-4.0 で、ほかのライセンスでは自分で条文を置きます。ツールキットの新しいリリースを提案する Dependabot の設定も書き出します。既存のリポジトリで実行すると、足りないファイルだけを足します。
+`init` は、設定の `node.yaml`、分野の `models/road/`、README、`.gitignore`、`LICENSE`、公開用のワークフローを書き出します。`LICENSE` に条文が入るのは CC0-1.0 と CC-BY-4.0 で、ほかのライセンスでは自分で条文を置きます。ほかの名前のライセンスのファイル（`LICENSE.md`、`LICENSE.txt`、`COPYING`）も、`LICENSE` とみなします。ツールキットの新しいリリースを提案する Dependabot の設定も書き出します。
 
-[GitHub CLI](https://cli.github.com/)（`gh`）があれば、`--github my-org/my-models` を付けて実行できます。`init` がその名前で公開リポジトリを作り、ファイルを push して GitHub Pages を有効にします（[手順 2](#publish)）。
+既存のリポジトリでも使えます（スキャフォルダーで作ったリポジトリなど）。足りないファイルだけを足し、既にあるファイルは上書きしません。`.gitignore` が既にあれば、足りない行を足します。足したファイルと残したファイルは、一覧で知らせます。
+
+答えはオプションでも渡せるので、スクリプトや CI でも実行できます。その場合は質問をせず、足りない答えがあれば使い方の誤りになります。答えの無い項目の既定は、ハッシュ IRI、英語、CC0-1.0 です。
+
+```bash
+npx @geolonia/datamodels@0.3.10 init my-models \
+  --base-url https://models.example.org --iris hash --languages ja,en \
+  --publisher "Example Inc." --publisher-url https://example.org/ \
+  --license CC0-1.0 --subject road --yes
+```
+
+[GitHub CLI](https://cli.github.com/)（`gh`）があれば、`--github my-org/my-models` を付けて実行できます。`init` がその名前で公開リポジトリを作り、ファイルを push して GitHub Pages を有効にします（[手順 2](#publish)）。そのリポジトリが既にフォルダーのリモートなら、リモートはそのままにして、Pages を GitHub Actions から公開する設定だけをします。リモートが別のリポジトリなら、止まります。リモートが無いときは、`init` が書いたファイルだけをコミットして push します。まだ Git のリポジトリでないフォルダーでは、ほかのファイルがあると止まります。リモートの無い Git のリポジトリでは、コミットしていない変更があるか、`main` 以外のブランチにいると止まります。コミット済みのファイルは、その履歴ごと push されます。
 
 ## 2. GitHub Pages で公開する {#publish}
 

@@ -165,7 +165,7 @@ datamodels release <subject> [dir] [--offline]
 | `[dir]` | `.` | ノード |
 | `--offline` | | スナップショットを公開済みのファイルと比べない |
 
-既にあるスナップショットはそのまま残します（終了コード 0）。公開した後に元ファイルが変わったときと、サイトが応答しないときは、終了コードが 1 です。`--offline` を付けると、この比較を飛ばします。
+スナップショットが既にあれば、元ファイルをそれと比べるだけで、何も変えません。元ファイルがスナップショットや公開済みのファイルと違うときは、終了コードが 1 です。公開済みのファイルを読めないときも 1 です。404 は未公開とみなし、それ以外の HTTP エラーや読み取りの失敗で止まります。`--offline` を付けると、公開済みのファイルとの比較を飛ばします。
 
 ## bump {#bump}
 
@@ -190,7 +190,7 @@ datamodels bump <subject> <level> [dir] [--offline]
 datamodels upgrade [dir] [--to <vX.Y.Z>]
 ```
 
-ノードを、ツールキットのあるリリースに移します。`.github/workflows/` の Action は、リリースのコミットの SHA に固定し、タグをコメントに書きます。ノードの直下の Markdown ファイルでは、`npx` の行がそのリリースを使うよう書き換えます。古い書き方の `npx github:geolonia/datamodels-toolkit#vX.Y.Z` も、npm の書き方に変えます。手順は[新しいツールキットに移る](/toolkit/versions#upgrade)で説明しています。
+ノードを、ツールキットのあるリリースに移します。`.github/workflows/` の Action は、リリースのコミットの SHA に固定し、タグをコメントに書きます。ノードの直下の Markdown ファイルでは、`npx` の行がそのリリースを使うよう書き換えます。v0.3.8 以降なら、古い書き方の `npx github:geolonia/datamodels-toolkit#vX.Y.Z` も、npm の書き方に変えます。それより古いリリースなら、GitHub の書き方にします。手順は[新しいツールキットに移る](/toolkit/versions#upgrade)で説明しています。
 
 | 引数・オプション | 既定値 | 内容 |
 |---|---|---|
@@ -254,6 +254,6 @@ datamodels export <subject>/<Type> [dir] --to <adapters> [options]
 | `[dir]` | `.` | ノード。`--index` が無く、ノードにそのモデルがあれば、それを使う |
 | `--to <adapters>` | （必須） | `csv`、`table-schema`、`ai`、`postgis` の 1 つ以上。カンマ区切り |
 | `--out <dir>` | `.` | ファイルを書き出すところ。ファイル名は `<Type>.<ext>` |
-| `--index <URL>` | `node.yaml` の最初のノード。無ければ `https://datamodels.jp/catalog.json` | ノードにモデルが無いときに、モデルを読む `catalog.json` |
+| `--index <URL>` | `node.yaml` の最初のノード。無ければ `https://datamodels.jp/catalog.json` | モデルを読む `catalog.json`。指定すると、ノードは読まない。指定しなければ、ノードにモデルが無いときだけ既定のものを読む |
 
 `--to` が無いときや知らない名前のときは、使い方の誤りです。モデルを読めないとき、モデルが値型のとき、ファイルを書き出せないときは、終了コードが 1 です。

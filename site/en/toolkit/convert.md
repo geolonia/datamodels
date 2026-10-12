@@ -27,7 +27,7 @@ npx @geolonia/datamodels@0.3.10 convert \
   092011_evacuation_space.csv --out sites.json
 ```
 
-This example converts a municipality's list of designated emergency evacuation sites (指定緊急避難場所一覧, municipal standard open dataset 03) into EvacuationSite entities. The CSV is Utsunomiya City's list, the file that step 1 of the [tutorial](/en/guide/tutorial#data) downloads. The arguments are the model (`<subject>/<Type>`), the name of the mapping file and the CSV file. The model page lists its mapping files under **Referenced standards**, and `catalog.json` lists them as `mappingUrls`.
+This example converts a municipality's list of designated emergency evacuation sites (指定緊急避難場所一覧, municipal standard open dataset 03) into EvacuationSite entities. The CSV is Utsunomiya City's list, the file that step 1 of the [tutorial](/en/guide/tutorial#data) downloads. The arguments are the model (`<subject>/<Type>`), the name of the mapping file and the CSV file. The model page lists its mapping files under **Referenced standards**, and `catalog.json` lists them as `mappingUrls`. `convert` also reads the mapping files that one names with `via`, such as `common/JapaneseAddress/jichitai-opendata-address` for the address columns.
 
 Only some mapping files have conversion rules (`column`, `transform`). The others describe how the model relates to the standard, and do not convert a list on their own ([which standards have a mapping](/en/guide/rules#mapping)). Then make a mapping of your own, [as below](#your-own-list). Rows with only `to` are documentation too: convert those fields yourself, following the note.
 
@@ -62,12 +62,23 @@ npx @geolonia/datamodels@0.3.10 convert \
   disaster/EvacuationSite my-list.yaml my-list.csv --out entities.json
 ```
 
+Give `convert` your file as a path (`./my-list.yaml`) or a name that ends in `.yaml` or `.yml`. Any other name is read as the name of a mapping file in the catalog. Your mapping follows the same [conversion rules](/en/guide/mapping#convert) as the catalog's mapping files. In `via` it may name a catalog mapping, or another file of your own, relative to the folder of your mapping (`address.yaml`): a via that ends in `.yaml` or `.yml` is a file.
+
 About the first version that `mapping` writes:
 
-- A column fills an attribute when its name matches the attribute's name (in English or Japanese). The columns that the catalog's mapping files read are clues too. Longitude and latitude columns become the location.
-- Every row has a comment of one line, in Japanese when the CSV header is Japanese. No value of your list goes into the file.
+- It reads the CSV header, and up to the first 50 rows of a column to tell a column of true and false (or 有 and 無) from one of 1 and 0. No value of your list goes into the file.
+- It has one row per attribute, per field of a value (`address.postalCode`) and for the location, as the CSV template splits them. Required attributes come first.
+- A column fills a row when its name is the attribute's, also when written otherwise (`postal_code`, `Postal Code`), or the attribute's Japanese or English name in the catalog. The columns that the catalog's mapping files read for the attribute are clues too, with their transform. Longitude and latitude columns (`lng`, `経度`, …) become the location.
+- A column that only shares part of the Japanese name is marked as a guess, to check. When two columns fit equally well, the row stays a TODO and lists both as candidates. When one column fits two rows equally well, both rows stay TODOs.
+- A row without a column says `# TODO: which column?` (`# TODO：どの列？` when the header is Japanese).
+- `transform` follows the attribute's type: `integer` or `number` for a number, `split` for a list, `weekdays` for days of the week, `time` for a time, `geometry` for the location, `json` for a value kept as JSON, `code6` for a local government code. A boolean gets `flag`, `boolean` when the column holds true and false, or `yesno` when it holds 有 and 無 or the other words of `yesno`. A rule taken from a catalog mapping keeps its `values`.
+- A value whose fields include a list, such as the opening hours, gets one row per field (`openingHoursSpecification.dayOfWeek`, `openingHoursSpecification.opens`). The CSV template keeps such a value as one JSON column.
+- A CSV column named `id` becomes `id: { column: "id" }`: the entity id as it is, without a template. Otherwise `convert.id` comes from a catalog mapping of the model when the columns it needs are there, else it is a TODO.
+- A model with opening hours gets a TODO under `convert:`: what 0:00 to 0:00 means in your list ([Opening hours of 0:00 to 0:00](/en/guide/mapping#all-day)). Delete it when the list has no such hours.
+- The CSV columns that no row reads are listed at the end, as a comment.
+- Every row has a comment of one line, in Japanese when the CSV header is Japanese.
 - When the header has nearly all the columns of one of the catalog's mapping files, `mapping` says so: try that mapping file first.
-- `--out` never overwrites a file.
+- Without `--out`, the mapping goes to standard output. `--out` never overwrites a file. `--site` works as for `convert` ([Options](#options)).
 
 A value that is the same in every row can go in `value`. Never guess a value that is not in your list. `convert` refuses a mapping that still has a TODO, or that names an attribute the model does not have.
 
@@ -83,7 +94,7 @@ The last line sums it up, for example `18 of 20 rows valid`. The exit code is 0 
 
 ### With an AI agent {#agent}
 
-An AI agent can fill in the TODOs with you. The [agent skill](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.10/skills/datamodels) of datamodels-toolkit (`skills/datamodels`) gives it the steps and the rules: never invent values, and ask about unclear columns. For Claude Code, copy the folder into your project's `.claude/skills/`.
+An AI agent can fill in the TODOs with you. The [agent skill](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.10/skills/datamodels) of datamodels-toolkit (`skills/datamodels`) gives it the steps and the rules: never invent values, and ask about unclear columns. How to install it: [Agent skill](/en/toolkit/#agent-skill).
 
 An example prompt:
 
@@ -106,6 +117,7 @@ Each column fills the attribute of the same name:
 - A column such as `address.postalCode` is a field of a value, such as the address.
 - `longitude` and `latitude` make a point. A model that allows other shapes also has a `location` column for a GeoJSON geometry.
 - A list is split at `;`, and a boolean is `true` or `false`.
+- A column that holds JSON, such as the opening hours, is read as JSON.
 
 You can delete the columns you do not use: `convert` lists them as "not in the file, so left empty", and those attributes stay empty. To check the file with frictionless, though, keep every column ([Using a spreadsheet (CSV)](/en/guide/csv#fill)).
 
@@ -115,7 +127,7 @@ Whichever way you convert, the results work the same:
 
 - It detects UTF-8 and Shift_JIS.
 - A column that the mapping reads but the CSV does not have is listed as "not in the file, so left empty", and that attribute stays empty. Without the column of a required attribute, the rows are invalid.
-- It repairs only what it can prove, such as a local government code that lost its leading zero or lacks its check digit (the check digit decides). It lists every repair on standard error.
+- It repairs only known forms, such as a local government code that lost its leading zero or lacks its check digit ([`code6`](/en/guide/mapping#transforms)). It lists every repair on standard error.
 - Invalid rows are left out and listed by line. Rows that get the same id are invalid, and so is an id in exponent form, such as `1.31E+11`: a spreadsheet rounded the number and its digits are lost.
 - The exit code is 1 when a row is invalid or a file cannot be read, and 2 for a usage error.
 
@@ -125,6 +137,6 @@ Whichever way you convert, the results work the same:
 - `--normalized`: the NGSI-LD normalized form instead of the key-values form, with the subject's `@context` and the NGSI-LD core context.
 - `--set attribute=value`: a value the list does not carry ([example above](#standard)).
 - `--check`, `--rows N`: check the first rows only ([above](#your-own-list)).
-- `--site`: the site to read the mapping files and models from (default: datamodels.jp). To try a mapping before it is published, build [geolonia/datamodels](https://github.com/geolonia/datamodels) (`npm run build`) and add `--site dist`.
+- `--site URL|dir`: the site to read the catalog, the mapping files and the models from (default: datamodels.jp), or a folder laid out like the site. To try a mapping before it is published, build [geolonia/datamodels](https://github.com/geolonia/datamodels) (`npm run build`) and add `--site dist`.
 
-The [tutorial](/en/guide/tutorial) converts real open data and shows it on a map, step by step. [Publishing your list](/en/guide/publish) says how to publish a converted list as open data. All options are in the toolkit's [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.8#convert).
+The [tutorial](/en/guide/tutorial) converts real open data and shows it on a map, step by step. [Publishing your list](/en/guide/publish) says how to publish a converted list as open data. Every rule of a mapping file, with the list of transforms: [Conversion rules](/en/guide/mapping#convert).

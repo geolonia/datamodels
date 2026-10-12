@@ -27,7 +27,7 @@ npx @geolonia/datamodels@0.3.10 convert \
   092011_evacuation_space.csv --out sites.json
 ```
 
-この例は、市町村の指定緊急避難場所一覧（自治体標準オープンデータセット 03）を EvacuationSite のエンティティに変換します。CSV は宇都宮市の一覧で、[チュートリアル](/guide/tutorial#data)の手順 1 で取得するファイルです。引数は、モデル（`<subject>/<Type>`）、対応表の名前、CSV ファイルの順です。対応表の名前は、モデルのページの**参照している標準**と、`catalog.json` の `mappingUrls` にあります。
+この例は、市町村の指定緊急避難場所一覧（自治体標準オープンデータセット 03）を EvacuationSite のエンティティに変換します。CSV は宇都宮市の一覧で、[チュートリアル](/guide/tutorial#data)の手順 1 で取得するファイルです。引数は、モデル（`<subject>/<Type>`）、対応表の名前、CSV ファイルの順です。対応表の名前は、モデルのページの**参照している標準**と、`catalog.json` の `mappingUrls` にあります。対応表が `via` で別の対応表を指していれば、`convert` はそれも読みます。たとえば住所の列は `common/JapaneseAddress/jichitai-opendata-address` で変換します。
 
 変換の規則（`column`、`transform`）があるのは、一部の対応表だけです。ほかの対応表は、モデルと標準の関係を説明するもので、そのままでは変換できません（[対応表を置く標準](/guide/rules#mapping)）。そのときは、[次の方法](#your-own-list)で自分の対応表を作ります。`to` だけの行も説明のための行です。その項目は、注記に沿って自分で変換してください。
 
@@ -62,12 +62,23 @@ npx @geolonia/datamodels@0.3.10 convert \
   disaster/EvacuationSite my-list.yaml my-list.csv --out entities.json
 ```
 
+`convert` には、自分の対応表をパス（`./my-list.yaml`）として渡すか、`.yaml` か `.yml` で終わる名前を付けて渡します。それ以外の名前は、カタログの対応表の名前として読みます。書き方は、カタログの対応表の[変換の規則](/guide/mapping#convert)と同じです。`via` には、カタログの対応表も、自分の別のファイルも書けます。自分のファイルは、対応表のあるフォルダーからの相対パスで書きます（`address.yaml`）。`.yaml` や `.yml` で終わる `via` は、ファイルとして読みます。
+
 `mapping` の下書きについて：
 
-- 列名が属性の名前（英語や日本語）と合うと、その列が入ります。カタログの対応表が読む列も手がかりにします。経度と緯度の列は位置になります。
-- 各行に 1 行の説明が付きます。CSV の見出しが日本語なら、説明も日本語です。一覧の値は下書きに入りません。
+- CSV の見出しと、列ごとに最初の 50 行までを読みます。50 行は、true と false（または有と無）の列か、1 と 0 の列かを見分けるためです。一覧の値は下書きに入りません。
+- 属性ごと、値の中の項目ごと（`address.postalCode`）、位置に 1 行ずつ書きます。分け方は CSV テンプレートと同じです。必須の属性が先に並びます。
+- 列名が属性の名前と同じとき、その列が入ります。書き方の違う名前（`postal_code`、`Postal Code`）や、カタログにある属性の日本語や英語の名前でも入ります。カタログの対応表がその属性に読む列も手がかりで、その `transform` も使います。経度と緯度の列（`lng`、`経度` など）は位置になります。
+- 日本語の名前の一部だけが合う列は、確かめるべき推測として印が付きます。同じくらい合う列が 2 つあるときは、TODO のまま、両方を候補として書きます。1 つの列が 2 つの行に同じくらい合うときも、両方の行が TODO のままです。
+- 列が見つからない行には、`# TODO：どの列？` と書きます（見出しが英語なら `# TODO: which column?`）。
+- `transform` は属性の型で決まります。数には `integer` か `number`、リストには `split`、曜日には `weekdays`、時刻には `time`、位置には `geometry` です。JSON のまま持つ値には `json`、全国地方公共団体コードには `code6` です。真偽値は `flag` です。ただし、列が true と false なら `boolean`、有と無などの `yesno` の言葉なら `yesno` です。カタログの対応表から取った行は、その `values` も残します。
+- 営業時間のように項目にリストを含む値も、項目ごとに 1 行です。たとえば `openingHoursSpecification.dayOfWeek` と `openingHoursSpecification.opens` です。CSV テンプレートでは、このような値は JSON の 1 列です。
+- CSV に `id` という列があれば、`id: { column: "id" }` と書きます。その列をエンティティの ID としてそのまま使い、テンプレートは使いません。`id` の列が無ければ、`convert.id` をそのモデルのカタログの対応表から取ります。必要な列がそろわなければ TODO です。
+- 営業時間のあるモデルでは、`convert:` の下に TODO が付きます。一覧の「0:00～0:00」が何を意味するかを書きます（[0:00～0:00 の営業時間](/guide/mapping#all-day)）。一覧にそのような時間が無ければ、消します。
+- どの行も読まない CSV の列は、最後にコメントで並べます。
+- 各行に 1 行の説明が付きます。CSV の見出しが日本語なら、説明も日本語です。
 - 見出しがカタログの対応表の列とほぼ同じなら、`mapping` がそう知らせます。まずその対応表で変換を試してください。
-- `--out` は既にあるファイルを上書きしません。
+- `--out` を付けなければ、標準出力に出します。`--out` は既にあるファイルを上書きしません。`--site` は `convert` と同じです（[オプション](#options)）。
 
 すべての行で同じ値は、`value` で書けます。一覧に無い値を推測で書くことはしないでください。`convert` は、TODO が残っている対応表や、モデルに無い属性を書いた対応表を受け付けません。
 
@@ -83,7 +94,7 @@ npx @geolonia/datamodels@0.3.10 convert \
 
 ### AI エージェントと埋める {#agent}
 
-TODO を埋める作業は、AI エージェントにも頼めます。datamodels-toolkit の[エージェントスキル](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.10/skills/datamodels)（`skills/datamodels`）が、手順と決まりをエージェントに教えます。一覧に無い値は書かない、意味のはっきりしない列は人に聞く、という決まりです。Claude Code では、このフォルダーをプロジェクトの `.claude/skills/` にコピーします。
+TODO を埋める作業は、AI エージェントにも頼めます。datamodels-toolkit の[エージェントスキル](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.10/skills/datamodels)（`skills/datamodels`）が、手順と決まりをエージェントに教えます。一覧に無い値は書かない、意味のはっきりしない列は人に聞く、という決まりです。入れ方は[エージェントスキル](/toolkit/#agent-skill)にあります。
 
 依頼の例です。
 
@@ -106,6 +117,7 @@ npx @geolonia/datamodels@0.3.10 convert \
 - `address.postalCode` のような列は、住所などの値の項目です。
 - `longitude` と `latitude` は、点の位置です。点以外の形も許すモデルでは、`location` の列に GeoJSON を書けます。
 - 一覧（リスト）の値は `;` で区切り、真偽値は `true` か `false` で書きます。
+- 営業時間のように JSON を入れる列は、JSON として読みます。
 
 使わない列は消してもかまいません。`convert` は消した列を「not in the file, so left empty」と知らせ、その属性は空になります。ただし、frictionless で検証するなら、列はすべて残します（[表計算ソフト（CSV）で使う](/guide/csv#fill)）。
 
@@ -115,7 +127,7 @@ npx @geolonia/datamodels@0.3.10 convert \
 
 - 文字コードは、UTF-8 と Shift_JIS を見分けます。
 - 対応表の読む列が CSV に無いときは、「not in the file, so left empty」と知らせ、その属性を空にします。必須の属性の列が無いときは、その行は無効です。
-- 確かめられる誤りだけを直します。たとえば、先頭の 0 が消えた全国地方公共団体コードや、検査数字の無いコードです（検査数字で確かめます）。直したところは、すべて標準エラー出力に出します。
+- 決まった形の誤りだけを直します。たとえば、先頭の 0 が消えた全国地方公共団体コードや、検査数字の無いコードです（[`code6`](/guide/mapping#transforms)）。直したところは、すべて標準エラー出力に出します。
 - 無効な行は出力せず、行番号と一緒に知らせます。複数の行が同じ ID になるときと、`1.31E+11` のように指数で書かれた ID も無効です。指数の ID は、表計算ソフトが数を丸めて桁が失われたものです。
 - 終了コードは、無効な行があるときと、ファイルを読めないときは 1、使い方の誤りは 2 です。
 
@@ -125,6 +137,6 @@ npx @geolonia/datamodels@0.3.10 convert \
 - `--normalized`：key-values の形ではなく、NGSI-LD の normalized の形にします。分野の `@context` と NGSI-LD のコアの context が付きます。
 - `--set 属性=値`：一覧に無い値を渡します（[上の例](#standard)）。
 - `--check`、`--rows N`：最初の行だけを検証します（[上の説明](#your-own-list)）。
-- `--site`：対応表とモデルを読むサイトです。既定は datamodels.jp です。公開前の対応表を試すときは、[geolonia/datamodels](https://github.com/geolonia/datamodels) をビルドして（`npm run build`）、`--site dist` を付けます。
+- `--site URL|フォルダー`：カタログ、対応表、モデルを読むサイトです。既定は datamodels.jp です。サイトと同じ構成のフォルダーも指定できます。公開前の対応表を試すときは、[geolonia/datamodels](https://github.com/geolonia/datamodels) をビルドして（`npm run build`）、`--site dist` を付けます。
 
-実際のオープンデータを変換して地図に表示するまでは、[チュートリアル](/guide/tutorial)で試せます。変換した一覧をオープンデータとして公開する方法は、[一覧を公開する](/guide/publish)にあります。すべてのオプションは、ツールキットの [README](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.8#convert)（英語）にあります。
+実際のオープンデータを変換して地図に表示するまでは、[チュートリアル](/guide/tutorial)で試せます。変換した一覧をオープンデータとして公開する方法は、[一覧を公開する](/guide/publish)にあります。対応表の規則と変換の種類の一覧は、[変換の規則](/guide/mapping#convert)にあります。
