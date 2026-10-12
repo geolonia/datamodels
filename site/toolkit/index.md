@@ -44,3 +44,19 @@ npx @geolonia/datamodels@0.3.10 --help
 
 - [コマンドリファレンス](/toolkit/reference)：すべてのコマンドの引数、オプション、既定値、終了コードです。
 - [ノードとビルド](/toolkit/node)：ノードが持つもの、`node.yaml`、`build` が書き出すものです。
+
+## エージェントスキル {#agent-skill}
+
+ツールキットには、AI エージェント向けのスキル [`skills/datamodels`](https://github.com/geolonia/datamodels-toolkit/tree/main/skills/datamodels) があります。このカタログのモデルの決まりと、ツールキットでの作業の進め方をエージェントに教えます。たとえば、新しいモデルを作る前に既にあるモデルを探すこと、別名とサブクラスの選び方、公開したモデルを変える前に `bump` を実行することです。自分の一覧を `mapping` と `convert --check` で変換する手順も含みます（[AI エージェントと埋める](/toolkit/convert#agent)）。モデルそのものについては、[llms.txt](https://datamodels.jp/llms.txt) を読むようにエージェントに伝えます。
+
+スキルは、ツールキットのリポジトリにあり、npm のパッケージには入っていません。Claude Code では、リポジトリを clone して、このフォルダーをプロジェクトの `.claude/skills/` にコピーします。すべてのプロジェクトで使うなら、`~/.claude/skills/` にコピーします。
+
+```bash
+mkdir -p .claude/skills
+cp -R path/to/datamodels-toolkit/skills/datamodels .claude/skills/
+```
+
+## 問題の報告と質問 {#issues}
+
+- ツールの問題は、[datamodels-toolkit の Issue](https://github.com/geolonia/datamodels-toolkit/issues) に書いてください。
+- モデルや対応表についての質問は、[geolonia/datamodels の Issue](https://github.com/geolonia/datamodels/issues) に書いてください。変換の規則は、そちらの対応表にあります。
