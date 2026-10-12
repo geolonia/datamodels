@@ -17,7 +17,7 @@ description: datamodels.jp の作成での AI の使い方と、AI エージェ�
 
 - **入口:** [/llms.txt](/llms.txt)。ガイドとすべてのモデルの短い一覧（英語）です。
 - **すべてのモデルとその URL:** [catalog.json](/catalog.json)。
-- **作ったデータの確認:** モデルの JSON Schema（`/schema/<subject>/<Type>/v1.json`）で検証できます。例（`/examples/…`）は、そのまま使える正しいデータです。
+- **作ったデータの確認:** モデルの JSON Schema（`/schema/<subject>/<Type>/v1.json`）で検査できます。例（`/examples/…`）は、そのまま使える正しいデータです。
 - **意味:** `https://datamodels.jp/ns/` の下にある型と属性の IRI を開くと、それぞれの説明のページが表示されます。
 - **変わらない URL:** 公開したバージョンは変わりません（[URL とバージョン](/guide/urls)）。引用した URL は、ずっと同じ内容を指します。ただし正式公開までのプレリリース中は、公開済みのバージョンも直接修正することがあります。
 

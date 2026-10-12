@@ -17,7 +17,7 @@ description: どの URL を使うか、何が変わらないか、バージョ�
 |---|---|
 | 保存するデータの `@context`、`Link` ヘッダー | エイリアス `/context/<subject>/v1.jsonld` |
 | 監査、他のブローカーでの結果の再現 | 正確なバージョン `/context/<subject>/v1.0.0.jsonld` |
-| バリデーション | `/schema/<subject>/<Type>/v1.json`（エイリアス）または `v1.0.0.json` |
+| 検査 | `/schema/<subject>/<Type>/v1.json`（エイリアス）または `v1.0.0.json` |
 
 エイリアスが指す先は、互換性のあるバージョンにしか変わらないので、通常はエイリアスで十分です。監査や結果の再現が要るときは正確なバージョンを使ってください。
 
