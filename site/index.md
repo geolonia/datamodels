@@ -1,5 +1,8 @@
 ---
 layout: home
+# The browser tab and search results: the name and what it is (titleTemplate: false, no " | datamodels.jp").
+title: datamodels.jp：日本で使えるデータモデル
+titleTemplate: false
 
 hero:
   # The headline carries the page; the mark and name are in the navigation (docs/brand.md).
@@ -25,7 +28,7 @@ hero:
 
 features:
   - title: 日本向け
-    details: 自治体標準オープンデータセット、EEI、国土地理院の避難所データなど、すでに使っている標準があれば、対応するモデルを探せます。
+    details: 自治体標準オープンデータセット、災害対応基本共有情報（EEI）、国土地理院の避難所データなど、すでに使っている標準があれば、対応するモデルを探せます。
     link: /guide/standards
     linkText: 対応している標準
   - title: データを変換する

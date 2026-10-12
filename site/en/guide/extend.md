@@ -73,4 +73,4 @@ It works the same way. Take the upstream @context by an address pinned to a comm
 
 ## Useful beyond your project?
 
-Propose the attribute to the catalog with an [issue](https://github.com/geolonia/datamodels/issues). Once it is in the catalog, new data can use the catalog's attribute. Data you already wrote keeps your attribute (and its meaning) until you convert it.
+Propose the attribute to the catalog with the [model proposal form](/en/guide/contribute#model-proposal). Once it is in the catalog, new data can use the catalog's attribute. Data you already wrote keeps your attribute (and its meaning) until you convert it.

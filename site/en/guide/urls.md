@@ -59,13 +59,14 @@ A new version does not replace the old one: `v1.0.0` stays at its URL, and the a
 | `/schema/<subject>/<Type>/vX.Y.Z.json` | JSON Schema (immutable) |
 | `/schema/<subject>/<Type>/vX.json` | alias |
 | `/vocab/<subject>/vX.Y.Z.jsonld` | vocabulary (RDFS: classes, subclass relations, ja/en labels; immutable) |
+| `/vocab/<subject>/vX.jsonld` | alias |
 | `/examples/<subject>/<Type>/example.json` | example (key-values) |
 | `/examples/<subject>/<Type>/example-normalized.jsonld` | example (NGSI-LD normalized; not for value types) |
 | `/ns/<subject>/<Term>` | type and attribute IRIs (redirect to the page; to the vocabulary for JSON-LD clients) |
 | `/mapping/<subject>/<Type>/<name>.yaml` | mapping file (correspondence to another standard and conversion rules; not versioned: the URL stays, the content follows the current model) |
-| `/adapters/<name>/<subject>/<Type>.json` | adapter output (for example a GeonicDB Custom Data Model definition) |
+| `/adapters/<name>/<subject>/<Type>.<ext>` | adapter files: CSV template (`.csv`), Table Schema (`.tableschema.json`), structured output for AI (`.ai.json`), PostgreSQL / PostGIS table (`.sql`), GeonicDB Custom Data Model definition (`.json`) |
 | `/catalog.json` | list of all models for programs (conforms to /catalog.schema.json) |
 
 </div>
 
-Everything is served with `Access-Control-Allow-Origin: *`; `.jsonld` files as `application/ld+json`, schemas as `application/schema+json`, mapping files as `application/yaml`.
+Everything is served with `Access-Control-Allow-Origin: *`; `.jsonld` files as `application/ld+json`, schemas as `application/schema+json`, mapping files as `application/yaml`, CSV templates as `text/csv`, SQL files as `application/sql`, and other `.json` files (examples, adapter files, `catalog.json`) as `application/json`.

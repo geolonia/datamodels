@@ -13,9 +13,13 @@ For every model, a ready-made definition is published at `https://datamodels.jp/
 
 Registration is optional. What a registered model checks, and what it does not, is [below](#checks).
 
-## Steps
+## Steps {#steps}
 
-You need a tenant and an API key whose policy allows these requests ([API keys](https://docs.geonicdb.com/en/saas/api-key), [policy binding](https://docs.geonicdb.com/en/reference/auth#policy-binding-policyid)), and three environment variables: `GEONICDB_BASE_URL` (for example `https://<your-deployment>.geonicdb.jp`), `GEONICDB_TENANT`, `GEONICDB_API_KEY`.
+You need a tenant and an API key whose policy allows these requests ([API keys](https://docs.geonicdb.com/en/saas/api-key), [policy binding](https://docs.geonicdb.com/en/reference/auth#policy-binding-policyid)). The steps use three environment variables:
+
+- `GEONICDB_BASE_URL` (for example `https://<your-deployment>.geonicdb.jp`)
+- `GEONICDB_TENANT`
+- `GEONICDB_API_KEY`
 
 ::: code-group
 
@@ -77,7 +81,7 @@ geonic entities list --type RoadRestriction \
 
 - Registering returns `201 Created`, or `409` if a model of that type already exists. To change a registered model, use `PATCH /custom-data-models/<Type>` or `geonic models update <Type> @model.json`.
 - **Typed dates:** the normalized example writes date-times as `{"@type": "DateTime", "@value": "…"}`. GeonicDB's model check (v0.21.0) accepts only the plain string. Even when it accepts typed date-times, `start` and `due` of Task and Milestone and `start` and `end` of Project will still need the plain string: they may be a plain date, so the model declares them as text. Step 2 therefore turns typed values into strings with [jq](https://jqlang.org/), which works with every version ([#185](https://github.com/geolonia/datamodels/issues/185)). Your own data can send the plain string, as in `"validFrom": {"type": "Property", "value": "2026-07-08T09:00:00+09:00"}`.
-- **GeonicDB CLI:** [geonicdb-cli](https://github.com/geolonia/geonicdb-cli) (`npm install -g @geolonia/geonicdb-cli`). Logged in as a tenant admin with `geonic auth login`, it needs no API key or policy. A saved login is used before `--api-key`, so run `geonic auth logout` first when you use an API key. Add `--dry-run` to any command to see the request without sending it.
+- **GeonicDB CLI:** [geonicdb-cli](https://github.com/geolonia/geonicdb-cli) (`npm install -g @geolonia/geonicdb-cli@0.26.1`). Logged in as a tenant admin with `geonic auth login`, it needs no API key or policy. A saved login is used before `--api-key`, so run `geonic auth logout` first when you use an API key. Add `--dry-run` to any command to see the request without sending it.
 - For your own data, put the @context in the body (`application/ld+json`) or send `application/json` with the `Link` header, never both. The tenant header is `NGSILD-Tenant` ([multi-tenancy](https://docs.geonicdb.com/en/core-concepts/multi-tenancy)).
 
 ## What a registered model checks {#checks}
@@ -99,7 +103,13 @@ It does not check:
 
 ## Your own attributes
 
-If the model fits but you need a few attributes of your own, write a profile @context that adds them ([Adding attributes](/en/guide/extend)), host it, and register a definition that has the catalog's attributes and yours. Your attributes are then checked like the others. If they are useful beyond your project, [propose them](https://github.com/geolonia/datamodels/issues) to the catalog.
+If the model fits but you need a few attributes of your own, write a profile @context that adds them ([Adding attributes](/en/guide/extend)), host it, and register a definition that has the catalog's attributes and yours. Your attributes are then checked like the others. If they are useful beyond your project, [propose them](/en/guide/contribute#model-proposal) to the catalog.
+
+The export script below (`adapters/geonicdb/export.mjs`) is in this catalog's repository. Get it first; you need [Node.js](https://nodejs.org/) 24 or later:
+
+```bash
+git clone https://github.com/geolonia/datamodels && cd datamodels && npm ci
+```
 
 <details class="rules">
 <summary>Exporting a definition with your attributes</summary>
@@ -138,7 +148,6 @@ To accept unknown attributes without checking them instead, export with `--allow
 A tenant that needs a prefix on its type names (for example when several projects share it and policies match on the type name) can export prefixed definitions. The attribute names and their meaning stay the catalog's.
 
 ```bash
-git clone https://github.com/geolonia/datamodels && cd datamodels && npm ci
 node adapters/geonicdb/export.mjs transportation \
   --type-prefix Acme --out ./out
 ```
