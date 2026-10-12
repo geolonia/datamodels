@@ -63,7 +63,8 @@ function indexTree(files, tokens) {
     if (list.length > 1) for (const { f } of list) byNorm.set(f, f);
     else {
       byNorm.set(norm, list[0].f);
-      if (list[0].token) tokens.add(list[0].token);
+      const { f, token } = list[0];
+      if (token) tokens.add(JSON.stringify([HASHED.exec(f.slice(f.lastIndexOf('/') + 1))[1], token]));
     }
   }
   return byNorm;
@@ -73,10 +74,22 @@ function isBinary(path, buf) {
   return BINARY.test(path) || buf.includes(0);
 }
 
+const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/**
+ * Replaces a hash only where it names its own file: in a reference to the file
+ * (about.md.CAEmknld.js) and as the value of the file's key in VitePress's hash
+ * map ("about.md":"CAEmknld", also escaped inside JSON.parse). The same letters
+ * anywhere else in a file stay, so a real change is never hidden (#261).
+ */
 function normalizer(tokens) {
-  const re = tokens.size ? new RegExp(`(?<![A-Za-z0-9_-])(?:${[...tokens].join('|')})(?![A-Za-z0-9_-])`, 'g') : null;
+  const alts = [...tokens].map((j) => JSON.parse(j)).flatMap(([name, hash]) => {
+    const n = escape(name), h = escape(hash);
+    return [`(${n}\\.)${h}(?![A-Za-z0-9_-])`, `("${n}":")${h}(?=")`, `(\\\\"${n}\\\\":\\\\")${h}(?=\\\\")`];
+  });
+  const re = alts.length ? new RegExp(alts.join('|'), 'g') : null;
   return (path, text) => {
-    let t = re ? text.replace(re, '[hash]') : text;
+    let t = re ? text.replace(re, (...m) => `${m.slice(1, 1 + alts.length).find((g) => g !== undefined)}[hash]`) : text;
     for (const v of VOLATILE) if (v.file === path) t = t.replace(v.pattern, v.replace);
     return t;
   };

@@ -74,3 +74,17 @@ test('lineDiff shows changed lines only, clipped around the change', () => {
   assert.ok(d[0].length < 200);
   assert.deepEqual(d.slice(2), ['…', '+new']);
 });
+
+test('a word that looks like a hash is still compared where it is not a file reference', async () => {
+  // Base and head each have an asset whose "hash" is an ordinary word (#261 review).
+  const r = await compare({
+    'assets/chunk.minified.js': 'export default 1',
+    'notes.txt': 'This build is minified.',
+  }, {
+    'assets/chunk.rendered.js': 'export default 1',
+    'notes.txt': 'This build is rendered.',
+  });
+  assert.deepEqual(r.changed.map((c) => c.path), ['notes.txt']);
+  assert.deepEqual(r.added, []);
+  assert.deepEqual(r.removed, []);
+});
