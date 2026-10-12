@@ -81,6 +81,6 @@ IRI には自分のドメインが入るので、IRI が使えるのはドメイ
 
 ## GitHub Pages 以外のホスト {#other-hosts}
 
-ノードは静的なファイルなので、GitHub Pages 以外のホストにも置けます。`build` は、Cloudflare（Pages と Workers）と Netlify が読む 2 つのファイルも書き出します。`_headers` はファイルごとの Content-Type と CORS、`_redirects` はスラッシュ IRI の転送です。ワークフローの例と、ほかのホストで設定することは、[datamodels-toolkit の README](https://github.com/geolonia/datamodels-toolkit#other-hosts)（英語）にあります。
+ノードは静的なファイルなので、GitHub Pages 以外のホストにも置けます。`build` は、Cloudflare Pages、Cloudflare Workers の静的アセットと Netlify が読むファイルも書き出します。`_headers` はファイルごとの Content-Type と CORS で、いつも書き出します。`_redirects` はスラッシュ IRI の転送で、スラッシュ IRI のノードだけに書き出します。Worker のスクリプトは、この 2 つのファイルを読みません。ワークフローの例と、ほかのホストで設定することは、[datamodels-toolkit の README](https://github.com/geolonia/datamodels-toolkit#other-hosts)（英語）にあります。
 
 サイトができたら、[サイトのモデル](/toolkit/models)に進みます。
