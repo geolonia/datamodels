@@ -180,7 +180,8 @@ Decided 2026-09-29 (#121). The site credits Geolonia, which runs the catalog, an
 - A page about a single product sits under "Using the models", after the steps that work with any broker, and says who makes the product. Other products get a page on the same terms when someone contributes one.
 - General pages (the start page, `/guide/use`, `/guide/extend`, `/guide/catalogs` and the others) describe NGSI-LD and brokers in general terms. Where they name a product, they say what was tried with it and what was not tried, and they do not present one product as the only choice.
 - No sales wording, rankings or comparisons between products.
-- Model pages do not name a product. A model that an adapter serves has an "Adapters" sentence under "Using this model" that links its entry on `/adapters/`, which lists every adapter's files (decided 2026-09-30, #123). The files of the generic adapters, which name no product, are also linked directly in a "Download" row, as on the toolkit's node pages (2026-10-12, #226).
+- Model pages do not name a product. A model that a product adapter serves has an "Adapters" sentence under "Using this model" that links the part of `/adapters/` about files for particular products (decided 2026-09-30, #123). The files of the generic adapters, which name no product, are buttons in a "Download" row, as on the toolkit's node pages (2026-10-12, #226).
+- `/adapters/` explains each adapter (what the file is, how to use it, where to get it) and does not list files by model, so it does not grow with the catalog. The generic files are on the model pages; only a product adapter keeps a list by model, at `/adapters/<name>/` (`/adapters/geonicdb/`), because the model pages cannot link its files. The lists of the generic adapters were removed and redirect to their sections (2026-10-12).
 
 ## Hosting
 
