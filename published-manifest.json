@@ -18,7 +18,7 @@
     "schema/disaster/EvacuationSite/v1.0.0.json": "dfe2c2d058e60ca2143a325272328ee66e6f3be574453ebba5a92a531481bfeb",
     "schema/facility/AEDLocation/v1.0.0.json": "950c56072455aa98581af238f8941b0725e5f15e45d8dc85af80c4edb38bc9ea",
     "schema/facility/Facility/v1.0.0.json": "cf617e8e4bd582d814d87846143f58b9b51b4a859faeb470e5e200b75007ca93",
-    "schema/facility/MedicalInstitution/v1.0.0.json": "65e51375eb96a5f0be53c8d1b4e34eb69fc34cc1d9cc20301c4732e33de9437c",
+    "schema/facility/MedicalInstitution/v1.0.0.json": "56422dc54623fedfded4192743e25935be4000cca167400ebca86b6f01e9f9ed",
     "schema/facility/PublicToilet/v1.0.0.json": "56862d4becd4b37450dccfa399b086e3c5e760f2c07a987f97831fe00ce73b70",
     "schema/task/Milestone/v1.0.0.json": "848fb079d2ab1846d1ef798651d8d50334e85b2e45e4e3ea935788aecb34fd08",
     "schema/task/Project/v1.0.0.json": "bbcac92732688bda365a0f63fc7bc0a51c363aae05deb7ce12970b552986e353",
@@ -27,7 +27,7 @@
     "vocab/common/v1.0.0.jsonld": "a5bc50b254d137070f4c8839717f38d69269d2658d67019b694a0691427f55fc",
     "vocab/decision/v1.0.0.jsonld": "873a6c9bd9ba916ad68e55f1ac7f17c4cbad966aa76dd9f93ce72786b47a7143",
     "vocab/disaster/v1.0.0.jsonld": "d96a266c9aeb6790567ee92ef16e364cb11e01bed1a5183ee2a44137b7f0e356",
-    "vocab/facility/v1.0.0.jsonld": "c095ddc9f23cc7d72731b9a7cebf37c9e69fd9e35e93793793f4e2d8767f77b3",
+    "vocab/facility/v1.0.0.jsonld": "579277259f46620a9332fd71ca59dc092d02e46b9b7b6206f318e7e46d2bb24f",
     "vocab/task/v1.0.0.jsonld": "f2e6e5305666c1e52057b20982664d0372fe1f9c1891781f9bd589b071690bc9",
     "vocab/transportation/v1.0.0.jsonld": "e51b5ead9ad90d48aa03e2f3481faf4a4563a292529f74a6abcf51ec45a03690"
   }

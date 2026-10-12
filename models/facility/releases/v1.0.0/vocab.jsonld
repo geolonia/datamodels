@@ -288,8 +288,8 @@
         "en": "medicalInstitutionType"
       },
       "comment": {
-        "ja": "医療機関の種類。hospital（病院、20 床以上）、clinicWithBeds（有床診療所、1〜19 床）、clinicWithoutBeds（無床診療所）",
-        "en": "Kind of medical institution: hospital (20 beds or more), clinicWithBeds (1 to 19 beds), clinicWithoutBeds (no beds)"
+        "ja": "医療機関の種類。hospital（病院、20 床以上）、clinicWithBeds（有床診療所、1〜19 床）、clinicWithoutBeds（無床診療所）、clinic（診療所。一覧が病床の有無を書いていないもの）、dentalClinic（歯科診療所）",
+        "en": "Kind of medical institution: hospital (20 beds or more), clinicWithBeds (1 to 19 beds), clinicWithoutBeds (no beds), clinic (a clinic whose list does not say whether it has beds), dentalClinic (a dental clinic)"
       },
       "isDefinedBy": "https://datamodels.jp/ns/facility/",
       "seeAlso": "https://datamodels.jp/models/facility/MedicalInstitution/#medicalInstitutionType"
