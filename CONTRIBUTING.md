@@ -29,7 +29,7 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 
 1. リポジトリをフォークして、ブランチを作ります。
 2. `npm ci` を実行します。新しいモデルなら、`npm run new-model -- <subject> <Type>` でひな形を作り、TODO の箇所を埋めます。構成は Smart Data Models と同じです（`schema.json`、`catalog.yaml`、`examples/`、`notes.yaml`）。
-3. `npm run validate:models` が、足りない箇所を一覧にします。最後に `npm run check` と `npm test` が通ることを確認します。
+3. `npm run validate:models` が、足りない箇所を一覧にします。[datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) の `datamodels check --offline`（どのデータモデルノードでも使う検査）を実行し、続けてこのカタログ独自のルール（`scripts/lib/catalog-rules.mjs`）を検査します。最後に `npm run check` と `npm test` が通ることを確認します。
 4. すべてのコミットに `git commit -s` で署名（Signed-off-by）を付けて、Pull Request を送ります。
 5. CI（スキーマ、例、`@context` の展開、予約語、バージョンの検査と自動レビュー。このリポジトリ内のブランチならプレビュー URL も）の結果を見て、レビューに答えます。
 
@@ -116,7 +116,7 @@ What the catalog accepts, and how to write a model: "[Rules for models](https://
 
 1. Fork the repository and create a branch.
 2. Run `npm ci`. For a new model, `npm run new-model -- <subject> <Type>` creates the files in the Smart Data Models layout (`schema.json`, `catalog.yaml`, `examples/`, `notes.yaml`); fill in the TODO markers.
-3. `npm run validate:models` lists what is still missing. Before you push, `npm run check` and `npm test` must pass.
+3. `npm run validate:models` lists what is still missing: it runs `datamodels check --offline` from [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit), the same check every data model node uses, and then the catalog's own rules (`scripts/lib/catalog-rules.mjs`). Before you push, `npm run check` and `npm test` must pass.
 4. Sign off every commit with `git commit -s` and open the pull request.
 5. Check the CI results (validation of schemas, examples, `@context` expansion, protected terms and versions, and an automated review; for branches in this repository also a preview URL) and answer the review.
 

@@ -4,11 +4,11 @@
   which IRI each attribute stands for. The page passes the model's data
   (scripts/lib/site.mjs). Ajv, the validator CI uses, is loaded only when the
   section comes into view; the form switch uses the same code as CI
-  (scripts/lib/ngsi.mjs).
+  (@geolonia/datamodels/ngsi, the toolkit's).
 -->
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue'
-import { toKeyValues, toNormalized } from '../../../scripts/lib/ngsi.mjs'
+import { toKeyValues, toNormalized } from '@geolonia/datamodels/ngsi'
 import { highlightJson } from './json-highlight'
 
 interface Iri { iri: string; origin: 'subject' | 'other' | 'core' | 'upstream'; label: string }
