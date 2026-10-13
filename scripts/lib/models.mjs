@@ -4,12 +4,15 @@ import { readFile, readdir, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import YAML from 'yaml';
+import { readNode } from '@geolonia/datamodels/build';
 
 export const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 // DATAMODELS_MODELS_DIR lets the test suite point the loader at a mutated copy.
 export const MODELS_DIR = process.env.DATAMODELS_MODELS_DIR ?? join(ROOT, 'models');
 export const DIST = join(ROOT, 'dist');
-export const BASE_URL = 'https://datamodels.jp';
+// The node's settings (node.yaml) as the toolkit reads them: the address, languages, publisher and licence in one place (#226).
+export const NODE = await readNode(ROOT);
+export const BASE_URL = NODE.baseUrl;
 export const CORE_CONTEXT_URL = 'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld';
 export const CORE_CONTEXT_FIXTURE = join(ROOT, 'test', 'fixtures', 'ngsi-ld-core-context-v1.8.jsonld');
 /** Terms the pinned core context defines (location, description, ...): protected, and left to the broker. */
