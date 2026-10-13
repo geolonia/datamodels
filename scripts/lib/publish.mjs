@@ -8,7 +8,7 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { publishCatalog, catalogEntry as tkCatalogEntry, attributeEntries as tkAttributeEntries, termRedirects as tkTermRedirects } from '@geolonia/datamodels/build';
 import { DIST, ROOT, NODE, URLS } from './models.mjs';
-import { exactVersionHeaderRules, readManifest } from './cache.mjs';
+import { exactVersionHeaderRules } from './cache.mjs';
 
 const options = { urls: URLS, languages: NODE.languages };
 const json = (o) => JSON.stringify(o, null, 2) + '\n';
@@ -56,6 +56,6 @@ export async function publishModels(subjects, adapters = [], { nodes = [] } = {}
   await writeFile(join(DIST, 'LICENSE-CONTENT.md'), await readFile(join(ROOT, 'LICENSE-CONTENT.md')));
   const rules = ['', '# Generated: type and attribute IRIs resolve to their documentation.', ...redirects.map(([from, to]) => `${from}  ${to}  302`)];
   await appendFile(join(DIST, '_redirects'), rules.join('\n') + '\n');
-  await appendFile(join(DIST, '_headers'), exactVersionHeaderRules(exactPaths, await readManifest()).join('\n') + '\n');
+  await appendFile(join(DIST, '_headers'), exactVersionHeaderRules(exactPaths).join('\n') + '\n');
   return { subjects: subjects.length, models: catalog.models.length };
 }

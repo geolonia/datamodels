@@ -16,7 +16,7 @@ The site explains how to use and extend the models: [属性を足す](https://da
 models/<subject>/
   subject.yaml            name, version, ja/en title and description
   context.jsonld          the subject's JSON-LD context (may import other catalog contexts by URL)
-  releases/vX.Y.Z/        snapshots of published versions (context, vocabulary, schemas), written by `npm run manifest:record`
+  releases/vX.Y.Z/        snapshots of published versions (context, vocabulary, schemas), written by `npx datamodels release <subject>`
   <Type>/
     schema.json           JSON Schema 2020-12 (key-values), with x-ngsi / x-iri, optional x-personal-data;
                           x-kind: value for value types, x-alias-of (same type under another name)
@@ -32,7 +32,6 @@ public/                   _headers and _redirects (the build appends the generat
 node.yaml                 the site's settings as a data model node (address, languages, publisher, licence), in datamodels-toolkit's format
 nodes.yaml                the other nodes datamodels.jp knows
 catalog.schema.json       wire format of /catalog.json
-published-manifest.json   SHA-256 of every published immutable file
 docs/design.md            design decisions
 docs/deployment.md        how the site is built and served (Cloudflare)
 ```
@@ -43,14 +42,13 @@ Model folders follow the Smart Data Models layout so a model can be proposed ups
 
 ```bash
 npm ci
-npm run check            # validate models, build dist/, check immutability, dry-run the deploy
+npm run check            # validate models, build dist/, check the release snapshots, dry-run the deploy
 npm test                 # validator, vocabulary and adapter tests
 npm run site:dev         # local site with generated model pages
-npm run check:live       # verify the deployed site against the URL contract and the manifest
+npm run check:live       # verify the deployed site against the URL contract and the release snapshots
 npm run dist:diff        # build origin/main (or --base <ref>) and this tree, list what differs in dist/; CI shows it on every pull request
-npm run manifest:record  # snapshot the current version and record its hashes (maintainers, last step before merging)
+npx datamodels release <subject>  # snapshot the current version (maintainers, last step before merging)
 npm run new-model -- <subject> <Type> [--value]   # scaffold a model; the validator lists the TODOs left
-npm run rerecord -- <subject> [...]               # pre-release only, maintainers: correct the current version in place
 node adapters/geonicdb/export.mjs <subject> [--type T] [--type-prefix P | --type-name N] [--rename a=b] [--context-url URL] [--exact-context] [--allow-additional] [--extend FILE] [--out DIR]
 ```
 
@@ -58,9 +56,9 @@ node adapters/geonicdb/export.mjs <subject> [--type T] [--type-prefix P | --type
 
 1. Edit or add files under `models/<subject>/`. For a new model, start with `npm run new-model -- <subject> <Type>`: it creates every file with TODO markers and adds the type to the subject's context; `npm run validate:models` lists what is still missing. Every attribute needs a context term (or a core-context term) and ja/en descriptions; never redefine a core-context term such as `status`.
 2. `npm run check` and `npm test` must pass. CI runs both on every pull request.
-3. Bump the subject version for anything that changes a published file and mark superseded attributes `x-deprecated`. Recording is a maintainer step (see [CONTRIBUTING.md](CONTRIBUTING.md)): before merging, a maintainer runs `npm run manifest:record` as the last step. It snapshots the new version into `releases/` and records its hashes in `published-manifest.json`; `npm run check` fails if a recorded file changed or disappeared.
+3. Bump the subject version for anything that changes a published file and mark superseded attributes `x-deprecated`. Releasing is a maintainer step (see [CONTRIBUTING.md](CONTRIBUTING.md)): before merging, a maintainer runs `npx datamodels release <subject>` as the last step. It snapshots the new version into `releases/`. `npm run check` fails if a snapshot differs from the sources or the current version has none; on a pull request, CI also fails if a published version changed or disappeared, compared with main and with the live site (`datamodels check --base`).
 
-**Pre-release exception, until the official launch** (launch plan #30): the published files of a subject's **current** version, `v1.0.0` included, may be corrected in place. Change the source; a maintainer then runs `npm run rerecord -- <subject>` (it deletes that version's `releases/` snapshot and its entries in `published-manifest.json`, then records again), and the pull request says so. Recording writes only the current version's snapshot, so an older release is never corrected this way: its snapshot is the only copy, and deleting it would drop the release from the site. `npm run check:live` then confirms the deployed bytes. CI lists such corrections in the job summary (`npm run check:manifest-base` compares the manifest with main's). The exception, the pre-release banner on the site, and the 5-minute cache on exact versions (instead of one year, immutable) end at the official launch: `"prerelease"` in `published-manifest.json` is set to `false`, after which the same check fails on any changed or removed entry and `rerecord` refuses to run.
+**Pre-release exception, until the official launch** (launch plan #30): the published files of a subject's **current** version, `v1.0.0` included, may be corrected in place. Change the source; a maintainer then removes that version's snapshot (`models/<subject>/releases/vX.Y.Z/`) and runs `npx datamodels release <subject>` again, and the pull request says so. Only the current version is corrected this way: an older release's snapshot is the only copy, and removing it would drop the release from the site. `npm run check:live` then confirms the deployed bytes. CI lists such corrections as notes (`datamodels check --base`, with `prerelease: true` in `node.yaml` on both branches). The exception, the pre-release banner on the site, and the 5-minute cache on exact versions (instead of one year, immutable) end at the official launch: `prerelease` in `node.yaml` is set to `false`, after which the same check fails on any changed or removed published file.
 
 Every model starts as `status: draft`. The stages, and what a model needs to become `stable` (#38, #125, #200): [Stages](https://datamodels.jp/en/guide/rules#stages) on the site.
 

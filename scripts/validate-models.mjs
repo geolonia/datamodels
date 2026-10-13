@@ -8,8 +8,8 @@
 //      TODO markers, both example files, x-version and x-ngsi.type stated,
 //      no product-specific keys, known namespaces for x-subclass-of, extensions
 //
-// Offline: the build does not depend on other sites. The published files are
-// compared online by the immutability check.
+// Offline: the build does not depend on other sites. On a pull request, CI
+// compares the published versions with main and online (datamodels check --base).
 import { mkdtemp, copyFile, symlink, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';

@@ -12,13 +12,13 @@ import YAML from 'yaml';
 
 const root = join(fileURLToPath(import.meta.url), '..', '..');
 
-async function withMutatedModels(mutate, expectMessage, { pass = false, rerecord = [] } = {}) {
+async function withMutatedModels(mutate, expectMessage, { pass = false, resnapshot = [] } = {}) {
   const dir = await mkdtemp(join(tmpdir(), 'geonicdb-models-'));
   try {
     await cp(join(root, 'models'), dir, { recursive: true });
     await mutate(dir);
-    // A correction during the pre-release is recorded again (npm run rerecord): here the snapshot of the current version goes.
-    for (const subject of rerecord) {
+    // A correction during the pre-release gets a new snapshot (remove it, then datamodels release): here the snapshot goes.
+    for (const subject of resnapshot) {
       const { version } = YAML.parse(await readFile(join(dir, subject, 'subject.yaml'), 'utf8'));
       await rm(join(dir, subject, 'releases', `v${version}`), { recursive: true, force: true });
     }
@@ -44,7 +44,7 @@ async function editJson(file, fn) { const o = JSON.parse(await readFile(file, 'u
 // resolveContextDocument (releases.mjs) resolves the exact context/vocab URL
 // to the frozen releases/v1.0.0/ snapshot, not to the live, probe-mutated
 // source. Deleting that snapshot from the temp copy (harmless: this suite
-// never runs check-immutability, only validate-models) makes it fall back to
+// runs only validate-models) makes it fall back to
 // the live source, which is what these probes need to be seen at all.
 async function dropFrozenSnapshot(d) { await rm(join(d, 'disaster', 'releases', 'v1.0.0'), { recursive: true, force: true }); }
 
@@ -358,8 +358,8 @@ test('a subclass that drops a parent-required attribute fails', () =>
 const setCommonParent = (type, parent) => (d) => editJson(join(d, 'common', type, 'schema.json'), (s) => { s['x-subclass-of'] = parent; });
 
 test('a subclass of a Smart Data Models or NGSI-LD core type is accepted', async () => {
-  await withMutatedModels(setCommonParent('ContactPoint', 'https://smartdatamodels.org/dataModel.PointOfInterest/PointOfInterest'), null, { pass: true, rerecord: ['common'] });
-  await withMutatedModels(setCommonParent('Geometry', 'https://uri.etsi.org/ngsi-ld/GeoProperty'), null, { pass: true, rerecord: ['common'] });
+  await withMutatedModels(setCommonParent('ContactPoint', 'https://smartdatamodels.org/dataModel.PointOfInterest/PointOfInterest'), null, { pass: true, resnapshot: ['common'] });
+  await withMutatedModels(setCommonParent('Geometry', 'https://uri.etsi.org/ngsi-ld/GeoProperty'), null, { pass: true, resnapshot: ['common'] });
 });
 
 test('a subclass of a type outside the known vocabularies fails', () =>
@@ -434,7 +434,7 @@ async function useJsonAndVocab(d, { wrapKeyValues = true, vocab = 'https://examp
 }
 
 test('JsonProperty and VocabProperty attributes validate', () =>
-  withMutatedModels((d) => useJsonAndVocab(d), null, { pass: true, rerecord: ['transportation'] }));
+  withMutatedModels((d) => useJsonAndVocab(d), null, { pass: true, resnapshot: ['transportation'] }));
 
 test('a JsonProperty without its json member in key-values form fails', () =>
   withMutatedModels((d) => useJsonAndVocab(d, { wrapKeyValues: false }), /example\.json: attribute address: a JsonProperty is \{"json": \.\.\.\} in key-values form/));

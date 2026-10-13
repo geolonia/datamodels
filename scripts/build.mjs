@@ -12,7 +12,8 @@
 //   5. write /llms.txt (scripts/lib/llms.mjs); VitePress writes sitemap.xml
 //
 // A versioned file that has been published must never be rewritten with
-// different content. That check runs after this script (check-immutability).
+// different content: the validation checks every release snapshot against the
+// sources, and build:deploy runs datamodels check --all-released after this.
 import { cp, rm, access, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';

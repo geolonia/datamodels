@@ -1,9 +1,8 @@
-// The snapshot of the current version must match the sources; CI runs this
-// check through check-immutability without --record.
+// The snapshot of the current version must match the sources; the build and
+// CI run this check through datamodels check (--all-released).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { cp, mkdtemp, mkdir, readFile, writeFile, rm } from 'node:fs/promises';
-import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -62,39 +61,34 @@ test('a missing snapshot is fine before recording and reported after', async () 
   assert.ok(problems.some((p) => /common v1\.0\.0: recorded in the manifest but its snapshot .* is missing/.test(p)), JSON.stringify(problems));
 });
 
-// The checker itself, against an isolated fixture: a models copy, a dist tree
-// holding one recorded file and a manifest recording it.
-async function runChecker(mutate) {
+// The guard that replaced the manifest (#226): datamodels check on the repository
+// as a node, offline, with --all-released, as `npm run build:deploy` runs it.
+const BIN = join(root, 'node_modules', '@geolonia', 'datamodels', 'bin', 'datamodels.mjs');
+async function runCheck(mutate) {
   const dir = await mkdtemp(join(tmpdir(), 'datamodels-checker-'));
   try {
-    const models = join(dir, 'models'); const dist = join(dir, 'dist'); const manifest = join(dir, 'manifest.json');
-    await cp(join(root, 'models'), models, { recursive: true });
-    const rel = 'context/common/v1.0.0.jsonld';
-    const bytes = await readFile(join(models, 'common', 'releases', 'v1.0.0', 'context.jsonld'));
-    await mkdir(join(dist, 'context', 'common'), { recursive: true });
-    await writeFile(join(dist, rel), bytes);
-    await writeFile(manifest, JSON.stringify({ files: { [rel]: createHash('sha256').update(bytes).digest('hex') } }));
-    await mutate(models);
-    return spawnSync(process.execPath, [join(root, 'scripts', 'check-immutability.mjs')], { env: { ...process.env, DATAMODELS_MODELS_DIR: models, DATAMODELS_DIST: dist, DATAMODELS_MANIFEST: manifest }, encoding: 'utf8' });
+    await cp(join(root, 'node.yaml'), join(dir, 'node.yaml'));
+    await cp(join(root, 'models'), join(dir, 'models'), { recursive: true });
+    await mutate(join(dir, 'models'));
+    return spawnSync(process.execPath, [BIN, 'check', dir, '--offline', '--all-released'], { encoding: 'utf8' });
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
 }
 
-test('the checker passes a consistent fixture', async () => {
-  const r = await runChecker(async () => {});
+test('the published versions: the repository passes', async () => {
+  const r = await runCheck(async () => {});
   assert.equal(r.status, 0, r.stderr);
-  assert.match(r.stdout, /immutability ok: 1 published file/);
 });
 
-test('the checker fails when a recorded version lost its snapshot', async () => {
-  const r = await runChecker((m) => rm(join(m, 'common', 'releases'), { recursive: true, force: true }));
+test('the published versions: a current version without its snapshot fails', async () => {
+  const r = await runCheck((m) => rm(join(m, 'common', 'releases'), { recursive: true, force: true }));
   assert.equal(r.status, 1);
-  assert.match(r.stderr, /common v1\.0\.0: recorded in the manifest but its snapshot .* is missing/);
+  assert.match(r.stderr, /common v1\.0\.0 has no release snapshot/);
 });
 
-test('the checker fails when the current snapshot drifted from the sources', async () => {
-  const r = await runChecker(async (m) => {
+test('the published versions: a snapshot that differs from the sources fails', async () => {
+  const r = await runCheck(async (m) => {
     const f = join(m, 'common', 'JapaneseAddress', 'schema.json');
     const s = JSON.parse(await readFile(f, 'utf8')); s.description += ' (edited)'; await writeFile(f, JSON.stringify(s, null, 2));
   });

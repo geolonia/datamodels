@@ -4,9 +4,10 @@
 // Fails on the first contract violation. Needs network access only.
 import jsonld from 'jsonld';
 import { createHash } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
 import { loadSubjects, subjectUrls, modelUrls, BASE_URL } from './lib/models.mjs';
 import { listReleases } from './lib/releases.mjs';
-import { exactCacheControl, isPrerelease, readManifest } from './lib/cache.mjs';
+import { exactCacheControl, isPrerelease } from './lib/cache.mjs';
 import { CATALOG_LICENSE } from './lib/publish.mjs';
 
 const origin = (process.argv[2] ?? BASE_URL).replace(/\/$/, '');
@@ -18,11 +19,10 @@ const h = (r, name) => r.headers.get(name) ?? '';
 // Exact versions must carry exactly this value: a joined value such as
 // "public, max-age=300, public, max-age=31536000, immutable" means the
 // inherited short cache was not detached. Which value applies follows
-// "prerelease" in published-manifest.json (scripts/lib/cache.mjs), so run this
-// from a checkout of the deployed commit.
-const manifest = await readManifest();
-const EXACT = exactCacheControl(manifest);
-const RULE = `${isPrerelease(manifest) ? 'pre-release' : 'launched'} rule`;
+// `prerelease` in node.yaml (scripts/lib/cache.mjs), so run this from a
+// checkout of the deployed commit.
+const EXACT = exactCacheControl();
+const RULE = `${isPrerelease() ? 'pre-release' : 'launched'} rule`;
 const isExactCache = (r) => h(r, 'cache-control').trim() === EXACT;
 const exactCacheMessage = (url, r) => `${url}: cache-control "${h(r, 'cache-control')}" must be exactly "${EXACT}" (${RULE})`;
 
@@ -78,15 +78,17 @@ for (const subject of subjects) {
     }
   }
 }
-// Served bytes of every recorded file must match the manifest. This
-// is what makes an in-place correction of a published file verifiable: after a
-// deploy, the CDN and the origin serve exactly what the repository says.
-for (const [path, hash] of Object.entries(manifest.files)) {
-  const url = `${origin}/${path}`;
-  const res = await fetch(url, { cache: 'no-store' });
-  if (!res.ok) { failures.push(`${url}: ${res.status}`); continue; }
-  const served = createHash('sha256').update(Buffer.from(await res.arrayBuffer())).digest('hex');
-  expect(served === hash, `${url}: served bytes differ from published-manifest.json (deploy not live yet, or a stale cache)`);
+// Served bytes of every published version must match its release snapshot
+// (models/<subject>/releases/). This is what makes an in-place correction of a
+// published file verifiable: after a deploy, the CDN and the origin serve
+// exactly what the repository says.
+let recorded = 0;
+const sha = (bytes) => createHash('sha256').update(bytes).digest('hex');
+for (const subject of subjects) for (const release of await listReleases(subject)) for (const f of release.files) {
+  recorded++;
+  const res = await fetch(swap(f.url), { cache: 'no-store' });
+  if (!res.ok) { failures.push(`${swap(f.url)}: ${res.status}`); continue; }
+  expect(sha(Buffer.from(await res.arrayBuffer())) === sha(await readFile(f.path)), `${swap(f.url)}: served bytes differ from the release snapshot ${f.path} (deploy not live yet, or a stale cache)`);
 }
 
 // Indexes for search engines and AI tools.
@@ -185,4 +187,4 @@ if (origin === BASE_URL || process.env.CHECK_MACHINE_UA === '1') {
 // A current release's files are also the exact versions checked above, so a failure can repeat.
 const unique = [...new Set(failures)];
 if (unique.length) { console.error(`Live check failed (${unique.length}) against ${origin}:`); for (const f of unique) console.error(`  ${f}`); process.exit(1); }
-console.log(`live ok: ${origin}, ${subjects.reduce((a, s) => a + s.models.length, 0)} model(s), ${Object.keys(manifest.files).length} recorded file(s) match the manifest, exact versions cached as "${EXACT}" (${RULE})`);
+console.log(`live ok: ${origin}, ${subjects.reduce((a, s) => a + s.models.length, 0)} model(s), ${recorded} published file(s) match their release snapshots, exact versions cached as "${EXACT}" (${RULE})`);

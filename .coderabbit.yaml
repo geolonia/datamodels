@@ -10,9 +10,9 @@ inheritance: true
 language: en-US
 
 # Release snapshots are byte copies of models/<subject>/ written by
-# `npm run manifest:record`. CI checks them: the snapshot of the current
-# version against the sources (verifyRelease in scripts/lib/releases.mjs),
-# older ones against published-manifest.json. Reviewing them again only
+# `npx datamodels release <subject>`. CI checks them: the snapshot of the
+# current version against the sources, all of them against main and the live
+# site (datamodels check --base --all-released). Reviewing them again only
 # duplicates the model diff.
 reviews:
   path_filters:

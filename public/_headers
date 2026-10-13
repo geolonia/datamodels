@@ -6,8 +6,7 @@
 # `! Header-Name`. The Cache-Control for exact versions is therefore
 # generated per file at build time (scripts/lib/cache.mjs) and appended
 # below, each with `! Cache-Control` before the new value: immutable for a
-# year after the launch, 5 minutes while published-manifest.json says
-# "prerelease": true.
+# year after the launch, 5 minutes while node.yaml says prerelease: true.
 # Verify live after a change: `npm run check:live`.
 #
 # Contexts and schemas are fetched cross-origin by brokers, JSON-LD processors

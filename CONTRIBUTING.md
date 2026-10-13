@@ -33,7 +33,7 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 4. すべてのコミットに `git commit -s` で署名（Signed-off-by）を付けて、Pull Request を送ります。
 5. CI（スキーマ、例、`@context` の展開、予約語、バージョンの検査と自動レビュー。このリポジトリ内のブランチならプレビュー URL も）の結果を見て、レビューに答えます。
 
-公開済みのバージョンの記録（スナップショットとマニフェスト）はメンテナーが行います。正式公開前（プレリリース）は、現行バージョンをその場で修正できます。
+公開済みバージョンのリリース（`models/<subject>/releases/` のスナップショット）は、メンテナーが作ります。正式公開前（プレリリース）は、現行バージョンをその場で修正できます。
 
 サイトの日本語のページは、`npm run lint:ja`（textlint、Geolonia のハンドブックと同じ規則）で検査します。このサイトでは、全角と半角の間に半角スペースを入れ、箇条書きも本文と同じです・ます体で書きます（`.textlintrc.json`）。英語版を一文ずつ訳すのではなく、日本語の読み手に向けて書いてください。
 
@@ -120,7 +120,7 @@ What the catalog accepts, and how to write a model: "[Rules for models](https://
 4. Sign off every commit with `git commit -s` and open the pull request.
 5. Check the CI results (validation of schemas, examples, `@context` expansion, protected terms and versions, and an automated review; for branches in this repository also a preview URL) and answer the review.
 
-Recording published versions (snapshots and the manifest) is a maintainer step. Until the official launch (pre-release), the current version may still be corrected in place.
+Releasing published versions (the snapshots in `models/<subject>/releases/`) is a maintainer step. Until the official launch (pre-release), the current version may still be corrected in place.
 
 The site's Japanese pages are checked with `npm run lint:ja` (textlint, the rules of Geolonia's handbook). This site puts a half-width space between Japanese and Latin text, and writes list items in the same polite form as the body (`.textlintrc.json`). Write the Japanese for Japanese readers, rather than translating the English sentence by sentence.
 
