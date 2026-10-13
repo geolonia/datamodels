@@ -89,7 +89,7 @@ test('supersededBy on a model that is not deprecated, or not a URL, fails', asyn
   let r = await validateWith({ catalogExtra: 'supersededBy: https://datamodels.jp/ns/task/Task\n' });
   assert.match(r.stderr, /Milestone\/catalog\.yaml: supersededBy is only for status deprecated, the status is draft/);
   r = await validateWith({ status: 'deprecated', catalogExtra: 'supersededBy: Task\n' });
-  assert.match(r.stderr, /supersededBy must be an http\(s\) URL with a host/);
+  assert.match(r.stderr, /supersededBy must be an http\(s\) URL/);
 });
 
 test('experimental validates without adopters', async () => {

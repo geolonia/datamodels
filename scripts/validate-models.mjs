@@ -1,418 +1,43 @@
-// Validate every subject and model in models/. Runs in CI via `npm run check`.
+// Validate every subject and model in models/. Runs in the build and in CI.
 //
-//   1. key-values example validates against schema.json, also with the
-//      @context the use guide tells readers to add
-//   2. normalized example follows the NGSI-LD representation rules and its
-//      key-values projection validates against schema.json
-//   3. the normalized example expands with a JSON-LD processor using the
-//      subject context (served locally) plus the core context (fixture);
-//      every attribute must expand to an IRI and round-trip through compaction
-//   4. the context defines every attribute the schemas use (unless the core
-//      context defines it), defines every type, and redefines no core term
-//   5. type IRIs are unique across subjects; the type name matches the folder
-//   6. every attribute's x-iri is what its name expands to through the
-//      subject context and the core context
-import Ajv2020 from 'ajv/dist/2020.js';
-import addFormats from 'ajv-formats';
-import jsonld from 'jsonld';
-import { readFile } from 'node:fs/promises';
+//   1. the toolkit's check of the node (`datamodels check --offline`, #226):
+//      schemas and examples, the normalized form and its JSON-LD round trip,
+//      the @contexts and the x-iri of every attribute, the vocabularies,
+//      mapping files, aliases and subclasses, catalog.yaml and notes.yaml
+//   2. the catalog's own rules (scripts/lib/catalog-rules.mjs): ADOPTERS.yaml,
+//      TODO markers, both example files, x-version and x-ngsi.type stated,
+//      no product-specific keys, known namespaces for x-subclass-of, extensions
+//
+// Offline: the build does not depend on other sites. The published files are
+// compared online by the immutability check.
+import { mkdtemp, copyFile, symlink, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { loadSubjects, attributesOf, toKeyValues, unwrapKeyValues, dateFormats, typedDate, NGSI_TYPES, subjectUrls, modelUrls, resolveContextTerms, CORE_CONTEXT_URL, CORE_CONTEXT_FIXTURE, isCatalogIri, externalParentProblem } from './lib/models.mjs';
-import { resolveContextDocument, listReleases } from './lib/releases.mjs';
-import { bilingual, mappingProblems, viaCycles } from './lib/mapping-check.mjs';
+import { checkNode } from '@geolonia/datamodels/build';
+import { loadSubjects, ROOT, MODELS_DIR } from './lib/models.mjs';
+import { catalogRuleProblems } from './lib/catalog-rules.mjs';
 import { reportFailures } from './lib/ci-summary.mjs';
-import { extensionProblems } from './lib/extensions.mjs';
-import { buildVocabulary } from './lib/vocab.mjs';
+
+// The node is the repository: node.yaml and models/. The tests point MODELS_DIR at a changed copy of models/.
+let nodeDir = ROOT;
+let temp;
+if (MODELS_DIR !== join(ROOT, 'models')) {
+  temp = await mkdtemp(join(tmpdir(), 'datamodels-node-'));
+  await copyFile(join(ROOT, 'node.yaml'), join(temp, 'node.yaml'));
+  await symlink(MODELS_DIR, join(temp, 'models'), 'dir');
+  nodeDir = temp;
+}
 
 const failures = [];
-const fail = (where, msg) => failures.push(`${where}: ${msg}`);
-
-const ajv = new Ajv2020({ allErrors: true, strict: false });
-addFormats(ajv);
-
-const core = JSON.parse(await readFile(CORE_CONTEXT_FIXTURE, 'utf8'));
-const coreTerms = new Set(Object.keys(core['@context']).filter((k) => !k.startsWith('@')));
-
-const subjects = await loadSubjects();
-// Every mapping file by subject/Type/name, for a conversion rule's via; via must not loop.
-const mappingsByName = Object.fromEntries(subjects.flatMap((s) => s.models.flatMap((m) => m.mappings.map((map) => [`${s.name}/${m.type}/${map.name}`, map]))));
-const mappingNames = new Set(Object.keys(mappingsByName));
-for (const cycle of viaCycles(mappingsByName)) { const [sub, type, name] = cycle[0].split('/'); fail(`models/${sub}/${type}/mapping/${name}.yaml`, `via cycle: ${cycle.join(' → ')}`); }
-const seenTypeIris = new Map();
-// Every type that owns its IRI (not an alias), for alias and subclass targets in
-// the catalog namespace. A subclass may also name a type of another vocabulary.
-const ownersByIri = new Map();
-for (const subject of subjects) for (const model of subject.models) if (!model.schema['x-alias-of']) ownersByIri.set(modelUrls(subject, model).typeIri, { subject, model });
-
-const stripType = (props = {}) => Object.fromEntries(Object.entries(props).filter(([k]) => k !== 'type'));
-/** Structural equality: object key order does not matter, array order does (JSON Schema arrays such as enum and oneOf are ordered). */
-function same(a, b) {
-  if (a === b) return true;
-  if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null || Array.isArray(a) !== Array.isArray(b)) return false;
-  if (Array.isArray(a)) return a.length === b.length && a.every((v, i) => same(v, b[i]));
-  const ka = Object.keys(a).sort(), kb = Object.keys(b).sort();
-  return same(ka, kb) && ka.every((k) => same(a[k], b[k]));
-}
-const sameSet = (a = [], b = []) => same([...a].sort(), [...b].sort());
-
-// GeoJSON ring closure (RFC 7946 §3.1.6: a linear ring's first and last
-// positions MUST be identical) cannot be expressed in JSON Schema — there is
-// no keyword to compare two elements of a variable-length array to each
-// other. So it is checked here instead, over every Polygon/MultiPolygon found
-// anywhere in an example, however deep (schema.json still enforces the
-// minItems/position shape around it).
-const positionsEqual = (a, b) => Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((v, i) => v === b[i]);
-const ringCloses = (ring) => !Array.isArray(ring) || ring.length === 0 || positionsEqual(ring[0], ring[ring.length - 1]);
-function findUnclosedRings(value, path = '$') {
-  const problems = [];
-  const walk = (v, p) => {
-    if (Array.isArray(v)) { v.forEach((e, i) => walk(e, `${p}[${i}]`)); return; }
-    if (!v || typeof v !== 'object') return;
-    if (v.type === 'Polygon' && Array.isArray(v.coordinates)) {
-      v.coordinates.forEach((ring, i) => { if (!ringCloses(ring)) problems.push(`${p}.coordinates[${i}]`); });
-    } else if (v.type === 'MultiPolygon' && Array.isArray(v.coordinates)) {
-      v.coordinates.forEach((poly, pi) => (Array.isArray(poly) ? poly : []).forEach((ring, ri) => { if (!ringCloses(ring)) problems.push(`${p}.coordinates[${pi}][${ri}]`); }));
-    }
-    for (const [k, vv] of Object.entries(v)) walk(vv, `${p}.${k}`);
-  };
-  walk(value, path);
-  return problems;
-}
-
-// Value schemas (x-kind: value) are referenced by $ref from entity schemas in
-// other subjects; register them so ajv resolves the URL without fetching.
-for (const subject of subjects) for (const model of subject.models) {
-  if (model.kind === 'value') { try { ajv.addSchema(model.schema, model.schema.$id); } catch (e) { fail(`models/${subject.name}/${model.type}/schema.json`, `cannot register: ${e.message}`); } }
-}
-
-// Examples form one scenario: an entity id is urn:ngsi-ld:<Type>:<local id> (an
-// organisation segment may precede the local id), and a reference to another
-// catalog type points at that type's example. References to the same type
-// (parent, relatedTo) and to types the catalog does not define (Person, Team)
-// are free.
-const EXAMPLE_ID = /^urn:ngsi-ld:([A-Za-z][A-Za-z0-9]*):[A-Za-z0-9][A-Za-z0-9._-]*(:[A-Za-z0-9][A-Za-z0-9._-]*)*$/;
-const exampleIdOf = new Map();
-// Type names per type IRI (an alias shares its target's IRI), to compare a
-// reference with the target its schema declares.
-const typeNamesOfIri = new Map();
-for (const subject of subjects) for (const model of subject.models) {
-  if (model.kind !== 'entity') continue;
-  if (model.examples['example.json']?.id) exampleIdOf.set(model.type, model.examples['example.json'].id);
-  const iri = modelUrls(subject, model).typeIri;
-  typeNamesOfIri.set(iri, [...(typeNamesOfIri.get(iri) ?? []), model.type]);
-}
-
-/** Every key at any depth of a plain object tree, as "a.b.c" paths. */
-function keyPaths(obj, prefix = '') {
-  const out = [];
-  if (!obj || typeof obj !== 'object' || Array.isArray(obj)) return out;
-  for (const [k, v] of Object.entries(obj)) { if (k.startsWith('@')) continue; const path = prefix ? `${prefix}.${k}` : k; out.push(path); out.push(...keyPaths(v, path)); }
-  return out;
-}
-
-for (const subject of subjects) {
-  const where = `models/${subject.name}`;
-  const urls = subjectUrls(subject);
-  let ctxTerms;
-  try { ctxTerms = await resolveContextTerms(subject.context, subjects, resolveContextDocument); } catch (e) { fail(`${where}/context.jsonld`, e.message); continue; }
-  const inlineTerms = subject.inlineTerms;
-
-  // Local document loader: our own context URLs resolve to the source file,
-  // the core context to the fixture. Anything else is a real fetch.
-  const loader = async (url) => {
-    const doc = await resolveContextDocument(url, subjects);
-    if (doc) return { documentUrl: url, document: doc };
-    if (url === CORE_CONTEXT_URL) return { documentUrl: url, document: core };
-    return jsonld.documentLoaders.node()(url);
-  };
-
-  for (const term of Object.keys(inlineTerms)) {
-    if (coreTerms.has(term)) fail(`${where}/context.jsonld`, `redefines core context term "${term}" (protected)`);
-  }
-
-  // The IRI a term expands to through the subject's own context (the source,
-  // not the recorded snapshot) followed by the core context, as in the examples.
-  const termContext = [...[subject.context['@context']].flat(), CORE_CONTEXT_URL];
-  const expandedIris = new Map();
-  const expandTerm = async (name) => {
-    if (!expandedIris.has(name)) {
-      const [node = {}] = await jsonld.expand({ '@context': termContext, '@id': 'urn:ngsi-ld:Probe:1', [name]: 'x' }, { documentLoader: loader });
-      expandedIris.set(name, Object.keys(node).find((k) => !k.startsWith('@')) ?? null);
-    }
-    return expandedIris.get(name);
-  };
-
-  // Examples expand through the recorded snapshot of the current version, so a
-  // context change (a new model or attribute) is invisible until it is recorded.
-  // Say so once, instead of leaving only the resulting expansion errors.
-  try {
-    const snapshot = JSON.parse(await readFile(join(subject.dir, 'releases', `v${subject.version}`, 'context.jsonld'), 'utf8'));
-    if (!same(snapshot, subject.context)) fail(`${where}/context.jsonld`, `differs from the recorded ${subject.version} snapshot, so examples still expand with the old terms. During the pre-release a maintainer records it (npm run rerecord -- ${subject.name}); after the official launch, bump the subject version instead`);
-  } catch (e) { if (e.code !== 'ENOENT') throw e; }
-
-  // The vocabulary must be valid JSON-LD and state every subclass relation, so
-  // tools other than this validator see them.
-  try {
-    const vocab = buildVocabulary(subject);
-    const expanded = await jsonld.expand(vocab, { documentLoader: loader });
-    const RDFS = 'http://www.w3.org/2000/01/rdf-schema#';
-    for (const model of subject.models) {
-      const parent = model.schema['x-subclass-of'];
-      if (!parent) continue;
-      const cls = expanded.find((n) => n['@id'] === modelUrls(subject, model).typeIri);
-      if (!cls?.[`${RDFS}subClassOf`]?.some((o) => o['@id'] === parent)) fail(`${where}/vocab`, `${model.type}: vocabulary lacks rdfs:subClassOf ${parent}`);
-    }
-  } catch (e) { fail(`${where}/vocab`, `vocabulary does not expand: ${e.message}`); }
-
-  for (const model of subject.models) {
-    const mwhere = `${where}/${model.type}`;
-    const murls = modelUrls(subject, model);
-    const { schema } = model;
-
-    if (model.kind === 'entity' && schema.properties?.type?.const !== model.type) fail(`${mwhere}/schema.json`, `properties.type.const must be "${model.type}"`);
-    if (schema.$id !== murls.schemaExact) fail(`${mwhere}/schema.json`, `$id must be ${murls.schemaExact}`);
-    if (schema['x-version'] !== subject.version) fail(`${mwhere}/schema.json`, `x-version must be ${subject.version} (subject version)`);
-    if (!ctxTerms[model.type]) fail(`${where}/context.jsonld`, `does not define type "${model.type}"`);
-    const aliasOf = schema['x-alias-of'];
-    const subclassOf = schema['x-subclass-of'];
-    if (aliasOf) {
-      // An alias is the same type under another name: same IRI, same attributes, same requirements.
-      const target = ownersByIri.get(aliasOf);
-      if (!target) fail(`${mwhere}/schema.json`, `x-alias-of ${aliasOf} is not a type of this catalog`);
-      else {
-        const differing = [...new Set([...Object.keys(stripType(schema.properties)), ...Object.keys(stripType(target.model.schema.properties))])].filter((k) => !same(schema.properties[k], target.model.schema.properties[k]));
-        if (differing.length) fail(`${mwhere}/schema.json`, `alias of ${target.model.type}: properties differ (${differing.join(', ')}); an alias has the same attributes, a subclass declares x-subclass-of`);
-        if (!sameSet(schema.required, target.model.schema.required)) fail(`${mwhere}/schema.json`, `alias of ${target.model.type}: required differs`);
-        if (!same(schema.anyOf ?? null, target.model.schema.anyOf ?? null)) fail(`${mwhere}/schema.json`, `alias of ${target.model.type}: anyOf differs`);
-        if (model.kind !== target.model.kind) fail(`${mwhere}/schema.json`, `alias of ${target.model.type}: kind differs (${model.kind} vs ${target.model.kind})`);
-        if ((schema.additionalProperties ?? true) !== (target.model.schema.additionalProperties ?? true)) fail(`${mwhere}/schema.json`, `alias of ${target.model.type}: additionalProperties differs`);
-      }
-      if (subclassOf) fail(`${mwhere}/schema.json`, 'x-alias-of and x-subclass-of are exclusive');
-    } else {
-      const prev = seenTypeIris.get(murls.typeIri); if (prev) fail(mwhere, `type IRI ${murls.typeIri} also used by ${prev}`); seenTypeIris.set(murls.typeIri, mwhere);
-    }
-    if (subclassOf && !isCatalogIri(subclassOf)) {
-      // A type of another vocabulary (schema.org and others): only the IRI is checked.
-      const problem = externalParentProblem(subclassOf);
-      if (problem) fail(`${mwhere}/schema.json`, `x-subclass-of ${subclassOf} ${problem}`);
-    } else if (subclassOf) {
-      // A subclass keeps its own type IRI but shares the parent's attribute IRIs and cannot loosen its requirements.
-      const target = ownersByIri.get(subclassOf);
-      if (!target) fail(`${mwhere}/schema.json`, `x-subclass-of ${subclassOf} is not a type of this catalog`);
-      else {
-        for (const [name, prop] of attributesOf(model)) {
-          const pp = target.model.schema.properties?.[name];
-          if (!pp) continue;
-          if (pp['x-iri'] !== prop['x-iri']) fail(`${mwhere}/schema.json`, `${name}: subclass of ${target.model.type} must use its IRI ${pp['x-iri']}, not ${prop['x-iri']}`);
-          if (pp['x-ngsi']?.type !== prop['x-ngsi']?.type) fail(`${mwhere}/schema.json`, `${name}: subclass of ${target.model.type} must keep the NGSI type ${pp['x-ngsi']?.type}`);
-        }
-        for (const r of target.model.schema.required ?? []) if (!(schema.required ?? []).includes(r)) fail(`${mwhere}/schema.json`, `subclass of ${target.model.type}: "${r}" must stay required`);
-        // An either/or requirement (the status or statusLabel) stays too: the same
-        // anyOf, or stricter by requiring one alternative outright.
-        const own = schema.required ?? [];
-        const keeps = (alts) => same(schema.anyOf ?? null, alts) || alts.some((a) => (a.required ?? []).every((r) => own.includes(r)));
-        if (target.model.schema.anyOf && !keeps(target.model.schema.anyOf)) fail(`${mwhere}/schema.json`, `subclass of ${target.model.type}: must keep its anyOf (${target.model.schema.anyOf.map((a) => (a.required ?? []).join('+')).join(' or ')}) or require one alternative`);
-      }
-    }
-
-    for (const [name, prop] of attributesOf(model)) {
-      if (model.kind === 'entity' && !prop['x-ngsi']?.type) fail(`${mwhere}/schema.json`, `${name}: missing x-ngsi.type`);
-      else if (prop['x-ngsi']?.type && !NGSI_TYPES.includes(prop['x-ngsi'].type)) fail(`${mwhere}/schema.json`, `${name}: x-ngsi.type must be one of ${NGSI_TYPES.join(', ')}`);
-      if ('x-personal-data' in prop && prop['x-personal-data'] !== true) fail(`${mwhere}/schema.json`, `${name}: x-personal-data must be true or absent`);
-      // Schemas are product-neutral: broker-specific hints belong in adapters/.
-      for (const k of Object.keys(prop)) if (/^x-(geonicdb|orion|scorpio|stellio)/i.test(k)) fail(`${mwhere}/schema.json`, `${name}: product-specific key ${k}; move it into an adapter`);
-      if (!ctxTerms[name] && !coreTerms.has(name)) fail(`${where}/context.jsonld`, `does not define attribute "${name}" used by ${model.type}`);
-      if (!model.catalog?.attributes?.[name]?.ja || !model.catalog?.attributes?.[name]?.en) fail(`${mwhere}/catalog.yaml`, `${name}: needs ja and en descriptions`);
-      // x-iri is what a JSON-LD processor makes of the name, core terms included.
-      let expanded;
-      try { expanded = await expandTerm(name); } catch (e) { fail(`${where}/context.jsonld`, `cannot expand "${name}": ${e.message}`); continue; }
-      if (expanded && prop['x-iri'] !== expanded) fail(`${mwhere}/schema.json`, `${name}: x-iri is ${prop['x-iri'] ?? '(missing)'}, but the context expands "${name}" to ${expanded}`);
-    }
-    // Title and description render every page heading and the catalog entry.
-    for (const field of ['title', 'description']) for (const l of ['ja', 'en']) {
-      const v = model.catalog?.[field]?.[l];
-      if (typeof v !== 'string' || !v.trim()) fail(`${mwhere}/catalog.yaml`, `${field}.${l} must be a non-empty string`);
-    }
-    for (const name of Object.keys(model.catalog?.attributes ?? {})) {
-      if (!schema.properties?.[name]) fail(`${mwhere}/catalog.yaml`, `${name}: not in schema.json`);
-    }
-
-    let validate;
-    try { validate = ajv.compile(schema); } catch (e) { fail(`${mwhere}/schema.json`, `does not compile: ${e.message}`); continue; }
-
-    const kv = model.examples['example.json'];
-    // The schema describes values; JsonProperty and VocabProperty carry a
-    // wrapper in key-values form ({"json": ...}), removed before validation.
-    let plain = null;
-    if (kv) {
-      try { plain = unwrapKeyValues(kv, schema); } catch (e) { fail(`${mwhere}/examples/example.json`, e.message); }
-    }
-    if (!kv) fail(mwhere, 'examples/example.json is required');
-    else if (!plain) { /* reported above */ } else if (!validate(plain)) fail(`${mwhere}/examples/example.json`, ajv.errorsText(validate.errors));
-    // Key-values data may carry its @context (/guide/use, Linked Data), as one URL or a list.
-    else if (model.kind === 'entity') {
-      for (const context of [urls.contextAlias, [urls.contextExact, CORE_CONTEXT_URL]]) {
-        if (!validate({ '@context': context, ...plain })) fail(`${mwhere}/schema.json`, `rejects example.json with "@context": ${JSON.stringify(context)} (${ajv.errorsText(validate.errors)}); entity schemas accept @context as a string or an array of strings`);
-      }
-    }
-    if (kv) for (const p of findUnclosedRings(kv)) fail(`${mwhere}/examples/example.json`, `${p}: polygon ring does not close (first and last position must be identical, RFC 7946 §3.1.6)`);
-    if (kv && model.kind === 'entity') {
-      const idType = EXAMPLE_ID.exec(kv.id ?? '')?.[1];
-      if (idType !== model.type) fail(`${mwhere}/examples/example.json`, `id must be urn:ngsi-ld:${model.type}:<local id>, got ${kv.id}`);
-      if (model.examples['example-normalized.jsonld'] && model.examples['example-normalized.jsonld'].id !== kv.id) fail(`${mwhere}/examples/example-normalized.jsonld`, `id must equal example.json's id ${kv.id}`);
-      const norm = model.examples['example-normalized.jsonld'];
-      for (const [name, prop] of attributesOf(model)) {
-        if (prop['x-ngsi']?.type !== 'Relationship') continue;
-        const targets = kv[name] === undefined ? [] : [kv[name]].flat();
-        // Both examples describe the same entity, so they reference the same targets.
-        const normTargets = norm?.[name] === undefined ? [] : [norm[name]].flat().map((i) => i?.object);
-        if (norm && !sameSet(targets, normTargets)) fail(`${mwhere}/examples/example-normalized.jsonld`, `${name}: references ${normTargets.join(', ') || 'nothing'}, but example.json references ${targets.join(', ') || 'nothing'}`);
-        // A declared catalog target (not "any" or "agent") fixes the type of the reference.
-        const declared = typeNamesOfIri.get(prop['x-ngsi'].target);
-        for (const target of targets) {
-          const targetType = EXAMPLE_ID.exec(target ?? '')?.[1];
-          if (!targetType) { fail(`${mwhere}/examples/example.json`, `${name}: ${target} is not urn:ngsi-ld:<Type>:<local id>`); continue; }
-          if (declared && !declared.includes(targetType)) { fail(`${mwhere}/examples/example.json`, `${name}: ${target} is a ${targetType}, but schema.json declares a ${declared.join(' or ')} target`); continue; }
-          const expected = targetType !== model.type ? exampleIdOf.get(targetType) : undefined;
-          if (expected && target !== expected) fail(`${mwhere}/examples/example.json`, `${name}: ${target} should reference the ${targetType} example ${expected}`);
-        }
-      }
-    }
-
-    // `npm run new-model` leaves TODO markers; a model is not done while any remain.
-    // A missing README is fine; an unreadable one must not skip the check.
-    const readme = await readFile(join(model.dir, 'README.md'), 'utf8').catch((e) => { if (e.code === 'ENOENT') return null; throw e; });
-    for (const [file, value] of [['schema.json', model.schema], ['catalog.yaml', model.catalog], ['notes.yaml', model.notes], ['README.md', readme], ['examples/example.json', model.examples['example.json']], ['examples/example-normalized.jsonld', model.examples['example-normalized.jsonld']]]) {
-      if (value != null && /\bTODO\b/.test(typeof value === 'string' ? value : JSON.stringify(value))) fail(`${mwhere}/${file}`, 'fill in the TODO markers');
-    }
-
-    // notes.yaml renders as a bullet list, in the page's language (#119): each note is { ja, en }.
-    if (model.notes != null && (typeof model.notes !== 'object' || Array.isArray(model.notes))) fail(`${mwhere}/notes.yaml`, 'root value must be a mapping with notes, history and license');
-    const notes = (model.notes && typeof model.notes === 'object' && !Array.isArray(model.notes)) ? model.notes : {};
-    // notes: the design notes; history: the dated changes, folded away on the page.
-    for (const key of ['notes', 'history']) {
-      if (notes[key] !== undefined && (!Array.isArray(notes[key]) || notes[key].some((n) => !bilingual(n)))) fail(`${mwhere}/notes.yaml`, `${key} must be a list of { ja, en }, each non-empty and nothing else (quote a text that contains ": " or a comma)`);
-    }
-    if (notes.license !== undefined && typeof notes.license !== 'string') fail(`${mwhere}/notes.yaml`, 'license must be a string');
-
-    // Correspondence tables render on the model page: every field must be one of the model's.
-    for (const map of model.mappings ?? []) for (const msg of mappingProblems(map, model.schema, mappingNames)) fail(`${mwhere}/mapping/${map.name}.yaml`, msg);
-    // Listed extensions render on the model page and in catalog.json; the owner's IRIs, never datamodels.jp's.
-    const published = [subject.version, ...(await listReleases(subject)).map((r) => r.version)];
-    for (const ext of model.extensions ?? []) for (const msg of extensionProblems(ext, model, subject, published)) fail(`${mwhere}/extensions/${ext.name}.yaml`, msg);
-
-    // Status and adopters (decided in #38): stable needs two independent
-    // implementations, self-reported with a link and checked by a reviewer in
-    // the pull request that sets it; CI checks the mechanics only.
-    // Only a missing status means draft; an explicit null is an error like any other value.
-    const status = model.catalog?.status === undefined ? 'draft' : model.catalog.status;
-    if (!['draft', 'experimental', 'stable', 'deprecated'].includes(status)) fail(`${mwhere}/catalog.yaml`, `status must be draft, experimental, stable or deprecated, got ${JSON.stringify(status)}`);
-    // A link must name a host: "https://" alone identifies no implementation.
-    const isLink = (u) => { if (typeof u !== 'string') return false; try { const x = new URL(u); return (x.protocol === 'https:' || x.protocol === 'http:') && x.hostname !== ''; } catch { return false; } };
-    // A deprecated model may name its replacement (catalog.json supersededBy).
-    const successor = model.catalog?.supersededBy;
-    if (successor !== undefined) {
-      if (status !== 'deprecated') fail(`${mwhere}/catalog.yaml`, `supersededBy is only for status deprecated, the status is ${status}`);
-      if (!isLink(successor)) fail(`${mwhere}/catalog.yaml`, `supersededBy must be an http(s) URL with a host (the replacement's type IRI or page), got ${JSON.stringify(successor)}`);
-    }
-    const list = model.adopters?.adopters;
-    // Required in every model folder (and in a proposal bundle, CONTRIBUTING); an empty list is fine for a draft.
-    if (model.adopters == null) {
-      fail(`${mwhere}/ADOPTERS.yaml`, 'file is required (an empty "adopters: []" is fine for a draft)');
-    } else if (typeof model.adopters !== 'object' || Array.isArray(model.adopters) || !Array.isArray(list)) {
-      fail(`${mwhere}/ADOPTERS.yaml`, 'root value must be a mapping with an adopters list');
-    } else {
-      (list ?? []).forEach((a, i) => {
-        if (!a || typeof a !== 'object' || typeof a.name !== 'string' || !a.name.trim() || typeof a.organization !== 'string' || !a.organization.trim()) fail(`${mwhere}/ADOPTERS.yaml`, `entry ${i + 1}: needs name and organization`);
-        else if (a.url !== undefined && !isLink(a.url)) fail(`${mwhere}/ADOPTERS.yaml`, `entry ${i + 1}: url must be an http(s) URL with a host, got ${JSON.stringify(a.url)}`);
-      });
-      if (status === 'stable') {
-        const orgs = new Set((list ?? []).filter((a) => a && typeof a.organization === 'string' && isLink(a.url)).map((a) => a.organization.trim().toLowerCase().replace(/\s+/g, ' ')));
-        if (orgs.size < 2) fail(`${mwhere}/ADOPTERS.yaml`, `status stable needs two implementations from different organisations, each with a url; found ${orgs.size}`);
-      }
-    }
-
-    if (model.kind === 'value') {
-      // A value type has no normalized form of its own; check its fields expand
-      // through this subject's context by wrapping the example in an entity,
-      // as a GeoProperty (location) when the schema says its values are geometries.
-      const geo = schema['x-ngsi']?.type === 'GeoProperty';
-      const probe = { '@context': [urls.contextExact, CORE_CONTEXT_URL], id: 'urn:ngsi-ld:Probe:1', type: 'Probe', [geo ? 'location' : 'address']: { type: geo ? 'GeoProperty' : 'Property', value: kv } };
-      try {
-        const expanded = await jsonld.expand(probe, { documentLoader: loader });
-        const compacted = await jsonld.compact(expanded, { '@context': probe['@context'] }, { documentLoader: loader });
-        const lost = keyPaths(probe).filter((k) => !keyPaths(compacted).includes(k) && k !== 'type');
-        for (const k of lost) fail(`${mwhere}/examples/example.json`, `field "${k}" is not defined by the context and was lost in expansion`);
-      } catch (e) { fail(`${mwhere}/examples/example.json`, `JSON-LD processing failed: ${e.message}`); }
-      continue;
-    }
-    const norm = model.examples['example-normalized.jsonld'];
-    if (!norm) { fail(mwhere, 'examples/example-normalized.jsonld is required'); continue; }
-    for (const [name, prop] of attributesOf(model)) {
-      if (!(name in norm)) continue;
-      const instances = Array.isArray(norm[name]) ? norm[name] : [norm[name]];
-      if (Array.isArray(norm[name]) && !prop['x-ngsi']?.multi) fail(`${mwhere}/examples/example-normalized.jsonld`, `attribute "${name}" is multi-valued in the example but schema.json does not declare x-ngsi.multi`);
-      for (const inst of instances) {
-        const got = inst?.type;
-        if (got !== prop['x-ngsi']?.type) fail(`${mwhere}/examples/example-normalized.jsonld`, `attribute "${name}" is a ${got} but schema.json declares ${prop['x-ngsi']?.type}`);
-      }
-      // A date or date-time value carries its NGSI-LD type, and the type fits the value (/guide/normalized).
-      const formats = prop['x-ngsi']?.type === 'Property' ? dateFormats(prop) : [];
-      for (const inst of formats.length ? instances : []) {
-        const v = inst?.value;
-        const plain = v && typeof v === 'object' && '@value' in v ? v['@value'] : v;
-        const want = typedDate(plain, formats);
-        if (typeof plain === 'string' && v?.['@type'] !== want['@type']) fail(`${mwhere}/examples/example-normalized.jsonld`, `attribute "${name}": value must be { "@type": "${want['@type']}", "@value": ${JSON.stringify(plain)} }`);
-      }
-    }
-    const multi = new Set(attributesOf(model).filter(([, p]) => p['x-ngsi']?.multi).map(([n]) => n));
-    let projected;
-    try { projected = toKeyValues(norm, { multi }); } catch (e) { fail(`${mwhere}/examples/example-normalized.jsonld`, e.message); continue; }
-    // The key-values example carries the same vocabulary as the normalized one,
-    // which is checked against the contexts below.
-    if (kv) for (const [name, prop] of attributesOf(model)) {
-      if (prop['x-ngsi']?.type !== 'VocabProperty' || !(name in kv) || !(name in norm)) continue;
-      const vocabs = (x) => JSON.stringify((Array.isArray(x) ? x : [x]).map((i) => i?.vocab));
-      if (vocabs(kv[name]) !== vocabs(norm[name])) fail(`${mwhere}/examples/example.json`, `attribute "${name}": vocab ${vocabs(kv[name])} differs from example-normalized.jsonld ${vocabs(norm[name])}`);
-    }
-    let projectedPlain;
-    try { projectedPlain = unwrapKeyValues(projected, schema); } catch (e) { fail(`${mwhere}/examples/example-normalized.jsonld`, e.message); continue; }
-    if (!validate(projectedPlain)) fail(`${mwhere}/examples/example-normalized.jsonld`, `key-values projection: ${ajv.errorsText(validate.errors)}`);
-    for (const p of findUnclosedRings(projected)) fail(`${mwhere}/examples/example-normalized.jsonld`, `${p}: polygon ring does not close (first and last position must be identical, RFC 7946 §3.1.6)`);
-    // Data names the alias (#117), and examples are what clients copy.
-    if (!Array.isArray(norm['@context']) || !norm['@context'].includes(urls.contextAlias)) fail(`${mwhere}/examples/example-normalized.jsonld`, `@context must include ${urls.contextAlias}`);
-
-    try {
-      const expanded = await jsonld.expand(norm, { documentLoader: loader });
-      const node = expanded[0] ?? {};
-      const expandedKeys = new Set(Object.keys(node).filter((k) => !k.startsWith('@')));
-      for (const [name, prop] of attributesOf(model)) {
-        if (!(name in norm)) continue;
-        const def = ctxTerms[name] ?? core['@context'][name];
-        const iri = typeof def === 'string' ? def : def?.['@id'];
-        const full = iri && iri.includes(':') && !iri.startsWith('http') ? iri.replace(/^([^:]+):/, (_, p) => ctxTerms[p] ?? core['@context'][p] ?? `${p}:`) : iri;
-        if (!full || !expandedKeys.has(full)) fail(`${mwhere}/examples/example-normalized.jsonld`, `attribute "${name}" did not expand to ${full ?? '(no IRI)'}`);
-        // A VocabProperty value is an IRI: a word the contexts do not define
-        // ends up in the NGSI-LD default context, which means nothing.
-        else if (prop['x-ngsi']?.type === 'VocabProperty') {
-          for (const inst of node[full]) {
-            for (const v of inst['https://uri.etsi.org/ngsi-ld/hasVocab'] ?? []) {
-              if (String(v['@id']).startsWith('https://uri.etsi.org/ngsi-ld/default-context/')) fail(`${mwhere}/examples/example-normalized.jsonld`, `attribute "${name}": vocab value expands to ${v['@id']}; define it in the context or use a full IRI`);
-            }
-          }
-        }
-      }
-      const typeIri = node['@type']?.[0];
-      if (typeIri !== murls.typeIri) fail(`${mwhere}/examples/example-normalized.jsonld`, `type expands to ${typeIri}, expected ${murls.typeIri}`);
-      const compacted = await jsonld.compact(expanded, { '@context': norm['@context'] }, { documentLoader: loader });
-      // Every key at every depth must survive: a nested field the context does
-      // not define is silently dropped by expansion, so compare key paths.
-      const after = new Set(keyPaths(compacted));
-      for (const k of keyPaths(norm)) if (!after.has(k) && !/(^|\.)(type|value|object|datasetId|json|vocab)$/.test(k)) fail(`${mwhere}/examples/example-normalized.jsonld`, `"${k}" lost in expand/compact round-trip (not defined by the context?)`);
-    } catch (e) {
-      fail(`${mwhere}/examples/example-normalized.jsonld`, `JSON-LD processing failed: ${e.message}`);
-    }
-  }
+try {
+  const { problems } = await checkNode(nodeDir, { offline: true });
+  failures.push(...problems);
+  // The catalog's rules need the models; a node the toolkit cannot load is already one problem above.
+  let subjects;
+  try { subjects = await loadSubjects(); } catch (e) { if (!problems.length) failures.push(e.message); }
+  if (subjects) failures.push(...(await catalogRuleProblems(subjects)));
+} finally {
+  if (temp) await rm(temp, { recursive: true, force: true });
 }
 
 if (failures.length) {
@@ -421,5 +46,6 @@ if (failures.length) {
   await reportFailures('Model validation failed', failures, 'Run `npm run validate:models` locally to see the same list. The rules are in the guide: https://datamodels.jp/en/guide/rules');
   process.exit(1);
 }
+const subjects = await loadSubjects();
 const n = subjects.reduce((a, s) => a + s.models.length, 0);
 console.log(`models ok: ${subjects.length} subject(s), ${n} model(s) validated`);
