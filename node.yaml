@@ -1,0 +1,13 @@
+# datamodels.jp as a data model node (docs/node.md), in the format of
+# datamodels-toolkit: its commands read these settings, and so does the site's
+# build (scripts/lib/models.mjs, publish.mjs). The nodes that datamodels.jp
+# knows are in nodes.yaml, with their reviewed snapshot (npm run nodes).
+baseUrl: https://datamodels.jp
+iris: slash
+languages: [ja, en]
+publisher: { name: { ja: 株式会社Geolonia, en: Geolonia Inc. }, url: https://geolonia.com/ }
+# catalog.json and every file it lists; the prose of the pages is CC BY 4.0 (LICENSE-CONTENT).
+license: CC0-1.0
+licenseUrl: https://datamodels.jp/LICENSE-CONTENT
+# Published versions may still be corrected in place until the launch (#30).
+prerelease: true

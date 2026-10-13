@@ -4,7 +4,7 @@ import { mkdir, writeFile, readFile, appendFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
-import { loadSubjects, attributesOf, subjectUrls, modelUrls, DIST, ROOT, BASE_URL } from './models.mjs';
+import { loadSubjects, attributesOf, subjectUrls, modelUrls, DIST, ROOT, BASE_URL, NODE } from './models.mjs';
 import { listReleases } from './releases.mjs';
 import { buildVocabulary } from './vocab.mjs';
 import { exactVersionHeaderRules, readManifest } from './cache.mjs';
@@ -18,10 +18,10 @@ async function write(url, content) {
 }
 const json = (o) => JSON.stringify(o, null, 2) + '\n';
 
-// catalog.json and every file it lists are CC0; the prose of the pages is CC BY 4.0 (LICENSE-CONTENT).
-export const CATALOG_LICENSE = { license: 'CC0-1.0', licenseUrl: `${BASE_URL}/LICENSE-CONTENT` };
-// Who publishes the catalog, in the node format (docs/node.md), so tools that read many catalogs can name it (decided 2026-10-12).
-export const CATALOG_PUBLISHER = { name: { ja: '株式会社Geolonia', en: 'Geolonia Inc.' }, url: 'https://geolonia.com/' };
+// catalog.json and every file it lists are CC0; the prose of the pages is CC BY 4.0 (LICENSE-CONTENT). From node.yaml.
+export const CATALOG_LICENSE = { license: NODE.license, licenseUrl: NODE.licenseUrl };
+// Who publishes the catalog, in the node format (docs/node.md), so tools that read many catalogs can name it (decided 2026-10-12). From node.yaml.
+export const CATALOG_PUBLISHER = NODE.publisher;
 
 /**
  * The attributes of a model as catalog.json lists them, so a tool can list a
