@@ -112,5 +112,5 @@ test('an attribute without x-iri or descriptions is named in the error, not only
   assert.throws(() => attributeEntries(model), /T\.a: no x-iri/);
   model.schema.properties.a['x-iri'] = 'https://example.com/a';
   model.catalog.attributes.a = { ja: 'あ' };
-  assert.throws(() => attributeEntries(model), /T\.a: catalog\.yaml needs ja and en/);
+  assert.throws(() => attributeEntries(model), /T\.a: catalog\.yaml needs an? (ja|en|ja and en) description/);
 });

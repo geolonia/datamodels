@@ -3,7 +3,8 @@
 // owner reports one with the issue form "Report an extension"; the catalog
 // lists it so others can find it and reuse its names, and does not review it.
 // The list shows on the model page ("Extended by") and in catalog.json.
-import { BASE_URL, CORE_TERMS, attributesOf, subjectUrls } from './models.mjs';
+import { extensionEntry as tkExtensionEntry } from '@geolonia/datamodels/build';
+import { BASE_URL, CORE_TERMS, NODE, attributesOf, subjectUrls } from './models.mjs';
 import { bilingual } from './mapping-check.mjs';
 
 const TOP = new Set(['organization', 'url', 'version', 'context', 'terms', 'data', 'since']);
@@ -124,16 +125,5 @@ export function extensionProblems(ext, model, subject, published = [subject.vers
   return out;
 }
 
-/** One extension in catalog.json (catalog.schema.json, models[].extensions). */
-export function extensionEntry(ext) {
-  return {
-    id: ext.name,
-    organization: { ja: ext.organization.ja, en: ext.organization.en },
-    ...(ext.url ? { url: ext.url } : {}),
-    version: ext.version,
-    ...(typeof ext.context === 'string' ? { contextUrl: ext.context } : { context: ext.context }),
-    terms: Object.entries(ext.terms).map(([name, t]) => ({ name, iri: t.iri, description: { ja: t.description.ja, en: t.description.en } })),
-    ...(ext.data ? { dataUrl: ext.data } : {}),
-    ...(ext.since !== undefined ? { since: String(ext.since) } : {}),
-  };
-}
+/** One extension in catalog.json (catalog.schema.json, models[].extensions): the toolkit's, with the languages of node.yaml (#226). */
+export const extensionEntry = (ext) => tkExtensionEntry(ext, { languages: NODE.languages });
