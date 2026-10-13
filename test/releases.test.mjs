@@ -59,7 +59,7 @@ test('a missing snapshot is fine before recording and reported after', async () 
   const drop = (d) => rm(join(d, 'common', 'releases'), { recursive: true, force: true });
   assert.deepEqual(await problemsAfter(drop), []);
   const problems = await problemsAfter(drop, { recorded: true });
-  assert.ok(problems.some((p) => /common v1\.0\.0: recorded in published-manifest\.json but its snapshot .* is missing/.test(p)), JSON.stringify(problems));
+  assert.ok(problems.some((p) => /common v1\.0\.0: recorded in the manifest but its snapshot .* is missing/.test(p)), JSON.stringify(problems));
 });
 
 // The checker itself, against an isolated fixture: a models copy, a dist tree
@@ -90,7 +90,7 @@ test('the checker passes a consistent fixture', async () => {
 test('the checker fails when a recorded version lost its snapshot', async () => {
   const r = await runChecker((m) => rm(join(m, 'common', 'releases'), { recursive: true, force: true }));
   assert.equal(r.status, 1);
-  assert.match(r.stderr, /common v1\.0\.0: recorded in published-manifest\.json but its snapshot .* is missing/);
+  assert.match(r.stderr, /common v1\.0\.0: recorded in the manifest but its snapshot .* is missing/);
 });
 
 test('the checker fails when the current snapshot drifted from the sources', async () => {
