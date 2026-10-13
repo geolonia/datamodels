@@ -1,6 +1,10 @@
 # datamodels
 
-Models: CC0 1.0 · Text: CC BY 4.0 · Code: Apache-2.0 ([Licences](#licences))
+[![datamodels.jp](https://img.shields.io/website?url=https%3A%2F%2Fdatamodels.jp&label=datamodels.jp)](https://datamodels.jp)
+[![Models](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fdatamodels.jp%2Fcatalog.json&query=%24.models.length&label=models)](https://datamodels.jp/models/)
+[![Models: CC0 1.0](https://img.shields.io/badge/models-CC0%201.0-blue)](#licences)
+[![Text: CC BY 4.0](https://img.shields.io/badge/text-CC%20BY%204.0-blue)](#licences)
+[![Code: Apache-2.0](https://img.shields.io/badge/code-Apache--2.0-blue)](#licences)
 
 Bilingual catalog of data models that work in practice in Japan, published at **https://datamodels.jp**. It serves JSON Schemas, JSON-LD `@context` files and RDFS vocabularies at URLs that never change: usable as plain JSON, as linked data, and as they are with NGSI-LD brokers. Existing standards such as [Smart Data Models](https://smartdatamodels.org/), the Digital Agency's GIF and [RFC 8984](https://www.rfc-editor.org/rfc/rfc8984.html) are extended and mapped, not copied.
 
