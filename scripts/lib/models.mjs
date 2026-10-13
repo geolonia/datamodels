@@ -1,10 +1,8 @@
-// Load the model repository: models/<subject>/{subject.yaml, context.jsonld, <Type>/...}
+// The model repository, read with the toolkit (#226): models/<subject>/{subject.yaml, context.jsonld, <Type>/...}
 import { readFileSync } from 'node:fs';
-import { readFile, readdir, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import YAML from 'yaml';
-import { readNode } from '@geolonia/datamodels/build';
+import { readNode, catalogUrls, loadSubjects as loadNodeSubjects, attributesOf } from '@geolonia/datamodels/build';
 
 export const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 // DATAMODELS_MODELS_DIR lets the test suite point the loader at a mutated copy.
@@ -17,8 +15,6 @@ export const CORE_CONTEXT_URL = 'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-co
 export const CORE_CONTEXT_FIXTURE = join(ROOT, 'test', 'fixtures', 'ngsi-ld-core-context-v1.8.jsonld');
 /** Terms the pinned core context defines (location, description, ...): protected, and left to the broker. */
 export const CORE_TERMS = new Set(Object.keys(JSON.parse(readFileSync(CORE_CONTEXT_FIXTURE, 'utf8'))['@context']).filter((k) => !k.startsWith('@')));
-
-const SEMVER = /^\d+\.\d+\.\d+$/;
 
 /** True when an IRI is in this catalog's namespace (a type the catalog must define). */
 export const isCatalogIri = (iri) => typeof iri === 'string' && iri.startsWith(`${BASE_URL}/ns/`);
@@ -39,101 +35,16 @@ export function externalParentProblem(iri) {
   return null;
 }
 
-async function readJson(file) { return JSON.parse(await readFile(file, 'utf8')); }
-async function readYaml(file) { return YAML.parse(await readFile(file, 'utf8')); }
-async function isDir(p) { try { return (await stat(p)).isDirectory(); } catch { return false; } }
-async function exists(p) { try { await stat(p); return true; } catch { return false; } }
+// The URLs and the loader are the toolkit's (#226): the same files as any node builds, from node.yaml.
+// The English pages are under /en.
+export const URLS = catalogUrls(BASE_URL, { iris: NODE.iris, pageEn: (url) => url.replace(BASE_URL, `${BASE_URL}/en`) });
+export const subjectUrls = (subject) => URLS.subjectUrls(subject);
+export const modelUrls = (subject, model) => URLS.modelUrls(subject, model);
+export { attributesOf };
 
-export function subjectUrls(subject) {
-  const major = subject.version.split('.')[0];
-  return {
-    contextExact: `${BASE_URL}/context/${subject.name}/v${subject.version}.jsonld`,
-    contextAlias: `${BASE_URL}/context/${subject.name}/v${major}.jsonld`,
-    vocabExact: `${BASE_URL}/vocab/${subject.name}/v${subject.version}.jsonld`,
-    vocabAlias: `${BASE_URL}/vocab/${subject.name}/v${major}.jsonld`,
-    namespace: `${BASE_URL}/ns/${subject.name}/`,
-    page: `${BASE_URL}/models/${subject.name}/`,
-  };
-}
-
-export function modelUrls(subject, model) {
-  const major = subject.version.split('.')[0];
-  return {
-    schemaExact: `${BASE_URL}/schema/${subject.name}/${model.type}/v${subject.version}.json`,
-    schemaAlias: `${BASE_URL}/schema/${subject.name}/${model.type}/v${major}.json`,
-    // An alias model (x-alias-of) is another name for a type defined elsewhere: same IRI.
-    typeIri: model.schema?.['x-alias-of'] ?? `${BASE_URL}/ns/${subject.name}/${model.type}`,
-    page: `${BASE_URL}/models/${subject.name}/${model.type}/`,
-    examples: `${BASE_URL}/examples/${subject.name}/${model.type}/`,
-    // Correspondence tables with their conversion rules (mapping/<name>.yaml). Not versioned: they follow the current model.
-    mapping: `${BASE_URL}/mapping/${subject.name}/${model.type}/`,
-  };
-}
-
-export async function loadSubjects() {
-  const subjects = [];
-  for (const name of (await readdir(MODELS_DIR)).sort()) {
-    const dir = join(MODELS_DIR, name);
-    if (!(await isDir(dir))) continue;
-    const meta = await readYaml(join(dir, 'subject.yaml'));
-    if (meta.name !== name) throw new Error(`${name}/subject.yaml: name "${meta.name}" does not match folder`);
-    if (!SEMVER.test(meta.version)) throw new Error(`${name}/subject.yaml: version must be X.Y.Z`);
-    for (const field of ['title', 'summary', 'description']) {
-      for (const lang of ['ja', 'en']) {
-        if (typeof meta[field]?.[lang] !== 'string' || !meta[field][lang].trim()) throw new Error(`${name}/subject.yaml: ${field}.${lang} is required (pages are rendered in both languages)`);
-      }
-    }
-    if (!['minted', 'profile', 'global'].includes(meta.source)) throw new Error(`${name}/subject.yaml: source must be minted, profile or global`);
-    const context = await readJson(join(dir, 'context.jsonld'));
-    if (!context['@context'] || typeof context['@context'] !== 'object') throw new Error(`${name}/context.jsonld: missing @context (object or array)`);
-    // A context may be an array that imports other catalog contexts by URL
-    // (for example the common subject) followed by inline term definitions.
-    const parts = Array.isArray(context['@context']) ? context['@context'] : [context['@context']];
-    const imports = parts.filter((p) => typeof p === 'string');
-    const inlineTerms = Object.assign({}, ...parts.filter((p) => p && typeof p === 'object'));
-    for (const url of imports) if (!url.startsWith(`${BASE_URL}/context/`)) throw new Error(`${name}/context.jsonld: only catalog contexts may be imported by URL, got ${url}`);
-    const models = [];
-    for (const type of (await readdir(dir)).sort()) {
-      const mdir = join(dir, type);
-      if (!(await isDir(mdir)) || type === 'releases') continue;
-      if (!(await exists(join(mdir, 'schema.json')))) throw new Error(`${name}/${type}: a model folder needs schema.json`);
-      const schema = await readJson(join(mdir, 'schema.json'));
-      const catalog = await readYaml(join(mdir, 'catalog.yaml'));
-      const notes = (await exists(join(mdir, 'notes.yaml'))) ? await readYaml(join(mdir, 'notes.yaml')) : {};
-      // Systems that use the model; null when the file is missing.
-      const adopters = (await exists(join(mdir, 'ADOPTERS.yaml'))) ? await readYaml(join(mdir, 'ADOPTERS.yaml')) : null;
-      // Correspondence tables to external standards (mapping/<name>.yaml).
-      const mappings = [];
-      const mdirMapping = join(mdir, 'mapping');
-      if (await isDir(mdirMapping)) for (const f of (await readdir(mdirMapping)).sort()) if (f.endsWith('.yaml')) mappings.push({ name: f.replace(/\.yaml$/, ''), ...(await readYaml(join(mdirMapping, f))) });
-      // Known extensions by other organisations (extensions/<name>.yaml, scripts/lib/extensions.mjs).
-      const extensions = [];
-      const mdirExt = join(mdir, 'extensions');
-      if (await isDir(mdirExt)) for (const f of (await readdir(mdirExt)).sort()) if (f.endsWith('.yaml')) {
-        // The file name is the id; fileKeys lets the validator reject a name: written in the file.
-        const data = (await readYaml(join(mdirExt, f))) ?? {};
-        const fileKeys = data && typeof data === 'object' && !Array.isArray(data) ? Object.keys(data) : [];
-        extensions.push({ ...data, name: f.replace(/\.yaml$/, ''), fileKeys });
-      }
-      const examples = {};
-      for (const f of ['example.json', 'example-normalized.jsonld']) {
-        const p = join(mdir, 'examples', f);
-        if (await exists(p)) examples[f] = await readJson(p);
-      }
-      // kind: 'entity' (an NGSI-LD entity type) or 'value' (a reusable value
-      // structure such as an address, referenced from entity schemas).
-      const kind = schema['x-kind'] ?? 'entity';
-      if (!['entity', 'value'].includes(kind)) throw new Error(`${name}/${type}/schema.json: x-kind must be entity or value`);
-      models.push({ type, kind, dir: mdir, schema, catalog, notes, adopters, examples, mappings, extensions });
-    }
-    subjects.push({ name, dir, ...meta, context, imports, inlineTerms, models });
-  }
-  return subjects;
-}
-
-/** Attributes of a model: every schema property except id, type and @context. */
-export function attributesOf(model) {
-  return Object.entries(model.schema.properties ?? {}).filter(([k]) => k !== 'id' && k !== 'type' && k !== '@context');
+/** The subjects in MODELS_DIR, each title, summary and description in every language of the node. */
+export function loadSubjects() {
+  return loadNodeSubjects(MODELS_DIR, { urls: URLS, languages: NODE.languages });
 }
 
 // The projection between the two forms lives in ngsi.mjs, which has no Node
