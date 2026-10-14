@@ -35,11 +35,9 @@ curl -X POST "$GEONICDB_BASE_URL/custom-data-models" \
   -H "Content-Type: application/json" -H "$KEY" \
   --data @model.json
 
-# 2. Create an entity: the model page's normalized example, with typed
-#    dates turned into strings (see the note below).
-curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" \
-  | jq 'walk(if type == "object" and has("@value") then .["@value"] else . end)' \
-  > entity.jsonld
+# 2. Create an entity: the model page's normalized example, as is
+#    (GeonicDB v0.22.0 or later; see the note below).
+curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" -o entity.jsonld
 curl -X POST "$GEONICDB_BASE_URL/ngsi-ld/v1/entities" \
   -H "Content-Type: application/ld+json" -H "$KEY" -H "$TENANT" \
   --data @entity.jsonld
@@ -65,10 +63,9 @@ export GDB_API_KEY="$GEONICDB_API_KEY"
 # 1. Register the model (once per tenant).
 curl -sSf "$BASE/adapters/geonicdb/$MODEL.json" | geonic models create
 
-# 2. Create an entity: the model page's normalized example, with typed
-#    dates turned into strings (see the note below).
+# 2. Create an entity: the model page's normalized example, as is
+#    (GeonicDB v0.22.0 or later; see the note below).
 curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" \
-  | jq 'walk(if type == "object" and has("@value") then .["@value"] else . end)' \
   | geonic entities create
 
 # 3. Query: closed roads only.
@@ -80,7 +77,15 @@ geonic entities list --type RoadRestriction \
 :::
 
 - Registering returns `201 Created`, or `409` if a model of that type already exists. To change a registered model, use `PATCH /custom-data-models/<Type>` or `geonic models update <Type> @model.json`.
-- **Typed dates:** the normalized example writes date-times as `{"@type": "DateTime", "@value": "…"}`. GeonicDB's model check accepts typed date-times from v0.22.0; v0.21.0 and earlier accept only the plain string. Even from v0.22.0, `start` and `due` of Task and Milestone and `start` and `end` of Project will still need the plain string: they may be a plain date, so the model declares them as text. Step 2 therefore turns typed values into strings with [jq](https://jqlang.org/), which works with every version ([#185](https://github.com/geolonia/datamodels/issues/185)). Your own data can send the plain string, as in `"validFrom": {"type": "Property", "value": "2026-07-08T09:00:00+09:00"}`.
+- **Typed dates:** the normalized example writes date-times as `{"@type": "DateTime", "@value": "…"}`. GeonicDB accepts this form from v0.22.0. With an older GeonicDB, and for the examples of Task, Milestone and Project (set `MODEL`, for example `MODEL=task/Task`, and register that model first), turn the typed dates into strings with [jq](https://jqlang.org/). Then send `entity.jsonld` with the second command of step 2 (`curl -X POST … --data @entity.jsonld`; with the CLI: `geonic entities create @entity.jsonld`):
+
+  ```bash
+  curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" -o typed.jsonld
+  jq 'walk(if type == "object" and has("@value") then .["@value"] else . end)' \
+    typed.jsonld > entity.jsonld
+  ```
+
+  Task and Milestone (`start`, `due`) and Project (`start`, `end`) need this even with v0.22.0 or later. These values may be a plain date, so the model declares them as text, and a text check does not accept a typed value ([#185](https://github.com/geolonia/datamodels/issues/185)). Your own data can send the plain string, as in `"validFrom": {"type": "Property", "value": "2026-07-08T09:00:00+09:00"}`.
 - **GeonicDB CLI:** [geonicdb-cli](https://github.com/geolonia/geonicdb-cli) (`npm install -g @geolonia/geonicdb-cli@0.26.1`). Logged in as a tenant admin with `geonic auth login`, it needs no API key or policy. A saved login is used before `--api-key`, so run `geonic auth logout` first when you use an API key. Add `--dry-run` to any command to see the request without sending it.
 - For your own data, put the @context in the body (`application/ld+json`) or send `application/json` with the `Link` header, never both. The tenant header is `NGSILD-Tenant` ([multi-tenancy](https://docs.geonicdb.com/en/core-concepts/multi-tenancy)).
 
