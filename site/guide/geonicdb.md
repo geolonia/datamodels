@@ -77,12 +77,11 @@ geonic entities list --type RoadRestriction \
 :::
 
 - 登録すると `201 Created`、同じ型名のモデルが既にあれば `409` が返ります。登録したモデルを変えるときは `PATCH /custom-data-models/<Type>` か `geonic models update <Type> @model.json` を使います。
-- **型付きの日時：** normalized の例では、日時を `{"@type": "DateTime", "@value": "…"}` の形で書いています。GeonicDB は、v0.22.0 からこの形を受け付けます。それより古い GeonicDB を使うときと、Task・Milestone・Project の例を送るときは、先に [jq](https://jqlang.org/) で日時を文字列に直します。そのあと手順 2 と同じように `entity.jsonld` を送ります（CLI では `geonic entities create @entity.jsonld`）。
+- **型付きの日時：** normalized の例では、日時を `{"@type": "DateTime", "@value": "…"}` の形で書いています。GeonicDB は、v0.22.0 からこの形を受け付けます。それより古い GeonicDB を使うときと、Task・Milestone・Project の例を送るときは、[jq](https://jqlang.org/) で日時を文字列に直します。Task などでは、`MODEL=task/Task` のように `MODEL` を変え、先にそのモデルを登録します。そのあと手順 2 の 2 つ目のコマンド（`curl -X POST … --data @entity.jsonld`）で送ります。CLI では `geonic entities create @entity.jsonld` です。
 
   ```bash
   curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" \
-    | jq 'walk(if type == "object" and has("@value") then .["@value"] else . end)' \
-    > entity.jsonld
+    | jq 'walk(if type == "object" and has("@value") then .["@value"] else . end)' > entity.jsonld
   ```
 
   Task と Milestone の `start`・`due`、Project の `start`・`end` は、v0.22.0 以降でも文字列で送る必要があります。これらは日付だけの値も取るので、モデルでは文字列として定義しています。文字列の検証は、型付きの値を受け付けません（[#185](https://github.com/geolonia/datamodels/issues/185)）。自分のデータでは、`"validFrom": {"type": "Property", "value": "2026-07-08T09:00:00+09:00"}` のように文字列で送れます。
