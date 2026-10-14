@@ -75,8 +75,8 @@ prerelease: true
 ## build が書き出すもの {#build}
 
 ```bash
-npx @geolonia/datamodels@0.3.15 build
-npx @geolonia/datamodels@0.3.15 build my-models --out public
+npx @geolonia/datamodels@0.3.16 build
+npx @geolonia/datamodels@0.3.16 build my-models --out public
 ```
 
 ファイルは、ノードのフォルダーの `_site/` か、`--out` に書き出します。次のパスは、ベース URL の下の URL でもあります。

@@ -22,7 +22,7 @@ description: datamodels-toolkit の convert で、手元の CSV の一覧をカ�
 自治体標準オープンデータセットや国土地理院のデータなど、カタログに変換ルール付きの対応表がある標準に従った一覧は、その対応表でそのまま変換できます。対応表の仕組みは[対応表](/guide/mapping)にあります。
 
 ```bash
-npx @geolonia/datamodels@0.3.15 convert \
+npx @geolonia/datamodels@0.3.16 convert \
   disaster/EvacuationSite jichitai-opendata-site \
   092011_evacuation_space.csv --out sites.json
 ```
@@ -34,7 +34,7 @@ npx @geolonia/datamodels@0.3.15 convert \
 一覧に無い値は `--set` で渡します。たとえば国土地理院のデータでは、市町村コードがファイル名にしかありません。次の例の `13101_2.csv` は、国土地理院が公開している千代田区の指定緊急避難場所のデータです（[ダウンロード](https://hinanmap.gsi.go.jp/hinanjocp/defaultFtpData/csv/13101_2.csv)）。
 
 ```bash
-npx @geolonia/datamodels@0.3.15 convert \
+npx @geolonia/datamodels@0.3.16 convert \
   disaster/EvacuationSite gsi-emergency-site \
   13101_2.csv --set localGovernmentCode=131016
 ```
@@ -52,13 +52,13 @@ npx @geolonia/datamodels@0.3.15 convert \
 
 ```bash
 # 1. 下書きを作る
-npx @geolonia/datamodels@0.3.15 mapping \
+npx @geolonia/datamodels@0.3.16 mapping \
   disaster/EvacuationSite my-list.csv --out my-list.yaml
 # 3. 最初の行を検証する
-npx @geolonia/datamodels@0.3.15 convert \
+npx @geolonia/datamodels@0.3.16 convert \
   disaster/EvacuationSite my-list.yaml my-list.csv --check
 # 4. 変換する
-npx @geolonia/datamodels@0.3.15 convert \
+npx @geolonia/datamodels@0.3.16 convert \
   disaster/EvacuationSite my-list.yaml my-list.csv --out entities.json
 ```
 
@@ -94,7 +94,7 @@ npx @geolonia/datamodels@0.3.15 convert \
 
 ### AI エージェントと埋める {#agent}
 
-TODO を埋める作業は、AI エージェントにも頼めます。datamodels-toolkit の[エージェントスキル](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.15/skills/datamodels)（`skills/datamodels`）が、手順と決まりをエージェントに教えます。一覧に無い値は書かない、意味のはっきりしない列は人に聞く、という決まりです。入れ方は[エージェントスキル](/toolkit/#agent-skill)にあります。
+TODO を埋める作業は、AI エージェントにも頼めます。datamodels-toolkit の[エージェントスキル](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.16/skills/datamodels)（`skills/datamodels`）が、手順と決まりをエージェントに教えます。一覧に無い値は書かない、意味のはっきりしない列は人に聞く、という決まりです。入れ方は[エージェントスキル](/toolkit/#agent-skill)にあります。
 
 依頼の例です。
 
@@ -107,7 +107,7 @@ TODO を埋める作業は、AI エージェントにも頼めます。datamodel
 新しく一覧を作るなら、モデルの CSV テンプレートに、1 行に 1 件ずつ入力します。対応表は要りません。テンプレートは、モデルのページの**ダウンロード**の行にあります。`export` でも作れます（[他のツールに書き出す](/toolkit/export)）。
 
 ```bash
-npx @geolonia/datamodels@0.3.15 convert \
+npx @geolonia/datamodels@0.3.16 convert \
   disaster/EvacuationSite csv-template sites.csv --out entities.json
 ```
 

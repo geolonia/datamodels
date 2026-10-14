@@ -1,7 +1,10 @@
 // The validate tool's checks (worker/mcp.mjs): one entity against one model's
 // JSON Schema, with the rules of the catalog's example check where they apply
-// to data (the toolkit's src/build/examples.mjs: NGSI-LD attribute types,
-// multi-valued attributes, typed dates, the json/vocab wrappers, closed rings).
+// to data: NGSI-LD attribute types, multi-valued attributes, typed dates, the
+// json/vocab wrappers, closed rings. The rules come from the toolkit's
+// @geolonia/datamodels/ngsi (attributeProblems, unclosedRings; toolkit 0.3.16,
+// geolonia/datamodels-toolkit#120), which check uses too; the messages are
+// worded here.
 //
 // The JSON Schema validator is @cfworker/json-schema, because Ajv (what CI
 // uses) compiles schemas with new Function, which Workers do not allow. Two of
@@ -17,7 +20,7 @@
 // The format date-time follows ajv-formats, so a date-time CI accepts (a leap
 // second with an offset) is accepted here too.
 import { Validator, format } from '@cfworker/json-schema';
-import { NGSI_TYPES, toKeyValues, unwrapKeyValues, dateFormats, typedDate } from '@geolonia/datamodels/ngsi';
+import { NGSI_TYPES, toKeyValues, unwrapKeyValues, attributeProblems, unclosedRings } from '@geolonia/datamodels/ngsi';
 
 /** At most this many problems are listed; problemCount says how many were found (all, when complete is true). */
 export const MAX_PROBLEMS = 20;
@@ -109,22 +112,6 @@ export function looksNormalized(entity) {
     && [v].flat().some((i) => isObject(i) && NGSI_TYPES.includes(i.type) && ['value', 'object', 'json', 'vocab'].some((p) => Object.hasOwn(i, p))));
 }
 
-/** The polygon rings that do not close (RFC 7946); JSON Schema cannot check it. As in the toolkit's check. */
-export function unclosedRings(value, path = '') {
-  const out = [];
-  const same = (a, b) => Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((v, i) => v === b[i]);
-  const closes = (ring) => !Array.isArray(ring) || ring.length === 0 || same(ring[0], ring.at(-1));
-  const walk = (v, p) => {
-    if (Array.isArray(v)) { v.forEach((e, i) => walk(e, `${p}/${i}`)); return; }
-    if (!isObject(v)) return;
-    if (v.type === 'Polygon' && Array.isArray(v.coordinates)) v.coordinates.forEach((ring, i) => { if (!closes(ring)) out.push(`${p}/coordinates/${i}`); });
-    else if (v.type === 'MultiPolygon' && Array.isArray(v.coordinates)) v.coordinates.forEach((poly, i) => (Array.isArray(poly) ? poly : []).forEach((ring, j) => { if (!closes(ring)) out.push(`${p}/coordinates/${i}/${j}`); }));
-    for (const [k, vv] of Object.entries(v)) walk(vv, `${p}/${k}`);
-  };
-  walk(value, path);
-  return out;
-}
-
 // --- the validator's errors ----------------------------------------------------
 
 // Errors that only say a part below had errors; the part below says what.
@@ -148,7 +135,8 @@ export function readableErrors(errors) {
     if (e.keyword === 'false') continue;
     const extra = e.keyword === 'additionalProperties' && EXTRA.exec(e.message);
     if (extra) {
-      const path = `${e.path === '/' ? '' : e.path}/${extra[1]}`;
+      // A JSON pointer, escaped as the validator's own paths are (RFC 6901), so the lookup in owned matches.
+      const path = pointer(e.path === '/' ? '' : e.path, extra[1]);
       if (!owned.has(path)) out.push({ path, message: `"${extra[1]}" is not an attribute here: the schema allows no other properties` });
       continue;
     }
@@ -306,6 +294,15 @@ export function makeChecker(root, refs) {
   };
 }
 
+/** The message of one of the toolkit's attributeProblems, as the validate tool words it. */
+function attributeMessage(p) {
+  if (p.rule === 'multi') return 'has several instances, but the model does not declare it multi-valued';
+  if (p.rule === 'type') return `is a ${p.found}, but the model makes it a ${p.expected}`;
+  if (p.rule === 'date') return `the value must be { "@type": "${p.expected['@type']}", "@value": ${JSON.stringify(p.expected['@value'])} }`;
+  // A rule a later toolkit adds: named, so the answer still says which attribute breaks it.
+  return `breaks the model's rule "${p.rule}"`;
+}
+
 /**
  * Check an entity that passed shape(). m: the model's index entry; root: its
  * published schema; check: makeChecker(...). Returns the tool's answer.
@@ -325,25 +322,9 @@ export function checkEntity(m, root, check, data, form, values) {
 
   let kv = data;
   if (usedForm === 'normalized') {
-    // The toolkit's toKeyValues drops an own "__proto__" key (it assigns with out[k] = ...),
-    // so it is reported here, before the projection, as the key-values check reports it.
-    if (Object.hasOwn(data, '__proto__')) problems.push({ path: '/__proto__', message: `"__proto__" is not an attribute of ${m.type}` });
-    // The toolkit's rules for normalized data: the declared attribute types, x-ngsi.multi, typed dates.
-    for (const [name, prop] of Object.entries(root.properties ?? {})) {
-      if (name === 'id' || name === 'type' || name === '@context' || !Object.hasOwn(data, name)) continue;
-      const ngsi = prop?.['x-ngsi'] ?? {};
-      const declared = ngsi.type ?? 'Property';
-      const instances = [data[name]].flat();
-      if (Array.isArray(data[name]) && !ngsi.multi) problems.push({ path: `/${name}`, message: 'has several instances, but the model does not declare it multi-valued' });
-      for (const inst of instances) if (isObject(inst) && Object.hasOwn(inst, 'type') && inst.type !== declared) problems.push({ path: `/${name}`, message: `is a ${inst.type}, but the model makes it a ${declared}` });
-      const formats = declared === 'Property' ? dateFormats(prop) : [];
-      for (const inst of formats.length ? instances : []) {
-        const v = inst?.value;
-        const value = isObject(v) && Object.hasOwn(v, '@value') ? v['@value'] : v;
-        const want = typedDate(value, formats);
-        if (typeof value === 'string' && v?.['@type'] !== want['@type']) problems.push({ path: `/${name}`, message: `the value must be { "@type": "${want['@type']}", "@value": ${JSON.stringify(value)} }` });
-      }
-    }
+    // The toolkit's rules for normalized data, as check applies them: the declared attribute types, x-ngsi.multi, typed dates.
+    // toKeyValues keeps an own "__proto__" key (toolkit 0.3.16), so the schema check below reports it as an extra attribute.
+    for (const p of attributeProblems(data, Object.entries(root.properties ?? {}))) problems.push({ path: `/${p.attribute}`, message: attributeMessage(p) });
     const multi = new Set(Object.entries(root.properties ?? {}).filter(([, p]) => p?.['x-ngsi']?.multi).map(([n]) => n));
     try { kv = toKeyValues(data, { multi }); } catch (e) { return stop(e); }
   }
@@ -357,6 +338,6 @@ export function checkEntity(m, root, check, data, form, values) {
     const key = `${path} ${message}`;
     if (!seen.has(key)) { seen.add(key); problems.push({ path, message }); }
   }
-  for (const p of unclosedRings(kv)) problems.push({ path: p, message: 'the polygon ring does not close: its first and last positions must be the same (RFC 7946)' });
+  for (const p of unclosedRings(kv, { style: 'pointer' })) problems.push({ path: p, message: 'the polygon ring does not close: its first and last positions must be the same (RFC 7946)' });
   return answer();
 }
