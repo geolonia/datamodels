@@ -46,6 +46,8 @@ A model that builds on a model of another node lists it in its `catalog.yaml` un
 baseUrl: https://models.example.org
 iris: hash
 languages: [en]
+title: { en: Road models }
+description: { en: Models for road maintenance. }
 publisher: { name: { en: Example Inc. }, url: https://example.org/ }
 license: CC0-1.0
 nodes:
@@ -58,6 +60,8 @@ prerelease: true
 | `baseUrl` | (required) | The address of the node, an http(s) URL. It is part of every IRI, so choose it once ([Starting a site](/en/toolkit/start#init)) |
 | `iris` | `hash` | `hash`: `/ns/<subject>#<Term>`, one page per subject with an anchor per term, for any static host. `slash`: `/ns/<subject>/<Term>`, which needs redirects ([Other hosts](/en/toolkit/hosts)); GitHub Pages cannot redirect |
 | `languages` | `[en]` | The languages of the node, the main one first. `subject.yaml` needs a title and description in each |
+| `title` | | The name of the node, a text in each language of the node. `catalog.json` lists it, and the pages use it as the site's name. Without it, the pages say "Data models by &lt;publisher&gt;" |
+| `description` | | What the node publishes, in a sentence or two, a text in each language of the node. `catalog.json` lists it, and the home page shows it |
 | `publisher` | (required) | Who runs the node: `name` in at least one language, and `url` |
 | `license` | (required) | The licence of the models, an SPDX identifier such as `CC0-1.0` |
 | `licenseUrl` | | Where the licence text is. Without it, the pages link the SPDX page of `license` |
@@ -66,16 +70,18 @@ prerelease: true
 
 `build` and `check` list every problem of `node.yaml` at once.
 
+The toolkit reads other nodes only over https. So `nodes[].url` and `nodes[].index` here, and `extends[].index` in `catalog.yaml`, must be https URLs. For an `http://` address, the error says to change it to `https://`.
+
 ## What build writes {#build}
 
 ```bash
-npx @geolonia/datamodels@0.3.14 build
-npx @geolonia/datamodels@0.3.14 build my-models --out public
+npx @geolonia/datamodels@0.3.15 build
+npx @geolonia/datamodels@0.3.15 build my-models --out public
 ```
 
 The files go into `_site/` in the node's folder, or into `--out`. The paths below are also their URLs under the base URL:
 
-- `catalog.json`: the index of the node, in the same format as [datamodels.jp's](/catalog.json), with `publisher`, `license`, `nodes`, and each model's URLs, `extends` and `adapters`.
+- `catalog.json`: the index of the node, in the same format as [datamodels.jp's](/catalog.json), with `title` and `description` (when node.yaml has them), `publisher`, `license`, `nodes`, and each model's URLs, `extends` and `adapters`.
 - `context/<subject>/vX.Y.Z.jsonld`, and the alias of the major version `vX.jsonld` ([URLs and versions](/en/guide/urls)).
 - `vocab/<subject>/vX.Y.Z.jsonld` and `vX.jsonld`: the vocabulary.
 - `schema/<subject>/<Type>/vX.Y.Z.json` and `vX.json`: the JSON Schemas.
@@ -102,7 +108,7 @@ For each entity model, `build` writes the files of [`export`](/en/toolkit/export
 
 The pages are plain HTML in a monospace font, without JavaScript, so they read well with `curl` too.
 
-- `/`: the subjects and their models.
+- `/`: the node's title and description, then the subjects and their models.
 - One page per subject. With hash IRIs it is the namespace document, `/ns/<subject>` (the file `ns/<subject>.html`), with an anchor for every type and attribute, so every IRI opens on it. With slash IRIs it is `/models/<subject>/`.
 - One page per model, `/models/<subject>/<Type>/`, with an anchor per attribute, the standards it maps (from `mapping/`), its notes (from `notes.yaml`) and the Download row.
 - A model that a released version had and the current one does not (renamed or removed) keeps a page at its old address. It says which versions had the model, links its last schema and `@context`, and names the current model with the same type IRI, if there is one. The subject page keeps an anchor for every term that earlier versions minted.

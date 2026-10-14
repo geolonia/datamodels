@@ -20,7 +20,7 @@ description: datamodels-toolkit の init で自分のデータモデルのサイ
 ## 1. ノードを作る {#init}
 
 ```bash
-npx @geolonia/datamodels@0.3.14 init my-models
+npx @geolonia/datamodels@0.3.15 init my-models
 cd my-models
 ```
 
@@ -35,12 +35,14 @@ cd my-models
 
 `init` は、設定の `node.yaml`、分野の `models/road/`、README、`.gitignore`、`LICENSE`、公開用のワークフローを書き出します。`LICENSE` に条文が入るのは CC0-1.0 と CC-BY-4.0 で、ほかのライセンスでは自分で条文を置きます。ほかの名前のライセンスのファイル（`LICENSE.md`、`LICENSE.txt`、`COPYING`）も、`LICENSE` とみなします。ツールキットの新しいリリースを提案する Dependabot の設定も書き出します。
 
+`init` は、`node.yaml` に `title` と `description` を空のままコメントとして書きます。言語ごとに書き入れてから、`#` を消してください（[node.yaml](/toolkit/node#node-yaml)）。
+
 既存のリポジトリでも使えます（スキャフォルダーで作ったリポジトリなど）。足りないファイルだけを足し、既にあるファイルは上書きしません。`.gitignore` が既にあれば、足りない行を足します。足したファイルと残したファイルは、一覧で知らせます。
 
 答えはオプションでも渡せるので、スクリプトや CI でも実行できます。その場合は質問をせず、足りない答えがあれば使い方の誤りになります。答えの無い項目の既定は、ハッシュ IRI、英語、CC0-1.0 です。
 
 ```bash
-npx @geolonia/datamodels@0.3.14 init my-models \
+npx @geolonia/datamodels@0.3.15 init my-models \
   --base-url https://models.example.org --iris hash --languages ja,en \
   --publisher "Example Inc." --publisher-url https://example.org/ \
   --license CC0-1.0 --subject road --yes

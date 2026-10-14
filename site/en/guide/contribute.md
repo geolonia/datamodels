@@ -45,7 +45,7 @@ What happens next: a maintainer checks that you speak for the organisation. A ma
 
 Do you publish your own data models on a site made with the [toolkit](/en/toolkit/) ([Starting a site](/en/toolkit/start))? Then use the site listing form to put the site on the list of [Data model sites](/en/guide/sites). If a model of your site builds on a catalog model, that model's page shows it too, under "Built on by others", with the attributes it adds.
 
-The form asks for the site's URL, the URL of its `catalog.json`, and its name in Japanese and English (the publisher name in `catalog.json`). You confirm that you run the site, or that you ask on behalf of the people who run it. You also agree that datamodels.jp lists the site and its models. When the site moves or closes, tell us in an issue.
+The form asks for the site's URL, the URL of its `catalog.json`, and its name in Japanese and English: the title in `catalog.json`, else the publisher name. The list uses it. You confirm that you run the site, or that you ask on behalf of the people who run it. You also agree that datamodels.jp lists the site and its models. When the site moves or closes, tell us in an issue.
 
 What happens next: a maintainer adds the site to the list in a pull request. The pull request also reads the site's `catalog.json`, and a review checks what was read. datamodels.jp does not review the models themselves: each site decides about its own.
 

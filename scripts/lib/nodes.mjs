@@ -112,7 +112,9 @@ export function nodeEntry(node, catalog, fetchedAt, catalogIris = new Map()) {
     extends: (Array.isArray(m?.extends) ? m.extends : []).map((e) => ({ typeIri: cleanUrl(e?.typeIri), version: /^\d+\.\d+\.\d+$/.test(e?.version) ? e.version : '' })).filter((e) => e.typeIri),
     ...addedToCatalog(m, catalogIris),
   })).filter((m) => m.type && m.typeIri);
-  return { url: node.url, index: node.index, fetchedAt, publisher: { name: texts(catalog?.publisher?.name), url: cleanUrl(catalog?.publisher?.url) }, license: cleanText(catalog?.license), models };
+  // The node's own title (node.yaml, toolkit 0.3.15), when its catalog.json has one: the pages name the node by it.
+  const title = texts(catalog?.title);
+  return { url: node.url, index: node.index, fetchedAt, ...(Object.keys(title).length ? { title } : {}), publisher: { name: texts(catalog?.publisher?.name), url: cleanUrl(catalog?.publisher?.url) }, license: cleanText(catalog?.license), models };
 }
 
 /** The committed snapshot: { nodes: [...] }; no file, no nodes. */
@@ -149,4 +151,4 @@ export function shownByNode(ext, others) {
   return others.some(({ node }) => { const base = node.url.endsWith('/') ? node.url : `${node.url}/`; return urls.some((u) => u.startsWith(base)); });
 }
 
-export const nodeName = (node, lang) => node.publisher?.name?.[lang] ?? Object.values(node.publisher?.name ?? {})[0] ?? new URL(node.url).host;
+export { nodeName } from './node-name.mjs';

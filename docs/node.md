@@ -60,12 +60,14 @@ Terms a node reuses (from datamodels.jp, another node, NGSI-LD, schema.org) keep
 
 ## 3. The index (`catalog.json`)
 
-The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.json) ([schema](https://datamodels.jp/catalog.schema.json)), with fewer required fields and three additions. A tool written for the node format can also read datamodels.jp's `catalog.json`, which carries every field a node requires, `publisher` included. The other way round works only in part: `catalog.schema.json` now describes `publisher`, `nodes` and `experimental`, but not yet `extends`, and it requires more fields for each model (the attributes, sample properties and page URL, among others). Describing `extends` there completes the format, with the toolkit library (geolonia/datamodels-toolkit#10).
+The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.json) ([schema](https://datamodels.jp/catalog.schema.json)), with fewer required fields and three additions. A tool written for the node format can also read datamodels.jp's `catalog.json`, which carries every field a node requires, `publisher` included. The other way round works only in part: `catalog.schema.json` now describes `title`, `description`, `publisher`, `nodes` and `experimental`, but not yet `extends`, and it requires more fields for each model (the attributes, sample properties and page URL, among others). Describing `extends` there completes the format, with the toolkit library (geolonia/datamodels-toolkit#10).
 
 ```json
 {
   "formatVersion": 1,
   "generatedAt": "2026-10-10T00:00:00Z",
+  "title": { "ja": "道路のモデル", "en": "Road models" },
+  "description": { "ja": "道路の維持管理のためのモデルです。", "en": "Models for road maintenance." },
   "publisher": {
     "name": { "ja": "例の会社", "en": "Example Inc." },
     "url": "https://example.org/"
@@ -100,9 +102,11 @@ The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.
 }
 ```
 
-`RoadPatrol` is an invented example.
+`RoadPatrol` and "Road models" are invented examples.
 
 **Required at the top:** `formatVersion`, `generatedAt`, `publisher`, `license` (the publisher decides; `datamodels init` suggests CC0, as datamodels.jp uses), `models`.
+
+**Optional at the top:** `title` and `description` (when `node.yaml` has them: the node's name and what it publishes, each a text in every language of the node; the pages use the title as the site's name, else "Data models by" and the publisher's name; datamodels.jp's catalog.json has both), `licenseUrl`, `nodes`. The keys come in this order: `formatVersion`, `generatedAt`, `title`, `description`, `publisher`, `license`, `licenseUrl`, `nodes`, `models`.
 
 **Required for every model:** `type`, `typeIri`, `subject`, `version`, `status`, `title`, `description`, `contextUrl`, `schemaUrl`, `vocabularyUrl`, `pageUrl`. `title` and `description` have at least one language (`ja`, `en` or another BCP 47 tag).
 
@@ -111,8 +115,8 @@ The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.
 **New in a node index:**
 
 - `publisher` (required at the top): who runs the node. Name in at least one language, and a URL.
-- `extends` (per model, optional): the models of other nodes this model builds on, by type IRI and version, with the index where they are listed. A model that only adds attributes to another node's model has the same `typeIri` as that model and lists it here; a new subtype has its own `typeIri` and lists its parent in `subClassOf` and `extends`.
-- `nodes` (at the top, optional): other nodes this node knows, by base URL and index URL. This is how the network is found: start at any node and follow `nodes` and `extends`.
+- `extends` (per model, optional): the models of other nodes this model builds on, by type IRI and version, with the index where they are listed (an https URL, as the toolkit reads other nodes only over https). A model that only adds attributes to another node's model has the same `typeIri` as that model and lists it here; a new subtype has its own `typeIri` and lists its parent in `subClassOf` and `extends`.
+- `nodes` (at the top, optional): other nodes this node knows, by base URL and index URL, both https (the toolkit reads other nodes only over https). This is how the network is found: start at any node and follow `nodes` and `extends`.
 
 ## 4. Stages
 
@@ -140,6 +144,7 @@ The index maps onto W3C [DCAT](https://www.w3.org/TR/vocab-dcat-3/), so the netw
 | Index | DCAT |
 |---|---|
 | the node (`catalog.json`) | `dcat:Catalog` |
+| `title`, `description` | `dct:title`, `dct:description` of the catalog |
 | `publisher` | `dct:publisher` |
 | a model | `dcat:Dataset`, with `dct:identifier` = `typeIri`, `dct:title`, `dct:description`, `dcat:version` |
 | its @context, JSON Schema, vocabulary | `dcat:Distribution` each, with `dcat:downloadURL` and `dcat:mediaType` |
@@ -156,7 +161,7 @@ Mapping files, adapters, ADOPTERS files, a second language, a review process, se
 
 [`datamodels build`](https://github.com/geolonia/datamodels-toolkit#build) in the toolkit builds a node from a folder with two parts, and writes the index, @contexts, JSON Schemas, vocabularies, examples and `llms.txt` into `_site/`. The pages for people follow in [geolonia/datamodels-toolkit#18](https://github.com/geolonia/datamodels-toolkit/pull/18); until then a node writes them itself.
 
-- `node.yaml`: the settings (base URL, IRI form, languages, publisher, licence, known nodes).
+- `node.yaml`: the settings (base URL, IRI form, languages, title and description, publisher, licence, known nodes).
 - `models/`: the subjects and models, laid out as in this repository's `models/`.
 
 A node does not have to use the toolkit; what counts is what it publishes.

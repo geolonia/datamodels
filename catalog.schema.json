@@ -18,6 +18,24 @@
       "type": "string",
       "format": "date-time"
     },
+    "title": {
+      "type": "object",
+      "description": "The node's name, in each language of the node.",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "description": {
+      "type": "object",
+      "description": "What the node publishes, in each language of the node.",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
     "publisher": {
       "type": "object",
       "description": "Who publishes the catalog: a name per language and a URL, as in the node format (docs/node.md).",

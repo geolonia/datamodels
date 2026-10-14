@@ -12,6 +12,7 @@ import { readFileSync } from 'node:fs';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { modelIndex, words } from './similar.mjs';
+import { nodeName } from './node-name.mjs';
 
 export const MCP_INDEX_PATH = 'mcp/index.json';
 
@@ -62,7 +63,7 @@ function attributeIndex(catalog, snapshot, base) {
     }
   }
   for (const n of snapshot.nodes ?? []) {
-    const site = Object.values(n.publisher?.name ?? {})[0] ?? n.url;
+    const site = nodeName(n, 'en');
     for (const m of n.models ?? []) for (const a of m.added ?? []) {
       const key = `${a.name} ${a.iri}`;
       let e = byKey.get(key);
@@ -99,7 +100,7 @@ export function mcpIndex(catalog, snapshot, schemaOf, base = 'https://datamodels
   }));
   const nodeModels = [];
   for (const n of snapshot.nodes ?? []) {
-    const site = Object.values(n.publisher?.name ?? {})[0] ?? n.url;
+    const site = nodeName(n, 'en');
     (n.models ?? []).forEach((m, i) => nodeModels.push({
       key: `${n.url}#${i}`, type: m.type, typeIri: m.typeIri, site, siteUrl: n.url, pageUrl: m.pageUrl, title: m.title ?? {}, status: m.status,
       ...(m.aliasOf ? { aliasOf: m.aliasOf } : {}), ...(m.subClassOf ? { subClassOf: m.subClassOf } : {}),

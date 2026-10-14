@@ -12,33 +12,33 @@ description: datamodels-toolkit の search で既にあるモデルを探し、a
 新しいモデルを作る前に、そのまま使えるモデルや、土台にできるモデルが既にないかを探します。`search` は、datamodels.jp と、datamodels.jp がリンクしているサイトのモデルから、型の名前、タイトル、属性、説明に言葉を含むものを探します。日本語でも英語でも探せます。
 
 ```bash
-npx @geolonia/datamodels@0.3.14 search 避難
-npx @geolonia/datamodels@0.3.14 search road closure --json
+npx @geolonia/datamodels@0.3.15 search 避難
+npx @geolonia/datamodels@0.3.15 search road closure --json
 ```
 
 1 つ目のコマンドの結果の一部です。
 
 ```text
-disaster/DesignatedShelter  指定避難所 / Designated shelter  Geolonia Inc.  https://datamodels.jp/models/disaster/DesignatedShelter/
-disaster/EvacuationShelter  避難所の運用状況 / Evacuation shelter operation  Geolonia Inc.  https://datamodels.jp/models/disaster/EvacuationShelter/
+disaster/DesignatedShelter  指定避難所 / Designated shelter  datamodels.jp  https://datamodels.jp/models/disaster/DesignatedShelter/
+disaster/EvacuationShelter  避難所の運用状況 / Evacuation shelter operation  datamodels.jp  https://datamodels.jp/models/disaster/EvacuationShelter/
 …
 4 of 18 models in 3 node(s) match
 ```
 
-1 行に 1 つのモデルが、分野と型、タイトル、サイト（公開している人や組織の名前）、ページの URL の順に並びます。上位の 10 件を出力します。件数は `--limit` で変えられます。`--json` を付けると、型の IRI、バージョン、スキーマ、`@context`、索引（`catalog.json`）も出力します。スクリプトや AI エージェントから使うときは、こちらを使います。この索引は、`extend` と `export` の `--index` に渡せます。この 2 つでは、ノードのアドレスではなく、`catalog.json` そのものの URL を渡します。
+1 行に 1 つのモデルが、分野と型、タイトル、サイト（そのタイトル。無ければ公開している人や組織の名前）、ページの URL の順に並びます。上位の 10 件を出力します。件数は `--limit` で変えられます。`--json` を付けると、型の IRI、バージョン、スキーマ、`@context`、索引（`catalog.json`）も出力します。スクリプトや AI エージェントから使うときは、こちらを使います。この索引は、`extend` と `export` の `--index` に渡せます。この 2 つでは、ノードのアドレスではなく、`catalog.json` そのものの URL を渡します。
 
 言葉は、型の名前に含まれるときがいちばん重く、タイトル、属性の名前、説明の順に軽くなります。めったに出ない言葉ほど重く数えます。英語の言葉は 3 文字以上が対象で、`data`、`model`、`type` のようなよく使う言葉は除きます。日本語は、漢字かカタカナを含む 2 文字ずつの組で比べます。`避難` で指定避難所が見つかります。`ひなん` のようにひらがなだけの言葉は、検索に使いません。このような言葉やよく使う言葉だけで、探す言葉が残らなければ、使い方の誤りです（終了コード 2、「nothing to search for」）。住所などの値の型も結果に入ります。
 
 `nodes` は、たどれるサイトを、名前、アドレス、ライセンス、モデルの数、リンク元のサイトとともに並べます。
 
 ```bash
-npx @geolonia/datamodels@0.3.14 nodes
+npx @geolonia/datamodels@0.3.15 nodes
 ```
 
 ```text
-Geolonia Inc.  https://datamodels.jp/  CC0-1.0  16 models
-GTT Project  https://models.gtt-project.org/  CC0-1.0  1 model  (linked from Geolonia Inc.)
-Geolonia Inc.  https://models.geolonia.com/  CC0-1.0  1 model  (linked from Geolonia Inc.)
+datamodels.jp  https://datamodels.jp/  CC0-1.0  16 models
+GTT Project  https://models.gtt-project.org/  CC0-1.0  1 model  (linked from datamodels.jp)
+Geolonia Inc.  https://models.geolonia.com/  CC0-1.0  1 model  (linked from datamodels.jp)
 3 node(s) within 1 link(s) of https://datamodels.jp/catalog.json
 ```
 
@@ -51,7 +51,7 @@ Geolonia Inc.  https://models.geolonia.com/  CC0-1.0  1 model  (linked from Geol
 ## 新しいモデル {#add}
 
 ```bash
-npx @geolonia/datamodels@0.3.14 add road/RoadPatrol
+npx @geolonia/datamodels@0.3.15 add road/RoadPatrol
 ```
 
 `models/road/RoadPatrol/` に `schema.json`、`catalog.yaml`、`examples/example.json`、`notes.yaml` ができます。`notes.yaml` は、出典や決めたことと、その理由を書く注記です。分野の `@context` には型 `RoadPatrol` が入ります。エンティティの型のスキーマには `id` と `type` があり、`catalog.yaml` にはノードの言語ごとのタイトルと説明があります。できたモデルは、そのままビルドでき、`check` も通ります。分野の今のバージョンがリリース済みなら、`add` の前に [`bump`](/toolkit/versions#bump) を実行します。`add` がそのバージョンのソースを変え、`build` と `check` が止まるからです。続けて、[属性を書きます](#attributes)。
@@ -59,7 +59,7 @@ npx @geolonia/datamodels@0.3.14 add road/RoadPatrol
 住所のように属性の中で使う値の型は、`--value` を付けて作ります。
 
 ```bash
-npx @geolonia/datamodels@0.3.14 add road/Segment --value
+npx @geolonia/datamodels@0.3.15 add road/Segment --value
 ```
 
 ## カタログのモデルから始める {#extend}
@@ -67,10 +67,10 @@ npx @geolonia/datamodels@0.3.14 add road/Segment --value
 このカタログのモデルから始めるときは、`extend` を使います。名前は似ていますが、[拡張](/guide/extend)とは別のもので、自分のサイトに新しいモデルを作ります。そのうえで、[下のように](#attributes)自分の属性を足します。
 
 ```bash
-npx @geolonia/datamodels@0.3.14 extend task/Task road/RoadTask
+npx @geolonia/datamodels@0.3.15 extend task/Task road/RoadTask
 ```
 
-最初の引数は、土台にするモデルです。相手のサイトの `catalog.json` にある `<subject>/<Type>` か、型の IRI で指定します。`--index` は、その `catalog.json` です（既定は `node.yaml` の最初のノード、無ければ datamodels.jp）。ターミナルで引数なしに実行すると、一覧からモデルを選び、新しいモデルの名前を入力できます。
+最初の引数は、土台にするモデルです。相手のサイトの `catalog.json` にある `<subject>/<Type>` か、型の IRI で指定します。`--index` は、その `catalog.json` です。指定しなければ、型 IRI のときは、その IRI を作ったノードの索引を使います（モデルが載っていれば）。それ以外は `node.yaml` の最初のノード、無ければ datamodels.jp です。詳しくは[型 IRI で指定したモデル](/toolkit/reference#type-iri)にあります。ターミナルで引数なしに実行すると、一覧からモデルを選び、新しいモデルの名前を入力できます。
 
 `extend` は次のことをします。
 

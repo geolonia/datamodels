@@ -20,7 +20,7 @@ The result looks like [models.gtt-project.org](https://models.gtt-project.org/):
 ## 1. Start the node {#init}
 
 ```bash
-npx @geolonia/datamodels@0.3.14 init my-models
+npx @geolonia/datamodels@0.3.15 init my-models
 cd my-models
 ```
 
@@ -35,12 +35,14 @@ cd my-models
 
 It writes `node.yaml` (the settings), `models/road/` (the subject), a README, `.gitignore`, `LICENSE` (the licence text for CC0-1.0 and CC-BY-4.0; for another licence, add the text yourself), the workflow that publishes the node, and a Dependabot configuration that proposes new toolkit releases. A licence file under another name (`LICENSE.md`, `LICENSE.txt`, `COPYING`) counts as `LICENSE`.
 
+`init` writes `title` and `description` in `node.yaml` as comments, with empty texts. Fill in each language, then remove the `#` ([node.yaml](/en/toolkit/node#node-yaml)).
+
 It also works in an existing repository, for example one made by a scaffolder: it adds only the files that are missing, never overwrites one, and adds its lines to an existing `.gitignore`. It lists what it added and what it kept.
 
 The options give the answers, so `init` can run in a script or in CI. There it never asks: a missing answer is a usage error. Without an answer, the defaults are hash IRIs, English and CC0-1.0.
 
 ```bash
-npx @geolonia/datamodels@0.3.14 init my-models \
+npx @geolonia/datamodels@0.3.15 init my-models \
   --base-url https://models.example.org --iris hash --languages ja,en \
   --publisher "Example Inc." --publisher-url https://example.org/ \
   --license CC0-1.0 --subject road --yes

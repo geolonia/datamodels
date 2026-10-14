@@ -46,6 +46,8 @@ my-models/
 baseUrl: https://models.example.org
 iris: hash
 languages: [en]
+title: { en: Road models }
+description: { en: Models for road maintenance. }
 publisher: { name: { en: Example Inc. }, url: https://example.org/ }
 license: CC0-1.0
 nodes:
@@ -58,6 +60,8 @@ prerelease: true
 | `baseUrl` | （必須） | ノードのアドレス。http(s) の URL。すべての IRI に入るので、一度だけ決める（[サイトを始める](/toolkit/start#init)） |
 | `iris` | `hash` | `hash` は `/ns/<subject>#<Term>` で、分野ごとに 1 ページ、用語ごとにアンカーを置く。どの静的ホストでも使える。`slash` は `/ns/<subject>/<Term>` で、転送が要る（[GitHub Pages 以外のホスト](/toolkit/hosts)）。GitHub Pages は転送できない |
 | `languages` | `[en]` | ノードの言語。主な言語を先に書く。`subject.yaml` には、言語ごとのタイトルと説明が要る |
+| `title` | | ノードの名前。ノードの各言語で書く。`catalog.json` に載り、ページはサイトの名前として使う。無ければ「&lt;publisher&gt; のデータモデル」になる |
+| `description` | | ノードが公開するものの短い説明。ノードの各言語で書く。`catalog.json` に載り、トップページに出る |
 | `publisher` | （必須） | ノードを運営する人や組織。1 つ以上の言語の `name` と、`url` |
 | `license` | （必須） | モデルのライセンス。`CC0-1.0` などの SPDX の識別子 |
 | `licenseUrl` | | ライセンスの本文がある URL。無ければ、ページは `license` の SPDX のページにリンクする |
@@ -66,16 +70,18 @@ prerelease: true
 
 `build` と `check` は、`node.yaml` の問題をすべてまとめて示します。
 
+ツールキットは、ほかのノードを https でだけ読みます。そのため、ここの `nodes[].url` と `nodes[].index`、`catalog.yaml` の `extends[].index` は https の URL にします。`http://` のアドレスを書くと、`https://` に変えるようにとエラーが出ます。
+
 ## build が書き出すもの {#build}
 
 ```bash
-npx @geolonia/datamodels@0.3.14 build
-npx @geolonia/datamodels@0.3.14 build my-models --out public
+npx @geolonia/datamodels@0.3.15 build
+npx @geolonia/datamodels@0.3.15 build my-models --out public
 ```
 
 ファイルは、ノードのフォルダーの `_site/` か、`--out` に書き出します。次のパスは、ベース URL の下の URL でもあります。
 
-- `catalog.json`：ノードの索引です。[datamodels.jp のもの](/catalog.json)と同じ形式で、`publisher`、`license`、`nodes` と、各モデルの URL、`extends`、`adapters` を含みます。
+- `catalog.json`：ノードの索引です。[datamodels.jp のもの](/catalog.json)と同じ形式です。`title` と `description`（node.yaml にあるとき）、`publisher`、`license`、`nodes` と、各モデルの URL、`extends`、`adapters` を含みます。
 - `context/<subject>/vX.Y.Z.jsonld` と、メジャーバージョンの別名 `vX.jsonld` です（[URL とバージョン](/guide/urls)）。
 - `vocab/<subject>/vX.Y.Z.jsonld` と `vX.jsonld`：語彙です。
 - `schema/<subject>/<Type>/vX.Y.Z.json` と `vX.json`：JSON Schema です。
@@ -102,7 +108,7 @@ npx @geolonia/datamodels@0.3.14 build my-models --out public
 
 ページは、等幅フォントのプレーンな HTML で、JavaScript を使いません。`curl` でも読めます。
 
-- `/`：分野とそのモデルの一覧です。
+- `/`：ノードのタイトルと説明、分野とそのモデルの一覧です。
 - 分野ごとのページです。ハッシュ IRI では、名前空間の文書 `/ns/<subject>`（ファイルは `ns/<subject>.html`）で、型と属性ごとにアンカーがあります。そのため、どの IRI もこのページで開きます。スラッシュ IRI では `/models/<subject>/` です。
 - モデルごとのページ `/models/<subject>/<Type>/` です。属性ごとのアンカー、対応している標準（`mapping/` から）、注記（`notes.yaml` から）、ダウンロードの行があります。
 - リリースしたバージョンにあり、現在のバージョンに無いモデル（名前を変えたか消したもの）は、元のアドレスにページが残ります。そのページは、モデルがあったバージョンを示し、最後のスキーマと `@context` にリンクします。同じ型の IRI を持つ現在のモデルがあれば、その名前も示します。分野のページには、以前のバージョンが作った用語のアンカーがすべて残ります。

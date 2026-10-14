@@ -10,7 +10,7 @@ Every command of `datamodels`, with its arguments, options, defaults and exit co
 Run a command with `npx` ([Running it](/en/toolkit/#run)):
 
 ```bash
-npx @geolonia/datamodels@0.3.14 search 避難
+npx @geolonia/datamodels@0.3.15 search 避難
 ```
 
 ## For every command {#general}
@@ -114,10 +114,22 @@ Starts a model of this node from a model of another node, such as datamodels.jp'
 | `[model]` | (asked) | The model to extend: `<subject>/<Type>` as in the other node's `catalog.json`, or its type IRI |
 | `[subject/Type]` | (asked) | The new model in this node, such as `road/RoadTask` |
 | `[dir]` | `.` | The node |
-| `--index <URL>` | the first node in `node.yaml`, else `https://datamodels.jp/catalog.json` | The other node's `catalog.json` |
+| `--index <URL>` | for a type IRI, its own node's index when that lists it ([below](#type-iri)); else the first node in `node.yaml`, else `https://datamodels.jp/catalog.json` | Another node's `catalog.json` |
 | `--subclass` | | A subtype with its own type IRI (`x-subclass-of`), instead of the same type with more attributes (`x-alias-of`) |
 
 In a terminal, `extend` asks for the missing model (from a list) and the new name. Elsewhere, a missing one is a usage error.
+
+`extend` reads the other node's index, schema and example only over https from public hosts. It shows which index it read the model from.
+
+### A model given by its type IRI {#type-iri}
+
+For `extend` and `export`:
+
+- Without `--index`, a model given by its type IRI is looked up first on the node that made the IRI. `export` looks at the models of your node before that.
+- That node's index is the part of the IRI before `/ns/`, plus `catalog.json` (https IRIs only).
+- If that index cannot be read within 5 seconds (redirects included), or does not list the model, the default index is used (the first node in `node.yaml`, else datamodels.jp).
+- So the model of the node that made the IRI wins over an alias with the same IRI in the default index. To use the alias, give `--index`, or `<subject>/<Type>` when the alias is in the default index.
+- `export` and `extend` take a model from a catalog only when its type name is UpperCamelCase and its version is x.y.z.
 
 ## check {#check}
 
@@ -254,6 +266,6 @@ Writes files made from one entity model for other tools. Steps: [Exporting to ot
 | `[dir]` | `.` | A node. Without `--index`, its own model is used when it has one |
 | `--to <adapters>` | (required) | One or more of `csv`, `table-schema`, `ai`, `postgis`, comma-separated |
 | `--out <dir>` | `.` | Where to write the files, named `<Type>.<ext>` |
-| `--index <URL>` | the first node in `node.yaml`, else `https://datamodels.jp/catalog.json` | The `catalog.json` to read the model from. When given, the node is not read; without it, the default is used only when the node does not have the model |
+| `--index <URL>` | for a type IRI, its own node's index when that lists it ([above](#type-iri)); else the first node in `node.yaml`, else `https://datamodels.jp/catalog.json` | Another node's `catalog.json`, to read the model from. When given, the node is not read; without it, the default is used only when the node does not have the model |
 
 A missing or unknown `--to` is a usage error. Exit code 1 when the model cannot be read or is a value type, or a file cannot be written.

@@ -29,7 +29,7 @@ adapters/<name>/          files for a particular broker or tool, published under
 site/                     VitePress site; site/models and site/en/models are generated
 scripts/                  validate, build, publish, vocabulary, live check
 public/                   _headers and _redirects (the build appends the generated per-file rules to both)
-node.yaml                 the site's settings as a data model node (address, languages, publisher, licence), in datamodels-toolkit's format
+node.yaml                 the site's settings as a data model node (address, languages, title and description, publisher, licence), in datamodels-toolkit's format
 nodes.yaml                the other nodes datamodels.jp knows
 catalog.schema.json       wire format of /catalog.json
 docs/design.md            design decisions
@@ -70,7 +70,7 @@ Contributions in Japanese or English are welcome as issues or pull requests; see
 The converter is `datamodels convert` in [geolonia/datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) (moved there in #91). It turns a CSV list into entities of a catalog model and validates each one, for example a municipality's 指定緊急避難場所一覧 (自治体標準オープンデータセット 03), or GSI's data, into EvacuationSite:
 
 ```bash
-npx @geolonia/datamodels@0.3.14 convert disaster/EvacuationSite jichitai-opendata-site 092011_evacuation_space.csv --out sites.json
+npx @geolonia/datamodels@0.3.15 convert disaster/EvacuationSite jichitai-opendata-site 092011_evacuation_space.csv --out sites.json
 ```
 
 It reads the mapping files from datamodels.jp (`/mapping/<subject>/<Type>/<name>.yaml`). To try a mapping before it is published, build this repository and add `--site dist`. A list that follows no standard in the catalog is converted with its owner's own mapping file, which `datamodels mapping` starts ([Converting your data](https://datamodels.jp/en/toolkit/convert)).
