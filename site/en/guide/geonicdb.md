@@ -80,8 +80,9 @@ geonic entities list --type RoadRestriction \
 - **Typed dates:** the normalized example writes date-times as `{"@type": "DateTime", "@value": "…"}`. GeonicDB accepts this form from v0.22.0. With an older GeonicDB, and for the examples of Task, Milestone and Project (set `MODEL`, for example `MODEL=task/Task`, and register that model first), turn the typed dates into strings with [jq](https://jqlang.org/). Then send `entity.jsonld` with the second command of step 2 (`curl -X POST … --data @entity.jsonld`; with the CLI: `geonic entities create @entity.jsonld`):
 
   ```bash
-  curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" \
-    | jq 'walk(if type == "object" and has("@value") then .["@value"] else . end)' > entity.jsonld
+  curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" -o typed.jsonld
+  jq 'walk(if type == "object" and has("@value") then .["@value"] else . end)' \
+    typed.jsonld > entity.jsonld
   ```
 
   Task and Milestone (`start`, `due`) and Project (`start`, `end`) need this even with v0.22.0 or later. These values may be a plain date, so the model declares them as text, and a text check does not accept a typed value ([#185](https://github.com/geolonia/datamodels/issues/185)). Your own data can send the plain string, as in `"validFrom": {"type": "Property", "value": "2026-07-08T09:00:00+09:00"}`.
