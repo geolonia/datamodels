@@ -10,7 +10,7 @@ import { attributesOf, subjectUrls, dateFormats } from '../../scripts/lib/models
 // without repeated groups that contain alternatives; this has none.
 // A string check rejects a typed value ({"@type": "Date" | "DateTime", ...}),
 // so these attributes need the plain string until GeonicDB can check "a date
-// or a date-time" (#185). Typed date-times pass datetime after GeonicDB v0.21.0.
+// or a date-time" (#185). Typed date-times pass datetime from GeonicDB v0.22.0 (geonicdb#3368).
 const DATE = '\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])';
 const TIME = 'T(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|[+-](?:[01]\\d|2[0-3]):[0-5]\\d)';
 export const DATE_PATTERN = `^${DATE}$`;
