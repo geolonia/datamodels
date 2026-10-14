@@ -260,8 +260,9 @@ test('search_models finds models by type name, English and Japanese words, and m
   r = await call('search_models', { query: 'address' });
   assert.ok(r.results.some((x) => x.model === 'common/JapaneseAddress'), 'value types are found too');
   const node = index.nodeModels[0];
-  // Named as the pages name it (title, else publisher, else host).
-  assert.equal(node.site, nodeName((await readSnapshot()).nodes.find((n) => n.url === node.siteUrl), 'en'));
+  // Every node model is named as the pages name its node (title, else publisher, else host).
+  const snapshot = await readSnapshot();
+  for (const m of index.nodeModels) assert.equal(m.site, nodeName(snapshot.nodes.find((n) => n.url === m.siteUrl), 'en'), m.siteUrl);
   r = await call('search_models', { query: node.type, limit: 50 });
   assert.ok(r.results.some((x) => x.source === 'node' && x.pageUrl === node.pageUrl), 'a node model is found');
   r = await call('search_models', { query: node.type, limit: 50, include_nodes: false });

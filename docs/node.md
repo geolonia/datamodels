@@ -106,7 +106,7 @@ The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.
 
 **Required at the top:** `formatVersion`, `generatedAt`, `publisher`, `license` (the publisher decides; `datamodels init` suggests CC0, as datamodels.jp uses), `models`.
 
-**Optional at the top:** `title` and `description` (when `node.yaml` has them), `licenseUrl`, `nodes`. The keys come in this order: `formatVersion`, `generatedAt`, `title`, `description`, `publisher`, `license`, `licenseUrl`, `nodes`, `models`.
+**Optional at the top:** `title` and `description` (when `node.yaml` has them: the node's name and what it publishes, each a text in every language of the node; the pages use the title as the site's name, else "Data models by" and the publisher's name; datamodels.jp's catalog.json has both), `licenseUrl`, `nodes`. The keys come in this order: `formatVersion`, `generatedAt`, `title`, `description`, `publisher`, `license`, `licenseUrl`, `nodes`, `models`.
 
 **Required for every model:** `type`, `typeIri`, `subject`, `version`, `status`, `title`, `description`, `contextUrl`, `schemaUrl`, `vocabularyUrl`, `pageUrl`. `title` and `description` have at least one language (`ja`, `en` or another BCP 47 tag).
 
@@ -114,7 +114,6 @@ The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.
 
 **New in a node index:**
 
-- `title` and `description` (at the top, optional): the node's name and what it publishes, each a text in every language of the node, from `node.yaml` (toolkit 0.3.15). The node's pages use the title as the site's name; without it they say "Data models by" and the publisher's name. datamodels.jp's catalog.json has both.
 - `publisher` (required at the top): who runs the node. Name in at least one language, and a URL.
 - `extends` (per model, optional): the models of other nodes this model builds on, by type IRI and version, with the index where they are listed (an https URL, as the toolkit reads other nodes only over https). A model that only adds attributes to another node's model has the same `typeIri` as that model and lists it here; a new subtype has its own `typeIri` and lists its parent in `subClassOf` and `extends`.
 - `nodes` (at the top, optional): other nodes this node knows, by base URL and index URL, both https (the toolkit reads other nodes only over https). This is how the network is found: start at any node and follow `nodes` and `extends`.

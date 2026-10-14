@@ -37,7 +37,7 @@ For a node that is not online yet, `check` cannot compare the published files, s
 
 The exit code is 1 on a problem. Another node that cannot be reached, or does not answer within 20 seconds, is only noted: a node that is down never fails someone else's check. `--offline` skips the published files, the extended models and the schemas on other sites.
 
-`check` reads other nodes' files only over https from public hosts. An address in your node's own files that cannot be read this way is a problem (exit code 1). When a redirect or the host's address is refused, it is only noted.
+`check` reads other nodes' files only over https from public hosts. An address in your node's own files that cannot be read this way is a problem (exit code 1). When a redirect leads to such an address, or the host name points to a private address, it is only noted. So is an address that comes from another node's files.
 
 ## GitHub Action {#action}
 

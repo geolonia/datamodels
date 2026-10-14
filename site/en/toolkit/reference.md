@@ -127,7 +127,7 @@ For `extend` and `export`:
 
 - Without `--index`, a model given by its type IRI is looked up first on the node that made the IRI. `export` looks at the models of your node before that.
 - That node's index is the part of the IRI before `/ns/`, plus `catalog.json` (https IRIs only).
-- If that index cannot be read within 5 seconds (redirects included), or does not list the model, the default index is used.
+- If that index cannot be read within 5 seconds (redirects included), or does not list the model, the default index is used (the first node in `node.yaml`, else datamodels.jp).
 - So the model of the node that made the IRI wins over an alias with the same IRI in the default index. To use the alias, give `--index`, or `<subject>/<Type>` when the alias is in the default index.
 - `export` and `extend` take a model from a catalog only when its type name is UpperCamelCase and its version is x.y.z.
 
