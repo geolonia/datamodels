@@ -11,25 +11,44 @@
   // `npx wrangler preview` and posts the Preview URL (on workers.dev) to the
   // pull request. Previews serve the same static tree; links to machine files
   // point at datamodels.jp, which is where they are published.
-  // `wrangler preview` requires the previews block, even empty: the Worker has
-  // no variables, secrets or bindings that previews would need to override.
+  // `wrangler preview` requires the previews block. Previews do not inherit
+  // bindings, so the rate limit of /mcp is declared again here: a preview is
+  // public on workers.dev too. Same namespace as production, so no other
+  // account-wide namespace ID is needed; a preview and production then share
+  // the 100 requests a minute of one address, which is harmless.
   "preview_urls": true,
-  "previews": {},
+  "previews": {
+    "ratelimits": [
+      { "name": "MCP_LIMITER", "namespace_id": "2230", "simple": { "limit": 100, "period": 60 } }
+    ]
+  },
 
   // Cloudflare serves the built tree directly. `_headers` and `_redirects`
   // inside the directory set the URL contract (content types, CORS, caching,
   // IRI redirects). See public/_headers.
-  // The script runs only for the IRIs (/ns/*): it answers JSON-LD clients with
-  // the subject's vocabulary and passes everything else to the assets (#196).
-  // No other path runs it.
+  // The script runs only for the IRIs (/ns/*) and the MCP server (/mcp): it
+  // answers JSON-LD clients with the subject's vocabulary and passes
+  // everything else under /ns/ to the assets (#196); /mcp answers AI agents
+  // (worker/mcp.mjs, #223) from the built files. No other path runs it, so
+  // only these requests count towards the Workers request quota.
   "main": "worker/index.mjs",
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
-    "run_worker_first": ["/ns/*"],
+    "run_worker_first": ["/ns/*", "/mcp"],
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page"
   },
+
+  // Rate limit for /mcp (worker/limit.mjs): 100 requests a minute per client
+  // address (IPv6 by its /64), counted per Cloudflare location. Deployed with
+  // the Worker; nothing to set up in the dashboard. namespace_id is unique in
+  // the account (1001 is another Worker's). Keep "limit" equal to RATE_LIMIT in
+  // worker/limit.mjs, which names it in the 429 answer, and the same in
+  // "previews" above. Only 10 or 60 are valid periods.
+  "ratelimits": [
+    { "name": "MCP_LIMITER", "namespace_id": "2230", "simple": { "limit": 100, "period": 60 } }
+  ],
 
   // Custom domain: deploying creates the DNS record and certificate in the
   // datamodels.jp zone (same Cloudflare account), so no manual DNS step is needed.

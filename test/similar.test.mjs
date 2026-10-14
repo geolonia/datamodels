@@ -23,6 +23,8 @@ test('words: camelCase split, plural folded, stop words out, Japanese pairs with
 test('a proposal finds the models it may duplicate, best first, and only those', () => {
   const index = modelIndex(CATALOG, NODES);
   assert.ok(!index.some((e) => e.type === 'Geometry'), 'value types are not listed');
+  assert.ok(modelIndex(CATALOG, NODES, { values: true }).some((e) => e.type === 'Geometry'), 'unless asked for (the MCP server, #223)');
+  assert.equal(modelIndex({ models: [{ ...CATALOG.models[2], subject: 'task' }] }, NODES).map((e) => e.key).join(' '), 'task/Task https://models.example.org/#0', 'each entry names its model');
   let r = similarModels(proposalText(BODY('Temporary road closures during heavy rain', '{"roadName": "Yasukuni-dori", "status": "closed"}')), index);
   assert.equal(r[0].entry.type, 'RoadRestriction');
   assert.ok(r[0].matched.includes('road'));

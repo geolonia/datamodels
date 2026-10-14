@@ -26,10 +26,12 @@
     "site:dev": "node scripts/generate-pages.mjs && vitepress dev site"
   },
   "devDependencies": {
+    "@cfworker/json-schema": "4.1.1",
     "@dagrejs/dagre": "^3.1.1",
     "@fontsource/ibm-plex-mono": "5.3.0",
     "@fontsource/ibm-plex-sans": "5.3.0",
     "@geolonia/datamodels": "0.3.14",
+    "@modelcontextprotocol/server": "2.2.0",
     "@panzoom/panzoom": "4.6.2",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
@@ -41,7 +43,8 @@
     "vitepress": "2.0.0-alpha.20",
     "vue": "^3.5.43",
     "wrangler": "4.144.0",
-    "yaml": "^2.9.1"
+    "yaml": "^2.9.1",
+    "zod": "4.6.5"
   },
   "overrides": {
     "miniflare": {

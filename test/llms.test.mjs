@@ -50,3 +50,9 @@ test('every English guide and toolkit page is listed', async () => {
 test('the adapters page is listed, as the explanation of the files and where to get them', () => {
   assert.match(txt, /- \[Adapters\]\(https:\/\/datamodels\.jp\/en\/adapters\/\): .*how to use it and where to get it/);
 });
+
+test('the MCP server is named, with its URL, its four tools and how to connect', () => {
+  assert.match(txt, /^MCP server for AI agents: https:\/\/datamodels\.jp\/mcp \(/m);
+  for (const tool of ['search_models', 'get_model', 'find_attribute', 'validate']) assert.ok(txt.includes(`${tool} (`), tool);
+  assert.ok(txt.includes(`${BASE_URL}/en/ai#mcp-server`));
+});

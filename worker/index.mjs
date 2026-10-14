@@ -1,6 +1,10 @@
+// Two jobs, the only paths that run this script (wrangler.jsonc, run_worker_first):
+//   /mcp   the MCP server for AI agents (worker/mcp.mjs, #223)
+//   /ns/*  content negotiation, below
+//
 // Content negotiation for the catalog's IRIs (/ns/<subject>/ and
-// /ns/<subject>/<Term>, #196). wrangler.jsonc runs this script for /ns/* only;
-// every other path is served as static assets without it.
+// /ns/<subject>/<Term>, #196). Every path other than /ns/* and /mcp is served
+// as static assets without this script.
 //
 // A browser gets what it got before: the 302 from _redirects to the
 // documentation page. A client that prefers JSON-LD gets a 303 See Other to
@@ -9,6 +13,7 @@
 // an IRI that names a thing rather than a document
 // (https://www.w3.org/TR/cooluris/). Only IRIs the catalog knows are answered
 // that way: an unknown /ns/ path stays a 404.
+import { handleMcp, MCP_PATH } from './mcp.mjs';
 
 /** The quality (0 to 1) the Accept header gives each media type; a wildcard is not counted. */
 function qualities(accept) {
@@ -43,6 +48,9 @@ async function subjectMajor(env, request, subject) {
 
 export default {
   async fetch(request, env) {
+    let path = null;
+    try { path = new URL(request.url).pathname; } catch { /* the assets answer it, as before */ }
+    if (path === MCP_PATH) return handleMcp(request, env);
     const res = await env.ASSETS.fetch(request);
     // Any error below falls back to the static answer, so the IRIs are never
     // worse off than without this script.
