@@ -33,7 +33,7 @@ description: datamodels.jp の作成での AI の使い方と、AI エージェ�
 - `find_attribute`: 再利用できる既存の属性を、名前か意味で探します。
 - `validate`: 1 つのエンティティを、モデルで検証します。key-values の形の JSON でも、NGSI-LD の normalized の形でも構いません。
 
-使うには、MCP クライアントの設定に追加します。リモートのサーバー（Streamable HTTP）を扱えるクライアントでは、たとえば次のように書きます。
+使うには、MCP クライアントの設定に追加します。リモートのサーバー（Streamable HTTP）を扱えるクライアントが対象です。Claude Code（`.mcp.json`）と Cursor（`.cursor/mcp.json`）では、次のように書きます。
 
 ```json
 {
@@ -46,4 +46,4 @@ description: datamodels.jp の作成での AI の使い方と、AI エージェ�
 }
 ```
 
-Claude Code では `claude mcp add --transport http datamodels https://datamodels.jp/mcp` で追加できます。
+VS Code（`.vscode/mcp.json`）では、同じ内容を `"mcpServers"` ではなく `"servers"` の下に書きます。Claude Code では、`claude mcp add --transport http datamodels https://datamodels.jp/mcp` でも追加できます。Claude Desktop と claude.ai では、コネクタの設定でカスタムコネクタとして追加します。URL は `https://datamodels.jp/mcp` です。

@@ -157,10 +157,29 @@ if (r.ok) {
   }
 }
 
+// The MCP server (/mcp, worker/mcp.mjs): the handshake and the four tools, on
+// every origin, previews included (they run the same Worker). Two requests of
+// the 100 a minute the rate limit allows.
+const MCP_TOOLS = ['find_attribute', 'get_model', 'search_models', 'validate'];
+const mcp = (body, headers = {}) => fetch(`${origin}/mcp`, { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json, text/event-stream', ...headers }, body: JSON.stringify(body) });
+/** The JSON-RPC answer, sent as JSON or as one SSE event. */
+const mcpMessage = async (res) => {
+  const text = await res.text();
+  return JSON.parse((res.headers.get('content-type') ?? '').includes('text/event-stream') ? text.split('\n').find((l) => l.startsWith('data:')).slice(5) : text);
+};
+try {
+  const init = await mcp({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'check-live', version: '1' } } });
+  const serverName = init.ok ? (await mcpMessage(init)).result?.serverInfo?.name : undefined;
+  expect(serverName === 'datamodels.jp', `${origin}/mcp: initialize ${init.status}, server ${serverName}`);
+  const list = await mcp({ jsonrpc: '2.0', id: 2, method: 'tools/list' });
+  const tools = list.ok ? ((await mcpMessage(list)).result?.tools ?? []).map((t) => t.name).sort() : [];
+  expect(JSON.stringify(tools) === JSON.stringify(MCP_TOOLS), `${origin}/mcp: tools/list ${list.status}, tools ${tools.join(', ') || 'none'}, expected ${MCP_TOOLS.join(', ')}`);
+} catch (e) { failures.push(`${origin}/mcp: ${e.message}`); }
+
 // Machine clients: tools that fetch contexts with Python's urllib (rdflib and
 // others) send "Python-urllib/3.x", which Cloudflare's Browser Integrity Check
 // blocks by default (error 1010). A configuration rule on the datamodels.jp
-// zone turns the check off for the machine-readable paths and /llms.txt; this
+// zone turns the check off for the machine-readable paths, /llms.txt and /mcp; this
 // catches it if that rule goes missing. Other origins (workers.dev previews)
 // keep Cloudflare's default and are skipped unless CHECK_MACHINE_UA=1.
 if (origin === BASE_URL || process.env.CHECK_MACHINE_UA === '1') {
@@ -182,6 +201,11 @@ if (origin === BASE_URL || process.env.CHECK_MACHINE_UA === '1') {
       expect(r.status === 200, `${swap(url)}: ${r.status} for user agent Python-urllib (Browser Integrity Check rule for machine-readable paths missing?)`);
     } catch (e) { failures.push(`${swap(url)}: ${e.message} for user agent Python-urllib`); }
   }
+  // MCP clients written in Python (the official Python SDK uses httpx; others use urllib) pass the same rule.
+  try {
+    const r = await mcp({ jsonrpc: '2.0', id: 3, method: 'tools/list' }, { 'user-agent': 'Python-urllib/3.13' });
+    expect(r.status === 200, `${origin}/mcp: ${r.status} for user agent Python-urllib (is /mcp in the Browser Integrity Check rule? docs/deployment.md)`);
+  } catch (e) { failures.push(`${origin}/mcp: ${e.message} for user agent Python-urllib`); }
 }
 
 // A current release's files are also the exact versions checked above, so a failure can repeat.

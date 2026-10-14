@@ -29,11 +29,11 @@ Machine-readable files (schemas, @context files, vocabularies, examples) can be 
 An agent that cannot open web pages or this repository can still use the catalog, through MCP (Model Context Protocol). The server is at `https://datamodels.jp/mcp`. It needs no login, only reads, and answers from the files of this site.
 
 - `search_models`: find models by words, in English or Japanese.
-- `get_model`: one model: its JSON Schema with the schemas it refers to, the @context URL, an example, every attribute with its IRI, and the URLs of its files.
+- `get_model`: returns one model, with its JSON Schema (including the schemas it refers to), the @context URL, an example, every attribute with its IRI, and the URLs of its files.
 - `find_attribute`: find an existing attribute to reuse, by its name or its meaning.
 - `validate`: check one entity, plain JSON (key-values) or NGSI-LD normalized, against a model.
 
-Add it to an MCP client that supports remote servers (Streamable HTTP). For example:
+Add it to an MCP client that supports remote servers (Streamable HTTP). In Claude Code (`.mcp.json`) and Cursor (`.cursor/mcp.json`), the entry is:
 
 ```json
 {
@@ -46,4 +46,4 @@ Add it to an MCP client that supports remote servers (Streamable HTTP). For exam
 }
 ```
 
-In Claude Code: `claude mcp add --transport http datamodels https://datamodels.jp/mcp`.
+VS Code (`.vscode/mcp.json`) takes the same entry under `"servers"` instead of `"mcpServers"`. Claude Code can also add it with `claude mcp add --transport http datamodels https://datamodels.jp/mcp`. In Claude Desktop and on claude.ai, add it under Connectors, as a custom connector with the URL `https://datamodels.jp/mcp`.
