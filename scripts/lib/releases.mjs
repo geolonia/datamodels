@@ -1,26 +1,23 @@
 // Published exact versions live on in models/<subject>/releases/<version>/ as
 // committed snapshots, so the build can keep serving every version ever
-// published while models/ moves on. `npm run manifest:record` writes the
-// snapshot for the current version; publish copies every snapshot into dist/.
+// published while models/ moves on. `npx datamodels release <subject>` writes
+// the snapshot for the current version; publish copies every snapshot into dist/.
 //
 //   models/<subject>/releases/v1.0.0/context.jsonld
 //   models/<subject>/releases/v1.0.0/vocab.jsonld
 //   models/<subject>/releases/v1.0.0/schema/<Type>.json
 import { readFile } from 'node:fs/promises';
-import { snapshotRelease as tkSnapshot, verifyRelease as tkVerify, listReleases as tkList } from '@geolonia/datamodels/build';
+import { verifyRelease as tkVerify, listReleases as tkList } from '@geolonia/datamodels/build';
 import { BASE_URL, URLS, NODE } from './models.mjs';
 
 // The toolkit's release snapshots (#226), with the settings of node.yaml.
 const options = { urls: URLS, languages: NODE.languages };
 
-/** Write the snapshot of the subject's current version (idempotent). */
-export const snapshotRelease = (subject) => tkSnapshot(subject, options);
-
 /**
- * Read-only counterpart for CI: the snapshot of the current version, when it
- * exists, must hold exactly what the sources produce. `recorded` says whether
- * this version's files are already published: a missing snapshot is only
- * acceptable before that. Returns a list of problems.
+ * The snapshot of the current version, when it exists, must hold exactly what
+ * the sources produce. `recorded`: whether the version must have a snapshot
+ * already (the toolkit's option; datamodels check --all-released asks the
+ * same). Returns a list of problems.
  */
 export const verifyRelease = (subject, { recorded = false } = {}) => tkVerify(subject, options, { recorded });
 

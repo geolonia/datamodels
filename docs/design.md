@@ -98,8 +98,8 @@ https://datamodels.jp/adapters/<name>/<subject>/<Type>.<ext>  adapter output (.j
 
 Contract:
 
-1. **Immutability.** A published exact-version file never changes and is never removed. `published-manifest.json` records its SHA-256; CI fails on any change, and `npm run check:live` compares the served bytes after every deploy.
-2. **Headers.** `.jsonld` as `application/ld+json`, schemas as `application/schema+json`, CORS open, `Cache-Control: public, max-age=31536000, immutable` for exact versions and a short max-age for aliases. During the pre-release, when exact versions may still be corrected in place, the build gives them the aliases' short max-age instead (`"prerelease"` in `published-manifest.json`, `scripts/lib/cache.mjs`).
+1. **Immutability.** A published exact-version file never changes and is never removed. Every published version is a release snapshot in `models/<subject>/releases/`; CI fails when a snapshot differs from the sources, when the current version has none, or when a pull request changes or removes a published version (`datamodels check --base --all-released`, compared with main and with the live site), and `npm run check:live` compares the served bytes after every deploy. When the live site cannot be reached, the pull request check still compares the snapshots with main and notes that the online comparison was skipped. The hash manifest that did this before was retired on 2026-10-14, after its 28 hashes were found equal to the snapshots (#226).
+2. **Headers.** `.jsonld` as `application/ld+json`, schemas as `application/schema+json`, CORS open, `Cache-Control: public, max-age=31536000, immutable` for exact versions and a short max-age for aliases. During the pre-release, when exact versions may still be corrected in place, the build gives them the aliases' short max-age instead (`prerelease` in `node.yaml`, `scripts/lib/cache.mjs`).
 3. **Term IRIs resolve** to the documenting page, and the namespace IRI to the subject page. No content negotiation in 1.0.0.
 4. **Term IRIs never change meaning.** A breaking change mints a new IRI; the old one stays published and documented.
 5. **Upstream IRIs are never re-minted.**
@@ -127,7 +127,7 @@ A context is an array that lists other contexts by URL and adds inline terms, so
 
 A profile of an upstream model imports the upstream context the same way, by a commit-pinned URL (`https://raw.githubusercontent.com/smart-data-models/dataModel.<Domain>/<commit>/context.jsonld`), never `master`.
 
-A byte-identical pinned mirror under `/context/mirror/<subject>/<commit>.jsonld` is possible for users who cannot depend on GitHub availability; it is covered by the immutability manifest but not needed for 1.0.0.
+A byte-identical pinned mirror under `/context/mirror/<subject>/<commit>.jsonld` is possible for users who cannot depend on GitHub availability; it would need a guard of its own, and is not needed for 1.0.0.
 
 ## Repository layout
 
@@ -140,7 +140,7 @@ models/<subject>/
     examples/               example.json (key-values), example-normalized.jsonld
     mapping/*.yaml          correspondence to external standards, rendered on the page, published at /mapping/<subject>/<Type>/
 adapters/<name>/            broker- or tool-specific output; the core never imports it
-scripts/                    validate, build, publish, vocabulary, immutability, live check
+scripts/                    validate, build, publish, live check (the rest is datamodels-toolkit)
 site/                       VitePress; model pages are generated
 docs/design.md              this document
 ```
@@ -153,17 +153,17 @@ CI on every pull request validates:
 - context coverage of every attribute, no redefinition of core terms, unique type IRIs, alias equality and subclass consistency;
 - the vocabulary's subclass relations;
 - no product-specific keys in schemas;
-- immutability of every published file; then a dry-run deploy.
+- every published version against its release snapshot; then a dry-run deploy.
 
 Every validator rule has a test proving that it fires.
 
 ## Versioning and lifecycle
 
 - One semantic version per subject, shared by its context, vocabulary and schemas. Adding attributes is a minor version; renaming or removing is a major version. Superseded attributes are marked `x-deprecated` for at least one minor version.
-- `npm run manifest:record` snapshots the version into `releases/` and records its hashes; every published version keeps being served.
+- `npx datamodels release <subject>` snapshots the version into `releases/`; every published version keeps being served.
 - Every model carries a status: `draft`, `experimental`, `stable` or `deprecated`. `experimental` (in use, to learn from, may be replaced) is the same stage as on the other nodes of the web of data models; on datamodels.jp it will be rare (decided 2026-10-10, #200). A model becomes `stable` once implementations from two different organisations are recorded in its `ADOPTERS.yaml`. Separate systems, customers or tenants of one organisation count as one. Entries are self-reported with a link; CI checks for two different organisations with a url, and the reviewer of the promoting pull request checks that they are real and independent (decided 2026-09-28, #38). The operator, Geolonia, may be one of the two on the same terms, and the other must be a different organisation; one organisation counts once, whatever the customer (decided 2026-09-30, #125). There is no `retired` status: a deprecated model stays published.
 - Pre-release history on models.geonicdb.com (2026-09-17 to 2026-09-24) was dropped: every subject restarted at 1.0.0 on `datamodels.jp`, with all models as drafts.
-- The catalog stays in pre-release until the official launch: the site shows a banner, and published files, `v1.0.0` included, may still be corrected in place under the README's documented procedure. CI compares `published-manifest.json` with main's (#76): during the pre-release it lists in-place corrections, and once the official launch sets `"prerelease": false` it rejects any changed or removed entry. The banner and the README exception are removed at the launch. The rules as a site page: /guide/urls#versions.
+- The catalog stays in pre-release until the official launch: the site shows a banner, and published files, `v1.0.0` included, may still be corrected in place under the README's documented procedure. CI compares the published versions with main's (#76, `datamodels check --base` since #226): during the pre-release it lists in-place corrections, and once the official launch sets `prerelease: false` in `node.yaml` it rejects any changed or removed published file. The banner and the README exception are removed at the launch. The rules as a site page: /guide/urls#versions.
 - Decided 2026-09-24, under the pre-release exception: `DisasterEvent`, `IncidentReport`, `IncidentResponseAction`, `IncidentHandoverNote` and `IncidentPhoto` were removed from `disaster` 1.0.0 in place, without a version bump, because none of them had an external standard behind it. The catalog publishes models built on an existing standard or guideline; `RoadClosure` and `EvacuationShelter` stay and are rebuilt on national guidelines. On 2026-09-25, also in place, `RoadClosure` moved to a new `transportation` subject as `RoadRestriction` (`closureStatus` → `restrictionStatus`), since with the national restriction categories it is no longer specific to disasters (#55).
 
 ## Adapters

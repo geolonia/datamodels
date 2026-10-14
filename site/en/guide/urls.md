@@ -27,7 +27,7 @@ Servers and brokers may keep a copy: the version alias for 5 minutes, so a new c
 
 ## The promises
 
-1. **A published versioned file is never changed or removed.** `/context/<subject>/v1.0.0.jsonld` stays the same forever. CI records a hash of every file and rejects a change to one.
+1. **A published versioned file is never changed or removed.** `/context/<subject>/v1.0.0.jsonld` stays the same forever. On every pull request, CI compares the published files with the main branch and with the live site, and rejects a change to one.
 2. **The meaning of an attribute never changes.** When it must, the catalog adds a new attribute and marks the old one deprecated.
 3. **Type and attribute IRIs lead to documentation.** Opening `https://datamodels.jp/ns/transportation/RoadRestriction` in a browser shows the type's page. A program that asks for JSON-LD (`Accept: application/ld+json`) is sent to the subject's vocabulary instead (`/vocab/transportation/v1.jsonld`), which defines the type with its labels and description.
 

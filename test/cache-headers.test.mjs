@@ -1,5 +1,5 @@
-// Generated Cache-Control rules for exact versions: short while the manifest
-// says "prerelease": true, immutable for a year after the launch.
+// Generated Cache-Control rules for exact versions: short while node.yaml
+// says prerelease: true, immutable for a year after the launch.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -29,8 +29,8 @@ test('pre-release: exact versions get the short cache, detached from the glob ru
 });
 
 test('launched: exact versions are immutable for a year', () => {
-  for (const manifest of [{ prerelease: false }, {}]) {
-    const rules = parse(exactVersionHeaderRules(paths, manifest));
+  for (const node of [{ prerelease: false }, {}]) {
+    const rules = parse(exactVersionHeaderRules(paths, node));
     assert.equal(rules.size, 2);
     for (const lines of rules.values()) assert.deepEqual(lines, ['! Cache-Control', `Cache-Control: ${IMMUTABLE_CACHE}`]);
   }

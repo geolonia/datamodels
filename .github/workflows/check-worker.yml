@@ -20,7 +20,8 @@ jobs:
   check:
     name: Build and dry-run deploy
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    # Room for the online comparison with datamodels.jp (20 s per request) when the site is slow.
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -45,19 +46,21 @@ jobs:
       - name: Lint the Japanese pages
         run: npm run lint:ja
 
-      # Validates models, builds dist/, checks immutability and runs
+      # Validates models, builds dist/, checks the release snapshots and runs
       # `wrangler deploy --dry-run`, which validates wrangler.jsonc and the
       # assets directory without touching Cloudflare.
       - name: Validate, build and dry-run deploy
         run: npm run check
 
-      # A pull request must not rewrite or drop a recorded (published) file.
-      # Before the official launch, in-place corrections are listed in the job
-      # summary instead of failing ("prerelease" in published-manifest.json).
-      - name: Compare the manifest with the base branch
+      # A pull request must not change or drop a published version (a release
+      # snapshot in models/<subject>/releases/), on GitHub or online, and every
+      # current version has its snapshot. Before the official launch, in-place
+      # corrections are notes instead of failures (prerelease: true in node.yaml,
+      # also on the base branch).
+      - name: Compare the published versions with the base branch
         if: github.event_name == 'pull_request'
         env:
           BASE_REF: ${{ github.base_ref }}
         run: |
           git fetch --no-tags --depth=1 origin "+refs/heads/$BASE_REF:refs/remotes/origin/$BASE_REF"
-          node scripts/check-manifest-base.mjs --base "origin/$BASE_REF"
+          npx datamodels check . --base "origin/$BASE_REF" --all-released
