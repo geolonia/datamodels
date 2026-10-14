@@ -33,6 +33,10 @@ const ABOUT_URL = `${BASE}/en/ai`;
 export const MAX_BODY_BYTES = 64 * 1024;
 /** At most this many problems are listed; the count says how many there were. */
 export const MAX_PROBLEMS = 20;
+/** Most keys one object of an entity may have; no model has more than a few dozen attributes. */
+export const MAX_KEYS = 1000;
+/** Deepest nesting of an entity: real ones (a MultiPolygon in a normalized attribute) stay under 10. */
+export const MAX_DEPTH = 64;
 const MAX_TEXT = 200;
 
 const CORS = {
@@ -134,7 +138,12 @@ export async function searchModels(env, { query, limit = 10, include_nodes = tru
   const cat = await catalog(env);
   if (query.trim() === '*') return { results: cat.models.map((m) => ({ model: m.id, kind: m.kind, status: m.status, title: m.title })) };
   const entries = include_nodes ? cat.search : cat.search.filter((e) => !e.node);
-  const found = similarModels(query, entries, { limit, min: 1 });
+  let found = similarModels(query, entries, { limit, min: 1 });
+  // A word of one Japanese character (駅) or two letters has no search words: look for it in the titles.
+  if (!found.length) {
+    const q = query.trim().toLowerCase();
+    found = entries.filter((e) => Object.values(e.model.title ?? {}).some((t) => String(t).toLowerCase().includes(q))).slice(0, limit).map((entry) => ({ entry, matched: [query.trim()] }));
+  }
   const results = found.map((r) => ({ ...(r.entry.node ? nodeSummary(r.entry.model) : summary(r.entry.model)), matched: r.matched }));
   return results.length ? { results } : { results, note: 'No model matched. Try other words (English or Japanese), or "*" to list every model.' };
 }
@@ -179,10 +188,17 @@ export async function findAttribute(env, { query, limit = 10 }) {
       matched.push(w);
     }
     return { a, score, matched };
-  }).filter((r) => r.score > 0)
+  }).filter((r) => r.score > 0);
+  // A word of one Japanese character or two letters has no search words: look for it in the names and descriptions.
+  if (!scored.length) {
+    for (const a of cat.attributes) {
+      if ([a.name, ...Object.values(a.description ?? {})].some((t) => String(t).toLowerCase().includes(lower))) scored.push({ a, score: 1, matched: [q] });
+    }
+  }
+  const ranked = scored
     .sort((x, y) => y.score - x.score || y.a.models.length - x.a.models.length || x.a.name.localeCompare(y.a.name))
     .slice(0, limit);
-  const results = scored.map(({ a, matched }) => ({
+  const results = ranked.map(({ a, matched }) => ({
     name: a.name, ...(a.iri ? { iri: a.iri } : {}), ...(a.ngsiType ? { ngsiType: a.ngsiType } : {}), ...(a.type ? { type: a.type } : {}),
     description: a.description, models: a.models, ...(a.nodeModels ? { nodeModels: a.nodeModels } : {}), ...(matched.length ? { matched } : {}),
   }));
@@ -205,6 +221,26 @@ function unclosedRings(value, path = '') {
   return out;
 }
 
+const TOO_DEEP = `the entity is nested too deeply (at most ${MAX_DEPTH} levels)`;
+
+/**
+ * Why an entity is refused before it is checked, or null: an object with more
+ * than MAX_KEYS keys, or nesting deeper than MAX_DEPTH. A walk with its own
+ * stack, so a deep entity cannot exhaust the call stack here.
+ */
+function shapeProblem(entity) {
+  const stack = [[entity, 1, '']];
+  while (stack.length) {
+    const [v, depth, path] = stack.pop();
+    if (!v || typeof v !== 'object') continue;
+    if (depth > MAX_DEPTH) return TOO_DEEP;
+    const keys = Object.keys(v);
+    if (!Array.isArray(v) && keys.length > MAX_KEYS) return `${path || 'the entity'} has ${keys.length} keys; at most ${MAX_KEYS} are accepted`;
+    for (const k of keys) stack.push([v[k], depth + 1, `${path}/${k}`]);
+  }
+  return null;
+}
+
 /** True when an entity is in the normalized form: an attribute is an NGSI-LD attribute object. */
 function looksNormalized(entity) {
   return Object.entries(entity).some(([k, v]) => k !== 'id' && k !== 'type' && k !== '@context'
@@ -223,16 +259,17 @@ const EXTRA = /^Property "(.+)" does not match additional properties schema\.$/;
  * sees it as not evaluated); that report is dropped when the attribute has
  * errors of its own, and a real extra attribute is named as one.
  */
-function readableErrors(errors) {
+export function readableErrors(errors) {
   const all = errors.map((e) => ({ path: e.instanceLocation.replace(/^#/, '') || '/', message: e.error, keyword: e.keyword }));
+  // The paths that have errors of their own, built once: a lookup per error keeps this linear.
+  const owned = new Set(all.filter((x) => x.keyword !== 'false').map((x) => x.path));
   const out = [];
   for (const e of all) {
     if (e.keyword === 'false') continue;
     const extra = e.keyword === 'additionalProperties' && EXTRA.exec(e.message);
     if (extra) {
       const path = `${e.path === '/' ? '' : e.path}/${extra[1]}`;
-      const below = all.filter((x) => x.path === path && x.keyword !== 'false');
-      if (!below.length) out.push({ path, message: `"${extra[1]}" is not an attribute here: the schema allows no other properties` });
+      if (!owned.has(path)) out.push({ path, message: `"${extra[1]}" is not an attribute here: the schema allows no other properties` });
       continue;
     }
     if (!WRAPPERS.has(e.keyword) && !/^A subschema had errors\.$/.test(e.message)) out.push(e);
@@ -247,9 +284,20 @@ export async function validate(env, { model, entity, form }) {
   const m = found.model;
   let data = entity;
   if (typeof data === 'string') {
-    try { data = JSON.parse(data); } catch (e) { return { error: `entity is not valid JSON: ${e.message}` }; }
+    try { data = JSON.parse(data); } catch (e) { return { error: e instanceof RangeError ? TOO_DEEP : `entity is not valid JSON: ${e.message}` }; }
   }
   if (!isObject(data)) return { error: `entity must be one JSON object ({ ... }), got ${data === null ? 'null' : Array.isArray(data) ? 'an array' : typeof data}` };
+  const shape = shapeProblem(data);
+  if (shape) return { error: shape };
+  try {
+    return await check(env, m, data, form);
+  } catch (e) {
+    if (e instanceof RangeError) return { error: TOO_DEEP };
+    throw e;
+  }
+}
+
+async function check(env, m, data, form) {
   const usedForm = form ?? (looksNormalized(data) ? 'normalized' : 'key-values');
   if (usedForm === 'normalized' && m.kind === 'value') return { error: `${m.id} is a value type: it has only the key-values form` };
   const { root, refs } = await bundled(env, m);
@@ -258,6 +306,9 @@ export async function validate(env, { model, entity, form }) {
 
   let kv = data;
   if (usedForm === 'normalized') {
+    // The toolkit's toKeyValues drops an own "__proto__" key (it assigns with out[k] = ...),
+    // so it is reported here, before the projection, as the key-values check reports it.
+    if (Object.hasOwn(data, '__proto__')) problems.push({ path: '/__proto__', message: `"__proto__" is not an attribute of ${m.type}` });
     // The same rules as CI (the toolkit's example check): the declared attribute types, x-ngsi.multi, typed dates.
     for (const [name, prop] of Object.entries(root.properties ?? {})) {
       if (name === 'id' || name === 'type' || name === '@context' || !Object.hasOwn(data, name)) continue;
@@ -308,7 +359,11 @@ const modelArg = z.string().min(1).max(MAX_TEXT).describe('The model: its type n
 export function createServer(env) {
   const server = new McpServer(
     { name: 'datamodels.jp', title: 'datamodels.jp data models', version: '1.0.0', websiteUrl: ABOUT_URL },
-    { instructions: 'Data models that work in Japan (JSON Schema, JSON-LD @context, NGSI-LD). Find a model with search_models, read it with get_model, reuse attribute names with find_attribute, and check data with validate. Every answer is JSON; URLs are on https://datamodels.jp.' },
+    {
+      // The tool list never changes.
+      capabilities: { tools: { listChanged: false } },
+      instructions: 'Data models that work in Japan (JSON Schema, JSON-LD @context, NGSI-LD). Find a model with search_models, read it with get_model, reuse attribute names with find_attribute, and check data with validate. Every answer is JSON; URLs are on https://datamodels.jp.',
+    },
   );
   const tool = (fn) => async (args) => {
     const out = await fn(env, args);
@@ -345,10 +400,11 @@ export function createServer(env) {
   }, tool(findAttribute));
   server.registerTool('validate', {
     title: 'Validate an entity',
-    description: `Check one entity against a model's JSON Schema, as the catalog's CI does. The entity may be plain JSON (key-values) or NGSI-LD normalized; the form is detected unless given. Returns valid true or false and the problems, each with its JSON path (at most ${MAX_PROBLEMS} listed). The request may be at most ${MAX_BODY_BYTES / 1024} KiB.`,
+    description: `Check one entity against a model's JSON Schema, as the catalog's CI does. The entity may be plain JSON (key-values) or NGSI-LD normalized; the form is detected unless given. Returns valid true or false and the problems, each with its JSON path (at most ${MAX_PROBLEMS} listed). The request may be at most ${MAX_BODY_BYTES / 1024} KiB, with at most ${MAX_KEYS} keys in one object and ${MAX_DEPTH} levels of nesting.`,
     inputSchema: z.object({
       model: modelArg,
-      entity: z.union([z.looseObject({}).meta({ additionalProperties: true }), z.string()]).describe('The entity: a JSON object, or a string with the JSON text.'),
+      // z.any() passes the object on as it came (a copy would drop an own "__proto__" key); the meta is its JSON Schema.
+      entity: z.union([z.string(), z.any().refine(isObject, { message: 'must be a JSON object' }).meta({ type: 'object', additionalProperties: true })]).describe('The entity: a JSON object, or a string with the JSON text.'),
       form: z.enum(['key-values', 'normalized']).optional().describe('The form of the entity; detected when left out.'),
     }),
     annotations: READ_ONLY,
@@ -357,6 +413,33 @@ export function createServer(env) {
 }
 
 const handlers = new WeakMap();
+
+/**
+ * Requests to /mcp per minute from one address: "limit" of the MCP_LIMITER
+ * binding in wrangler.jsonc, named in the 429 answer. There is no login, so
+ * the client's IP address is the only key. Cloudflare counts per location
+ * and approximately; 100 a minute
+ * leaves room for an office behind one address, while a loop is stopped. No
+ * binding (the tests, a local run without it): no limit. A failing limiter
+ * lets the request through, as the data is public and the tools only read.
+ */
+export const RATE_LIMIT = 100;
+async function allowed(request, env) {
+  if (!env.MCP_LIMITER) return true;
+  try {
+    const { success } = await env.MCP_LIMITER.limit({ key: request.headers.get('cf-connecting-ip') ?? 'unknown' });
+    return success !== false;
+  } catch (e) {
+    console.error('mcp: rate limiter:', e);
+    return true;
+  }
+}
+
+/** The first byte that is not JSON whitespace, or -1. */
+function firstByte(bytes) {
+  for (const b of bytes) if (b !== 0x20 && b !== 0x09 && b !== 0x0a && b !== 0x0d) return b;
+  return -1;
+}
 const jsonRpcError = (status, code, message, headers = {}) => Response.json({ jsonrpc: '2.0', error: { code, message }, id: null }, { status, headers: { ...CORS, ...headers } });
 
 /** The body, or null when it is larger than `max` bytes (read as a stream, so a large body is never held). */
@@ -382,14 +465,32 @@ export async function handleMcp(request, env) {
   if (request.method !== 'POST') {
     return jsonRpcError(405, -32000, `Method not allowed. This is an MCP server (Streamable HTTP, stateless): send JSON-RPC messages with POST. About it: ${ABOUT_URL}`, { allow: 'POST, OPTIONS' });
   }
+  if (!(await allowed(request, env))) {
+    return jsonRpcError(429, -32000, `Too many requests: at most ${RATE_LIMIT} a minute from one address. Try again in a minute.`, { 'retry-after': '60' });
+  }
   const tooLarge = () => jsonRpcError(413, -32600, `The request is larger than ${MAX_BODY_BYTES} bytes.`);
   if (Number(request.headers.get('content-length') ?? 0) > MAX_BODY_BYTES) return tooLarge();
   try {
     const body = await readBody(request, MAX_BODY_BYTES);
     if (body === null) return tooLarge();
+    // MCP dropped JSON-RPC batches in revision 2025-06-18; the SDK would still take 100 calls in one request.
+    if (firstByte(body) === 0x5b) return jsonRpcError(400, -32600, 'JSON-RPC batches are not supported: send one message per request.');
     let handler = handlers.get(env.ASSETS);
-    if (!handler) handlers.set(env.ASSETS, (handler = createMcpHandler(() => createServer(env))));
-    const res = await handler.fetch(new Request(request.url, { method: 'POST', headers: request.headers, body }));
+    if (!handler) {
+      handler = createMcpHandler(() => createServer(env), {
+        // Internal errors are logged; a refused listen (below) is expected and is not.
+        onerror: (e) => { if (!/subscriptions\/listen refused/.test(e?.message ?? '')) console.error('mcp:', e); },
+        // Nothing is ever published to subscribers (the tool list is fixed), so no listen stream is opened.
+        maxSubscriptions: 0,
+        maxRequestBodySize: MAX_BODY_BYTES,
+      });
+      handlers.set(env.ASSETS, handler);
+    }
+    const headers = new Headers(request.headers);
+    // The transport answers 406 unless Accept names both types; a client that accepts anything gets the answer too.
+    const accept = headers.get('accept') ?? '';
+    if (!accept.includes('text/event-stream') || !/application\/json|\*\/\*/.test(accept)) headers.set('accept', 'application/json, text/event-stream');
+    const res = await handler.fetch(new Request(request.url, { method: 'POST', headers, body, signal: request.signal }));
     const out = new Response(res.body, res);
     for (const [k, v] of Object.entries(CORS)) out.headers.set(k, v);
     return out;

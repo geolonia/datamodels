@@ -10,7 +10,7 @@ import { join } from 'node:path';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import worker from '../worker/index.mjs';
-import { MAX_BODY_BYTES, MAX_PROBLEMS } from '../worker/mcp.mjs';
+import { MAX_BODY_BYTES, MAX_PROBLEMS, MAX_KEYS, MAX_DEPTH, RATE_LIMIT, readableErrors } from '../worker/mcp.mjs';
 import { loadSubjects, BASE_URL } from '../scripts/lib/models.mjs';
 import { publishModels } from '../scripts/lib/publish.mjs';
 import { readNodeList, readSnapshot } from '../scripts/lib/nodes.mjs';
@@ -73,12 +73,59 @@ test('GET, HEAD, PUT and DELETE get 405 with Allow; OPTIONS answers CORS', async
   assert.match(r.headers.get('access-control-allow-headers'), /MCP-Protocol-Version/);
 });
 
-test('a body that is not JSON is a parse error; another content type is refused', async () => {
+test('a body that is not JSON is a parse error; another content type is refused; both carry CORS', async () => {
   let r = await send('{"jsonrpc": "2.0", "id": 1, "method": ');
   assert.equal(r.status, 400);
+  assert.equal(r.headers.get('access-control-allow-origin'), '*');
   assert.equal((await r.json()).error.code, -32700);
   r = await send('hello', { headers: { ...HEADERS, 'content-type': 'text/plain' } });
   assert.equal(r.status, 415);
+  assert.equal(r.headers.get('access-control-allow-origin'), '*');
+});
+
+test('a JSON-RPC batch is refused with 400 (MCP dropped batches in 2025-06-18)', async () => {
+  const one = { jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'get_model', arguments: { model: 'Task' } } };
+  for (const body of [JSON.stringify([one, { ...one, id: 2 }]), ` \n\t[${JSON.stringify(one)}]`]) {
+    const r = await send(body);
+    assert.equal(r.status, 400);
+    assert.equal(r.headers.get('access-control-allow-origin'), '*');
+    const m = await r.json();
+    assert.equal(m.error.code, -32600);
+    assert.match(m.error.message, /batches are not supported/);
+  }
+});
+
+test('a client whose Accept lacks text/event-stream still gets its answer, not 406', async () => {
+  for (const accept of ['*/*', 'application/json', 'text/event-stream', null]) {
+    const headers = { 'content-type': 'application/json', ...(accept ? { accept } : {}) };
+    const r = await send({ jsonrpc: '2.0', id: 1, method: 'tools/list' }, { headers });
+    assert.equal(r.status, 200, String(accept));
+    assert.equal((await message(r)).result.tools.length, 4, String(accept));
+  }
+});
+
+test('the rate limit: 429 with Retry-After and CORS when the binding says no; no binding, no limit', async () => {
+  const keys = [];
+  const limiter = (success) => ({ async limit({ key }) { keys.push(key); return { success }; } });
+  const list = (e, headers = HEADERS) => send({ jsonrpc: '2.0', id: 1, method: 'tools/list' }, { e, headers });
+  let r = await list({ ...env, MCP_LIMITER: limiter(true) }, { ...HEADERS, 'cf-connecting-ip': '203.0.113.7' });
+  assert.equal(r.status, 200);
+  assert.deepEqual(keys, ['203.0.113.7'], 'keyed on the client address');
+  r = await list({ ...env, MCP_LIMITER: limiter(false) });
+  assert.equal(r.status, 429);
+  assert.equal(r.headers.get('retry-after'), '60');
+  assert.equal(r.headers.get('access-control-allow-origin'), '*');
+  const m = await r.json();
+  assert.equal(m.jsonrpc, '2.0');
+  assert.match(m.error.message, new RegExp(`at most ${RATE_LIMIT} a minute`));
+  // Preflight and other paths are never counted.
+  keys.length = 0;
+  assert.equal((await send(undefined, { method: 'OPTIONS', e: { ...env, MCP_LIMITER: limiter(false) } })).status, 204);
+  assert.equal((await send(undefined, { method: 'GET', path: '/mcp/index.json', e: { ...env, MCP_LIMITER: limiter(false) } })).status, 200);
+  assert.deepEqual(keys, []);
+  // A limiter that fails lets the request through; without the binding there is no limit.
+  assert.equal((await list({ ...env, MCP_LIMITER: { limit: async () => { throw new Error('down'); } } })).status, 200);
+  assert.equal((await list(env)).status, 200);
 });
 
 test(`a request over ${MAX_BODY_BYTES} bytes gets 413, with or without Content-Length`, async () => {
@@ -91,6 +138,10 @@ test(`a request over ${MAX_BODY_BYTES} bytes gets 413, with or without Content-L
   const stream = new ReadableStream({ start(c) { for (let i = 0; i < bytes.length; i += 8192) c.enqueue(bytes.slice(i, i + 8192)); c.close(); } });
   r = await worker.fetch(new Request('https://datamodels.jp/mcp', { method: 'POST', headers: HEADERS, body: stream, duplex: 'half' }), env);
   assert.equal(r.status, 413);
+  // A Content-Length over the limit is refused before the body is read.
+  r = await send('{}', { headers: { ...HEADERS, 'content-length': String(MAX_BODY_BYTES + 1) } });
+  assert.equal(r.status, 413);
+  assert.equal(r.headers.get('access-control-allow-origin'), '*');
   // Just under the limit is served.
   const ok = JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'validate', arguments: { model: 'Task', entity: { id: 'urn:x', type: 'Task', name: 'x'.repeat(MAX_BODY_BYTES - 300) } } } });
   assert.ok(ok.length <= MAX_BODY_BYTES);
@@ -184,6 +235,7 @@ test('when the index cannot be read, the tool says so, and the next call reads i
 test('initialize names the server and offers tools; tools/list has the four read-only tools', async () => {
   const init = await rpc('initialize', { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'test', version: '1' } });
   assert.equal(init.result.serverInfo.name, 'datamodels.jp');
+  assert.equal(init.result.capabilities.tools.listChanged, false, 'the tool list never changes');
   assert.equal(init.result.protocolVersion, '2025-06-18');
   assert.ok(init.result.capabilities.tools);
   assert.match(init.result.instructions, /search_models/);
@@ -308,4 +360,109 @@ test('validate agrees with Ajv, the validator CI uses, on broken copies of every
       if (!ringProblem && !r.problems.some((p) => /\{"(json|vocab)"/.test(p.message))) assert.equal(r.valid, check(plain), `${m.type}: ${JSON.stringify(entity).slice(0, 200)}`);
     }
   }
+});
+
+// --- Review fixes: sizes, shapes, the 2026-07-28 revision, short queries ----
+
+const MODERN_META = { 'io.modelcontextprotocol/protocolVersion': '2026-07-28', 'io.modelcontextprotocol/clientInfo': { name: 'test', version: '1' }, 'io.modelcontextprotocol/clientCapabilities': {} };
+const modern = (method, params = {}) => send({ jsonrpc: '2.0', id: ++id, method, params: { ...params, _meta: MODERN_META } }, { headers: { ...HEADERS, 'mcp-protocol-version': '2026-07-28', 'mcp-method': method } });
+
+test('2026-07-28: discover says the tool list never changes, and subscriptions/listen is refused at once', async () => {
+  const discover = await message(await modern('server/discover'));
+  assert.equal(discover.result.capabilities.tools.listChanged, false);
+  const res = await modern('subscriptions/listen', { notifications: { toolsListChanged: true } });
+  assert.equal(res.headers.get('content-type'), 'application/json', 'an answer, not a stream left open');
+  assert.equal((await res.json()).error.message, 'Subscription limit reached');
+  assert.equal((await message(await modern('tools/list'))).result.tools.length, 4);
+});
+
+test(`validate refuses an object with more than ${MAX_KEYS} keys, at any depth, quickly`, async () => {
+  const many = (n) => Object.fromEntries(Array.from({ length: n }, (_, i) => [`k${i}`, 1]));
+  const base = { id: 'urn:ngsi-ld:Task:1', type: 'Task', name: 'x', progress: 'completed' };
+  const t = process.cpuUsage();
+  const r = await call('validate', { model: 'Task', entity: { ...base, ...many(6000) } });
+  const cpu = process.cpuUsage(t);
+  assert.match(r.error, /has 6004 keys; at most 1000/);
+  assert.ok((cpu.user + cpu.system) / 1000 < 50, `took ${(cpu.user + cpu.system) / 1000} ms of CPU`);
+  assert.match((await call('validate', { model: 'Task', entity: { ...base, address: many(MAX_KEYS + 1) } })).error, /\/address has 1001 keys/);
+  // At the limit, each extra attribute is still named.
+  const ok = await call('validate', { model: 'Task', entity: { ...base, ...many(MAX_KEYS - 4) } });
+  assert.equal(ok.problemCount, MAX_KEYS - 4);
+  assert.match(ok.problems[0].message, /is not an attribute here/);
+});
+
+test('readableErrors is linear in the number of errors, and its answer is the one the old lookup gave', () => {
+  // What @cfworker/json-schema reports for n extra properties and one wrong value.
+  const errors = (n) => [
+    { instanceLocation: '#', keyword: 'properties', error: 'Property "progress" does not match schema.' },
+    { instanceLocation: '#/progress', keyword: 'enum', error: 'Instance does not match any of ["completed"].' },
+    { instanceLocation: '#', keyword: 'additionalProperties', error: 'Property "progress" does not match additional properties schema.' },
+    { instanceLocation: '#/progress', keyword: 'false', error: 'False boolean schema.' },
+    ...Array.from({ length: n }, (_, i) => [
+      { instanceLocation: '#', keyword: 'additionalProperties', error: `Property "k${i}" does not match additional properties schema.` },
+      { instanceLocation: `#/k${i}`, keyword: 'false', error: 'False boolean schema.' },
+    ]).flat(),
+  ];
+  // The lookup before the fix (a filter over every error for each extra property).
+  const before = (list) => {
+    const all = list.map((e) => ({ path: e.instanceLocation.replace(/^#/, '') || '/', message: e.error, keyword: e.keyword }));
+    const out = [];
+    for (const e of all) {
+      if (e.keyword === 'false') continue;
+      const extra = e.keyword === 'additionalProperties' && /^Property "(.+)" does not match additional properties schema\.$/.exec(e.message);
+      if (extra) {
+        const path = `${e.path === '/' ? '' : e.path}/${extra[1]}`;
+        if (!all.filter((x) => x.path === path && x.keyword !== 'false').length) out.push({ path, message: `"${extra[1]}" is not an attribute here: the schema allows no other properties` });
+        continue;
+      }
+      if (!['properties', '$ref', 'items', 'prefixItems', 'allOf', 'additionalItems', 'unevaluatedItems', 'contains'].includes(e.keyword) && !/^A subschema had errors\.$/.test(e.message)) out.push(e);
+    }
+    return out;
+  };
+  assert.deepEqual(readableErrors(errors(300)), before(errors(300)));
+  const big = errors(6000);
+  const t = process.cpuUsage();
+  const out = readableErrors(big);
+  const cpu = process.cpuUsage(t);
+  assert.equal(out.length, 6001);
+  assert.ok((cpu.user + cpu.system) / 1000 < 50, `took ${(cpu.user + cpu.system) / 1000} ms of CPU`);
+});
+
+test(`validate refuses an entity nested deeper than ${MAX_DEPTH} levels, as an object or as JSON text`, async () => {
+  let deep = 1; for (let i = 0; i < 200; i++) deep = { a: deep };
+  const base = { id: 'urn:ngsi-ld:Task:1', type: 'Task', name: 'x', progress: 'completed' };
+  assert.match((await call('validate', { model: 'Task', entity: { ...base, description: deep } })).error, /nested too deeply/);
+  const text = `{"id":"urn:x","type":"Task","name":"x","description":${'{"a":'.repeat(5000)}1${'}'.repeat(5000)}}`;
+  assert.match((await call('validate', { model: 'Task', entity: text })).error, /nested too deeply/);
+});
+
+test('an own "__proto__" key is reported, not dropped, in both forms', async () => {
+  const kv = await readFile(join(dir, 'examples/task/Task/example.json'), 'utf8');
+  const withProto = (json) => json.replace(/^\{/, '{"__proto__": {"polluted": true},');
+  // Raw JSON-RPC text, so the key arrives as JSON.parse makes it: an own property.
+  const callRaw = async (entityJson, form) => {
+    const r = await send(`{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"validate","arguments":{"model":"Task","form":"${form}","entity":${entityJson}}}}`);
+    return JSON.parse((await message(r)).result.content[0].text);
+  };
+  let r = await callRaw(withProto(kv), 'key-values');
+  assert.equal(r.valid, false);
+  assert.ok(r.problems.some((p) => p.path === '/__proto__'), JSON.stringify(r.problems));
+  r = await call('validate', { model: 'Task', entity: withProto(kv) });
+  assert.equal(r.valid, false, 'also as JSON text');
+  const norm = await readFile(join(dir, 'examples/task/Task/example-normalized.jsonld'), 'utf8');
+  r = await callRaw(withProto(norm), 'normalized');
+  assert.equal(r.valid, false);
+  assert.ok(r.problems.some((p) => p.path === '/__proto__' && /not an attribute of Task/.test(p.message)), JSON.stringify(r.problems));
+  assert.equal({}.polluted, undefined);
+});
+
+test('a one-character Japanese word or a two-letter word is found in titles, names and descriptions', async () => {
+  let r = await call('search_models', { query: '判' });
+  assert.equal(r.results[0]?.model, 'decision/Decision', JSON.stringify(r));
+  assert.deepEqual(r.results[0].matched, ['判']);
+  r = await call('search_models', { query: 'ae' });
+  assert.ok(r.results.some((x) => x.model === 'facility/AEDLocation'), JSON.stringify(r.results.map((x) => x.model)));
+  r = await call('find_attribute', { query: '郵' });
+  assert.ok(r.results.some((a) => a.name === 'postalCode'), JSON.stringify(r.results.map((a) => a.name)));
+  assert.deepEqual((await call('search_models', { query: '鰻' })).results, []);
 });

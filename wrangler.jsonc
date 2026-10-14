@@ -33,6 +33,15 @@
     "not_found_handling": "404-page"
   },
 
+  // Rate limit for /mcp (worker/mcp.mjs): 100 requests a minute per client IP
+  // address, counted per Cloudflare location. Deployed with the Worker; nothing
+  // to set up in the dashboard. namespace_id is unique in the account (1001 is
+  // another Worker's). Keep "limit" equal to RATE_LIMIT in worker/mcp.mjs, which
+  // names it in the 429 answer. Only 10 or 60 are valid periods.
+  "ratelimits": [
+    { "name": "MCP_LIMITER", "namespace_id": "2230", "simple": { "limit": 100, "period": 60 } }
+  ],
+
   // Custom domain: deploying creates the DNS record and certificate in the
   // datamodels.jp zone (same Cloudflare account), so no manual DNS step is needed.
   "routes": [
