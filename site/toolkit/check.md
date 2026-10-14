@@ -6,8 +6,8 @@ description: datamodels-toolkit の check と build でノードを検査して�
 # 検査とビルド
 
 ```bash
-npx @geolonia/datamodels@0.3.10 check
-npx @geolonia/datamodels@0.3.10 build
+npx @geolonia/datamodels@0.3.14 check
+npx @geolonia/datamodels@0.3.14 build
 ```
 
 `check` は、すべてのスキーマと例を検査します。GitHub では、Pull Request のたびにワークフローが同じ検査をします。
