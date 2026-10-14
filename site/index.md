@@ -3,13 +3,15 @@ layout: home
 # The browser tab and search results: the name and what it is (titleTemplate: false, no " | datamodels.jp").
 title: datamodels.jp：日本で使えるデータモデル
 titleTemplate: false
+description: 避難所や道路規制、施設、タスクなどを表す共通のデータモデル。自治体やシステムが違っても、データを組み合わせられます。JSON Schema、JSON-LD、NGSI-LD で使えます。
 
 hero:
   # The headline carries the page; the mark and name are in the navigation (docs/brand.md).
   name: ''
   # HTML: 「ずっと変わらない」 and 「URL で。」 never break inside, so a narrow screen breaks between them; 「データモデル」 and the full stop (the mark's dot) are red.
   text: 日本で使える<br><span class="accent">データモデル</span>を、<span class="nowrap">ずっと変わらない</span> <span class="nowrap">URL で<span class="dot">。</span></span>
-  tagline: 避難所、道路規制、施設、タスクなどの共通の定義です。自治体やシステムが違っても、データを<span class="nowrap">組み合わせられます。</span>
+  # The tagline says what the models are for; the last phrase keeps together on a phone.
+  tagline: 避難所や道路規制、施設、タスクなどを表す共通の定義です。自治体やシステムが違っても、データを<span class="nowrap">組み合わせられます。</span>
   # Records from many systems linked to the shared definitions; one branch adds its own attribute (#167).
   image:
     light: /hero-illustration.svg

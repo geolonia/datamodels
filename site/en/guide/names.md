@@ -9,7 +9,7 @@ Often the model fits but a name does not match how people talk. The catalog says
 
 <svg class="flow-diagram" viewBox="0 0 460 150" role="img" aria-label="Your name taiouHan and the catalog's name assignee both stand for the same meaning, https://datamodels.jp/ns/task/assignee." xmlns="http://www.w3.org/2000/svg"><defs><marker id="nm-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="ah"/></marker></defs><rect class="box" x="10" y="8" width="190" height="58" rx="10"/><text class="t m" x="105.0" y="32">taiouHan</text><text class="s" x="105.0" y="51">your name</text><rect class="box" x="10" y="84" width="190" height="58" rx="10"/><text class="t m" x="105.0" y="108">assignee</text><text class="s" x="105.0" y="127">the catalog's name</text><line class="a" x1="200" y1="37" x2="256" y2="66" marker-end="url(#nm-ah)"/><line class="a" x1="200" y1="113" x2="256" y2="84" marker-end="url(#nm-ah)"/><rect class="box main" x="260" y="46" width="190" height="58" rx="10"/><text class="t" x="355.0" y="70">one meaning</text><text class="s" x="355.0" y="89">…/ns/task/assignee</text></svg>
 
-The example below uses `SaigaiTaiou` for `Project` and `taiouHan` for `assignee` from [task management](/en/models/task/):
+The example below uses `SaigaiTaiou` (災害対応, disaster response) for `Project` and `taiouHan` for `assignee` from [task management](/en/models/task/):
 
 ```json
 {

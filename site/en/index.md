@@ -3,6 +3,7 @@ layout: home
 # The browser tab and search results: the name and what it is (titleTemplate: false, no " | datamodels.jp").
 title: "datamodels.jp: data models that work in Japan"
 titleTemplate: false
+description: Shared data models for shelters, road closures, facilities and tasks, so that data from different cities and systems fits together. For JSON Schema, JSON-LD and NGSI-LD.
 
 hero:
   # The headline carries the page; the mark and name are in the navigation (docs/brand.md).

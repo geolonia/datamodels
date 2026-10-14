@@ -111,6 +111,7 @@
 /* Hero headline (site/index.md): a phrase that never wraps, the key word in red,
    and the full stop drawn as the mark's red dot. The character stays in the text
    (copy, screen readers). */
+/* A phrase that must not break inside, in the headline and the tagline. */
 .VPHero .text .nowrap, .VPHero .tagline .nowrap { white-space: nowrap; }
 .VPHero .text .accent { color: var(--vp-c-brand-1); }
 .VPHero .text .dot {
@@ -394,13 +395,6 @@
 .flow-diagram .l { font-size: 12.5px; text-anchor: start; fill: var(--vp-c-text-2); }
 .flow-diagram .l.e { text-anchor: end; }
 .flow-diagram .a { stroke: var(--vp-c-text-3); stroke-width: 1.5; }
-/* On a phone a 460-unit diagram shrinks to about 70% and its text to 9 px: use the full screen width
-   and slightly larger text (checked on every diagram at 375 px: nothing leaves its box). */
-@media (max-width: 640px) {
-  .vp-doc .flow-diagram { width: calc(100% + 48px); max-width: none; margin-left: -24px; margin-right: -24px; }
-  .flow-diagram .t { font-size: 16px; }
-  .flow-diagram .s, .flow-diagram .l { font-size: 13.5px; }
-}
 .flow-diagram .a.d { stroke-dasharray: 4 3; }
 /* A dashed box: something the reader may add (your own site, /guide/own-models). */
 .flow-diagram .box.d { stroke-dasharray: 5 4; }
@@ -417,6 +411,15 @@
 /* Lines of a file inside a box, left-aligned (a CSV row and its JSON on /guide/publish); .hl marks what matches. */
 .flow-diagram .c { font-family: var(--vp-font-family-mono); font-size: 12px; text-anchor: start; }
 .flow-diagram .hl { fill: var(--vp-c-brand-1); font-weight: 600; }
+/* On a phone a 460-unit diagram shrinks to about 70% and its text to 9 px. Below 508 px (460 plus the
+   24 px page margins) it uses the full screen width and slightly larger text; after the rules above,
+   so the mono titles grow too (checked on every diagram at 320 and 375 px: nothing leaves its box). */
+@media (max-width: 508px) {
+  .vp-doc .flow-diagram { width: calc(100% + 48px); max-width: none; margin-left: -24px; margin-right: -24px; }
+  .flow-diagram .t { font-size: 16px; }
+  .flow-diagram .t.m { font-size: 15px; }
+  .flow-diagram .s, .flow-diagram .l { font-size: 13.5px; }
+}
 
 /* All URLs (guide/urls): the URL and its description share the width. */
 .vp-doc .url-list td:first-child { width: 50%; }

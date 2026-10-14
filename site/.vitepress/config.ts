@@ -250,7 +250,8 @@ export default defineConfig({
       ['meta', { property: 'og:url', content: `${SITE_URL}/${path}` }],
       ['link', { rel: 'canonical', href: `${SITE_URL}/${path}` }],
     );
-    // The same page in the other language, for search engines (hreflang); Japanese is the default.
+    // The same page in the other language, for search engines (hreflang). A reader of any other
+    // language gets the English page (x-default): more of them read English than Japanese.
     // Only when that page exists: a page in one language only names no other.
     const ja = lang === 'en' ? pageData.relativePath.slice('en/'.length) : pageData.relativePath;
     const en = `en/${ja}`;
@@ -258,7 +259,7 @@ export default defineConfig({
       pageData.frontmatter.head.push(
         ['link', { rel: 'alternate', hreflang: 'ja', href: `${SITE_URL}/${urlPath(ja)}` }],
         ['link', { rel: 'alternate', hreflang: 'en', href: `${SITE_URL}/${urlPath(en)}` }],
-        ['link', { rel: 'alternate', hreflang: 'x-default', href: `${SITE_URL}/${urlPath(ja)}` }],
+        ['link', { rel: 'alternate', hreflang: 'x-default', href: `${SITE_URL}/${urlPath(en)}` }],
       );
     }
   },
