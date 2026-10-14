@@ -591,3 +591,90 @@ test('a large wrong array lists its first problems quickly instead of every erro
   assert.ok(r.problems.length > 0 && r.problems.length <= MAX_PROBLEMS);
   assert.ok((cpu.user + cpu.system) / 1000 < 100, `took ${(cpu.user + cpu.system) / 1000} ms of CPU`);
 });
+
+// --- Third review: error caps, complete, conditional uniqueItems, queries ----
+
+const cpuOf = async (fn) => { const t = process.cpuUsage(); const out = await fn(); const d = process.cpuUsage(t); return [out, (d.user + d.system) / 1000]; };
+
+test('invalid entities that make many validator errors stay cheap, and say they are not complete', async () => {
+  const task = { id: 'urn:x', type: 'Task', name: 'x', progress: 'completed' };
+  const cases = {
+    'GeometryCollection of 4,990 empty members': { ...task, location: { type: 'GeometryCollection', geometries: Array.from({ length: 4990 }, () => ({})) } },
+    'GeometryCollection of 990 empty members (full check, error cap)': { ...task, location: { type: 'GeometryCollection', geometries: Array.from({ length: 990 }, () => ({})) } },
+    'Point with 4,990 numbers': { ...task, location: { type: 'Point', coordinates: Array.from({ length: 4990 }, (_, i) => i % 10) } },
+    'location without type, 4,990 empty arrays': { ...task, location: { coordinates: Array.from({ length: 4990 }, () => []) } },
+  };
+  for (const [name, entity] of Object.entries(cases)) {
+    await call('validate', { model: 'Task', entity }); // warm
+    const [r, ms] = await cpuOf(() => call('validate', { model: 'Task', entity }));
+    assert.equal(r.valid, false, name);
+    assert.equal(r.complete, false, name);
+    assert.match(r.note, /stopped at the first problems/, name);
+    assert.ok(r.problems.length > 0 && r.problemCount <= MAX_PROBLEMS * 2, `${name}: ${r.problemCount} problems`);
+    // Before: 42-66 ms for the first three and the fourth (4,990 values), 7-10 ms for 990.
+    assert.ok(ms < 25, `${name}: ${ms} ms of CPU`);
+  }
+});
+
+test('complete is true for a valid entity and for a small invalid one, whose count is the total', async () => {
+  const kv = JSON.parse(await readFile(join(dir, 'examples/task/Task/example.json'), 'utf8'));
+  let r = await call('validate', { model: 'Task', entity: kv });
+  assert.equal(r.complete, true);
+  assert.equal(r.note, undefined);
+  r = await call('validate', { model: 'Task', entity: { ...kv, progress: 'nope', colour: 1, size: 2 } });
+  assert.equal(r.complete, true);
+  assert.equal(r.problemCount, 3);
+  // A valid Polygon of about 64 KiB: checked with the first-error validator, and still complete.
+  const ring = Array.from({ length: 3800 }, (_, i) => [139 + (i % 100) / 1000, 35 + Math.floor(i / 100) / 1000]); ring.push(ring[0]);
+  r = await call('validate', { model: 'Task', entity: { ...kv, location: { type: 'Polygon', coordinates: [ring] } } });
+  assert.equal(r.valid, true, JSON.stringify(r.problems));
+  assert.equal(r.complete, true);
+});
+
+test('uniqueItems on a node that is also reached through anyOf stays with the validator', async () => {
+  const { prepareSchemas, makeChecker } = await import('../worker/validate.mjs');
+  const schema = {
+    $schema: 'https://json-schema.org/draft/2020-12/schema', $id: 'https://example.org/s.json', type: 'object',
+    $defs: { tags: { type: 'array', uniqueItems: true }, only: { type: 'array', uniqueItems: true } },
+    properties: {
+      a: { $ref: '#/$defs/tags' },
+      b: { anyOf: [{ $ref: '#/$defs/tags' }, { type: 'string' }] },
+      c: { $ref: '#/$defs/only' },
+    },
+  };
+  const prepared = prepareSchemas(schema, []);
+  assert.equal(prepared.root.$defs.tags.uniqueItems, true, 'kept: also reached through anyOf');
+  assert.equal(prepared.root.$defs.only.uniqueItems, undefined, 'stripped: reached only unconditionally');
+  assert.equal(schema.$defs.only.uniqueItems, true, 'the published schema itself is not changed');
+  const { problems } = makeChecker(schema, [])({ a: [1, 1], b: [2, 2], c: [3, 3] }, 10);
+  const dups = problems.filter((p) => /^Duplicate items/.test(p.message)).map((p) => p.path).sort();
+  assert.deepEqual(dups, ['/a', '/b', '/c']);
+});
+
+test('in every published schema, no stripped uniqueItems is reachable through a conditional keyword', async () => {
+  const { prepareSchemas, conditionalNodes } = await import('../worker/validate.mjs');
+  let stripped = 0;
+  for (const m of index.models) {
+    const read = async (u) => JSON.parse(await readFile(join(dir, new URL(u).pathname), 'utf8'));
+    const prepared = prepareSchemas(await read(m.schemaUrl), await Promise.all(m.refs.map(read)));
+    const conditional = conditionalNodes(prepared.root, prepared.resolve);
+    for (const node of prepared.unique) assert.ok(!conditional.has(node), `${m.id}: a stripped node is reachable conditionally`);
+    stripped += prepared.unique.size;
+  }
+  // medicalDepartments, hazardTypes, and OpeningHours.dayOfWeek in the four facility models and OpeningHours itself.
+  assert.ok(stripped >= 3, `${stripped} nodes stripped`);
+});
+
+test('an empty query is refused; one hiragana or punctuation character does not match everything', async () => {
+  for (const tool of ['search_models', 'find_attribute']) {
+    for (const query of ['   ', '\t\n']) assert.match((await call(tool, { query })).error, /query is empty/, `${tool} ${JSON.stringify(query)}`);
+    for (const query of ['の', '、', 'です', '!']) {
+      const r = await call(tool, { query });
+      assert.deepEqual(r.results, [], `${tool} ${query}`);
+    }
+  }
+  // Spaces around a word do not matter.
+  assert.equal((await call('search_models', { query: '  Task  ' })).results[0].model, 'task/Task');
+  assert.equal((await call('search_models', { query: ' 判 ' })).results[0].model, 'decision/Decision');
+  assert.equal((await call('search_models', { query: ' * ' })).results.length, catalog.models.length);
+});

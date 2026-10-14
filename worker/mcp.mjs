@@ -133,15 +133,25 @@ const nodeSummary = (m) => ({
   ...(m.aliasOf ? { aliasOf: m.aliasOf } : {}), ...(m.subClassOf ? { subClassOf: m.subClassOf } : {}), ...(m.extends ? { extends: m.extends } : {}),
 });
 
+const EMPTY_QUERY = 'query is empty: give a word to look for (English or Japanese).';
+/**
+ * Whether a query may be looked for as a substring: it has a character that is
+ * not hiragana, punctuation, a symbol or a space. の or 、 alone is in every
+ * Japanese description, so it would match everything.
+ */
+export const substringQuery = (q) => /[^\p{Script=Hiragana}\p{P}\p{S}\s]/u.test(q);
+
 export async function searchModels(env, { query, limit = 10, include_nodes = true }) {
+  query = query.trim();
+  if (!query) return { error: EMPTY_QUERY };
   const cat = await catalog(env);
-  if (query.trim() === '*') return { results: cat.models.map((m) => ({ model: m.id, kind: m.kind, status: m.status, title: m.title })) };
+  if (query === '*') return { results: cat.models.map((m) => ({ model: m.id, kind: m.kind, status: m.status, title: m.title })) };
   const entries = include_nodes ? cat.search : cat.search.filter((e) => !e.node);
   let found = similarModels(query, entries, { limit, min: 1 });
   // A word of one Japanese character (駅) or two letters has no search words: look for it in the titles.
-  if (!found.length) {
-    const q = query.trim().toLowerCase();
-    found = entries.filter((e) => Object.values(e.model.title ?? {}).some((t) => String(t).toLowerCase().includes(q))).slice(0, limit).map((entry) => ({ entry, matched: [query.trim()] }));
+  if (!found.length && substringQuery(query)) {
+    const q = query.toLowerCase();
+    found = entries.filter((e) => Object.values(e.model.title ?? {}).some((t) => String(t).toLowerCase().includes(q))).slice(0, limit).map((entry) => ({ entry, matched: [query] }));
   }
   const results = found.map((r) => ({ ...(r.entry.node ? nodeSummary(r.entry.model) : summary(r.entry.model)), matched: r.matched }));
   return results.length ? { results } : { results, note: 'No model matched. Try other words (English or Japanese), or "*" to list every model.' };
@@ -169,8 +179,9 @@ export async function getModel(env, { model, example = 'key-values', include_sch
 }
 
 export async function findAttribute(env, { query, limit = 10 }) {
-  const cat = await catalog(env);
   const q = query.trim();
+  if (!q) return { error: EMPTY_QUERY };
+  const cat = await catalog(env);
   const lower = q.toLowerCase();
   const asked = [...words(q)];
   const df = new Map();
@@ -189,7 +200,7 @@ export async function findAttribute(env, { query, limit = 10 }) {
     return { a, score, matched };
   }).filter((r) => r.score > 0);
   // A word of one Japanese character or two letters has no search words: look for it in the names and descriptions.
-  if (!scored.length) {
+  if (!scored.length && substringQuery(q)) {
     for (const a of cat.attributes) {
       if ([a.name, ...Object.values(a.description ?? {})].some((t) => String(t).toLowerCase().includes(lower))) scored.push({ a, score: 1, matched: [q] });
     }
@@ -285,7 +296,7 @@ export function createServer(env) {
   }, tool('find_attribute', findAttribute));
   server.registerTool('validate', {
     title: 'Validate an entity',
-    description: `Check one entity against a model's JSON Schema. The entity may be plain JSON (key-values) or NGSI-LD normalized; the form is detected unless given. A normalized entity is also checked for the attribute types the model declares, multi-valued attributes and typed dates, as the catalog checks its examples; its @context is not checked. Returns valid true or false and the problems, each with its JSON path (at most ${MAX_PROBLEMS} listed). The request may be at most ${MAX_BODY_BYTES / 1024} KiB, with at most ${MAX_KEYS} keys in one object and ${MAX_DEPTH} levels of nesting.`,
+    description: `Check one entity against a model's JSON Schema. The entity may be plain JSON (key-values) or NGSI-LD normalized; the form is detected unless given. A normalized entity is also checked for the attribute types the model declares, multi-valued attributes and typed dates, as the catalog checks its examples; its @context is not checked. Returns valid true or false and the problems, each with its JSON path (at most ${MAX_PROBLEMS} listed; problemCount says how many were found). complete is false when a large entity was checked only up to its first problems: fix them and check again. The request may be at most ${MAX_BODY_BYTES / 1024} KiB, with at most ${MAX_KEYS} keys in one object and ${MAX_DEPTH} levels of nesting.`,
     inputSchema: z.object({
       model: modelArg,
       // z.any() passes the object on as it came (a copy would drop an own "__proto__" key); the meta is its JSON Schema.

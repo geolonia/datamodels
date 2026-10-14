@@ -10,14 +10,16 @@
 //   - uniqueItems compares every pair of items (n²). The schemas are given to
 //     it without uniqueItems, and duplicates are found here with a Set.
 //   - with all errors collected, a long wrong array gives one error per item,
-//     and a few nested wrappers per error. Large entities are checked with the
-//     validator stopping at the first error.
+//     and a few nested wrappers per error (an invalid geometry under oneOf
+//     about 15). Entities with many values are checked with the validator
+//     stopping at the first error, and a full check that finds too many
+//     errors falls back to that. The answer then says it is not complete.
 // The format date-time follows ajv-formats, so a date-time CI accepts (a leap
 // second with an offset) is accepted here too.
 import { Validator, format } from '@cfworker/json-schema';
 import { NGSI_TYPES, toKeyValues, unwrapKeyValues, dateFormats, typedDate } from '@geolonia/datamodels/ngsi';
 
-/** At most this many problems are listed; the count says how many there were. */
+/** At most this many problems are listed; problemCount says how many were found (all, when complete is true). */
 export const MAX_PROBLEMS = 20;
 /** Most keys one object of an entity may have; no model has more than a few dozen attributes. */
 export const MAX_KEYS = 1000;
@@ -26,12 +28,17 @@ export const MAX_DEPTH = 64;
 /**
  * Entities with more values than this (numbers, strings, objects, arrays at
  * any depth) are checked with the validator stopping at its first error, so
- * an invalid one lists the first problems, not all. A valid one is checked in
- * full either way: a Polygon of about 5,000 positions (64 KiB) takes about
- * 25-70 ms of CPU, which the Paid plan's limit (30 s) allows; legitimate
- * GeoJSON is never refused for its size.
+ * an invalid one lists its first problems, not all (complete: false). A valid
+ * one is checked in full either way, and legitimate GeoJSON is never refused
+ * for its size: a valid 64 KiB Polygon takes about 5-15 ms of CPU. The costly
+ * case is an invalid one in a full check, about 9 µs per value (an invalid
+ * GeometryCollection of 4,990 members: 55-66 ms before this limit).
  */
-export const FULL_CHECK_VALUES = 5000;
+export const FULL_CHECK_VALUES = 1000;
+/** A full check that reports more errors than this is answered with the first-error check instead. */
+export const MAX_RAW_ERRORS = 2000;
+/** What the answer says when not every problem was looked for. */
+export const INCOMPLETE = 'The check stopped at the first problems of this large entity: fix them and check again to find any others.';
 
 const isObject = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
 export const TOO_DEEP = `the entity is nested too deeply (at most ${MAX_DEPTH} levels)`;
@@ -192,11 +199,16 @@ export function prepareSchemas(root, refs) {
     for (const token of fragment.split('/').slice(1)) target = target?.[token.replaceAll('~1', '/').replaceAll('~0', '~')];
     return target && typeof target === 'object' ? [target, res] : null;
   };
+  // The nodes that apply only sometimes (below anyOf, oneOf, not, if/then/else,
+  // additionalProperties, ...): a node there keeps its uniqueItems for the
+  // validator, also when it is reached unconditionally too (a $defs entry used
+  // from both), because duplicateProblems follows only the unconditional paths.
+  const conditional = conditionalNodes(copies[0], resolve);
   const seen = new Set();
   const strip = (node, resource) => {
     if (!node || typeof node !== 'object' || seen.has(node)) return;
     seen.add(node);
-    if (node.uniqueItems === true) { delete node.uniqueItems; unique.add(node); }
+    if (node.uniqueItems === true && !conditional.has(node)) { delete node.uniqueItems; unique.add(node); }
     if (typeof node.$ref === 'string') { const r = resolve(node.$ref, resource); if (r) strip(...r); }
     for (const s of node.allOf ?? []) strip(s, resource);
     for (const s of Object.values(node.properties ?? {})) strip(s, resource);
@@ -204,7 +216,37 @@ export function prepareSchemas(root, refs) {
     for (const s of node.prefixItems ?? []) strip(s, resource);
   };
   strip(copies[0], copies[0]);
-  return { root: copies[0], refs: copies.slice(1), unique, resolve };
+  return { root: copies[0], refs: copies.slice(1), unique, conditional, resolve };
+}
+
+// Subschema keywords that always apply to the instance at hand (what
+// duplicateProblems follows), and those that apply only sometimes.
+const ALWAYS = { single: ['items'], list: ['allOf', 'prefixItems'], map: ['properties'] };
+const SOMETIMES = { single: ['not', 'if', 'then', 'else', 'contains', 'additionalProperties', 'propertyNames', 'unevaluatedItems', 'unevaluatedProperties', 'additionalItems'], list: ['anyOf', 'oneOf'], map: ['patternProperties', 'dependentSchemas'] };
+
+/** Every schema node reachable from `root` through at least one keyword that applies only sometimes. */
+export function conditionalNodes(root, resolve) {
+  const out = new Set();
+  // Each node is visited at most twice: once unconditionally, once conditionally.
+  const visited = new Map();
+  const stack = [[root, root, false]];
+  while (stack.length) {
+    const [node, resource, cond] = stack.pop();
+    if (!node || typeof node !== 'object' || Array.isArray(node)) continue;
+    const bit = cond ? 2 : 1;
+    const state = visited.get(node) ?? 0;
+    if (state & bit) continue;
+    visited.set(node, state | bit);
+    if (cond) out.add(node);
+    const push = (child, c) => stack.push([child, resource, c]);
+    if (typeof node.$ref === 'string') { const r = resolve(node.$ref, resource); if (r) stack.push([r[0], r[1], cond]); }
+    for (const [kinds, c] of [[ALWAYS, cond], [SOMETIMES, true]]) {
+      for (const k of kinds.single) if (node[k] && typeof node[k] === 'object') push(node[k], c);
+      for (const k of kinds.list) for (const s of Array.isArray(node[k]) ? node[k] : []) push(s, c);
+      for (const k of kinds.map) for (const s of Object.values(isObject(node[k]) ? node[k] : {})) push(s, c);
+    }
+  }
+  return out;
 }
 
 /** The duplicates in the arrays the stripped uniqueItems applied to, as the validator words them. */
@@ -246,11 +288,15 @@ export function makeChecker(root, refs) {
   };
   const full = validator(false);
   const first = validator(true);
-  /** The schema problems of a plain key-values entity; `values` from shape(). */
+  /** { problems, complete } of a plain key-values entity; `values` from shape(). */
   return (plain, values) => {
-    const result = (values > FULL_CHECK_VALUES ? first : full).validate(plain);
+    let complete = values <= FULL_CHECK_VALUES;
+    let result = (complete ? full : first).validate(plain);
+    // Too many errors to sort out: answer with the first ones, as for a large entity.
+    if (complete && result.errors.length > MAX_RAW_ERRORS) { result = first.validate(plain); complete = false; }
     const out = result.valid ? [] : readableErrors(result.errors);
-    return [...out, ...duplicateProblems(plain, prepared)];
+    // A valid entity has no other problems, whichever check found that.
+    return { problems: [...out, ...duplicateProblems(plain, prepared)], complete: complete || result.valid };
   };
 }
 
@@ -262,7 +308,11 @@ export function checkEntity(m, root, check, data, form, values) {
   const usedForm = form ?? (looksNormalized(data) ? 'normalized' : 'key-values');
   if (usedForm === 'normalized' && m.kind === 'value') return { error: `${m.id} is a value type: it has only the key-values form` };
   const problems = [];
-  const answer = () => ({ model: m.id, version: m.version, form: usedForm, valid: problems.length === 0, problemCount: problems.length, problems: problems.slice(0, MAX_PROBLEMS) });
+  let complete = true;
+  const answer = () => ({
+    model: m.id, version: m.version, form: usedForm, valid: problems.length === 0,
+    problemCount: problems.length, complete, ...(complete ? {} : { note: INCOMPLETE }), problems: problems.slice(0, MAX_PROBLEMS),
+  });
 
   let kv = data;
   if (usedForm === 'normalized') {
@@ -291,7 +341,9 @@ export function checkEntity(m, root, check, data, form, values) {
   let plain;
   try { plain = unwrapKeyValues(kv, root); } catch (e) { problems.push({ path: '/', message: e.message }); return answer(); }
   const seen = new Set();
-  for (const { path, message } of check(plain, values)) {
+  const checked = check(plain, values);
+  complete = checked.complete;
+  for (const { path, message } of checked.problems) {
     const key = `${path} ${message}`;
     if (!seen.has(key)) { seen.add(key); problems.push({ path, message }); }
   }
