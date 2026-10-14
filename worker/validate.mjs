@@ -35,13 +35,16 @@ export const MAX_DEPTH = 64;
  * first, about 9 µs per value on a fast machine and several times that on a
  * slow one (an invalid GeometryCollection of 4,990 members: 55-66 ms before
  * this limit; 990 members: 8 ms locally, 52 ms on a CI runner). 250 values
- * cover real entities and keep a full check to a few ms.
+ * keep a full check to a few ms. The values are counted in the key-values
+ * form the schema checks (a normalized entity sends about 2.7 times as many).
  */
 export const FULL_CHECK_VALUES = 250;
 /** A full check that reports more errors than this is answered with the first-error check instead. */
 export const MAX_RAW_ERRORS = 2000;
 /** What the answer says when not every problem was looked for. */
-export const INCOMPLETE = 'The check stopped at the first problems of this large entity: fix them and check again to find any others.';
+export const INCOMPLETE = 'The check stopped at the first problems (a large entity, or many problems): fix them and check again to find any others.';
+/** What the answer says when the entity could not be read as the model's attributes, so the schema was not checked. */
+export const NOT_CHECKED = 'The entity could not be read as attributes of this model, so its schema was not checked yet: fix this and check again.';
 
 const isObject = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
 export const TOO_DEEP = `the entity is nested too deeply (at most ${MAX_DEPTH} levels)`;
@@ -225,7 +228,7 @@ export function prepareSchemas(root, refs) {
 // Subschema keywords that always apply to the instance at hand (what
 // duplicateProblems follows), and those that apply only sometimes.
 const ALWAYS = { single: ['items'], list: ['allOf', 'prefixItems'], map: ['properties'] };
-const SOMETIMES = { single: ['not', 'if', 'then', 'else', 'contains', 'additionalProperties', 'propertyNames', 'unevaluatedItems', 'unevaluatedProperties', 'additionalItems'], list: ['anyOf', 'oneOf'], map: ['patternProperties', 'dependentSchemas'] };
+const SOMETIMES = { single: ['not', 'if', 'then', 'else', 'contains', 'additionalProperties', 'propertyNames', 'unevaluatedItems', 'unevaluatedProperties', 'additionalItems'], list: ['anyOf', 'oneOf'], map: ['patternProperties', 'dependentSchemas', 'dependencies'] };
 
 /** Every schema node reachable from `root` through at least one keyword that applies only sometimes. */
 export function conditionalNodes(root, resolve) {
@@ -312,10 +315,13 @@ export function checkEntity(m, root, check, data, form, values) {
   if (usedForm === 'normalized' && m.kind === 'value') return { error: `${m.id} is a value type: it has only the key-values form` };
   const problems = [];
   let complete = true;
+  let note = INCOMPLETE;
   const answer = () => ({
     model: m.id, version: m.version, form: usedForm, valid: problems.length === 0,
-    problemCount: problems.length, complete, ...(complete ? {} : { note: INCOMPLETE }), problems: problems.slice(0, MAX_PROBLEMS),
+    problemCount: problems.length, complete, ...(complete ? {} : { note }), problems: problems.slice(0, MAX_PROBLEMS),
   });
+  // The schema check never ran: the answer must not say that every problem was found.
+  const stop = (e) => { problems.push({ path: '/', message: e.message }); complete = false; note = NOT_CHECKED; return answer(); };
 
   let kv = data;
   if (usedForm === 'normalized') {
@@ -339,12 +345,13 @@ export function checkEntity(m, root, check, data, form, values) {
       }
     }
     const multi = new Set(Object.entries(root.properties ?? {}).filter(([, p]) => p?.['x-ngsi']?.multi).map(([n]) => n));
-    try { kv = toKeyValues(data, { multi }); } catch (e) { problems.push({ path: '/', message: e.message }); return answer(); }
+    try { kv = toKeyValues(data, { multi }); } catch (e) { return stop(e); }
   }
   let plain;
-  try { plain = unwrapKeyValues(kv, root); } catch (e) { problems.push({ path: '/', message: e.message }); return answer(); }
+  try { plain = unwrapKeyValues(kv, root); } catch (e) { return stop(e); }
   const seen = new Set();
-  const checked = check(plain, values);
+  // Counted on what the schema checks, not on the form as sent.
+  const checked = check(plain, shape(plain).values);
   complete = checked.complete;
   for (const { path, message } of checked.problems) {
     const key = `${path} ${message}`;

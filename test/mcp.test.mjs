@@ -661,6 +661,12 @@ test('in every published schema, no stripped uniqueItems is reachable through a 
     const prepared = prepareSchemas(await read(m.schemaUrl), await Promise.all(m.refs.map(read)));
     const conditional = conditionalNodes(prepared.root, prepared.resolve);
     for (const node of prepared.unique) assert.ok(!conditional.has(node), `${m.id}: a stripped node is reachable conditionally`);
+    // No uniqueItems is left for the validator, whose check is quadratic: a new one under anyOf would need a plan.
+    const left = []; const walk = (n, p) => { if (!n || typeof n !== 'object') return; if (n.uniqueItems === true) left.push(p); for (const [k, v] of Object.entries(n)) walk(v, `${p}/${k}`); };
+    walk(prepared.root, m.id); prepared.refs.forEach((r, i) => walk(r, `${m.id} ref ${i}`));
+    assert.deepEqual(left, [], `${m.id}: uniqueItems left for the validator`);
+    // Keywords the stripping does not follow; none is used today.
+    assert.doesNotMatch(JSON.stringify([prepared.root, ...prepared.refs]), /"\$(anchor|dynamicRef|dynamicAnchor|recursiveRef|recursiveAnchor)"/, m.id);
     stripped += prepared.unique.size;
   }
   // medicalDepartments, hazardTypes, and OpeningHours.dayOfWeek in the four facility models and OpeningHours itself.
@@ -679,4 +685,31 @@ test('an empty query is refused; one hiragana or punctuation character does not 
   assert.equal((await call('search_models', { query: '  Task  ' })).results[0].model, 'task/Task');
   assert.equal((await call('search_models', { query: ' 判 ' })).results[0].model, 'decision/Decision');
   assert.equal((await call('search_models', { query: ' * ' })).results.length, catalog.models.length);
+});
+
+// --- Final review: complete when the schema never ran, hiragana queries, dependencies ----
+
+test('an entity that cannot be read as attributes says its schema was not checked (complete: false)', async () => {
+  const r = await call('validate', { model: 'Task', form: 'normalized', entity: { id: 'urn:ngsi-ld:Task:1', type: 'Task', name: { type: 'Property' }, progress: 'nope', colour: 1 } });
+  assert.equal(r.valid, false);
+  assert.equal(r.complete, false);
+  assert.match(r.note, /schema was not checked/);
+});
+
+test('three hiragana or more are looked for as a substring; a substring in too many entries finds nothing', async () => {
+  const omutsu = await call('find_attribute', { query: 'おむつ' });
+  assert.ok(omutsu.results.some((a) => a.name === 'babyCareToilet'), JSON.stringify(omutsu.results.map((a) => a.name)));
+  for (const query of ['ー', 'です', 'の']) assert.deepEqual((await call('find_attribute', { query })).results, [], query);
+});
+
+test('uniqueItems reached through dependencies stays with the validator', async () => {
+  const { makeChecker } = await import('../worker/validate.mjs');
+  const schema = {
+    type: 'object',
+    $defs: { tags: { type: 'array', uniqueItems: true } },
+    properties: { z: { $ref: '#/$defs/tags' } },
+    dependencies: { k: { properties: { z: { $ref: '#/$defs/tags' } } } },
+  };
+  const { problems } = makeChecker(schema, [])({ k: 1, z: [1, 1] }, 3);
+  assert.ok(problems.some((p) => /^Duplicate items/.test(p.message)), JSON.stringify(problems));
 });

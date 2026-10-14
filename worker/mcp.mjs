@@ -135,11 +135,18 @@ const nodeSummary = (m) => ({
 
 const EMPTY_QUERY = 'query is empty: give a word to look for (English or Japanese).';
 /**
- * Whether a query may be looked for as a substring: it has a character that is
- * not hiragana, punctuation, a symbol or a space. の or 、 alone is in every
- * Japanese description, so it would match everything.
+ * Whether a query may be looked for as a substring: a character that is not
+ * hiragana, punctuation, a symbol or a space (駅, バ, a), or three hiragana or
+ * more (おむつ). の, です or 、 alone is in almost every Japanese description.
  */
-export const substringQuery = (q) => /[^\p{Script=Hiragana}\p{P}\p{S}\s]/u.test(q);
+export const substringQuery = (q) => /[^\p{Script=Hiragana}\p{P}\p{S}\s]/u.test(q) || [...q.replace(/[\p{P}\p{S}\s]/gu, '')].length >= 3;
+/** A substring that matches more than this share of the entries says nothing (ー is in a quarter of them). */
+const MAX_SUBSTRING_SHARE = 0.25;
+/** The entries that contain q, or none when q is in too many of them to mean anything. */
+const bySubstring = (entries, q, texts) => {
+  const hits = entries.filter((e) => texts(e).some((t) => String(t).toLowerCase().includes(q)));
+  return hits.length > Math.max(1, entries.length * MAX_SUBSTRING_SHARE) ? [] : hits;
+};
 
 export async function searchModels(env, { query, limit = 10, include_nodes = true }) {
   query = query.trim();
@@ -150,8 +157,7 @@ export async function searchModels(env, { query, limit = 10, include_nodes = tru
   let found = similarModels(query, entries, { limit, min: 1 });
   // A word of one Japanese character (駅) or two letters has no search words: look for it in the titles.
   if (!found.length && substringQuery(query)) {
-    const q = query.toLowerCase();
-    found = entries.filter((e) => Object.values(e.model.title ?? {}).some((t) => String(t).toLowerCase().includes(q))).slice(0, limit).map((entry) => ({ entry, matched: [query] }));
+    found = bySubstring(entries, query.toLowerCase(), (e) => Object.values(e.model.title ?? {})).slice(0, limit).map((entry) => ({ entry, matched: [query] }));
   }
   const results = found.map((r) => ({ ...(r.entry.node ? nodeSummary(r.entry.model) : summary(r.entry.model)), matched: r.matched }));
   return results.length ? { results } : { results, note: 'No model matched. Try other words (English or Japanese), or "*" to list every model.' };
@@ -201,9 +207,7 @@ export async function findAttribute(env, { query, limit = 10 }) {
   }).filter((r) => r.score > 0);
   // A word of one Japanese character or two letters has no search words: look for it in the names and descriptions.
   if (!scored.length && substringQuery(q)) {
-    for (const a of cat.attributes) {
-      if ([a.name, ...Object.values(a.description ?? {})].some((t) => String(t).toLowerCase().includes(lower))) scored.push({ a, score: 1, matched: [q] });
-    }
+    for (const a of bySubstring(cat.attributes, lower, (a) => [a.name, ...Object.values(a.description ?? {})])) scored.push({ a, score: 1, matched: [q] });
   }
   const ranked = scored
     .sort((x, y) => y.score - x.score || y.a.models.length - x.a.models.length || x.a.name.localeCompare(y.a.name))
