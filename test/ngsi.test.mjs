@@ -1,4 +1,4 @@
-// The two NGSI-LD forms (scripts/lib/ngsi.mjs): the example playground switches
+// The two NGSI-LD forms (@geolonia/datamodels/ngsi): the example playground switches
 // between them in the browser with the same code, so each direction must give
 // back the catalog's own examples.
 import { test } from 'node:test';

@@ -9,7 +9,7 @@
 // (allOf + $ref) would reject every added attribute; the builder therefore
 // starts from the exact published version and says which one (x-extends).
 
-import { NGSI_TYPES } from './ngsi.mjs';
+import { NGSI_TYPES } from '@geolonia/datamodels/ngsi';
 
 const TERM = /^[a-z][A-Za-z0-9]*$/;
 const PREFIX = /^[a-z][a-z0-9-]*$/;

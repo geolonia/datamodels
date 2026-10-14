@@ -52,6 +52,8 @@ test('an inline context imports the subject and defines each term as listed', ()
 
 test('organisation, version, links and keys are checked', () => {
   assert.match(problems({ organization: { ja: '和歌山県' } }).join('\n'), /organization needs ja and en/);
+  // YAML's { ja: 和歌山県, en: Wakayama, Japan } cuts the text at the comma: an extra key.
+  assert.match(problems({ organization: { ja: '和歌山県', en: 'Wakayama', Japan: null } }).join('\n'), /organization needs ja and en/);
   assert.match(problems({ version: '99.0.0' }).join('\n'), /newer than the subject/);
   assert.match(problems({ version: 'v1' }).join('\n'), /X\.Y\.Z/);
   assert.match(problems({ data: 'ftp://example.org/x' }).join('\n'), /data must be a plain http\(s\) URL/);

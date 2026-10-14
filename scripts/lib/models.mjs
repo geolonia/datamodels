@@ -47,9 +47,9 @@ export function loadSubjects() {
   return loadNodeSubjects(MODELS_DIR, { urls: URLS, languages: NODE.languages });
 }
 
-// The projection between the two forms lives in ngsi.mjs, which has no Node
-// imports, so the site's example playground runs the same code in the browser.
-export { toKeyValues, toNormalized, unwrapKeyValues, dateFormats, typedDate, NGSI_TYPES } from './ngsi.mjs';
+// The projection between the two forms is the toolkit's (@geolonia/datamodels/ngsi, #226), which has
+// no Node imports, so the site's example playground runs the same code in the browser.
+export { toKeyValues, toNormalized, unwrapKeyValues, dateFormats, typedDate, NGSI_TYPES } from '@geolonia/datamodels/ngsi';
 
 /** Imports (URLs) and merged inline terms of a context document. */
 export function splitContext(doc) {

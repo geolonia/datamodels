@@ -44,6 +44,7 @@ Model folders follow the Smart Data Models layout so a model can be proposed ups
 npm ci
 npm run check            # validate models, build dist/, check the release snapshots, dry-run the deploy
 npm test                 # validator, vocabulary and adapter tests
+npm run validate:models  # datamodels check --offline (datamodels-toolkit) on this repository, plus the catalog's own rules
 npm run site:dev         # local site with generated model pages
 npm run check:live       # verify the deployed site against the URL contract and the release snapshots
 npm run dist:diff        # build origin/main (or --base <ref>) and this tree, list what differs in dist/; CI shows it on every pull request
