@@ -10,7 +10,8 @@ import { join } from 'node:path';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import worker from '../worker/index.mjs';
-import { MAX_BODY_BYTES, MAX_PROBLEMS, MAX_KEYS, MAX_DEPTH, RATE_LIMIT, readableErrors } from '../worker/mcp.mjs';
+import { MAX_BODY_BYTES, MAX_PROBLEMS, MAX_KEYS, MAX_DEPTH, RATE_LIMIT } from '../worker/mcp.mjs';
+import { readableErrors } from '../worker/validate.mjs';
 import { loadSubjects, BASE_URL } from '../scripts/lib/models.mjs';
 import { publishModels } from '../scripts/lib/publish.mjs';
 import { readNodeList, readSnapshot } from '../scripts/lib/nodes.mjs';
@@ -465,4 +466,128 @@ test('a one-character Japanese word or a two-letter word is found in titles, nam
   r = await call('find_attribute', { query: '郵' });
   assert.ok(r.results.some((a) => a.name === 'postalCode'), JSON.stringify(r.results.map((a) => a.name)));
   assert.deepEqual((await call('search_models', { query: '鰻' })).results, []);
+});
+
+// --- Second review: uniqueItems, BOM, address keys, logging, date-time -------
+
+const medical = async () => JSON.parse(await readFile(join(dir, 'examples/facility/MedicalInstitution/example.json'), 'utf8'));
+
+test('uniqueItems: a 64 KiB array of distinct strings is checked in linear time', async () => {
+  const ex = await medical();
+  const items = []; for (let i = 0; JSON.stringify(items).length < MAX_BODY_BYTES - 2500; i++) items.push(`d${i}`);
+  const body = JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'validate', arguments: { model: 'MedicalInstitution', entity: { ...ex, medicalDepartments: items } } } });
+  assert.ok(body.length <= MAX_BODY_BYTES && body.length > MAX_BODY_BYTES - 3000, `${body.length} bytes`);
+  await send(body); // warm
+  const t = process.cpuUsage();
+  const r = JSON.parse((await message(await send(body))).result.content[0].text);
+  const cpu = process.cpuUsage(t);
+  assert.equal(r.valid, true, JSON.stringify(r.problems));
+  assert.ok((cpu.user + cpu.system) / 1000 < 50, `took ${(cpu.user + cpu.system) / 1000} ms of CPU for ${items.length} items`);
+  // One duplicate at the end is still found.
+  const dup = await call('validate', { model: 'MedicalInstitution', entity: { ...ex, medicalDepartments: [...items.slice(0, 5000), 'd7'] } });
+  assert.deepEqual(dup.problems, [{ path: '/medicalDepartments', message: 'Duplicate items at indexes 7 and 5000.' }]);
+});
+
+test('uniqueItems: duplicates are reported as the validator reported them, for strings, numbers, objects and arrays', async () => {
+  const { Validator } = await import('@cfworker/json-schema');
+  const ex = await medical();
+  const schema = JSON.parse(await readFile(join(dir, new URL(catalog.models.find((m) => m.type === 'MedicalInstitution').schemaUrl).pathname), 'utf8'));
+  const refs = await Promise.all(index.models.find((m) => m.type === 'MedicalInstitution').refs.map(async (u) => JSON.parse(await readFile(join(dir, new URL(u).pathname), 'utf8'))));
+  // The validator with uniqueItems left in, as before: what it says about duplicates is the reference.
+  const reference = new Validator(schema, '2020-12', false); for (const r of refs) reference.addSchema(r);
+  const cases = [
+    ['内科', '外科', '内科'],
+    ['a', 'b', 'c', 'b', 'a'],
+    [1, 2, 3, 2],
+    [{ a: 1, b: 2 }, { b: 2, a: 1 }],
+    [[1, 2], [2, 1], [1, 2]],
+    [{ a: [1, { x: 1, y: 2 }] }, { a: [1, { y: 2, x: 1 }] }],
+    ['1', 1],
+    [],
+  ];
+  for (const items of cases) {
+    const entity = { ...ex, medicalDepartments: items };
+    const want = reference.validate(entity).errors.filter((e) => e.keyword === 'uniqueItems').map((e) => ({ path: e.instanceLocation.slice(1), message: e.error }));
+    const r = await call('validate', { model: 'MedicalInstitution', entity, form: 'key-values' });
+    assert.deepEqual(r.problems.filter((p) => /^Duplicate items/.test(p.message)), want, JSON.stringify(items));
+  }
+  // Inside a value type reached through $ref: OpeningHours.dayOfWeek in openingHoursSpecification.
+  const hours = { ...ex.openingHoursSpecification, dayOfWeek: ['Monday', 'Tuesday', 'Monday'] };
+  const r = await call('validate', { model: 'MedicalInstitution', entity: { ...ex, openingHoursSpecification: hours }, form: 'key-values' });
+  assert.deepEqual(r.problems, [{ path: '/openingHoursSpecification/dayOfWeek', message: 'Duplicate items at indexes 0 and 2.' }]);
+});
+
+test('a byte order mark does not hide a batch, and a single message after one is served', async () => {
+  const one = { jsonrpc: '2.0', id: 1, method: 'tools/list' };
+  let r = await send(`﻿${JSON.stringify([one, { ...one, id: 2 }])}`);
+  assert.equal(r.status, 400);
+  assert.equal((await r.json()).error.code, -32600);
+  r = await send(`﻿${JSON.stringify(one)}`);
+  assert.equal(r.status, 200);
+  assert.equal((await message(r)).result.tools.length, 4);
+});
+
+test('answers are plain JSON, whatever the client accepts', async () => {
+  for (const accept of ['application/json', 'application/json, text/event-stream', '*/*']) {
+    const r = await send({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'search_models', arguments: { query: 'task', limit: 1 } } }, { headers: { 'content-type': 'application/json', accept } });
+    assert.equal(r.status, 200, accept);
+    assert.match(r.headers.get('content-type'), /^application\/json/, accept);
+  }
+});
+
+test('the rate-limit key: IPv4 as it is, IPv6 by its /64, IPv4-mapped IPv6 as IPv4', async () => {
+  const { limiterKey } = await import('../worker/limit.mjs');
+  assert.equal(limiterKey('203.0.113.7'), '203.0.113.7');
+  assert.equal(limiterKey('2001:0db8:85a3:0000:0000:8a2e:0370:7334'), '2001:db8:85a3:0::/64');
+  assert.equal(limiterKey('2001:db8:85a3::8a2e:370:7334'), '2001:db8:85a3:0::/64');
+  assert.equal(limiterKey('2001:DB8:85A3:0:ffff:1:2:3'), '2001:db8:85a3:0::/64', 'another address in the same /64');
+  assert.equal(limiterKey('2001:db8::1'), '2001:db8:0:0::/64');
+  assert.equal(limiterKey('::1'), '0:0:0:0::/64');
+  assert.equal(limiterKey('fe80::1%eth0'), 'fe80:0:0:0::/64');
+  assert.equal(limiterKey('::ffff:192.0.2.1'), '192.0.2.1');
+  assert.equal(limiterKey('::ffff:c000:201'), '192.0.2.1');
+  assert.equal(limiterKey(null), 'unknown');
+  assert.equal(limiterKey(''), 'unknown');
+  assert.equal(limiterKey('not:an::address::'), 'not:an::address::');
+});
+
+test('client mistakes are not logged; a real failure is logged once', async () => {
+  const logged = [];
+  const original = console.error;
+  console.error = (...args) => logged.push(args.map(String).join(' '));
+  try {
+    await send('{"jsonrpc": "2.0", "id": 1, "method": ');
+    await send({ hello: 'world' });
+    await send({ jsonrpc: '2.0', id: 1, method: 'tools/list' }, { headers: { ...HEADERS, 'mcp-protocol-version': '2026-07-28' } });
+    await send('x', { headers: { ...HEADERS, 'content-type': 'text/plain' } });
+    await modern('subscriptions/listen', { notifications: { toolsListChanged: true } });
+    await call('nope_tool', {});
+    assert.deepEqual(logged, []);
+    const down = { ASSETS: { fetch: async () => new Response('down', { status: 503 }) } };
+    await call('search_models', { query: 'task' }, down);
+    assert.equal(logged.length, 1, logged.join('\n'));
+    assert.match(logged[0], /^mcp: search_models: .*index\.json is not published \(503\)/);
+  } finally { console.error = original; }
+});
+
+test('date-time follows ajv-formats, as CI does: a leap second with an offset is accepted', async () => {
+  const { dateTime } = await import('../worker/validate.mjs');
+  const { fullFormats } = await import('ajv-formats/dist/formats.js');
+  for (const s of ['2026-10-14T08:59:60-15:00', '2016-12-31T23:59:60Z', '2026-10-14T09:00:00+09:00', '2026-10-14T09:00:00', '2026-10-14T23:59:60+09:00', '2026-02-30T00:00:00Z', '2026-10-14t09:00:00.123z', '2026-10-14 09:00:00Z']) {
+    assert.equal(dateTime(s), fullFormats['date-time'].validate(s), s);
+  }
+  const kv = JSON.parse(await readFile(join(dir, 'examples/task/Task/example.json'), 'utf8'));
+  const r = await call('validate', { model: 'Task', entity: { ...kv, dateCreated: '2026-10-14T08:59:60-15:00' } });
+  assert.equal(r.valid, true, JSON.stringify(r.problems));
+});
+
+test('a large wrong array lists its first problems quickly instead of every error', async () => {
+  const task = { id: 'urn:ngsi-ld:Task:1', type: 'Task', name: 'x', progress: 'completed' };
+  const coordinates = []; while (JSON.stringify(coordinates).length < MAX_BODY_BYTES - 1000) coordinates.push(7);
+  const t = process.cpuUsage();
+  const r = await call('validate', { model: 'Task', entity: { ...task, location: { type: 'Point', coordinates } } });
+  const cpu = process.cpuUsage(t);
+  assert.equal(r.valid, false);
+  assert.ok(r.problems.length > 0 && r.problems.length <= MAX_PROBLEMS);
+  assert.ok((cpu.user + cpu.system) / 1000 < 100, `took ${(cpu.user + cpu.system) / 1000} ms of CPU`);
 });
