@@ -3,12 +3,16 @@
 // under /en/. Model pages are generated from models/ at build time
 // (scripts/lib/site.mjs) and are not committed.
 import type MarkdownIt from 'markdown-it'
+import { createRequire } from 'node:module'
 import { defineConfig, type DefaultTheme } from 'vitepress'
 import { loadSubjects, subjectUrls, modelUrls, BASE_URL } from '../../scripts/lib/models.mjs'
 import { tokenize } from './search-tokenize.mjs'
 import { endUrlsAtNonAscii } from './linkify.mjs'
 
 const subjects = await loadSubjects()
+// The toolkit release this build runs, as the other nodes show it: in the footer and a generator tag.
+// It comes from the installed package, so an upgrade pull request changes it with nothing else to edit.
+const TOOLKIT_VERSION: string = createRequire(import.meta.url)('@geolonia/datamodels/package.json').version
 const rel = (url: string) => url.slice(BASE_URL.length)
 
 function addVPreToInlineCode(md: MarkdownIt) {
@@ -228,6 +232,7 @@ export default defineConfig({
     ['meta', { property: 'og:image:width', content: '1200' }],
     ['meta', { property: 'og:image:height', content: '630' }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'generator', content: `datamodels-toolkit ${TOOLKIT_VERSION}` }],
   ],
   // Per-page title, description and canonical URL for the same previews.
   transformPageData(pageData) {
@@ -280,7 +285,7 @@ export default defineConfig({
       description: DESCRIPTION.ja,
       themeConfig: {
         nav: nav('', 'ja'),
-        footer: { message: '運営: <a href="https://geolonia.com/">Geolonia</a> · <a href="/LICENSE-CONTENT">モデルのファイル CC0 · 文章 CC BY 4.0 · コード Apache-2.0</a> · <a href="/about">このサイトについて</a>' },
+        footer: { message: `運営: <a href="https://geolonia.com/">Geolonia</a> · <a href="/LICENSE-CONTENT">モデルのファイル CC0 · 文章 CC BY 4.0 · コード Apache-2.0</a> · <a href="/about">このサイトについて</a> · <a href="/toolkit/">datamodels-toolkit</a> ${TOOLKIT_VERSION} で作成` },
         sidebar: sidebar('', 'ja'),
         outline: { label: '目次', level: [2, 3] },
         docFooter: { prev: '前のページ', next: '次のページ' },
@@ -296,7 +301,7 @@ export default defineConfig({
       link: '/en/',
       themeConfig: {
         nav: nav('/en', 'en'),
-        footer: { message: 'Operated by <a href="https://geolonia.com/">Geolonia</a> · <a href="/en/LICENSE-CONTENT">Model files CC0 · Text CC BY 4.0 · Code Apache-2.0</a> · <a href="/en/about">About this site</a>' },
+        footer: { message: `Operated by <a href="https://geolonia.com/">Geolonia</a> · <a href="/en/LICENSE-CONTENT">Model files CC0 · Text CC BY 4.0 · Code Apache-2.0</a> · <a href="/en/about">About this site</a> · Built with <a href="/en/toolkit/">datamodels-toolkit</a> ${TOOLKIT_VERSION}` },
         sidebar: sidebar('/en', 'en'),
         outline: { level: [2, 3] },
       },
