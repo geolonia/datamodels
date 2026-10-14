@@ -235,8 +235,9 @@ export default defineConfig({
     ['meta', { name: 'generator', content: `datamodels-toolkit ${TOOLKIT_VERSION}` }],
   ],
   // Per-page title, description and canonical URL for the same previews.
-  transformPageData(pageData) {
-    const path = pageData.relativePath.replace(/(^|\/)index\.md$/, '$1').replace(/\.md$/, '');
+  transformPageData(pageData, { siteConfig }) {
+    const urlPath = (rel: string) => rel.replace(/(^|\/)index\.md$/, '$1').replace(/\.md$/, '');
+    const path = urlPath(pageData.relativePath);
     // A page with titleTemplate: false (the home pages) has its whole title in its frontmatter.
     const title = pageData.frontmatter.titleTemplate === false && pageData.title ? pageData.title
       : pageData.title && pageData.title !== 'datamodels.jp' ? `${pageData.title} | datamodels.jp` : 'datamodels.jp';
@@ -249,6 +250,17 @@ export default defineConfig({
       ['meta', { property: 'og:url', content: `${SITE_URL}/${path}` }],
       ['link', { rel: 'canonical', href: `${SITE_URL}/${path}` }],
     );
+    // The same page in the other language, for search engines (hreflang); Japanese is the default.
+    // Only when that page exists: a page in one language only names no other.
+    const ja = lang === 'en' ? pageData.relativePath.slice('en/'.length) : pageData.relativePath;
+    const en = `en/${ja}`;
+    if (siteConfig.pages.includes(ja) && siteConfig.pages.includes(en)) {
+      pageData.frontmatter.head.push(
+        ['link', { rel: 'alternate', hreflang: 'ja', href: `${SITE_URL}/${urlPath(ja)}` }],
+        ['link', { rel: 'alternate', hreflang: 'en', href: `${SITE_URL}/${urlPath(en)}` }],
+        ['link', { rel: 'alternate', hreflang: 'x-default', href: `${SITE_URL}/${urlPath(ja)}` }],
+      );
+    }
   },
 
   themeConfig: {

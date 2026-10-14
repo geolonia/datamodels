@@ -394,6 +394,13 @@
 .flow-diagram .l { font-size: 12.5px; text-anchor: start; fill: var(--vp-c-text-2); }
 .flow-diagram .l.e { text-anchor: end; }
 .flow-diagram .a { stroke: var(--vp-c-text-3); stroke-width: 1.5; }
+/* On a phone a 460-unit diagram shrinks to about 70% and its text to 9 px: use the full screen width
+   and slightly larger text (checked on every diagram at 375 px: nothing leaves its box). */
+@media (max-width: 640px) {
+  .vp-doc .flow-diagram { width: calc(100% + 48px); max-width: none; margin-left: -24px; margin-right: -24px; }
+  .flow-diagram .t { font-size: 16px; }
+  .flow-diagram .s, .flow-diagram .l { font-size: 13.5px; }
+}
 .flow-diagram .a.d { stroke-dasharray: 4 3; }
 /* A dashed box: something the reader may add (your own site, /guide/own-models). */
 .flow-diagram .box.d { stroke-dasharray: 5 4; }
