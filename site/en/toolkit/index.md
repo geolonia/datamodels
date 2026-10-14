@@ -15,10 +15,10 @@ Not sure yet whether you need a site of your own? See [Your own data models](/en
 
 ## Running it {#run}
 
-You need [Node.js](https://nodejs.org/) 24 or later. The commands run a release of the npm package [`@geolonia/datamodels`](https://www.npmjs.com/package/@geolonia/datamodels) with `npx`; there is nothing to install. In a project of your own, `npm install --save-dev @geolonia/datamodels@0.3.10` adds it, and `npx datamodels …` runs it. Releases before 0.3.8 are not on npm and run from GitHub.
+You need [Node.js](https://nodejs.org/) 24 or later. The commands run a release of the npm package [`@geolonia/datamodels`](https://www.npmjs.com/package/@geolonia/datamodels) with `npx`; there is nothing to install. In a project of your own, `npm install --save-dev @geolonia/datamodels@0.3.14` adds it, and `npx datamodels …` runs it. Releases before 0.3.8 are not on npm and run from GitHub.
 
 ```bash
-npx @geolonia/datamodels@0.3.10 --help
+npx @geolonia/datamodels@0.3.14 --help
 ```
 
 The first time, `npx` asks before it downloads the package (`Need to install the following packages: … Ok to proceed? (y)`): answer `y`.
