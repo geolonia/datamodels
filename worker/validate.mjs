@@ -328,7 +328,7 @@ export function checkEntity(m, root, check, data, form, values) {
   if (usedForm === 'normalized') {
     // The toolkit's rules for normalized data, as check applies them: the declared attribute types, x-ngsi.multi, typed dates.
     // toKeyValues keeps an own "__proto__" key (toolkit 0.3.16), so the schema check below reports it as an extra attribute.
-    for (const p of attributeProblems(data, Object.entries(root.properties ?? {}))) problems.push({ path: `/${p.attribute}`, message: attributeMessage(p) });
+    for (const p of attributeProblems(data, Object.entries(root.properties ?? {}))) problems.push({ path: pointer('', p.attribute), message: attributeMessage(p) });
     const multi = new Set(Object.entries(root.properties ?? {}).filter(([, p]) => p?.['x-ngsi']?.multi).map(([n]) => n));
     try { kv = toKeyValues(data, { multi }); } catch (e) { return stop(e); }
   }

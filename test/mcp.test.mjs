@@ -11,7 +11,7 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import worker from '../worker/index.mjs';
 import { MAX_BODY_BYTES, MAX_PROBLEMS, MAX_KEYS, MAX_DEPTH, RATE_LIMIT } from '../worker/mcp.mjs';
-import { readableErrors, attributeMessage } from '../worker/validate.mjs';
+import { readableErrors, attributeMessage, checkEntity, makeChecker, shape } from '../worker/validate.mjs';
 import { Validator } from '@cfworker/json-schema';
 import { loadSubjects, BASE_URL } from '../scripts/lib/models.mjs';
 import { publishModels } from '../scripts/lib/publish.mjs';
@@ -776,4 +776,13 @@ test('a declared attribute with a non-ASCII or spaced name and a wrong value is 
 test('a rule a later toolkit adds is still named with its attribute', () => {
   assert.equal(attributeMessage({ attribute: 'x', rule: 'future' }), 'breaks the model\'s rule "future"');
   assert.equal(attributeMessage({ attribute: 'x', rule: 'multi', instances: 2 }), 'has several instances, but the model does not declare it multi-valued');
+});
+
+test('an attribute problem of a name with / or ~ has an escaped path, like every other path', () => {
+  const schema = { type: 'object', properties: { id: { type: 'string' }, type: { const: 'X' }, 'a/b': { type: 'string' }, 'c~d': { type: 'string' } } };
+  const data = { id: 'urn:x', type: 'X', 'a/b': [{ type: 'Property', value: 'p' }, { type: 'Property', value: 'q' }], 'c~d': { type: 'Relationship', object: 'urn:y' } };
+  const r = checkEntity({ id: 'test/X', type: 'X', kind: 'entity' }, schema, makeChecker(schema, []), data, 'normalized', shape(data).values);
+  const paths = r.problems.map((p) => p.path);
+  assert.ok(paths.includes('/a~1b') && paths.includes('/c~0d'), JSON.stringify(r.problems));
+  assert.ok(!paths.includes('/a/b') && !paths.includes('/c~d'), JSON.stringify(r.problems));
 });
