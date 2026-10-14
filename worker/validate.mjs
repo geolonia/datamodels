@@ -31,10 +31,13 @@ export const MAX_DEPTH = 64;
  * an invalid one lists its first problems, not all (complete: false). A valid
  * one is checked in full either way, and legitimate GeoJSON is never refused
  * for its size: a valid 64 KiB Polygon takes about 5-15 ms of CPU. The costly
- * case is an invalid one in a full check, about 9 µs per value (an invalid
- * GeometryCollection of 4,990 members: 55-66 ms before this limit).
+ * case is an invalid one in a full check: the validator collects every error
+ * first, about 9 µs per value on a fast machine and several times that on a
+ * slow one (an invalid GeometryCollection of 4,990 members: 55-66 ms before
+ * this limit; 990 members: 8 ms locally, 52 ms on a CI runner). 250 values
+ * cover real entities and keep a full check to a few ms.
  */
-export const FULL_CHECK_VALUES = 1000;
+export const FULL_CHECK_VALUES = 250;
 /** A full check that reports more errors than this is answered with the first-error check instead. */
 export const MAX_RAW_ERRORS = 2000;
 /** What the answer says when not every problem was looked for. */
