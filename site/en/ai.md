@@ -33,7 +33,7 @@ An agent that cannot open web pages or this repository can still use the catalog
 - `find_attribute`: find an existing attribute to reuse, by its name or its meaning.
 - `validate`: check one entity, plain JSON (key-values) or NGSI-LD normalized, against a model.
 
-Add it to an MCP client that supports remote servers (Streamable HTTP). In Claude Code (`.mcp.json`) and Cursor (`.cursor/mcp.json`), the entry is:
+Add it to an MCP client that supports remote servers (Streamable HTTP). In Claude Code (`.mcp.json`), the entry is:
 
 ```json
 {
@@ -46,4 +46,16 @@ Add it to an MCP client that supports remote servers (Streamable HTTP). In Claud
 }
 ```
 
-VS Code (`.vscode/mcp.json`) takes the same entry under `"servers"` instead of `"mcpServers"`. Claude Code can also add it with `claude mcp add --transport http datamodels https://datamodels.jp/mcp`. In Claude Desktop and on claude.ai, add it under Connectors, as a custom connector with the URL `https://datamodels.jp/mcp`.
+Cursor (`.cursor/mcp.json`) needs only the URL:
+
+```json
+{
+  "mcpServers": {
+    "datamodels": {
+      "url": "https://datamodels.jp/mcp"
+    }
+  }
+}
+```
+
+VS Code (`.vscode/mcp.json`) takes the Claude Code entry under `"servers"` instead of `"mcpServers"`. Claude Code can also add it with `claude mcp add --transport http datamodels https://datamodels.jp/mcp`. In Claude Desktop and on claude.ai, add it under Connectors, as a custom connector with the URL `https://datamodels.jp/mcp`.

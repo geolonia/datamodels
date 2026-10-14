@@ -16,4 +16,4 @@ starts_with(http.request.uri.path, "/context/") or starts_with(http.request.uri.
 
 `models.geonicdb.com`, the pre-launch preview, is retired and must not answer. `wrangler deploy` does not detach a custom domain that disappears from `wrangler.jsonc`, so if it still responds, remove it under the Worker's Settings → Domains & Routes; that also deletes its DNS record.
 
-`/mcp` is rate-limited by the `MCP_LIMITER` binding in `wrangler.jsonc` (namespace `2230`, 100 requests a minute per client IP address, counted per Cloudflare location). It deploys with the Worker and is not shown or set in the dashboard; change it in `wrangler.jsonc` and keep `RATE_LIMIT` in `worker/mcp.mjs` the same.
+`/mcp` is rate-limited by the `MCP_LIMITER` binding in `wrangler.jsonc` (namespace `2230`, 100 requests a minute per client IP address, counted per Cloudflare location). It deploys with the Worker and is not shown or set in the dashboard; change it in `wrangler.jsonc` and keep `RATE_LIMIT` in `worker/limit.mjs` and the copy under `previews` (previews do not inherit bindings) the same.

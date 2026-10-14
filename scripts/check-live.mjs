@@ -158,8 +158,9 @@ if (r.ok) {
 }
 
 // The MCP server (/mcp, worker/mcp.mjs): the handshake and the four tools, on
-// every origin, previews included (they run the same Worker). Two requests of
-// the 100 a minute the rate limit allows.
+// every origin, previews included (they run the same Worker). Two requests, and
+// a third on datamodels.jp below (Python-urllib), of the 100 a minute the rate
+// limit allows.
 const MCP_TOOLS = ['find_attribute', 'get_model', 'search_models', 'validate'];
 const mcp = (body, headers = {}) => fetch(`${origin}/mcp`, { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json, text/event-stream', ...headers }, body: JSON.stringify(body) });
 /** The JSON-RPC answer, sent as JSON or as one SSE event. */

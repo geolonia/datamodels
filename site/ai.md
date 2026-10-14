@@ -29,11 +29,11 @@ description: datamodels.jp の作成での AI の使い方と、AI エージェ�
 ウェブページもこのリポジトリも開けないエージェントでも、MCP（Model Context Protocol）でカタログを使えます。サーバーは `https://datamodels.jp/mcp` にあります。ログインは不要です。読み取りだけを行い、このサイトのファイルをもとに答えます。
 
 - `search_models`: 日本語か英語の言葉で、モデルを探します。
-- `get_model`: 1 つのモデルを返します。参照先のスキーマを含む JSON Schema、@context の URL、例、IRI 付きのすべての属性、関連ファイルの URL です。
+- `get_model`: 1 つのモデルを返します。返す内容は、参照先のスキーマも含めた JSON Schema、@context の URL、例、すべての属性とその IRI、関連ファイルの URL です。
 - `find_attribute`: 再利用できる既存の属性を、名前か意味で探します。
 - `validate`: 1 つのエンティティを、モデルで検証します。key-values の形の JSON でも、NGSI-LD の normalized の形でも構いません。
 
-使うには、MCP クライアントの設定に追加します。リモートのサーバー（Streamable HTTP）を扱えるクライアントが対象です。Claude Code（`.mcp.json`）と Cursor（`.cursor/mcp.json`）では、次のように書きます。
+使うには、MCP クライアントの設定に追加します。リモートのサーバー（Streamable HTTP）を扱えるクライアントが対象です。Claude Code（`.mcp.json`）では、次のように書きます。
 
 ```json
 {
@@ -46,4 +46,16 @@ description: datamodels.jp の作成での AI の使い方と、AI エージェ�
 }
 ```
 
-VS Code（`.vscode/mcp.json`）では、同じ内容を `"mcpServers"` ではなく `"servers"` の下に書きます。Claude Code では、`claude mcp add --transport http datamodels https://datamodels.jp/mcp` でも追加できます。Claude Desktop と claude.ai では、コネクタの設定でカスタムコネクタとして追加します。URL は `https://datamodels.jp/mcp` です。
+Cursor（`.cursor/mcp.json`）では、URL だけを書きます。
+
+```json
+{
+  "mcpServers": {
+    "datamodels": {
+      "url": "https://datamodels.jp/mcp"
+    }
+  }
+}
+```
+
+VS Code（`.vscode/mcp.json`）では、Claude Code と同じ内容を `"mcpServers"` ではなく `"servers"` の下に書きます。Claude Code では、`claude mcp add --transport http datamodels https://datamodels.jp/mcp` でも追加できます。Claude Desktop と claude.ai では、コネクタの設定でカスタムコネクタとして追加します。URL は `https://datamodels.jp/mcp` です。
