@@ -39,7 +39,7 @@ If your list does not follow the standard, write a mapping file of your own and 
 You need [Node.js](https://nodejs.org/) 24 or later. The example here is Utsunomiya City's list of designated emergency evacuation sites. Step 1 of the [tutorial](/en/guide/tutorial#data) downloads it as `sites.csv`.
 
 ```bash
-npx @geolonia/datamodels@0.3.15 convert \
+npx @geolonia/datamodels@0.3.16 convert \
   disaster/EvacuationSite jichitai-opendata-site sites.csv --out sites.json
 ```
 

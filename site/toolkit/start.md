@@ -20,7 +20,7 @@ description: datamodels-toolkit の init で自分のデータモデルのサイ
 ## 1. ノードを作る {#init}
 
 ```bash
-npx @geolonia/datamodels@0.3.15 init my-models
+npx @geolonia/datamodels@0.3.16 init my-models
 cd my-models
 ```
 
@@ -42,7 +42,7 @@ cd my-models
 答えはオプションでも渡せるので、スクリプトや CI でも実行できます。その場合は質問をせず、足りない答えがあれば使い方の誤りになります。答えの無い項目の既定は、ハッシュ IRI、英語、CC0-1.0 です。
 
 ```bash
-npx @geolonia/datamodels@0.3.15 init my-models \
+npx @geolonia/datamodels@0.3.16 init my-models \
   --base-url https://models.example.org --iris hash --languages ja,en \
   --publisher "Example Inc." --publisher-url https://example.org/ \
   --license CC0-1.0 --subject road --yes

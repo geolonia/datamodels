@@ -70,7 +70,7 @@ frictionless validate sites.csv --schema EvacuationSite.tableschema.json
 [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) の `datamodels convert` は、各行をエンティティにして、モデルの JSON Schema で検証します。
 
 ```bash
-npx @geolonia/datamodels@0.3.15 convert \
+npx @geolonia/datamodels@0.3.16 convert \
   disaster/EvacuationSite csv-template sites.csv --out entities.json
 ```
 

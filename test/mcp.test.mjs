@@ -11,7 +11,8 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import worker from '../worker/index.mjs';
 import { MAX_BODY_BYTES, MAX_PROBLEMS, MAX_KEYS, MAX_DEPTH, RATE_LIMIT } from '../worker/mcp.mjs';
-import { readableErrors } from '../worker/validate.mjs';
+import { readableErrors, attributeMessage, checkEntity, makeChecker, shape } from '../worker/validate.mjs';
+import { Validator } from '@cfworker/json-schema';
 import { loadSubjects, BASE_URL } from '../scripts/lib/models.mjs';
 import { publishModels } from '../scripts/lib/publish.mjs';
 import { readNodeList, readSnapshot, nodeName } from '../scripts/lib/nodes.mjs';
@@ -453,9 +454,17 @@ test('an own "__proto__" key is reported, not dropped, in both forms', async () 
   r = await call('validate', { model: 'Task', entity: withProto(kv) });
   assert.equal(r.valid, false, 'also as JSON text');
   const norm = await readFile(join(dir, 'examples/task/Task/example-normalized.jsonld'), 'utf8');
+  // Not an attribute object: the projection to key-values stops at it, once.
   r = await callRaw(withProto(norm), 'normalized');
   assert.equal(r.valid, false);
-  assert.ok(r.problems.some((p) => p.path === '/__proto__' && /not an attribute of Task/.test(p.message)), JSON.stringify(r.problems));
+  assert.deepEqual(r.problems.filter((p) => /__proto__/.test(`${p.path} ${p.message}`)), [{ path: '/', message: 'attribute __proto__: not a normalized attribute object' }]);
+  // An attribute object: toKeyValues keeps it as an own key (toolkit 0.3.16), so the schema reports it, once.
+  r = await callRaw(norm.replace(/^\{/, '{"__proto__": {"type": "Property", "value": 1},'), 'normalized');
+  assert.equal(r.valid, false);
+  assert.deepEqual(r.problems.filter((p) => /__proto__/.test(`${p.path} ${p.message}`)), [{ path: '/__proto__', message: '"__proto__" is not an attribute here: the schema allows no other properties' }]);
+  // An extra attribute's path is a JSON pointer, escaped like every other path in the answer.
+  const odd = await call('validate', { model: 'Task', entity: { id: 'urn:ngsi-ld:Task:1', type: 'Task', name: 'x', progress: 'completed', 'a/b': 1, 'c~d': 2 } });
+  assert.deepEqual(odd.problems.map((p) => p.path).sort(), ['/a~1b', '/c~0d']);
   assert.equal({}.polluted, undefined);
 });
 
@@ -707,4 +716,73 @@ test('uniqueItems reached through dependencies stays with the validator', async 
   };
   const { problems } = makeChecker(schema, [])({ k: 1, z: [1, 1] }, 3);
   assert.ok(problems.some((p) => /^Duplicate items/.test(p.message)), JSON.stringify(problems));
+});
+
+// --- Toolkit 0.3.16: the NGSI-LD rules of check, shared (geolonia/datamodels-toolkit#120) ----
+
+test('a Relationship on a date Property gets its type problem only, not also a date problem', async () => {
+  const norm = JSON.parse(await readFile(join(dir, 'examples/task/Task/example-normalized.jsonld'), 'utf8'));
+  const r = await call('validate', { model: 'Task', entity: { ...norm, due: { type: 'Relationship', object: 'urn:ngsi-ld:Task:2', value: '2026-10-15' } } });
+  assert.equal(r.valid, false);
+  // The schema also finds that urn:ngsi-ld:Task:2 is no date; of the NGSI-LD rules, only the type is broken.
+  const rules = r.problems.filter((p) => /^is a |the value must be|several instances/.test(p.message));
+  assert.deepEqual(rules, [{ path: '/due', message: 'is a Relationship, but the model makes it a Property' }], JSON.stringify(r.problems));
+});
+
+test('validate and the toolkit\'s check find the same NGSI-LD rule problems and open rings', async () => {
+  // check's own rules for an example (src/build/examples.mjs); the package does not export the file, so it is imported by its path.
+  const { exampleProblems } = await import(new URL('../node_modules/@geolonia/datamodels/src/build/examples.mjs', import.meta.url));
+  const schema = JSON.parse(await readFile(join(dir, new URL(index.models.find((x) => x.id === 'task/Task').schemaUrl).pathname), 'utf8'));
+  const norm = JSON.parse(await readFile(join(dir, 'examples/task/Task/example-normalized.jsonld'), 'utf8'));
+  const open = { type: 'Polygon', coordinates: [[[139, 35], [139.1, 35], [139.1, 35.1], [139, 35.05]]] };
+  const entities = [
+    norm,
+    { ...norm, name: { type: 'Relationship', object: 'urn:x' } },
+    { ...norm, due: { type: 'Property', value: '2026-10-15T09:00:00Z' }, start: { type: 'Property', value: { '@type': 'DateTime', '@value': '2026-10-15' } } },
+    { ...norm, description: [{ type: 'Property', value: 'a', datasetId: 'urn:a' }, { type: 'Property', value: 'b', datasetId: 'urn:b' }] },
+    { ...norm, due: { type: 'Relationship', object: 'urn:x', value: '2026-10-15' }, progress: { type: 'GeoProperty', value: open } },
+    { ...norm, location: { type: 'GeoProperty', value: { type: 'MultiPolygon', coordinates: [[open.coordinates[0]], [open.coordinates[0]]] } } },
+  ];
+  const RULES = [['multi', /has several instances/], ['type', /^is a |" is a /], ['date', /the value must be/]];
+  const rule = (message) => RULES.find(([, re]) => re.test(message))?.[0];
+  let found = 0;
+  for (const entity of entities) {
+    const fromCheck = exampleProblems({ name: 'task' }, { type: 'Task', kind: 'entity', schema, examples: { 'example-normalized.jsonld': entity } }, {
+      urls: { subjectUrls: () => ({ contextAlias: norm['@context'][0] }) }, validate: () => true, errorsText: () => '',
+    });
+    const r = await call('validate', { model: 'Task', entity, form: 'normalized' });
+    // The attribute rules, in order, as "<attribute> <rule>".
+    const checkRules = fromCheck.map((p) => [/attribute "([^"]+)"/.exec(p)?.[1], rule(p)]).filter(([a, k]) => a && k).map((x) => x.join(' '));
+    const workerRules = r.problems.map((p) => [p.path.slice(1), rule(p.message)]).filter(([, k]) => k).map((x) => x.join(' '));
+    assert.deepEqual(workerRules, checkRules, JSON.stringify(entity).slice(0, 200));
+    // The open rings: check writes $.location.coordinates[0], validate /location/coordinates/0.
+    const checkRings = fromCheck.map((p) => /: (\$[^:]*): the polygon ring/.exec(p)?.[1]).filter(Boolean).map((p) => p.slice(1).replace(/\[(\d+)\]/g, '.$1').replaceAll('.', '/'));
+    const workerRings = r.problems.filter((p) => /does not close/.test(p.message)).map((p) => p.path);
+    assert.deepEqual(workerRings, checkRings, JSON.stringify(entity).slice(0, 200));
+    found += checkRules.length + checkRings.length;
+  }
+  assert.equal(found, 9, 'the entities break 6 rules and have 3 open rings');
+});
+
+test('a declared attribute with a non-ASCII or spaced name and a wrong value is one problem, at its plain path', () => {
+  const schema = { type: 'object', properties: { 'あ': { type: 'string' }, 'a b': { type: 'string' }, 'a/b': { type: 'string' } }, additionalProperties: false };
+  const result = new Validator(schema, '2020-12', false).validate({ 'あ': 5, 'a b': 5, 'a/b': 5, 'い': 1 });
+  const problems = readableErrors(result.errors);
+  assert.deepEqual(problems.map((p) => p.path).sort(), ['/a b', '/a~1b', '/あ', '/い'], JSON.stringify(problems));
+  assert.match(problems.find((p) => p.path === '/い').message, /is not an attribute here/);
+  assert.ok(!problems.some((p) => p.path === '/あ' && /is not an attribute here/.test(p.message)));
+});
+
+test('a rule a later toolkit adds is still named with its attribute', () => {
+  assert.equal(attributeMessage({ attribute: 'x', rule: 'future' }), 'breaks the model\'s rule "future"');
+  assert.equal(attributeMessage({ attribute: 'x', rule: 'multi', instances: 2 }), 'has several instances, but the model does not declare it multi-valued');
+});
+
+test('an attribute problem of a name with / or ~ has an escaped path, like every other path', () => {
+  const schema = { type: 'object', properties: { id: { type: 'string' }, type: { const: 'X' }, 'a/b': { type: 'string' }, 'c~d': { type: 'string' } } };
+  const data = { id: 'urn:x', type: 'X', 'a/b': [{ type: 'Property', value: 'p' }, { type: 'Property', value: 'q' }], 'c~d': { type: 'Relationship', object: 'urn:y' } };
+  const r = checkEntity({ id: 'test/X', type: 'X', kind: 'entity' }, schema, makeChecker(schema, []), data, 'normalized', shape(data).values);
+  const paths = r.problems.map((p) => p.path);
+  assert.ok(paths.includes('/a~1b') && paths.includes('/c~0d'), JSON.stringify(r.problems));
+  assert.ok(!paths.includes('/a/b') && !paths.includes('/c~d'), JSON.stringify(r.problems));
 });

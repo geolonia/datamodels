@@ -70,7 +70,7 @@ Contributions in Japanese or English are welcome as issues or pull requests; see
 The converter is `datamodels convert` in [geolonia/datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) (moved there in #91). It turns a CSV list into entities of a catalog model and validates each one, for example a municipality's 指定緊急避難場所一覧 (自治体標準オープンデータセット 03), or GSI's data, into EvacuationSite:
 
 ```bash
-npx @geolonia/datamodels@0.3.15 convert disaster/EvacuationSite jichitai-opendata-site 092011_evacuation_space.csv --out sites.json
+npx @geolonia/datamodels@0.3.16 convert disaster/EvacuationSite jichitai-opendata-site 092011_evacuation_space.csv --out sites.json
 ```
 
 It reads the mapping files from datamodels.jp (`/mapping/<subject>/<Type>/<name>.yaml`). To try a mapping before it is published, build this repository and add `--site dist`. A list that follows no standard in the catalog is converted with its owner's own mapping file, which `datamodels mapping` starts ([Converting your data](https://datamodels.jp/en/toolkit/convert)).
