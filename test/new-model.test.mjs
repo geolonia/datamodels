@@ -24,7 +24,8 @@ test('new-model scaffolds a model the validator lists as unfinished', async () =
     assert.equal(v.status, 1);
     assert.match(v.stderr, /TrafficFlow\/catalog\.yaml: fill in the TODO markers/);
     assert.match(v.stderr, /TrafficFlow\/README\.md: fill in the TODO markers/);
-    assert.match(v.stderr, /transportation\/context\.jsonld: differs from the recorded 1\.0\.0 snapshot/);
+    // During the pre-release the snapshot is corrected too, and the message says how.
+    assert.match(v.stderr, /transportation v1\.0\.0 was published and its files would change; during the pre-release \(prerelease: true in node\.yaml\) correct the snapshot too: remove models\/transportation\/releases\/v1\.0\.0\/ and run datamodels release transportation/);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }

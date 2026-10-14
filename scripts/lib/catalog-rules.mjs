@@ -11,15 +11,6 @@ import { extensionProblems } from './extensions.mjs';
 
 const isLink = (u) => { if (typeof u !== 'string') return false; try { const x = new URL(u); return (x.protocol === 'https:' || x.protocol === 'http:') && x.hostname !== ''; } catch { return false; } };
 const isObject = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
-/** Structural equality: object key order does not matter, array order does. */
-function same(a, b) {
-  if (a === b) return true;
-  if (typeof a !== 'object' || typeof b !== 'object' || a === null || b === null || Array.isArray(a) !== Array.isArray(b)) return false;
-  if (Array.isArray(a)) return a.length === b.length && a.every((v, i) => same(v, b[i]));
-  const ka = Object.keys(a).sort(), kb = Object.keys(b).sort();
-  return same(ka, kb) && ka.every((k) => same(a[k], b[k]));
-}
-
 /** The problems of the catalog's own rules, as "models/<subject>/...: <problem>" lines. */
 export async function catalogRuleProblems(subjects) {
   const out = [];
@@ -31,18 +22,13 @@ export async function catalogRuleProblems(subjects) {
     try { ctxTerms = await resolveContextTerms(subject.context, subjects, resolveContextDocument); } catch (e) { fail(`${where}/context.jsonld`, e.message); }
     // The core terms are left to the broker: the catalog redefines none of them, not even with the same IRI.
     for (const term of Object.keys(subject.inlineTerms)) if (CORE_TERMS.has(term)) fail(`${where}/context.jsonld`, `redefines core context term "${term}" (protected)`);
-    // During the pre-release a changed context is recorded again; say how, once.
-    try {
-      const snapshot = JSON.parse(await readFile(join(subject.dir, 'releases', `v${subject.version}`, 'context.jsonld'), 'utf8'));
-      if (!same(snapshot, subject.context)) fail(`${where}/context.jsonld`, `differs from the recorded ${subject.version} snapshot, so examples still expand with the old terms. During the pre-release a maintainer records it (npm run rerecord -- ${subject.name}); after the official launch, bump the subject version instead`);
-    } catch (e) { if (e.code !== 'ENOENT') throw e; }
     const published = [subject.version, ...(await listReleases(subject)).map((r) => r.version)];
 
     for (const model of subject.models) {
       const mwhere = `${where}/${model.type}`;
       const { schema } = model;
-      // Every schema says its version, so a copied file shows where it came from.
-      if (schema['x-version'] !== subject.version) fail(`${mwhere}/schema.json`, `x-version must be ${subject.version} (subject version)`);
+      // Every schema says its version, so a copied file shows where it came from (a wrong one the toolkit reports).
+      if (schema['x-version'] === undefined) fail(`${mwhere}/schema.json`, `x-version must be ${subject.version} (subject version)`);
       // A value type is a term of the context too, as every entity type is.
       if (model.kind === 'value' && !ctxTerms[model.type]) fail(`${where}/context.jsonld`, `does not define type "${model.type}"`);
       // Another vocabulary's class only from the known namespaces: a typo in its IRI cannot be checked by fetching it.
@@ -61,7 +47,7 @@ export async function catalogRuleProblems(subjects) {
 
       // `npm run new-model` leaves TODO markers; a model is not done while any remain.
       // A missing README is fine; an unreadable one must not skip the check.
-      const readme = await readFile(join(model.dir, 'README.md'), 'utf8').catch((e) => { if (e.code === 'ENOENT') return null; throw e; });
+      const readme = await readFile(join(model.dir, 'README.md'), 'utf8').catch((e) => { if (e.code !== 'ENOENT') fail(`${mwhere}/README.md`, `cannot be read (${e.code ?? e.message})`); return null; });
       for (const [file, value] of [['schema.json', schema], ['catalog.yaml', model.catalog], ['notes.yaml', model.notes], ['README.md', readme], ['examples/example.json', model.examples['example.json']], ['examples/example-normalized.jsonld', model.examples['example-normalized.jsonld']]]) {
         if (value != null && /\bTODO\b/.test(typeof value === 'string' ? value : JSON.stringify(value))) fail(`${mwhere}/${file}`, 'fill in the TODO markers');
       }

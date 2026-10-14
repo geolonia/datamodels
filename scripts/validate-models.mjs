@@ -12,30 +12,33 @@
 // compared online by the immutability check.
 import { mkdtemp, copyFile, symlink, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { checkNode } from '@geolonia/datamodels/build';
 import { loadSubjects, ROOT, MODELS_DIR } from './lib/models.mjs';
 import { catalogRuleProblems } from './lib/catalog-rules.mjs';
 import { reportFailures } from './lib/ci-summary.mjs';
 
 // The node is the repository: node.yaml and models/. The tests point MODELS_DIR at a changed copy of models/.
-let nodeDir = ROOT;
-let temp;
-if (MODELS_DIR !== join(ROOT, 'models')) {
-  temp = await mkdtemp(join(tmpdir(), 'datamodels-node-'));
-  await copyFile(join(ROOT, 'node.yaml'), join(temp, 'node.yaml'));
-  await symlink(MODELS_DIR, join(temp, 'models'), 'dir');
-  nodeDir = temp;
-}
-
 const failures = [];
+let subjects;
+let temp;
 try {
+  let nodeDir = ROOT;
+  if (resolve(MODELS_DIR) !== join(ROOT, 'models')) {
+    temp = await mkdtemp(join(tmpdir(), 'datamodels-node-'));
+    await copyFile(join(ROOT, 'node.yaml'), join(temp, 'node.yaml'));
+    await symlink(resolve(MODELS_DIR), join(temp, 'models'), 'dir');
+    nodeDir = temp;
+  }
   const { problems } = await checkNode(nodeDir, { offline: true });
-  failures.push(...problems);
+  // Paths as in the repository (the toolkit names them from models/ on).
+  failures.push(...problems.map((p) => (/^[\w-]+\/[^\s:]*:/.test(p) ? `models/${p}` : p)));
   // The catalog's rules need the models; a node the toolkit cannot load is already one problem above.
-  let subjects;
   try { subjects = await loadSubjects(); } catch (e) { if (!problems.length) failures.push(e.message); }
-  if (subjects) failures.push(...(await catalogRuleProblems(subjects)));
+  // Anything they throw is one more problem, not the end of the list.
+  if (subjects) {
+    try { failures.push(...(await catalogRuleProblems(subjects))); } catch (e) { failures.push(`the catalog's rules stopped: ${e.message}`); }
+  }
 } finally {
   if (temp) await rm(temp, { recursive: true, force: true });
 }
@@ -46,6 +49,5 @@ if (failures.length) {
   await reportFailures('Model validation failed', failures, 'Run `npm run validate:models` locally to see the same list. The rules are in the guide: https://datamodels.jp/en/guide/rules');
   process.exit(1);
 }
-const subjects = await loadSubjects();
 const n = subjects.reduce((a, s) => a + s.models.length, 0);
 console.log(`models ok: ${subjects.length} subject(s), ${n} model(s) validated`);

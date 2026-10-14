@@ -14,8 +14,9 @@ export async function reportFailures(title, lines, hint) {
   const file = process.env.GITHUB_STEP_SUMMARY;
   if (!file) return;
   const rows = lines.map((l) => {
+    // "Where" only when the text before the first ': ' is a path; a message can contain ': ' too.
     const i = l.indexOf(': ');
-    return i > 0 ? `| \`${cell(l.slice(0, i))}\` | ${cell(l.slice(i + 2))} |` : `| | ${cell(l)} |`;
+    return i > 0 && /^[\w./@-]+$/.test(l.slice(0, i)) ? `| \`${cell(l.slice(0, i))}\` | ${cell(l.slice(i + 2))} |` : `| | ${cell(l)} |`;
   });
   await appendFile(file, `### ${title} (${lines.length})\n\n| Where | Problem |\n|---|---|\n${rows.join('\n')}\n\n${hint}\n\n`);
 }
