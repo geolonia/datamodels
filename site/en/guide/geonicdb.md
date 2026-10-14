@@ -156,10 +156,10 @@ With your own names for a type or an attribute ([Your own names](/en/guide/names
 
 ```bash
 CONTEXT=https://example.com/context/city-disaster.jsonld
-node adapters/geonicdb/export.mjs task --type Project --type-name Saigai \
+node adapters/geonicdb/export.mjs task --type Project --type-name SaigaiTaiou \
   --context-url "$CONTEXT" --out ./out
 node adapters/geonicdb/export.mjs task --type Task \
-  --rename assignee=responsibleTeam \
+  --rename assignee=taiouHan \
   --context-url "$CONTEXT" --out ./out
 ```
 

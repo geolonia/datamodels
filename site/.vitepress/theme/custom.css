@@ -111,7 +111,7 @@
 /* Hero headline (site/index.md): a phrase that never wraps, the key word in red,
    and the full stop drawn as the mark's red dot. The character stays in the text
    (copy, screen readers). */
-.VPHero .text .nowrap { white-space: nowrap; }
+.VPHero .text .nowrap, .VPHero .tagline .nowrap { white-space: nowrap; }
 .VPHero .text .accent { color: var(--vp-c-brand-1); }
 .VPHero .text .dot {
   display: inline-block;

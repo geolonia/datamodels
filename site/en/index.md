@@ -9,7 +9,7 @@ hero:
   name: ''
   # HTML: "Data models" and the full stop (the mark's dot) are red (docs/brand.md).
   text: <span class="accent">Data models</span> that work in Japan, at URLs that never <span class="nowrap">change<span class="dot">.</span></span>
-  tagline: Published as JSON Schemas, JSON-LD @context files and vocabularies. Use them with plain JSON, as linked data, or with any NGSI-LD broker.
+  tagline: Shared definitions for shelters, road closures, facilities and tasks, so that data from different cities and systems fits together.
   # Records from many systems linked to the shared definitions; one branch adds its own attribute (#167).
   image:
     light: /hero-illustration.svg

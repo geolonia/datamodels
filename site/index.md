@@ -9,7 +9,7 @@ hero:
   name: ''
   # HTML: 「ずっと変わらない」 and 「URL で。」 never break inside, so a narrow screen breaks between them; 「データモデル」 and the full stop (the mark's dot) are red.
   text: 日本で使える<br><span class="accent">データモデル</span>を、<span class="nowrap">ずっと変わらない</span> <span class="nowrap">URL で<span class="dot">。</span></span>
-  tagline: JSON Schema、JSON-LD の @context、語彙の形で公開しています。JSON のままでも、Linked Data としても、どの NGSI-LD ブローカーでも使えます。
+  tagline: 避難所、道路規制、施設、タスクなどの共通の定義です。自治体やシステムが違っても、データを<span class="nowrap">組み合わせられます。</span>
   # Records from many systems linked to the shared definitions; one branch adds its own attribute (#167).
   image:
     light: /hero-illustration.svg
