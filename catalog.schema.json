@@ -19,12 +19,22 @@
       "format": "date-time"
     },
     "title": {
-      "$ref": "#/$defs/i18n",
-      "description": "The node's name, in each language of the node."
+      "type": "object",
+      "description": "The node's name, in each language of the node.",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
     },
     "description": {
-      "$ref": "#/$defs/i18n",
-      "description": "What the node publishes, in each language of the node."
+      "type": "object",
+      "description": "What the node publishes, in each language of the node.",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
     },
     "publisher": {
       "type": "object",

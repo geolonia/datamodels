@@ -29,7 +29,7 @@ adapters/<name>/          files for a particular broker or tool, published under
 site/                     VitePress site; site/models and site/en/models are generated
 scripts/                  validate, build, publish, vocabulary, live check
 public/                   _headers and _redirects (the build appends the generated per-file rules to both)
-node.yaml                 the site's settings as a data model node (address, languages, publisher, licence), in datamodels-toolkit's format
+node.yaml                 the site's settings as a data model node (address, languages, title and description, publisher, licence), in datamodels-toolkit's format
 nodes.yaml                the other nodes datamodels.jp knows
 catalog.schema.json       wire format of /catalog.json
 docs/design.md            design decisions

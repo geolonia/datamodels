@@ -34,7 +34,14 @@ test('the catalog lists the nodes of nodes.yaml, so tools that start here find t
   assert.deepEqual(catalog.publisher, { name: { ja: '株式会社Geolonia', en: 'Geolonia Inc.' }, url: 'https://geolonia.com/' });
   // The node's own name and what it publishes, from node.yaml (toolkit 0.3.15).
   assert.deepEqual(catalog.title, { ja: 'datamodels.jp', en: 'datamodels.jp' });
-  for (const field of ['title', 'description']) assert.ok(schema.properties[field], `${field} is in catalog.schema.json`);
+  for (const field of ['title', 'description']) {
+    assert.ok(schema.properties[field], `${field} is in catalog.schema.json`);
+    // datamodels.jp has both languages; the format asks only for a text in each language of the node.
+    assert.deepEqual(Object.keys(catalog[field]), ['ja', 'en'], field);
+    assert.ok(validate({ ...catalog, [field]: { en: 'Road models' } }), `${field} in English only`);
+    assert.ok(!validate({ ...catalog, [field]: { en: '' } }), `${field}: an empty text`);
+    assert.ok(!validate({ ...catalog, [field]: {} }), `${field}: no language`);
+  }
   // No nodes, no empty list.
   assert.equal(catalogHead([]).nodes, undefined);
 });

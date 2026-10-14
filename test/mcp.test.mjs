@@ -14,7 +14,7 @@ import { MAX_BODY_BYTES, MAX_PROBLEMS, MAX_KEYS, MAX_DEPTH, RATE_LIMIT } from '.
 import { readableErrors } from '../worker/validate.mjs';
 import { loadSubjects, BASE_URL } from '../scripts/lib/models.mjs';
 import { publishModels } from '../scripts/lib/publish.mjs';
-import { readNodeList, readSnapshot } from '../scripts/lib/nodes.mjs';
+import { readNodeList, readSnapshot, nodeName } from '../scripts/lib/nodes.mjs';
 import { discoverAdapters } from '../scripts/lib/adapters.mjs';
 import { writeMcpIndex, schemaRefs } from '../scripts/lib/mcp-index.mjs';
 
@@ -260,6 +260,8 @@ test('search_models finds models by type name, English and Japanese words, and m
   r = await call('search_models', { query: 'address' });
   assert.ok(r.results.some((x) => x.model === 'common/JapaneseAddress'), 'value types are found too');
   const node = index.nodeModels[0];
+  // Named as the pages name it (title, else publisher, else host).
+  assert.equal(node.site, nodeName((await readSnapshot()).nodes.find((n) => n.url === node.siteUrl), 'en'));
   r = await call('search_models', { query: node.type, limit: 50 });
   assert.ok(r.results.some((x) => x.source === 'node' && x.pageUrl === node.pageUrl), 'a node model is found');
   r = await call('search_models', { query: node.type, limit: 50, include_nodes: false });

@@ -70,7 +70,7 @@ npx @geolonia/datamodels@0.3.15 add road/Segment --value
 npx @geolonia/datamodels@0.3.15 extend task/Task road/RoadTask
 ```
 
-最初の引数は、土台にするモデルです。相手のサイトの `catalog.json` にある `<subject>/<Type>` か、型の IRI で指定します。`--index` は、その `catalog.json` です（既定は、型 IRI ならそれを作ったノードの索引。なければ `node.yaml` の最初のノード、さらになければ datamodels.jp）。詳しくは[型 IRI で指定したモデル](/toolkit/reference#type-iri)にあります。ターミナルで引数なしに実行すると、一覧からモデルを選び、新しいモデルの名前を入力できます。
+最初の引数は、土台にするモデルです。相手のサイトの `catalog.json` にある `<subject>/<Type>` か、型の IRI で指定します。`--index` は、その `catalog.json` です（既定は、型 IRI なら、それを作ったノードの索引（モデルが載っていれば）。無ければ `node.yaml` の最初のノード、さらに無ければ datamodels.jp）。詳しくは[型 IRI で指定したモデル](/toolkit/reference#type-iri)にあります。ターミナルで引数なしに実行すると、一覧からモデルを選び、新しいモデルの名前を入力できます。
 
 `extend` は次のことをします。
 

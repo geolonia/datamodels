@@ -3,6 +3,7 @@
 // (nodes.snapshot.json), so the proposer and the group see what may already
 // cover it ("extend, do not duplicate", /guide/rules). Deterministic: no AI,
 // the same answer every time. The same index can serve a search tool later (#223).
+import { nodeName } from './node-name.mjs';
 
 // Words too common to tell models apart.
 const STOP = new Set(('the and for with from that this which one each are is was were has have had not but its into per any all can may when where what who how also other than then them they their there these those such only more most some same both own over under about after before between while within without data model models record records type types entity entities attribute attributes value values name names field fields list item items new use used using example examples based like etc via eg ie').split(' '));
@@ -53,7 +54,7 @@ export function modelIndex(catalog, snapshot = { nodes: [] }, { values = false }
   };
   for (const m of catalog?.models ?? []) if (values || m.kind !== 'value') add(m, 'datamodels.jp', m.pageUrlEn ?? m.pageUrl, (m.attributes ?? []).flatMap((a) => texts(a.description)), `${m.subject}/${m.type}`);
   for (const n of snapshot?.nodes ?? []) {
-    const site = Object.values(n.publisher?.name ?? {})[0] ?? n.url;
+    const site = nodeName(n, 'en');
     (n.models ?? []).forEach((m, i) => add(m, site, m.pageUrl, [], `${n.url}#${i}`));
   }
   return entries;

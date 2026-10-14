@@ -29,7 +29,7 @@ body:
     id: name
     attributes:
       label: 名前（日本語と英語） / Name (Japanese and English)
-      description: catalog.json の publisher と同じ名前。一覧ではこの名前を使います / The publisher name in catalog.json; the list uses it
+      description: catalog.json の title（無ければ publisher の名前）。一覧ではこの名前を使います / The title in catalog.json, else the publisher name; the list uses it
       placeholder: 例 GTT プロジェクト / GTT Project
     validations:
       required: true

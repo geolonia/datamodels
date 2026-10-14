@@ -34,6 +34,9 @@ test('a proposal finds the models it may duplicate, best first, and only those',
   assert.deepEqual(similarModels(proposalText(BODY('Beehives in the city park')), index), []);
   // A model of a known node is found too.
   assert.equal(similarModels('Bicycle ride along the river', index)[0].entry.where, 'Example');
+  // A node whose catalog.json has a title is named by it, as on the pages.
+  const titled = modelIndex(CATALOG, { nodes: [{ ...NODES.nodes[0], title: { ja: '自転車', en: 'Rides' } }] });
+  assert.equal(similarModels('Bicycle ride along the river', titled)[0].entry.where, 'Rides');
 });
 
 test('the comment lists the models with links, or says none were found, and carries its marker', () => {
