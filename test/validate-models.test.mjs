@@ -8,14 +8,20 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import YAML from 'yaml';
 
 const root = join(fileURLToPath(import.meta.url), '..', '..');
 
-async function withMutatedModels(mutate, expectMessage, { pass = false } = {}) {
+async function withMutatedModels(mutate, expectMessage, { pass = false, rerecord = [] } = {}) {
   const dir = await mkdtemp(join(tmpdir(), 'geonicdb-models-'));
   try {
     await cp(join(root, 'models'), dir, { recursive: true });
     await mutate(dir);
+    // A correction during the pre-release is recorded again (npm run rerecord): here the snapshot of the current version goes.
+    for (const subject of rerecord) {
+      const { version } = YAML.parse(await readFile(join(dir, subject, 'subject.yaml'), 'utf8'));
+      await rm(join(dir, subject, 'releases', `v${version}`), { recursive: true, force: true });
+    }
     const r = spawnSync(process.execPath, [join(root, 'scripts', 'validate-models.mjs')], { env: { ...process.env, DATAMODELS_MODELS_DIR: dir }, encoding: 'utf8' });
     if (pass) { assert.equal(r.status, 0, r.stderr); return; }
     assert.equal(r.status, 1, `validator should fail\nstdout: ${r.stdout}\nstderr: ${r.stderr}`);
@@ -112,7 +118,7 @@ test('redefining a protected core term fails', () =>
 
 test('an attribute missing from the context fails', () =>
   withMutatedModels((d) => editJson(join(d, 'transportation', 'context.jsonld'), (c) => { delete inlineTerms(c).roadName; }),
-    /does not define attribute "roadName"/));
+    /RoadRestriction: the attribute roadName is not in the @context/));
 
 test('a key-values example violating the schema fails', () =>
   withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => { e.restrictionStatus = '不明'; }),
@@ -137,9 +143,9 @@ test('a date or date-time attribute rejects an impossible time and a word', asyn
 
 test('a normalized date typed as DateTime, or a date-time left untyped, fails', async () => {
   await withMutatedModels(setTaskStart('2026-07-08', { '@type': 'DateTime', '@value': '2026-07-08' }),
-    /attribute "start": value must be \{ "@type": "Date", "@value": "2026-07-08" \}/);
+    /attribute "start": the value must be \{ "@type": "Date", "@value": "2026-07-08" \}/);
   await withMutatedModels(setTaskStart('2026-07-08T10:30:00Z', '2026-07-08T10:30:00Z'),
-    /attribute "start": value must be \{ "@type": "DateTime"/);
+    /attribute "start": the value must be \{ "@type": "DateTime"/);
 });
 
 test('an out-of-vocabulary regulationCategory fails', () =>
@@ -178,11 +184,11 @@ test('a model title that is not a string fails', () =>
     const f = join(d, 'task', 'Milestone', 'catalog.yaml');
     const s = await readFile(f, 'utf8');
     await writeFile(f, s.replace(/^title:\n  ja: .*$/m, 'title:\n  ja: [マイルストーン]'));
-  }, /Milestone\/catalog\.yaml: title\.ja must be a non-empty string/));
+  }, /Milestone\/catalog\.yaml: title needs a non-empty ja text/));
 
 test('an example referencing a catalog type other than its example fails', () =>
   withMutatedModels((d) => editJson(join(d, 'task', 'Milestone', 'examples', 'example.json'), (e) => { e.project = 'urn:ngsi-ld:Project:9999'; }),
-    /Milestone\/examples\/example\.json: project: urn:ngsi-ld:Project:9999 should reference the Project example urn:ngsi-ld:Project:heavy-rain-2026-07/));
+    /Milestone\/examples\/example\.json: project: urn:ngsi-ld:Project:9999 should reference the Project example, urn:ngsi-ld:Project:heavy-rain-2026-07/));
 
 test('a normalized example referencing a different target than example.json fails', () =>
   withMutatedModels((d) => editJson(join(d, 'task', 'Milestone', 'examples', 'example-normalized.jsonld'), (e) => { e.project.object = 'urn:ngsi-ld:Project:9999'; }),
@@ -206,7 +212,7 @@ test('a status example with neither the status nor statusLabel fails', () =>
 
 test('a Task subclass that drops the status-or-label requirement fails', () =>
   withMutatedModels(async (d) => { await addSubclassProbe(d); await editJson(join(d, 'disaster', 'SubclassProbe', 'schema.json'), (s) => { s.required = s.required.filter((r) => r !== 'progress'); }); },
-    /subclass of Task: must keep its anyOf \(progress or statusLabel\) or require one alternative/));
+    /a subclass of task\/Task keeps its anyOf \(progress or statusLabel\) or requires one of them/));
 
 test('an empty statusLabel does not satisfy the status requirement', () =>
   withMutatedModels(async (d) => {
@@ -252,7 +258,7 @@ test('a schema version diverging from the subject version fails', () =>
 
 test('a normalized attribute whose wrapper type contradicts x-ngsi.type fails', () =>
   withMutatedModels((d) => editJson(join(d, 'task', 'Task', 'examples', 'example-normalized.jsonld'), (e) => { e.project = { type: 'Property', value: e.project.object }; }),
-    /"project" is a Property but schema.json declares Relationship/));
+    /attribute "project" is a Property, but schema\.json makes it a Relationship/));
 
 test('a subject without an English title fails at load time', () =>
   withMutatedModels(async (d) => {
@@ -267,7 +273,7 @@ test('a nested address field the context does not define fails', () =>
     await writeFile(cat, (await readFile(cat, 'utf8')) + '  wardName:\n    ja: "x"\n    en: "x"\n');
     await editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example-normalized.jsonld'), (e) => { e.address.value.wardName = '中区'; });
     await editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => { e.address.wardName = '中区'; });
-  }, /(does not define attribute "wardName"|address\.value\.wardName" lost)/));
+  }, /(the attribute wardName is not in the @context|"address\.value\.wardName" is lost)/));
 
 test('a value-type example violating a code pattern fails', () =>
   withMutatedModels((d) => editJson(join(d, 'common', 'JapaneseAddress', 'examples', 'example.json'), (e) => { e.jisMunicipalityCode = '3720'; }),
@@ -283,9 +289,9 @@ test('a context importing a version that is neither published nor current fails'
 
 test('a multi-valued attribute the schema does not declare as multi fails', () =>
   withMutatedModels((d) => editJson(join(d, 'task', 'Task', 'schema.json'), (s) => { delete s.properties.assignee['x-ngsi'].multi; }),
-    /"assignee" is multi-valued in the example but schema.json does not declare x-ngsi.multi/));
+    /attribute "assignee" has several instances, but schema\.json does not declare x-ngsi\.multi/));
 
-const NOTES_PROBLEM = /notes must be a list of \{ ja, en \}/;
+const NOTES_PROBLEM = /notes\[0\] (must be \{ ja, en \}|needs a non-empty (ja|en) text|has .*, which is not a language with a text)/;
 test('a notes.yaml entry that is a plain string fails: notes are { ja, en } (#119)', () =>
   withMutatedModels((d) => writeFile(join(d, 'task', 'Task', 'notes.yaml'), 'notes:\n  - Upstream considered none\nlicense: CC BY 4.0\n'), NOTES_PROBLEM));
 
@@ -295,7 +301,7 @@ test('a note with one language, or cut at a comma, fails', async () => {
 });
 
 test('a history entry with one language fails, like a note', () =>
-  withMutatedModels((d) => writeFile(join(d, 'task', 'Task', 'notes.yaml'), 'notes:\n  - { ja: 上流なし, en: none }\nhistory:\n  - en: Added\nlicense: CC BY 4.0\n'), /history must be a list of \{ ja, en \}/));
+  withMutatedModels((d) => writeFile(join(d, 'task', 'Task', 'notes.yaml'), 'notes:\n  - { ja: 上流なし, en: none }\nhistory:\n  - en: Added\nlicense: CC BY 4.0\n'), /history\[0\] needs a non-empty ja text/));
 
 test('two instances of a multi-valued attribute without datasetId fail', () =>
   withMutatedModels((d) => editJson(join(d, 'task', 'Task', 'examples', 'example-normalized.jsonld'), (e) => { e.assignee = [{ type: 'Relationship', object: 'urn:ngsi-ld:Team:a' }, { type: 'Relationship', object: 'urn:ngsi-ld:Team:b' }]; }),
@@ -325,35 +331,35 @@ test('a geometry without coordinates fails', () =>
 
 test('a notes.yaml whose root is a list fails', () =>
   withMutatedModels((d) => writeFile(join(d, 'task', 'Task', 'notes.yaml'), '- a note\n- another\n'),
-    /root value must be a mapping/));
+    /notes\.yaml: must be a mapping with notes, history and license/));
 
 test('an alias whose attributes differ from the aliased type fails', () =>
   withMutatedModels(async (d) => { await addAliasProbe(d); await editJson(join(d, 'disaster', 'AliasProbe', 'schema.json'), (s) => { delete s.properties.keywords; }); },
-    /alias of Project: properties differ \(keywords\)/));
+    /an alias of task\/Project has the same attributes, these differ: keywords/));
 
 test('an alias of a type the catalog does not define fails', () =>
   withMutatedModels(async (d) => { await addAliasProbe(d); await editJson(join(d, 'disaster', 'AliasProbe', 'schema.json'), (s) => { s['x-alias-of'] = 'https://datamodels.jp/ns/task/Programme'; }); },
-    /x-alias-of .* is not a type of this catalog/));
+    /x-alias-of .* is not a type of this node/));
 
 test('a second type claiming an existing IRI without x-alias-of fails', () =>
   withMutatedModels(async (d) => { await addAliasProbe(d); await editJson(join(d, 'disaster', 'AliasProbe', 'schema.json'), (s) => { delete s['x-alias-of']; }); },
-    /type expands to .*\/ns\/task\/Project, expected .*\/ns\/disaster\/AliasProbe/));
+    /the type expands to .*\/ns\/task\/Project, not .*\/ns\/disaster\/AliasProbe/));
 
 test('a subclass attribute under a different IRI than the parent fails', () =>
   withMutatedModels(async (d) => { await addSubclassProbe(d); await editJson(join(d, 'disaster', 'SubclassProbe', 'schema.json'), (s) => { s.properties.progress['x-iri'] = 'https://datamodels.jp/ns/disaster/progress'; }); },
-    /progress: subclass of Task must use its IRI/));
+    /progress: a subclass of task\/Task uses its IRI/));
 
 test('a subclass that drops a parent-required attribute fails', () =>
   withMutatedModels(async (d) => { await addSubclassProbe(d); await editJson(join(d, 'disaster', 'SubclassProbe', 'schema.json'), (s) => { s.required = s.required.filter((r) => r !== 'name'); }); },
-    /subclass of Task: "name" must stay required/));
+    /a subclass of task\/Task keeps "name" required/));
 
 // A subclass may name a type outside the catalog (common's ContactPoint is a
 // schema.org ContactPoint), but only in a known vocabulary and only a class.
 const setCommonParent = (type, parent) => (d) => editJson(join(d, 'common', type, 'schema.json'), (s) => { s['x-subclass-of'] = parent; });
 
 test('a subclass of a Smart Data Models or NGSI-LD core type is accepted', async () => {
-  await withMutatedModels(setCommonParent('ContactPoint', 'https://smartdatamodels.org/dataModel.PointOfInterest/PointOfInterest'), null, { pass: true });
-  await withMutatedModels(setCommonParent('Geometry', 'https://uri.etsi.org/ngsi-ld/GeoProperty'), null, { pass: true });
+  await withMutatedModels(setCommonParent('ContactPoint', 'https://smartdatamodels.org/dataModel.PointOfInterest/PointOfInterest'), null, { pass: true, rerecord: ['common'] });
+  await withMutatedModels(setCommonParent('Geometry', 'https://uri.etsi.org/ngsi-ld/GeoProperty'), null, { pass: true, rerecord: ['common'] });
 });
 
 test('a subclass of a type outside the known vocabularies fails', () =>
@@ -367,11 +373,11 @@ test('a subclass parent that is not an absolute http(s) IRI fails', () =>
 
 test('a subclass of a catalog type that does not exist fails', () =>
   withMutatedModels(async (d) => { await addSubclassProbe(d); await editJson(join(d, 'disaster', 'SubclassProbe', 'schema.json'), (s) => { s['x-subclass-of'] = 'https://datamodels.jp/ns/task/Tsak'; }); },
-    /x-subclass-of https:\/\/datamodels\.jp\/ns\/task\/Tsak is not a type of this catalog/));
+    /x-subclass-of https:\/\/datamodels\.jp\/ns\/task\/Tsak is not a type of this node/));
 
 test('an alias with a different unknown-attribute policy fails', () =>
   withMutatedModels(async (d) => { await addAliasProbe(d); await editJson(join(d, 'disaster', 'AliasProbe', 'schema.json'), (s) => { s.additionalProperties = true; }); },
-    /alias of Project: additionalProperties differs/));
+    /an alias of task\/Project has the same additionalProperties/));
 
 test('an alias survives a different key and required order', () =>
   withMutatedModels(async (d) => {
@@ -393,11 +399,11 @@ test('a product-specific annotation in a schema fails', () =>
 // context file's URL.
 test('an x-iri that differs from the core context expansion fails', () =>
   withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'schema.json'), (s) => { s.properties.location['x-iri'] = 'https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld#location'; }),
-    /RoadRestriction\/schema\.json: location: x-iri is https:\/\/uri\.etsi\.org\/ngsi-ld\/v1\/ngsi-ld-core-context-v1\.8\.jsonld#location, but the context expands "location" to https:\/\/uri\.etsi\.org\/ngsi-ld\/location/));
+    /RoadRestriction: location is https:\/\/uri\.etsi\.org\/ngsi-ld\/v1\/ngsi-ld-core-context-v1\.8\.jsonld#location in the schema, but the @context expands it to https:\/\/uri\.etsi\.org\/ngsi-ld\/location/));
 
 test('an x-iri that differs from the subject context expansion fails', () =>
   withMutatedModels((d) => editJson(join(d, 'task', 'Task', 'schema.json'), (s) => { s.properties.progress['x-iri'] = 'https://datamodels.jp/ns/disaster/progress'; }),
-    /Task\/schema\.json: progress: x-iri is https:\/\/datamodels\.jp\/ns\/disaster\/progress, but the context expands "progress" to https:\/\/datamodels\.jp\/ns\/task\/progress/));
+    /Task: progress is https:\/\/datamodels\.jp\/ns\/disaster\/progress in the schema, but the @context expands it to https:\/\/datamodels\.jp\/ns\/task\/progress/));
 
 // /guide/use adds @context to key-values data; the closed entity schemas must accept it.
 test('an entity schema that rejects @context in key-values data fails', () =>
@@ -428,7 +434,7 @@ async function useJsonAndVocab(d, { wrapKeyValues = true, vocab = 'https://examp
 }
 
 test('JsonProperty and VocabProperty attributes validate', () =>
-  withMutatedModels((d) => useJsonAndVocab(d), null, { pass: true }));
+  withMutatedModels((d) => useJsonAndVocab(d), null, { pass: true, rerecord: ['transportation'] }));
 
 test('a JsonProperty without its json member in key-values form fails', () =>
   withMutatedModels((d) => useJsonAndVocab(d, { wrapKeyValues: false }), /example\.json: attribute address: a JsonProperty is \{"json": \.\.\.\} in key-values form/));
@@ -438,7 +444,7 @@ test('an unknown x-ngsi.type fails', () =>
     /roadName: x-ngsi\.type must be one of Property, Relationship, GeoProperty, JsonProperty, VocabProperty/));
 
 test('a VocabProperty value the contexts do not define fails', () =>
-  withMutatedModels((d) => useJsonAndVocab(d, { vocab: 'closedAtNight' }), /attribute "statusLabel": vocab value expands to https:\/\/uri\.etsi\.org\/ngsi-ld\/default-context\/closedAtNight/));
+  withMutatedModels((d) => useJsonAndVocab(d, { vocab: 'closedAtNight' }), /attribute "statusLabel": the vocab value expands to https:\/\/uri\.etsi\.org\/ngsi-ld\/default-context\/closedAtNight/));
 
 test('a key-values vocab that differs from the normalized example fails', () =>
   withMutatedModels(async (d) => {
