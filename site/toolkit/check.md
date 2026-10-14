@@ -6,8 +6,8 @@ description: datamodels-toolkit の check と build でノードを検査して�
 # 検査とビルド
 
 ```bash
-npx @geolonia/datamodels@0.3.14 check
-npx @geolonia/datamodels@0.3.14 build
+npx @geolonia/datamodels@0.3.15 check
+npx @geolonia/datamodels@0.3.15 build
 ```
 
 `check` は、すべてのスキーマと例を検査します。GitHub では、Pull Request のたびにワークフローが同じ検査をします。
@@ -36,6 +36,8 @@ npx @geolonia/datamodels@0.3.14 build
 - `extends` で土台にしたモデルの用語を、定義し直していないこと。同じ名前は、同じ IRI のままです。
 
 問題があれば、終了コードは 1 です。ほかのノードに届かないときや、20 秒以内に応答が無いときは、知らせるだけです。止まっているノードのせいで、ほかの人の検査が失敗することはありません。`--offline` を付けると、公開済みのファイル、土台にしたモデル、ほかのサイトのスキーマを読みません。
+
+`check` は、ほかのノードのファイルを公開ホストの https からだけ読みます。自分のノードに書いたアドレスがこの条件で読めないときは問題です。ネットワーク側で断られたときは注記です。
 
 ## GitHub Action {#action}
 

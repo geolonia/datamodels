@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { nodeEntry, builtOn, readNodeList, cleanText, cleanUrl, isIndex, catalogAttributeIris, shownByNode, unlistedNodes } from '../scripts/lib/nodes.mjs';
+import { nodeEntry, nodeName, builtOn, readNodeList, cleanText, cleanUrl, isIndex, catalogAttributeIris, shownByNode, unlistedNodes } from '../scripts/lib/nodes.mjs';
 import { loadSubjects } from '../scripts/lib/models.mjs';
 import { renderModelPage, nodesPage } from '../scripts/lib/site.mjs';
 
@@ -44,6 +44,19 @@ test('the snapshot keeps only the shown fields, as plain text and plain http(s) 
   assert.deepEqual(e.models[0].extends, [{ typeIri: TASK, version: '1.0.0' }]);
   assert.equal(cleanText('a | b\n[c](d)'), 'a b c(d)');
   assert.equal(cleanUrl('https://user:pw@example.org/'), null);
+});
+
+test('the snapshot keeps the node\'s own title and description, cleaned, and leaves them out when the catalog has none', () => {
+  const e = nodeEntry(NODE, { ...CATALOG, title: { en: 'Road <b>models</b>', 'not a language': 'x' }, description: { en: 'Models for road maintenance.', ja: ' ' } }, '2026-10-11');
+  assert.deepEqual(e.title, { en: 'Road bmodels/b' });
+  assert.deepEqual(e.description, { en: 'Models for road maintenance.' }, 'an empty text is left out');
+  const none = nodeEntry(NODE, { ...CATALOG, title: 'not per language' }, '2026-10-11');
+  assert.equal(none.title, undefined);
+  assert.equal(none.description, undefined);
+  // The pages name a node by its title, else by its publisher, else by its host.
+  assert.equal(nodeName(e, 'ja'), 'Road bmodels/b', 'the title in another language comes before the publisher');
+  assert.equal(nodeName(none, 'en'), 'Example bOrg/b');
+  assert.equal(nodeName({ url: 'https://models.example.org/' }, 'en'), 'models.example.org');
 });
 
 test('for a model built on a catalog model, the snapshot keeps its @context and the attributes it adds', () => {

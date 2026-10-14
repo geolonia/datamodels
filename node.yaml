@@ -5,6 +5,11 @@
 baseUrl: https://datamodels.jp
 iris: slash
 languages: [ja, en]
+# The site's name and the tagline of the home page (site/index.md, site/en/index.md), for catalog.json.
+title: { ja: datamodels.jp, en: datamodels.jp }
+description:
+  ja: 避難所や道路規制、施設、タスクなどを表す共通の定義です。自治体やシステムが違っても、データを組み合わせられます。
+  en: Shared definitions for shelters, road closures, facilities and tasks, so that data from different cities and systems fits together.
 publisher: { name: { ja: 株式会社Geolonia, en: Geolonia Inc. }, url: https://geolonia.com/ }
 # catalog.json and every file it lists; the prose of the pages is CC BY 4.0 (LICENSE-CONTENT).
 license: CC0-1.0

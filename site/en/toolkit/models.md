@@ -12,33 +12,33 @@ This page adds models to a subject of your node and writes their attributes. No 
 Before you make a new model, check whether one already exists that you can use as it is or build on. `search` looks through the models of datamodels.jp and of the sites it links to, for words in the type name, title, attributes and description. It finds Japanese and English words.
 
 ```bash
-npx @geolonia/datamodels@0.3.14 search 避難
-npx @geolonia/datamodels@0.3.14 search road closure --json
+npx @geolonia/datamodels@0.3.15 search 避難
+npx @geolonia/datamodels@0.3.15 search road closure --json
 ```
 
 The result of the first command, shortened:
 
 ```text
-disaster/DesignatedShelter  指定避難所 / Designated shelter  Geolonia Inc.  https://datamodels.jp/models/disaster/DesignatedShelter/
-disaster/EvacuationShelter  避難所の運用状況 / Evacuation shelter operation  Geolonia Inc.  https://datamodels.jp/models/disaster/EvacuationShelter/
+disaster/DesignatedShelter  指定避難所 / Designated shelter  datamodels.jp  https://datamodels.jp/models/disaster/DesignatedShelter/
+disaster/EvacuationShelter  避難所の運用状況 / Evacuation shelter operation  datamodels.jp  https://datamodels.jp/models/disaster/EvacuationShelter/
 …
 4 of 18 models in 3 node(s) match
 ```
 
-Each line is one model: its subject and type, its titles, the site (the name of its publisher), and its page. The best 10 are listed; `--limit` changes the number. With `--json`, the output also has the type IRI, version, schema, `@context` and index (`catalog.json`) of each model; use it from scripts and AI agents. `extend` and `export` take that index as `--index`: for them it must be the URL of the `catalog.json` itself, not the address of a node.
+Each line is one model: its subject and type, its titles, the site (its title, else the name of its publisher), and its page. The best 10 are listed; `--limit` changes the number. With `--json`, the output also has the type IRI, version, schema, `@context` and index (`catalog.json`) of each model; use it from scripts and AI agents. `extend` and `export` take that index as `--index`: for them it must be the URL of the `catalog.json` itself, not the address of a node.
 
 A word counts most in the type name, then in the title, the attribute names and the descriptions, and a rare word counts more than a common one. English words need 3 letters or more, and common words such as `data`, `model` or `type` are skipped. Japanese is matched by pairs of characters that contain a kanji or katakana, so `避難` finds 指定避難所; a word in hiragana only, such as `ひなん`, is not searched for. When nothing is left to search for, such as with only such words or common words, it is a usage error (exit code 2, "nothing to search for"). Value types, such as an address, are listed too.
 
 `nodes` lists the sites it can reach, with their name, address, licence, number of models, and the site that links to them:
 
 ```bash
-npx @geolonia/datamodels@0.3.14 nodes
+npx @geolonia/datamodels@0.3.15 nodes
 ```
 
 ```text
-Geolonia Inc.  https://datamodels.jp/  CC0-1.0  16 models
-GTT Project  https://models.gtt-project.org/  CC0-1.0  1 model  (linked from Geolonia Inc.)
-Geolonia Inc.  https://models.geolonia.com/  CC0-1.0  1 model  (linked from Geolonia Inc.)
+datamodels.jp  https://datamodels.jp/  CC0-1.0  16 models
+GTT Project  https://models.gtt-project.org/  CC0-1.0  1 model  (linked from datamodels.jp)
+Geolonia Inc.  https://models.geolonia.com/  CC0-1.0  1 model  (linked from datamodels.jp)
 3 node(s) within 1 link(s) of https://datamodels.jp/catalog.json
 ```
 
@@ -51,7 +51,7 @@ To build on a model you found, use [extend](#extend).
 ## A new model {#add}
 
 ```bash
-npx @geolonia/datamodels@0.3.14 add road/RoadPatrol
+npx @geolonia/datamodels@0.3.15 add road/RoadPatrol
 ```
 
 This adds `models/road/RoadPatrol/` with `schema.json`, `catalog.yaml`, `examples/example.json` and `notes.yaml` (the notes: sources, decisions and their reasons), and the type `RoadPatrol` to the subject's `@context`. The schema of an entity type has `id` and `type`, and `catalog.yaml` has a title and a description in each language of the node. The new model builds and passes `check` at once. On a subject whose current version is already released, run [`bump`](/en/toolkit/versions#bump) before `add`: `add` changes that version's sources, and `build` and `check` then stop. Then [write its attributes](#attributes).
@@ -59,7 +59,7 @@ This adds `models/road/RoadPatrol/` with `schema.json`, `catalog.yaml`, `example
 For a value type, a structure used inside attributes (like an address), add `--value`:
 
 ```bash
-npx @geolonia/datamodels@0.3.14 add road/Segment --value
+npx @geolonia/datamodels@0.3.15 add road/Segment --value
 ```
 
 ## Starting from a catalog model {#extend}
@@ -67,10 +67,10 @@ npx @geolonia/datamodels@0.3.14 add road/Segment --value
 To start from a model of this catalog instead, use `extend`. Despite its name, it is not an [extension](/en/guide/extend): it makes a new model on your own site. Then add your attributes as [below](#attributes).
 
 ```bash
-npx @geolonia/datamodels@0.3.14 extend task/Task road/RoadTask
+npx @geolonia/datamodels@0.3.15 extend task/Task road/RoadTask
 ```
 
-The first argument is the model to start from: `<subject>/<Type>` as the other site's `catalog.json` lists it, or its type IRI. `--index` names that `catalog.json` (default: the first node in `node.yaml`, else datamodels.jp). In a terminal, `extend` without arguments lets you pick the model from a list and asks for the new name.
+The first argument is the model to start from: `<subject>/<Type>` as the other site's `catalog.json` lists it, or its type IRI. `--index` names that `catalog.json` (default: for a type IRI, its own node's index when that lists it; else the first node in `node.yaml`, else datamodels.jp; see [A model given by its type IRI](/en/toolkit/reference#type-iri)). In a terminal, `extend` without arguments lets you pick the model from a list and asks for the new name.
 
 `extend`:
 

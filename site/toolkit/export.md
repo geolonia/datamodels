@@ -8,7 +8,7 @@ description: datamodels-toolkit の export で、モデルから CSV テンプ�
 データモデルは NGSI-LD のブローカーがなくても使えます。datamodels-toolkit の `export` は、1 つのモデルから次のファイルを作ります。
 
 ```bash
-npx @geolonia/datamodels@0.3.14 export \
+npx @geolonia/datamodels@0.3.15 export \
   disaster/EvacuationSite --to csv,table-schema,ai,postgis
 ```
 
@@ -21,10 +21,10 @@ npx @geolonia/datamodels@0.3.14 export \
 
 どのファイルもモデルの属性名と IRI をそのまま使うので、NGSI-LD の形との間でデータを変換できます。ファイルは `<Type>.<拡張子>` の名前で、`--out` のフォルダー（省略すると今のフォルダー）に書きます。
 
-自分のサイトのモデルも、サイトのフォルダーを指定すると書き出せます（省略すると今のフォルダー）。`--index` を付けると、その `catalog.json` からモデルを読み、自分のサイトはまったく読みません。付けなければ、サイトにそのモデルが無いときに、`node.yaml` の最初のノードから読みます。そのノードが無ければ datamodels.jp から読みます。`<subject>/<Type>` の代わりに、型の IRI も使えます。
+自分のサイトのモデルも、サイトのフォルダーを指定すると書き出せます（省略すると今のフォルダー）。`--index` を付けると、その `catalog.json` からモデルを読み、自分のサイトはまったく読みません。付けなければ、サイトにそのモデルが無いときに、`node.yaml` の最初のノードから読みます。そのノードが無ければ datamodels.jp から読みます。`<subject>/<Type>` の代わりに、型の IRI も使えます。型の IRI のときは、`node.yaml` の最初のノードより先に、その IRI を作ったノードを探します（[型 IRI で指定したモデル](/toolkit/reference#type-iri)）。
 
 ```bash
-npx @geolonia/datamodels@0.3.14 export road/RoadPatrol my-models --to postgis
+npx @geolonia/datamodels@0.3.15 export road/RoadPatrol my-models --to postgis
 ```
 
 ## モデルから列を作る規則 {#columns}

@@ -18,6 +18,14 @@
       "type": "string",
       "format": "date-time"
     },
+    "title": {
+      "$ref": "#/$defs/i18n",
+      "description": "The node's name, in each language of the node."
+    },
+    "description": {
+      "$ref": "#/$defs/i18n",
+      "description": "What the node publishes, in each language of the node."
+    },
     "publisher": {
       "type": "object",
       "description": "Who publishes the catalog: a name per language and a URL, as in the node format (docs/node.md).",

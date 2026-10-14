@@ -17,6 +17,8 @@ const json = (o) => JSON.stringify(o, null, 2) + '\n';
 export const CATALOG_LICENSE = { license: NODE.license, licenseUrl: NODE.licenseUrl };
 // Who publishes the catalog, in the node format (docs/node.md), so tools that read many catalogs can name it (decided 2026-10-12). From node.yaml.
 export const CATALOG_PUBLISHER = NODE.publisher;
+// The node's own name and what it publishes, in each language, listed first (toolkit 0.3.15). From node.yaml.
+export const CATALOG_TEXTS = { ...(NODE.title ? { title: NODE.title } : {}), ...(NODE.description ? { description: NODE.description } : {}) };
 
 /** The attributes of a model as catalog.json lists them (#156). */
 export const attributeEntries = (model) => tkAttributeEntries(model, options);
@@ -36,7 +38,7 @@ export const termRedirects = (subject) => tkTermRedirects(subject, options).map(
  * knows (nodes.yaml, [{ url, index }]), listed so that tools starting here find
  * them, as every node lists the nodes it knows (docs/node.md, section 3).
  */
-export const catalogHead = (nodes = []) => ({ formatVersion: 1, generatedAt: new Date().toISOString(), publisher: CATALOG_PUBLISHER, ...CATALOG_LICENSE, ...(nodes.length ? { nodes: nodes.map(({ url, index }) => ({ url, index })) } : {}) });
+export const catalogHead = (nodes = []) => ({ formatVersion: 1, generatedAt: new Date().toISOString(), ...CATALOG_TEXTS, publisher: CATALOG_PUBLISHER, ...CATALOG_LICENSE, ...(nodes.length ? { nodes: nodes.map(({ url, index }) => ({ url, index })) } : {}) });
 
 /**
  * adapters: modules discovered under adapters/ by build.mjs (the core never

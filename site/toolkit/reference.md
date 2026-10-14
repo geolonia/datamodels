@@ -10,7 +10,7 @@ description: datamodels-toolkit の datamodels コマンドのすべてのコマ
 コマンドは `npx` で実行します（[実行する](/toolkit/#run)）。
 
 ```bash
-npx @geolonia/datamodels@0.3.14 search 避難
+npx @geolonia/datamodels@0.3.15 search 避難
 ```
 
 ## すべてのコマンドに共通すること {#general}
@@ -114,10 +114,22 @@ datamodels.jp などほかのノードのモデルをもとに、このノード
 | `[model]` | （尋ねる） | もとにするモデル。ほかのノードの `catalog.json` にある `<subject>/<Type>`、または型の IRI |
 | `[subject/Type]` | （尋ねる） | このノードの新しいモデル（`road/RoadTask` など） |
 | `[dir]` | `.` | ノード |
-| `--index <URL>` | `node.yaml` の最初のノード。無ければ `https://datamodels.jp/catalog.json` | ほかのノードの `catalog.json` |
+| `--index <URL>` | 型 IRI なら、それを作ったノードの索引（[下](#type-iri)）。なければ `node.yaml` の最初のノード、さらになければ `https://datamodels.jp/catalog.json` | ほかのノードの `catalog.json` |
 | `--subclass` | | 同じ型に属性を足す（`x-alias-of`）のではなく、独自の型の IRI を持つ下位の型にする（`x-subclass-of`） |
 
 端末で実行すると、`extend` は足りない引数を尋ねます。もとにするモデルは一覧から選びます。端末の外では、引数が足りなければ使い方の誤りです。
+
+`extend` は、ほかのノードの索引・スキーマ・例を、公開ホストの https からだけ読みます。どの索引からモデルを読んだかを表示します。
+
+### 型 IRI で指定したモデル {#type-iri}
+
+`extend` と `export` で共通です。
+
+- `--index` を付けずに型 IRI でモデルを指定すると、まずその IRI を作ったノードを探します。`export` は、その前に自分のノードのモデルを見ます。
+- そのノードの索引は、IRI の `/ns/` より前の部分に `catalog.json` を付けたものです。
+- その索引を 5 秒以内（転送を含む）に読めないか、モデルが載っていないときは、いつもの索引を使います。
+- 同じ IRI の別名より、IRI を作ったノードのモデルが優先されます。別名を使うには、`--index` を指定するか、いつもの索引にある別名を `<subject>/<Type>` で指定します。
+- `export` と `extend` は、型の名前が UpperCamelCase で、バージョンが x.y.z のモデルだけを使います。
 
 ## check {#check}
 
@@ -254,6 +266,6 @@ datamodels export <subject>/<Type> [dir] --to <adapters> [options]
 | `[dir]` | `.` | ノード。`--index` が無く、ノードにそのモデルがあれば、それを使う |
 | `--to <adapters>` | （必須） | `csv`、`table-schema`、`ai`、`postgis` の 1 つ以上。カンマ区切り |
 | `--out <dir>` | `.` | ファイルを書き出すところ。ファイル名は `<Type>.<ext>` |
-| `--index <URL>` | `node.yaml` の最初のノード。無ければ `https://datamodels.jp/catalog.json` | モデルを読む `catalog.json`。指定すると、ノードは読まない。指定しなければ、ノードにモデルが無いときだけ既定のものを読む |
+| `--index <URL>` | 型 IRI なら、それを作ったノードの索引（[上](#type-iri)）。なければ `node.yaml` の最初のノード、さらになければ `https://datamodels.jp/catalog.json` | モデルを読む、ほかのノードの `catalog.json`。指定すると、ノードは読まない。指定しなければ、ノードにモデルが無いときだけ既定のものを読む |
 
 `--to` が無いときや知らない名前のときは、使い方の誤りです。モデルを読めないとき、モデルが値型のとき、ファイルを書き出せないときは、終了コードが 1 です。

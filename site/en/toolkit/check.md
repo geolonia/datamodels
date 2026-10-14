@@ -6,8 +6,8 @@ description: Check and build a node with the check and build commands of datamod
 # Checking and building
 
 ```bash
-npx @geolonia/datamodels@0.3.14 check
-npx @geolonia/datamodels@0.3.14 build
+npx @geolonia/datamodels@0.3.15 check
+npx @geolonia/datamodels@0.3.15 build
 ```
 
 `check` validates every schema and example. On GitHub, the workflow runs the same check on every pull request.
@@ -36,6 +36,8 @@ For a node that is not online yet, `check` cannot compare the published files, s
 - A model does not redefine a term of a model it `extends`: the same name keeps the same IRI.
 
 The exit code is 1 on a problem. Another node that cannot be reached, or does not answer within 20 seconds, is only noted: a node that is down never fails someone else's check. `--offline` skips the published files, the extended models and the schemas on other sites.
+
+`check` reads other nodes' files only over https from public hosts. An address your node writes that cannot be read this way is a problem; a refusal on the network side is a note.
 
 ## GitHub Action {#action}
 

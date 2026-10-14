@@ -70,7 +70,7 @@ The local government code has 6 digits, with the check digit at the end. Change 
 `datamodels convert` from [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) turns each row into an entity and checks it against the model's JSON Schema:
 
 ```bash
-npx @geolonia/datamodels@0.3.14 convert \
+npx @geolonia/datamodels@0.3.15 convert \
   disaster/EvacuationSite csv-template sites.csv --out entities.json
 ```
 
