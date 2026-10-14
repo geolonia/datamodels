@@ -127,7 +127,9 @@ const EXTRA = /^Property "(.+)" does not match additional properties schema\.$/;
  * errors of its own, and a real extra attribute is named as one.
  */
 export function readableErrors(errors) {
-  const all = errors.map((e) => ({ path: e.instanceLocation.replace(/^#/, '') || '/', message: e.error, keyword: e.keyword }));
+  // @cfworker/json-schema percent-encodes its paths (encodeURI after the RFC 6901 escape): decoded
+  // here, so a path reads as the attribute's name (/あ) and matches the extra-attribute paths below.
+  const all = errors.map((e) => ({ path: plainPointer(e.instanceLocation) || '/', message: e.error, keyword: e.keyword }));
   // The paths that have errors of their own, built once: a lookup per error keeps this linear.
   const owned = new Set(all.filter((x) => x.keyword !== 'false').map((x) => x.path));
   const out = [];
@@ -135,7 +137,7 @@ export function readableErrors(errors) {
     if (e.keyword === 'false') continue;
     const extra = e.keyword === 'additionalProperties' && EXTRA.exec(e.message);
     if (extra) {
-      // A JSON pointer, escaped as the validator's own paths are (RFC 6901), so the lookup in owned matches.
+      // A JSON pointer (RFC 6901), as the decoded paths of the validator are, so the lookup in owned matches.
       const path = pointer(e.path === '/' ? '' : e.path, extra[1]);
       if (!owned.has(path)) out.push({ path, message: `"${extra[1]}" is not an attribute here: the schema allows no other properties` });
       continue;
@@ -171,6 +173,8 @@ export function firstDuplicate(items) {
   return best;
 }
 
+/** A validator path without its # and its percent-encoding; as given when it does not decode. */
+const plainPointer = (location) => { const p = location.replace(/^#/, ''); try { return decodeURI(p); } catch { return p; } };
 const pointer = (base, token) => `${base}/${String(token).replaceAll('~', '~0').replaceAll('/', '~1')}`;
 
 /**
@@ -295,7 +299,7 @@ export function makeChecker(root, refs) {
 }
 
 /** The message of one of the toolkit's attributeProblems, as the validate tool words it. */
-function attributeMessage(p) {
+export function attributeMessage(p) {
   if (p.rule === 'multi') return 'has several instances, but the model does not declare it multi-valued';
   if (p.rule === 'type') return `is a ${p.found}, but the model makes it a ${p.expected}`;
   if (p.rule === 'date') return `the value must be { "@type": "${p.expected['@type']}", "@value": ${JSON.stringify(p.expected['@value'])} }`;

@@ -11,7 +11,8 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import worker from '../worker/index.mjs';
 import { MAX_BODY_BYTES, MAX_PROBLEMS, MAX_KEYS, MAX_DEPTH, RATE_LIMIT } from '../worker/mcp.mjs';
-import { readableErrors } from '../worker/validate.mjs';
+import { readableErrors, attributeMessage } from '../worker/validate.mjs';
+import { Validator } from '@cfworker/json-schema';
 import { loadSubjects, BASE_URL } from '../scripts/lib/models.mjs';
 import { publishModels } from '../scripts/lib/publish.mjs';
 import { readNodeList, readSnapshot, nodeName } from '../scripts/lib/nodes.mjs';
@@ -761,4 +762,18 @@ test('validate and the toolkit\'s check find the same NGSI-LD rule problems and 
     found += checkRules.length + checkRings.length;
   }
   assert.equal(found, 9, 'the entities break 6 rules and have 3 open rings');
+});
+
+test('a declared attribute with a non-ASCII or spaced name and a wrong value is one problem, at its plain path', () => {
+  const schema = { type: 'object', properties: { 'あ': { type: 'string' }, 'a b': { type: 'string' }, 'a/b': { type: 'string' } }, additionalProperties: false };
+  const result = new Validator(schema, '2020-12', false).validate({ 'あ': 5, 'a b': 5, 'a/b': 5, 'い': 1 });
+  const problems = readableErrors(result.errors);
+  assert.deepEqual(problems.map((p) => p.path).sort(), ['/a b', '/a~1b', '/あ', '/い'], JSON.stringify(problems));
+  assert.match(problems.find((p) => p.path === '/い').message, /is not an attribute here/);
+  assert.ok(!problems.some((p) => p.path === '/あ' && /is not an attribute here/.test(p.message)));
+});
+
+test('a rule a later toolkit adds is still named with its attribute', () => {
+  assert.equal(attributeMessage({ attribute: 'x', rule: 'future' }), 'breaks the model\'s rule "future"');
+  assert.equal(attributeMessage({ attribute: 'x', rule: 'multi', instances: 2 }), 'has several instances, but the model does not declare it multi-valued');
 });
