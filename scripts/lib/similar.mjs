@@ -32,13 +32,16 @@ const singular = (w) => (NOT_PLURAL_IES.has(w) ? w
 const texts = (o) => (o && typeof o === 'object' ? Object.values(o).filter((v) => typeof v === 'string') : []);
 
 /**
- * The searchable models: [{ type, title, url, where, terms: Map(word → weight) }].
+ * The searchable models: [{ type, title, url, where, key, terms: Map(word → weight) }].
  * catalog: datamodels.jp's catalog.json; snapshot: nodes.snapshot.json. A word
  * counts most in the type name, then the title, the attribute names, the description.
+ * key: "<subject>/<Type>" for a catalog model, "<node url>#<n>" for a node's model.
+ * values: list the value types (Geometry, JapaneseAddress) too, as the MCP
+ * server's search_models does (#223); a proposal is never for one of them.
  */
-export function modelIndex(catalog, snapshot = { nodes: [] }) {
+export function modelIndex(catalog, snapshot = { nodes: [] }, { values = false } = {}) {
   const entries = [];
-  const add = (m, where, url, extra) => {
+  const add = (m, where, url, extra, key) => {
     const terms = new Map();
     const put = (text, weight) => { for (const w of words(text)) terms.set(w, Math.max(terms.get(w) ?? 0, weight)); };
     put(m.type, 4);
@@ -46,12 +49,12 @@ export function modelIndex(catalog, snapshot = { nodes: [] }) {
     for (const a of m.attributes ?? []) put(a?.name, 2);
     for (const t of texts(m.description)) put(t, 1);
     for (const t of extra ?? []) put(t, 1);
-    entries.push({ type: m.type, title: m.title ?? {}, url, where, terms });
+    entries.push({ type: m.type, title: m.title ?? {}, url, where, key, terms });
   };
-  for (const m of catalog?.models ?? []) if (m.kind !== 'value') add(m, 'datamodels.jp', m.pageUrlEn ?? m.pageUrl, (m.attributes ?? []).flatMap((a) => texts(a.description)));
+  for (const m of catalog?.models ?? []) if (values || m.kind !== 'value') add(m, 'datamodels.jp', m.pageUrlEn ?? m.pageUrl, (m.attributes ?? []).flatMap((a) => texts(a.description)), `${m.subject}/${m.type}`);
   for (const n of snapshot?.nodes ?? []) {
     const site = Object.values(n.publisher?.name ?? {})[0] ?? n.url;
-    for (const m of n.models ?? []) add(m, site, m.pageUrl);
+    (n.models ?? []).forEach((m, i) => add(m, site, m.pageUrl, [], `${n.url}#${i}`));
   }
   return entries;
 }

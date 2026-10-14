@@ -49,6 +49,7 @@ export async function llmsTxt(subjects) {
   let txt = `# datamodels.jp\n\n`;
   txt += `> Data models that work in Japan: JSON Schemas (2020-12), JSON-LD @context files and RDFS vocabularies at URLs that never change. Usable as plain JSON, as linked data, and with NGSI-LD brokers. Existing standards (Smart Data Models, the Digital Agency's GIF, RFC 8984) are extended and mapped, not copied.\n\n`;
   txt += `Every model page is published in Japanese (${BASE_URL}/models/...) and English (${BASE_URL}/en/models/...). Exact versions (v1.0.0) never change; version aliases (v1) follow the latest compatible version. Machine-readable list of every model with all its URLs: ${BASE_URL}/catalog.json.\n\n`;
+  txt += `MCP server for AI agents: ${BASE_URL}/mcp (Streamable HTTP, no login, read-only). Tools: search_models (find a model by English or Japanese words), get_model (one model's schema with its references, @context, example and attributes), find_attribute (an attribute to reuse, by name or meaning) and validate (check an entity against a model). How to connect: ${BASE_URL}/en/ai#mcp-server\n\n`;
   txt += `## Guides\n\n`;
   for (const [slug, title, what] of GUIDES) {
     if (await exists(join(ROOT, 'site', 'en', 'guide', `${slug || 'index'}.md`))) txt += `- [${title}](${BASE_URL}/en/guide/${slug}): ${what}\n`;

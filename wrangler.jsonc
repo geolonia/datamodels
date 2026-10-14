@@ -19,14 +19,16 @@
   // Cloudflare serves the built tree directly. `_headers` and `_redirects`
   // inside the directory set the URL contract (content types, CORS, caching,
   // IRI redirects). See public/_headers.
-  // The script runs only for the IRIs (/ns/*): it answers JSON-LD clients with
-  // the subject's vocabulary and passes everything else to the assets (#196).
-  // No other path runs it.
+  // The script runs only for the IRIs (/ns/*) and the MCP server (/mcp): it
+  // answers JSON-LD clients with the subject's vocabulary and passes
+  // everything else under /ns/ to the assets (#196); /mcp answers AI agents
+  // (worker/mcp.mjs, #223) from the built files. No other path runs it, so
+  // only these requests count towards the Workers request quota.
   "main": "worker/index.mjs",
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
-    "run_worker_first": ["/ns/*"],
+    "run_worker_first": ["/ns/*", "/mcp"],
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page"
   },

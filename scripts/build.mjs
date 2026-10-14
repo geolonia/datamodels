@@ -10,6 +10,7 @@
 //      vocabularies, catalog.json) plus each adapter's files (adapters/*), and
 //      append the generated redirects and exact-version cache header rules
 //   5. write /llms.txt (scripts/lib/llms.mjs); VitePress writes sitemap.xml
+//   6. write the MCP server's lookup index, /mcp/index.json (scripts/lib/mcp-index.mjs)
 //
 // A versioned file that has been published must never be rewritten with
 // different content: the validation checks every release snapshot against the
@@ -21,8 +22,10 @@ import { spawnSync } from 'node:child_process';
 import { build as vitepressBuild } from 'vitepress';
 import { generatePages } from './generate-pages.mjs';
 import { publishModels } from './lib/publish.mjs';
-import { readNodeList } from './lib/nodes.mjs';
+import { readNodeList, readSnapshot } from './lib/nodes.mjs';
 import { llmsTxt } from './lib/llms.mjs';
+import { writeMcpIndex, MCP_INDEX_PATH } from './lib/mcp-index.mjs';
+import { BASE_URL } from './lib/models.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const site = join(root, 'site');
@@ -46,10 +49,11 @@ await vitepressBuild(site, { outDir: out });
 await cp(src, out, { recursive: true });
 const published = await publishModels(subjects, adapters, { nodes: await readNodeList() });
 await writeFile(join(out, 'llms.txt'), await llmsTxt(subjects));
+await writeMcpIndex(out, published.catalog, await readSnapshot(), BASE_URL);
 
 // The hosting contract depends on these files being served. Fail loudly
 // rather than deploy a tree without them.
-for (const required of ['_headers', '_redirects', 'index.html', '404.html', 'en/index.html', 'models/index.html', 'catalog.json', 'LICENSE-CONTENT.html', 'en/LICENSE-CONTENT.html', 'LICENSE-CONTENT.md', 'llms.txt', 'sitemap.xml', 'robots.txt']) {
+for (const required of ['_headers', '_redirects', 'index.html', '404.html', 'en/index.html', 'models/index.html', 'catalog.json', 'LICENSE-CONTENT.html', 'en/LICENSE-CONTENT.html', 'LICENSE-CONTENT.md', 'llms.txt', 'sitemap.xml', 'robots.txt', MCP_INDEX_PATH]) {
   await access(join(out, required));
 }
 // The adapter index that model pages link (scripts/lib/adapter-pages.mjs).

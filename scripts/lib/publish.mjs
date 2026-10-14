@@ -41,21 +41,22 @@ export const catalogHead = (nodes = []) => ({ formatVersion: 1, generatedAt: new
 /**
  * adapters: modules discovered under adapters/ by build.mjs (the core never
  * imports them). Each may add one file per model, listed in catalog.json.
- * nodes: the known nodes, for catalogHead.
+ * nodes: the known nodes, for catalogHead. outDir: where to write (dist/;
+ * the tests write a copy elsewhere). Returns the counts and catalog.json.
  */
-export async function publishModels(subjects, adapters = [], { nodes = [] } = {}) {
+export async function publishModels(subjects, adapters = [], { nodes = [], outDir = DIST } = {}) {
   const { generatedAt, formatVersion, ...head } = catalogHead(nodes);
-  const { catalog, exactPaths, redirects } = await publishCatalog(subjects, { ...options, outDir: DIST, head, adapters, now: new Date(generatedAt) });
+  const { catalog, exactPaths, redirects } = await publishCatalog(subjects, { ...options, outDir, head, adapters, now: new Date(generatedAt) });
   const ajv = new Ajv2020({ allErrors: true, strict: false }); addFormats(ajv);
   const schema = JSON.parse(await readFile(join(ROOT, 'catalog.schema.json'), 'utf8'));
   const validate = ajv.compile(schema);
   if (!validate(catalog)) throw new Error(`catalog.json does not validate: ${ajv.errorsText(validate.errors)}`);
-  await writeFile(join(DIST, 'catalog.schema.json'), json(schema));
+  await writeFile(join(outDir, 'catalog.schema.json'), json(schema));
   // The raw file with the legal texts. /LICENSE-CONTENT itself is a page in each language (site/LICENSE-CONTENT.md),
   // the URL that x-license-url in the schemas and licenseUrl in catalog.json name.
-  await writeFile(join(DIST, 'LICENSE-CONTENT.md'), await readFile(join(ROOT, 'LICENSE-CONTENT.md')));
+  await writeFile(join(outDir, 'LICENSE-CONTENT.md'), await readFile(join(ROOT, 'LICENSE-CONTENT.md')));
   const rules = ['', '# Generated: type and attribute IRIs resolve to their documentation.', ...redirects.map(([from, to]) => `${from}  ${to}  302`)];
-  await appendFile(join(DIST, '_redirects'), rules.join('\n') + '\n');
-  await appendFile(join(DIST, '_headers'), exactVersionHeaderRules(exactPaths).join('\n') + '\n');
-  return { subjects: subjects.length, models: catalog.models.length };
+  await appendFile(join(outDir, '_redirects'), rules.join('\n') + '\n');
+  await appendFile(join(outDir, '_headers'), exactVersionHeaderRules(exactPaths).join('\n') + '\n');
+  return { subjects: subjects.length, models: catalog.models.length, catalog };
 }
