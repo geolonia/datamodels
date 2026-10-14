@@ -380,14 +380,15 @@ test('2026-07-28: discover says the tool list never changes, and subscriptions/l
   assert.equal((await message(await modern('tools/list'))).result.tools.length, 4);
 });
 
+// The best of five runs: one garbage collection (counted in process CPU) must not fail a run on a busy CI machine.
+const cpuOf = async (fn) => { let best = Infinity, out; for (let i = 0; i < 5; i++) { const t = process.cpuUsage(); out = await fn(); const d = process.cpuUsage(t); best = Math.min(best, (d.user + d.system) / 1000); } return [out, best]; };
+
 test(`validate refuses an object with more than ${MAX_KEYS} keys, at any depth, quickly`, async () => {
   const many = (n) => Object.fromEntries(Array.from({ length: n }, (_, i) => [`k${i}`, 1]));
   const base = { id: 'urn:ngsi-ld:Task:1', type: 'Task', name: 'x', progress: 'completed' };
-  const t = process.cpuUsage();
-  const r = await call('validate', { model: 'Task', entity: { ...base, ...many(6000) } });
-  const cpu = process.cpuUsage(t);
+  const [r, ms] = await cpuOf(() => call('validate', { model: 'Task', entity: { ...base, ...many(6000) } }));
   assert.match(r.error, /has 6004 keys; at most 1000/);
-  assert.ok((cpu.user + cpu.system) / 1000 < 50, `took ${(cpu.user + cpu.system) / 1000} ms of CPU`);
+  assert.ok(ms < 50, `took ${ms} ms of CPU`);
   assert.match((await call('validate', { model: 'Task', entity: { ...base, address: many(MAX_KEYS + 1) } })).error, /\/address has 1001 keys/);
   // At the limit, each extra attribute is still named.
   const ok = await call('validate', { model: 'Task', entity: { ...base, ...many(MAX_KEYS - 4) } });
@@ -395,7 +396,7 @@ test(`validate refuses an object with more than ${MAX_KEYS} keys, at any depth, 
   assert.match(ok.problems[0].message, /is not an attribute here/);
 });
 
-test('readableErrors is linear in the number of errors, and its answer is the one the old lookup gave', () => {
+test('readableErrors is linear in the number of errors, and its answer is the one the old lookup gave', async () => {
   // What @cfworker/json-schema reports for n extra properties and one wrong value.
   const errors = (n) => [
     { instanceLocation: '#', keyword: 'properties', error: 'Property "progress" does not match schema.' },
@@ -425,11 +426,9 @@ test('readableErrors is linear in the number of errors, and its answer is the on
   };
   assert.deepEqual(readableErrors(errors(300)), before(errors(300)));
   const big = errors(6000);
-  const t = process.cpuUsage();
-  const out = readableErrors(big);
-  const cpu = process.cpuUsage(t);
+  const [out, ms] = await cpuOf(() => readableErrors(big));
   assert.equal(out.length, 6001);
-  assert.ok((cpu.user + cpu.system) / 1000 < 50, `took ${(cpu.user + cpu.system) / 1000} ms of CPU`);
+  assert.ok(ms < 50, `took ${ms} ms of CPU`);
 });
 
 test(`validate refuses an entity nested deeper than ${MAX_DEPTH} levels, as an object or as JSON text`, async () => {
@@ -481,11 +480,9 @@ test('uniqueItems: a 64 KiB array of distinct strings is checked in linear time'
   const body = JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'validate', arguments: { model: 'MedicalInstitution', entity: { ...ex, medicalDepartments: items } } } });
   assert.ok(body.length <= MAX_BODY_BYTES && body.length > MAX_BODY_BYTES - 3000, `${body.length} bytes`);
   await send(body); // warm
-  const t = process.cpuUsage();
-  const r = JSON.parse((await message(await send(body))).result.content[0].text);
-  const cpu = process.cpuUsage(t);
+  const [r, ms] = await cpuOf(async () => JSON.parse((await message(await send(body))).result.content[0].text));
   assert.equal(r.valid, true, JSON.stringify(r.problems));
-  assert.ok((cpu.user + cpu.system) / 1000 < 50, `took ${(cpu.user + cpu.system) / 1000} ms of CPU for ${items.length} items`);
+  assert.ok(ms < 50, `took ${ms} ms of CPU for ${items.length} items`);
   // One duplicate at the end is still found.
   const dup = await call('validate', { model: 'MedicalInstitution', entity: { ...ex, medicalDepartments: [...items.slice(0, 5000), 'd7'] } });
   assert.deepEqual(dup.problems, [{ path: '/medicalDepartments', message: 'Duplicate items at indexes 7 and 5000.' }]);
@@ -587,18 +584,13 @@ test('date-time follows ajv-formats, as CI does: a leap second with an offset is
 test('a large wrong array lists its first problems quickly instead of every error', async () => {
   const task = { id: 'urn:ngsi-ld:Task:1', type: 'Task', name: 'x', progress: 'completed' };
   const coordinates = []; while (JSON.stringify(coordinates).length < MAX_BODY_BYTES - 1000) coordinates.push(7);
-  const t = process.cpuUsage();
-  const r = await call('validate', { model: 'Task', entity: { ...task, location: { type: 'Point', coordinates } } });
-  const cpu = process.cpuUsage(t);
+  const [r, ms] = await cpuOf(() => call('validate', { model: 'Task', entity: { ...task, location: { type: 'Point', coordinates } } }));
   assert.equal(r.valid, false);
   assert.ok(r.problems.length > 0 && r.problems.length <= MAX_PROBLEMS);
-  assert.ok((cpu.user + cpu.system) / 1000 < 100, `took ${(cpu.user + cpu.system) / 1000} ms of CPU`);
+  assert.ok(ms < 100, `took ${ms} ms of CPU`);
 });
 
 // --- Third review: error caps, complete, conditional uniqueItems, queries ----
-
-// The best of five runs: one garbage collection (counted in process CPU) must not fail a run on a busy CI machine.
-const cpuOf = async (fn) => { let best = Infinity, out; for (let i = 0; i < 5; i++) { const t = process.cpuUsage(); out = await fn(); const d = process.cpuUsage(t); best = Math.min(best, (d.user + d.system) / 1000); } return [out, best]; };
 
 test('invalid entities that make many validator errors stay cheap, and say they are not complete', async () => {
   const task = { id: 'urn:x', type: 'Task', name: 'x', progress: 'completed' };
