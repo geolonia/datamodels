@@ -11,10 +11,11 @@ test('reportFailures writes a table to GITHUB_STEP_SUMMARY', async () => {
   const before = process.env.GITHUB_STEP_SUMMARY;
   try {
     process.env.GITHUB_STEP_SUMMARY = join(dir, 'summary.md');
-    await reportFailures('Model validation failed', ['models/a/B/schema.json: fill in the TODO markers', 'no location here | with a pipe', 'task v1.0.0 was published; during the pre-release (prerelease: true in node.yaml) correct it'], 'Hint.');
+    await reportFailures('Model validation failed', ['models/a/B/schema.json: fill in the TODO markers', 'no location here | with a pipe', 'task v1.0.0 was published; during the pre-release (prerelease: true in node.yaml) correct it', 'missing: context/a/v1.0.0.jsonld'], 'Hint.');
     const md = await readFile(process.env.GITHUB_STEP_SUMMARY, 'utf8');
-    assert.match(md, /^### Model validation failed \(3\)/);
-    // A message with ': ' in it that does not start with a path stays in one cell.
+    assert.match(md, /^### Model validation failed \(4\)/);
+    // A message with ': ' in it that does not start with a path stays in one cell, also after a label.
+    assert.match(md, /\| \| missing: context\/a\/v1\.0\.0\.jsonld \|/);
     assert.match(md, /\| \| task v1\.0\.0 was published; during the pre-release \(prerelease: true in node\.yaml\) correct it \|/);
     assert.match(md, /\| `models\/a\/B\/schema\.json` \| fill in the TODO markers \|/);
     assert.match(md, /\| \| no location here \\\| with a pipe \|/);
