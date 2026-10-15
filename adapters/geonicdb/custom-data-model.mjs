@@ -20,32 +20,53 @@ export const DATE_OR_DATE_TIME_PATTERN = `^${DATE}(?:${TIME})?$`;
 // (CUSTOM_DATA_MODELS.NGSI_TYPES). A VocabProperty or JsonProperty is registered
 // as a Property: the model does not check the attribute's NGSI-LD type, and the
 // entity is still sent and stored as a VocabProperty or JsonProperty (#280).
+// Once GeonicDB accepts them, they are sent as their own types (#285).
 const GEONICDB_NGSI_TYPES = new Set(['Property', 'GeoProperty', 'Relationship', 'LanguageProperty']);
+const geonicdbNgsiType = (type) => (GEONICDB_NGSI_TYPES.has(type) ? type : 'Property');
 const VALUE_CHECKS = ['minLength', 'maxLength', 'minimum', 'maximum', 'pattern', 'enum'];
 
 /**
- * The full IRI of a VocabProperty term, expanded with the subject's own context
- * as JSON-LD expands a `vocab` value: a term the context defines, a compact IRI
- * whose prefix it defines, or an absolute IRI. GeonicDB stores and checks the
- * expanded IRI (#280). A term the context cannot expand would end up in the
- * NGSI-LD default context, which means nothing, so it fails the build.
+ * The full IRI of a VocabProperty term, or undefined, expanded with `terms` (the
+ * context's term definitions, imports included) as JSON-LD expands a `vocab`
+ * value: a term the context defines, a compact IRI whose prefix it defines, or
+ * an absolute IRI. GeonicDB stores and checks the expanded IRI (#280).
  */
-export function expandVocabTerm(subject, term, where = 'term', depth = 0) {
-  const terms = subject.inlineTerms ?? {};
+export function expandVocabTerm(terms, term, depth = 0) {
+  if (typeof term !== 'string' || depth >= 10) return undefined;
   const idOf = (def) => (typeof def === 'string' ? def : def?.['@id']);
-  if (typeof term === 'string' && depth < 10) {
-    const defined = idOf(terms[term]);
-    if (typeof defined === 'string' && defined !== term) return expandVocabTerm(subject, defined, where, depth + 1);
-    const i = term.indexOf(':');
-    if (i > 0) {
-      const prefix = term.slice(0, i);
-      const rest = term.slice(i + 1);
-      const base = rest.startsWith('//') ? undefined : idOf(terms[prefix]);
-      if (typeof base === 'string' && /^https?:\/\//.test(base)) return base + rest;
-      if (/^(https?:\/\/|urn:)/.test(term)) return term;
-    }
+  const defined = idOf(terms[term]);
+  if (typeof defined === 'string' && defined !== term) return expandVocabTerm(terms, defined, depth + 1);
+  const i = term.indexOf(':');
+  if (i <= 0) return undefined;
+  const rest = term.slice(i + 1);
+  // https://example.org/x is an absolute IRI, not the prefix "https".
+  const base = rest.startsWith('//') ? undefined : idOf(terms[term.slice(0, i)]);
+  if (typeof base === 'string' && /^https?:\/\//.test(base)) return base + rest;
+  if (/^(https?:\/\/|urn:)/.test(term)) return term;
+  return undefined;
+}
+
+/**
+ * A VocabProperty's checks as GeonicDB applies them: it checks the term after
+ * expanding it to its full IRI (#280), so the allowed terms are sent as full
+ * IRIs. A term that cannot be expanded would end up in the NGSI-LD default
+ * context, which means nothing, so it fails the build (`fix` says what to do).
+ * A pattern or a length is written for the term as data writes it, not for the
+ * IRI: not sent, and the build says so.
+ */
+function vocabValidation(validation, terms, where, fix) {
+  const v = { ...validation };
+  const dropped = ['pattern', 'minLength', 'maxLength'].filter((k) => v[k] !== undefined);
+  for (const k of dropped) delete v[k];
+  if (dropped.length) console.warn(`${where}: GeonicDB adapter: ${dropped.join(', ')} of a VocabProperty not sent (GeonicDB checks the term as a full IRI, #280)`);
+  if (v.enum) {
+    v.enum = v.enum.map((t) => {
+      const iri = terms ? expandVocabTerm(terms, t) : undefined;
+      if (iri === undefined) throw new Error(`${where}: the VocabProperty term ${JSON.stringify(t)} cannot be expanded to a full IRI; ${fix}`);
+      return iri;
+    });
   }
-  throw new Error(`${where}: the VocabProperty term ${JSON.stringify(term)} cannot be expanded to a full IRI with the ${subject.name} context; define its prefix or term in models/${subject.name}/context.jsonld, or write the full IRI`);
+  return v;
 }
 
 /** The pattern for a string Property that may be a plain date, or undefined. */
@@ -82,9 +103,14 @@ function valueTypeOf(prop) {
  *   rename           { catalogName: aliasName }: attribute aliases. The body
  *                    keeps each property's catalog IRI in `@context`, so the
  *                    caller's contextUrl must map the alias to that IRI.
+ *   contextTerms     the term definitions of the subject's context, imports
+ *                    included, to expand VocabProperty terms; default
+ *                    subject.contextTerms (set by loadSubjects)
  */
-export function toCustomDataModel(subject, model, { typePrefix = '', typeName, contextUrl, allowAdditional = false, extend, rename = {} } = {}) {
+export function toCustomDataModel(subject, model, { typePrefix = '', typeName, contextUrl, allowAdditional = false, extend, rename = {}, contextTerms } = {}) {
   const urls = subjectUrls(subject);
+  const terms = contextTerms ?? subject.contextTerms;
+  const termsMissing = terms ? '' : ` (the ${subject.name} context's terms are not loaded${subject.contextTermsError ? `: ${subject.contextTermsError}` : '; load the subject with loadSubjects()'})`;
   const catalogNames = new Set(attributesOf(model).map(([n]) => n));
   for (const [from, to] of Object.entries(rename)) {
     if (!catalogNames.has(from)) throw new Error(`rename: "${from}" is not an attribute of ${model.type}`);
@@ -101,7 +127,7 @@ export function toCustomDataModel(subject, model, { typePrefix = '', typeName, c
       // valueType stays the schema's: GeonicDB checks the stored value, which is
       // the expanded term (a string) for a VocabProperty and the JSON itself for
       // a JsonProperty, as the schema describes them.
-      ngsiType: GEONICDB_NGSI_TYPES.has(ngsiType) ? ngsiType : 'Property',
+      ngsiType: geonicdbNgsiType(ngsiType),
       valueType: valueTypeOf(prop),
       // GeonicDB requires the key on every property; null when the catalog example has no value.
       example: example[name] ?? null,
@@ -117,14 +143,10 @@ export function toCustomDataModel(subject, model, { typePrefix = '', typeName, c
     // broker. Their x-iri is the core context's own IRI, so nothing conflicts.
     const iri = prop['x-iri'];
     if (typeof iri === 'string' && /^https?:\/\//.test(iri)) d['@context'] = iri;
-    const validation = {};
+    let validation = {};
     for (const k of VALUE_CHECKS) if (prop[k] !== undefined) validation[k] = prop[k];
     if (ngsiType === 'VocabProperty') {
-      // GeonicDB checks a VocabProperty's term after expanding it to its full IRI
-      // (#280), so the allowed terms are sent as full IRIs. A pattern or a length
-      // is written for the term as data writes it, not for the IRI: not sent.
-      for (const k of ['pattern', 'minLength', 'maxLength']) delete validation[k];
-      if (validation.enum) validation.enum = validation.enum.map((t) => expandVocabTerm(subject, t, `${model.type}.${name}`));
+      validation = vocabValidation(validation, terms, `${model.type}.${name}`, `define its prefix or term in models/${subject.name}/context.jsonld (or a context it imports), or write the full IRI${termsMissing}`);
     }
     // A JsonProperty keeps its checks: GeonicDB applies them to the JSON itself,
     // which is what the schema describes.
@@ -136,7 +158,13 @@ export function toCustomDataModel(subject, model, { typePrefix = '', typeName, c
     for (const [name, detail] of Object.entries(extend.propertyDetails)) {
       if (name in propertyDetails) throw new Error(`extension redefines catalog attribute "${name}" of ${model.type}; add a new attribute instead`);
       if (!detail || typeof detail !== 'object' || !detail.ngsiType || !detail.valueType) throw new Error(`extension attribute "${name}" needs ngsiType and valueType`);
-      propertyDetails[name] = { ...detail, example: detail.example ?? null };
+      // The same GeonicDB rules as the catalog's attributes (#280). The extension's
+      // own context is not read here: its allowed terms expand with the catalog's.
+      const ext = { ...detail, ngsiType: geonicdbNgsiType(detail.ngsiType), example: detail.example ?? null };
+      if (detail.ngsiType === 'VocabProperty' && detail.validation) {
+        ext.validation = vocabValidation(detail.validation, terms, `extension attribute "${name}"`, `write it as a full IRI, or as a term or prefix of the ${subject.name} context${termsMissing}`);
+      }
+      propertyDetails[name] = ext;
     }
   }
   return {

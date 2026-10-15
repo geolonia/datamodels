@@ -42,9 +42,25 @@ export const subjectUrls = (subject) => URLS.subjectUrls(subject);
 export const modelUrls = (subject, model) => URLS.modelUrls(subject, model);
 export { attributesOf };
 
-/** The subjects in MODELS_DIR, each title, summary and description in every language of the node. */
-export function loadSubjects() {
-  return loadNodeSubjects(MODELS_DIR, { urls: URLS, languages: NODE.languages });
+/**
+ * The subjects in MODELS_DIR, each title, summary and description in every language of the node.
+ * Each subject also has `contextTerms` (not enumerable): every term its context
+ * provides, imported catalog contexts included (resolveContextTerms), for the
+ * adapters that expand terms as a JSON-LD processor would (GeonicDB, #280).
+ * When the context cannot be resolved, `contextTermsError` says why; the
+ * validator reports the problem itself, so loading does not fail on it.
+ */
+export async function loadSubjects() {
+  const subjects = await loadNodeSubjects(MODELS_DIR, { urls: URLS, languages: NODE.languages });
+  // Imported here, not at the top: releases.mjs imports this module.
+  const { resolveContextDocument } = await import('./releases.mjs');
+  for (const subject of subjects) {
+    let terms, error;
+    try { terms = await resolveContextTerms(subject.context, subjects, resolveContextDocument); } catch (e) { error = e.message; }
+    Object.defineProperty(subject, 'contextTerms', { value: terms, enumerable: false });
+    Object.defineProperty(subject, 'contextTermsError', { value: error, enumerable: false });
+  }
+  return subjects;
 }
 
 // The projection between the two forms is the toolkit's (@geolonia/datamodels/ngsi, #226), which has
