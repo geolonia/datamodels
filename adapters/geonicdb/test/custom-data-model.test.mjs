@@ -135,8 +135,10 @@ test('a VocabProperty or JsonProperty is registered as a Property, with the sche
   assert.equal(toCustomDataModel(transportation, labelled).propertyDetails.label.ngsiType, 'LanguageProperty');
 });
 
-test('a VocabProperty\'s allowed terms are full IRIs, expanded with the context and its imports (#280)', () => {
+test('a VocabProperty\'s allowed terms are full IRIs, expanded with the context and its imports (#280)', (t) => {
+  const warn = t.mock.method(console, 'warn', () => {});
   const d = decisionBody();
+  assert.equal(warn.mock.callCount(), 0, 'nothing is dropped from Decision');
   assert.deepEqual(d.humanInvolvement.validation, {
     enum: [
       'https://w3id.org/dpv#HumanInvolvementForVerification',
@@ -172,6 +174,12 @@ test('a VocabProperty term the context cannot expand fails the build clearly (#2
   }
   const unloaded = { ...decisionSubject }; // a copy without the non-enumerable contextTerms
   assert.throws(() => toCustomDataModel(unloaded, decision), /context's terms are not loaded; load the subject with loadSubjects\(\)/);
+  Object.defineProperty(unloaded, 'contextTermsError', { value: 'context imports https://example.com/x.jsonld, which is not a catalog context URL' });
+  assert.throws(() => toCustomDataModel(unloaded, decision), /context's terms are not loaded: context imports https:\/\/example\.com\/x\.jsonld, which is not a catalog context URL/);
+});
+
+test('the contextTerms option expands the terms instead of the subject\'s (#280)', () => {
+  assert.deepEqual(decisionBody(withEnum('x'), { contextTerms: { x: 'https://e.example/x' } }).humanInvolvement.validation.enum, ['https://e.example/x']);
 });
 
 test('a VocabProperty gets no pattern or length check, and the build says so; a JsonProperty keeps its checks (#280)', (t) => {
@@ -199,4 +207,11 @@ test('extension attributes follow the same GeonicDB rules (#280)', (t) => {
   assert.equal(level.validation.pattern, '^x', 'the caller\'s definition is not changed');
   const bad = { propertyDetails: { level: { ...level, validation: { enum: ['acme:Low'] } } } };
   assert.throws(() => decisionBody(decision, { extend: bad }), /extension attribute "level": the VocabProperty term "acme:Low" cannot be expanded to a full IRI; write it as a full IRI/);
+  // Only VocabProperty and JsonProperty become a Property: a typo reaches GeonicDB, which refuses it.
+  assert.equal(decisionBody(decision, { extend: { propertyDetails: { link: { ngsiType: 'Relationshp', valueType: 'uri' } } } }).link.ngsiType, 'Relationshp');
+  // A VocabProperty whose only checks were a pattern or a length gets no empty validation.
+  const lengthOnly = decisionBody(decision, { extend: { propertyDetails: { level: { ...level, validation: { maxLength: 10 } } } } });
+  assert.ok(!('validation' in lengthOnly.level));
+  const notAList = { propertyDetails: { level: { ...level, validation: { enum: 'dpv:HumanNotInvolved' } } } };
+  assert.throws(() => decisionBody(decision, { extend: notAList }), /extension attribute "level": the enum of a VocabProperty must be a list of terms, not "dpv:HumanNotInvolved"/);
 });

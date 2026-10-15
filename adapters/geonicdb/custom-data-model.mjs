@@ -59,7 +59,8 @@ function vocabValidation(validation, terms, where, fix) {
   const dropped = ['pattern', 'minLength', 'maxLength'].filter((k) => v[k] !== undefined);
   for (const k of dropped) delete v[k];
   if (dropped.length) console.warn(`${where}: GeonicDB adapter: ${dropped.join(', ')} of a VocabProperty not sent (GeonicDB checks the term as a full IRI, #280)`);
-  if (v.enum) {
+  if (v.enum !== undefined) {
+    if (!Array.isArray(v.enum)) throw new Error(`${where}: the enum of a VocabProperty must be a list of terms, not ${JSON.stringify(v.enum)}`);
     v.enum = v.enum.map((t) => {
       const iri = terms ? expandVocabTerm(terms, t) : undefined;
       if (iri === undefined) throw new Error(`${where}: the VocabProperty term ${JSON.stringify(t)} cannot be expanded to a full IRI; ${fix}`);
@@ -158,11 +159,15 @@ export function toCustomDataModel(subject, model, { typePrefix = '', typeName, c
     for (const [name, detail] of Object.entries(extend.propertyDetails)) {
       if (name in propertyDetails) throw new Error(`extension redefines catalog attribute "${name}" of ${model.type}; add a new attribute instead`);
       if (!detail || typeof detail !== 'object' || !detail.ngsiType || !detail.valueType) throw new Error(`extension attribute "${name}" needs ngsiType and valueType`);
-      // The same GeonicDB rules as the catalog's attributes (#280). The extension's
-      // own context is not read here: its allowed terms expand with the catalog's.
-      const ext = { ...detail, ngsiType: geonicdbNgsiType(detail.ngsiType), example: detail.example ?? null };
+      // The same GeonicDB rules as the catalog's attributes (#280), but only these
+      // two types become a Property: any other ngsiType reaches GeonicDB as written,
+      // so a typo is refused there. The extension's own context is not read here:
+      // its allowed terms expand with the catalog's.
+      const asProperty = detail.ngsiType === 'VocabProperty' || detail.ngsiType === 'JsonProperty';
+      const ext = { ...detail, ngsiType: asProperty ? 'Property' : detail.ngsiType, example: detail.example ?? null };
       if (detail.ngsiType === 'VocabProperty' && detail.validation) {
         ext.validation = vocabValidation(detail.validation, terms, `extension attribute "${name}"`, `write it as a full IRI, or as a term or prefix of the ${subject.name} context${termsMissing}`);
+        if (!Object.keys(ext.validation).length) delete ext.validation;
       }
       propertyDetails[name] = ext;
     }
