@@ -61,12 +61,13 @@ geonic config set service "$GEONICDB_TENANT"
 export GDB_API_KEY="$GEONICDB_API_KEY"
 
 # 1. モデルを登録する（テナントごとに 1 回）。
-curl -sSf "$BASE/adapters/geonicdb/$MODEL.json" | geonic models create
+curl -sSf "$BASE/adapters/geonicdb/$MODEL.json" -o model.json
+geonic models create @model.json
 
 # 2. エンティティを作成する。モデルのページの normalized の例を、
 #    そのまま送ります（GeonicDB v0.22.0 以降。下の注を参照）。
-curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" \
-  | geonic entities create
+curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" -o entity.jsonld
+geonic entities create @entity.jsonld
 
 # 3. 検索する（通行止めだけ）。
 geonic entities list --type RoadRestriction \

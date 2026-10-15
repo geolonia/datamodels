@@ -7,7 +7,7 @@ description: One real open-data CSV converted into a catalog model, step by step
 
 This tutorial converts one real open-data file into a catalog model. Steps 1–2 turn a CSV list into JSON that follows the model. Steps 3–6 are optional: they put that JSON into an NGSI-LD context broker, ask it questions and show the result on a map. Each step says what happened and why. You need no knowledge of FIWARE or NGSI-LD, only a terminal with Bash or zsh (macOS, Linux, or WSL on Windows). Steps 1–2 take about 10 minutes, the whole tutorial about 30.
 
-The data is Utsunomiya City's list of designated emergency evacuation sites (指定緊急避難場所): 198 schools, parks and other places, published as a CSV file. Every command here was run on 2026-10-10.
+The data is Utsunomiya City's list of designated emergency evacuation sites (指定緊急避難場所): 198 schools, parks and other places, published as a CSV file. Every command here was run on 2026-10-15.
 
 ## First: entities and models {#model}
 
@@ -47,7 +47,7 @@ npx @geolonia/datamodels@0.3.16 convert \
   disaster/EvacuationSite jichitai-opendata-site sites.csv --out sites.json
 ```
 
-**What happened:** each row became one entity, and each entity was checked against the model. The converter lists what it repaired, for example local government codes that lost their leading zero in the spreadsheet (`92011 → 092011`). All 198 sites are valid. Look at the first one in `sites.json`, shortened here (the address, the telephone number and a few more attributes are left out):
+**What happened:** each row became one entity, and each entity was checked against the model. The converter lists what it repaired, for example local government codes that lost their leading zero in the spreadsheet (`92011 → 092011`). It also leaves out the column 所在地_市区町村, because it holds a full address, not a city name; the full address is still kept. All 198 sites are valid. Look at the first one in `sites.json`, shortened here (the address, the telephone number and a few more attributes are left out):
 
 ```json
 {
@@ -84,7 +84,7 @@ The commands use `geonic`, the command-line tool for GeonicDB, but it loads and 
 
 - **A tenant in a broker.** A tenant is your own space in a shared broker; nobody else sees your data. Ask whoever runs the broker you use to set one up. They give you its address and a login as tenant administrator. For GeonicDB, ask through Geolonia's [contact form](https://www.geolonia.com/contact/) (Japanese).
 - **[jq](https://jqlang.org/)**, a small tool for JSON, used in steps 5 and 6.
-- **The GeonicDB CLI** (`geonic`), the command-line tool for GeonicDB. Install it and log in once:
+- **The GeonicDB CLI** (`geonic`), the command-line tool for GeonicDB. Install it and log in once. The login asks for your email address and password:
 
 ```bash
 npm install -g @geolonia/geonicdb-cli@0.26.1
@@ -110,11 +110,12 @@ Then tell the broker about the model. From then on it checks every EvacuationSit
 
 ```bash
 BASE=https://datamodels.jp
-curl -sSf "$BASE/adapters/geonicdb/disaster/EvacuationSite.json" | geonic models create
+curl -sSf -o model.json "$BASE/adapters/geonicdb/disaster/EvacuationSite.json"
+geonic models create @model.json
 geonic import sites.jsonld --input-format json
 ```
 
-**What happened:** `geonic models create` registered the model's definition, which the catalog publishes for GeonicDB. `geonic import` sent the 198 entities and answers `Imported: 198 succeeded, 0 failed`. If you run the first command twice, the second answers `409`: the model is already there.
+**What happened:** `curl` downloaded the model's definition, which the catalog publishes for GeonicDB, and `geonic models create` registered it (`@model.json` means "read this file"). It prints the registered model and ends with `Model created.` `geonic import` sent the 198 entities and answers `Imported: 198 succeeded, 0 failed, 0 skipped`. If you run `geonic models create` twice, the second answers `Custom data model already exists`: the model is already there.
 
 ### 4. Ask questions {#query}
 
@@ -162,7 +163,7 @@ jq '{type: "FeatureCollection", features: map({type: "Feature",
 
 Open `sites.geojson` in a map tool: drag it onto [geojson.io](https://geojson.io/) in the browser, or open it in QGIS. Click a point to see its name and hazards.
 
-To build your own web map that reads the broker directly, start from the [geonicdb-workshop](https://github.com/geolonia/geonicdb-workshop) template.
+To build your own web map that reads the broker directly, start from the [geonicdb-workshop](https://github.com/geolonia/geonicdb-workshop) template (in Japanese). Put your broker's address and tenant in its `.env.local`; the code that reads the data and draws it is yours to write.
 
 ### 6. See the model check at work {#check}
 
@@ -170,12 +171,14 @@ Because you registered the model in step 3, the broker refuses data that does no
 
 ```bash
 # A site without a name (the model requires one)
-jq '.[1] | .id += "-test" | del(.name)' sites.jsonld | geonic entities create
+jq '.[1] | .id += "-test" | del(.name)' sites.jsonld > no-name.json
+geonic entities create @no-name.json
 # → Required attribute 'name' is missing
 
 # A site with an attribute the model does not have
 jq '.[2] | .id += "-test" | .capacity = {type: "Property", value: 500}' \
-  sites.jsonld | geonic entities create
+  sites.jsonld > extra.json
+geonic entities create @extra.json
 # → Attribute 'capacity' is not defined in data model 'EvacuationSite'
 ```
 

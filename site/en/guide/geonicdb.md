@@ -61,12 +61,13 @@ geonic config set service "$GEONICDB_TENANT"
 export GDB_API_KEY="$GEONICDB_API_KEY"
 
 # 1. Register the model (once per tenant).
-curl -sSf "$BASE/adapters/geonicdb/$MODEL.json" | geonic models create
+curl -sSf "$BASE/adapters/geonicdb/$MODEL.json" -o model.json
+geonic models create @model.json
 
 # 2. Create an entity: the model page's normalized example, as is
 #    (GeonicDB v0.22.0 or later; see the note below).
-curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" \
-  | geonic entities create
+curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" -o entity.jsonld
+geonic entities create @entity.jsonld
 
 # 3. Query: closed roads only.
 geonic entities list --type RoadRestriction \
