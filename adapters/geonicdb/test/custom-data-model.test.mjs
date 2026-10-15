@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { loadSubjects, CORE_TERMS, CORE_CONTEXT_FIXTURE } from '../../../scripts/lib/models.mjs';
-import { toCustomDataModel, DATE_OR_DATE_TIME_PATTERN } from '../custom-data-model.mjs';
+import { toCustomDataModel, expandVocabTerm, DATE_OR_DATE_TIME_PATTERN } from '../custom-data-model.mjs';
 
 const subjects = await loadSubjects();
 const transportation = subjects.find((s) => s.name === 'transportation');
@@ -113,4 +113,58 @@ test('a date or date-time attribute is a string with a pattern: GeonicDB\'s date
   assert.ok(DATE_OR_DATE_TIME_PATTERN.length <= 200);
   assert.ok(DATE_OR_DATE_TIME_PATTERN.split('|').length - 1 <= 10);
   assert.ok(!/\)[*+{]/.test(DATE_OR_DATE_TIME_PATTERN));
+});
+
+// #280: GeonicDB registers only Property, GeoProperty, Relationship and
+// LanguageProperty, and checks a VocabProperty's term as its full IRI.
+const decisionSubject = subjects.find((s) => s.name === 'decision');
+const decision = decisionSubject.models.find((m) => m.type === 'Decision');
+const decisionBody = (model = decision) => toCustomDataModel(decisionSubject, model).propertyDetails;
+
+test('a VocabProperty or JsonProperty is registered as a Property, with the schema\'s value type (#280)', () => {
+  const d = decisionBody();
+  for (const [name, valueType] of [['humanInvolvement', 'string'], ['answers', 'array'], ['facts', 'array'], ['corrections', 'array']]) {
+    assert.equal(d[name].ngsiType, 'Property', name);
+    assert.equal(d[name].valueType, valueType, name);
+  }
+  assert.equal(d.refersTo.ngsiType, 'Relationship', 'other NGSI-LD types stay');
+  assert.equal(d.reviewStatus.ngsiType, 'Property');
+});
+
+test('a VocabProperty\'s allowed terms are full IRIs, expanded with the context (#280)', () => {
+  const d = decisionBody();
+  assert.deepEqual(d.humanInvolvement.validation, {
+    enum: [
+      'https://w3id.org/dpv#HumanInvolvementForVerification',
+      'https://w3id.org/dpv#HumanInvolvementForOversight',
+      'https://w3id.org/dpv#HumanInvolvementForDecision',
+      'https://w3id.org/dpv#HumanNotInvolved',
+    ],
+  });
+  assert.equal(decision.schema.properties.humanInvolvement.enum[0], 'dpv:HumanInvolvementForVerification', 'the catalog schema keeps the compact terms');
+  // Other attributes keep their checks as the schema has them.
+  assert.deepEqual(d.reviewStatus.validation, { enum: ['pending', 'resolved'] });
+  assert.deepEqual(d.profileVersion.validation, { minimum: 1 });
+  assert.deepEqual(d.policyRule.validation, { pattern: decision.schema.properties.policyRule.pattern });
+  // A term the context defines, and an absolute IRI.
+  assert.equal(expandVocabTerm(decisionSubject, 'Decision'), 'https://datamodels.jp/ns/decision/Decision');
+  assert.equal(expandVocabTerm(decisionSubject, 'https://w3id.org/dpv#HumanNotInvolved'), 'https://w3id.org/dpv#HumanNotInvolved');
+});
+
+test('a VocabProperty term the context cannot expand fails the build clearly (#280)', () => {
+  for (const term of ['nope:HumanNotInvolved', 'HumanNotInvolved']) {
+    const model = structuredClone(decision);
+    model.schema.properties.humanInvolvement.enum = ['dpv:HumanNotInvolved', term];
+    assert.throws(() => toCustomDataModel(decisionSubject, model), (e) => e.message.includes(`Decision.humanInvolvement: the VocabProperty term "${term}" cannot be expanded`) && e.message.includes('models/decision/context.jsonld'), term);
+  }
+});
+
+test('a VocabProperty gets no pattern or length check, a JsonProperty keeps its checks (#280)', () => {
+  const model = structuredClone(decision);
+  Object.assign(model.schema.properties.humanInvolvement, { pattern: '^dpv:', minLength: 1, maxLength: 80 });
+  Object.assign(model.schema.properties.answers, { minimum: 0, enum: [[]] });
+  const d = decisionBody(model);
+  assert.deepEqual(Object.keys(d.humanInvolvement.validation), ['enum'], 'written for the compact term, not the IRI');
+  // GeonicDB applies a JsonProperty's checks to the JSON itself, as the schema describes it.
+  assert.deepEqual(d.answers.validation, { minimum: 0, enum: [[]] });
 });

@@ -98,6 +98,8 @@ GeonicDB は、その型のエンティティを作成・変更するたびに�
 - モデルに無い属性が含まれていないこと（カタログの定義では許していません）
 - 一意でなければならない組み合わせが一意であること（定義で宣言していれば）
 
+VocabProperty の許される値は、完全な IRI に直してから比べます。`dpv:HumanNotInvolved` と `https://w3id.org/dpv#HumanNotInvolved` は同じ値です。
+
 検証しないこと：
 
 - リストの中の値（許される値、最低の個数など）。リストであることだけを検証します（カタログの JSON Schema は中の値も検証します。`datamodels convert` の変換時など）。

@@ -98,6 +98,8 @@ GeonicDB checks every entity of the type when it is created or changed, also in 
 - there are no attributes the model does not know (the catalog's definitions do not allow them);
 - combinations that must be unique are unique, if the definition declares them.
 
+A VocabProperty's allowed terms are compared as full IRIs, so `dpv:HumanNotInvolved` and `https://w3id.org/dpv#HumanNotInvolved` count as the same term.
+
 It does not check:
 
 - the values inside a list, such as allowed values or a minimum number of items: only that the value is a list (the catalog's JSON Schema checks them, for example during `datamodels convert`);
