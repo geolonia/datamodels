@@ -163,7 +163,7 @@ jq '{type: "FeatureCollection", features: map({type: "Feature",
 
 `sites.geojson` を地図のツールで開きます。ブラウザで [geojson.io](https://geojson.io/) にドラッグするか、QGIS で開いてください。点を選ぶと、名称と災害の種別が表示されます。
 
-ブローカーから直接データを読む Web 地図を作りたい場合は、[geonicdb-workshop](https://github.com/geolonia/geonicdb-workshop) のテンプレートから始められます。ブローカーのアドレスとテナントは、テンプレートの `.env.local` に書きます。データを読んで地図に描くコードは、自分で書きます。
+ブローカーから直接データを読む Web 地図を作りたい場合は、[geonicdb-workshop](https://github.com/geolonia/geonicdb-workshop) のテンプレートから始められます。ブローカーのアドレスとテナントは、テンプレートの `.env.local` に書きます。データを読んで地図に描くコードは、自分で書きます。テンプレートはログインせずに読むので、テナントで匿名の読み取りを許可しておく必要があります。設定はテナント管理者が行います。
 
 ### 6. モデルによる検証を確かめる {#check}
 

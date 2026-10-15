@@ -163,7 +163,7 @@ jq '{type: "FeatureCollection", features: map({type: "Feature",
 
 Open `sites.geojson` in a map tool: drag it onto [geojson.io](https://geojson.io/) in the browser, or open it in QGIS. Click a point to see its name and hazards.
 
-To build your own web map that reads the broker directly, start from the [geonicdb-workshop](https://github.com/geolonia/geonicdb-workshop) template (in Japanese). Put your broker's address and tenant in its `.env.local`; the code that reads the data and draws it is yours to write.
+To build your own web map that reads the broker directly, start from the [geonicdb-workshop](https://github.com/geolonia/geonicdb-workshop) template (in Japanese). Put your broker's address and tenant in its `.env.local`; the code that reads the data and draws it is yours to write. The template reads without logging in, so the tenant must allow anonymous reads; a tenant admin sets that up.
 
 ### 6. See the model check at work {#check}
 
