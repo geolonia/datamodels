@@ -7,7 +7,7 @@ description: One real open-data CSV converted into a catalog model, step by step
 
 This tutorial converts one real open-data file into a catalog model. Steps 1–2 turn a CSV list into JSON that follows the model. Steps 3–6 are optional: they put that JSON into an NGSI-LD context broker, ask it questions and show the result on a map. Each step says what happened and why. You need no knowledge of FIWARE or NGSI-LD, only a terminal with Bash or zsh (macOS, Linux, or WSL on Windows). Steps 1–2 take about 10 minutes, the whole tutorial about 30.
 
-The data is Utsunomiya City's list of designated emergency evacuation sites (指定緊急避難場所): 198 schools, parks and other places, published as a CSV file. Every command here was run on 2026-10-15.
+The data is Utsunomiya City's list of designated emergency evacuation sites (指定緊急避難場所): 198 schools, parks and other places, published as a CSV file. The steps were run on 2026-10-15 against a local GeonicDB v0.22.0; the login steps follow the CLI's documentation.
 
 ## First: entities and models {#model}
 
@@ -115,7 +115,7 @@ geonic models create @model.json
 geonic import sites.jsonld --input-format json
 ```
 
-**What happened:** `curl` downloaded the model's definition, which the catalog publishes for GeonicDB, and `geonic models create` registered it (`@model.json` means "read this file"). It prints the registered model and ends with `Model created.` `geonic import` sent the 198 entities and answers `Imported: 198 succeeded, 0 failed, 0 skipped`. If you run `geonic models create` twice, the second answers `Custom data model already exists`: the model is already there.
+**What happened:** `curl` downloaded the model's definition, which the catalog publishes for GeonicDB, and `geonic models create` registered it (`@model.json` means "read this file"). It prints the registered model and ends with `Model created.` `geonic import` sent the 198 entities and answers with a line that starts `Imported: 198 succeeded, 0 failed, 0 skipped …`. If you run `geonic models create` twice, the second answers `Custom data model already exists`: the model is already there.
 
 ### 4. Ask questions {#query}
 

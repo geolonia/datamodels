@@ -7,7 +7,7 @@ description: 実際のオープンデータを、カタログのモデルに変�
 
 実際のオープンデータを、カタログのモデルに変換するチュートリアルです。手順 1〜2 で、CSV の一覧から、モデルに合った JSON を作ります。手順 3〜6 は任意です。その JSON を NGSI-LD のコンテキストブローカーに入れ、検索して、結果を地図で確認します。各手順で、何が起きたのか、なぜそうするのかも説明します。FIWARE や NGSI-LD の知識は要りません。Bash か zsh が使えるターミナル（macOS、Linux、Windows では WSL）があれば大丈夫です。所要時間は、手順 1〜2 が 10 分ほど、全体で 30 分ほどです。
 
-使うのは、宇都宮市の指定緊急避難場所一覧です。学校や公園など 198 か所が、CSV ファイルで公開されています。ここに載せたコマンドは、すべて 2026-10-15 に実行して確かめています。
+使うのは、宇都宮市の指定緊急避難場所一覧です。学校や公園など 198 か所が、CSV ファイルで公開されています。手順は 2026-10-15 に、ローカルの GeonicDB v0.22.0 で実行して確かめています。ログインの手順は、CLI の説明のとおりに書いています。
 
 ## はじめに：エンティティとモデル {#model}
 
@@ -115,7 +115,7 @@ geonic models create @model.json
 geonic import sites.jsonld --input-format json
 ```
 
-**何が起きたか：** カタログが GeonicDB 用に公開しているモデルの定義を `curl` で取得し、`geonic models create` で登録しました。`@model.json` は「このファイルを読む」という意味です。登録したモデルの内容が表示され、最後に `Model created.` と出ます。`geonic import` は 198 件のエンティティを送り、`Imported: 198 succeeded, 0 failed, 0 skipped` と返します。`geonic models create` をもう一度実行すると、`Custom data model already exists` になります。モデルがすでに登録されているためです。
+**何が起きたか：** カタログが GeonicDB 用に公開しているモデルの定義を `curl` で取得し、`geonic models create` で登録しました。`@model.json` は「このファイルを読む」という意味です。登録したモデルの内容が表示され、最後に `Model created.` と出ます。`geonic import` は 198 件のエンティティを送り、`Imported: 198 succeeded, 0 failed, 0 skipped …` で始まる行を返します。`geonic models create` をもう一度実行すると、`Custom data model already exists` になります。モデルがすでに登録されているためです。
 
 ### 4. 検索する {#query}
 
