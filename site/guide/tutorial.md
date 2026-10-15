@@ -7,7 +7,7 @@ description: 実際のオープンデータを、カタログのモデルに変�
 
 実際のオープンデータを、カタログのモデルに変換するチュートリアルです。手順 1〜2 で、CSV の一覧から、モデルに合った JSON を作ります。手順 3〜6 は任意です。その JSON を NGSI-LD のコンテキストブローカーに入れ、検索して、結果を地図で確認します。各手順で、何が起きたのか、なぜそうするのかも説明します。FIWARE や NGSI-LD の知識は要りません。Bash か zsh が使えるターミナル（macOS、Linux、Windows では WSL）があれば大丈夫です。所要時間は、手順 1〜2 が 10 分ほど、全体で 30 分ほどです。
 
-使うのは、宇都宮市の指定緊急避難場所一覧です。学校や公園など 198 か所が、CSV ファイルで公開されています。ここに載せたコマンドは、すべて 2026-10-10 に実行して確かめています。
+使うのは、宇都宮市の指定緊急避難場所一覧です。学校や公園など 198 か所が、CSV ファイルで公開されています。手順は 2026-10-15 に、ローカルの GeonicDB v0.22.0 で実行して確かめています。ログインの手順は、CLI の説明のとおりに書いています。
 
 ## はじめに：エンティティとモデル {#model}
 
@@ -47,7 +47,7 @@ npx @geolonia/datamodels@0.3.16 convert \
   disaster/EvacuationSite jichitai-opendata-site sites.csv --out sites.json
 ```
 
-**何が起きたか：** CSV の 1 行が 1 つのエンティティになり、1 件ずつモデルで検証されました。変換ツールは、自動で直した箇所も表示します。たとえば、表計算ソフトで先頭の 0 が落ちた地方公共団体コード（`92011 → 092011`）です。198 か所すべてが有効でした。`sites.json` の最初の 1 件を見てみましょう。ここでは、住所や電話番号など、一部の属性を省いています。
+**何が起きたか：** CSV の 1 行が 1 つのエンティティになり、1 件ずつモデルで検証されました。変換ツールは、自動で直した箇所も表示します。たとえば、表計算ソフトで先頭の 0 が落ちた地方公共団体コード（`92011 → 092011`）です。列 `所在地_市区町村` は使わずに省きます。市区町村名ではなく住所が入っているためです。住所そのものは残ります。198 か所すべてが有効でした。`sites.json` の最初の 1 件を見てみましょう。ここでは、住所や電話番号など、一部の属性を省いています。
 
 ```json
 {
@@ -84,7 +84,7 @@ npx @geolonia/datamodels@0.3.16 convert \
 
 - **ブローカーのテナント。** テナントは、共用のブローカーの中にある自分専用の領域です。ほかの人からはデータが見えません。テナントは、使うブローカーの運用者に頼んで用意してもらい、アドレスとテナント管理者のログイン情報を受け取ります。GeonicDB については、Geolonia の[お問い合わせフォーム](https://www.geolonia.com/contact/)から問い合わせてください。
 - **[jq](https://jqlang.org/)**（JSON を扱う小さなツール）。手順 5〜6 で使います。
-- **GeonicDB CLI**（`geonic`）。GeonicDB をコマンドで操作するツールです。インストールして、最初に一度だけログインします。
+- **GeonicDB CLI**（`geonic`）。GeonicDB をコマンドで操作するツールです。インストールして、最初に一度だけログインします。ログインでは、メールアドレスとパスワードを聞かれます。
 
 ```bash
 npm install -g @geolonia/geonicdb-cli@0.26.1
@@ -110,11 +110,12 @@ npx @geolonia/datamodels@0.3.16 convert \
 
 ```bash
 BASE=https://datamodels.jp
-curl -sSf "$BASE/adapters/geonicdb/disaster/EvacuationSite.json" | geonic models create
+curl -sSf -o model.json "$BASE/adapters/geonicdb/disaster/EvacuationSite.json"
+geonic models create @model.json
 geonic import sites.jsonld --input-format json
 ```
 
-**何が起きたか：** `geonic models create` で、カタログが GeonicDB 用に公開しているモデルの定義を登録しました。`geonic import` は 198 件のエンティティを送り、`Imported: 198 succeeded, 0 failed` と返します。1 つ目のコマンドをもう一度実行すると、`409` になります。モデルがすでに登録されているためです。
+**何が起きたか：** カタログが GeonicDB 用に公開しているモデルの定義を `curl` で取得し、`geonic models create` で登録しました。`@model.json` は「このファイルを読む」という意味です。登録したモデルの内容が表示され、最後に `Model created.` と出ます。`geonic import` は 198 件のエンティティを送り、`Imported: 198 succeeded, 0 failed, 0 skipped …` で始まる行を返します。`geonic models create` をもう一度実行すると、`Custom data model already exists` になります。モデルがすでに登録されているためです。
 
 ### 4. 検索する {#query}
 
@@ -162,7 +163,7 @@ jq '{type: "FeatureCollection", features: map({type: "Feature",
 
 `sites.geojson` を地図のツールで開きます。ブラウザで [geojson.io](https://geojson.io/) にドラッグするか、QGIS で開いてください。点を選ぶと、名称と災害の種別が表示されます。
 
-ブローカーから直接データを読む Web 地図を作りたい場合は、[geonicdb-workshop](https://github.com/geolonia/geonicdb-workshop) のテンプレートから始められます。
+ブローカーから直接データを読む Web 地図を作りたい場合は、[geonicdb-workshop](https://github.com/geolonia/geonicdb-workshop) のテンプレートから始められます。ブローカーのアドレスとテナントは、テンプレートの `.env.local` に書きます。データを読んで地図に描くコードは、自分で書きます。テンプレートはログインせずに読むので、テナントで匿名の読み取りを許可しておく必要があります。設定はテナント管理者が行います。
 
 ### 6. モデルによる検証を確かめる {#check}
 
@@ -170,12 +171,14 @@ jq '{type: "FeatureCollection", features: map({type: "Feature",
 
 ```bash
 # 名称の無い避難場所（モデルでは必須）
-jq '.[1] | .id += "-test" | del(.name)' sites.jsonld | geonic entities create
+jq '.[1] | .id += "-test" | del(.name)' sites.jsonld > no-name.json
+geonic entities create @no-name.json
 # → Required attribute 'name' is missing
 
 # モデルに無い属性を持つ避難場所
 jq '.[2] | .id += "-test" | .capacity = {type: "Property", value: 500}' \
-  sites.jsonld | geonic entities create
+  sites.jsonld > extra.json
+geonic entities create @extra.json
 # → Attribute 'capacity' is not defined in data model 'EvacuationSite'
 ```
 

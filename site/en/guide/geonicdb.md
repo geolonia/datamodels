@@ -61,12 +61,13 @@ geonic config set service "$GEONICDB_TENANT"
 export GDB_API_KEY="$GEONICDB_API_KEY"
 
 # 1. Register the model (once per tenant).
-curl -sSf "$BASE/adapters/geonicdb/$MODEL.json" | geonic models create
+curl -sSf "$BASE/adapters/geonicdb/$MODEL.json" -o model.json
+geonic models create @model.json
 
 # 2. Create an entity: the model page's normalized example, as is
 #    (GeonicDB v0.22.0 or later; see the note below).
-curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" \
-  | geonic entities create
+curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" -o entity.jsonld
+geonic entities create @entity.jsonld
 
 # 3. Query: closed roads only.
 geonic entities list --type RoadRestriction \
@@ -76,7 +77,7 @@ geonic entities list --type RoadRestriction \
 
 :::
 
-- Registering returns `201 Created`, or `409` if a model of that type already exists. To change a registered model, use `PATCH /custom-data-models/<Type>` or `geonic models update <Type> @model.json`.
+- Registering returns `201 Created`. If a model of that type already exists, it answers with the error `Custom data model already exists` (HTTP 400). To change a registered model, use `PATCH /custom-data-models/<Type>` or `geonic models update <Type> @model.json`.
 - **Typed dates:** the normalized example writes date-times as `{"@type": "DateTime", "@value": "…"}`. GeonicDB accepts this form from v0.22.0. With an older GeonicDB, and for the examples of Task, Milestone and Project (set `MODEL`, for example `MODEL=task/Task`, and register that model first), turn the typed dates into strings with [jq](https://jqlang.org/). Then send `entity.jsonld` with the second command of step 2 (`curl -X POST … --data @entity.jsonld`; with the CLI: `geonic entities create @entity.jsonld`):
 
   ```bash
