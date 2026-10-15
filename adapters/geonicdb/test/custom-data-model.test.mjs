@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { loadSubjects, CORE_TERMS, CORE_CONTEXT_FIXTURE } from '../../../scripts/lib/models.mjs';
-import { toCustomDataModel, DATE_OR_DATE_TIME_PATTERN } from '../custom-data-model.mjs';
+import { toCustomDataModel, expandVocabTerm, DATE_OR_DATE_TIME_PATTERN } from '../custom-data-model.mjs';
 
 const subjects = await loadSubjects();
 const transportation = subjects.find((s) => s.name === 'transportation');
@@ -113,4 +113,105 @@ test('a date or date-time attribute is a string with a pattern: GeonicDB\'s date
   assert.ok(DATE_OR_DATE_TIME_PATTERN.length <= 200);
   assert.ok(DATE_OR_DATE_TIME_PATTERN.split('|').length - 1 <= 10);
   assert.ok(!/\)[*+{]/.test(DATE_OR_DATE_TIME_PATTERN));
+});
+
+// #280: GeonicDB registers only Property, GeoProperty, Relationship and
+// LanguageProperty, and checks a VocabProperty's term as its full IRI.
+const decisionSubject = subjects.find((s) => s.name === 'decision');
+const decision = decisionSubject.models.find((m) => m.type === 'Decision');
+const decisionBody = (model = decision, options) => toCustomDataModel(decisionSubject, model, options).propertyDetails;
+const withEnum = (...terms) => { const m = structuredClone(decision); m.schema.properties.humanInvolvement.enum = terms; return m; };
+
+test('a VocabProperty or JsonProperty is registered as a Property, with the schema\'s value type; the other types stay (#280)', () => {
+  const d = decisionBody();
+  for (const [name, valueType] of [['humanInvolvement', 'string'], ['answers', 'array'], ['facts', 'array'], ['corrections', 'array']]) {
+    assert.equal(d[name].ngsiType, 'Property', name);
+    assert.equal(d[name].valueType, valueType, name);
+  }
+  assert.equal(d.refersTo.ngsiType, 'Relationship');
+  assert.equal(d.reviewStatus.ngsiType, 'Property');
+  assert.equal(toCustomDataModel(transportation, roadRestriction).propertyDetails.location.ngsiType, 'GeoProperty');
+  const labelled = { type: 'Labelled', kind: 'entity', examples: {}, schema: { properties: { label: { type: 'object', 'x-ngsi': { type: 'LanguageProperty' } } } } };
+  assert.equal(toCustomDataModel(transportation, labelled).propertyDetails.label.ngsiType, 'LanguageProperty');
+});
+
+test('a VocabProperty\'s allowed terms are full IRIs, expanded with the context and its imports (#280)', (t) => {
+  const warn = t.mock.method(console, 'warn', () => {});
+  const d = decisionBody();
+  assert.equal(warn.mock.callCount(), 0, 'nothing is dropped from Decision');
+  assert.deepEqual(d.humanInvolvement.validation, {
+    enum: [
+      'https://w3id.org/dpv#HumanInvolvementForVerification',
+      'https://w3id.org/dpv#HumanInvolvementForOversight',
+      'https://w3id.org/dpv#HumanInvolvementForDecision',
+      'https://w3id.org/dpv#HumanNotInvolved',
+    ],
+  });
+  assert.equal(decision.schema.properties.humanInvolvement.enum[0], 'dpv:HumanInvolvementForVerification', 'the catalog schema keeps the compact terms');
+  // Other attributes keep their checks as the schema has them.
+  assert.deepEqual(d.reviewStatus.validation, { enum: ['pending', 'resolved'] });
+  assert.deepEqual(d.profileVersion.validation, { minimum: 1 });
+  assert.deepEqual(d.policyRule.validation, { pattern: decision.schema.properties.policyRule.pattern });
+  // A prefix and a term of the common context, which Decision's context imports, and terms of its own.
+  assert.deepEqual(decisionBody(withEnum('schema:Thing', 'ContactPoint', 'Decision', 'urn:x', 'https://w3id.org/dpv#HumanNotInvolved')).humanInvolvement.validation.enum, [
+    'https://schema.org/Thing', 'https://datamodels.jp/ns/common/ContactPoint', 'https://datamodels.jp/ns/decision/Decision', 'urn:x', 'https://w3id.org/dpv#HumanNotInvolved',
+  ]);
+});
+
+test('expandVocabTerm: definitions, cycles and absolute IRIs (#280)', () => {
+  const terms = { dpv: 'https://w3id.org/dpv#', 'dpv:X': 'dpv:X', a: 'b', b: 'a', https: 'https://wrong.example/', urn: 'https://wrong.example/' };
+  assert.equal(expandVocabTerm(terms, 'dpv:X'), 'https://w3id.org/dpv#X', 'a term defined as itself expands as a compact IRI');
+  assert.equal(expandVocabTerm(terms, 'a'), undefined, 'a cycle ends without an answer');
+  assert.equal(expandVocabTerm(terms, 'https://w3id.org/dpv#X'), 'https://w3id.org/dpv#X', 'an absolute IRI is not read as the prefix "https"');
+  assert.equal(expandVocabTerm({}, 'urn:x'), 'urn:x');
+  assert.equal(expandVocabTerm({}, 'nope'), undefined);
+  assert.throws(() => decisionBody(withEnum('a'), { contextTerms: terms }), /Decision\.humanInvolvement: the VocabProperty term "a" cannot be expanded/);
+});
+
+test('a VocabProperty term the context cannot expand fails the build clearly (#280)', () => {
+  for (const term of ['nope:HumanNotInvolved', 'HumanNotInvolved']) {
+    assert.throws(() => decisionBody(withEnum('dpv:HumanNotInvolved', term)), (e) => e.message.includes(`Decision.humanInvolvement: the VocabProperty term "${term}" cannot be expanded`) && e.message.includes('models/decision/context.jsonld (or a context it imports)'), term);
+  }
+  const unloaded = { ...decisionSubject }; // a copy without the non-enumerable contextTerms
+  assert.throws(() => toCustomDataModel(unloaded, decision), /context's terms are not loaded; load the subject with loadSubjects\(\)/);
+  Object.defineProperty(unloaded, 'contextTermsError', { value: 'context imports https://example.com/x.jsonld, which is not a catalog context URL' });
+  assert.throws(() => toCustomDataModel(unloaded, decision), /context's terms are not loaded: context imports https:\/\/example\.com\/x\.jsonld, which is not a catalog context URL/);
+});
+
+test('the contextTerms option expands the terms instead of the subject\'s (#280)', () => {
+  assert.deepEqual(decisionBody(withEnum('x'), { contextTerms: { x: 'https://e.example/x' } }).humanInvolvement.validation.enum, ['https://e.example/x']);
+});
+
+test('a VocabProperty gets no pattern or length check, and the build says so; a JsonProperty keeps its checks (#280)', (t) => {
+  const warn = t.mock.method(console, 'warn', () => {});
+  const model = structuredClone(decision);
+  Object.assign(model.schema.properties.humanInvolvement, { pattern: '^dpv:', minLength: 1, maxLength: 80 });
+  Object.assign(model.schema.properties.answers, { minimum: 0, enum: [[]] });
+  const d = decisionBody(model);
+  assert.deepEqual(Object.keys(d.humanInvolvement.validation), ['enum'], 'written for the compact term, not the IRI');
+  assert.equal(warn.mock.callCount(), 1);
+  assert.match(warn.mock.calls[0].arguments[0], /^Decision\.humanInvolvement: GeonicDB adapter: pattern, minLength, maxLength of a VocabProperty not sent/);
+  // GeonicDB applies a JsonProperty's checks to the JSON itself, as the schema describes it.
+  assert.deepEqual(d.answers.validation, { minimum: 0, enum: [[]] });
+});
+
+test('extension attributes follow the same GeonicDB rules (#280)', (t) => {
+  t.mock.method(console, 'warn', () => {});
+  const level = { ngsiType: 'VocabProperty', valueType: 'string', validation: { enum: ['dpv:HumanNotInvolved', 'https://example.com/ns/acme/Low'], pattern: '^x' } };
+  const extend = { propertyDetails: { level, raw: { ngsiType: 'JsonProperty', valueType: 'object' }, note: { ngsiType: 'LanguageProperty', valueType: 'object' } } };
+  const d = decisionBody(decision, { extend });
+  assert.equal(d.level.ngsiType, 'Property');
+  assert.deepEqual(d.level.validation, { enum: ['https://w3id.org/dpv#HumanNotInvolved', 'https://example.com/ns/acme/Low'] });
+  assert.equal(d.raw.ngsiType, 'Property');
+  assert.equal(d.note.ngsiType, 'LanguageProperty');
+  assert.equal(level.validation.pattern, '^x', 'the caller\'s definition is not changed');
+  const bad = { propertyDetails: { level: { ...level, validation: { enum: ['acme:Low'] } } } };
+  assert.throws(() => decisionBody(decision, { extend: bad }), /extension attribute "level": the VocabProperty term "acme:Low" cannot be expanded to a full IRI; write it as a full IRI/);
+  // Only VocabProperty and JsonProperty become a Property: a typo reaches GeonicDB, which refuses it.
+  assert.equal(decisionBody(decision, { extend: { propertyDetails: { link: { ngsiType: 'Relationshp', valueType: 'uri' } } } }).link.ngsiType, 'Relationshp');
+  // A VocabProperty whose only checks were a pattern or a length gets no empty validation.
+  const lengthOnly = decisionBody(decision, { extend: { propertyDetails: { level: { ...level, validation: { maxLength: 10 } } } } });
+  assert.ok(!('validation' in lengthOnly.level));
+  const notAList = { propertyDetails: { level: { ...level, validation: { enum: 'dpv:HumanNotInvolved' } } } };
+  assert.throws(() => decisionBody(decision, { extend: notAList }), /extension attribute "level": the enum of a VocabProperty must be a list of terms, not "dpv:HumanNotInvolved"/);
 });

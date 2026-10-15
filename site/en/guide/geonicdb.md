@@ -94,7 +94,8 @@ geonic entities list --type RoadRestriction \
 GeonicDB checks every entity of the type when it is created or changed, also in batches and through NGSIv2:
 
 - the required attributes are there;
-- each value has the right type (text, number, whole number, true or false, list, object, GeoJSON, URI, date-time in RFC 3339) and follows the rules: length, minimum and maximum, pattern, allowed values;
+- each value has the right type (text, number, whole number, true or false, list, object, GeoJSON, URI, date-time in RFC 3339) and follows the rules: length, minimum and maximum, pattern, allowed values:
+  - a VocabProperty's allowed terms are compared as full IRIs, expanded with the @context you send, so `dpv:HumanNotInvolved` and `https://w3id.org/dpv#HumanNotInvolved` are the same term;
 - there are no attributes the model does not know (the catalog's definitions do not allow them);
 - combinations that must be unique are unique, if the definition declares them.
 
