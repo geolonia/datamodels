@@ -13,3 +13,6 @@ site/en/guide/standards.md
 site/guide/sites.md
 site/en/guide/sites.md
 nodes.snapshot.json.tmp
+
+# Threat-model producer-side files (backtest corpus); only the figures in threat-model.md are published
+.threat-model/
