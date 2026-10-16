@@ -8,8 +8,9 @@ as the first pilot (Pointsman, geolonia/pointsman#96), in draft-first mode:
 the agent wrote version 1 from the public artifacts and collected 24
 questions for the maintainer in §1.18. This run used Claude Opus 5.5 for the
 draft, so the two pilots can be compared (the first used Claude Fable 5.1).
-Nothing has been answered yet; the model's status is *unratified draft* and
-its triage policy is `strict`. The toolkit (geolonia/datamodels-toolkit) is
+The maintainer answered all 24 questions in one batch on 2026-10-16,
+accepting every proposed answer; the model's status is now *accepted* and its
+triage policy stays `strict`. The toolkit (geolonia/datamodels-toolkit) is
 a separate pilot and is named as a sibling model in §1.1.
 
 ## Time spent
@@ -24,13 +25,16 @@ draft pull request.
 | Draft the prose | about 6 min | 14,800 words; the validator warns about length, as in the first pilot. |
 | Backtest, sidecar, JSON export, validator loop | about 7 min | Four validator rounds; see "What did not fit". |
 | Lessons note, commit, draft pull request | about 5 min | |
-| **Total** | **about 30 min agent time** | The maintainer's reading and answers are still to come. |
+| Maintainer: answer the 24 questions | one batch on 2026-10-16 | Every proposed answer accepted, relayed by the session that started this one. |
+| Apply the wave: promote tags, two new properties and one new disclaimer, retire §1.18, re-route the backtest, regenerate the companions, add `SECURITY.md` | about 10 min | One validator round. |
+| **Total** | **about 40 min agent time, plus the maintainer's reading** | |
 
 The first pilot took about 40 minutes for the draft. Both runs were fast for
 the same reason: the docs and the source comments already state most of the
-contract, so most claims could be tagged **documented**. The draft counts
-201 documented, 0 maintainer, 40 inferred and 12 assumption tags, counted as
-the validator counts.
+contract, so most claims could be tagged **documented**. The first draft
+counted 201 documented, 0 maintainer, 40 inferred and 12 assumption tags;
+after the wave, 201 documented and 59 maintainer (0 inferred, 0 assumption),
+counted as the validator counts.
 
 ## What the brief and the repository disagreed on
 
@@ -137,17 +141,36 @@ question-bank extension, same proposed-answer style):
   (§1.19 says so).
 - **The backtest** had a small real corpus this time: two fixed cache-header
   defects (#6, and #116 fixed by #128). Both route `VALID` against
-  `P-HEADERS`. The other 21 cases are synthesized. Two route to `MODEL-GAP`;
-  both are the unresolved rows of Q13 and Q19, which is the intended outcome
-  for an unratified draft.
+  `P-HEADERS`. The other 21 cases are synthesized. In the first draft two
+  routed to `MODEL-GAP` (the unresolved rows of Q13 and Q19) and six
+  escalated; after the wave, the stale-major case closes against
+  `D-NEGOTIATION-STALE-MAJOR`, the external-`$ref` case routes `VALID` against
+  the new `P-REFS-CATALOG-ONLY`, and the escalations close because the
+  maintainer stated those limits. 17 of 23 close, none by a widened
+  disclaimer.
 - **The secret scanner.** The first pilot's false positive ("login" followed
   by backticked file names) was avoided by checking the wording by hand; no
-  scanner was available locally. The pull request's checks are the real test.
+  scanner was available locally. The pull request's betterleaks check passed
+  on the first commit.
 
-## The questions of the first draft and their proposed answers
+## The questions of the first draft and their answers
 
-All 24 are open. Answer them in one batch, for example "Q3 yes, Q9 no,
-because …"; a "yes" accepts the proposed answer.
+All 24 were answered on 2026-10-16 with the proposed answer. The ratified
+claims carry *(maintainer, 2026-10)* in `threat-model.md`, and §1.18 is now
+marked not applicable. The list is kept here as the record of what was
+asked, since the skill deletes answered questions from the model. What the
+answers changed beyond promoting tags:
+
+- Q4 and Q7: `P-PUBLISHED-IMMUTABLE` now says that a change to an older
+  release before the launch, and any merged change to a published file after
+  it, is `VALID` however it got in.
+- Q9, Q10, Q16, Q17, Q22: the five disclaimers that rested on silence are
+  stated limits now, so they can close reports.
+- Q13: new property `P-REFS-CATALOG-ONLY` (correctness-only, kept by review).
+- Q14: new property `P-CONTEXT-IMPORTS-CATALOG` (security-critical, enforced
+  by CI).
+- Q19: new disclaimer `D-NEGOTIATION-STALE-MAJOR` (correctness-only).
+- Q6: `SECURITY.md` added, linking the model.
 
 **Wave 1 — scope, configuration, side effects**
 
@@ -238,8 +261,8 @@ belong in issues, not in the threat model:
    pointer to the release snapshots as the reference copy (Q9).
 7. Document what `x-personal-data` means and does not mean (Q22).
 8. Run `npm run check:live` automatically after a deploy (Q23).
-9. A `SECURITY.md` in the repository that links this model, as Pointsman
-   did after its pilot (Q6).
+9. ~~A `SECURITY.md` in the repository that links this model, as Pointsman
+   did after its pilot (Q6).~~ Done in this pull request.
 10. Refresh the IRI Worker's cached subject majors, or accept the stale
     window in writing (Q19).
 11. Upstream to Alpha-Omega: document the §1.11 bullet format the validator
@@ -256,6 +279,8 @@ belong in issues, not in the threat model:
   prose by SHA-256.
 - `threat-model.json` — the flat export (`schema.json`, spec 1), with
   `description` and `trust_boundaries` completed by hand.
+- `SECURITY.md` — the reporting channel (private vulnerability reporting) and
+  how reports are triaged against the model.
 - `.threat-model/backtest.md` — producer-side routing table, ignored by git
   and not in the repository, as the skill asks; only the aggregate figures in
   §1.1 are published.

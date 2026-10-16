@@ -6,8 +6,8 @@
   "scope_subpath": null,
   "description": "datamodels.jp publishes data models for Japan as files at URLs that are meant never to change. People and programs store those URLs in their data: type and attribute IRIs, @context URLs, schema URLs. The catalogue is built from this repository: anyone can send a pull request, maintainers review and merge it, and Cloudflare Workers Builds deploys main. The catalogue stores no data of its users, has no login and runs no service for data except a read-only MCP server.",
   "confidence": {
-    "documented": 201,
-    "inferred": 52
+    "documented": 260,
+    "inferred": 0
   },
   "components": [
     {
@@ -83,26 +83,26 @@
     {
       "item": "site-prose",
       "reason": "the prose of the VitePress pages is out of scope except where it states a promise, per §1.3",
-      "provenance": "inferred",
-      "source": "open question Q1"
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
     },
     {
       "item": "toolkit",
       "reason": "datamodels-toolkit is a sibling model in its own repository; a dependency here, per §1.3 and §1.9",
-      "provenance": "inferred",
-      "source": "open question Q1"
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
     },
     {
       "item": "geonicdb-export-cli",
       "reason": "adapters/geonicdb/export.mjs is a command a user runs locally; not part of the build, per §1.3",
-      "provenance": "inferred",
-      "source": "open question Q1"
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
     },
     {
       "item": "dev-tools",
       "reason": "tests and local-only commands do not run in the deployed catalogue, per §1.3",
-      "provenance": "inferred",
-      "source": "open question Q1"
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
     },
     {
       "item": "node-sites",
@@ -345,8 +345,8 @@
       "attacker_controllable": "yes",
       "component": "build-validation",
       "caller_must_enforce": "review of $ref targets, size and pattern expressions",
-      "provenance": "inferred",
-      "source": "open question Q13"
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
     },
     {
       "entry_point": "pull-request",
@@ -426,8 +426,8 @@
       "attacker_controllable": "yes",
       "component": "build-validation",
       "caller_must_enforce": "review of dependency changes; npm ci installs exactly the lockfile",
-      "provenance": "inferred",
-      "source": "open question Q11"
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
     },
     {
       "entry_point": "listing-files",
@@ -516,8 +516,8 @@
       "attacker_controllable": "yes",
       "component": "published-files",
       "caller_must_enforce": "the consumer bounds its JSON-LD loader and schema validator",
-      "provenance": "inferred",
-      "source": "open question Q16"
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
     }
   ],
   "environment": {
@@ -531,7 +531,7 @@
       "**Zone rule.** A configuration rule on the `datamodels.jp` zone turns off Browser Integrity Check for the machine-readable paths and `/mcp`. It lives in the Cloudflare dashboard, not in the repository. `npm run check:live` fails when it goes missing. The check is run by hand after a deploy, not by CI.",
       "**Concurrency.** The Worker keeps per-isolate caches of public files (the MCP index, schemas, compiled validators, the subject majors). No state is shared between requests except these."
     ],
-    "provenance": "inferred"
+    "provenance": "documented"
   },
   "build_variants": [
     {
@@ -604,7 +604,7 @@
       "operator-accounts-and-platforms",
       "network-attacker"
     ],
-    "provenance": "inferred"
+    "provenance": "documented"
   },
   "properties_provided": [
     {
@@ -662,6 +662,22 @@
       "conditions": "before anything reaches dist/",
       "provenance": "documented",
       "source": "docs/design.md \"Repository layout\": \"CI on every pull request validates\""
+    },
+    {
+      "property": "P-CONTEXT-IMPORTS-CATALOG",
+      "violation_symptom": "integrity-bypass",
+      "severity_tier": "security",
+      "conditions": "subject contexts import only catalogue context URLs at a published or current version",
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
+    },
+    {
+      "property": "P-REFS-CATALOG-ONLY",
+      "violation_symptom": "bad-data-accepted",
+      "severity_tier": "correctness",
+      "conditions": "schema $ref targets are catalogue schemas or pointers inside the file; a review rule",
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
     },
     {
       "property": "P-NEGOTIATION-FALLBACK",
@@ -731,7 +747,7 @@
   "properties_not_provided": [
     {
       "property": "D-PRERELEASE-CORRECTIONS",
-      "reason": "stated; while prerelease is true, the current version may be corrected in place; older releases only by maintainer choice",
+      "reason": "stated; while prerelease is true, only the current version may be corrected in place; a change to an older release is VALID",
       "false_friend": false,
       "provenance": "documented",
       "source": "site/en/guide/urls.md \"Do not reference them from production data before the launch\""
@@ -745,10 +761,10 @@
     },
     {
       "property": "D-NO-SIGNATURE",
-      "reason": "silence; manifest retired 2026-10-14, nothing replaced it",
+      "reason": "stated by maintainer ruling (2026-10); no signatures; the release snapshot in the repository is the reference copy",
       "false_friend": false,
-      "provenance": "inferred",
-      "source": "open question Q9"
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
     },
     {
       "property": "D-CACHE-HINT",
@@ -759,10 +775,10 @@
     },
     {
       "property": "D-NO-AVAILABILITY-SLA",
-      "reason": "silence for uptime; stated for the mirror",
+      "reason": "stated by maintainer ruling (2026-10) for uptime; in docs/design.md for the mirror",
       "false_friend": false,
-      "provenance": "inferred",
-      "source": "open question Q10"
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
     },
     {
       "property": "D-NO-CONFIDENTIALITY",
@@ -801,24 +817,24 @@
     },
     {
       "property": "D-PERSONAL-DATA-MARKER",
-      "reason": "silence; x-personal-data is a marker only",
+      "reason": "stated by maintainer ruling (2026-10); x-personal-data is a marker only",
       "false_friend": true,
-      "provenance": "inferred",
-      "source": "open question Q22"
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
     },
     {
       "property": "D-CONTRIBUTED-FILE-LIMITS",
-      "reason": "silence; no size, nesting, $ref count, import depth or pattern limit",
+      "reason": "stated by maintainer ruling (2026-10); no size, nesting, $ref count, import depth or pattern limit",
       "false_friend": false,
-      "provenance": "inferred",
-      "source": "open question Q16"
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
     },
     {
       "property": "D-AGENT-TEXT",
-      "reason": "silence; text reaches agents as written",
+      "reason": "stated by maintainer ruling (2026-10); text reaches agents as written",
       "false_friend": false,
-      "provenance": "inferred",
-      "source": "open question Q17"
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
     },
     {
       "property": "D-LISTED-CONTENT-UNREVIEWED",
@@ -833,6 +849,13 @@
       "false_friend": true,
       "provenance": "documented",
       "source": "docs/design.md \"Versioning and lifecycle\""
+    },
+    {
+      "property": "D-NEGOTIATION-STALE-MAJOR",
+      "reason": "stated by maintainer ruling (2026-10); cached subject majors may be stale after a major release until the isolate is recycled",
+      "false_friend": false,
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
     },
     {
       "property": "D-REPO-CODE-RUNS",
@@ -929,7 +952,7 @@
     {
       "reported_as": "/ns/ redirects, so it is an open redirect",
       "why_safe": "Covers iri-negotiation; symptom 'open-redirect'. Exact-match conditions (§1.15): the `Location` is a same-origin path: the 303 to `/vocab/<subject>/v<major>.jsonld` or a 302 generated into `_redirects` from `models/`.",
-      "cites": "properties_provided[7]",
+      "cites": "properties_provided[9]",
       "suppression": "Location is a same-origin path: the 303 to /vocab/<subject>/v<major>.jsonld or a generated 302"
     },
     {
@@ -962,126 +985,5 @@
     "known_non_finding",
     "model_gap"
   ],
-  "open_questions": [
-    {
-      "claim": "Q1: Is the scope right: one model for the catalogue with six families (`published-files`, `iri-negotiation`, `mcp-server`, `build-validation`, `listings`, `supply-chain`), the toolkit as a sibling model, and `site/` prose, the GeonicDB export CLI, tests and local tools, node sites and the retired `models.geonicdb.com` out of scope? Consumers are the integrators, contributors and listing owners are untrusted, maintainers and the operator are trusted.",
-      "field": "description",
-      "proposed": "yes."
-    },
-    {
-      "claim": "Q2: `docs/design.md` \"Non-goals\" still says no validation API and no content negotiation in 1.0.0, but `/ns/*` negotiation (#196) and the MCP `validate` tool (#223) exist. Is the code (with `site/en/guide/urls.md` and `site/en/ai.md`) the current contract, and the non-goal superseded on these two points?",
-      "field": "out_of_scope",
-      "proposed": "yes. The catalogue offers no general validation service with any service level; `validate` is an aid for agents, bounded and advisory (`D-VALIDATE-NOT-ASSURANCE`). Updating `docs/design.md` is a separate change."
-    },
-    {
-      "claim": "Q3: `prerelease: true` is a supported production posture until the official launch, and consumers are told not to depend on exact versions before it. A report that a current-version file changed before the launch is `BY-DESIGN` / `KNOWN-NON-FINDING`, not `VALID`?",
-      "field": "build_variants",
-      "proposed": "yes."
-    },
-    {
-      "claim": "Q4: Before the launch, CI turns a change to **any** release snapshot into a note, not only to the current version's, while the README says only the current version is corrected. Is \"older releases are never corrected\" a rule that only review enforces, and is a change to an older release before the launch `VALID`?",
-      "field": "properties_not_provided",
-      "proposed": "yes to both; the README rule holds, CI does not check it."
-    },
-    {
-      "claim": "Q5: Side effects: the Worker fetches only through the assets binding and writes nothing; the production build is offline apart from `npm ci`; the pull-request check fetches the live site and any remote `$ref` or context from the runner; the build spawns only the validator and `git`; a network attacker between a consumer and Cloudflare is out of scope because TLS terminates at Cloudflare.",
-      "field": "environment",
-      "proposed": "yes."
-    },
-    {
-      "claim": "Q6: Reporting and coexistence: the repository has no `SECURITY.md` of its own; the organisation's default `SECURITY.md` and GitHub's private vulnerability reporting (enabled) are the channel; there is no earlier threat-model content to absorb.",
-      "field": "§1.1",
-      "proposed": "yes; the model sits alongside the organisation policy and replaces nothing."
-    },
-    {
-      "claim": "Q7: At the bound commit, `main` requires a pull request with one approval, the organisation's security-suite workflow and resolved threads, but no status check: the \"Build and dry-run deploy\" job, including the comparison of published versions, does not block a merge by itself, and the organisation ruleset allows bypass by a repository role and a team. Is it right that the immutability guard relies on maintainers not merging a red check, and that after the launch a merged change to a published file is `VALID` against `P-PUBLISHED-IMMUTABLE` however it got in?",
-      "field": "properties_provided",
-      "proposed": "yes to both."
-    },
-    {
-      "claim": "Q8: The immutability promise covers exact-version contexts, vocabularies and schemas only; examples, mapping files, adapter files, `catalog.json`, `llms.txt`, `/mcp/index.json` and aliases may change with any build.",
-      "field": "properties_provided",
-      "proposed": "yes."
-    },
-    {
-      "claim": "Q9: Since the manifest was retired (#226), the catalogue publishes no digest or signature. Should that be a stated limit: \"no signatures; the release snapshot in the repository is the reference copy\"?",
-      "field": "properties_not_provided",
-      "proposed": "yes, a stated disclaimer, tier security-critical."
-    },
-    {
-      "claim": "Q10: `P-IRI-RESOLVES` is the operator's commitment that IRIs are kept and keep their meaning, not an uptime promise; outages and the moment of a deploy are not vulnerabilities; there is no mirror.",
-      "field": "properties_provided",
-      "proposed": "yes; tier correctness-only; consumers cache."
-    },
-    {
-      "claim": "Q11: Supply chain: Workers Builds runs `npm ci` and every locked package with the deploy rights; a malicious published package version is `OUT-OF-MODEL: dependency-contract`; there is no vendored code; Cloudflare, GitHub, npm and Geolonia's accounts are trusted; a dependency change is reviewed like code.",
-      "field": "adversaries",
-      "proposed": "yes."
-    },
-    {
-      "claim": "Q12: The CI token claims (`P-CI-TOKENS-SCOPED`) cover the four workflows in this repository; the organisation's security-suite workflow is run from `geolonia/.github` and is outside this model.",
-      "field": "properties_provided",
-      "proposed": "yes."
-    },
-    {
-      "claim": "Q13: No rule restricts schema `$ref` targets. Today every `$ref` in `models/` points to `https://datamodels.jp/schema/` or inside the same file; offline, a remote `$ref` is skipped with a note; the MCP server refuses it. Choose: (a) claim \"published schemas reference only catalogue schemas or local pointers\", kept by review, correctness-only, so a merged external `$ref` is `VALID`; or (b) disclaim it and leave `$ref` resolution wholly to consumers.",
-      "field": "properties_provided",
-      "proposed": "(a)."
-    },
-    {
-      "claim": "Q14: A catalogue context imports only catalogue contexts at a version that exists; CI refuses any other URL (`scripts/lib/models.mjs:69`). Should this be a claimed property, tier security-critical, because a context imported from another site lets that site change the meaning of stored data?",
-      "field": "properties_provided",
-      "proposed": "yes; revisit when profiles of upstream models land (§1.16)."
-    },
-    {
-      "claim": "Q15: Is `P-CORE-TERMS-PROTECTED` correctness-only? A redefinition of a protected core term makes a JSON-LD 1.1 processor fail rather than change meaning silently.",
-      "field": "properties_provided",
-      "proposed": "yes, correctness-only."
-    },
-    {
-      "claim": "Q16: No limit on the size or nesting of contributed files, the number of `$ref`s, the depth of context imports, or the complexity of `pattern` expressions. Should that be a stated limit, with bounding the consumer's processor a consumer responsibility?",
-      "field": "properties_not_provided",
-      "proposed": "yes, a stated disclaimer, tier security-critical."
-    },
-    {
-      "claim": "Q17: Text in model files and listings reaches agents through `llms.txt`, `catalog.json` and MCP answers unfiltered. Should \"the catalogue does not filter instructions aimed at agents; agents treat answers as data\" be a stated limit, with review as the only control?",
-      "field": "properties_not_provided",
-      "proposed": "yes, stated disclaimer, tier security-critical."
-    },
-    {
-      "claim": "Q18: Reviewed contributor text on the pages (`P-MODEL-TEXT-ESCAPED`) is correctness-only; outsider text from listings (`P-OUTSIDER-TEXT-PLAIN`) is security-critical because nobody reviews its content.",
-      "field": "properties_provided",
-      "proposed": "yes."
-    },
-    {
-      "claim": "Q19: The IRI Worker caches the subject majors per isolate; after a new major version an isolate may send JSON-LD clients to the old major's vocabulary until it is recycled. Its work is linear in the `Accept` header. Choose: disclaim the stale window as correctness-only, or claim that a 303 always names the current major.",
-      "field": "entry_points",
-      "proposed": "disclaim, correctness-only."
-    },
-    {
-      "claim": "Q20: `P-MCP-BOUNDED` is correctness-only, with the threshold \"a request inside the limits that uses more than tens of milliseconds of CPU, or that the CPU limit stops, is a bug; slow is not\".",
-      "field": "properties_provided",
-      "proposed": "yes."
-    },
-    {
-      "claim": "Q21: Logs: the code logs only internal errors (`console.error`), never tool arguments or entities on purpose; Cloudflare Workers observability records invocations with request metadata such as the client address, kept for the plan's retention.",
-      "field": "environment",
-      "proposed": "yes; no other record of MCP use exists."
-    },
-    {
-      "claim": "Q22: `x-personal-data: true` marks attributes that commonly hold personal data. It promises nothing about protection, storage, retention or legal classification, and an attribute without it may still be personal data. Should that be a stated limit?",
-      "field": "properties_not_provided",
-      "proposed": "yes, stated disclaimer, false friend, tier security-critical."
-    },
-    {
-      "claim": "Q23: The Browser Integrity Check rule, the Workers Builds settings and the custom domain are operator configuration outside the repository. A missing rule is an availability bug (correctness-only), not a security report; `npm run check:live` is run by hand after a deploy, not by CI; previews keep Cloudflare's default.",
-      "field": "environment",
-      "proposed": "yes."
-    },
-    {
-      "claim": "Q24: Bind this model to commit `e554242`, keep the triage policy `strict`, and re-bind at the official launch.",
-      "field": "§1.1",
-      "proposed": "yes."
-    }
-  ]
+  "open_questions": []
 }
