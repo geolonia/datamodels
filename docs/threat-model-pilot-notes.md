@@ -4,7 +4,7 @@ Date: 2026-10-16. The first draft of [`threat-model.md`](../threat-model.md)
 (with `threat-model.yaml` and `threat-model.json`) was produced with the
 Alpha-Omega `threat-model` plugin, version 1.2.1 at commit `192fd60`
 (https://github.com/alpha-omega-security/threat-model, MIT), the same commit
-as the first pilot (Pointsman, geolonia/pointsman#96), in draft-first mode:
+as the first pilot, a small Cloudflare Workers service, in draft-first mode:
 the agent wrote version 1 from the public artifacts and collected 24
 questions for the maintainer in §1.18. This run used Claude Opus 5.5 for the
 draft, so the two pilots can be compared (the first used Claude Fable 5.1).
@@ -286,8 +286,8 @@ belong in issues, not in the threat model:
    pointer to the release snapshots as the reference copy (Q9).
 7. Document what `x-personal-data` means and does not mean (Q22).
 8. Run `npm run check:live` automatically after a deploy (Q23).
-9. ~~A `SECURITY.md` in the repository that links this model, as Pointsman
-   did after its pilot (Q6).~~ Done in this pull request.
+9. ~~A `SECURITY.md` in the repository that links this model, as the first
+   pilot did after its wave (Q6).~~ Done in this pull request.
 10. Refresh the IRI Worker's cached subject majors, or accept the stale
     window in writing (Q19).
 11. Upstream to Alpha-Omega: document the §1.11 bullet format the validator

@@ -20,7 +20,7 @@
   `threat-model-recon`, `threat-model-surface`, `threat-model-interview` in
   draft-first mode, `threat-model-authoring`, `threat-model-backtest`,
   `threat-model-sidecar`). No MCP servers were used. Ten questions were
-  adapted from the first Geolonia pilot (Pointsman); the others were written
+  adapted from the first Geolonia pilot, a small Cloudflare Workers service; the others were written
   for a data catalogue.
 - **Reporting cross-reference**: a finding that violates a §1.11 claimed
   property is reported through GitHub's private vulnerability reporting for
