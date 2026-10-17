@@ -33,8 +33,10 @@ The first pilot took about 40 minutes for the draft. Both runs were fast for
 the same reason: the docs and the source comments already state most of the
 contract, so most claims could be tagged **documented**. The first draft
 counted 201 documented, 0 maintainer, 40 inferred and 12 assumption tags;
-after the wave, 201 documented and 59 maintainer (0 inferred, 0 assumption),
-counted as the validator counts.
+after the wave, 201 documented and 59 maintainer (0 inferred, 0 assumption);
+after the self-review corrections, 198 documented and 64 maintainer, because
+five claims that cited a document reaching less far than the claim are now
+tagged as maintainer rulings. All are counted as the validator counts.
 
 ## What the brief and the repository disagreed on
 
@@ -50,12 +52,18 @@ Three facts in the task brief had changed by the bound commit (`e554242`,
   has a `validate` tool, and `/ns/*` does content negotiation (#196), while
   `docs/design.md` still lists both as non-goals for 1.0.0 (Q2). The model
   covers the MCP server as a component family of its own.
-- **The immutability check does not block a merge.** `main` requires one
-  approval, resolved threads and the organisation's security-suite workflow,
-  but no status check: the "Build and dry-run deploy" job, which runs the
-  comparison of published versions, can be red at merge time, and the
-  organisation ruleset allows bypass by a repository role and a team (Q7).
-  This came from the GitHub API, not from the repository.
+- **The immutability check does not block a merge.** Two organisation
+  rulesets apply to `main`. "main-protection" requires one approval, approval
+  of the last push, code-owner review and resolved threads, forbids deletion
+  and non-fast-forward pushes, and allows bypass by a repository role and one
+  team. "security-suite" requires the organisation's Security Suite workflow
+  (zizmor, betterleaks, pinact, bumblebee). No check from this repository's
+  own workflows is required, so the "Build and dry-run deploy" job, which runs
+  the comparison of published versions, can be red at merge time (Q7). This
+  came from the GitHub API, not from the repository. The first draft and Q7
+  said "no status check is required", read from the classic branch
+  protection, whose list of required checks is empty; the self-review caught
+  that the organisation ruleset does require the Security Suite.
 
 One finding came from reading the toolkit: during the pre-release, its
 `--base` comparison turns a change to **any** release snapshot into a note,
@@ -124,9 +132,11 @@ question-bank extension, same proposed-answer style):
 - **Configuration outside the repository.** The branch rules (Q7), the
   Workers Builds settings and the Browser Integrity Check rule (Q23) decide
   whether the claims hold, but none is in a file a reader of the repository
-  can see. The model cites `docs/deployment.md` where it describes them and
-  tags the branch rules **inferred**.
-- **Length.** 14,800 words against the 3 to 8 pages the skill asks for. The
+  can see. The model cites `docs/deployment.md` where it describes them; the
+  branch rules and the fork-build setting rest on maintainer rulings
+  (2026-10).
+- **Length.** About 14,200 words in the accepted model (`wc -w`; the first
+  draft had 14,800) against the 3 to 8 pages the skill asks for. The
   contract-dimension matrix (6 families × 8 dimensions + 2) and the 41-row
   input table are most of it. The same per-family appendix the first pilot
   asked for would help here.
@@ -196,7 +206,9 @@ answers changed beyond promoting tags:
 
 - Q7 No status check is required on `main` and bypass is possible; the
   immutability guard relies on maintainers; after the launch any merged change
-  to a published file is `VALID`. Proposed: yes to both.
+  to a published file is `VALID`. Proposed: yes to both. (Corrected after the
+  answer: the organisation's Security Suite is required; no check from this
+  repository's workflows is. The substance of the answer is unchanged.)
 - Q8 Immutability covers exact-version contexts, vocabularies and schemas
   only. Proposed: yes.
 - Q9 No signature or digest since the manifest was retired; make it a stated
@@ -240,13 +252,26 @@ answers changed beyond promoting tags:
   hand. Proposed: yes.
 - Q24 Bind to `e554242`, keep `strict`, re-bind at the launch. Proposed: yes.
 
+## Self-review corrections (2026-10-17)
+
+A self-review of the accepted model (a fresh agent, `code-review-expert
+--report`, head `825788b`) found no blocking problem and eleven corrections,
+all applied: `datamodel.jp` is not registered, as the model had claimed it
+was; the organisation's rulesets on `main` described fully (above); the
+Security Suite named as outside the model; a non-OK read of `catalog.json` is
+cached as empty in the IRI Worker (added to `D-NEGOTIATION-STALE-MAJOR`);
+search counts and one stale search result corrected; fork builds tagged as a
+maintainer ruling about a dashboard setting; the JSON's folding of maintainer
+into documented explained in §1.19; and labels that still said "draft".
+
 ## Candidate issues (not in the model)
 
 The model describes the catalogue as it is. These came up while reading and
 belong in issues, not in the threat model:
 
-1. Make "Build and dry-run deploy" a required status check on `main`, so the
-   comparison of published versions blocks a merge (Q7).
+1. Make "Build and dry-run deploy" a required status check on `main` (next to
+   the organisation's Security Suite), so the comparison of published versions
+   blocks a merge (Q7).
 2. In the toolkit: during the pre-release, let the `--base` comparison accept
    corrections only for the current version, as the README says (Q4).
 3. A catalogue rule that a schema's `$ref` points to `https://datamodels.jp/`
@@ -271,6 +296,9 @@ belong in issues, not in the threat model:
     dimension.
 12. For `geolonia/skills`: the data-catalogue questions in the table above,
     next to the first pilot's hosted-service questions.
+13. Register `datamodel.jp` as the typo guard `docs/design.md` names, or
+    remove it from the design document; it is not registered (JPRS whois,
+    2026-10-17).
 
 ## Files
 

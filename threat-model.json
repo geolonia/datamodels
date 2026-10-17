@@ -6,7 +6,7 @@
   "scope_subpath": null,
   "description": "datamodels.jp publishes data models for Japan as files at URLs that are meant never to change. People and programs store those URLs in their data: type and attribute IRIs, @context URLs, schema URLs. The catalogue is built from this repository: anyone can send a pull request, maintainers review and merge it, and Cloudflare Workers Builds deploys main. The catalogue stores no data of its users, has no login and runs no service for data except a read-only MCP server.",
   "confidence": {
-    "documented": 260,
+    "documented": 262,
     "inferred": 0
   },
   "components": [
@@ -524,11 +524,11 @@
     "assumes": [
       "**Runtime.** The Worker runs on Cloudflare Workers with `compatibility_date` 2026-08-01; static files are served by Workers static assets from `./dist` with `_headers` and `_redirects`.",
       "**Transport.** TLS terminates at Cloudflare for the custom domain, which `wrangler deploy` creates with its certificate.",
-      "**Domain.** `datamodels.jp` is registered in Route 53 in the GeonicDB AWS account, with name servers delegated to Cloudflare; `datamodel.jp` is held as a typo guard.",
-      "**Build host.** Node 24; Workers Builds and GitHub-hosted runners provide it. Workers Builds builds only branches of this repository."
+      "**Build host.** Node 24; Workers Builds and GitHub-hosted runners provide it. Workers Builds builds only branches of this repository, a setting in the Cloudflare dashboard; only branches in this repository get a preview URL."
     ],
     "does_not": [
       "**Zone rule.** A configuration rule on the `datamodels.jp` zone turns off Browser Integrity Check for the machine-readable paths and `/mcp`. It lives in the Cloudflare dashboard, not in the repository. `npm run check:live` fails when it goes missing. The check is run by hand after a deploy, not by CI.",
+      "**Domain.** `datamodels.jp` is registered in Route 53 in the GeonicDB AWS account, with name servers delegated to Cloudflare. `datamodel.jp` is not registered: `docs/design.md` calls it \"available as a typo guard\", and the JPRS whois has no record of it (checked 2026-10-17).",
       "**Concurrency.** The Worker keeps per-isolate caches of public files (the MCP index, schemas, compiled validators, the subject majors). No state is shared between requests except these."
     ],
     "provenance": "documented"
@@ -560,11 +560,11 @@
     },
     {
       "name": "preview-builds",
-      "default": "on, branches of this repository only",
+      "default": "on, branches of this repository only (a dashboard setting)",
       "effect": "preserves P-NO-DEPLOY-CREDENTIAL-IN-GITHUB",
       "discouraged": false,
       "provenance": "documented",
-      "source": "wrangler.jsonc previews comment"
+      "source": "maintainer ruling, 2026-10"
     },
     {
       "name": "mcp-limiter-absent",
@@ -739,7 +739,7 @@
       "property": "P-CI-TOKENS-SCOPED",
       "violation_symptom": "integrity-bypass",
       "severity_tier": "security",
-      "conditions": "the four workflows in this repository",
+      "conditions": "the four workflows in this repository; the organisation's Security Suite workflow is outside this model",
       "provenance": "documented",
       "source": ".github/workflows/similar-models.yml header"
     }
@@ -852,7 +852,7 @@
     },
     {
       "property": "D-NEGOTIATION-STALE-MAJOR",
-      "reason": "stated by maintainer ruling (2026-10); cached subject majors may be stale after a major release until the isolate is recycled",
+      "reason": "stated by maintainer ruling (2026-10); cached subject majors may be stale after a major release until the isolate is recycled; a non-OK read of catalog.json is cached as empty the same way",
       "false_friend": false,
       "provenance": "documented",
       "source": "maintainer ruling, 2026-10"

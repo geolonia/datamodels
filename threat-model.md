@@ -43,7 +43,7 @@
   default, open as question `QN` in §1.18.
 - **Glossary**: a short plain-language glossary is at the end of this document
   (Appendix A).
-- **Draft confidence**: 201 documented / 59 maintainer / 0 inferred / 0 assumption.
+- **Confidence**: 198 documented / 64 maintainer / 0 inferred / 0 assumption.
   Counted as the plugin's validator counts, over §1.2 to §1.19: one count per
   parenthesised tag, by its first kind; the tags in this header and its legend
   are not counted.
@@ -263,11 +263,14 @@ Reachability preconditions:
   in the Cloudflare dashboard, not in the repository *(documented, docs/deployment.md "Machine-readable files: no Browser Integrity Check")*.
   `npm run check:live` fails when it goes missing *(documented, docs/deployment.md: "`npm run check:live` fetches those paths with that user agent and fails if the rule goes missing")*. The check is run by hand after a deploy, not by CI *(maintainer, 2026-10)*.
 - **Domain.** `datamodels.jp` is registered in Route 53 in the GeonicDB AWS
-  account, with name servers delegated to Cloudflare; `datamodel.jp` is held as
-  a typo guard *(documented, docs/design.md "Decision 1": "Registration: Route 53 in the GeonicDB AWS account")*.
+  account, with name servers delegated to Cloudflare *(documented, docs/design.md "Decision 1": "Registration: Route 53 in the GeonicDB AWS account")*.
+  `datamodel.jp` is not registered: `docs/design.md` calls it "available as a
+  typo guard", and the JPRS whois has no record of it (checked 2026-10-17)
+  *(documented, docs/design.md "Decision 1": "`datamodel.jp` is available as a typo guard")*.
 - **Build host.** Node 24 *(documented, package.json `engines`)*; Workers
   Builds and GitHub-hosted runners provide it. Workers Builds builds only
-  branches of this repository *(documented, CONTRIBUTING.md "Pull request steps" step 5: "for branches in this repository also a preview URL")*.
+  branches of this repository, a setting in the Cloudflare dashboard; only
+  branches in this repository get a preview URL *(maintainer, 2026-10)*.
 - **Concurrency.** The Worker keeps per-isolate caches of public files (the
   MCP index, schemas, compiled validators, the subject majors). No state is
   shared between requests except these *(documented, worker/mcp.mjs header: "nothing is kept between requests except the catalog files, which are public")*.
@@ -276,7 +279,7 @@ Reachability preconditions:
 
 | Effect | Stance | Components | Conditions | Provenance |
 | --- | --- | --- | --- | --- |
-| Outbound network from the Worker | absent | `iri-negotiation`, `mcp-server` | the Worker calls only `env.ASSETS.fetch` and the rate-limit binding. Search: `grep -n "fetch(" worker/*.mjs` — 4 hits, all `env.ASSETS.fetch` or the MCP SDK handler's `fetch` method | *(maintainer, 2026-10)* |
+| Outbound network from the Worker | absent | `iri-negotiation`, `mcp-server` | the Worker calls only `env.ASSETS.fetch` and the rate-limit binding. Search: `grep -n "fetch(" worker/*.mjs` — 5 hits: `env.ASSETS.fetch`, the exported handler's `fetch` method, and the MCP SDK handler's `fetch` | *(maintainer, 2026-10)* |
 | Storage writes from the Worker | absent | `iri-negotiation`, `mcp-server` | `wrangler.jsonc` declares no KV, D1, R2 or Durable Object binding; only `ASSETS` and `MCP_LIMITER` | *(maintainer, 2026-10)* |
 | Logs | present | `mcp-server`, `iri-negotiation` | `console.error` on internal failures and limiter errors; Cloudflare Workers observability is on (`"observability": { "enabled": true }`) and records invocations | *(maintainer, 2026-10)* |
 | Outbound network in the production build | absent | `build-validation` | Workers Builds runs `build:deploy`, which calls `datamodels check . --offline --all-released`; `npm ci` itself reaches the npm registry | *(maintainer, 2026-10)* |
@@ -292,7 +295,7 @@ Reachability preconditions:
 | `prerelease` in `node.yaml` | `true` | Exact versions get a 5-minute cache instead of a year; CI lists changed or removed release-snapshot files as notes instead of failures; voids `P-PUBLISHED-IMMUTABLE` until the official launch | supported until the launch; once `false` on the base branch it cannot be set back (the toolkit refuses it) | *(documented, README "Pre-release exception, until the official launch")* |
 | `--offline` on `datamodels check` | used by `build:deploy` (production) and `validate:models` | skips the comparison with the live site and records a schema whose `$ref` points to another site as "not validated" (a note) | supported; the online comparison runs only in the pull-request check | *(documented, package.json `build:deploy` script)* |
 | `--base origin/<base>` | used only in the pull-request job of `check-worker.yml` | compares release snapshots with the base branch | supported | *(documented, .github/workflows/check-worker.yml step "Compare the published versions with the base branch")* |
-| Preview builds on workers.dev | on, branches of this repository only | same static tree and Worker; the zone's Browser Integrity Check rule does not apply; the same `MCP_LIMITER` namespace is declared again | supported for review, not for consumers | *(documented, wrangler.jsonc "previews" comment)* |
+| Preview builds on workers.dev | on, branches of this repository only (a dashboard setting) | same static tree and Worker; the zone's Browser Integrity Check rule does not apply; the same `MCP_LIMITER` namespace is declared again | supported for review, not for consumers | *(maintainer, 2026-10)* |
 | `MCP_LIMITER` binding absent | present in production and previews | no rate limit (`allowed()` returns true) | dev-only (tests, `wrangler dev`) | *(documented, worker/limit.mjs `allowed` comment: "No binding (the tests; wrangler dev simulates it): no limit")* |
 | `CHECK_MACHINE_UA=1` | unset | runs the user-agent checks of `check:live` against a preview too | dev-only | *(documented, docs/deployment.md "unless `CHECK_MACHINE_UA=1` is set")* |
 | `run_worker_first` list | `["/ns/*", "/mcp"]` | which paths run code at all | supported; adding a path is a §1.16 trigger | *(documented, wrangler.jsonc `assets` comment)* |
@@ -395,7 +398,7 @@ instructions).
 | `iri-negotiation` | callback and collaborator execution | N/A — no caller-supplied code | | §1.7 | *(documented, worker/index.mjs header)* |
 | `iri-negotiation` | serialization and reconstruction | N/A — reads only `catalog.json` from the build | | §1.7 | *(documented, worker/index.mjs comment: "from catalog.json (read once per isolate)")* |
 | `iri-negotiation` | reference and object lifecycle | disclaimed | the subject majors are cached per isolate; after a major release an isolate may send the old major's vocabulary until it is recycled | §1.12 `D-NEGOTIATION-STALE-MAJOR` | *(maintainer, 2026-10)* |
-| `iri-negotiation` | concurrency and reentrancy | claimed | one shared promise per isolate; a failed read is dropped and retried | §1.11 `P-NEGOTIATION-FALLBACK` | *(documented, worker/index.mjs `subjectMajor` (`.catch(() => { majors = null; ...`))* |
+| `iri-negotiation` | concurrency and reentrancy | claimed | one shared promise per isolate; a thrown read is dropped and retried, while a non-OK answer is cached as an empty map until the isolate is recycled (`D-NEGOTIATION-STALE-MAJOR`), and requests then get the static answer | §1.11 `P-NEGOTIATION-FALLBACK` | *(documented, worker/index.mjs `subjectMajor` (`.catch(() => { majors = null; ...`))* |
 | `iri-negotiation` | resource complexity | claimed | linear in the length of the `Accept` header | §1.11 `P-NEGOTIATION-FALLBACK` | *(maintainer, 2026-10)* |
 | `mcp-server` | numeric domain and representational limits | claimed | 64 KiB, 1,000 keys, 64 levels, 200-character text arguments, `limit` 1–50 | §1.11 `P-MCP-BOUNDED` | *(documented, worker/mcp.mjs `validate` tool description: "The request may be at most")* |
 | `mcp-server` | failure and exception atomicity | claimed | stateless: a failed request leaves nothing behind; a failed index or schema read is not cached | §1.11 `P-MCP-STATELESS` | *(documented, worker/mcp.mjs comment: "A failed read is not kept")* |
@@ -423,7 +426,7 @@ instructions).
 | `listings` | concurrency and reentrancy | N/A — maintainer command, run once | | §1.5 | *(documented, scripts/fetch-nodes.mjs header)* |
 | `listings` | resource complexity | claimed | 15-second timeout per node; text cut to 200 characters | §1.11 `P-OUTSIDER-TEXT-PLAIN` | *(documented, scripts/fetch-nodes.mjs `TIMEOUT`)* |
 | `supply-chain` | numeric domain and representational limits | N/A — no numeric input | | §1.7 | *(documented, .github/workflows/check-worker.yml)* |
-| `supply-chain` | failure and exception atomicity | claimed | no status check is required on `main`, so a red check does not block a merge by itself; after the launch a merged change to a published file is `VALID` however it got in | §1.11 `P-PUBLISHED-IMMUTABLE` | *(maintainer, 2026-10)* |
+| `supply-chain` | failure and exception atomicity | claimed | the organisation's ruleset "main-protection" requires one approval, approval of the last push, code-owner review and resolved threads, and forbids deletion and non-fast-forward pushes, with bypass for a repository role and one team; the organisation's ruleset "security-suite" requires its Security Suite workflow (zizmor, betterleaks, pinact, bumblebee). No check from this repository's own workflows is required, so the "Build and dry-run deploy" job, which runs the `--base` comparison, does not block a merge by itself; after the launch a merged change to a published file is `VALID` however it got in | §1.11 `P-PUBLISHED-IMMUTABLE` | *(maintainer, 2026-10)* |
 | `supply-chain` | recursive or cyclic topology | N/A | no recursive input | §1.7 | *(documented, .github/workflows/check-worker.yml)* |
 | `supply-chain` | callback and collaborator execution | claimed | pull-request code runs only with read-only tokens; deploy rights exist only in Workers Builds on branches of this repository | §1.11 `P-NO-DEPLOY-CREDENTIAL-IN-GITHUB`, `P-CI-TOKENS-SCOPED` | *(documented, docs/deployment.md: "no credential lives in GitHub")* |
 | `supply-chain` | serialization and reconstruction | claimed | untrusted text (issue, PR description) is read as data, never interpolated into a shell command | §1.11 `P-CI-TOKENS-SCOPED` | *(documented, .github/workflows/similar-models.yml header)* |
@@ -452,11 +455,11 @@ instructions).
 | Dependency | Relied on for | Violation triaged |
 | --- | --- | --- |
 | Cloudflare Workers static assets | serving `dist/` as built, applying `_headers` and `_redirects` | upstream (`dependency-contract`) *(documented, docs/design.md "Hosting")* |
-| Cloudflare Workers Builds | building `main` with the configured commands; building previews only for branches of this repository; holding the deploy credential | upstream *(documented, docs/deployment.md "Dashboard settings")* |
+| Cloudflare Workers Builds | building `main` with the configured commands (documented in docs/deployment.md "Dashboard settings"); building previews only for branches of this repository; holding the deploy credential | upstream *(maintainer, 2026-10)* |
 | Cloudflare Rate Limiting binding | counting `/mcp` requests per key, approximately, per location | upstream *(documented, worker/limit.mjs `allowed` comment: "Cloudflare counts per location and approximately")* |
 | Cloudflare zone (TLS, DNS, configuration rule) | the custom domain, its certificate and the Browser Integrity Check exception | upstream *(documented, wrangler.jsonc "routes" comment)* |
 | AWS Route 53 (GeonicDB account) | keeping `datamodels.jp` registered | operator *(documented, docs/design.md "Decision 1")* |
-| GitHub (repository, Actions, branch rules, DCO app) | holding `main`, running CI with the declared permissions, enforcing the branch rules | upstream *(documented, .github/dco.yml header)* |
+| GitHub (repository, Actions, branch rules, DCO app) | holding `main`, running CI with the declared permissions, enforcing the branch rules. The organisation's Security Suite workflow (`geolonia/.github`, required by an organisation ruleset) also runs on every pull request; it is outside this model | upstream *(documented, .github/dco.yml header)* |
 | npm registry and `package-lock.json` | delivering the locked packages to CI and to Workers Builds | upstream; a malicious published package version is `dependency-contract` *(maintainer, 2026-10)* |
 | `@geolonia/datamodels` 0.3.14 (toolkit) | `datamodels check` (schemas, examples, JSON-LD, release comparison), the generic adapters, `ngsi` helpers in the Worker | sibling model; forwarded there *(documented, package.json `devDependencies` and CONTRIBUTING.md "Pull request steps" step 3)* |
 | `@modelcontextprotocol/server` 2.2.0 | the MCP protocol handling | upstream *(documented, worker/mcp.mjs header: "Protocol: @modelcontextprotocol/server (the MCP SDK)")* |
@@ -479,7 +482,7 @@ its previews on workers.dev.
 
 | Actor | In scope? | Capabilities held | Capabilities excluded | Goals | Provenance |
 | --- | --- | --- | --- | --- | --- |
-| Contributor (pull request, also from a fork; also a tool's bundle sent by a person) | yes | any file in the pull request, including scripts, adapter code, workflows, snapshots and `node.yaml`; code execution in CI with read-only tokens | merging; approving their own pull request; running code in Workers Builds from a fork; reading secrets | change a published file, slip in a file that harms consumers, obtain a credential | *(documented, CONTRIBUTING.md "Pull request steps")* |
+| Contributor (pull request, also from a fork; also a tool's bundle sent by a person) | yes | any file in the pull request, including scripts, adapter code, workflows, snapshots and `node.yaml`; code execution in CI with read-only tokens | merging; approving their own pull request, or their own last push after an approval (the "main-protection" ruleset requires approval of the last push); running code in Workers Builds from a fork; reading secrets | change a published file, slip in a file that harms consumers, obtain a credential | *(documented, CONTRIBUTING.md "Pull request steps")* |
 | Issue author | yes | text of issues, including the model-proposal form read by `similar-models.yml` | code execution; the job's token | reach a shell or the `issues: write` token | *(documented, .github/workflows/similar-models.yml header)* |
 | Listing owner (extension) and node operator | yes | the content of an extension file sent by pull request; the content of their node's `catalog.json` | changing catalogue files or IRIs; adding markup to pages; adding a node without a reviewed pull request | appear endorsed; inject markup or links | *(documented, scripts/lib/extensions.mjs header and nodes.yaml header)* |
 | Anonymous HTTP client (consumers, scanners, AI agents, MCP clients) | yes | any request to `datamodels.jp` or a preview, from many addresses | writing anything; reading anything that is not public (there is nothing); bypassing Cloudflare | exhaust the Worker, find an open redirect, get a wrong IRI answer | *(documented, site/en/ai.md "It needs no login, only reads")* |
@@ -518,10 +521,10 @@ are listed, or properties the maintainer ratified (2026-10).
     - The production build compares nothing with the base branch or the live
       site: `build:deploy` runs `datamodels check . --offline --all-released` —
       `package.json:23`. Only the pull-request job runs `--base`.
-    - A merge that does not wait for a green pull-request check. No status
-      check is required on `main` at the bound commit, so the guard relies on
-      maintainers not merging a red check; after the launch, a merged change to
-      a published file is `VALID` against this property however it got in
+    - A merge that does not wait for a green pull-request check. At the
+      bound commit, the organisation's ruleset "main-protection" requires one approval, approval of the last push, code-owner review and resolved threads, and forbids deletion and non-fast-forward pushes, with bypass for a repository role and one team; the organisation's ruleset "security-suite" requires its Security Suite workflow (zizmor, betterleaks, pinact, bumblebee). No check from this repository's own workflows is required, so the "Build and dry-run deploy" job, which runs the `--base` comparison, does not block a merge by itself. The guard therefore relies on maintainers not
+      merging a red check; after the launch, a merged change to a published
+      file is `VALID` against this property however it got in
       *(maintainer, 2026-10)*.
     - Before the launch, the pre-release exception covers only the current
       version. CI notes a change to any snapshot, so "older releases are never
@@ -539,8 +542,8 @@ are listed, or properties the maintainer ratified (2026-10).
   - Tier: correctness-only. It is an editorial promise kept by review and
     versioning, not by a check.
   - Voided by: nothing in code; review is the control. Search:
-    `grep -rn "x-deprecated" scripts/lib/*.mjs` — the validator checks the
-    marker's form, not meaning.
+    `grep -rn "x-deprecated" scripts/lib/*.mjs` — one hit, `site.mjs`, which
+    shows a badge on the page; no check reads meaning.
 
 - **`P-ALIAS-ADDITIVE` — within a major version, an alias only gains terms.**
   Data names the alias `vX.jsonld`; within a major version a term's meaning
@@ -642,9 +645,10 @@ are listed, or properties the maintainer ratified (2026-10).
     chose).
   - Tier: security-critical.
   - *Voided by*: nothing. The refusal is `worker/mcp.mjs:96`. Search:
-    `grep -n "fetch(" worker/*.mjs` — 4 hits: `env.ASSETS.fetch` in
-    `index.mjs` and `mcp.mjs`, the `fetch` method of the exported handler, and
-    the SDK handler's `fetch`; none takes a client-chosen URL.
+    `grep -n "fetch(" worker/*.mjs` — 5 hits: `env.ASSETS.fetch` at
+    `index.mjs` lines 42 and 54 and `mcp.mjs` line 65, the `fetch` method of
+    the exported handler (`index.mjs` line 50), and the SDK handler's `fetch`
+    (`mcp.mjs` line 399); none takes a client-chosen URL.
 
 - **`P-MCP-STATELESS` — one MCP request cannot see another's data.** Each
   request gets a fresh server; nothing is kept between requests except the
@@ -652,8 +656,10 @@ are listed, or properties the maintainer ratified (2026-10).
   - Symptom: `info-leak`.
   - Tier: security-critical.
   - Voided by: nothing. Search: `grep -n "new Map\|WeakMap" worker/mcp.mjs` —
-    the caches hold the index, published schemas and compiled validators, keyed
-    by the assets binding and model id.
+    the caches (`stores`, line 57) hold the index, published schemas and
+    compiled validators, keyed by the assets binding and model id; `handlers`
+    (line 315) holds the MCP handler per assets binding and no request data;
+    the other hits are local maps built per call.
 
 - **`P-MCP-BOUNDED` — one MCP request does bounded work.** At most 64 KiB of
   body, no batches, 1,000 keys per object, 64 levels, 20 listed problems; large
@@ -691,7 +697,8 @@ are listed, or properties the maintainer ratified (2026-10).
 - **`P-NO-DEPLOY-CREDENTIAL-IN-GITHUB` — nothing in GitHub can deploy.** No
   Cloudflare token lives in GitHub; CI only runs a dry-run deploy; Workers Builds
   deploys `main` *(documented, docs/deployment.md: "no credential lives in GitHub")*.
-  Workers Builds builds only branches of this repository *(documented, CONTRIBUTING.md "Pull request steps" step 5)*.
+  Workers Builds builds only branches of this repository, a setting in the
+  Cloudflare dashboard *(maintainer, 2026-10)*.
   - Symptom: `integrity-bypass` (someone without merge rights changes what
     datamodels.jp serves).
   - Tier: security-critical.
@@ -699,10 +706,13 @@ are listed, or properties the maintainer ratified (2026-10).
     `grep -rn "secrets\.\|CLOUDFLARE" .github/workflows` — 0 hits.
 
 - **`P-CI-TOKENS-SCOPED` — untrusted text in CI is data, and tokens are
-  narrow.** Every workflow runs with `contents: read`; only `similar-models.yml`
+  narrow.** Every workflow in this repository runs with `contents: read`; only `similar-models.yml`
   adds `issues: write` and reads the issue from the event file as data; the
   pull-request description is passed in an environment variable
   *(documented, .github/workflows/similar-models.yml header: "nothing from the issue reaches a shell command")*.
+  - Covers the four workflows in `.github/workflows/`. The organisation's
+    Security Suite workflow, which an organisation ruleset requires on every
+    pull request, is outside this model *(maintainer, 2026-10)*.
   - Symptom: `integrity-bypass` (an issue or a pull request gets the token to
     act).
   - Tier: security-critical.
@@ -748,7 +758,7 @@ rested on silence were turned into stated limits by maintainer ruling
 | `D-AGENT-TEXT` | filtering of text meant to steer AI agents | stated by maintainer ruling (2026-10). Descriptions, notes and listings reach agents through `llms.txt`, `catalog.json` and MCP answers as written | security-critical | no | *(maintainer, 2026-10)* |
 | `D-LISTED-CONTENT-UNREVIEWED` | review or endorsement of listed extensions and node models | stated. Content is listed as the owner reported it; whether the domain is the owner's is not checked; the review only checks that the reporter represents the organisation | correctness-only | yes: "listed on datamodels.jp" is not "endorsed" | *(documented, CONTRIBUTING.md "Adding a listed extension" steps 3 and 4)* |
 | `D-STATUS-NOT-REVIEW` | a security review behind `stable`, `ADOPTERS.yaml` or a DCO sign-off | stated. `stable` means two independent adopters; adopters are self-reported; the sign-off is an agreement to the DCO, not an identity check | correctness-only | yes | *(documented, docs/design.md "Versioning and lifecycle": "Entries are self-reported with a link")* |
-| `D-NEGOTIATION-STALE-MAJOR` | a 303 that always names the subject's current major version | stated by maintainer ruling (2026-10). The IRI Worker caches the subject majors per isolate; after a new major version an isolate may send JSON-LD clients to the old major's vocabulary until it is recycled | correctness-only | no | *(maintainer, 2026-10)* |
+| `D-NEGOTIATION-STALE-MAJOR` | a 303 that always names the subject's current major version | stated by maintainer ruling (2026-10). The IRI Worker caches the subject majors per isolate; after a new major version an isolate may send JSON-LD clients to the old major's vocabulary until it is recycled. A non-OK read of `catalog.json` is cached as an empty map the same way (`worker/index.mjs:43`), so that isolate gives JSON-LD clients the static answer until it is recycled | correctness-only | no | *(maintainer, 2026-10)* |
 | `D-REPO-CODE-RUNS` | isolation of the build from repository code | stated. Adapter modules and scripts run with the rights of the build (CI's read-only token; after merge, Workers Builds) | security-critical | no | *(documented, scripts/lib/adapters.mjs header)* |
 
 Well-known attack classes for a catalogue of schemas and contexts that the
@@ -770,8 +780,8 @@ project leaves to the consumer:
   without a limit can be made to allocate a lot.
 - **Indirect prompt injection.** Text in a model can be read by an agent as an
   instruction.
-- **Look-alike domains.** `datamodel.jp` is held as a typo guard; other
-  look-alikes are not.
+- **Look-alike domains.** No look-alike domain is held; `datamodel.jp`, named
+  in `docs/design.md` as a typo guard, is not registered.
 
 ## 1.13 Downstream responsibilities
 
@@ -819,8 +829,8 @@ project leaves to the consumer:
 - Keep `models.geonicdb.com` detached from the Worker *(documented, docs/deployment.md "`models.geonicdb.com` ... is retired and must not answer")*.
 - At the launch, set `prerelease: false`; from then on, the pull-request check
   fails on any changed or removed published file *(documented, README "Pre-release exception")*.
-- Merge only after the pull-request check is green while no status check is
-  required *(maintainer, 2026-10)*.
+- Merge only after the "Build and dry-run deploy" check is green, since no
+  check from this repository's own workflows is required *(maintainer, 2026-10)*.
 
 ## 1.14 Known misuse patterns
 
@@ -948,11 +958,14 @@ both whenever this file changes. Two JSON fields are completed by hand after
 export: `description` (the exporter takes the first paragraph of §1.2) and
 `trust_boundaries` (the exporter cannot read §1.4 and labels every boundary
 `inferred` with no text); the published JSON carries the §1.4 boundary for
-each family with `documented` provenance, matching §1.4.
+each family with `documented` provenance, matching §1.4. The JSON schema
+has no **maintainer** kind, so the export counts maintainer-ratified claims as
+documented: its confidence reads 262 documented and 0 inferred, the sum of the
+198 documented and 64 maintainer claims counted here.
 
 ## Appendix: prior security-policy back-map
 
-Not applicable — the repository had no `SECURITY.md` and no earlier document that states a threat model at the bound commit `e554242`; the change that adds this model adds a `SECURITY.md` derived from it, the organisation's default `SECURITY.md` describes only how to report, and the statements mined for this draft come from the README, `CONTRIBUTING.md`, `docs/design.md`, `docs/deployment.md`, `site/en/guide/urls.md`, `site/en/ai.md`, `wrangler.jsonc`, `public/_headers`, the workflow files and source-file comments, each cited inline.
+Not applicable — the repository had no `SECURITY.md` and no earlier document that states a threat model at the bound commit `e554242`; the change that adds this model adds a `SECURITY.md` derived from it, the organisation's default `SECURITY.md` describes only how to report, and the statements mined for this model come from the README, `CONTRIBUTING.md`, `docs/design.md`, `docs/deployment.md`, `site/en/guide/urls.md`, `site/en/ai.md`, `wrangler.jsonc`, `public/_headers`, the workflow files and source-file comments, each cited inline.
 
 ## Appendix A: glossary
 
@@ -977,4 +990,4 @@ Not applicable — the repository had no `SECURITY.md` and no earlier document t
 | Security-critical / correctness-only | The tier of a property or disclaimer: whether a violation is a vulnerability or a bug. |
 | False friend | Something that looks like a security guarantee but is not (an `immutable` cache header ≠ integrity; `valid: true` ≠ safe; `x-personal-data` ≠ protection). |
 | Silence basis | A disclaimer written because nothing promises the property, rather than because the project stated a limit. It never closes a security-critical report. |
-| Unratified draft | A model published while claims are unconfirmed. Usable, but it escalates rather than closes on the unconfirmed parts. |
+| Accepted | A model whose claims are all documented or confirmed by the maintainer; it can close reports wherever its claims reach. |

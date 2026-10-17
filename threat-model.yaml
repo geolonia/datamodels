@@ -1,10 +1,10 @@
 # threat-model.yaml — derived index; the prose threat model (threat-model.md) is canonical.
 schema: threat-model-sidecar/v2
 project: datamodels
-prose_version: "threat-model.md@sha256:7c8124c6465f5053e12b5f3ab90606a64ddfd0ee326ce5c143d29c40eaa80ed3"
+prose_version: "threat-model.md@sha256:5ad8234afcf3dae6e9f4be0c7b4cc3d8f50a9251e7e52b2b1f92f05b1ea835e6"
 model_status: accepted
 triage_policy: strict
-confidence: {documented: 201, maintainer: 59, inferred: 0, assumption: 0}
+confidence: {documented: 198, maintainer: 64, inferred: 0, assumption: 0}
 
 generation:
   model: "Claude Opus 5.5 (claude-opus-5-5)"
@@ -384,7 +384,7 @@ contract_dimensions:
   - {component: iri-negotiation, dimension: callback-execution, status: not-applicable, conditions: "no caller-supplied code", provenance: {kind: documented, source: "worker/index.mjs header"}}
   - {component: iri-negotiation, dimension: serialization-reconstruction, status: not-applicable, conditions: "reads only catalog.json from the build", provenance: {kind: documented, source: "worker/index.mjs comment: \"from catalog.json (read once per isolate)\""}}
   - {component: iri-negotiation, dimension: reference-lifecycle, status: disclaimed, conditions: "subject majors cached per isolate; stale after a major release until recycled", property_id: D-NEGOTIATION-STALE-MAJOR, provenance: {kind: maintainer, date: "2026-10"}}
-  - {component: iri-negotiation, dimension: concurrency-reentrancy, status: claimed, conditions: "one shared promise per isolate; a failed read is dropped", property_id: P-NEGOTIATION-FALLBACK, provenance: {kind: documented, source: "worker/index.mjs subjectMajor"}}
+  - {component: iri-negotiation, dimension: concurrency-reentrancy, status: claimed, conditions: "one shared promise per isolate; a thrown read is dropped and retried; a non-OK read is cached as empty until the isolate is recycled (D-NEGOTIATION-STALE-MAJOR)", property_id: P-NEGOTIATION-FALLBACK, provenance: {kind: documented, source: "worker/index.mjs subjectMajor"}}
   - {component: iri-negotiation, dimension: resource-complexity, status: claimed, conditions: "linear in the length of the Accept header", property_id: P-NEGOTIATION-FALLBACK, provenance: {kind: maintainer, date: "2026-10"}}
   - {component: mcp-server, dimension: numeric-domain, status: claimed, conditions: "64 KiB, 1,000 keys, 64 levels, 200-character text, limit 1-50", property_id: P-MCP-BOUNDED, provenance: {kind: documented, source: "worker/mcp.mjs validate tool description"}}
   - {component: mcp-server, dimension: failure-atomicity, status: claimed, conditions: "stateless; failed reads are not cached", property_id: P-MCP-STATELESS, provenance: {kind: documented, source: "worker/mcp.mjs comment: \"A failed read is not kept\""}}
@@ -412,7 +412,7 @@ contract_dimensions:
   - {component: listings, dimension: concurrency-reentrancy, status: not-applicable, conditions: "maintainer command, run once", provenance: {kind: documented, source: "scripts/fetch-nodes.mjs header"}}
   - {component: listings, dimension: resource-complexity, status: claimed, conditions: "15-second timeout per node; text cut to 200 characters", property_id: P-OUTSIDER-TEXT-PLAIN, provenance: {kind: documented, source: "scripts/fetch-nodes.mjs TIMEOUT"}}
   - {component: supply-chain, dimension: numeric-domain, status: not-applicable, conditions: "no numeric input", provenance: {kind: documented, source: ".github/workflows/check-worker.yml"}}
-  - {component: supply-chain, dimension: failure-atomicity, status: claimed, conditions: "no status check is required on main; after the launch a merged change to a published file is VALID however it got in", property_id: P-PUBLISHED-IMMUTABLE, provenance: {kind: maintainer, date: "2026-10"}}
+  - {component: supply-chain, dimension: failure-atomicity, status: claimed, conditions: "org ruleset main-protection requires one approval, last-push approval, code-owner review and resolved threads, with bypass for a repository role and one team; org ruleset security-suite requires its Security Suite workflow; no check from this repository's own workflows is required, so the --base comparison does not block a merge; after the launch a merged change to a published file is VALID however it got in", property_id: P-PUBLISHED-IMMUTABLE, provenance: {kind: maintainer, date: "2026-10"}}
   - {component: supply-chain, dimension: recursive-cyclic-topology, status: not-applicable, conditions: "no recursive input", provenance: {kind: documented, source: ".github/workflows/check-worker.yml"}}
   - {component: supply-chain, dimension: callback-execution, status: claimed, conditions: "pull-request code runs only with read-only tokens; deploy rights only in Workers Builds", property_id: P-NO-DEPLOY-CREDENTIAL-IN-GITHUB, provenance: {kind: documented, source: "docs/deployment.md \"no credential lives in GitHub\""}}
   - {component: supply-chain, dimension: serialization-reconstruction, status: claimed, conditions: "untrusted text read as data, never interpolated into a shell command", property_id: P-CI-TOKENS-SCOPED, provenance: {kind: documented, source: ".github/workflows/similar-models.yml header"}}
@@ -606,14 +606,14 @@ dependencies:
     violation_disposition: "OUT-OF-MODEL: dependency-contract"
     provenance: {kind: documented, source: "docs/design.md \"Hosting\""}
   - name: cloudflare-workers-builds
-    relied_on_for: "building main with the configured commands; previews only for branches of this repository; holding the deploy credential"
+    relied_on_for: "building main with the configured commands; previews only for branches of this repository (a dashboard setting); holding the deploy credential"
     relied_on_properties: [build-configured-branch-only]
     caller_obligations_acknowledged: []
     adversary_capabilities_forwarded: []
     outputs_consumed: []
     covered_here: false
     violation_disposition: "OUT-OF-MODEL: dependency-contract"
-    provenance: {kind: documented, source: "docs/deployment.md \"Dashboard settings\""}
+    provenance: {kind: maintainer, date: "2026-10"}
   - name: cloudflare-rate-limiting
     relied_on_for: "counting /mcp requests per key, approximately, per location"
     relied_on_properties: [approximate-rate-count]
@@ -642,7 +642,7 @@ dependencies:
     violation_disposition: "OUT-OF-MODEL: dependency-contract"
     provenance: {kind: documented, source: "docs/design.md \"Decision 1\""}
   - name: github
-    relied_on_for: "holding main, running CI with the declared permissions, enforcing branch rules, the DCO app"
+    relied_on_for: "holding main, running CI with the declared permissions, enforcing branch rules, the DCO app; the organisation's required Security Suite workflow also runs on every pull request and is outside this model"
     relied_on_properties: [workflow-permissions-enforced, branch-rules-enforced]
     caller_obligations_acknowledged: []
     adversary_capabilities_forwarded: [any-file-in-pull-request, write-issue-text]
@@ -743,12 +743,12 @@ build_flags:
       - {property_id: P-PUBLISHED-IMMUTABLE, effect: preserves}
     provenance: {kind: documented, source: ".github/workflows/check-worker.yml \"Compare the published versions with the base branch\""}
   - name: preview-builds
-    default: "on, branches of this repository only"
+    default: "on, branches of this repository only (a dashboard setting)"
     security_relevant: true
     maintainer_stance: supported
     affects_properties:
       - {property_id: P-NO-DEPLOY-CREDENTIAL-IN-GITHUB, effect: preserves}
-    provenance: {kind: documented, source: "wrangler.jsonc previews comment"}
+    provenance: {kind: maintainer, date: "2026-10"}
   - name: mcp-limiter-absent
     default: "present in production and previews"
     security_relevant: false
@@ -886,7 +886,7 @@ properties_claimed:
     kind: integrity
     components: [supply-chain]
     tier: security-critical
-    conditions: "the four workflows in this repository"
+    conditions: "the four workflows in this repository; the organisation's Security Suite workflow is outside this model"
     violation_symptoms: [integrity-bypass]
     provenance: {kind: documented, source: ".github/workflows/similar-models.yml header"}
 
@@ -906,7 +906,7 @@ properties_disclaimed:
   - {id: D-AGENT-TEXT, components: [mcp-server, published-files], conditions: "stated by maintainer ruling (2026-10); text reaches agents as written", tier: security-critical, false_friend: false, provenance: {kind: maintainer, date: "2026-10"}}
   - {id: D-LISTED-CONTENT-UNREVIEWED, components: [listings], conditions: "stated; listed as reported, domain not checked", tier: correctness-only, false_friend: true, provenance: {kind: documented, source: "CONTRIBUTING.md \"Adding a listed extension\" steps 3 and 4"}}
   - {id: D-STATUS-NOT-REVIEW, components: [published-files], conditions: "stated; stable means two adopters, self-reported; DCO is an agreement", tier: correctness-only, false_friend: true, provenance: {kind: documented, source: "docs/design.md \"Versioning and lifecycle\""}}
-  - {id: D-NEGOTIATION-STALE-MAJOR, components: [iri-negotiation], conditions: "stated by maintainer ruling (2026-10); cached subject majors may be stale after a major release until the isolate is recycled", tier: correctness-only, false_friend: false, provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: D-NEGOTIATION-STALE-MAJOR, components: [iri-negotiation], conditions: "stated by maintainer ruling (2026-10); cached subject majors may be stale after a major release until the isolate is recycled; a non-OK read of catalog.json is cached as empty the same way", tier: correctness-only, false_friend: false, provenance: {kind: maintainer, date: "2026-10"}}
   - {id: D-REPO-CODE-RUNS, components: [build-validation, supply-chain], conditions: "stated; adapter modules and scripts run with the build's rights", tier: security-critical, false_friend: false, provenance: {kind: documented, source: "scripts/lib/adapters.mjs header"}}
 
 downstream_responsibilities:
