@@ -1,0 +1,989 @@
+{
+  "spec_version": 1,
+  "repository": "https://github.com/geolonia/datamodels",
+  "commit": "e5542423e632dbe1232f688cbd1ad3c7dced41cf",
+  "date": "2026-10-16",
+  "scope_subpath": null,
+  "description": "datamodels.jp publishes data models for Japan as files at URLs that are meant never to change. People and programs store those URLs in their data: type and attribute IRIs, @context URLs, schema URLs. The catalogue is built from this repository: anyone can send a pull request, maintainers review and merge it, and Cloudflare Workers Builds deploys main. The catalogue stores no data of its users, has no login and runs no service for data except a read-only MCP server.",
+  "confidence": {
+    "documented": 262,
+    "inferred": 0
+  },
+  "components": [
+    {
+      "name": "published-files",
+      "entry_points": [
+        "GET /<static path>",
+        "consumer-processing"
+      ],
+      "touches": [],
+      "in_scope": true,
+      "provenance": "documented",
+      "source": "docs/design.md \"URL scheme and hosting contract\""
+    },
+    {
+      "name": "iri-negotiation",
+      "entry_points": [
+        "GET /ns/<subject>/<Term>"
+      ],
+      "touches": [],
+      "in_scope": true,
+      "provenance": "documented",
+      "source": "worker/index.mjs header comment"
+    },
+    {
+      "name": "mcp-server",
+      "entry_points": [
+        "POST /mcp",
+        "search_models",
+        "get_model",
+        "find_attribute",
+        "validate"
+      ],
+      "touches": [],
+      "in_scope": true,
+      "provenance": "documented",
+      "source": "worker/mcp.mjs header comment"
+    },
+    {
+      "name": "build-validation",
+      "entry_points": [
+        "pull-request"
+      ],
+      "touches": [
+        "child_processes"
+      ],
+      "in_scope": true,
+      "provenance": "documented",
+      "source": "scripts/build.mjs header comment"
+    },
+    {
+      "name": "listings",
+      "entry_points": [
+        "listing-files"
+      ],
+      "touches": [],
+      "in_scope": true,
+      "provenance": "documented",
+      "source": "scripts/lib/extensions.mjs header; nodes.yaml header comment"
+    },
+    {
+      "name": "supply-chain",
+      "entry_points": [
+        "ci-workflows",
+        "workers-builds"
+      ],
+      "touches": [],
+      "in_scope": true,
+      "provenance": "documented",
+      "source": "docs/deployment.md \"Cloudflare Workers Builds watches this repository and deploys main\""
+    }
+  ],
+  "out_of_scope": [
+    {
+      "item": "site-prose",
+      "reason": "the prose of the VitePress pages is out of scope except where it states a promise, per §1.3",
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
+    },
+    {
+      "item": "toolkit",
+      "reason": "datamodels-toolkit is a sibling model in its own repository; a dependency here, per §1.3 and §1.9",
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
+    },
+    {
+      "item": "geonicdb-export-cli",
+      "reason": "adapters/geonicdb/export.mjs is a command a user runs locally; not part of the build, per §1.3",
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
+    },
+    {
+      "item": "dev-tools",
+      "reason": "tests and local-only commands do not run in the deployed catalogue, per §1.3",
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
+    },
+    {
+      "item": "node-sites",
+      "reason": "other people's catalogues; only the reviewed snapshot is in scope (listings), per §1.3",
+      "provenance": "documented",
+      "source": "nodes.yaml header comment: \"so what they publish is reviewed before it appears on datamodels.jp\""
+    }
+  ],
+  "trust_boundaries": [
+    {
+      "component": "published-files",
+      "boundary": "Edge boundary: consumers reach only Cloudflare; static files are served without code of this repository, and only /ns/* and /mcp run the Worker (wrangler.jsonc run_worker_first).",
+      "provenance": "documented",
+      "reachability_precondition": "concerns bytes or headers that https://datamodels.jp serves for a URL in the URL scheme of docs/design.md, at a deployed commit"
+    },
+    {
+      "component": "iri-negotiation",
+      "boundary": "Edge boundary: consumers reach only Cloudflare; static files are served without code of this repository, and only /ns/* and /mcp run the Worker (wrangler.jsonc run_worker_first).",
+      "provenance": "documented",
+      "reachability_precondition": "reachable with a request to a path under /ns/"
+    },
+    {
+      "component": "mcp-server",
+      "boundary": "Edge boundary: consumers reach only Cloudflare; static files are served without code of this repository, and only /ns/* and /mcp run the Worker (wrangler.jsonc run_worker_first).",
+      "provenance": "documented",
+      "reachability_precondition": "reachable with one POST /mcp request of at most 64 KiB"
+    },
+    {
+      "component": "build-validation",
+      "boundary": "Repository boundary: everything a contributor sends is untrusted until a maintainer merges it; CI runs pull-request code with a read-only token and no secrets (.github/workflows/check-worker.yml).",
+      "provenance": "documented",
+      "reachability_precondition": "reachable from files a contributor can put in a pull request, and changes what is published or lets a broken file through"
+    },
+    {
+      "component": "listings",
+      "boundary": "Repository boundary: everything a contributor sends is untrusted until a maintainer merges it; CI runs pull-request code with a read-only token and no secrets (.github/workflows/check-worker.yml).",
+      "provenance": "documented",
+      "reachability_precondition": "reachable from an extension file or a node's catalog.json and reaches a published page, catalog.json or an MCP answer"
+    },
+    {
+      "component": "supply-chain",
+      "boundary": "Build boundary: Workers Builds runs npm ci, npm run build:deploy and wrangler deploy on main with the operator's deploy rights; every locked package and repository script runs there (docs/deployment.md).",
+      "provenance": "documented",
+      "reachability_precondition": "lets someone without merge rights change what is deployed, or obtain a credential"
+    }
+  ],
+  "entry_points": [
+    {
+      "entry_point": "GET /<static path>",
+      "parameter": "request_path",
+      "attacker_controllable": "yes",
+      "component": "published-files",
+      "caller_must_enforce": "none — P-IRI-RESOLVES",
+      "provenance": "documented",
+      "source": "wrangler.jsonc assets \"not_found_handling\": \"404-page\""
+    },
+    {
+      "entry_point": "GET /<static path>",
+      "parameter": "request_headers",
+      "attacker_controllable": "yes",
+      "component": "published-files",
+      "caller_must_enforce": "none — P-HEADERS",
+      "provenance": "documented",
+      "source": "public/_headers header comment: \"Nothing here is private\""
+    },
+    {
+      "entry_point": "GET /ns/<subject>/<Term>",
+      "parameter": "path",
+      "attacker_controllable": "yes",
+      "component": "iri-negotiation",
+      "caller_must_enforce": "none — P-NEGOTIATION-FALLBACK",
+      "provenance": "documented",
+      "source": "worker/index.mjs header: \"an unknown /ns/ path stays a 404\""
+    },
+    {
+      "entry_point": "GET /ns/<subject>/<Term>",
+      "parameter": "accept_header",
+      "attacker_controllable": "yes",
+      "component": "iri-negotiation",
+      "caller_must_enforce": "none — P-NEGOTIATION-FALLBACK",
+      "provenance": "documented",
+      "source": "worker/index.mjs prefersJsonLd comment: \"a tie goes to the page\""
+    },
+    {
+      "entry_point": "GET /ns/<subject>/<Term>",
+      "parameter": "method",
+      "attacker_controllable": "yes",
+      "component": "iri-negotiation",
+      "caller_must_enforce": "none — P-NEGOTIATION-FALLBACK",
+      "provenance": "documented",
+      "source": "worker/index.mjs comment: \"Only reads are negotiated\""
+    },
+    {
+      "entry_point": "GET /ns/<subject>/<Term>",
+      "parameter": "catalog_json_asset",
+      "attacker_controllable": "no",
+      "component": "iri-negotiation",
+      "caller_must_enforce": "only reviewed, merged commits are built",
+      "provenance": "documented",
+      "source": "worker/index.mjs comment: \"The major version of each subject, from catalog.json\""
+    },
+    {
+      "entry_point": "POST /mcp",
+      "parameter": "method",
+      "attacker_controllable": "yes",
+      "component": "mcp-server",
+      "caller_must_enforce": "none — P-MCP-BOUNDED",
+      "provenance": "documented",
+      "source": "worker/mcp.mjs handleMcp: \"send JSON-RPC messages with POST\""
+    },
+    {
+      "entry_point": "POST /mcp",
+      "parameter": "body_bytes",
+      "attacker_controllable": "yes",
+      "component": "mcp-server",
+      "caller_must_enforce": "none — P-MCP-BOUNDED",
+      "provenance": "documented",
+      "source": "worker/mcp.mjs MAX_BODY_BYTES comment"
+    },
+    {
+      "entry_point": "POST /mcp",
+      "parameter": "content_type",
+      "attacker_controllable": "yes",
+      "component": "mcp-server",
+      "caller_must_enforce": "none — P-MCP-BOUNDED",
+      "provenance": "documented",
+      "source": "worker/mcp.mjs handleMcp: \"Content-Type must be application/json\""
+    },
+    {
+      "entry_point": "POST /mcp",
+      "parameter": "jsonrpc_message",
+      "attacker_controllable": "yes",
+      "component": "mcp-server",
+      "caller_must_enforce": "none — P-MCP-BOUNDED",
+      "provenance": "documented",
+      "source": "worker/mcp.mjs header: \"a batch is refused\""
+    },
+    {
+      "entry_point": "POST /mcp",
+      "parameter": "mcp_headers",
+      "attacker_controllable": "yes",
+      "component": "mcp-server",
+      "caller_must_enforce": "none — P-MCP-STATELESS",
+      "provenance": "documented",
+      "source": "worker/mcp.mjs header: \"Stateless and without login\""
+    },
+    {
+      "entry_point": "POST /mcp",
+      "parameter": "cf_connecting_ip",
+      "attacker_controllable": "no",
+      "component": "mcp-server",
+      "caller_must_enforce": "none — P-MCP-STATELESS",
+      "provenance": "documented",
+      "source": "worker/limit.mjs header: \"the client's address is the only key\""
+    },
+    {
+      "entry_point": "search_models",
+      "parameter": "query",
+      "attacker_controllable": "yes",
+      "component": "mcp-server",
+      "caller_must_enforce": "none — P-MCP-BOUNDED",
+      "provenance": "documented",
+      "source": "worker/mcp.mjs registerTool('search_models') input schema"
+    },
+    {
+      "entry_point": "search_models",
+      "parameter": "limit_include_nodes",
+      "attacker_controllable": "yes",
+      "component": "mcp-server",
+      "caller_must_enforce": "none — P-MCP-BOUNDED",
+      "provenance": "documented",
+      "source": "worker/mcp.mjs registerTool('search_models') input schema"
+    },
+    {
+      "entry_point": "get_model",
+      "parameter": "model",
+      "attacker_controllable": "yes",
+      "component": "mcp-server",
+      "caller_must_enforce": "none — P-MCP-NO-OUTBOUND",
+      "provenance": "documented",
+      "source": "worker/mcp.mjs findModel comment"
+    },
+    {
+      "entry_point": "get_model",
+      "parameter": "example_include_schema",
+      "attacker_controllable": "yes",
+      "component": "mcp-server",
+      "caller_must_enforce": "none — P-MCP-BOUNDED",
+      "provenance": "documented",
+      "source": "worker/mcp.mjs registerTool('get_model') input schema"
+    },
+    {
+      "entry_point": "find_attribute",
+      "parameter": "query_limit",
+      "attacker_controllable": "yes",
+      "component": "mcp-server",
+      "caller_must_enforce": "none — P-MCP-BOUNDED",
+      "provenance": "documented",
+      "source": "worker/mcp.mjs registerTool('find_attribute') input schema"
+    },
+    {
+      "entry_point": "validate",
+      "parameter": "model",
+      "attacker_controllable": "yes",
+      "component": "mcp-server",
+      "caller_must_enforce": "none — P-MCP-NO-OUTBOUND",
+      "provenance": "documented",
+      "source": "worker/mcp.mjs schema comment: \"A published schema of the catalog, by its URL\""
+    },
+    {
+      "entry_point": "validate",
+      "parameter": "entity",
+      "attacker_controllable": "yes",
+      "component": "mcp-server",
+      "caller_must_enforce": "none — P-MCP-BOUNDED",
+      "provenance": "documented",
+      "source": "worker/validate.mjs shape comment"
+    },
+    {
+      "entry_point": "validate",
+      "parameter": "form",
+      "attacker_controllable": "yes",
+      "component": "mcp-server",
+      "caller_must_enforce": "none — P-MCP-BOUNDED",
+      "provenance": "documented",
+      "source": "worker/mcp.mjs registerTool('validate') input schema"
+    },
+    {
+      "entry_point": "pull-request",
+      "parameter": "subject_context",
+      "attacker_controllable": "yes",
+      "component": "build-validation",
+      "caller_must_enforce": "review; CI checks coverage, imports and core terms",
+      "provenance": "documented",
+      "source": "docs/design.md \"CI on every pull request validates\""
+    },
+    {
+      "entry_point": "pull-request",
+      "parameter": "schema_json",
+      "attacker_controllable": "yes",
+      "component": "build-validation",
+      "caller_must_enforce": "review of $ref targets, size and pattern expressions",
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
+    },
+    {
+      "entry_point": "pull-request",
+      "parameter": "examples",
+      "attacker_controllable": "yes",
+      "component": "build-validation",
+      "caller_must_enforce": "review of content (real places, invented people)",
+      "provenance": "documented",
+      "source": "site/en/guide/rules.md \"Real and fictional\""
+    },
+    {
+      "entry_point": "pull-request",
+      "parameter": "text_files",
+      "attacker_controllable": "yes",
+      "component": "build-validation",
+      "caller_must_enforce": "review of wording; markup escaped on pages",
+      "provenance": "documented",
+      "source": "scripts/lib/models.mjs mdText comment"
+    },
+    {
+      "entry_point": "pull-request",
+      "parameter": "mapping_files",
+      "attacker_controllable": "yes",
+      "component": "build-validation",
+      "caller_must_enforce": "review; CI checks structure and via loops",
+      "provenance": "documented",
+      "source": "README \"Converting a published list\""
+    },
+    {
+      "entry_point": "pull-request",
+      "parameter": "adopters",
+      "attacker_controllable": "yes",
+      "component": "build-validation",
+      "caller_must_enforce": "the reviewer of a promotion to stable checks that adopters are real and independent",
+      "provenance": "documented",
+      "source": "docs/design.md \"Versioning and lifecycle\""
+    },
+    {
+      "entry_point": "pull-request",
+      "parameter": "version_and_snapshots",
+      "attacker_controllable": "yes",
+      "component": "build-validation",
+      "caller_must_enforce": "maintainer runs npx datamodels release; CI compares snapshots with the base branch",
+      "provenance": "documented",
+      "source": "README \"Adding or changing a model\" step 3"
+    },
+    {
+      "entry_point": "pull-request",
+      "parameter": "node_yaml",
+      "attacker_controllable": "yes",
+      "component": "build-validation",
+      "caller_must_enforce": "review; the toolkit refuses prerelease going back to true",
+      "provenance": "documented",
+      "source": "README \"Pre-release exception\""
+    },
+    {
+      "entry_point": "pull-request",
+      "parameter": "adapter_code",
+      "attacker_controllable": "yes",
+      "component": "build-validation",
+      "caller_must_enforce": "review: the build imports and runs repository code",
+      "provenance": "documented",
+      "source": "scripts/lib/adapters.mjs header"
+    },
+    {
+      "entry_point": "pull-request",
+      "parameter": "scripts_worker_theme_wrangler",
+      "attacker_controllable": "yes",
+      "component": "build-validation",
+      "caller_must_enforce": "review: the build imports and runs repository code",
+      "provenance": "documented",
+      "source": ".github/workflows/check-worker.yml steps \"Test\" and \"Validate, build and dry-run deploy\""
+    },
+    {
+      "entry_point": "pull-request",
+      "parameter": "package_files",
+      "attacker_controllable": "yes",
+      "component": "build-validation",
+      "caller_must_enforce": "review of dependency changes; npm ci installs exactly the lockfile",
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
+    },
+    {
+      "entry_point": "listing-files",
+      "parameter": "extension_yaml",
+      "attacker_controllable": "yes",
+      "component": "listings",
+      "caller_must_enforce": "review checks only that the reporter represents the organisation",
+      "provenance": "documented",
+      "source": "CONTRIBUTING.md \"Adding a listed extension\" step 4"
+    },
+    {
+      "entry_point": "listing-files",
+      "parameter": "nodes_yaml",
+      "attacker_controllable": "yes",
+      "component": "listings",
+      "caller_must_enforce": "nodes are added only by a reviewed pull request",
+      "provenance": "documented",
+      "source": "scripts/fetch-nodes.mjs comment: \"Nodes are listed only by a reviewed pull request (#219)\""
+    },
+    {
+      "entry_point": "listing-files",
+      "parameter": "node_catalog_json",
+      "attacker_controllable": "yes",
+      "component": "listings",
+      "caller_must_enforce": "maintainer reviews the snapshot diff",
+      "provenance": "documented",
+      "source": "scripts/lib/nodes.mjs cleanText comment"
+    },
+    {
+      "entry_point": "ci-workflows",
+      "parameter": "pull_request_description",
+      "attacker_controllable": "yes",
+      "component": "supply-chain",
+      "caller_must_enforce": "none — P-CI-TOKENS-SCOPED",
+      "provenance": "documented",
+      "source": ".github/workflows/check-languages.yml comment: \"passed as data in an environment variable\""
+    },
+    {
+      "entry_point": "ci-workflows",
+      "parameter": "issue_title_and_body",
+      "attacker_controllable": "yes",
+      "component": "supply-chain",
+      "caller_must_enforce": "none — P-CI-TOKENS-SCOPED",
+      "provenance": "documented",
+      "source": ".github/workflows/similar-models.yml header: \"nothing from the issue reaches a shell command\""
+    },
+    {
+      "entry_point": "ci-workflows",
+      "parameter": "pull_request_merge_commit",
+      "attacker_controllable": "yes",
+      "component": "supply-chain",
+      "caller_must_enforce": "none — P-CI-TOKENS-SCOPED",
+      "provenance": "documented",
+      "source": ".github/workflows/check-worker.yml permissions: contents: read"
+    },
+    {
+      "entry_point": "workers-builds",
+      "parameter": "main_commit",
+      "attacker_controllable": "no",
+      "component": "supply-chain",
+      "caller_must_enforce": "only reviewed, merged commits are built",
+      "provenance": "documented",
+      "source": "docs/deployment.md \"deploys main\""
+    },
+    {
+      "entry_point": "workers-builds",
+      "parameter": "dashboard_settings",
+      "attacker_controllable": "no",
+      "component": "supply-chain",
+      "caller_must_enforce": "operator keeps the Workers Builds settings",
+      "provenance": "documented",
+      "source": "docs/deployment.md \"Dashboard settings on the datamodels Worker\""
+    },
+    {
+      "entry_point": "workers-builds",
+      "parameter": "zone_bic_rule",
+      "attacker_controllable": "no",
+      "component": "supply-chain",
+      "caller_must_enforce": "operator keeps the zone configuration rule",
+      "provenance": "documented",
+      "source": "docs/deployment.md \"Machine-readable files: no Browser Integrity Check\""
+    },
+    {
+      "entry_point": "consumer-processing",
+      "parameter": "published_files_as_input",
+      "attacker_controllable": "yes",
+      "component": "published-files",
+      "caller_must_enforce": "the consumer bounds its JSON-LD loader and schema validator",
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
+    }
+  ],
+  "environment": {
+    "assumes": [
+      "**Runtime.** The Worker runs on Cloudflare Workers with `compatibility_date` 2026-08-01; static files are served by Workers static assets from `./dist` with `_headers` and `_redirects`.",
+      "**Transport.** TLS terminates at Cloudflare for the custom domain, which `wrangler deploy` creates with its certificate.",
+      "**Build host.** Node 24; Workers Builds and GitHub-hosted runners provide it. Workers Builds builds only branches of this repository, a setting in the Cloudflare dashboard; only branches in this repository get a preview URL."
+    ],
+    "does_not": [
+      "**Zone rule.** A configuration rule on the `datamodels.jp` zone turns off Browser Integrity Check for the machine-readable paths and `/mcp`. It lives in the Cloudflare dashboard, not in the repository. `npm run check:live` fails when it goes missing. The check is run by hand after a deploy, not by CI.",
+      "**Domain.** `datamodels.jp` is registered in Route 53 in the GeonicDB AWS account, with name servers delegated to Cloudflare. `datamodel.jp` is not registered: `docs/design.md` calls it \"available as a typo guard\", and the JPRS whois has no record of it (checked 2026-10-17).",
+      "**Concurrency.** The Worker keeps per-isolate caches of public files (the MCP index, schemas, compiled validators, the subject majors). No state is shared between requests except these."
+    ],
+    "provenance": "documented"
+  },
+  "build_variants": [
+    {
+      "name": "prerelease",
+      "default": "true",
+      "effect": "voids P-PUBLISHED-IMMUTABLE; narrows P-HEADERS",
+      "discouraged": false,
+      "provenance": "documented",
+      "source": "README \"Pre-release exception, until the official launch\""
+    },
+    {
+      "name": "offline",
+      "default": "used by build:deploy and validate:models",
+      "effect": "narrows P-PUBLISHED-IMMUTABLE; narrows P-EXAMPLES-CONFORM",
+      "discouraged": false,
+      "provenance": "documented",
+      "source": "package.json build:deploy script"
+    },
+    {
+      "name": "base",
+      "default": "pull-request job only",
+      "effect": "preserves P-PUBLISHED-IMMUTABLE",
+      "discouraged": false,
+      "provenance": "documented",
+      "source": ".github/workflows/check-worker.yml \"Compare the published versions with the base branch\""
+    },
+    {
+      "name": "preview-builds",
+      "default": "on, branches of this repository only (a dashboard setting)",
+      "effect": "preserves P-NO-DEPLOY-CREDENTIAL-IN-GITHUB",
+      "discouraged": false,
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
+    },
+    {
+      "name": "mcp-limiter-absent",
+      "default": "present in production and previews",
+      "effect": "no effect on claimed properties",
+      "discouraged": false,
+      "provenance": "documented",
+      "source": "worker/limit.mjs allowed comment: \"No binding (the tests; wrangler dev simulates it): no limit\""
+    },
+    {
+      "name": "CHECK_MACHINE_UA",
+      "default": "unset",
+      "effect": "no effect on claimed properties",
+      "discouraged": false,
+      "provenance": "documented",
+      "source": "docs/deployment.md \"unless CHECK_MACHINE_UA=1 is set\""
+    },
+    {
+      "name": "run_worker_first",
+      "default": "[\"/ns/*\", \"/mcp\"]",
+      "effect": "preserves P-NEGOTIATION-FALLBACK",
+      "discouraged": false,
+      "provenance": "documented",
+      "source": "wrangler.jsonc assets comment"
+    }
+  ],
+  "adversaries": {
+    "in_scope": [
+      "contributor",
+      "issue-author",
+      "listing-owner-or-node-operator",
+      "anonymous-http-client",
+      "agent-text-author"
+    ],
+    "out_of_scope": [
+      "maintainer",
+      "operator-accounts-and-platforms",
+      "network-attacker"
+    ],
+    "provenance": "documented"
+  },
+  "properties_provided": [
+    {
+      "property": "P-PUBLISHED-IMMUTABLE",
+      "violation_symptom": "integrity-bypass",
+      "severity_tier": "security",
+      "conditions": "after the official launch; exact-version context, vocabulary and schema files",
+      "provenance": "documented",
+      "source": "docs/design.md \"URL scheme and hosting contract\" item 1"
+    },
+    {
+      "property": "P-TERM-MEANING-STABLE",
+      "violation_symptom": "wrong-output",
+      "severity_tier": "correctness",
+      "conditions": "breaking changes mint new IRIs",
+      "provenance": "documented",
+      "source": "docs/design.md \"URL scheme and hosting contract\" item 4"
+    },
+    {
+      "property": "P-ALIAS-ADDITIVE",
+      "violation_symptom": "wrong-output",
+      "severity_tier": "correctness",
+      "conditions": "within a major version",
+      "provenance": "documented",
+      "source": "docs/design.md \"URL scheme and hosting contract\" item 6"
+    },
+    {
+      "property": "P-IRI-RESOLVES",
+      "violation_symptom": "x-unresolvable-iri",
+      "severity_tier": "correctness",
+      "conditions": "an operator commitment, not an uptime promise",
+      "provenance": "documented",
+      "source": "docs/design.md \"Decision 1\""
+    },
+    {
+      "property": "P-HEADERS",
+      "violation_symptom": "wrong-output",
+      "severity_tier": "correctness",
+      "conditions": "content types, open CORS, cache lifetimes per class; short cache during the pre-release",
+      "provenance": "documented",
+      "source": "docs/design.md \"URL scheme and hosting contract\" item 2"
+    },
+    {
+      "property": "P-CORE-TERMS-PROTECTED",
+      "violation_symptom": "bad-data-accepted",
+      "severity_tier": "correctness",
+      "conditions": "every subject context",
+      "provenance": "documented",
+      "source": "docs/design.md \"Decision 2\" rules"
+    },
+    {
+      "property": "P-EXAMPLES-CONFORM",
+      "violation_symptom": "bad-data-accepted",
+      "severity_tier": "correctness",
+      "conditions": "before anything reaches dist/",
+      "provenance": "documented",
+      "source": "docs/design.md \"Repository layout\": \"CI on every pull request validates\""
+    },
+    {
+      "property": "P-CONTEXT-IMPORTS-CATALOG",
+      "violation_symptom": "integrity-bypass",
+      "severity_tier": "security",
+      "conditions": "subject contexts import only catalogue context URLs at a published or current version",
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
+    },
+    {
+      "property": "P-REFS-CATALOG-ONLY",
+      "violation_symptom": "bad-data-accepted",
+      "severity_tier": "correctness",
+      "conditions": "schema $ref targets are catalogue schemas or pointers inside the file; a review rule",
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
+    },
+    {
+      "property": "P-NEGOTIATION-FALLBACK",
+      "violation_symptom": "wrong-output, x-open-redirect",
+      "severity_tier": "correctness",
+      "conditions": "GET and HEAD for known IRIs; same-origin 303; fallback on any error",
+      "provenance": "documented",
+      "source": "worker/index.mjs header comment"
+    },
+    {
+      "property": "P-MCP-NO-OUTBOUND",
+      "violation_symptom": "x-ssrf",
+      "severity_tier": "security",
+      "conditions": "all four tools",
+      "provenance": "documented",
+      "source": "worker/mcp.mjs header: \"Nothing is fetched from another site\""
+    },
+    {
+      "property": "P-MCP-STATELESS",
+      "violation_symptom": "info-leak",
+      "severity_tier": "security",
+      "conditions": "a fresh server per request; caches hold only public files",
+      "provenance": "documented",
+      "source": "worker/mcp.mjs header: \"Stateless and without login\""
+    },
+    {
+      "property": "P-MCP-BOUNDED",
+      "violation_symptom": "x-cpu-exhaustion",
+      "severity_tier": "correctness",
+      "conditions": "64 KiB body, no batches, 1,000 keys, 64 levels, 20 problems; threshold: tens of milliseconds of CPU",
+      "provenance": "documented",
+      "source": "worker/validate.mjs header"
+    },
+    {
+      "property": "P-OUTSIDER-TEXT-PLAIN",
+      "violation_symptom": "x-markup-injection",
+      "severity_tier": "security",
+      "conditions": "extension files and node snapshots",
+      "provenance": "documented",
+      "source": "scripts/lib/extensions.mjs comment: \"nothing in a file can add markup, a script or a template expression\""
+    },
+    {
+      "property": "P-MODEL-TEXT-ESCAPED",
+      "violation_symptom": "x-markup-injection",
+      "severity_tier": "correctness",
+      "conditions": "text from model files on the generated pages",
+      "provenance": "documented",
+      "source": "scripts/lib/models.mjs mdText comment"
+    },
+    {
+      "property": "P-NO-DEPLOY-CREDENTIAL-IN-GITHUB",
+      "violation_symptom": "integrity-bypass",
+      "severity_tier": "security",
+      "conditions": "Workers Builds deploys main; builds only branches of this repository",
+      "provenance": "documented",
+      "source": "docs/deployment.md \"no credential lives in GitHub\""
+    },
+    {
+      "property": "P-CI-TOKENS-SCOPED",
+      "violation_symptom": "integrity-bypass",
+      "severity_tier": "security",
+      "conditions": "the four workflows in this repository; the organisation's Security Suite workflow is outside this model",
+      "provenance": "documented",
+      "source": ".github/workflows/similar-models.yml header"
+    }
+  ],
+  "properties_not_provided": [
+    {
+      "property": "D-PRERELEASE-CORRECTIONS",
+      "reason": "stated; while prerelease is true, only the current version may be corrected in place; a change to an older release is VALID",
+      "false_friend": false,
+      "provenance": "documented",
+      "source": "site/en/guide/urls.md \"Do not reference them from production data before the launch\""
+    },
+    {
+      "property": "D-UNVERSIONED-FILES",
+      "reason": "stated; examples, mapping files, adapter files, catalog.json, llms.txt, MCP index, pages, aliases",
+      "false_friend": false,
+      "provenance": "documented",
+      "source": "docs/design.md \"Adapters\": \"not part of the release snapshots\""
+    },
+    {
+      "property": "D-NO-SIGNATURE",
+      "reason": "stated by maintainer ruling (2026-10); no signatures; the release snapshot in the repository is the reference copy",
+      "false_friend": false,
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
+    },
+    {
+      "property": "D-CACHE-HINT",
+      "reason": "stated; Cache-Control immutable is a cache directive",
+      "false_friend": true,
+      "provenance": "documented",
+      "source": "scripts/lib/cache.mjs header"
+    },
+    {
+      "property": "D-NO-AVAILABILITY-SLA",
+      "reason": "stated by maintainer ruling (2026-10) for uptime; in docs/design.md for the mirror",
+      "false_friend": false,
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
+    },
+    {
+      "property": "D-NO-CONFIDENTIALITY",
+      "reason": "stated; everything public, CORS open",
+      "false_friend": false,
+      "provenance": "documented",
+      "source": "public/_headers header comment: \"Nothing here is private\""
+    },
+    {
+      "property": "D-NO-AUTHENTICATION",
+      "reason": "stated; no login",
+      "false_friend": false,
+      "provenance": "documented",
+      "source": "site/en/ai.md \"It needs no login, only reads\""
+    },
+    {
+      "property": "D-BIC-NOT-ACCESS-CONTROL",
+      "reason": "stated; BIC off on machine paths and /mcp",
+      "false_friend": true,
+      "provenance": "documented",
+      "source": "docs/deployment.md \"Machine-readable files: no Browser Integrity Check\""
+    },
+    {
+      "property": "D-RATE-LIMIT-BEST-EFFORT",
+      "reason": "stated; per address or /64, per location, approximate, fails open",
+      "false_friend": true,
+      "provenance": "documented",
+      "source": "worker/limit.mjs allowed comment"
+    },
+    {
+      "property": "D-VALIDATE-NOT-ASSURANCE",
+      "reason": "stated; schema conformance only, @context not checked",
+      "false_friend": true,
+      "provenance": "documented",
+      "source": "worker/mcp.mjs validate description: \"its @context is not checked\""
+    },
+    {
+      "property": "D-PERSONAL-DATA-MARKER",
+      "reason": "stated by maintainer ruling (2026-10); x-personal-data is a marker only",
+      "false_friend": true,
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
+    },
+    {
+      "property": "D-CONTRIBUTED-FILE-LIMITS",
+      "reason": "stated by maintainer ruling (2026-10); no size, nesting, $ref count, import depth or pattern limit",
+      "false_friend": false,
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
+    },
+    {
+      "property": "D-AGENT-TEXT",
+      "reason": "stated by maintainer ruling (2026-10); text reaches agents as written",
+      "false_friend": false,
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
+    },
+    {
+      "property": "D-LISTED-CONTENT-UNREVIEWED",
+      "reason": "stated; listed as reported, domain not checked",
+      "false_friend": true,
+      "provenance": "documented",
+      "source": "CONTRIBUTING.md \"Adding a listed extension\" steps 3 and 4"
+    },
+    {
+      "property": "D-STATUS-NOT-REVIEW",
+      "reason": "stated; stable means two adopters, self-reported; DCO is an agreement",
+      "false_friend": true,
+      "provenance": "documented",
+      "source": "docs/design.md \"Versioning and lifecycle\""
+    },
+    {
+      "property": "D-NEGOTIATION-STALE-MAJOR",
+      "reason": "stated by maintainer ruling (2026-10); cached subject majors may be stale after a major release until the isolate is recycled; a non-OK read of catalog.json is cached as empty the same way",
+      "false_friend": false,
+      "provenance": "documented",
+      "source": "maintainer ruling, 2026-10"
+    },
+    {
+      "property": "D-REPO-CODE-RUNS",
+      "reason": "stated; adapter modules and scripts run with the build's rights",
+      "false_friend": false,
+      "provenance": "documented",
+      "source": "scripts/lib/adapters.mjs header"
+    }
+  ],
+  "attack_classes": [
+    "change-published-file",
+    "harm-consumers-with-a-file",
+    "obtain-credential",
+    "reach-shell",
+    "use-issues-write-token",
+    "appear-endorsed",
+    "inject-markup-or-links",
+    "exhaust-worker",
+    "open-redirect",
+    "wrong-iri-answer",
+    "steer-an-agent"
+  ],
+  "downstream_responsibilities": [
+    "before the launch, do not reference catalogue files from production data",
+    "name the alias in stored data; use the exact version for audits",
+    "cache or bundle contexts; give the JSON-LD loader a timeout and host allow-list",
+    "limit $ref resolution to datamodels.jp; bound pattern evaluation, size and import depth",
+    "escape text before rendering; never let an agent follow it as an instruction",
+    "decide which attributes are personal data and protect them",
+    "validate data in your own pipeline; the validate tool is advisory",
+    "ignore unknown fields in catalog.json",
+    "treat node models and listed extensions as other people's claims",
+    "to verify bytes, compare with the release snapshot in the repository",
+    "follow 302 and 303 redirects from /ns/*",
+    "expect 429 after 100 requests a minute from one address",
+    "operator keeps the BIC rule and runs check:live after a deploy",
+    "operator keeps datamodels.jp registered and the zone in the same account",
+    "operator keeps Workers Builds on main, previews only for own branches, preview_urls true",
+    "operator keeps RATE_LIMIT equal to both MCP_LIMITER declarations",
+    "operator keeps models.geonicdb.com detached",
+    "at the launch, set prerelease: false",
+    "merge only after the pull-request check is green"
+  ],
+  "known_misuse": [
+    {
+      "pattern": "pinning a pre-release exact version and its hash for integrity",
+      "why_unsafe": "**Pinning a pre-release exact version for integrity.** Looks like: storing `v1.0.0` and its hash before the launch. Why unsafe: the current version may still be corrected. Instead: wait for the launch, or keep your own copy (`D-PRERELEASE-CORRECTIONS`).",
+      "instead": "wait for the launch or keep your own copy"
+    },
+    {
+      "pattern": "fetching contexts on every request without a cache",
+      "why_unsafe": "**Fetching contexts on every request without a cache.** Looks like: a JSON-LD processor with the default network loader in a hot path. Why unsafe: availability and latency then depend on datamodels.jp. Instead: cache or bundle (§1.13).",
+      "instead": "cache or bundle contexts"
+    },
+    {
+      "pattern": "reading valid: true as safe",
+      "why_unsafe": "**Reading `valid: true` as \"safe\".** Looks like: storing or rendering an entity because the MCP tool or CI accepted it. Instead: escape and authorise in your own system (`D-VALIDATE-NOT-ASSURANCE`).",
+      "instead": "escape and authorise in your own system"
+    },
+    {
+      "pattern": "reading x-personal-data as a compliance statement",
+      "why_unsafe": "**Reading `x-personal-data` as a compliance statement.** Looks like: skipping a privacy review for attributes without the marker. Instead: decide per attribute (`D-PERSONAL-DATA-MARKER`).",
+      "instead": "decide per attribute"
+    },
+    {
+      "pattern": "trusting an extension's IRIs because the catalogue lists them",
+      "why_unsafe": "**Treating a listing as endorsement.** Looks like: trusting an extension's IRIs because the catalogue lists them. Instead: check the owner's domain (`D-LISTED-CONTENT-UNREVIEWED`).",
+      "instead": "check the owner's domain"
+    },
+    {
+      "pattern": "an agent acting on an instruction found in catalogue text",
+      "why_unsafe": "**Letting an agent follow catalogue text.** Looks like: an agent that reads a description through MCP and acts on an instruction in it. Instead: treat answers as data (`D-AGENT-TEXT`).",
+      "instead": "treat answers as data"
+    },
+    {
+      "pattern": "recording the alias as the definition used for a decision",
+      "why_unsafe": "**Using the alias for an audit.** Looks like: recording `v1.jsonld` as the definition used for a decision. Instead: record the exact version.",
+      "instead": "record the exact version"
+    }
+  ],
+  "known_non_findings": [
+    {
+      "reported_as": "Access-Control-Allow-Origin: * on every response",
+      "why_safe": "Covers published-files, mcp-server; symptom 'cors-misconfiguration'. Exact-match conditions (§1.15): the response is a published file or an MCP answer; no cookie or credential is involved.",
+      "cites": "properties_not_provided[5]",
+      "suppression": "a published file or an MCP answer; no cookie or credential involved"
+    },
+    {
+      "reported_as": "the MCP endpoint accepts requests without a token",
+      "why_safe": "Covers mcp-server; symptom 'missing-authentication'. Exact-match conditions (§1.15): the request uses one of the four read-only tools.",
+      "cites": "properties_not_provided[6]",
+      "suppression": "one of the four read-only tools"
+    },
+    {
+      "reported_as": "/ns/ redirects, so it is an open redirect",
+      "why_safe": "Covers iri-negotiation; symptom 'open-redirect'. Exact-match conditions (§1.15): the `Location` is a same-origin path: the 303 to `/vocab/<subject>/v<major>.jsonld` or a 302 generated into `_redirects` from `models/`.",
+      "cites": "properties_provided[9]",
+      "suppression": "Location is a same-origin path: the 303 to /vocab/<subject>/v<major>.jsonld or a generated 302"
+    },
+    {
+      "reported_as": "a v1.0.0 file changed after it was published",
+      "why_safe": "Covers published-files; symptom 'integrity-change'. Exact-match conditions (§1.15): `node.yaml` had `prerelease: true` on both the base branch and the change; the file belongs to the subject's current version.",
+      "cites": "properties_not_provided[0]",
+      "suppression": "prerelease: true on the base branch and the change; the file belongs to the subject's current version"
+    },
+    {
+      "reported_as": "the limit can be exceeded from several locations or addresses, or hosted-connector users block each other",
+      "why_safe": "Covers mcp-server; symptom 'rate-limit-bypass'. Exact-match conditions (§1.15): the requests come from several Cloudflare locations, several /64 blocks, or one provider's shared addresses.",
+      "cites": "properties_not_provided[8]",
+      "suppression": "several Cloudflare locations, several /64 blocks, or one provider's shared addresses"
+    },
+    {
+      "reported_as": "Browser Integrity Check disabled on machine paths and /mcp",
+      "why_safe": "Covers published-files, mcp-server; symptom 'missing-bot-protection'. Exact-match conditions (§1.15): the path is in the zone rule's expression.",
+      "cites": "properties_not_provided[7]",
+      "suppression": "the path is in the zone rule's expression"
+    }
+  ],
+  "dispositions": [
+    "valid",
+    "valid_hardening",
+    "out_of_model_trusted_input",
+    "out_of_model_adversary",
+    "out_of_model_unsupported_component",
+    "out_of_model_non_default_build",
+    "by_design_disclaimed",
+    "known_non_finding",
+    "model_gap"
+  ],
+  "open_questions": []
+}

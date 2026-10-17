@@ -1,0 +1,972 @@
+# threat-model.yaml — derived index; the prose threat model (threat-model.md) is canonical.
+schema: threat-model-sidecar/v2
+project: datamodels
+prose_version: "threat-model.md@sha256:271c65356fed88f3f4a69419e8c999c6a64a971a0d117152da5417999e6c7f26"
+model_status: accepted
+triage_policy: strict
+confidence: {documented: 198, maintainer: 64, inferred: 0, assumption: 0}
+
+generation:
+  model: "Claude Opus 5.5 (claude-opus-5-5)"
+  effort: session default
+  plugins:
+    - threat-model
+    - threat-model-recon
+    - threat-model-surface
+    - threat-model-interview
+    - threat-model-authoring
+    - threat-model-backtest
+    - threat-model-sidecar
+
+components:
+  - name: published-files
+    scope: in
+    reachability_precondition: "concerns bytes or headers that https://datamodels.jp serves for a URL in the URL scheme of docs/design.md, at a deployed commit"
+    provenance: {kind: documented, source: "docs/design.md \"URL scheme and hosting contract\""}
+  - name: iri-negotiation
+    scope: in
+    reachability_precondition: "reachable with a request to a path under /ns/"
+    provenance: {kind: documented, source: "worker/index.mjs header comment"}
+  - name: mcp-server
+    scope: in
+    reachability_precondition: "reachable with one POST /mcp request of at most 64 KiB"
+    provenance: {kind: documented, source: "worker/mcp.mjs header comment"}
+  - name: build-validation
+    scope: in
+    reachability_precondition: "reachable from files a contributor can put in a pull request, and changes what is published or lets a broken file through"
+    provenance: {kind: documented, source: "scripts/build.mjs header comment"}
+  - name: listings
+    scope: in
+    reachability_precondition: "reachable from an extension file or a node's catalog.json and reaches a published page, catalog.json or an MCP answer"
+    provenance: {kind: documented, source: "scripts/lib/extensions.mjs header; nodes.yaml header comment"}
+  - name: supply-chain
+    scope: in
+    reachability_precondition: "lets someone without merge rights change what is deployed, or obtain a credential"
+    provenance: {kind: documented, source: "docs/deployment.md \"Cloudflare Workers Builds watches this repository and deploys main\""}
+  - name: site-prose
+    scope: out
+    reason: "the prose of the VitePress pages is out of scope except where it states a promise, per §1.3"
+    provenance: {kind: maintainer, date: "2026-10"}
+  - name: toolkit
+    scope: out
+    reason: "datamodels-toolkit is a sibling model in its own repository; a dependency here, per §1.3 and §1.9"
+    provenance: {kind: maintainer, date: "2026-10"}
+  - name: geonicdb-export-cli
+    scope: out
+    reason: "adapters/geonicdb/export.mjs is a command a user runs locally; not part of the build, per §1.3"
+    provenance: {kind: maintainer, date: "2026-10"}
+  - name: dev-tools
+    scope: out
+    reason: "tests and local-only commands do not run in the deployed catalogue, per §1.3"
+    provenance: {kind: maintainer, date: "2026-10"}
+  - name: node-sites
+    scope: out
+    reason: "other people's catalogues; only the reviewed snapshot is in scope (listings), per §1.3"
+    provenance: {kind: documented, source: "nodes.yaml header comment: \"so what they publish is reviewed before it appears on datamodels.jp\""}
+
+host_side_effects:
+  - effect: outbound-network-worker
+    stance: absent
+    components: [iri-negotiation, mcp-server]
+    conditions: "the Worker calls only env.ASSETS.fetch and the rate-limit binding; grep -n \"fetch(\" worker/*.mjs"
+    provenance: {kind: maintainer, date: "2026-10"}
+  - effect: storage-writes-worker
+    stance: absent
+    components: [iri-negotiation, mcp-server]
+    conditions: "wrangler.jsonc declares no KV, D1, R2 or Durable Object binding"
+    provenance: {kind: maintainer, date: "2026-10"}
+  - effect: logs
+    stance: present
+    components: [mcp-server, iri-negotiation]
+    conditions: "console.error on internal failures and limiter errors; Workers observability records invocations"
+    provenance: {kind: maintainer, date: "2026-10"}
+  - effect: outbound-network-production-build
+    stance: absent
+    components: [build-validation]
+    conditions: "build:deploy runs datamodels check --offline; npm ci reaches the npm registry"
+    provenance: {kind: maintainer, date: "2026-10"}
+  - effect: outbound-network-pull-request-check
+    stance: present
+    components: [build-validation, supply-chain]
+    conditions: "datamodels check --base fetches the live site, remote $ref schemas and remote contexts from the GitHub runner"
+    provenance: {kind: maintainer, date: "2026-10"}
+  - effect: outbound-network-maintainer-commands
+    stance: present
+    components: [listings, supply-chain]
+    conditions: "npm run nodes fetches node indexes; npm run check:live fetches datamodels.jp"
+    provenance: {kind: documented, source: "scripts/fetch-nodes.mjs header: \"read the catalog.json of every node in nodes.yaml\""}
+  - effect: child-processes
+    stance: present
+    components: [build-validation]
+    conditions: "scripts/build.mjs spawns scripts/validate-models.mjs; the toolkit spawns git for --base"
+    provenance: {kind: maintainer, date: "2026-10"}
+  - effect: repository-code-loaded-at-build
+    stance: present
+    components: [build-validation]
+    conditions: "scripts/lib/adapters.mjs imports every adapters/<name>/index.mjs"
+    provenance: {kind: documented, source: "scripts/lib/adapters.mjs header: \"finds every adapters/<name>/index.mjs and loads its default export\""}
+
+entry_points:
+  - id: "GET /<static path>"
+    component: published-files
+    parameters:
+      - name: request_path
+        attacker_controllable: true
+        control_kinds: [resource-name]
+        caller_must_enforce: "none — P-IRI-RESOLVES"
+        provenance: {kind: documented, source: "wrangler.jsonc assets \"not_found_handling\": \"404-page\""}
+      - name: request_headers
+        attacker_controllable: true
+        control_kinds: [data]
+        caller_must_enforce: "none — P-HEADERS"
+        provenance: {kind: documented, source: "public/_headers header comment: \"Nothing here is private\""}
+  - id: "GET /ns/<subject>/<Term>"
+    component: iri-negotiation
+    parameters:
+      - name: path
+        attacker_controllable: true
+        control_kinds: [resource-name]
+        caller_must_enforce: "none — P-NEGOTIATION-FALLBACK"
+        provenance: {kind: documented, source: "worker/index.mjs header: \"an unknown /ns/ path stays a 404\""}
+      - name: accept_header
+        attacker_controllable: true
+        control_kinds: [data]
+        caller_must_enforce: "none — P-NEGOTIATION-FALLBACK"
+        provenance: {kind: documented, source: "worker/index.mjs prefersJsonLd comment: \"a tie goes to the page\""}
+      - name: method
+        attacker_controllable: true
+        control_kinds: [data]
+        caller_must_enforce: "none — P-NEGOTIATION-FALLBACK"
+        provenance: {kind: documented, source: "worker/index.mjs comment: \"Only reads are negotiated\""}
+      - name: catalog_json_asset
+        attacker_controllable: false
+        control_kinds: [data]
+        obligation_id: keep-build-reviewed
+        caller_must_enforce: "only reviewed, merged commits are built"
+        provenance: {kind: documented, source: "worker/index.mjs comment: \"The major version of each subject, from catalog.json\""}
+  - id: "POST /mcp"
+    component: mcp-server
+    parameters:
+      - name: method
+        attacker_controllable: true
+        control_kinds: [data]
+        caller_must_enforce: "none — P-MCP-BOUNDED"
+        provenance: {kind: documented, source: "worker/mcp.mjs handleMcp: \"send JSON-RPC messages with POST\""}
+      - name: body_bytes
+        attacker_controllable: true
+        control_kinds: [size]
+        caller_must_enforce: "none — P-MCP-BOUNDED"
+        provenance: {kind: documented, source: "worker/mcp.mjs MAX_BODY_BYTES comment"}
+      - name: content_type
+        attacker_controllable: true
+        control_kinds: [data]
+        caller_must_enforce: "none — P-MCP-BOUNDED"
+        provenance: {kind: documented, source: "worker/mcp.mjs handleMcp: \"Content-Type must be application/json\""}
+      - name: jsonrpc_message
+        attacker_controllable: true
+        control_kinds: [data, serialized-state]
+        caller_must_enforce: "none — P-MCP-BOUNDED"
+        provenance: {kind: documented, source: "worker/mcp.mjs header: \"a batch is refused\""}
+      - name: mcp_headers
+        attacker_controllable: true
+        control_kinds: [data]
+        caller_must_enforce: "none — P-MCP-STATELESS"
+        provenance: {kind: documented, source: "worker/mcp.mjs header: \"Stateless and without login\""}
+      - name: cf_connecting_ip
+        attacker_controllable: false
+        control_kinds: [data]
+        caller_must_enforce: "none — P-MCP-STATELESS"
+        provenance: {kind: documented, source: "worker/limit.mjs header: \"the client's address is the only key\""}
+  - id: search_models
+    component: mcp-server
+    parameters:
+      - name: query
+        attacker_controllable: true
+        control_kinds: [data, size]
+        caller_must_enforce: "none — P-MCP-BOUNDED"
+        provenance: {kind: documented, source: "worker/mcp.mjs registerTool('search_models') input schema"}
+      - name: limit_include_nodes
+        attacker_controllable: true
+        control_kinds: [size, data]
+        caller_must_enforce: "none — P-MCP-BOUNDED"
+        provenance: {kind: documented, source: "worker/mcp.mjs registerTool('search_models') input schema"}
+  - id: get_model
+    component: mcp-server
+    parameters:
+      - name: model
+        attacker_controllable: true
+        control_kinds: [resource-name]
+        caller_must_enforce: "none — P-MCP-NO-OUTBOUND"
+        provenance: {kind: documented, source: "worker/mcp.mjs findModel comment"}
+      - name: example_include_schema
+        attacker_controllable: true
+        control_kinds: [data]
+        caller_must_enforce: "none — P-MCP-BOUNDED"
+        provenance: {kind: documented, source: "worker/mcp.mjs registerTool('get_model') input schema"}
+  - id: find_attribute
+    component: mcp-server
+    parameters:
+      - name: query_limit
+        attacker_controllable: true
+        control_kinds: [data, size]
+        caller_must_enforce: "none — P-MCP-BOUNDED"
+        provenance: {kind: documented, source: "worker/mcp.mjs registerTool('find_attribute') input schema"}
+  - id: validate
+    component: mcp-server
+    parameters:
+      - name: model
+        attacker_controllable: true
+        control_kinds: [resource-name]
+        caller_must_enforce: "none — P-MCP-NO-OUTBOUND"
+        provenance: {kind: documented, source: "worker/mcp.mjs schema comment: \"A published schema of the catalog, by its URL\""}
+      - name: entity
+        attacker_controllable: true
+        control_kinds: [data, size, object-topology]
+        caller_must_enforce: "none — P-MCP-BOUNDED"
+        provenance: {kind: documented, source: "worker/validate.mjs shape comment"}
+      - name: form
+        attacker_controllable: true
+        control_kinds: [data]
+        caller_must_enforce: "none — P-MCP-BOUNDED"
+        provenance: {kind: documented, source: "worker/mcp.mjs registerTool('validate') input schema"}
+  - id: pull-request
+    component: build-validation
+    parameters:
+      - name: subject_context
+        attacker_controllable: true
+        control_kinds: [data]
+        obligation_id: review-model-files
+        caller_must_enforce: "review; CI checks coverage, imports and core terms"
+        provenance: {kind: documented, source: "docs/design.md \"CI on every pull request validates\""}
+      - name: schema_json
+        attacker_controllable: true
+        control_kinds: [data, size, resource-name]
+        obligation_id: review-schema-refs
+        caller_must_enforce: "review of $ref targets, size and pattern expressions"
+        provenance: {kind: maintainer, date: "2026-10"}
+      - name: examples
+        attacker_controllable: true
+        control_kinds: [data]
+        obligation_id: review-examples
+        caller_must_enforce: "review of content (real places, invented people)"
+        provenance: {kind: documented, source: "site/en/guide/rules.md \"Real and fictional\""}
+      - name: text_files
+        attacker_controllable: true
+        control_kinds: [data, x-agent-text]
+        obligation_id: review-text
+        caller_must_enforce: "review of wording; markup escaped on pages"
+        provenance: {kind: documented, source: "scripts/lib/models.mjs mdText comment"}
+      - name: mapping_files
+        attacker_controllable: true
+        control_kinds: [data, size]
+        obligation_id: review-mappings
+        caller_must_enforce: "review; CI checks structure and via loops"
+        provenance: {kind: documented, source: "README \"Converting a published list\""}
+      - name: adopters
+        attacker_controllable: true
+        control_kinds: [data]
+        obligation_id: review-adopters
+        caller_must_enforce: "the reviewer of a promotion to stable checks that adopters are real and independent"
+        provenance: {kind: documented, source: "docs/design.md \"Versioning and lifecycle\""}
+      - name: version_and_snapshots
+        attacker_controllable: true
+        control_kinds: [data]
+        obligation_id: maintainer-release
+        caller_must_enforce: "maintainer runs npx datamodels release; CI compares snapshots with the base branch"
+        provenance: {kind: documented, source: "README \"Adding or changing a model\" step 3"}
+      - name: node_yaml
+        attacker_controllable: true
+        control_kinds: [data]
+        obligation_id: review-node-yaml
+        caller_must_enforce: "review; the toolkit refuses prerelease going back to true"
+        provenance: {kind: documented, source: "README \"Pre-release exception\""}
+      - name: adapter_code
+        attacker_controllable: true
+        control_kinds: [callback-code]
+        obligation_id: review-repo-code
+        caller_must_enforce: "review: the build imports and runs repository code"
+        provenance: {kind: documented, source: "scripts/lib/adapters.mjs header"}
+      - name: scripts_worker_theme_wrangler
+        attacker_controllable: true
+        control_kinds: [callback-code]
+        obligation_id: review-repo-code
+        caller_must_enforce: "review: the build imports and runs repository code"
+        provenance: {kind: documented, source: ".github/workflows/check-worker.yml steps \"Test\" and \"Validate, build and dry-run deploy\""}
+      - name: package_files
+        attacker_controllable: true
+        control_kinds: [callback-code, resource-name]
+        obligation_id: review-dependencies
+        caller_must_enforce: "review of dependency changes; npm ci installs exactly the lockfile"
+        provenance: {kind: maintainer, date: "2026-10"}
+  - id: listing-files
+    component: listings
+    parameters:
+      - name: extension_yaml
+        attacker_controllable: true
+        control_kinds: [data]
+        obligation_id: review-listing-representation
+        caller_must_enforce: "review checks only that the reporter represents the organisation"
+        provenance: {kind: documented, source: "CONTRIBUTING.md \"Adding a listed extension\" step 4"}
+      - name: nodes_yaml
+        attacker_controllable: true
+        control_kinds: [resource-name]
+        obligation_id: review-node-list
+        caller_must_enforce: "nodes are added only by a reviewed pull request"
+        provenance: {kind: documented, source: "scripts/fetch-nodes.mjs comment: \"Nodes are listed only by a reviewed pull request (#219)\""}
+      - name: node_catalog_json
+        attacker_controllable: true
+        control_kinds: [data, size]
+        obligation_id: review-node-snapshot
+        caller_must_enforce: "maintainer reviews the snapshot diff"
+        provenance: {kind: documented, source: "scripts/lib/nodes.mjs cleanText comment"}
+  - id: ci-workflows
+    component: supply-chain
+    parameters:
+      - name: pull_request_description
+        attacker_controllable: true
+        control_kinds: [data]
+        caller_must_enforce: "none — P-CI-TOKENS-SCOPED"
+        provenance: {kind: documented, source: ".github/workflows/check-languages.yml comment: \"passed as data in an environment variable\""}
+      - name: issue_title_and_body
+        attacker_controllable: true
+        control_kinds: [data]
+        caller_must_enforce: "none — P-CI-TOKENS-SCOPED"
+        provenance: {kind: documented, source: ".github/workflows/similar-models.yml header: \"nothing from the issue reaches a shell command\""}
+      - name: pull_request_merge_commit
+        attacker_controllable: true
+        control_kinds: [callback-code]
+        caller_must_enforce: "none — P-CI-TOKENS-SCOPED"
+        provenance: {kind: documented, source: ".github/workflows/check-worker.yml permissions: contents: read"}
+  - id: workers-builds
+    component: supply-chain
+    parameters:
+      - name: main_commit
+        attacker_controllable: false
+        control_kinds: [callback-code]
+        obligation_id: keep-build-reviewed
+        caller_must_enforce: "only reviewed, merged commits are built"
+        provenance: {kind: documented, source: "docs/deployment.md \"deploys main\""}
+      - name: dashboard_settings
+        attacker_controllable: false
+        control_kinds: [data]
+        obligation_id: operator-keeps-build-settings
+        caller_must_enforce: "operator keeps the Workers Builds settings"
+        provenance: {kind: documented, source: "docs/deployment.md \"Dashboard settings on the datamodels Worker\""}
+      - name: zone_bic_rule
+        attacker_controllable: false
+        control_kinds: [data]
+        obligation_id: operator-keeps-zone-rule
+        caller_must_enforce: "operator keeps the zone configuration rule"
+        provenance: {kind: documented, source: "docs/deployment.md \"Machine-readable files: no Browser Integrity Check\""}
+  - id: consumer-processing
+    component: published-files
+    parameters:
+      - name: published_files_as_input
+        attacker_controllable: true
+        control_kinds: [data, size, resource-name]
+        obligation_id: bound-consumer-processors
+        caller_must_enforce: "the consumer bounds its JSON-LD loader and schema validator"
+        provenance: {kind: maintainer, date: "2026-10"}
+
+contract_dimensions:
+  - {component: published-files, dimension: numeric-domain, status: claimed, conditions: "semantic versions; alias vX points to the latest X.y.z", property_id: P-ALIAS-ADDITIVE, provenance: {kind: documented, source: "docs/design.md \"URL scheme and hosting contract\" item 6"}}
+  - {component: published-files, dimension: failure-atomicity, status: disclaimed, conditions: "a deploy replaces the whole tree; no guarantee during a deploy", property_id: D-NO-AVAILABILITY-SLA, provenance: {kind: maintainer, date: "2026-10"}}
+  - {component: published-files, dimension: recursive-cyclic-topology, status: disclaimed, conditions: "no guard for consumers against deep import chains or large documents", property_id: D-CONTRIBUTED-FILE-LIMITS, provenance: {kind: maintainer, date: "2026-10"}}
+  - {component: published-files, dimension: callback-execution, status: not-applicable, conditions: "static files run no code on the server", provenance: {kind: documented, source: "wrangler.jsonc run_worker_first comment"}}
+  - {component: published-files, dimension: serialization-reconstruction, status: claimed, conditions: "files labelled by Content-Type", property_id: P-HEADERS, provenance: {kind: documented, source: "docs/design.md \"URL scheme and hosting contract\" item 2"}}
+  - {component: published-files, dimension: reference-lifecycle, status: claimed, conditions: "term IRIs keep their meaning and keep resolving", property_id: P-IRI-RESOLVES, provenance: {kind: documented, source: "docs/design.md \"URL scheme and hosting contract\" items 3 and 4"}}
+  - {component: published-files, dimension: concurrency-reentrancy, status: not-applicable, conditions: "read-only files", provenance: {kind: documented, source: "public/_headers header comment"}}
+  - {component: published-files, dimension: resource-complexity, status: disclaimed, conditions: "no size or shape limit on what consumers download and process", property_id: D-CONTRIBUTED-FILE-LIMITS, provenance: {kind: maintainer, date: "2026-10"}}
+  - {component: published-files, dimension: x-version-immutability, status: claimed, conditions: "exact-version context, vocabulary and schema files, after the launch", property_id: P-PUBLISHED-IMMUTABLE, provenance: {kind: documented, source: "docs/design.md \"URL scheme and hosting contract\" item 1"}}
+  - {component: iri-negotiation, dimension: numeric-domain, status: claimed, conditions: "q values parsed as numbers; non-finite counts as 0", property_id: P-NEGOTIATION-FALLBACK, provenance: {kind: documented, source: "worker/index.mjs qualities comment"}}
+  - {component: iri-negotiation, dimension: failure-atomicity, status: claimed, conditions: "any error falls back to the static answer", property_id: P-NEGOTIATION-FALLBACK, provenance: {kind: documented, source: "worker/index.mjs comment: \"Any error below falls back to the static answer\""}}
+  - {component: iri-negotiation, dimension: recursive-cyclic-topology, status: not-applicable, conditions: "no recursive input", provenance: {kind: documented, source: "worker/index.mjs header"}}
+  - {component: iri-negotiation, dimension: callback-execution, status: not-applicable, conditions: "no caller-supplied code", provenance: {kind: documented, source: "worker/index.mjs header"}}
+  - {component: iri-negotiation, dimension: serialization-reconstruction, status: not-applicable, conditions: "reads only catalog.json from the build", provenance: {kind: documented, source: "worker/index.mjs comment: \"from catalog.json (read once per isolate)\""}}
+  - {component: iri-negotiation, dimension: reference-lifecycle, status: disclaimed, conditions: "subject majors cached per isolate; stale after a major release until recycled", property_id: D-NEGOTIATION-STALE-MAJOR, provenance: {kind: maintainer, date: "2026-10"}}
+  - {component: iri-negotiation, dimension: concurrency-reentrancy, status: claimed, conditions: "one shared promise per isolate; a thrown read is dropped and retried; a non-OK read is cached as empty until the isolate is recycled (D-NEGOTIATION-STALE-MAJOR)", property_id: P-NEGOTIATION-FALLBACK, provenance: {kind: documented, source: "worker/index.mjs subjectMajor"}}
+  - {component: iri-negotiation, dimension: resource-complexity, status: claimed, conditions: "linear in the length of the Accept header", property_id: P-NEGOTIATION-FALLBACK, provenance: {kind: maintainer, date: "2026-10"}}
+  - {component: mcp-server, dimension: numeric-domain, status: claimed, conditions: "64 KiB, 1,000 keys, 64 levels, 200-character text, limit 1-50", property_id: P-MCP-BOUNDED, provenance: {kind: documented, source: "worker/mcp.mjs validate tool description"}}
+  - {component: mcp-server, dimension: failure-atomicity, status: claimed, conditions: "stateless; failed reads are not cached", property_id: P-MCP-STATELESS, provenance: {kind: documented, source: "worker/mcp.mjs comment: \"A failed read is not kept\""}}
+  - {component: mcp-server, dimension: recursive-cyclic-topology, status: claimed, conditions: "depth checked iteratively before validation", property_id: P-MCP-BOUNDED, provenance: {kind: documented, source: "worker/mcp.mjs validate: \"shape() has bounded the depth\""}}
+  - {component: mcp-server, dimension: callback-execution, status: not-applicable, conditions: "tool arguments are data; no caller code runs", provenance: {kind: documented, source: "worker/mcp.mjs READ_ONLY annotations"}}
+  - {component: mcp-server, dimension: serialization-reconstruction, status: claimed, conditions: "entity parsed once; own __proto__ passed on as data", property_id: P-MCP-BOUNDED, provenance: {kind: documented, source: "worker/mcp.mjs validate input schema comment"}}
+  - {component: mcp-server, dimension: reference-lifecycle, status: claimed, conditions: "caches hold only public files, per isolate", property_id: P-MCP-STATELESS, provenance: {kind: documented, source: "worker/mcp.mjs comment: \"read from the assets once per isolate\""}}
+  - {component: mcp-server, dimension: concurrency-reentrancy, status: claimed, conditions: "a fresh server per request", property_id: P-MCP-STATELESS, provenance: {kind: documented, source: "worker/mcp.mjs header: \"each request gets a fresh server from the factory\""}}
+  - {component: mcp-server, dimension: resource-complexity, status: claimed, conditions: "per-request CPU in milliseconds inside the limits", property_id: P-MCP-BOUNDED, provenance: {kind: documented, source: "worker/validate.mjs header"}}
+  - {component: mcp-server, dimension: x-agent-instructions, status: disclaimed, conditions: "answers carry contributed and listed text unchanged", property_id: D-AGENT-TEXT, provenance: {kind: maintainer, date: "2026-10"}}
+  - {component: build-validation, dimension: numeric-domain, status: claimed, conditions: "semantic versions per subject; every schema states x-version", property_id: P-EXAMPLES-CONFORM, provenance: {kind: documented, source: "scripts/lib/catalog-rules.mjs comment: \"Every schema says its version\""}}
+  - {component: build-validation, dimension: failure-atomicity, status: claimed, conditions: "validation runs before anything is written to dist/", property_id: P-EXAMPLES-CONFORM, provenance: {kind: documented, source: "scripts/build.mjs comment: \"Validate before anything is published\""}}
+  - {component: build-validation, dimension: recursive-cyclic-topology, status: claimed, conditions: "contexts import only catalogue contexts at a version that exists; via cycles fail", property_id: P-CONTEXT-IMPORTS-CATALOG, provenance: {kind: documented, source: "scripts/lib/catalog-rules.mjs comment: \"what that URL really serves must exist\""}}
+  - {component: build-validation, dimension: callback-execution, status: disclaimed, conditions: "adapter modules and scripts run with the build's rights", property_id: D-REPO-CODE-RUNS, provenance: {kind: documented, source: "scripts/lib/adapters.mjs header"}}
+  - {component: build-validation, dimension: serialization-reconstruction, status: claimed, conditions: "schemas reference only catalogue schemas or pointers inside the file; kept by review, not by a CI rule", property_id: P-REFS-CATALOG-ONLY, provenance: {kind: maintainer, date: "2026-10"}}
+  - {component: build-validation, dimension: reference-lifecycle, status: claimed, conditions: "a published version without a snapshot fails --all-released", property_id: P-PUBLISHED-IMMUTABLE, provenance: {kind: documented, source: "README \"Adding or changing a model\" step 3"}}
+  - {component: build-validation, dimension: concurrency-reentrancy, status: not-applicable, conditions: "a single build process per run", provenance: {kind: documented, source: "scripts/build.mjs header"}}
+  - {component: build-validation, dimension: resource-complexity, status: disclaimed, conditions: "no limit on the size of contributed files", property_id: D-CONTRIBUTED-FILE-LIMITS, provenance: {kind: maintainer, date: "2026-10"}}
+  - {component: listings, dimension: numeric-domain, status: claimed, conditions: "node text cut to 200 characters; versions X.Y.Z only", property_id: P-OUTSIDER-TEXT-PLAIN, provenance: {kind: documented, source: "scripts/lib/nodes.mjs cleanText comment"}}
+  - {component: listings, dimension: failure-atomicity, status: claimed, conditions: "an unreachable node keeps its previous entry; snapshot written then renamed", property_id: P-OUTSIDER-TEXT-PLAIN, provenance: {kind: documented, source: "scripts/fetch-nodes.mjs header"}}
+  - {component: listings, dimension: recursive-cyclic-topology, status: not-applicable, conditions: "flat records", provenance: {kind: documented, source: "scripts/lib/nodes.mjs nodeEntry"}}
+  - {component: listings, dimension: callback-execution, status: not-applicable, conditions: "listings are data", provenance: {kind: documented, source: "scripts/lib/extensions.mjs header"}}
+  - {component: listings, dimension: serialization-reconstruction, status: claimed, conditions: "only known fields kept; text and URLs cleaned", property_id: P-OUTSIDER-TEXT-PLAIN, provenance: {kind: documented, source: "scripts/lib/extensions.mjs comment: \"plain text and plain URLs only\""}}
+  - {component: listings, dimension: reference-lifecycle, status: disclaimed, conditions: "a listed extension's IRIs and contexts are the owner's", property_id: D-LISTED-CONTENT-UNREVIEWED, provenance: {kind: documented, source: "CONTRIBUTING.md \"Adding a listed extension\" step 3"}}
+  - {component: listings, dimension: concurrency-reentrancy, status: not-applicable, conditions: "maintainer command, run once", provenance: {kind: documented, source: "scripts/fetch-nodes.mjs header"}}
+  - {component: listings, dimension: resource-complexity, status: claimed, conditions: "15-second timeout per node; text cut to 200 characters", property_id: P-OUTSIDER-TEXT-PLAIN, provenance: {kind: documented, source: "scripts/fetch-nodes.mjs TIMEOUT"}}
+  - {component: supply-chain, dimension: numeric-domain, status: not-applicable, conditions: "no numeric input", provenance: {kind: documented, source: ".github/workflows/check-worker.yml"}}
+  - {component: supply-chain, dimension: failure-atomicity, status: claimed, conditions: "org ruleset main-protection requires one approval, last-push approval, code-owner review and resolved threads, with bypass for a repository role and one team; org ruleset security-suite requires its Security Suite workflow; no check from this repository's own workflows is required, so the --base comparison does not block a merge; after the launch a merged change to a published file is VALID however it got in", property_id: P-PUBLISHED-IMMUTABLE, provenance: {kind: maintainer, date: "2026-10"}}
+  - {component: supply-chain, dimension: recursive-cyclic-topology, status: not-applicable, conditions: "no recursive input", provenance: {kind: documented, source: ".github/workflows/check-worker.yml"}}
+  - {component: supply-chain, dimension: callback-execution, status: claimed, conditions: "pull-request code runs only with read-only tokens; deploy rights only in Workers Builds", property_id: P-NO-DEPLOY-CREDENTIAL-IN-GITHUB, provenance: {kind: documented, source: "docs/deployment.md \"no credential lives in GitHub\""}}
+  - {component: supply-chain, dimension: serialization-reconstruction, status: claimed, conditions: "untrusted text read as data, never interpolated into a shell command", property_id: P-CI-TOKENS-SCOPED, provenance: {kind: documented, source: ".github/workflows/similar-models.yml header"}}
+  - {component: supply-chain, dimension: reference-lifecycle, status: not-applicable, conditions: "no long-lived objects", provenance: {kind: documented, source: ".github/workflows/check-worker.yml"}}
+  - {component: supply-chain, dimension: concurrency-reentrancy, status: not-applicable, conditions: "GitHub and Cloudflare serialise runs", provenance: {kind: documented, source: ".github/workflows/dist-diff.yml concurrency block"}}
+  - {component: supply-chain, dimension: resource-complexity, status: not-applicable, conditions: "runner time limits bound every job", provenance: {kind: documented, source: ".github/workflows/check-worker.yml timeout-minutes: 15"}}
+
+outputs:
+  - component: published-files
+    channel: exact-version-files
+    taint: constrained
+    taint_provenance: {kind: documented, source: "README \"Pre-release exception, until the official launch\""}
+    invariants:
+      - id: exact-version-bytes-kept
+        statement: "after the launch, exact-version files keep their bytes"
+        property_id: P-PUBLISHED-IMMUTABLE
+        provenance: {kind: documented, source: "docs/design.md \"URL scheme and hosting contract\" item 1"}
+    downstream_must_not_assume:
+      - id: never-changed-before-launch
+        statement: "that the files never changed before the launch, or that they are signed"
+        provenance: {kind: documented, source: "site/en/guide/urls.md \"Do not reference them from production data before the launch\""}
+  - component: published-files
+    channel: version-aliases
+    taint: constrained
+    taint_provenance: {kind: documented, source: "public/_headers comment: \"Aliases (vN.jsonld) advance to the latest compatible version\""}
+    invariants: []
+    downstream_must_not_assume:
+      - id: alias-bytes-stable
+        statement: "that alias bytes stay the same"
+        provenance: {kind: documented, source: "public/_headers comment on aliases"}
+  - component: published-files
+    channel: unversioned-files
+    taint: constrained
+    taint_provenance: {kind: documented, source: "docs/design.md \"Adapters\""}
+    invariants: []
+    downstream_must_not_assume:
+      - id: unversioned-files-stable
+        statement: "that examples, mapping files, adapter files, catalog.json, llms.txt or the MCP index are versioned or immutable"
+        provenance: {kind: documented, source: "docs/design.md \"Adapters\": \"regenerated on every build\""}
+  - component: listings
+    channel: catalog-json-listings
+    taint: constrained
+    taint_provenance: {kind: documented, source: "CONTRIBUTING.md \"Adding a listed extension\" step 3"}
+    invariants:
+      - id: listing-text-plain
+        statement: "listed text is plain text, URLs plain http(s) without credentials"
+        property_id: P-OUTSIDER-TEXT-PLAIN
+        provenance: {kind: documented, source: "scripts/lib/extensions.mjs comment"}
+    downstream_must_not_assume:
+      - id: listing-endorsed
+        statement: "that the catalogue reviewed or endorses listed content, or that a domain belongs to the organisation named"
+        provenance: {kind: documented, source: "CONTRIBUTING.md \"whether the domain is the owner's is not checked\""}
+  - component: published-files
+    channel: text-fields
+    taint: same-as-input
+    taint_provenance: {kind: maintainer, date: "2026-10"}
+    invariants: []
+    downstream_must_not_assume:
+      - id: text-safe
+        statement: "that text is safe to render as HTML or to follow as instructions"
+        provenance: {kind: maintainer, date: "2026-10"}
+  - component: build-validation
+    channel: generated-model-pages
+    taint: sanitized
+    taint_provenance: {kind: documented, source: "scripts/lib/models.mjs mdText comment"}
+    invariants:
+      - id: model-text-escaped
+        statement: "< and { escaped outside code spans"
+        property_id: P-MODEL-TEXT-ESCAPED
+        provenance: {kind: documented, source: "scripts/lib/models.mjs mdText comment"}
+    downstream_must_not_assume:
+      - id: description-links-safe
+        statement: "that a description is free of misleading links"
+        provenance: {kind: documented, source: "scripts/lib/models.mjs mdText comment: \"links and `code` work\""}
+  - component: iri-negotiation
+    channel: ns-redirects
+    taint: constrained
+    taint_provenance: {kind: documented, source: "worker/index.mjs header"}
+    invariants:
+      - id: same-origin-redirect
+        statement: "the Location is a same-origin path"
+        property_id: P-NEGOTIATION-FALLBACK
+        provenance: {kind: documented, source: "worker/index.mjs header"}
+    downstream_must_not_assume:
+      - id: redirect-exact-version
+        statement: "that the 303 target is an exact version; it is the alias"
+        provenance: {kind: documented, source: "worker/index.mjs header: \"/vocab/<subject>/v<major>.jsonld\""}
+  - component: mcp-server
+    channel: mcp-lookup-answers
+    taint: constrained
+    taint_provenance: {kind: documented, source: "worker/mcp.mjs search_models description"}
+    invariants: []
+    downstream_must_not_assume:
+      - id: answers-are-instructions
+        statement: "that answers are instructions, or that node entries are catalogue models"
+        provenance: {kind: documented, source: "worker/mcp.mjs search_models description: \"source\": \"node\""}
+  - component: mcp-server
+    channel: mcp-validate-answer
+    taint: same-as-input
+    taint_provenance: {kind: documented, source: "worker/mcp.mjs validate description"}
+    invariants: []
+    downstream_must_not_assume:
+      - id: valid-means-safe
+        statement: "that valid: true means safe, true, authorised or free of personal data, or that the @context was checked"
+        provenance: {kind: documented, source: "worker/mcp.mjs validate description: \"its @context is not checked\""}
+  - component: mcp-server
+    channel: mcp-error-messages
+    taint: same-as-input
+    taint_provenance: {kind: documented, source: "worker/mcp.mjs findModel"}
+    invariants: []
+    downstream_must_not_assume:
+      - id: errors-constant
+        statement: "that error messages are constant text; they echo the model or query argument"
+        provenance: {kind: documented, source: "worker/mcp.mjs findModel: \"No model\""}
+  - component: published-files
+    channel: response-headers
+    taint: constrained
+    taint_provenance: {kind: documented, source: "public/_headers header comment"}
+    invariants:
+      - id: contract-headers
+        statement: "content types and cache lifetimes per the URL contract"
+        property_id: P-HEADERS
+        provenance: {kind: documented, source: "docs/design.md \"URL scheme and hosting contract\" item 2"}
+    downstream_must_not_assume:
+      - id: cors-restricts
+        statement: "that CORS restricts anything"
+        provenance: {kind: documented, source: "public/_headers header comment"}
+
+adversaries:
+  - name: contributor
+    scope: in
+    capabilities: [any-file-in-pull-request, run-code-in-ci-read-only]
+    excluded_capabilities: [merge, approve-own-pull-request, run-code-in-workers-builds-from-fork, read-secrets]
+    goals: [change-published-file, harm-consumers-with-a-file, obtain-credential]
+    provenance: {kind: documented, source: "CONTRIBUTING.md \"Pull request steps\""}
+  - name: issue-author
+    scope: in
+    capabilities: [write-issue-text]
+    excluded_capabilities: [code-execution, use-workflow-token]
+    goals: [reach-shell, use-issues-write-token]
+    provenance: {kind: documented, source: ".github/workflows/similar-models.yml header"}
+  - name: listing-owner-or-node-operator
+    scope: in
+    capabilities: [write-extension-file-via-pull-request, control-node-catalog-json]
+    excluded_capabilities: [change-catalogue-files, add-markup-to-pages, add-node-without-review]
+    goals: [appear-endorsed, inject-markup-or-links]
+    provenance: {kind: documented, source: "scripts/lib/extensions.mjs header; nodes.yaml header"}
+  - name: anonymous-http-client
+    scope: in
+    capabilities: [any-request, many-addresses]
+    excluded_capabilities: [write-anything, read-non-public-data, bypass-cloudflare]
+    goals: [exhaust-worker, open-redirect, wrong-iri-answer]
+    provenance: {kind: documented, source: "site/en/ai.md \"It needs no login, only reads\""}
+  - name: agent-text-author
+    scope: in
+    capabilities: [text-in-model-files-past-review]
+    excluded_capabilities: [anything-beyond-contributor]
+    goals: [steer-an-agent]
+    provenance: {kind: maintainer, date: "2026-10"}
+  - name: maintainer
+    scope: out
+    capabilities: [merge, release, run-npm-run-nodes]
+    excluded_capabilities: []
+    goals: []
+    provenance: {kind: documented, source: "CONTRIBUTING.md \"Stages and who decides\""}
+  - name: operator-accounts-and-platforms
+    scope: out
+    capabilities: [publish]
+    excluded_capabilities: []
+    goals: []
+    provenance: {kind: maintainer, date: "2026-10"}
+  - name: network-attacker
+    scope: out
+    capabilities: [observe-or-modify-traffic]
+    excluded_capabilities: []
+    goals: []
+    provenance: {kind: maintainer, date: "2026-10"}
+
+dependency_policy:
+  zero_runtime_dependencies: false
+  provenance: {kind: documented, source: "package.json devDependencies"}
+
+dependencies:
+  - name: cloudflare-workers-static-assets
+    relied_on_for: "serving dist/ as built, applying _headers and _redirects"
+    relied_on_properties: [serve-assets-as-built]
+    caller_obligations_acknowledged: []
+    adversary_capabilities_forwarded: [any-request]
+    outputs_consumed: []
+    covered_here: false
+    violation_disposition: "OUT-OF-MODEL: dependency-contract"
+    provenance: {kind: documented, source: "docs/design.md \"Hosting\""}
+  - name: cloudflare-workers-builds
+    relied_on_for: "building main with the configured commands; previews only for branches of this repository (a dashboard setting); holding the deploy credential"
+    relied_on_properties: [build-configured-branch-only]
+    caller_obligations_acknowledged: []
+    adversary_capabilities_forwarded: []
+    outputs_consumed: []
+    covered_here: false
+    violation_disposition: "OUT-OF-MODEL: dependency-contract"
+    provenance: {kind: maintainer, date: "2026-10"}
+  - name: cloudflare-rate-limiting
+    relied_on_for: "counting /mcp requests per key, approximately, per location"
+    relied_on_properties: [approximate-rate-count]
+    caller_obligations_acknowledged: []
+    adversary_capabilities_forwarded: [many-addresses]
+    outputs_consumed: []
+    covered_here: false
+    violation_disposition: "OUT-OF-MODEL: dependency-contract"
+    provenance: {kind: documented, source: "worker/limit.mjs allowed comment"}
+  - name: cloudflare-zone
+    relied_on_for: "custom domain, certificate and the Browser Integrity Check exception"
+    relied_on_properties: [tls-termination, configuration-rules]
+    caller_obligations_acknowledged: []
+    adversary_capabilities_forwarded: []
+    outputs_consumed: []
+    covered_here: false
+    violation_disposition: "OUT-OF-MODEL: dependency-contract"
+    provenance: {kind: documented, source: "wrangler.jsonc routes comment"}
+  - name: aws-route53
+    relied_on_for: "keeping datamodels.jp registered"
+    relied_on_properties: [domain-registration]
+    caller_obligations_acknowledged: []
+    adversary_capabilities_forwarded: []
+    outputs_consumed: []
+    covered_here: false
+    violation_disposition: "OUT-OF-MODEL: dependency-contract"
+    provenance: {kind: documented, source: "docs/design.md \"Decision 1\""}
+  - name: github
+    relied_on_for: "holding main, running CI with the declared permissions, enforcing branch rules, the DCO app; the organisation's required Security Suite workflow also runs on every pull request and is outside this model"
+    relied_on_properties: [workflow-permissions-enforced, branch-rules-enforced]
+    caller_obligations_acknowledged: []
+    adversary_capabilities_forwarded: [any-file-in-pull-request, write-issue-text]
+    outputs_consumed: []
+    covered_here: false
+    violation_disposition: "OUT-OF-MODEL: dependency-contract"
+    provenance: {kind: documented, source: ".github/dco.yml header"}
+  - name: npm-registry-and-lockfile
+    relied_on_for: "delivering the locked packages to CI and Workers Builds"
+    relied_on_properties: [locked-package-integrity]
+    caller_obligations_acknowledged: []
+    adversary_capabilities_forwarded: []
+    outputs_consumed: []
+    covered_here: false
+    violation_disposition: "OUT-OF-MODEL: dependency-contract"
+    provenance: {kind: maintainer, date: "2026-10"}
+  - name: "@geolonia/datamodels"
+    relied_on_for: "datamodels check, release comparison, generic adapters, ngsi helpers in the Worker (sibling model)"
+    relied_on_properties: [check-validates-models, base-comparison]
+    caller_obligations_acknowledged: []
+    adversary_capabilities_forwarded: [any-file-in-pull-request]
+    outputs_consumed: []
+    covered_here: false
+    violation_disposition: "OUT-OF-MODEL: dependency-contract"
+    provenance: {kind: documented, source: "CONTRIBUTING.md \"Pull request steps\" step 3"}
+  - name: "@modelcontextprotocol/server"
+    relied_on_for: "MCP protocol handling"
+    relied_on_properties: [mcp-protocol-handling]
+    caller_obligations_acknowledged: []
+    adversary_capabilities_forwarded: [any-request]
+    outputs_consumed: []
+    covered_here: false
+    violation_disposition: "OUT-OF-MODEL: dependency-contract"
+    provenance: {kind: documented, source: "worker/mcp.mjs header"}
+  - name: "@cfworker/json-schema"
+    relied_on_for: "JSON Schema checks in the Worker"
+    relied_on_properties: [schema-validation]
+    caller_obligations_acknowledged: []
+    adversary_capabilities_forwarded: [any-request]
+    outputs_consumed: []
+    covered_here: false
+    violation_disposition: "OUT-OF-MODEL: dependency-contract"
+    provenance: {kind: documented, source: "worker/validate.mjs header"}
+  - name: zod
+    relied_on_for: "MCP argument schemas"
+    relied_on_properties: [argument-validation]
+    caller_obligations_acknowledged: []
+    adversary_capabilities_forwarded: [any-request]
+    outputs_consumed: []
+    covered_here: false
+    violation_disposition: "OUT-OF-MODEL: dependency-contract"
+    provenance: {kind: documented, source: "worker/mcp.mjs modelArg"}
+  - name: build-toolchain
+    relied_on_for: "ajv, ajv-formats, jsonld, yaml, vitepress, wrangler in CI and Workers Builds"
+    relied_on_properties: [build-tool-correctness]
+    caller_obligations_acknowledged: []
+    adversary_capabilities_forwarded: [any-file-in-pull-request]
+    outputs_consumed: []
+    covered_here: false
+    violation_disposition: "OUT-OF-MODEL: dependency-contract"
+    provenance: {kind: documented, source: "package.json devDependencies"}
+  - name: etsi-ngsi-ld-core-context
+    relied_on_for: "the list of protected core terms (fixture)"
+    relied_on_properties: [core-term-list]
+    caller_obligations_acknowledged: []
+    adversary_capabilities_forwarded: []
+    outputs_consumed: []
+    covered_here: false
+    violation_disposition: "OUT-OF-MODEL: dependency-contract"
+    provenance: {kind: documented, source: "scripts/lib/models.mjs CORE_TERMS"}
+
+build_policy:
+  security_relevant_flags_present: true
+  provenance: {kind: documented, source: "README \"Pre-release exception, until the official launch\""}
+
+build_flags:
+  - name: prerelease
+    default: "true"
+    security_relevant: true
+    maintainer_stance: supported
+    affects_properties:
+      - {property_id: P-PUBLISHED-IMMUTABLE, effect: voids}
+      - {property_id: P-HEADERS, effect: narrows}
+    provenance: {kind: documented, source: "README \"Pre-release exception, until the official launch\""}
+  - name: offline
+    default: "used by build:deploy and validate:models"
+    security_relevant: true
+    maintainer_stance: supported
+    affects_properties:
+      - {property_id: P-PUBLISHED-IMMUTABLE, effect: narrows}
+      - {property_id: P-EXAMPLES-CONFORM, effect: narrows}
+    provenance: {kind: documented, source: "package.json build:deploy script"}
+  - name: base
+    default: "pull-request job only"
+    security_relevant: true
+    maintainer_stance: supported
+    affects_properties:
+      - {property_id: P-PUBLISHED-IMMUTABLE, effect: preserves}
+    provenance: {kind: documented, source: ".github/workflows/check-worker.yml \"Compare the published versions with the base branch\""}
+  - name: preview-builds
+    default: "on, branches of this repository only (a dashboard setting)"
+    security_relevant: true
+    maintainer_stance: supported
+    affects_properties:
+      - {property_id: P-NO-DEPLOY-CREDENTIAL-IN-GITHUB, effect: preserves}
+    provenance: {kind: maintainer, date: "2026-10"}
+  - name: mcp-limiter-absent
+    default: "present in production and previews"
+    security_relevant: false
+    maintainer_stance: dev-only
+    affects_properties: []
+    provenance: {kind: documented, source: "worker/limit.mjs allowed comment: \"No binding (the tests; wrangler dev simulates it): no limit\""}
+  - name: CHECK_MACHINE_UA
+    default: "unset"
+    security_relevant: false
+    maintainer_stance: dev-only
+    affects_properties: []
+    provenance: {kind: documented, source: "docs/deployment.md \"unless CHECK_MACHINE_UA=1 is set\""}
+  - name: run_worker_first
+    default: "[\"/ns/*\", \"/mcp\"]"
+    security_relevant: true
+    maintainer_stance: supported
+    affects_properties:
+      - {property_id: P-NEGOTIATION-FALLBACK, effect: preserves}
+    provenance: {kind: documented, source: "wrangler.jsonc assets comment"}
+
+properties_claimed:
+  - id: P-PUBLISHED-IMMUTABLE
+    kind: integrity
+    components: [published-files, build-validation, supply-chain]
+    tier: security-critical
+    conditions: "after the official launch; exact-version context, vocabulary and schema files"
+    violation_symptoms: [integrity-bypass]
+    provenance: {kind: documented, source: "docs/design.md \"URL scheme and hosting contract\" item 1"}
+  - id: P-TERM-MEANING-STABLE
+    kind: correctness
+    components: [published-files]
+    tier: correctness-only
+    conditions: "breaking changes mint new IRIs"
+    violation_symptoms: [wrong-output]
+    provenance: {kind: documented, source: "docs/design.md \"URL scheme and hosting contract\" item 4"}
+  - id: P-ALIAS-ADDITIVE
+    kind: correctness
+    components: [published-files]
+    tier: correctness-only
+    conditions: "within a major version"
+    violation_symptoms: [wrong-output]
+    provenance: {kind: documented, source: "docs/design.md \"URL scheme and hosting contract\" item 6"}
+  - id: P-IRI-RESOLVES
+    kind: availability
+    components: [published-files, iri-negotiation]
+    tier: correctness-only
+    conditions: "an operator commitment, not an uptime promise"
+    violation_symptoms: [x-unresolvable-iri]
+    provenance: {kind: documented, source: "docs/design.md \"Decision 1\""}
+  - id: P-HEADERS
+    kind: correctness
+    components: [published-files]
+    tier: correctness-only
+    conditions: "content types, open CORS, cache lifetimes per class; short cache during the pre-release"
+    violation_symptoms: [wrong-output]
+    provenance: {kind: documented, source: "docs/design.md \"URL scheme and hosting contract\" item 2"}
+  - id: P-CORE-TERMS-PROTECTED
+    kind: correctness
+    components: [build-validation, published-files]
+    tier: correctness-only
+    conditions: "every subject context"
+    violation_symptoms: [bad-data-accepted]
+    provenance: {kind: documented, source: "docs/design.md \"Decision 2\" rules"}
+  - id: P-EXAMPLES-CONFORM
+    kind: correctness
+    components: [build-validation]
+    tier: correctness-only
+    conditions: "before anything reaches dist/"
+    violation_symptoms: [bad-data-accepted]
+    provenance: {kind: documented, source: "docs/design.md \"Repository layout\": \"CI on every pull request validates\""}
+  - id: P-CONTEXT-IMPORTS-CATALOG
+    kind: integrity
+    components: [build-validation, published-files]
+    tier: security-critical
+    conditions: "subject contexts import only catalogue context URLs at a published or current version"
+    violation_symptoms: [integrity-bypass]
+    provenance: {kind: maintainer, date: "2026-10"}
+  - id: P-REFS-CATALOG-ONLY
+    kind: correctness
+    components: [build-validation, published-files]
+    tier: correctness-only
+    conditions: "schema $ref targets are catalogue schemas or pointers inside the file; a review rule"
+    violation_symptoms: [bad-data-accepted]
+    provenance: {kind: maintainer, date: "2026-10"}
+  - id: P-NEGOTIATION-FALLBACK
+    kind: correctness
+    components: [iri-negotiation]
+    tier: correctness-only
+    conditions: "GET and HEAD for known IRIs; same-origin 303; fallback on any error"
+    violation_symptoms: [wrong-output, x-open-redirect]
+    provenance: {kind: documented, source: "worker/index.mjs header comment"}
+  - id: P-MCP-NO-OUTBOUND
+    kind: integrity
+    components: [mcp-server]
+    tier: security-critical
+    conditions: "all four tools"
+    violation_symptoms: [x-ssrf]
+    provenance: {kind: documented, source: "worker/mcp.mjs header: \"Nothing is fetched from another site\""}
+  - id: P-MCP-STATELESS
+    kind: confidentiality
+    components: [mcp-server]
+    tier: security-critical
+    conditions: "a fresh server per request; caches hold only public files"
+    violation_symptoms: [info-leak]
+    provenance: {kind: documented, source: "worker/mcp.mjs header: \"Stateless and without login\""}
+  - id: P-MCP-BOUNDED
+    kind: resource-bound
+    components: [mcp-server]
+    tier: correctness-only
+    conditions: "64 KiB body, no batches, 1,000 keys, 64 levels, 20 problems; threshold: tens of milliseconds of CPU"
+    violation_symptoms: [x-cpu-exhaustion]
+    provenance: {kind: documented, source: "worker/validate.mjs header"}
+  - id: P-OUTSIDER-TEXT-PLAIN
+    kind: output-sanitization
+    components: [listings]
+    tier: security-critical
+    conditions: "extension files and node snapshots"
+    violation_symptoms: [x-markup-injection]
+    provenance: {kind: documented, source: "scripts/lib/extensions.mjs comment: \"nothing in a file can add markup, a script or a template expression\""}
+  - id: P-MODEL-TEXT-ESCAPED
+    kind: output-sanitization
+    components: [build-validation]
+    tier: correctness-only
+    conditions: "text from model files on the generated pages"
+    violation_symptoms: [x-markup-injection]
+    provenance: {kind: documented, source: "scripts/lib/models.mjs mdText comment"}
+  - id: P-NO-DEPLOY-CREDENTIAL-IN-GITHUB
+    kind: integrity
+    components: [supply-chain]
+    tier: security-critical
+    conditions: "Workers Builds deploys main; builds only branches of this repository"
+    violation_symptoms: [integrity-bypass]
+    provenance: {kind: documented, source: "docs/deployment.md \"no credential lives in GitHub\""}
+  - id: P-CI-TOKENS-SCOPED
+    kind: integrity
+    components: [supply-chain]
+    tier: security-critical
+    conditions: "the four workflows in this repository; the organisation's Security Suite workflow is outside this model"
+    violation_symptoms: [integrity-bypass]
+    provenance: {kind: documented, source: ".github/workflows/similar-models.yml header"}
+
+properties_disclaimed:
+  - {id: D-PRERELEASE-CORRECTIONS, components: [published-files, build-validation], conditions: "stated; while prerelease is true, only the current version may be corrected in place; a change to an older release is VALID", tier: security-critical, false_friend: false, provenance: {kind: documented, source: "site/en/guide/urls.md \"Do not reference them from production data before the launch\""}}
+  - {id: D-UNVERSIONED-FILES, components: [published-files], conditions: "stated; examples, mapping files, adapter files, catalog.json, llms.txt, MCP index, pages, aliases", tier: correctness-only, false_friend: false, provenance: {kind: documented, source: "docs/design.md \"Adapters\": \"not part of the release snapshots\""}}
+  - {id: D-NO-SIGNATURE, components: [published-files], conditions: "stated by maintainer ruling (2026-10); no signatures; the release snapshot in the repository is the reference copy", tier: security-critical, false_friend: false, provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: D-CACHE-HINT, components: [published-files], conditions: "stated; Cache-Control immutable is a cache directive", tier: correctness-only, false_friend: true, provenance: {kind: documented, source: "scripts/lib/cache.mjs header"}}
+  - {id: D-NO-AVAILABILITY-SLA, components: [published-files, iri-negotiation, mcp-server], conditions: "stated by maintainer ruling (2026-10) for uptime; in docs/design.md for the mirror", tier: correctness-only, false_friend: false, provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: D-NO-CONFIDENTIALITY, components: [published-files, iri-negotiation, mcp-server], conditions: "stated; everything public, CORS open", tier: correctness-only, false_friend: false, provenance: {kind: documented, source: "public/_headers header comment: \"Nothing here is private\""}}
+  - {id: D-NO-AUTHENTICATION, components: [published-files, mcp-server], conditions: "stated; no login", tier: correctness-only, false_friend: false, provenance: {kind: documented, source: "site/en/ai.md \"It needs no login, only reads\""}}
+  - {id: D-BIC-NOT-ACCESS-CONTROL, components: [published-files, mcp-server], conditions: "stated; BIC off on machine paths and /mcp", tier: correctness-only, false_friend: true, provenance: {kind: documented, source: "docs/deployment.md \"Machine-readable files: no Browser Integrity Check\""}}
+  - {id: D-RATE-LIMIT-BEST-EFFORT, components: [mcp-server], conditions: "stated; per address or /64, per location, approximate, fails open", tier: correctness-only, false_friend: true, provenance: {kind: documented, source: "worker/limit.mjs allowed comment"}}
+  - {id: D-VALIDATE-NOT-ASSURANCE, components: [mcp-server, build-validation], conditions: "stated; schema conformance only, @context not checked", tier: correctness-only, false_friend: true, provenance: {kind: documented, source: "worker/mcp.mjs validate description: \"its @context is not checked\""}}
+  - {id: D-PERSONAL-DATA-MARKER, components: [published-files, build-validation], conditions: "stated by maintainer ruling (2026-10); x-personal-data is a marker only", tier: security-critical, false_friend: true, provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: D-CONTRIBUTED-FILE-LIMITS, components: [published-files, build-validation], conditions: "stated by maintainer ruling (2026-10); no size, nesting, $ref count, import depth or pattern limit", tier: security-critical, false_friend: false, provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: D-AGENT-TEXT, components: [mcp-server, published-files], conditions: "stated by maintainer ruling (2026-10); text reaches agents as written", tier: security-critical, false_friend: false, provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: D-LISTED-CONTENT-UNREVIEWED, components: [listings], conditions: "stated; listed as reported, domain not checked", tier: correctness-only, false_friend: true, provenance: {kind: documented, source: "CONTRIBUTING.md \"Adding a listed extension\" steps 3 and 4"}}
+  - {id: D-STATUS-NOT-REVIEW, components: [published-files], conditions: "stated; stable means two adopters, self-reported; DCO is an agreement", tier: correctness-only, false_friend: true, provenance: {kind: documented, source: "docs/design.md \"Versioning and lifecycle\""}}
+  - {id: D-NEGOTIATION-STALE-MAJOR, components: [iri-negotiation], conditions: "stated by maintainer ruling (2026-10); cached subject majors may be stale after a major release until the isolate is recycled; a non-OK read of catalog.json is cached as empty the same way", tier: correctness-only, false_friend: false, provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: D-REPO-CODE-RUNS, components: [build-validation, supply-chain], conditions: "stated; adapter modules and scripts run with the build's rights", tier: security-critical, false_friend: false, provenance: {kind: documented, source: "scripts/lib/adapters.mjs header"}}
+
+downstream_responsibilities:
+  - {id: R-NO-PRERELEASE-PRODUCTION, component: published-files, statement: "before the launch, do not reference catalogue files from production data", enforces: [never-changed-before-launch], provenance: {kind: documented, source: "site/en/guide/urls.md"}}
+  - {id: R-ALIAS-IN-DATA, component: published-files, statement: "name the alias in stored data; use the exact version for audits", enforces: [alias-bytes-stable], provenance: {kind: documented, source: "docs/design.md \"URL scheme and hosting contract\" item 6"}}
+  - {id: R-CACHE-CONTEXTS, component: published-files, statement: "cache or bundle contexts; give the JSON-LD loader a timeout and host allow-list", enforces: [D-NO-AVAILABILITY-SLA], provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: R-BOUND-PROCESSORS, component: published-files, statement: "limit $ref resolution to datamodels.jp; bound pattern evaluation, size and import depth", enforces: [bound-consumer-processors], provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: R-TEXT-AS-DATA, component: published-files, statement: "escape text before rendering; never let an agent follow it as an instruction", enforces: [text-safe], provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: R-OWN-PERSONAL-DATA, component: published-files, statement: "decide which attributes are personal data and protect them", enforces: [D-PERSONAL-DATA-MARKER], provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: R-OWN-VALIDATION, component: mcp-server, statement: "validate data in your own pipeline; the validate tool is advisory", enforces: [valid-means-safe], provenance: {kind: documented, source: "worker/mcp.mjs validate description"}}
+  - {id: R-IGNORE-UNKNOWN-FIELDS, component: published-files, statement: "ignore unknown fields in catalog.json", enforces: [unversioned-files-stable], provenance: {kind: documented, source: "catalog.schema.json description"}}
+  - {id: R-LISTINGS-ARE-CLAIMS, component: listings, statement: "treat node models and listed extensions as other people's claims", enforces: [listing-endorsed], provenance: {kind: documented, source: "CONTRIBUTING.md \"Adding a listed extension\" step 4"}}
+  - {id: R-VERIFY-AGAINST-SNAPSHOT, component: published-files, statement: "to verify bytes, compare with the release snapshot in the repository", enforces: [D-NO-SIGNATURE], provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: R-FOLLOW-NS-REDIRECTS, component: iri-negotiation, statement: "follow 302 and 303 redirects from /ns/*", enforces: [redirect-exact-version], provenance: {kind: documented, source: "site/en/guide/urls.md \"The promises\" item 3"}}
+  - {id: R-EXPECT-429, component: mcp-server, statement: "expect 429 after 100 requests a minute from one address", enforces: [D-RATE-LIMIT-BEST-EFFORT], provenance: {kind: documented, source: "docs/deployment.md \"/mcp is rate-limited\""}}
+  - {id: R-OPERATOR-ZONE-RULE, component: supply-chain, statement: "operator keeps the BIC rule and runs check:live after a deploy", enforces: [D-BIC-NOT-ACCESS-CONTROL], provenance: {kind: documented, source: "docs/deployment.md \"After a deploy, run npm run check:live\""}}
+  - {id: R-OPERATOR-DOMAIN, component: supply-chain, statement: "operator keeps datamodels.jp registered and the zone in the same account", enforces: [P-IRI-RESOLVES], provenance: {kind: documented, source: "docs/design.md \"Decision 1\""}}
+  - {id: R-OPERATOR-BUILDS, component: supply-chain, statement: "operator keeps Workers Builds on main, previews only for own branches, preview_urls true", enforces: [P-NO-DEPLOY-CREDENTIAL-IN-GITHUB], provenance: {kind: documented, source: "docs/deployment.md"}}
+  - {id: R-OPERATOR-LIMIT-SYNC, component: mcp-server, statement: "operator keeps RATE_LIMIT equal to both MCP_LIMITER declarations", enforces: [D-RATE-LIMIT-BEST-EFFORT], provenance: {kind: documented, source: "wrangler.jsonc ratelimits comment"}}
+  - {id: R-OPERATOR-RETIRED-PREVIEW, component: supply-chain, statement: "operator keeps models.geonicdb.com detached", enforces: [P-IRI-RESOLVES], provenance: {kind: documented, source: "docs/deployment.md"}}
+  - {id: R-OPERATOR-LAUNCH, component: published-files, statement: "at the launch, set prerelease: false", enforces: [P-PUBLISHED-IMMUTABLE], provenance: {kind: documented, source: "README \"Pre-release exception\""}}
+  - {id: R-OPERATOR-GREEN-MERGE, component: supply-chain, statement: "merge only after the pull-request check is green", enforces: [P-PUBLISHED-IMMUTABLE], provenance: {kind: maintainer, date: "2026-10"}}
+
+known_misuses:
+  - {id: M-PIN-PRERELEASE, components: [published-files], pattern: "pinning a pre-release exact version and its hash for integrity", safer_alternative: "wait for the launch or keep your own copy", provenance: {kind: documented, source: "README \"Pre-release exception\""}}
+  - {id: M-FETCH-WITHOUT-CACHE, components: [published-files], pattern: "fetching contexts on every request without a cache", safer_alternative: "cache or bundle contexts", provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: M-VALID-AS-SAFE, components: [mcp-server, build-validation], pattern: "reading valid: true as safe", safer_alternative: "escape and authorise in your own system", provenance: {kind: documented, source: "worker/mcp.mjs validate description"}}
+  - {id: M-MARKER-AS-COMPLIANCE, components: [published-files], pattern: "reading x-personal-data as a compliance statement", safer_alternative: "decide per attribute", provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: M-LISTING-AS-ENDORSEMENT, components: [listings], pattern: "trusting an extension's IRIs because the catalogue lists them", safer_alternative: "check the owner's domain", provenance: {kind: documented, source: "CONTRIBUTING.md \"Adding a listed extension\" step 3"}}
+  - {id: M-AGENT-FOLLOWS-TEXT, components: [mcp-server], pattern: "an agent acting on an instruction found in catalogue text", safer_alternative: "treat answers as data", provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: M-ALIAS-FOR-AUDIT, components: [published-files], pattern: "recording the alias as the definition used for a decision", safer_alternative: "record the exact version", provenance: {kind: documented, source: "docs/design.md \"URL scheme and hosting contract\" item 6"}}
+
+known_non_findings:
+  - {id: KNF-CORS-WILDCARD, components: [published-files, mcp-server], symptom: cors-misconfiguration, tool_pattern: "Access-Control-Allow-Origin: * on every response", conditions: "a published file or an MCP answer; no cookie or credential involved", discharged_by: [D-NO-CONFIDENTIALITY], provenance: {kind: documented, source: "public/_headers header comment"}}
+  - {id: KNF-MCP-NO-AUTH, components: [mcp-server], symptom: missing-authentication, tool_pattern: "the MCP endpoint accepts requests without a token", conditions: "one of the four read-only tools", discharged_by: [D-NO-AUTHENTICATION], provenance: {kind: documented, source: "site/en/ai.md \"It needs no login, only reads\""}}
+  - {id: KNF-NS-SAME-ORIGIN, components: [iri-negotiation], symptom: open-redirect, tool_pattern: "/ns/ redirects, so it is an open redirect", conditions: "Location is a same-origin path: the 303 to /vocab/<subject>/v<major>.jsonld or a generated 302", discharged_by: [P-NEGOTIATION-FALLBACK], provenance: {kind: documented, source: "worker/index.mjs header"}}
+  - {id: KNF-PRERELEASE-CORRECTION, components: [published-files], symptom: integrity-change, tool_pattern: "a v1.0.0 file changed after it was published", conditions: "prerelease: true on the base branch and the change; the file belongs to the subject's current version", discharged_by: [D-PRERELEASE-CORRECTIONS], provenance: {kind: documented, source: "README \"Pre-release exception, until the official launch\""}}
+  - {id: KNF-RATE-LIMIT-SHARED, components: [mcp-server], symptom: rate-limit-bypass, tool_pattern: "the limit can be exceeded from several locations or addresses, or hosted-connector users block each other", conditions: "several Cloudflare locations, several /64 blocks, or one provider's shared addresses", discharged_by: [D-RATE-LIMIT-BEST-EFFORT], provenance: {kind: documented, source: "docs/deployment.md \"Hosted connectors\""}}
+  - {id: KNF-BIC-OFF, components: [published-files, mcp-server], symptom: missing-bot-protection, tool_pattern: "Browser Integrity Check disabled on machine paths and /mcp", conditions: "the path is in the zone rule's expression", discharged_by: [D-BIC-NOT-ACCESS-CONTROL], provenance: {kind: documented, source: "docs/deployment.md \"Machine-readable files: no Browser Integrity Check\""}}
+
+dispositions:
+  - VALID
+  - VALID-HARDENING
+  - "OUT-OF-MODEL: trusted-input"
+  - "OUT-OF-MODEL: adversary-not-in-scope"
+  - "OUT-OF-MODEL: unsupported-component"
+  - "OUT-OF-MODEL: non-default-build"
+  - "OUT-OF-MODEL: dependency-contract"
+  - "BY-DESIGN: property-disclaimed"
+  - KNOWN-NON-FINDING
+  - MODEL-GAP
+
+disposition_precedence:
+  - KNOWN-NON-FINDING
+  - "OUT-OF-MODEL: unsupported-component"
+  - "OUT-OF-MODEL: non-default-build"
+  - "OUT-OF-MODEL: dependency-contract"
+  - "OUT-OF-MODEL: trusted-input"
+  - "OUT-OF-MODEL: adversary-not-in-scope"
+  - "BY-DESIGN: property-disclaimed"
+  - VALID
+  - VALID-HARDENING
+  - MODEL-GAP
