@@ -961,7 +961,11 @@ export: `description` (the exporter takes the first paragraph of §1.2) and
 each family with `documented` provenance, matching §1.4. The JSON schema
 has no **maintainer** kind, so the export counts maintainer-ratified claims as
 documented: its confidence reads 262 documented and 0 inferred, the sum of the
-198 documented and 64 maintainer claims counted here.
+198 documented and 64 maintainer claims counted here. The JSON's `dispositions`
+array has nine values, not ten: the plugin's `schema.json` (commit `192fd60`)
+allows exactly nine and has no value for `OUT-OF-MODEL: dependency-contract`,
+so that disposition, which §1.9 and §1.17 use, appears only here and in the
+YAML.
 
 ## Appendix: prior security-policy back-map
 

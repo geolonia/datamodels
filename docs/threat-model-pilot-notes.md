@@ -148,7 +148,10 @@ question-bank extension, same proposed-answer style):
 - **The JSON exporter** again needs hand completion: it takes the first
   paragraph of §1.2 as the description and labels every trust boundary
   `inferred` with empty text. A small script sets both after each export
-  (§1.19 says so).
+  (§1.19 says so). Its `dispositions` array has nine values, because the
+  plugin's `schema.json` allows exactly nine and has none for
+  `OUT-OF-MODEL: dependency-contract`; §1.19 records that the prose and the
+  YAML carry all ten.
 - **The backtest** had a small real corpus this time: two fixed cache-header
   defects (#6, and #116 fixed by #128). Both route `VALID` against
   `P-HEADERS`. The other 21 cases are synthesized. In the first draft two
@@ -318,9 +321,20 @@ belong in issues, not in the threat model:
   threat-model@threat-model`, or copy the `skills/` folder from the plugin
   repository at commit `192fd60`.
 
-To re-validate after a change (needs Python with PyYAML and a checkout of the
-plugin repository):
+To re-validate after a change: the validator is not in this repository. It is
+`tests/harness/validate_model.py` in the plugin repository
+(https://github.com/alpha-omega-security/threat-model) at commit `192fd60`,
+and needs Python with PyYAML. Run it from that checkout, with paths into this
+repository (here `../datamodels`):
 
 ```bash
-python tests/harness/validate_model.py threat-model.md threat-model.yaml --json-report threat-model.json --source-root .
+git clone https://github.com/alpha-omega-security/threat-model.git
+```
+
+```bash
+cd threat-model && git checkout 192fd60
+```
+
+```bash
+python tests/harness/validate_model.py ../datamodels/threat-model.md ../datamodels/threat-model.yaml --json-report ../datamodels/threat-model.json --source-root ../datamodels
 ```
