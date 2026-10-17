@@ -10,26 +10,22 @@ import { attributesOf, subjectUrls, dateFormats } from '../../scripts/lib/models
 // without repeated groups that contain alternatives; this has none.
 // A string check rejects a typed value ({"@type": "Date" | "DateTime", ...}),
 // so these attributes need the plain string until GeonicDB can check "a date
-// or a date-time" (#185). Typed date-times pass datetime from GeonicDB v0.22.0 (geonicdb#3368).
+// or a date-time" (#185). Typed date-times pass datetime from GeonicDB v0.22.0.
 const DATE = '\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])';
 const TIME = 'T(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|[+-](?:[01]\\d|2[0-3]):[0-5]\\d)';
 export const DATE_PATTERN = `^${DATE}$`;
 export const DATE_OR_DATE_TIME_PATTERN = `^${DATE}(?:${TIME})?$`;
 
-// GeonicDB (v0.22.0) registers only these NGSI-LD types as a property's ngsiType
-// (CUSTOM_DATA_MODELS.NGSI_TYPES). A VocabProperty or JsonProperty is registered
-// as a Property: the model does not check the attribute's NGSI-LD type, and the
-// entity is still sent and stored as a VocabProperty or JsonProperty (#280).
-// Once GeonicDB accepts them, they are sent as their own types (#285).
-const GEONICDB_NGSI_TYPES = new Set(['Property', 'GeoProperty', 'Relationship', 'LanguageProperty']);
-const geonicdbNgsiType = (type) => (GEONICDB_NGSI_TYPES.has(type) ? type : 'Property');
+// Every attribute is sent with its own NGSI-LD type as ngsiType, VocabProperty
+// and JsonProperty included (#285). A GeonicDB that does not accept these two
+// types in a model (v0.22.0 and older) answers 400 for a model that has them.
 const VALUE_CHECKS = ['minLength', 'maxLength', 'minimum', 'maximum', 'pattern', 'enum'];
 
 /**
  * The full IRI of a VocabProperty term, or undefined, expanded with `terms` (the
  * context's term definitions, imports included) as JSON-LD expands a `vocab`
  * value: a term the context defines, a compact IRI whose prefix it defines, or
- * an absolute IRI. GeonicDB stores and checks the expanded IRI (#280).
+ * an absolute IRI. GeonicDB stores and checks the expanded IRI (#280, #285).
  */
 export function expandVocabTerm(terms, term, depth = 0) {
   if (typeof term !== 'string' || depth >= 10) return undefined;
@@ -48,11 +44,12 @@ export function expandVocabTerm(terms, term, depth = 0) {
 
 /**
  * A VocabProperty's checks as GeonicDB applies them: it checks the term after
- * expanding it to its full IRI (#280), so the allowed terms are sent as full
- * IRIs. A term that cannot be expanded would end up in the NGSI-LD default
- * context, which means nothing, so it fails the build (`fix` says what to do).
- * A pattern or a length is written for the term as data writes it, not for the
- * IRI: not sent, and the build says so.
+ * expanding it to its full IRI, and GeonicDB's rule is that the enum of a
+ * VocabProperty lists full IRIs only (#285), so the allowed terms are sent
+ * as full IRIs. A term that cannot be expanded would end up in the NGSI-LD
+ * default context, which means nothing, so it fails the build (`fix` says
+ * what to do). A pattern or a length is written for the term as data writes
+ * it, but GeonicDB applies it to the full IRI: not sent, and the build says so.
  */
 function vocabValidation(validation, terms, where, fix) {
   const v = { ...validation };
@@ -128,7 +125,7 @@ export function toCustomDataModel(subject, model, { typePrefix = '', typeName, c
       // valueType stays the schema's: GeonicDB checks the stored value, which is
       // the expanded term (a string) for a VocabProperty and the JSON itself for
       // a JsonProperty, as the schema describes them.
-      ngsiType: geonicdbNgsiType(ngsiType),
+      ngsiType,
       valueType: valueTypeOf(prop),
       // GeonicDB requires the key on every property; null when the catalog example has no value.
       example: example[name] ?? null,
@@ -159,12 +156,11 @@ export function toCustomDataModel(subject, model, { typePrefix = '', typeName, c
     for (const [name, detail] of Object.entries(extend.propertyDetails)) {
       if (name in propertyDetails) throw new Error(`extension redefines catalog attribute "${name}" of ${model.type}; add a new attribute instead`);
       if (!detail || typeof detail !== 'object' || !detail.ngsiType || !detail.valueType) throw new Error(`extension attribute "${name}" needs ngsiType and valueType`);
-      // The same GeonicDB rules as the catalog's attributes (#280), but only these
-      // two types become a Property: any other ngsiType reaches GeonicDB as written,
-      // so a typo is refused there. The extension's own context is not read here:
-      // its allowed terms expand with the catalog's.
-      const asProperty = detail.ngsiType === 'VocabProperty' || detail.ngsiType === 'JsonProperty';
-      const ext = { ...detail, ngsiType: asProperty ? 'Property' : detail.ngsiType, example: detail.example ?? null };
+      // The same GeonicDB rules as the catalog's attributes (#280, #285). The
+      // ngsiType reaches GeonicDB as written, so a typo is refused there. The
+      // extension's own context is not read here: its allowed terms expand
+      // with the catalog's.
+      const ext = { ...detail, example: detail.example ?? null };
       if (detail.ngsiType === 'VocabProperty' && detail.validation) {
         ext.validation = vocabValidation(detail.validation, terms, `extension attribute "${name}"`, `write it as a full IRI, or as a term or prefix of the ${subject.name} context${termsMissing}`);
         if (!Object.keys(ext.validation).length) delete ext.validation;

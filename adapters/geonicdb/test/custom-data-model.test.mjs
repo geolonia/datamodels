@@ -115,17 +115,17 @@ test('a date or date-time attribute is a string with a pattern: GeonicDB\'s date
   assert.ok(!/\)[*+{]/.test(DATE_OR_DATE_TIME_PATTERN));
 });
 
-// #280: GeonicDB registers only Property, GeoProperty, Relationship and
-// LanguageProperty, and checks a VocabProperty's term as its full IRI.
+// #280, #285: GeonicDB registers VocabProperty and JsonProperty as their own
+// types, and checks a VocabProperty's term as its full IRI.
 const decisionSubject = subjects.find((s) => s.name === 'decision');
 const decision = decisionSubject.models.find((m) => m.type === 'Decision');
 const decisionBody = (model = decision, options) => toCustomDataModel(decisionSubject, model, options).propertyDetails;
 const withEnum = (...terms) => { const m = structuredClone(decision); m.schema.properties.humanInvolvement.enum = terms; return m; };
 
-test('a VocabProperty or JsonProperty is registered as a Property, with the schema\'s value type; the other types stay (#280)', () => {
+test('every attribute keeps its own NGSI-LD type, VocabProperty and JsonProperty included, with the schema\'s value type (#285)', () => {
   const d = decisionBody();
-  for (const [name, valueType] of [['humanInvolvement', 'string'], ['answers', 'array'], ['facts', 'array'], ['corrections', 'array']]) {
-    assert.equal(d[name].ngsiType, 'Property', name);
+  for (const [name, ngsiType, valueType] of [['humanInvolvement', 'VocabProperty', 'string'], ['answers', 'JsonProperty', 'array'], ['facts', 'JsonProperty', 'array'], ['corrections', 'JsonProperty', 'array']]) {
+    assert.equal(d[name].ngsiType, ngsiType, name);
     assert.equal(d[name].valueType, valueType, name);
   }
   assert.equal(d.refersTo.ngsiType, 'Relationship');
@@ -195,19 +195,19 @@ test('a VocabProperty gets no pattern or length check, and the build says so; a 
   assert.deepEqual(d.answers.validation, { minimum: 0, enum: [[]] });
 });
 
-test('extension attributes follow the same GeonicDB rules (#280)', (t) => {
+test('extension attributes follow the same GeonicDB rules (#280, #285)', (t) => {
   t.mock.method(console, 'warn', () => {});
   const level = { ngsiType: 'VocabProperty', valueType: 'string', validation: { enum: ['dpv:HumanNotInvolved', 'https://example.com/ns/acme/Low'], pattern: '^x' } };
   const extend = { propertyDetails: { level, raw: { ngsiType: 'JsonProperty', valueType: 'object' }, note: { ngsiType: 'LanguageProperty', valueType: 'object' } } };
   const d = decisionBody(decision, { extend });
-  assert.equal(d.level.ngsiType, 'Property');
+  assert.equal(d.level.ngsiType, 'VocabProperty');
   assert.deepEqual(d.level.validation, { enum: ['https://w3id.org/dpv#HumanNotInvolved', 'https://example.com/ns/acme/Low'] });
-  assert.equal(d.raw.ngsiType, 'Property');
+  assert.equal(d.raw.ngsiType, 'JsonProperty');
   assert.equal(d.note.ngsiType, 'LanguageProperty');
   assert.equal(level.validation.pattern, '^x', 'the caller\'s definition is not changed');
   const bad = { propertyDetails: { level: { ...level, validation: { enum: ['acme:Low'] } } } };
   assert.throws(() => decisionBody(decision, { extend: bad }), /extension attribute "level": the VocabProperty term "acme:Low" cannot be expanded to a full IRI; write it as a full IRI/);
-  // Only VocabProperty and JsonProperty become a Property: a typo reaches GeonicDB, which refuses it.
+  // Every ngsiType reaches GeonicDB as written: a typo too, which GeonicDB refuses.
   assert.equal(decisionBody(decision, { extend: { propertyDetails: { link: { ngsiType: 'Relationshp', valueType: 'uri' } } } }).link.ngsiType, 'Relationshp');
   // A VocabProperty whose only checks were a pattern or a length gets no empty validation.
   const lengthOnly = decisionBody(decision, { extend: { propertyDetails: { level: { ...level, validation: { maxLength: 10 } } } } });
