@@ -78,7 +78,7 @@ geonic entities list --type RoadRestriction \
 :::
 
 - 登録すると `201 Created` が返ります。同じ型名のモデルが既にあれば、`Custom data model already exists` のエラー（HTTP 400）になります。登録したモデルを変えるときは `PATCH /custom-data-models/<Type>` か `geonic models update <Type> @model.json` を使います。
-- **Decision：** Decision のモデルには、VocabProperty と JsonProperty の属性があります。登録には、この 2 つの型をモデルで受け付ける GeonicDB が要ります。古い GeonicDB では、登録が HTTP 400 のエラーになります。
+- **Decision：** Decision のモデルには、VocabProperty と JsonProperty の属性があります。GeonicDB は、v0.23.0 からこの 2 つの型をモデルで受け付けます。それより古い GeonicDB では、登録が HTTP 400 のエラーになります。
 - **型付きの日時：** normalized の例では、日時を `{"@type": "DateTime", "@value": "…"}` の形で書いています。GeonicDB は、v0.22.0 からこの形を受け付けます。それより古い GeonicDB を使うときと、Task・Milestone・Project の例を送るときは、[jq](https://jqlang.org/) で日時を文字列に直します。Task などでは、`MODEL=task/Task` のように `MODEL` を変え、先にそのモデルを登録します。そのあと手順 2 の 2 つ目のコマンド（`curl -X POST … --data @entity.jsonld`）で送ります。CLI では `geonic entities create @entity.jsonld` です。
 
   ```bash
