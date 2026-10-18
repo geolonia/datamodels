@@ -78,6 +78,7 @@ geonic entities list --type RoadRestriction \
 :::
 
 - Registering returns `201 Created`. If a model of that type already exists, it answers with the error `Custom data model already exists` (HTTP 400). To change a registered model, use `PATCH /custom-data-models/<Type>` or `geonic models update <Type> @model.json`.
+- **Decision:** the Decision model has VocabProperty and JsonProperty attributes. GeonicDB accepts these two types in a model from v0.23.0; an older GeonicDB answers HTTP 400.
 - **Typed dates:** the normalized example writes date-times as `{"@type": "DateTime", "@value": "…"}`. GeonicDB accepts this form from v0.22.0. With an older GeonicDB, and for the examples of Task, Milestone and Project (set `MODEL`, for example `MODEL=task/Task`, and register that model first), turn the typed dates into strings with [jq](https://jqlang.org/). Then send `entity.jsonld` with the second command of step 2 (`curl -X POST … --data @entity.jsonld`; with the CLI: `geonic entities create @entity.jsonld`):
 
   ```bash
