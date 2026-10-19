@@ -1,6 +1,6 @@
 notes:
-  - ja: "自治体の災害対応アプリの Custom Data Model から派生したモデルです（2026 年 9 月。元のソースは非公開）。型名はテナント固有の接頭辞「Saitai」を外して一般化し、属性名はタスク管理の分野に合わせました。"
-    en: Derived from the Custom Data Models of a municipal disaster-response application (September 2026; its source is not public). Type names generalised from the tenant-specific "Saitai" prefix; attribute names aligned with the task subject.
+  - ja: "自治体の災害対応アプリの Custom Data Model から派生したモデルです（2026 年 9 月。元のソースは非公開）。型名はテナント固有の接頭辞を外して一般化し、属性名はタスク管理の分野に合わせました。"
+    en: Derived from the Custom Data Models of a municipal disaster-response application (September 2026; its source is not public). Type names generalised by removing a tenant-specific prefix; attribute names aligned with the task subject.
   - ja: "元のアプリからの変更：status は openingStatus にしました（open、closed、full、requested に正規化し、現場の呼び方は statusLabel に残す）。避難者数は整数にしました（元は文字列）。memo は description にしました。requested は、元のアプリの「依頼中」（開設を依頼・指示されたが、まだ確認できていない状態）にあたります。"
     en: "From the source application: status → openingStatus, normalised to open | closed | full | requested, with the local wording in statusLabel; evacuee counts are integers (strings in the source); memo → description. requested covers the application's 依頼中 (opening requested or instructed, not yet confirmed)."
   - ja: "このモデルは、指定避難所（災害対策基本法第 49 条の 7）の運用を表します。法律は、指定避難所を指定緊急避難場所（第 49 条の 4）と区別しています。指定避難所そのものは DesignatedShelter で表します。運用状況はそれを、shelter、externalShelterId、nationalShelterId のどれかで指し、どれか 1 つは必須です（#118）。externalShelterId は、DesignatedShelter と同じく市町村の避難所一覧の ID です。デジタル庁の自治体標準オープンデータセット（2023-03-31 から推奨データセットの後継）の一覧 03 は、指定緊急避難場所だけを扱います。その ID は EvacuationSite（externalSiteId）を指し、site で参照します。国土地理院は両方の全国一覧を別々に公開していて、どちらにも共通 ID の列があります。"

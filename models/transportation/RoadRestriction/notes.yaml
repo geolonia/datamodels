@@ -1,6 +1,6 @@
 notes:
-  - ja: "自治体の災害対応アプリの Custom Data Model から派生したモデルです（2026 年 9 月。元のソースは非公開）。型名はテナント固有の接頭辞「Saitai」を外して一般化し、属性名はタスク管理の分野に合わせました。"
-    en: Derived from the Custom Data Models of a municipal disaster-response application (September 2026; its source is not public). Type names generalised from the tenant-specific "Saitai" prefix; attribute names aligned with the task subject.
+  - ja: "自治体の災害対応アプリの Custom Data Model から派生したモデルです（2026 年 9 月。元のソースは非公開）。型名はテナント固有の接頭辞を外して一般化し、属性名はタスク管理の分野に合わせました。"
+    en: Derived from the Custom Data Models of a municipal disaster-response application (September 2026; its source is not public). Type names generalised by removing a tenant-specific prefix; attribute names aligned with the task subject.
   - ja: "元のアプリからの変更：status は restrictionStatus にしました（RoadSegment の値 closed、limited、open に正規化し、現場の呼び方は statusLabel に残す）。「依頼中」は通行できるので、open にしてラベルを「依頼中」とします。area は location にしました（コアの語で、規制区間が規制の位置です）。memo は description に、町や番地の平らな項目は address（JapaneseAddress）にしました。"
     en: "From the source application: status → restrictionStatus, normalised to the RoadSegment value space closed | limited | open, with the local wording in statusLabel (依頼中 is open with the label 依頼中: the road is still passable); area → location (core term; the closed section is the location of the closure); memo → description; the flat town and block fields → address (JapaneseAddress)."
   - ja: "検討した上流（2026-09-18）：Smart Data Models の RoadSegment は道路網の基本情報で、通行止めは市が持っていない区間の状態になってしまいます。RestrictedTrafficArea は出来事ではなく、区域の規制を表します。Alert は配信する通知で、roadClosed はありますが道路名が無く、alertSource が必須です。どれも型としては合いません。借りたもの：restrictionStatus の値として RoadSegment の status の値、Transportation の roadName の IRI、Smart Data Models の validFrom と validTo。"
