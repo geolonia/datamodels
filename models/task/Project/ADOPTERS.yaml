@@ -4,7 +4,7 @@ adopters:
     url: https://github.com/gtt-project/redmine_gtt_fiware
     since: 2026
     note: Planned first implementation; validation against a live Redmine instance pending.
-  - name: Takamatsu City flood-response application, through the disaster subject (built by Geolonia for Takamatsu City)
+  - name: A municipal disaster-response application, through the disaster subject (built by Geolonia)
     organization: Geolonia Inc.
     url: https://www.geolonia.com/contact/
     since: 2026

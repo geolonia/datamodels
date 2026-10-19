@@ -24,8 +24,8 @@ test('default body: exact context, additionalProperties from the schema, catalog
 });
 
 test('type prefix changes the type name only', () => {
-  const b = toCustomDataModel(transportation, roadRestriction, { typePrefix: 'Saitai' });
-  assert.equal(b.type, 'SaitaiRoadRestriction');
+  const b = toCustomDataModel(transportation, roadRestriction, { typePrefix: 'Acme' });
+  assert.equal(b.type, 'AcmeRoadRestriction');
   assert.equal(b.propertyDetails.roadName['@context'], 'https://smartdatamodels.org/dataModel.Transportation/roadName');
 });
 
