@@ -199,7 +199,7 @@ Japanese is the default language, English the second; both are mandatory for eve
 
 ## Open questions
 
-1. Takamatsu application: running on these models or an experiment, and whether the city needs types of its own (launch plan #30).
+1. The municipal disaster-response application: running on these models or an experiment, and whether the municipality needs types of its own (launch plan #30).
 2. Which curated global models and profiles come first, and from which implementations.
 3. Whether the pinned mirror of upstream contexts is needed.
 
