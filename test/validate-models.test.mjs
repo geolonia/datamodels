@@ -321,20 +321,41 @@ test('a single instance of a multi-valued attribute projects to a one-element ar
 // No remaining model has a oneOf whose branches can both match (Attachment's
 // task-or-project owner was the last, removed on 2026-10-09); Decision's
 // answers are a oneOf of answer kinds, so an answer of no known kind fails it.
-// The example is a final decision with rules only, so the answer is added here.
 test('a Decision answer of no known kind fails (oneOf)', () =>
-  withMutatedModels((d) => editJson(join(d, 'decision', 'Decision', 'examples', 'example.json'), (e) => { e.answers = { json: [{ name: 'danger', type: 'unknown', value: true, probability: 0.9 }] }; }),
+  withMutatedModels((d) => editJson(join(d, 'decision', 'Decision', 'examples', 'example.json'), (e) => { e.answers.json[0].type = 'unknown'; }),
     /must match exactly one schema in oneOf/));
 
-// Only a decision that uses earlier decisions (wasInformedBy) may leave out answers and model.
-test('a Decision without wasInformedBy needs answers and model', () =>
-  withMutatedModels((d) => editJson(join(d, 'decision', 'Decision', 'examples', 'example.json'), (e) => { delete e.wasInformedBy; delete e.requiredDecisions; }),
-    /must have required property 'answers'/));
+// A decision made by rules only, from earlier decisions, has model none and no answers.
+test('a Decision with model none and no answers is valid', () =>
+  withMutatedModels(async (d) => {
+    const check = 'urn:ngsi-ld:Decision:check-1';
+    const required = [{ name: 'check', decision: check }];
+    await editJson(join(d, 'decision', 'Decision', 'examples', 'example.json'), (e) => {
+      Object.assign(e, { model: 'none', answers: { json: [] }, wasInformedBy: [check], requiredDecisions: { json: required } });
+    });
+    await editJson(join(d, 'decision', 'Decision', 'examples', 'example-normalized.jsonld'), (e) => {
+      Object.assign(e, {
+        model: { type: 'Property', value: 'none' },
+        answers: { type: 'JsonProperty', json: [] },
+        wasInformedBy: [{ type: 'Relationship', object: check, datasetId: 'urn:ngsi-ld:dataset:wasInformedBy:1' }],
+        requiredDecisions: { type: 'JsonProperty', json: required },
+      });
+    });
+  }, null, { pass: true }));
 
-// wasInformedBy is multi-valued: a list of decisions in key-values form, even with one.
-test('a Decision wasInformedBy that is a bare string fails', () =>
-  withMutatedModels((d) => editJson(join(d, 'decision', 'Decision', 'examples', 'example.json'), (e) => { e.wasInformedBy = e.wasInformedBy[0]; }),
-    /wasInformedBy must be array/));
+// A check that a newer decision made unnecessary has no result of a person.
+test('a Decision whose check was superseded is valid without finalAction, but not with it', async () => {
+  const supersede = (keep) => async (d) => {
+    for (const f of ['example.json', 'example-normalized.jsonld']) {
+      await editJson(join(d, 'decision', 'Decision', 'examples', f), (e) => {
+        e.reviewStatus = f === 'example.json' ? 'superseded' : { type: 'Property', value: 'superseded' };
+        if (!keep) for (const k of ['finalAction', 'reviewedBy', 'reviewedAt', 'corrections']) delete e[k];
+      });
+    }
+  };
+  await withMutatedModels(supersede(false), null, { pass: true });
+  await withMutatedModels(supersede(true), /must NOT be valid/);
+});
 
 test('a geometry without coordinates fails', () =>
   withMutatedModels((d) => editJson(join(d, 'task', 'Project', 'examples', 'example.json'), (e) => { e.location = { type: 'Polygon' }; }),

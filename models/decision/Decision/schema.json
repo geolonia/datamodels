@@ -62,7 +62,6 @@
     },
     "answers": {
       "type": "array",
-      "minItems": 1,
       "items": {
         "oneOf": [
           {
@@ -183,7 +182,7 @@
           }
         ]
       },
-      "description": "The model's answers, one per question, each with its probability. Required, except in a decision that uses earlier decisions (wasInformedBy): it may use rules only, with no model",
+      "description": "The model's answers, one per question, each with its probability. Empty for a decision made by rules only, with no model",
       "x-ngsi": {
         "type": "JsonProperty"
       },
@@ -294,7 +293,7 @@
     },
     "model": {
       "type": "string",
-      "description": "Id of the model that answered. Required, except in a decision that uses earlier decisions (wasInformedBy) and rules only",
+      "description": "Id of the model that answered; none for a decision made by rules only, with no model",
       "x-ngsi": {
         "type": "Property"
       },
@@ -327,9 +326,10 @@
       "type": "string",
       "enum": [
         "pending",
-        "resolved"
+        "resolved",
+        "superseded"
       ],
-      "description": "State of the check by a person: pending or resolved. Absent when no check was asked",
+      "description": "State of the check by a person: pending, resolved, or superseded (the check was still pending when a newer decision replaced this one, so it is no longer needed). Absent when no check was asked",
       "x-ngsi": {
         "type": "Property"
       },
@@ -469,8 +469,10 @@
     "id",
     "type",
     "action",
+    "answers",
     "profile",
     "profileVersion",
+    "model",
     "decidedAt"
   ],
   "x-model-tags": "decision, AI, provenance",
@@ -525,21 +527,6 @@
             }
           ]
         }
-      }
-    },
-    {
-      "if": {
-        "not": {
-          "required": [
-            "wasInformedBy"
-          ]
-        }
-      },
-      "then": {
-        "required": [
-          "answers",
-          "model"
-        ]
       }
     }
   ],
