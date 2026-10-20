@@ -325,6 +325,80 @@ test('a Decision answer of no known kind fails (oneOf)', () =>
   withMutatedModels((d) => editJson(join(d, 'decision', 'Decision', 'examples', 'example.json'), (e) => { e.answers.json[0].type = 'unknown'; }),
     /must match exactly one schema in oneOf/));
 
+// Chains of decisions: the Decision examples with attributes set in both forms
+// (key-values and normalized), so the two keep referring to the same entities.
+const CHECK = 'urn:ngsi-ld:Decision:check-1';
+const decisionExamples = (kv, norm) => async (d) => {
+  const at = (f) => join(d, 'decision', 'Decision', 'examples', f);
+  const merge = (set) => (e) => { for (const [k, v] of Object.entries(set)) { if (v === undefined) delete e[k]; else e[k] = v; } };
+  await editJson(at('example.json'), merge(kv));
+  await editJson(at('example-normalized.jsonld'), merge(norm));
+};
+const usesCheck = (required = [{ name: 'check', decision: CHECK }]) => [
+  { wasInformedBy: [CHECK], requiredDecisions: { json: required } },
+  { wasInformedBy: [{ type: 'Relationship', object: CHECK, datasetId: 'urn:ngsi-ld:dataset:wasInformedBy:1' }], requiredDecisions: { type: 'JsonProperty', json: required } },
+];
+
+// A decision made by rules only, from earlier decisions, has model none and no answers.
+test('a Decision with model none and no answers is valid', () => {
+  const [kv, norm] = usesCheck();
+  return withMutatedModels(decisionExamples(
+    { ...kv, model: 'none', answers: { json: [] } },
+    { ...norm, model: { type: 'Property', value: 'none' }, answers: { type: 'JsonProperty', json: [] } },
+  ), null, { pass: true });
+});
+
+test('a Decision with model none and answers fails', () =>
+  withMutatedModels(decisionExamples({ model: 'none' }, { model: { type: 'Property', value: 'none' } }),
+    /answers must NOT have more than 0 items/));
+
+test('a Decision with no answers and a real model fails', () =>
+  withMutatedModels(decisionExamples({ answers: { json: [] } }, { answers: { type: 'JsonProperty', json: [] } }),
+    /model must be equal to constant/));
+
+// Data written before wasInformedBy took several decisions: one instance, no datasetId.
+test('a Decision with one wasInformedBy instance without datasetId is valid', () =>
+  withMutatedModels(decisionExamples({ wasInformedBy: [CHECK] }, { wasInformedBy: { type: 'Relationship', object: CHECK } }), null, { pass: true }));
+
+// wasInformedBy is multi-valued: a list of decisions in key-values form, even with one.
+test('a Decision wasInformedBy that is a bare string in key-values form fails', () =>
+  withMutatedModels(decisionExamples({ wasInformedBy: CHECK }, { wasInformedBy: { type: 'Relationship', object: CHECK } }),
+    /wasInformedBy must be array/));
+
+test('a Decision that replaces an earlier one is valid', () =>
+  withMutatedModels(decisionExamples(
+    { replaces: 'urn:ngsi-ld:Decision:earlier-1' },
+    { replaces: { type: 'Relationship', object: 'urn:ngsi-ld:Decision:earlier-1' } },
+  ), null, { pass: true }));
+
+for (const [what, item, message] of [
+  ['without name', { decision: CHECK }, /must have required property 'name'/],
+  ['without decision', { name: 'check' }, /must have required property 'decision'/],
+  ['with another key', { name: 'check', decision: CHECK, role: 'x' }, /must NOT have additional properties/],
+]) {
+  test(`a Decision requiredDecisions item ${what} fails`, () => withMutatedModels(decisionExamples(...usesCheck([item])), message));
+}
+
+test('a Decision with requiredDecisions but no wasInformedBy fails', () => {
+  const [kv, norm] = usesCheck();
+  return withMutatedModels(decisionExamples({ ...kv, wasInformedBy: undefined }, { ...norm, wasInformedBy: undefined }),
+    /must have property wasInformedBy when property requiredDecisions is present/);
+});
+
+// A check that a newer decision made unnecessary has no result of a person.
+test('a Decision whose check was superseded is valid without finalAction, but not with it', async () => {
+  const supersede = (keep) => async (d) => {
+    for (const f of ['example.json', 'example-normalized.jsonld']) {
+      await editJson(join(d, 'decision', 'Decision', 'examples', f), (e) => {
+        e.reviewStatus = f === 'example.json' ? 'superseded' : { type: 'Property', value: 'superseded' };
+        if (!keep) for (const k of ['finalAction', 'reviewedBy', 'reviewedAt', 'corrections']) delete e[k];
+      });
+    }
+  };
+  await withMutatedModels(supersede(false), null, { pass: true });
+  await withMutatedModels(supersede(true), /must NOT be valid/);
+});
+
 test('a geometry without coordinates fails', () =>
   withMutatedModels((d) => editJson(join(d, 'task', 'Project', 'examples', 'example.json'), (e) => { e.location = { type: 'Polygon' }; }),
     /location/));

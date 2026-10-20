@@ -74,8 +74,8 @@
         "en": "answers"
       },
       "comment": {
-        "ja": "モデルの答え。問いごとに 1 つで、それぞれに確率が付きます。各要素は name（問いの名前）、type、value、probability（value の確率）を持ちます。type は noul（はい・いいえ）、choice（選択肢から 1 つ）、score（順序のある段階）のどれかです。choice と score では、probabilities（選択肢や段階ごとの確率）も持ちます。",
-        "en": "The model's answers, one per question, each with its probability. Each item has name (the question), type (noul for yes or no, choice for one of a list of options, score for a level on an ordered scale), value, probability (of that value) and, for choice and score, probabilities (per option or level)"
+        "ja": "モデルの答え。問いごとに 1 つで、それぞれに確率が付きます。各要素は name（問いの名前）、type、value、probability（value の確率）を持ちます。type は noul（はい・いいえ）、choice（選択肢から 1 つ）、score（順序のある段階）のどれかです。choice と score では、probabilities（選択肢や段階ごとの確率）も持ちます。モデルを使わず規則だけで決めた判定では空のリストで、そのとき model は none です。",
+        "en": "The model's answers, one per question, each with its probability. Each item has name (the question), type (noul for yes or no, choice for one of a list of options, score for a level on an ordered scale), value, probability (of that value) and, for choice and score, probabilities (per option or level). An empty list for a decision made by rules only; its model is then none"
       },
       "isDefinedBy": "https://datamodels.jp/ns/decision/",
       "seeAlso": "https://datamodels.jp/models/decision/Decision/#answers"
@@ -87,8 +87,8 @@
         "en": "corrections"
       },
       "comment": {
-        "ja": "人が直した答え（モデルの正しさを測るための正解データ）。各要素は name、value、by（識別子）、at を持ち、note は任意です。",
-        "en": "Answers corrected by a person (the ground truth for measuring the model). Each item has name, value, by (an identifier), at and optionally note"
+        "ja": "人が直した答え（モデルの正しさを測るための正解データ）。各要素は name、value、by（識別子）、at を持ち、note は任意です。人による確認（reviewStatus）が無くても、いつでも付けられます。",
+        "en": "Answers corrected by a person (the ground truth for measuring the model). Each item has name, value, by (an identifier), at and optionally note. They can come at any time, also without a check (reviewStatus)"
       },
       "isDefinedBy": "https://datamodels.jp/ns/decision/",
       "seeAlso": "https://datamodels.jp/models/decision/Decision/#corrections"
@@ -139,8 +139,8 @@
         "en": "model"
       },
       "comment": {
-        "ja": "答えたモデルの ID",
-        "en": "Id of the model that answered"
+        "ja": "答えたモデルの ID。モデルを使わず規則だけで決めた判定では none で、そのとき answers は空のリストです。",
+        "en": "Id of the model that answered; none for a decision made by rules only, with no model, whose answers are then an empty list"
       },
       "isDefinedBy": "https://datamodels.jp/ns/decision/",
       "seeAlso": "https://datamodels.jp/models/decision/Decision/#model"
@@ -185,6 +185,19 @@
       "seeAlso": "https://datamodels.jp/models/decision/Decision/#profileVersion"
     },
     {
+      "@id": "https://datamodels.jp/ns/decision/requiredDecisions",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "requiredDecisions"
+      },
+      "comment": {
+        "ja": "前の判定のそれぞれを、どの役割で使ったか。前の判定ごとに 1 つで、各要素は name（規則の集まりがその判定に付けた名前。例：check）と decision（その判定の ID）を持ちます。同じ name は 1 回だけ使います。ここに書く判定は、すべて wasInformedBy にも入れます。",
+        "en": "Which earlier decision played which part: one item per earlier decision, with name (the name the rule set gives it, for example check) and decision (its id). Each name appears once. Every decision listed here must also be in wasInformedBy"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/decision/",
+      "seeAlso": "https://datamodels.jp/models/decision/Decision/#requiredDecisions"
+    },
+    {
       "@id": "https://datamodels.jp/ns/decision/reviewedAt",
       "@type": "rdf:Property",
       "label": {
@@ -217,8 +230,8 @@
         "en": "reviewStatus"
       },
       "comment": {
-        "ja": "人による確認の状態：pending（確認待ち）か resolved（確認済み）。確認を求めないときは省きます。",
-        "en": "State of the check by a person, pending or resolved. Absent when no check was asked"
+        "ja": "人による確認の状態：pending（確認待ち）、resolved（確認済み）、superseded（確認待ちのうちに新しい判定に置き換わり、確認が要らなくなった）のどれかです。確認を求めないときは省きます。corrections（人が直した答え）は、この状態に関係なく、いつでも付けられます。",
+        "en": "State of the check by a person: pending, resolved, or superseded (the check was still pending when a newer decision replaced this one, so it is no longer needed). Absent when no check was asked. Corrections of answers do not depend on it: they can come at any time"
       },
       "isDefinedBy": "https://datamodels.jp/ns/decision/",
       "seeAlso": "https://datamodels.jp/models/decision/Decision/#reviewStatus"

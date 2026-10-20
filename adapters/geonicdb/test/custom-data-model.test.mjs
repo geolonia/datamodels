@@ -149,7 +149,7 @@ test('a VocabProperty\'s allowed terms are full IRIs, expanded with the context 
   });
   assert.equal(decision.schema.properties.humanInvolvement.enum[0], 'dpv:HumanInvolvementForVerification', 'the catalog schema keeps the compact terms');
   // Other attributes keep their checks as the schema has them.
-  assert.deepEqual(d.reviewStatus.validation, { enum: ['pending', 'resolved'] });
+  assert.deepEqual(d.reviewStatus.validation, { enum: ['pending', 'resolved', 'superseded'] });
   assert.deepEqual(d.profileVersion.validation, { minimum: 1 });
   assert.deepEqual(d.policyRule.validation, { pattern: decision.schema.properties.policyRule.pattern });
   // A prefix and a term of the common context, which Decision's context imports, and terms of its own.
