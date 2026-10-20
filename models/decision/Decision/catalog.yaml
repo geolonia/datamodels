@@ -17,8 +17,8 @@ attributes:
     ja: "規則が出した行動。次に何が起きるかを表します（例：auto、review、publish、urgent）。値は規則の集まりが定めます。"
     en: The action the rules gave, meaning what happens next (for example auto, review, publish, urgent). The values are defined by the rule set
   answers:
-    ja: "モデルの答え。問いごとに 1 つで、それぞれに確率が付きます。各要素は name（問いの名前）、type、value、probability（value の確率）を持ちます。type は noul（はい・いいえ）、choice（選択肢から 1 つ）、score（順序のある段階）のどれかです。choice と score では、probabilities（選択肢や段階ごとの確率）も持ちます。モデルを使わず規則だけで決めた判定では、空のリストです。"
-    en: "The model's answers, one per question, each with its probability. Each item has name (the question), type (noul for yes or no, choice for one of a list of options, score for a level on an ordered scale), value, probability (of that value) and, for choice and score, probabilities (per option or level). An empty list for a decision made by rules only, with no model"
+    ja: "モデルの答え。問いごとに 1 つで、それぞれに確率が付きます。各要素は name（問いの名前）、type、value、probability（value の確率）を持ちます。type は noul（はい・いいえ）、choice（選択肢から 1 つ）、score（順序のある段階）のどれかです。choice と score では、probabilities（選択肢や段階ごとの確率）も持ちます。モデルを使わず規則だけで決めた判定では空のリストで、そのとき model は none です。"
+    en: "The model's answers, one per question, each with its probability. Each item has name (the question), type (noul for yes or no, choice for one of a list of options, score for a level on an ordered scale), value, probability (of that value) and, for choice and score, probabilities (per option or level). An empty list for a decision made by rules only; its model is then none"
   facts:
     ja: "規則の集まりが求めた空間の事実を、この判定のために調べた結果です（当たった規則が使ったかどうかは問いません）。モデルではなく、空間の演算で求めた値です（例：浸水想定区域の中か、最寄りの避難場所までの距離）。各要素は name と missing を持ちます。求められたときは values（項目ごとの値）と source（出どころ）、求められなかったときは reason（no_location、unavailable、timeout、error）も持ちます。求められなかった事実を使う規則は当たりません。"
     en: "Every spatial fact the rule set asks for, as looked up for this decision (whether or not the matching rule used it), computed by spatial operations, not by the model (for example inside a flood zone, or the distance to the nearest evacuation site). Each item has name and missing, and either values (per field) and source, or, when it could not be looked up, reason (no_location, unavailable, timeout, error). Rules that need a missing fact do not match"
@@ -41,8 +41,8 @@ attributes:
     ja: "人の関わり方（W3C DPV の語）：dpv:HumanInvolvementForVerification（行動の前に人が確認する）、dpv:HumanInvolvementForOversight（行動はそのまま行い、人が後から確認・修正できる）、dpv:HumanInvolvementForDecision（人が決め、答えは参考にする）、dpv:HumanNotInvolved（人は関わらない）"
     en: "How a person takes part, as a W3C DPV term: dpv:HumanInvolvementForVerification (a person checks before the action is taken), dpv:HumanInvolvementForOversight (the action is taken, and a person can check and correct it later), dpv:HumanInvolvementForDecision (a person decides, and the answers only inform), dpv:HumanNotInvolved"
   reviewStatus:
-    ja: "人による確認の状態：pending（確認待ち）、resolved（確認済み）、superseded（確認待ちのうちに新しい判定に置き換わり、確認が要らなくなった）のどれかです。確認を求めないときは省きます。"
-    en: "State of the check by a person: pending, resolved, or superseded (the check was still pending when a newer decision replaced this one, so it is no longer needed). Absent when no check was asked"
+    ja: "人による確認の状態：pending（確認待ち）、resolved（確認済み）、superseded（確認待ちのうちに新しい判定に置き換わり、確認が要らなくなった）のどれかです。確認を求めないときは省きます。corrections（人が直した答え）は、この状態に関係なく、いつでも付けられます。"
+    en: "State of the check by a person: pending, resolved, or superseded (the check was still pending when a newer decision replaced this one, so it is no longer needed). Absent when no check was asked. Corrections of answers do not depend on it: they can come at any time"
   finalAction:
     ja: 人が確認した後の行動
     en: The action after the check by a person
@@ -53,14 +53,14 @@ attributes:
     ja: 確認した日時
     en: When the check was resolved
   corrections:
-    ja: "人が直した答え（モデルの正しさを測るための正解データ）。各要素は name、value、by（識別子）、at を持ち、note は任意です。"
-    en: Answers corrected by a person (the ground truth for measuring the model). Each item has name, value, by (an identifier), at and optionally note
+    ja: "人が直した答え（モデルの正しさを測るための正解データ）。各要素は name、value、by（識別子）、at を持ち、note は任意です。人による確認（reviewStatus）が無くても、いつでも付けられます。"
+    en: "Answers corrected by a person (the ground truth for measuring the model). Each item has name, value, by (an identifier), at and optionally note. They can come at any time, also without a check (reviewStatus)"
   wasInformedBy:
     ja: "判定が続いているときに、この判定が使った前の判定。key-values の形では、前の判定が 1 つでも常に配列です。DMN では、この判定が必要とする判定にあたります。"
     en: "The earlier decisions this one used, in a chain of decisions. Always an array in the key-values form, even with one decision. In DMN terms, the decisions this one requires"
   requiredDecisions:
-    ja: "前の判定のそれぞれを、どの役割で使ったか。前の判定ごとに 1 つで、各要素は name（規則の集まりがその判定に付けた名前。例：check）と decision（その判定の ID）を持ちます。ここに書く判定は、すべて wasInformedBy にも入れます。"
-    en: "Which earlier decision played which part: one item per earlier decision, with name (the name the rule set gives it, for example check) and decision (its id). Every decision listed here must also be in wasInformedBy"
-  wasRevisionOf:
-    ja: "この判定が置き換える前の判定。同じ規則の集まりで、同じエンティティについて、もう一度行った判定です（例：使った判定の 1 つを人が確認した後に、最後の判定をやり直したとき）。"
-    en: "The earlier decision that this one replaces: a decision of the same rule set about the same entity, made again (for example a final decision, made again after a person checked one of the decisions it used)"
+    ja: "前の判定のそれぞれを、どの役割で使ったか。前の判定ごとに 1 つで、各要素は name（規則の集まりがその判定に付けた名前。例：check）と decision（その判定の ID）を持ちます。同じ name は 1 回だけ使います。ここに書く判定は、すべて wasInformedBy にも入れます。"
+    en: "Which earlier decision played which part: one item per earlier decision, with name (the name the rule set gives it, for example check) and decision (its id). Each name appears once. Every decision listed here must also be in wasInformedBy"
+  replaces:
+    ja: "この判定が置き換える前の判定。この判定は、同じ規則の集まりで同じエンティティについて、もう一度行った判定です（例：使った判定の 1 つを人が確認した後に、最後の判定をやり直したとき）。"
+    en: "The decision this one replaces. This one is the same rule set's decision about the same entity, made again (for example a final decision, made again after a person checked one of the decisions it used)"

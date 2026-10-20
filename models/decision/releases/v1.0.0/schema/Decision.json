@@ -182,7 +182,7 @@
           }
         ]
       },
-      "description": "The model's answers, one per question, each with its probability. Empty for a decision made by rules only, with no model",
+      "description": "The model's answers, one per question, each with its probability. Empty for a decision made by rules only; its model is then none",
       "x-ngsi": {
         "type": "JsonProperty"
       },
@@ -329,7 +329,7 @@
         "resolved",
         "superseded"
       ],
-      "description": "State of the check by a person: pending, resolved, or superseded (the check was still pending when a newer decision replaced this one, so it is no longer needed). Absent when no check was asked",
+      "description": "State of the check by a person: pending, resolved, or superseded (the check was still pending when a newer decision replaced this one, so it is no longer needed). Absent when no check was asked. Corrections of answers do not depend on it: they can come at any time",
       "x-ngsi": {
         "type": "Property"
       },
@@ -402,7 +402,7 @@
           }
         }
       },
-      "description": "Answers corrected by a person (the ground truth for measuring the model)",
+      "description": "Answers corrected by a person (the ground truth for measuring the model). They can come at any time, also without a check (reviewStatus)",
       "x-ngsi": {
         "type": "JsonProperty"
       },
@@ -448,21 +448,21 @@
           }
         }
       },
-      "description": "Which earlier decision played which part: one item per earlier decision, with the name the rule set gives it and the decision's id. Every decision listed here must also be in wasInformedBy",
+      "description": "Which earlier decision played which part: one item per earlier decision, with the name the rule set gives it (each name once) and the decision's id. Every decision listed here must also be in wasInformedBy",
       "x-ngsi": {
         "type": "JsonProperty"
       },
       "x-iri": "https://datamodels.jp/ns/decision/requiredDecisions"
     },
-    "wasRevisionOf": {
+    "replaces": {
       "type": "string",
       "format": "uri",
-      "description": "The earlier decision that this one replaces: a decision of the same rule set about the same entity, made again, for example after a person checked one of the decisions it used",
+      "description": "The decision this one replaces. This one is the same rule set's decision about the same entity, made again, for example after a person checked one of the decisions it used",
       "x-ngsi": {
         "type": "Relationship",
         "target": "https://datamodels.jp/ns/decision/Decision"
       },
-      "x-iri": "http://www.w3.org/ns/prov#wasRevisionOf"
+      "x-iri": "http://purl.org/dc/terms/replaces"
     }
   },
   "required": [
@@ -528,7 +528,31 @@
           ]
         }
       }
+    },
+    {
+      "if": {
+        "required": [
+          "answers"
+        ],
+        "properties": {
+          "answers": {
+            "maxItems": 0
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "model": {
+            "const": "none"
+          }
+        }
+      }
     }
   ],
+  "dependentRequired": {
+    "requiredDecisions": [
+      "wasInformedBy"
+    ]
+  },
   "additionalProperties": false
 }

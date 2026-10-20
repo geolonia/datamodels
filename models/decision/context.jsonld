@@ -30,8 +30,8 @@
         "@type": "@id"
       },
       "requiredDecisions": "decision:requiredDecisions",
-      "wasRevisionOf": {
-        "@id": "prov:wasRevisionOf",
+      "replaces": {
+        "@id": "http://purl.org/dc/terms/replaces",
         "@type": "@id"
       }
     }
