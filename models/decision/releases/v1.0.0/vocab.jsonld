@@ -139,8 +139,8 @@
         "en": "model"
       },
       "comment": {
-        "ja": "答えたモデルの ID。モデルを使わず規則だけで決めた判定では none です。",
-        "en": "Id of the model that answered; none for a decision made by rules only, with no model"
+        "ja": "答えたモデルの ID。モデルを使わず規則だけで決めた判定では none で、そのとき answers は空のリストです。",
+        "en": "Id of the model that answered; none for a decision made by rules only, with no model, whose answers are then an empty list"
       },
       "isDefinedBy": "https://datamodels.jp/ns/decision/",
       "seeAlso": "https://datamodels.jp/models/decision/Decision/#model"

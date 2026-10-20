@@ -348,6 +348,10 @@ test('a Decision with model none and no answers is valid', () => {
   ), null, { pass: true });
 });
 
+test('a Decision with model none and answers fails', () =>
+  withMutatedModels(decisionExamples({ model: 'none' }, { model: { type: 'Property', value: 'none' } }),
+    /answers must NOT have more than 0 items/));
+
 test('a Decision with no answers and a real model fails', () =>
   withMutatedModels(decisionExamples({ answers: { json: [] } }, { answers: { type: 'JsonProperty', json: [] } }),
     /model must be equal to constant/));

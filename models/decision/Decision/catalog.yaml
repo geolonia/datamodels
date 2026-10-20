@@ -32,8 +32,8 @@ attributes:
     ja: "行動を出した規則。0 から数えた番号を文字列で書き（\"0\"、\"1\" など）、どの規則にも当たらなかったときは \"default\" です。判定の根拠になります。"
     en: "Which rule gave the action: its index from 0 as text (\"0\", \"1\", ...), or \"default\" when no rule matched. The reason for the result"
   model:
-    ja: "答えたモデルの ID。モデルを使わず規則だけで決めた判定では none です。"
-    en: "Id of the model that answered; none for a decision made by rules only, with no model"
+    ja: "答えたモデルの ID。モデルを使わず規則だけで決めた判定では none で、そのとき answers は空のリストです。"
+    en: "Id of the model that answered; none for a decision made by rules only, with no model, whose answers are then an empty list"
   decidedAt:
     ja: 判定した日時
     en: When the decision was made

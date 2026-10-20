@@ -293,7 +293,7 @@
     },
     "model": {
       "type": "string",
-      "description": "Id of the model that answered; none for a decision made by rules only, with no model",
+      "description": "Id of the model that answered; none for a decision made by rules only, with no model, whose answers are then an empty list",
       "x-ngsi": {
         "type": "Property"
       },
@@ -544,6 +544,25 @@
         "properties": {
           "model": {
             "const": "none"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "model"
+        ],
+        "properties": {
+          "model": {
+            "const": "none"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "answers": {
+            "maxItems": 0
           }
         }
       }
