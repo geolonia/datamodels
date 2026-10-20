@@ -17,8 +17,8 @@ attributes:
     ja: "規則が出した行動。次に何が起きるかを表します（例：auto、review、publish、urgent）。値は規則の集まりが定めます。"
     en: The action the rules gave, meaning what happens next (for example auto, review, publish, urgent). The values are defined by the rule set
   answers:
-    ja: "モデルの答え。問いごとに 1 つで、それぞれに確率が付きます。各要素は name（問いの名前）、type、value、probability（value の確率）を持ちます。type は noul（はい・いいえ）、choice（選択肢から 1 つ）、score（順序のある段階）のどれかです。choice と score では、probabilities（選択肢や段階ごとの確率）も持ちます。"
-    en: "The model's answers, one per question, each with its probability. Each item has name (the question), type (noul for yes or no, choice for one of a list of options, score for a level on an ordered scale), value, probability (of that value) and, for choice and score, probabilities (per option or level)"
+    ja: "モデルの答え。問いごとに 1 つで、それぞれに確率が付きます。各要素は name（問いの名前）、type、value、probability（value の確率）を持ちます。type は noul（はい・いいえ）、choice（選択肢から 1 つ）、score（順序のある段階）のどれかです。choice と score では、probabilities（選択肢や段階ごとの確率）も持ちます。必須ですが、前の判定を使う判定（wasInformedBy がある判定）では省けます。規則だけで決め、モデルを使わないことがあるからです。"
+    en: "The model's answers, one per question, each with its probability. Each item has name (the question), type (noul for yes or no, choice for one of a list of options, score for a level on an ordered scale), value, probability (of that value) and, for choice and score, probabilities (per option or level). Required, except in a decision that uses earlier decisions (wasInformedBy): it may use rules only, with no model"
   facts:
     ja: "規則の集まりが求めた空間の事実を、この判定のために調べた結果です（当たった規則が使ったかどうかは問いません）。モデルではなく、空間の演算で求めた値です（例：浸水想定区域の中か、最寄りの避難場所までの距離）。各要素は name と missing を持ちます。求められたときは values（項目ごとの値）と source（出どころ）、求められなかったときは reason（no_location、unavailable、timeout、error）も持ちます。求められなかった事実を使う規則は当たりません。"
     en: "Every spatial fact the rule set asks for, as looked up for this decision (whether or not the matching rule used it), computed by spatial operations, not by the model (for example inside a flood zone, or the distance to the nearest evacuation site). Each item has name and missing, and either values (per field) and source, or, when it could not be looked up, reason (no_location, unavailable, timeout, error). Rules that need a missing fact do not match"
@@ -32,8 +32,8 @@ attributes:
     ja: "行動を出した規則。0 から数えた番号を文字列で書き（\"0\"、\"1\" など）、どの規則にも当たらなかったときは \"default\" です。判定の根拠になります。"
     en: "Which rule gave the action: its index from 0 as text (\"0\", \"1\", ...), or \"default\" when no rule matched. The reason for the result"
   model:
-    ja: 答えたモデルの ID
-    en: Id of the model that answered
+    ja: "答えたモデルの ID。必須ですが、前の判定と規則だけで決めた判定（wasInformedBy がある判定）では省けます。"
+    en: "Id of the model that answered. Required, except in a decision that uses earlier decisions (wasInformedBy) and rules only"
   decidedAt:
     ja: 判定した日時
     en: When the decision was made
@@ -56,5 +56,11 @@ attributes:
     ja: "人が直した答え（モデルの正しさを測るための正解データ）。各要素は name、value、by（識別子）、at を持ち、note は任意です。"
     en: Answers corrected by a person (the ground truth for measuring the model). Each item has name, value, by (an identifier), at and optionally note
   wasInformedBy:
-    ja: "判定が続いているときの、この判定の前の判定"
-    en: The decision this one followed, in a chain of decisions
+    ja: "判定が続いているときに、この判定が使った前の判定。key-values の形では、前の判定が 1 つでも常に配列です。DMN では、この判定が必要とする判定にあたります。"
+    en: "The earlier decisions this one used, in a chain of decisions. Always an array in the key-values form, even with one decision. In DMN terms, the decisions this one requires"
+  requiredDecisions:
+    ja: "前の判定のそれぞれを、どの役割で使ったか。前の判定ごとに 1 つで、各要素は name（規則の集まりがその判定に付けた名前。例：check）と decision（その判定の ID）を持ちます。ここに書く判定は、すべて wasInformedBy にも入れます。"
+    en: "Which earlier decision played which part: one item per earlier decision, with name (the name the rule set gives it, for example check) and decision (its id). Every decision listed here must also be in wasInformedBy"
+  wasRevisionOf:
+    ja: "この判定が置き換える前の判定。同じ規則の集まりで、同じエンティティについて、もう一度行った判定です（例：使った判定の 1 つを人が確認した後に、最後の判定をやり直したとき）。"
+    en: "The earlier decision that this one replaces: a decision of the same rule set about the same entity, made again (for example a final decision, made again after a person checked one of the decisions it used)"

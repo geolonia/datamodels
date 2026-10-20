@@ -183,7 +183,7 @@
           }
         ]
       },
-      "description": "The model's answers, one per question, each with its probability",
+      "description": "The model's answers, one per question, each with its probability. Required, except in a decision that uses earlier decisions (wasInformedBy): it may use rules only, with no model",
       "x-ngsi": {
         "type": "JsonProperty"
       },
@@ -294,7 +294,7 @@
     },
     "model": {
       "type": "string",
-      "description": "Id of the model that answered",
+      "description": "Id of the model that answered. Required, except in a decision that uses earlier decisions (wasInformedBy) and rules only",
       "x-ngsi": {
         "type": "Property"
       },
@@ -410,24 +410,67 @@
       "x-personal-data": true
     },
     "wasInformedBy": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "The earlier decisions this one used, in a chain of decisions. Always an array in the key-values form, even with one decision. In DMN terms, the decisions this one requires",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "https://datamodels.jp/ns/decision/Decision",
+        "multi": true
+      },
+      "x-iri": "http://www.w3.org/ns/prov#wasInformedBy"
+    },
+    "requiredDecisions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "decision"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The name the rule set gives this earlier decision, for example check"
+          },
+          "decision": {
+            "type": "string",
+            "format": "uri",
+            "description": "Id of the earlier decision. It must also be in wasInformedBy"
+          }
+        }
+      },
+      "description": "Which earlier decision played which part: one item per earlier decision, with the name the rule set gives it and the decision's id. Every decision listed here must also be in wasInformedBy",
+      "x-ngsi": {
+        "type": "JsonProperty"
+      },
+      "x-iri": "https://datamodels.jp/ns/decision/requiredDecisions"
+    },
+    "wasRevisionOf": {
       "type": "string",
       "format": "uri",
-      "description": "The decision this one followed, in a chain of decisions",
+      "description": "The earlier decision that this one replaces: a decision of the same rule set about the same entity, made again, for example after a person checked one of the decisions it used",
       "x-ngsi": {
         "type": "Relationship",
         "target": "https://datamodels.jp/ns/decision/Decision"
       },
-      "x-iri": "http://www.w3.org/ns/prov#wasInformedBy"
+      "x-iri": "http://www.w3.org/ns/prov#wasRevisionOf"
     }
   },
   "required": [
     "id",
     "type",
     "action",
-    "answers",
     "profile",
     "profileVersion",
-    "model",
     "decidedAt"
   ],
   "x-model-tags": "decision, AI, provenance",
@@ -482,6 +525,21 @@
             }
           ]
         }
+      }
+    },
+    {
+      "if": {
+        "not": {
+          "required": [
+            "wasInformedBy"
+          ]
+        }
+      },
+      "then": {
+        "required": [
+          "answers",
+          "model"
+        ]
       }
     }
   ],
