@@ -41,10 +41,10 @@
     "textlint-rule-preset-ja-technical-writing": "12.0.2",
     "textlint-rule-preset-jtf-style": "3.0.3",
     "vitepress": "2.0.0-alpha.20",
-    "vue": "^3.5.43",
-    "wrangler": "4.148.0",
+    "vue": "^3.5.44",
+    "wrangler": "4.151.0",
     "yaml": "^2.9.1",
-    "zod": "4.6.5"
+    "zod": "4.6.7"
   },
   "overrides": {
     "miniflare": {
