@@ -809,3 +809,29 @@ test('a few unclosed rings are all reported, and the answer stays complete', () 
   assert.deepEqual(r.problems.map((p) => p.path), ['/area/0/coordinates/0', '/area/1/coordinates/0']);
   assert.equal(r.complete, true);
 });
+
+test('rings and other problems: exactly as many as the answer holds stays complete; one more does not', () => {
+  const ring = { type: 'Polygon', coordinates: [[[0, 0], [1, 1]]] };
+  // n attributes that must be numbers, sent as strings: n schema problems before the rings.
+  const entity = (n, rings) => {
+    const schema = { type: 'object', properties: { id: { type: 'string' }, type: { const: 'X' }, area: {} } };
+    const data = { id: 'urn:x', type: 'X', area: Array.from({ length: rings }, () => ring) };
+    for (let i = 0; i < n; i++) { schema.properties[`p${i}`] = { type: 'number' }; data[`p${i}`] = 'x'; }
+    return checkEntity({ id: 'test/X', type: 'X', kind: 'entity' }, schema, makeChecker(schema, []), data, 'key-values', shape(data).values);
+  };
+  const ringsOf = (r) => r.problems.filter((p) => /ring does not close/.test(p.message)).length;
+  // 18 + 2 = MAX_PROBLEMS: all shown, complete.
+  let r = entity(MAX_PROBLEMS - 2, 2);
+  assert.equal(r.problemCount, MAX_PROBLEMS, JSON.stringify(r.problems));
+  assert.equal(ringsOf(r), 2);
+  assert.equal(r.complete, true);
+  // 18 + 3: one ring has no room, so the answer is not complete.
+  r = entity(MAX_PROBLEMS - 2, 3);
+  assert.equal(r.problemCount, MAX_PROBLEMS);
+  assert.equal(ringsOf(r), 2);
+  assert.equal(r.complete, false);
+  // No room at all: a ring still makes the answer incomplete.
+  r = entity(MAX_PROBLEMS, 1);
+  assert.equal(ringsOf(r), 0);
+  assert.equal(r.complete, false);
+});

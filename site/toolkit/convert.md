@@ -94,7 +94,7 @@ npx @geolonia/datamodels@0.3.17 convert \
 
 ### AI エージェントと埋める {#agent}
 
-TODO を埋める作業は、AI エージェントにも頼めます。datamodels-toolkit の[エージェントスキル](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.16/skills/datamodels)（`skills/datamodels`）が、手順と決まりをエージェントに教えます。一覧に無い値は書かない、意味のはっきりしない列は人に聞く、という決まりです。入れ方は[エージェントスキル](/toolkit/#agent-skill)にあります。
+TODO を埋める作業は、AI エージェントにも頼めます。datamodels-toolkit の[エージェントスキル](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.17/skills/datamodels)（`skills/datamodels`）が、手順と決まりをエージェントに教えます。一覧に無い値は書かない、意味のはっきりしない列は人に聞く、という決まりです。入れ方は[エージェントスキル](/toolkit/#agent-skill)にあります。
 
 依頼の例です。
 

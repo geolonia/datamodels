@@ -94,7 +94,7 @@ The last line sums it up, for example `18 of 20 rows valid`. The exit code is 0 
 
 ### With an AI agent {#agent}
 
-An AI agent can fill in the TODOs with you. The [agent skill](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.16/skills/datamodels) of datamodels-toolkit (`skills/datamodels`) gives it the steps and the rules: never invent values, and ask about unclear columns. How to install it: [Agent skill](/en/toolkit/#agent-skill).
+An AI agent can fill in the TODOs with you. The [agent skill](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.17/skills/datamodels) of datamodels-toolkit (`skills/datamodels`) gives it the steps and the rules: never invent values, and ask about unclear columns. How to install it: [Agent skill](/en/toolkit/#agent-skill).
 
 An example prompt:
 
