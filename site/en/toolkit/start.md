@@ -20,7 +20,7 @@ The result looks like [models.gtt-project.org](https://models.gtt-project.org/):
 ## 1. Start the node {#init}
 
 ```bash
-npx @geolonia/datamodels@0.3.16 init my-models
+npx @geolonia/datamodels@0.3.17 init my-models
 cd my-models
 ```
 
@@ -42,7 +42,7 @@ It also works in an existing repository, for example one made by a scaffolder: i
 The options give the answers, so `init` can run in a script or in CI. There it never asks: a missing answer is a usage error. Without an answer, the defaults are hash IRIs, English and CC0-1.0.
 
 ```bash
-npx @geolonia/datamodels@0.3.16 init my-models \
+npx @geolonia/datamodels@0.3.17 init my-models \
   --base-url https://models.example.org --iris hash --languages ja,en \
   --publisher "Example Inc." --publisher-url https://example.org/ \
   --license CC0-1.0 --subject road --yes

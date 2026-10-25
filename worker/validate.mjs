@@ -342,6 +342,11 @@ export function checkEntity(m, root, check, data, form, values) {
     const key = `${path} ${message}`;
     if (!seen.has(key)) { seen.add(key); problems.push({ path, message }); }
   }
-  for (const p of unclosedRings(kv, { style: 'pointer' })) problems.push({ path: p, message: 'the polygon ring does not close: its first and last positions must be the same (RFC 7946)' });
+  // Each ring path repeats the keys above it, so only as many as the answer can
+  // show are made, plus one to tell that there were more (toolkit 0.3.17).
+  const room = Math.max(0, MAX_PROBLEMS - problems.length);
+  const rings = unclosedRings(kv, { style: 'pointer', limit: room + 1 });
+  if (rings.length > room) complete = false;
+  for (const p of rings.slice(0, room)) problems.push({ path: p, message: 'the polygon ring does not close: its first and last positions must be the same (RFC 7946)' });
   return answer();
 }

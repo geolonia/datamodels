@@ -10,7 +10,7 @@
 //
 // Offline: the build does not depend on other sites. On a pull request, CI
 // compares the published versions with main and online (datamodels check --base).
-import { mkdtemp, copyFile, symlink, rm } from 'node:fs/promises';
+import { mkdtemp, copyFile, cp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { checkNode } from '@geolonia/datamodels/build';
@@ -27,7 +27,8 @@ try {
   if (resolve(MODELS_DIR) !== join(ROOT, 'models')) {
     temp = await mkdtemp(join(tmpdir(), 'datamodels-node-'));
     await copyFile(join(ROOT, 'node.yaml'), join(temp, 'node.yaml'));
-    await symlink(resolve(MODELS_DIR), join(temp, 'models'), 'dir');
+    // A copy, not a link: the toolkit refuses symbolic links in models/ (0.3.17).
+    await cp(resolve(MODELS_DIR), join(temp, 'models'), { recursive: true });
     nodeDir = temp;
   }
   const { problems } = await checkNode(nodeDir, { offline: true });

@@ -43,7 +43,7 @@ curl -sSfL -o sites.csv "$HOST/$SET/$FILE/092011_evacuation_space_sanitized_new.
 変換すると、CSV の 1 行が、モデルに合った 1 つのエンティティになります。この避難場所に当たるカタログのモデルは [EvacuationSite](/models/disaster/EvacuationSite/) です。このモデルには、どの列をどの属性にするかを書いた**対応表**（`jichitai-opendata-site`）が用意されています。そのため、変換のコードを自分で書く必要はありません。
 
 ```bash
-npx @geolonia/datamodels@0.3.16 convert \
+npx @geolonia/datamodels@0.3.17 convert \
   disaster/EvacuationSite jichitai-opendata-site sites.csv --out sites.json
 ```
 
@@ -99,7 +99,7 @@ geonic auth login --tenant "<your-tenant>"
 まず、ブローカーが受け取る形に変換します。
 
 ```bash
-npx @geolonia/datamodels@0.3.16 convert \
+npx @geolonia/datamodels@0.3.17 convert \
   disaster/EvacuationSite jichitai-opendata-site sites.csv \
   --normalized --out sites.jsonld
 ```

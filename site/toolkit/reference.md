@@ -10,7 +10,7 @@ description: datamodels-toolkit の datamodels コマンドのすべてのコマ
 コマンドは `npx` で実行します（[実行する](/toolkit/#run)）。
 
 ```bash
-npx @geolonia/datamodels@0.3.16 search 避難
+npx @geolonia/datamodels@0.3.17 search 避難
 ```
 
 ## すべてのコマンドに共通すること {#general}

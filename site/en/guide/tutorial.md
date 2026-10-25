@@ -43,7 +43,7 @@ Open it in a spreadsheet if you like. Each row is one site, with columns such as
 Converting turns each row of the CSV into one entity that follows the model. The catalog's model for these sites is [EvacuationSite](/en/models/disaster/EvacuationSite/), and it comes with a **mapping file** (`jichitai-opendata-site`) that says which column becomes which attribute. So the converter needs no code from you:
 
 ```bash
-npx @geolonia/datamodels@0.3.16 convert \
+npx @geolonia/datamodels@0.3.17 convert \
   disaster/EvacuationSite jichitai-opendata-site sites.csv --out sites.json
 ```
 
@@ -99,7 +99,7 @@ geonic auth login --tenant "<your-tenant>"
 First convert the data once more, into the form a broker takes:
 
 ```bash
-npx @geolonia/datamodels@0.3.16 convert \
+npx @geolonia/datamodels@0.3.17 convert \
   disaster/EvacuationSite jichitai-opendata-site sites.csv \
   --normalized --out sites.jsonld
 ```
