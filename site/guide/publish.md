@@ -39,7 +39,7 @@ description: 自治体が CSV で公開している一覧（避難場所、AED �
 [Node.js](https://nodejs.org/) 24 以降が要ります。ここでは、宇都宮市の指定緊急避難場所一覧を例にします。[チュートリアルの手順 1](/guide/tutorial#data) のコマンドで、`sites.csv` としてダウンロードできます。
 
 ```bash
-npx @geolonia/datamodels@0.3.16 convert \
+npx @geolonia/datamodels@0.3.17 convert \
   disaster/EvacuationSite jichitai-opendata-site sites.csv --out sites.json
 ```
 

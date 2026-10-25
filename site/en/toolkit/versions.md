@@ -12,7 +12,7 @@ A published version must not change: data that names its `@context` relies on it
 Before you change anything, start the next version with `bump`. It keeps the published version online (its `@context`, vocabulary and schemas go into `models/road/releases/`), then raises the subject's `version` in `subject.yaml` and the version in its schema URLs (`$id`, and `$ref` between the subject's models). It refuses when the files differ from the published ones. Commit the result.
 
 ```bash
-npx @geolonia/datamodels@0.3.16 bump road minor
+npx @geolonia/datamodels@0.3.17 bump road minor
 ```
 
 For a node that is not online yet, there is nothing to compare with, so `bump` and `release` stop:
@@ -35,7 +35,7 @@ The first thing `bump` does, keeping the version, is also a command of its own: 
 When the version already has a snapshot, `release` compares the sources with it instead, and changes nothing. Otherwise, online, `release` first compares the files with the published ones. When the sources changed after publishing, it refuses: restore them (for example with git), release, and then make the change in a new version. A file it cannot read also stops it, unless the site answers 404 (not published).
 
 ```bash
-npx @geolonia/datamodels@0.3.16 release road
+npx @geolonia/datamodels@0.3.17 release road
 ```
 
 ## How a published version is kept {#never-changes}
@@ -54,7 +54,7 @@ Three checks guard them:
 
 ```bash
 git fetch origin main
-npx @geolonia/datamodels@0.3.16 check --base origin/main --all-released
+npx @geolonia/datamodels@0.3.17 check --base origin/main --all-released
 ```
 
 ### Before the launch {#prerelease}
@@ -70,7 +70,7 @@ The base branch decides. Once it has the flag, a change may not remove it, or se
 To move the node to a newer toolkit, run `upgrade` and commit: it changes the version in the workflow and in the Markdown files at the top of the node, such as the README, to the latest release (or the one given with `--to`). Dependabot also proposes new releases.
 
 ```bash
-npx @geolonia/datamodels@0.3.16 upgrade
+npx @geolonia/datamodels@0.3.17 upgrade
 ```
 
 `upgrade` reads the release from the GitHub API. In `.github/workflows/`, it pins the Action to the release's commit SHA, with the tag as a comment. An `npx` line that ran the toolkit from GitHub (`npx github:geolonia/datamodels-toolkit#vX.Y.Z`) becomes the npm form (`npx @geolonia/datamodels@X.Y.Z`). This holds for v0.3.8 and later; with an older `--to`, the lines get the GitHub form.
