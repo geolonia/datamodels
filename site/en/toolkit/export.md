@@ -8,7 +8,7 @@ description: With export from datamodels-toolkit, make a CSV template, a Table S
 You can use the data models without an NGSI-LD broker. The toolkit's `export` command makes files from one model:
 
 ```bash
-npx @geolonia/datamodels@0.3.17 export \
+npx @geolonia/datamodels@0.3.18 export \
   disaster/EvacuationSite --to csv,table-schema,ai,postgis
 ```
 
@@ -24,7 +24,7 @@ Every file keeps the model's attribute names and IRIs, so the data converts to t
 Models of your own site work too: give the site's folder (default: the current folder). With `--index`, `export` reads the model from that `catalog.json` and does not read your site at all. Without it, when your site has no such model, `export` reads it from the first node in `node.yaml`, else datamodels.jp. A type IRI works in place of `<subject>/<Type>`. For a type IRI, `export` tries the node that made the IRI before the first node in `node.yaml` ([A model given by its type IRI](/en/toolkit/reference#type-iri)).
 
 ```bash
-npx @geolonia/datamodels@0.3.17 export road/RoadPatrol my-models --to postgis
+npx @geolonia/datamodels@0.3.18 export road/RoadPatrol my-models --to postgis
 ```
 
 ## How a model becomes columns {#columns}

@@ -6,7 +6,7 @@
 // the catalog models in models/), which the catalog model's page lists. It also
 // reports the nodes that the known nodes link to but nodes.yaml does not list yet.
 import { writeFile, rename } from 'node:fs/promises';
-import { readNodeList, readSnapshot, nodeEntry, isIndex, catalogAttributeIris, unlistedNodes, SNAPSHOT_FILE } from './lib/nodes.mjs';
+import { readNodeList, readSnapshot, readJsonLimited, nodeEntry, isIndex, catalogAttributeIris, unlistedNodes, SNAPSHOT_FILE } from './lib/nodes.mjs';
 import { loadSubjects } from './lib/models.mjs';
 
 const TIMEOUT = 15000;
@@ -19,7 +19,7 @@ for (const node of list) {
   try {
     const res = await fetch(node.index, { signal: AbortSignal.timeout(TIMEOUT), headers: { accept: 'application/json' } });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const catalog = await res.json();
+    const catalog = await readJsonLimited(res);
     if (!isIndex(catalog)) throw new Error('not a node index (no models list)');
     const entry = nodeEntry(node, catalog, new Date().toISOString().slice(0, 10), catalogIris);
     nodes.push(entry);

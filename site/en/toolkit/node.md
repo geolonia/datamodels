@@ -75,8 +75,8 @@ The toolkit reads other nodes only over https. So `nodes[].url` and `nodes[].ind
 ## What build writes {#build}
 
 ```bash
-npx @geolonia/datamodels@0.3.17 build
-npx @geolonia/datamodels@0.3.17 build my-models --out public
+npx @geolonia/datamodels@0.3.18 build
+npx @geolonia/datamodels@0.3.18 build my-models --out public
 ```
 
 The files go into `_site/` in the node's folder, or into `--out`. The paths below are also their URLs under the base URL:

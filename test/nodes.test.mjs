@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { nodeEntry, nodeName, builtOn, readNodeList, cleanText, cleanUrl, isIndex, catalogAttributeIris, shownByNode, unlistedNodes } from '../scripts/lib/nodes.mjs';
+import { nodeEntry, nodeName, readJsonLimited, builtOn, readNodeList, cleanText, cleanUrl, isIndex, catalogAttributeIris, shownByNode, unlistedNodes } from '../scripts/lib/nodes.mjs';
 import { loadSubjects } from '../scripts/lib/models.mjs';
 import { renderModelPage, nodesPage } from '../scripts/lib/site.mjs';
 
@@ -168,4 +168,22 @@ test('the Task page lists the models of other sites built on it, with what they 
   // Every catalog model a site builds on, in the order met.
   const two = { nodes: [nodeEntry(NODE, { models: [{ type: 'Both', typeIri: 'https://models.example.org/ns/x#Both', extends: [{ typeIri: TASK, version: '1.0.0' }, { typeIri: 'https://datamodels.jp/ns/task/Project', version: '1.0.0' }] }, { type: 'Alias', typeIri: TASK, aliasOf: TASK, extends: [{ typeIri: TASK, version: '1.0.0' }] }] }, '2026-10-11')] };
   assert.match(nodesPage('ja', '', two), /\| 2 \| \[Task\]\(\/models\/task\/Task\/\), \[Project\]\(\/models\/task\/Project\/\) \|/);
+});
+
+test('readJsonLimited parses a body within the limit and refuses a larger one', async () => {
+  assert.deepEqual(await readJsonLimited(new Response('{"models":[]}'), 100), { models: [] });
+  await assert.rejects(readJsonLimited(new Response(JSON.stringify({ pad: 'x'.repeat(200) })), 100), /larger than 100 bytes/);
+  await assert.rejects(readJsonLimited(new Response('not json'), 100), SyntaxError);
+  await assert.rejects(readJsonLimited(new Response(null), 100), SyntaxError);
+});
+
+test('readJsonLimited stops reading an endless body at the limit', async () => {
+  let pulled = 0, cancelled = false;
+  const body = new ReadableStream({
+    pull(c) { pulled++; c.enqueue(new Uint8Array(1024)); },
+    cancel() { cancelled = true; },
+  });
+  await assert.rejects(readJsonLimited(new Response(body), 10_000), /larger than 10000 bytes/);
+  assert.ok(pulled <= 12, `read ${pulled} chunks`);
+  assert.ok(cancelled, 'the stream is cancelled');
 });
