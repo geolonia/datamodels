@@ -6,7 +6,8 @@
 //   node scripts/dist-diff.mjs --base-dist <dir> --head-dist <dir>   (no builds)
 //
 // The base is built in a temporary git worktree of that ref, with its own
-// `npm ci`; the working tree is built in place (`npm run build`). Either side
+// install (pnpm, or npm ci for a ref from before the switch to pnpm); the
+// working tree is built in place (`pnpm run build`). Either side
 // can be given as an already built folder instead (--base-dist, --head-dist).
 // Exit 0: identical; 1: something differs; 2: a build or git step failed.
 //
@@ -22,7 +23,7 @@
 //     [hash]; the content of every chunk is still compared.
 import { readdir, readFile, mkdtemp, rm } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
-import { appendFileSync } from 'node:fs';
+import { appendFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -250,13 +251,20 @@ async function main() {
       worktree = join(tmp, 'base');
       console.error(`building ${label} in ${worktree}`);
       run('git', ['worktree', 'add', '--detach', worktree, sha], ROOT);
-      run('npm', ['ci', '--no-audit', '--no-fund'], worktree);
-      run('npm', ['run', 'build'], worktree);
+      // Refs from before the switch to pnpm (2026-10) have package-lock.json;
+      // drop the npm branch once comparing with such refs no longer matters.
+      if (existsSync(join(worktree, 'pnpm-lock.yaml'))) {
+        run('pnpm', ['install', '--frozen-lockfile'], worktree);
+        run('pnpm', ['run', 'build'], worktree);
+      } else {
+        run('npm', ['ci', '--no-audit', '--no-fund'], worktree);
+        run('npm', ['run', 'build'], worktree);
+      }
       baseDist = join(worktree, 'dist');
     }
     if (!headDist) {
       console.error('building the working tree');
-      run('npm', ['run', 'build'], ROOT);
+      run('pnpm', ['run', 'build'], ROOT);
       headDist = join(ROOT, 'dist');
     }
     const r = await compareDirs(baseDist, headDist);

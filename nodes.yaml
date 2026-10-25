@@ -1,6 +1,6 @@
 # Data model nodes that datamodels.jp knows (docs/node.md, section 5): sites of
 # their own, made with datamodels-toolkit, that publish a catalog.json.
-# npm run nodes reads their indexes into nodes.snapshot.json; commit it in a pull
+# pnpm run nodes reads their indexes into nodes.snapshot.json; commit it in a pull
 # request, so what they publish is reviewed before it appears on datamodels.jp.
 - url: https://models.gtt-project.org/
   index: https://models.gtt-project.org/catalog.json

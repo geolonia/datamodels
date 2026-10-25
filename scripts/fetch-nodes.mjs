@@ -1,4 +1,4 @@
-// npm run nodes: read the catalog.json of every node in nodes.yaml into
+// pnpm run nodes: read the catalog.json of every node in nodes.yaml into
 // nodes.snapshot.json, keeping only what the pages show. A node that does not
 // answer keeps its previous entry, so a short outage never removes it. Commit the
 // result in a pull request: the diff is what datamodels.jp will show. For a model

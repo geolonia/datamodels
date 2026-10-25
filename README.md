@@ -16,7 +16,7 @@ The site explains how to use and extend the models: [属性を足す](https://da
 models/<subject>/
   subject.yaml            name, version, ja/en title and description
   context.jsonld          the subject's JSON-LD context (may import other catalog contexts by URL)
-  releases/vX.Y.Z/        snapshots of published versions (context, vocabulary, schemas), written by `npx datamodels release <subject>`
+  releases/vX.Y.Z/        snapshots of published versions (context, vocabulary, schemas), written by `pnpm exec datamodels release <subject>`
   <Type>/
     schema.json           JSON Schema 2020-12 (key-values), with x-ngsi / x-iri, optional x-personal-data;
                           x-kind: value for value types, x-alias-of (same type under another name)
@@ -40,26 +40,28 @@ Model folders follow the Smart Data Models layout so a model can be proposed ups
 
 ## Commands
 
+You need Node.js 24 or later and pnpm (the version in `packageManager` in `package.json`; without pnpm installed, `npx pnpm install` works too).
+
 ```bash
-npm ci
-npm run check            # validate models, build dist/, check the release snapshots, dry-run the deploy
-npm test                 # validator, vocabulary and adapter tests
-npm run validate:models  # datamodels check --offline (datamodels-toolkit) on this repository, plus the catalog's own rules
-npm run site:dev         # local site with generated model pages
-npm run check:live       # verify the deployed site against the URL contract and the release snapshots
-npm run dist:diff        # build origin/main (or --base <ref>) and this tree, list what differs in dist/; CI shows it on every pull request
-npx datamodels release <subject>  # snapshot the current version (maintainers, last step before merging)
-npm run new-model -- <subject> <Type> [--value]   # scaffold a model; the validator lists the TODOs left
+pnpm install
+pnpm run check           # validate models, build dist/, check the release snapshots, dry-run the deploy
+pnpm test                # validator, vocabulary and adapter tests
+pnpm run validate:models # datamodels check --offline (datamodels-toolkit) on this repository, plus the catalog's own rules
+pnpm run site:dev        # local site with generated model pages
+pnpm run check:live      # verify the deployed site against the URL contract and the release snapshots
+pnpm run dist:diff       # build origin/main (or --base <ref>) and this tree, list what differs in dist/; CI shows it on every pull request
+pnpm exec datamodels release <subject>  # snapshot the current version (maintainers, last step before merging)
+pnpm run new-model -- <subject> <Type> [--value]   # scaffold a model; the validator lists the TODOs left
 node adapters/geonicdb/export.mjs <subject> [--type T] [--type-prefix P | --type-name N] [--rename a=b] [--context-url URL] [--exact-context] [--allow-additional] [--extend FILE] [--out DIR]
 ```
 
 ## Adding or changing a model
 
-1. Edit or add files under `models/<subject>/`. For a new model, start with `npm run new-model -- <subject> <Type>`: it creates every file with TODO markers and adds the type to the subject's context; `npm run validate:models` lists what is still missing. Every attribute needs a context term (or a core-context term) and ja/en descriptions; never redefine a core-context term such as `status`.
-2. `npm run check` and `npm test` must pass. CI runs both on every pull request.
-3. Bump the subject version for anything that changes a published file and mark superseded attributes `x-deprecated`. Releasing is a maintainer step (see [CONTRIBUTING.md](CONTRIBUTING.md)): before merging, a maintainer runs `npx datamodels release <subject>` as the last step. It snapshots the new version into `releases/`. `npm run check` fails if a snapshot differs from the sources or the current version has none; on a pull request, CI also fails if a published version changed or disappeared, compared with main and with the live site (`datamodels check --base`).
+1. Edit or add files under `models/<subject>/`. For a new model, start with `pnpm run new-model -- <subject> <Type>`: it creates every file with TODO markers and adds the type to the subject's context; `pnpm run validate:models` lists what is still missing. Every attribute needs a context term (or a core-context term) and ja/en descriptions; never redefine a core-context term such as `status`.
+2. `pnpm run check` and `pnpm test` must pass. CI runs both on every pull request.
+3. Bump the subject version for anything that changes a published file and mark superseded attributes `x-deprecated`. Releasing is a maintainer step (see [CONTRIBUTING.md](CONTRIBUTING.md)): before merging, a maintainer runs `pnpm exec datamodels release <subject>` as the last step. It snapshots the new version into `releases/`. `pnpm run check` fails if a snapshot differs from the sources or the current version has none; on a pull request, CI also fails if a published version changed or disappeared, compared with main and with the live site (`datamodels check --base`).
 
-**Pre-release exception, until the official launch** (launch plan #30): the published files of a subject's **current** version, `v1.0.0` included, may be corrected in place. Change the source; a maintainer then removes that version's snapshot (`models/<subject>/releases/vX.Y.Z/`) and runs `npx datamodels release <subject> --offline` again (the live site still serves the old files, so the online comparison would refuse), and the pull request says so. Only the current version is corrected this way: an older release's snapshot is the only copy, and removing it would drop the release from the site. `npm run check:live` then confirms the deployed bytes. CI lists such corrections as notes (`datamodels check --base`, with `prerelease: true` in `node.yaml` on both branches). The exception, the pre-release banner on the site, and the 5-minute cache on exact versions (instead of one year, immutable) end at the official launch: `prerelease` in `node.yaml` is set to `false`, after which the same check fails on any changed or removed published file.
+**Pre-release exception, until the official launch** (launch plan #30): the published files of a subject's **current** version, `v1.0.0` included, may be corrected in place. Change the source; a maintainer then removes that version's snapshot (`models/<subject>/releases/vX.Y.Z/`) and runs `pnpm exec datamodels release <subject> --offline` again (the live site still serves the old files, so the online comparison would refuse), and the pull request says so. Only the current version is corrected this way: an older release's snapshot is the only copy, and removing it would drop the release from the site. `pnpm run check:live` then confirms the deployed bytes. CI lists such corrections as notes (`datamodels check --base`, with `prerelease: true` in `node.yaml` on both branches). The exception, the pre-release banner on the site, and the 5-minute cache on exact versions (instead of one year, immutable) end at the official launch: `prerelease` in `node.yaml` is set to `false`, after which the same check fails on any changed or removed published file.
 
 Every model starts as `status: draft`. The stages, and what a model needs to become `stable` (#38, #125, #200): [Stages](https://datamodels.jp/en/guide/rules#stages) on the site.
 

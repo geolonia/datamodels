@@ -30,18 +30,22 @@ jobs:
           # The merge commit and its first parent, the base: the pull request's changes.
           fetch-depth: 2
 
+      # Reads the pnpm version from "packageManager" in package.json.
+      - name: Set up pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
       - name: Set up Node
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24'
-          cache: npm
+          cache: pnpm
 
       - name: Install
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Compare the pages
         if: github.event_name != 'pull_request'
-        run: npm run check:languages
+        run: pnpm run check:languages
 
       # The description is passed as data in an environment variable, never
       # into the script itself.
@@ -49,4 +53,4 @@ jobs:
         if: github.event_name == 'pull_request'
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
-        run: npm run check:languages -- --base HEAD^1
+        run: pnpm run check:languages -- --base HEAD^1

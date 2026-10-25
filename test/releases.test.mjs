@@ -62,7 +62,7 @@ test('a missing snapshot is fine before recording and reported after', async () 
 });
 
 // The guard that replaced the manifest (#226): datamodels check on the repository
-// as a node, offline, with --all-released, as `npm run build:deploy` runs it.
+// as a node, offline, with --all-released, as `pnpm run build:deploy` runs it.
 const BIN = join(root, 'node_modules', '@geolonia', 'datamodels', 'bin', 'datamodels.mjs');
 async function runCheck(mutate) {
   const dir = await mkdtemp(join(tmpdir(), 'datamodels-checker-'));

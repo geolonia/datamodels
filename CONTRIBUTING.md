@@ -28,29 +28,29 @@ datamodels.jp は、日本で使えるデータモデルを共有の資産とし
 ## Pull Request の手順
 
 1. リポジトリをフォークして、ブランチを作ります。
-2. `npm ci` を実行します。新しいモデルなら、`npm run new-model -- <subject> <Type>` でひな形を作り、TODO の箇所を埋めます。構成は Smart Data Models と同じです（`schema.json`、`catalog.yaml`、`examples/`、`notes.yaml`）。
-3. `npm run validate:models` が、足りない箇所を一覧にします。[datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) の `datamodels check --offline`（どのデータモデルノードでも使う検査）を実行し、続けてこのカタログ独自のルール（`scripts/lib/catalog-rules.mjs`）を検査します。最後に `npm run check` と `npm test` が通ることを確認します。
+2. `pnpm install` を実行します（pnpm が入っていなければ `npx pnpm install`）。新しいモデルなら、`pnpm run new-model -- <subject> <Type>` でひな形を作り、TODO の箇所を埋めます。構成は Smart Data Models と同じです（`schema.json`、`catalog.yaml`、`examples/`、`notes.yaml`）。
+3. `pnpm run validate:models` が、足りない箇所を一覧にします。[datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit) の `datamodels check --offline`（どのデータモデルノードでも使う検査）を実行し、続けてこのカタログ独自のルール（`scripts/lib/catalog-rules.mjs`）を検査します。最後に `pnpm run check` と `pnpm test` が通ることを確認します。
 4. すべてのコミットに `git commit -s` で署名（Signed-off-by）を付けて、Pull Request を送ります。
 5. CI（スキーマ、例、`@context` の展開、予約語、バージョンの検査と自動レビュー。このリポジトリ内のブランチならプレビュー URL も）の結果を見て、レビューに答えます。
 
 公開済みバージョンのリリース（`models/<subject>/releases/` のスナップショット）は、メンテナーが作ります。正式公開前（プレリリース）は、現行バージョンをその場で修正できます。
 
-サイトの日本語のページは、`npm run lint:ja`（textlint、Geolonia のハンドブックと同じ規則）で検査します。このサイトでは、全角と半角の間に半角スペースを入れ、箇条書きも本文と同じです・ます体で書きます（`.textlintrc.json`）。英語版を一文ずつ訳すのではなく、日本語の読み手に向けて書いてください。
+サイトの日本語のページは、`pnpm run lint:ja`（textlint、Geolonia のハンドブックと同じ規則）で検査します。このサイトでは、全角と半角の間に半角スペースを入れ、箇条書きも本文と同じです・ます体で書きます（`.textlintrc.json`）。英語版を一文ずつ訳すのではなく、日本語の読み手に向けて書いてください。
 
-日本語と英語のページは、同じ Pull Request で両方を変えます。`npm run check:languages` が、見出し、コード、リンク、囲み（`:::`）が両方で同じかを検査します。文章の意味までは検査しないので、レビューで確かめます。片方の言語だけを変えるときは（日本語の書き直しなど）、Pull Request の説明に `One language only:` で始まる行を書き、理由を添えてください。
+日本語と英語のページは、同じ Pull Request で両方を変えます。`pnpm run check:languages` が、見出し、コード、リンク、囲み（`:::`）が両方で同じかを検査します。文章の意味までは検査しないので、レビューで確かめます。片方の言語だけを変えるときは（日本語の書き直しなど）、Pull Request の説明に `One language only:` で始まる行を書き、理由を添えてください。
 
 ### ツールが作ったモデルを提案する
 
 データを登録するツール（ブローカーの管理画面など）は、利用者のデータから新しいモデルを作ることがあります。それを提案として渡すときは、このリポジトリのモデルと同じ構成のフォルダ（**提案バンドル**）を書き出します。
 
-- `models/<subject>/<Type>/` に、モデルのファイルを置きます。`catalog.yaml`、`schema.json`、`examples/`、`notes.yaml`、`ADOPTERS.yaml`（使っている組織とおよそのデータ量）です。多くの一覧が従う公開の標準を元にしたモデルなら、その標準との対応表（`mapping/`）も置きます（[モデルのルール](https://datamodels.jp/guide/rules#mapping)）。`npm run validate:models` で足りない箇所が分かります。
+- `models/<subject>/<Type>/` に、モデルのファイルを置きます。`catalog.yaml`、`schema.json`、`examples/`、`notes.yaml`、`ADOPTERS.yaml`（使っている組織とおよそのデータ量）です。多くの一覧が従う公開の標準を元にしたモデルなら、その標準との対応表（`mapping/`）も置きます（[モデルのルール](https://datamodels.jp/guide/rules#mapping)）。`pnpm run validate:models` で足りない箇所が分かります。
 - **ツールは自分で投稿しません。** 人が自分の GitHub アカウントで Pull Request を開き、署名（DCO）を付けます。作者と責任は人に残ります。
 - レビューを経て、他のモデルと同じく `draft` で取り込みます。新しい段階はありません。
 - `ADOPTERS.yaml` の記載は、早めの根拠になります。1 つの組織は 1 回だけ数えるので、`stable` に 2 つの独立した組織が要るという規則は変わりません（2026-10-06 決定、#156）。
 
 ### 登録された拡張を取り込む
 
-拡張の登録フォームで届いた拡張は、次の手順でモデルのページの「このモデルをもとにしたもの」と `catalog.json` に入ります。ツールキットで作った自分のサイトで公開している拡張は、サイトを `nodes.yaml` に載せれば、`npm run nodes` で読んだ内容が同じ欄に載ります。サイトとフォームの両方に同じ拡張があるときは、サイトの内容を 1 回だけ載せます（拡張のページか @context の URL がサイトの URL で始まるとき、同じとみなします）。
+拡張の登録フォームで届いた拡張は、次の手順でモデルのページの「このモデルをもとにしたもの」と `catalog.json` に入ります。ツールキットで作った自分のサイトで公開している拡張は、サイトを `nodes.yaml` に載せれば、`pnpm run nodes` で読んだ内容が同じ欄に載ります。サイトとフォームの両方に同じ拡張があるときは、サイトの内容を 1 回だけ載せます（拡張のページか @context の URL がサイトの URL で始まるとき、同じとみなします）。
 
 1. 持ち主が [拡張の登録フォーム](https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml) に記入します（モデルのページからはモデル名が入った状態で開きます）。使う場面とそのあとの流れは「[拡張を載せる](https://datamodels.jp/guide/contribute#extension)」にあります。
 2. メンテナーか持ち主が、`models/<subject>/<Type>/extensions/<name>.yaml` を足す Pull Request を開きます（署名付き）。
@@ -115,29 +115,29 @@ What the catalog accepts, and how to write a model: "[Rules for models](https://
 ## Pull request steps
 
 1. Fork the repository and create a branch.
-2. Run `npm ci`. For a new model, `npm run new-model -- <subject> <Type>` creates the files in the Smart Data Models layout (`schema.json`, `catalog.yaml`, `examples/`, `notes.yaml`); fill in the TODO markers.
-3. `npm run validate:models` lists what is still missing: it runs `datamodels check --offline` from [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit), the same check every data model node uses, and then the catalog's own rules (`scripts/lib/catalog-rules.mjs`). Before you push, `npm run check` and `npm test` must pass.
+2. Run `pnpm install` (without pnpm installed, `npx pnpm install`). For a new model, `pnpm run new-model -- <subject> <Type>` creates the files in the Smart Data Models layout (`schema.json`, `catalog.yaml`, `examples/`, `notes.yaml`); fill in the TODO markers.
+3. `pnpm run validate:models` lists what is still missing: it runs `datamodels check --offline` from [datamodels-toolkit](https://github.com/geolonia/datamodels-toolkit), the same check every data model node uses, and then the catalog's own rules (`scripts/lib/catalog-rules.mjs`). Before you push, `pnpm run check` and `pnpm test` must pass.
 4. Sign off every commit with `git commit -s` and open the pull request.
 5. Check the CI results (validation of schemas, examples, `@context` expansion, protected terms and versions, and an automated review; for branches in this repository also a preview URL) and answer the review.
 
 Releasing published versions (the snapshots in `models/<subject>/releases/`) is a maintainer step. Until the official launch (pre-release), the current version may still be corrected in place.
 
-The site's Japanese pages are checked with `npm run lint:ja` (textlint, the rules of Geolonia's handbook). This site puts a half-width space between Japanese and Latin text, and writes list items in the same polite form as the body (`.textlintrc.json`). Write the Japanese for Japanese readers, rather than translating the English sentence by sentence.
+The site's Japanese pages are checked with `pnpm run lint:ja` (textlint, the rules of Geolonia's handbook). This site puts a half-width space between Japanese and Latin text, and writes list items in the same polite form as the body (`.textlintrc.json`). Write the Japanese for Japanese readers, rather than translating the English sentence by sentence.
 
-Change the Japanese and English page in the same pull request. `npm run check:languages` checks that both have the same headings, code, links and boxes (`:::`). It does not check what the words mean; review does. To change one language only (a rewrite of the Japanese, say), add a line starting with `One language only:` and the reason to the pull request description.
+Change the Japanese and English page in the same pull request. `pnpm run check:languages` checks that both have the same headings, code, links and boxes (`:::`). It does not check what the words mean; review does. To change one language only (a rewrite of the Japanese, say), add a line starting with `One language only:` and the reason to the pull request description.
 
 ### Proposing a model that a tool made
 
 A tool that registers data (a broker console, for example) may build a new model from a user's data. To hand it in as a proposal, the tool writes out a folder in the same layout as the models in this repository: a **proposal bundle**.
 
-- In `models/<subject>/<Type>/`: `catalog.yaml`, `schema.json`, `examples/`, `mapping/` if the model was designed from a published standard that many lists follow ([Rules for models](https://datamodels.jp/en/guide/rules#mapping)), `notes.yaml`, and `ADOPTERS.yaml` (who uses the model, and roughly how much data). `npm run validate:models` lists what is missing.
+- In `models/<subject>/<Type>/`: `catalog.yaml`, `schema.json`, `examples/`, `mapping/` if the model was designed from a published standard that many lists follow ([Rules for models](https://datamodels.jp/en/guide/rules#mapping)), `notes.yaml`, and `ADOPTERS.yaml` (who uses the model, and roughly how much data). `pnpm run validate:models` lists what is missing.
 - **Tools never post.** A person opens the pull request under their own GitHub account and signs off the commits (DCO), so authorship and responsibility stay with a person.
 - After review, the model is merged as `draft`, like any other. There is no extra stage.
 - The `ADOPTERS.yaml` entry gives reviewers evidence early. One organisation still counts once, so `stable` still needs two independent organisations (decided 2026-10-06, #156).
 
 ### Adding a listed extension
 
-An extension reported with the extension form gets onto the model page ("Built on by others") and into `catalog.json` in these steps. An extension published on a site of its own, made with the toolkit, needs no listing: once the site is in `nodes.yaml`, `npm run nodes` reads it into the same section. When a site and a listed extension are the same, the section shows the site's data once (they are the same when the extension's page or @context URL starts with the site's URL).
+An extension reported with the extension form gets onto the model page ("Built on by others") and into `catalog.json` in these steps. An extension published on a site of its own, made with the toolkit, needs no listing: once the site is in `nodes.yaml`, `pnpm run nodes` reads it into the same section. When a site and a listed extension are the same, the section shows the site's data once (they are the same when the extension's page or @context URL starts with the site's URL).
 
 1. The owner fills in the [extension form](https://github.com/geolonia/datamodels/issues/new?template=extension-report.yml) (from a model page it opens with the model filled in). When to use it and what happens next: "[List your extension](https://datamodels.jp/en/guide/contribute#extension)".
 2. A maintainer or the owner opens a pull request that adds `models/<subject>/<Type>/extensions/<name>.yaml` (signed off).

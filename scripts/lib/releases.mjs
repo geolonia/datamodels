@@ -1,6 +1,6 @@
 // Published exact versions live on in models/<subject>/releases/<version>/ as
 // committed snapshots, so the build can keep serving every version ever
-// published while models/ moves on. `npx datamodels release <subject>` writes
+// published while models/ moves on. `pnpm exec datamodels release <subject>` writes
 // the snapshot for the current version; publish copies every snapshot into dist/.
 //
 //   models/<subject>/releases/v1.0.0/context.jsonld

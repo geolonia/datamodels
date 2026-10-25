@@ -4,7 +4,7 @@ The catalog itself (contexts, schemas, examples, vocabularies, pages) is indepen
 
 Rules:
 
-- The core (`scripts/`, `models/`) never imports from `adapters/`. `scripts/lib/adapters.mjs` discovers every `adapters/<name>/index.mjs`, for the build and for `npm run site:dev`.
+- The core (`scripts/`, `models/`) never imports from `adapters/`. `scripts/lib/adapters.mjs` discovers every `adapters/<name>/index.mjs`, for the build and for `pnpm run site:dev`.
 - An adapter only adds files. It cannot change a context, a schema or an IRI.
 - Adapter output is generated on every build and is not a published version; pin the catalog version, not an adapter file.
 - Model pages stay product-neutral: they do not name a product or link a product's file. The files of a generic adapter (`download: true`, no product) are buttons in the model page's "Download" row, which links their explanation on `/adapters/` (`#downloads`). A model that a product adapter serves gets an "Adapters" sentence linking the products' part of `/adapters/` (`#products`).
