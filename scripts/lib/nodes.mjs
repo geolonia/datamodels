@@ -49,7 +49,8 @@ export async function readJsonLimited(res, limit = MAX_INDEX_BYTES) {
     if (size > limit) throw new Error(`index larger than ${limit} bytes`);
     chunks.push(chunk);
   }
-  return JSON.parse(Buffer.concat(chunks).toString('utf8'));
+  // As res.json() did: a leading BOM is dropped. Unlike it, bytes that are not UTF-8 are refused.
+  return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)));
 }
 
 // An index URL to compare: without its #fragment, which is never sent in the request, so

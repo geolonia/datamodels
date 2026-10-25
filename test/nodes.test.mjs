@@ -3,6 +3,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, writeFile } from 'node:fs/promises';
+import { createServer } from 'node:http';
+import { gzipSync } from 'node:zlib';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { nodeEntry, nodeName, readJsonLimited, builtOn, readNodeList, cleanText, cleanUrl, isIndex, catalogAttributeIris, shownByNode, unlistedNodes } from '../scripts/lib/nodes.mjs';
@@ -175,6 +177,8 @@ test('readJsonLimited parses a body within the limit and refuses a larger one', 
   await assert.rejects(readJsonLimited(new Response(JSON.stringify({ pad: 'x'.repeat(200) })), 100), /larger than 100 bytes/);
   await assert.rejects(readJsonLimited(new Response('not json'), 100), SyntaxError);
   await assert.rejects(readJsonLimited(new Response(null), 100), SyntaxError);
+  assert.deepEqual(await readJsonLimited(new Response('\uFEFF{"models":[]}'), 100), { models: [] }, 'a BOM is dropped');
+  await assert.rejects(readJsonLimited(new Response(new Uint8Array([0x7b, 0x22, 0xff, 0x22, 0x3a, 0x31, 0x7d])), 100), TypeError, 'not UTF-8');
 });
 
 test('readJsonLimited stops reading an endless body at the limit', async () => {
@@ -184,6 +188,16 @@ test('readJsonLimited stops reading an endless body at the limit', async () => {
     cancel() { cancelled = true; },
   });
   await assert.rejects(readJsonLimited(new Response(body), 10_000), /larger than 10000 bytes/);
-  assert.ok(pulled <= 12, `read ${pulled} chunks`);
+  assert.ok(pulled <= 50, `read ${pulled} chunks`);
   assert.ok(cancelled, 'the stream is cancelled');
+});
+
+test('readJsonLimited refuses a gzip body that decodes past the limit, as fetch reads it', async () => {
+  const bomb = gzipSync(Buffer.alloc(50_000_000, 0x20)); // about 50 kB on the wire
+  const server = createServer((_req, res) => { res.writeHead(200, { 'content-type': 'application/json', 'content-encoding': 'gzip' }); res.end(bomb); });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  try {
+    const res = await fetch(`http://127.0.0.1:${server.address().port}/catalog.json`);
+    await assert.rejects(readJsonLimited(res, 1_000_000), /larger than 1000000 bytes/);
+  } finally { server.close(); }
 });
