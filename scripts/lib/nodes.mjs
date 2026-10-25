@@ -32,6 +32,27 @@ export async function readNodeList(file = NODES_FILE) {
   });
 }
 
+// The largest index npm run nodes reads. Real ones are well under 1 MB (datamodels.jp: about 180 kB).
+export const MAX_INDEX_BYTES = 5_000_000;
+
+/**
+ * A response body parsed as JSON, read as a stream and refused once it passes `limit`
+ * bytes. fetch decompresses gzip and brotli on its own, so a small compressed answer can
+ * decode to gigabytes: count the decoded bytes, not Content-Length.
+ */
+export async function readJsonLimited(res, limit = MAX_INDEX_BYTES) {
+  const chunks = [];
+  let size = 0;
+  // Throwing inside the loop ends the iterator, which cancels the stream.
+  for await (const chunk of res.body ?? []) {
+    size += chunk.byteLength;
+    if (size > limit) throw new Error(`index larger than ${limit} bytes`);
+    chunks.push(chunk);
+  }
+  // As res.json() did: a leading BOM is dropped. Unlike it, bytes that are not UTF-8 are refused.
+  return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(Buffer.concat(chunks)));
+}
+
 // An index URL to compare: without its #fragment, which is never sent in the request, so
 // catalog.json#models and catalog.json are one index (as the toolkit reads them).
 const indexKey = (u) => cleanUrl(u)?.replace(/#.*$/, '') || null;

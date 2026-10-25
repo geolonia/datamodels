@@ -12,7 +12,7 @@ description: datamodels-toolkit で、公開したモデルを新しいバージ
 変える前に、`bump` で次のバージョンを始めます。`bump` は、公開したバージョンをサイトに残します（その `@context`、語彙、スキーマを `models/road/releases/` に保存します）。そのうえで、`subject.yaml` の `version` と、スキーマの URL（`$id` と、分野のモデルの間の `$ref`）のバージョンを上げます。公開済みのファイルと違えば止まります。結果をコミットしてください。
 
 ```bash
-npx @geolonia/datamodels@0.3.17 bump road minor
+npx @geolonia/datamodels@0.3.18 bump road minor
 ```
 
 まだ公開していないノードでは、比べるファイルが無いので、`bump` と `release` は止まります。
@@ -35,7 +35,7 @@ Try again when the site answers, or release with --offline to skip the compariso
 そのバージョンのスナップショットが既にあれば、`release` はソースをスナップショットと比べるだけで、何も変えません。無ければ、オンラインでは、まず公開済みのファイルと比べます。公開した後にソースが変わっていれば、止まります。そのときは、ソースを元に戻し（git などで）、`release` を実行してから、新しいバージョンで変更します。読めないファイルがあるときも止まります。ただし、サイトの答えが 404（未公開）なら止まりません。
 
 ```bash
-npx @geolonia/datamodels@0.3.17 release road
+npx @geolonia/datamodels@0.3.18 release road
 ```
 
 ## 公開したバージョンを守る仕組み {#never-changes}
@@ -54,7 +54,7 @@ npx @geolonia/datamodels@0.3.17 release road
 
 ```bash
 git fetch origin main
-npx @geolonia/datamodels@0.3.17 check --base origin/main --all-released
+npx @geolonia/datamodels@0.3.18 check --base origin/main --all-released
 ```
 
 ### 正式公開の前 {#prerelease}
@@ -70,7 +70,7 @@ npx @geolonia/datamodels@0.3.17 check --base origin/main --all-released
 ノードを新しいツールキットに移すには、`upgrade` を実行してコミットします。ワークフローと、ノードの最上位にある Markdown ファイル（README など）のバージョンが、最新のリリース（`--to` で指定したときはそのリリース）に変わります。Dependabot も新しいリリースを提案します。
 
 ```bash
-npx @geolonia/datamodels@0.3.17 upgrade
+npx @geolonia/datamodels@0.3.18 upgrade
 ```
 
 `upgrade` は、リリースを GitHub の API から読みます。`.github/workflows/` では、Action をリリースのコミットの SHA で固定し、タグをコメントに書きます。GitHub から実行する形の `npx` の行は、npm の形に書き換えます。`npx github:geolonia/datamodels-toolkit#vX.Y.Z` は、`npx @geolonia/datamodels@X.Y.Z` になります。これは v0.3.8 以降の場合です。`--to` がそれより古ければ、GitHub の形になります。

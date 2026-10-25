@@ -3,9 +3,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, writeFile } from 'node:fs/promises';
+import { createServer } from 'node:http';
+import { gzipSync } from 'node:zlib';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { nodeEntry, nodeName, builtOn, readNodeList, cleanText, cleanUrl, isIndex, catalogAttributeIris, shownByNode, unlistedNodes } from '../scripts/lib/nodes.mjs';
+import { nodeEntry, nodeName, readJsonLimited, builtOn, readNodeList, cleanText, cleanUrl, isIndex, catalogAttributeIris, shownByNode, unlistedNodes } from '../scripts/lib/nodes.mjs';
 import { loadSubjects } from '../scripts/lib/models.mjs';
 import { renderModelPage, nodesPage } from '../scripts/lib/site.mjs';
 
@@ -168,4 +170,34 @@ test('the Task page lists the models of other sites built on it, with what they 
   // Every catalog model a site builds on, in the order met.
   const two = { nodes: [nodeEntry(NODE, { models: [{ type: 'Both', typeIri: 'https://models.example.org/ns/x#Both', extends: [{ typeIri: TASK, version: '1.0.0' }, { typeIri: 'https://datamodels.jp/ns/task/Project', version: '1.0.0' }] }, { type: 'Alias', typeIri: TASK, aliasOf: TASK, extends: [{ typeIri: TASK, version: '1.0.0' }] }] }, '2026-10-11')] };
   assert.match(nodesPage('ja', '', two), /\| 2 \| \[Task\]\(\/models\/task\/Task\/\), \[Project\]\(\/models\/task\/Project\/\) \|/);
+});
+
+test('readJsonLimited parses a body within the limit and refuses a larger one', async () => {
+  assert.deepEqual(await readJsonLimited(new Response('{"models":[]}'), 100), { models: [] });
+  await assert.rejects(readJsonLimited(new Response(JSON.stringify({ pad: 'x'.repeat(200) })), 100), /larger than 100 bytes/);
+  await assert.rejects(readJsonLimited(new Response('not json'), 100), SyntaxError);
+  await assert.rejects(readJsonLimited(new Response(null), 100), SyntaxError);
+  assert.deepEqual(await readJsonLimited(new Response('\uFEFF{"models":[]}'), 100), { models: [] }, 'a BOM is dropped');
+  await assert.rejects(readJsonLimited(new Response(new Uint8Array([0x7b, 0x22, 0xff, 0x22, 0x3a, 0x31, 0x7d])), 100), TypeError, 'not UTF-8');
+});
+
+test('readJsonLimited stops reading an endless body at the limit', async () => {
+  let pulled = 0, cancelled = false;
+  const body = new ReadableStream({
+    pull(c) { pulled++; c.enqueue(new Uint8Array(1024)); },
+    cancel() { cancelled = true; },
+  });
+  await assert.rejects(readJsonLimited(new Response(body), 10_000), /larger than 10000 bytes/);
+  assert.ok(pulled <= 50, `read ${pulled} chunks`);
+  assert.ok(cancelled, 'the stream is cancelled');
+});
+
+test('readJsonLimited refuses a gzip body that decodes past the limit, as fetch reads it', async () => {
+  const bomb = gzipSync(Buffer.alloc(50_000_000, 0x20)); // about 50 kB on the wire
+  const server = createServer((_req, res) => { res.writeHead(200, { 'content-type': 'application/json', 'content-encoding': 'gzip' }); res.end(bomb); });
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  try {
+    const res = await fetch(`http://127.0.0.1:${server.address().port}/catalog.json`);
+    await assert.rejects(readJsonLimited(res, 1_000_000), /larger than 1000000 bytes/);
+  } finally { server.close(); }
 });

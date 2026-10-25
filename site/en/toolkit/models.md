@@ -12,8 +12,8 @@ This page adds models to a subject of your node and writes their attributes. No 
 Before you make a new model, check whether one already exists that you can use as it is or build on. `search` looks through the models of datamodels.jp and of the sites it links to, for words in the type name, title, attributes and description. It finds Japanese and English words.
 
 ```bash
-npx @geolonia/datamodels@0.3.17 search 避難
-npx @geolonia/datamodels@0.3.17 search road closure --json
+npx @geolonia/datamodels@0.3.18 search 避難
+npx @geolonia/datamodels@0.3.18 search road closure --json
 ```
 
 The result of the first command, shortened:
@@ -32,7 +32,7 @@ A word counts most in the type name, then in the title, the attribute names and 
 `nodes` lists the sites it can reach, with their name, address, licence, number of models, and the site that links to them:
 
 ```bash
-npx @geolonia/datamodels@0.3.17 nodes
+npx @geolonia/datamodels@0.3.18 nodes
 ```
 
 ```text
@@ -51,7 +51,7 @@ To build on a model you found, use [extend](#extend).
 ## A new model {#add}
 
 ```bash
-npx @geolonia/datamodels@0.3.17 add road/RoadPatrol
+npx @geolonia/datamodels@0.3.18 add road/RoadPatrol
 ```
 
 This adds `models/road/RoadPatrol/` with `schema.json`, `catalog.yaml`, `examples/example.json` and `notes.yaml` (the notes: sources, decisions and their reasons), and the type `RoadPatrol` to the subject's `@context`. The schema of an entity type has `id` and `type`, and `catalog.yaml` has a title and a description in each language of the node. The new model builds and passes `check` at once. On a subject whose current version is already released, run [`bump`](/en/toolkit/versions#bump) before `add`: `add` changes that version's sources, and `build` and `check` then stop. Then [write its attributes](#attributes).
@@ -59,7 +59,7 @@ This adds `models/road/RoadPatrol/` with `schema.json`, `catalog.yaml`, `example
 For a value type, a structure used inside attributes (like an address), add `--value`:
 
 ```bash
-npx @geolonia/datamodels@0.3.17 add road/Segment --value
+npx @geolonia/datamodels@0.3.18 add road/Segment --value
 ```
 
 ## Starting from a catalog model {#extend}
@@ -67,7 +67,7 @@ npx @geolonia/datamodels@0.3.17 add road/Segment --value
 To start from a model of this catalog instead, use `extend`. Despite its name, it is not an [extension](/en/guide/extend): it makes a new model on your own site. Then add your attributes as [below](#attributes).
 
 ```bash
-npx @geolonia/datamodels@0.3.17 extend task/Task road/RoadTask
+npx @geolonia/datamodels@0.3.18 extend task/Task road/RoadTask
 ```
 
 The first argument is the model to start from: `<subject>/<Type>` as the other site's `catalog.json` lists it, or its type IRI. `--index` names that `catalog.json` (default: for a type IRI, its own node's index when that lists it; else the first node in `node.yaml`, else datamodels.jp; see [A model given by its type IRI](/en/toolkit/reference#type-iri)). In a terminal, `extend` without arguments lets you pick the model from a list and asks for the new name.

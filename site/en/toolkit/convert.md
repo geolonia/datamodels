@@ -22,7 +22,7 @@ There are three ways, depending on your list:
 If your list follows a standard that has a mapping file with conversion rules in the catalog, such as the municipal standard open datasets or the data of the Geospatial Information Authority of Japan (GSI), that mapping file converts it as it is. [Mapping files](/en/guide/mapping) explains how they work.
 
 ```bash
-npx @geolonia/datamodels@0.3.17 convert \
+npx @geolonia/datamodels@0.3.18 convert \
   disaster/EvacuationSite jichitai-opendata-site \
   092011_evacuation_space.csv --out sites.json
 ```
@@ -34,7 +34,7 @@ Only some mapping files have conversion rules (`column`, `transform`). The other
 `--set` gives a value that the list does not carry. In GSI's data, for example, the municipality code is only in the file name. The `13101_2.csv` of the example is GSI's file of designated emergency evacuation sites in Chiyoda City ([download](https://hinanmap.gsi.go.jp/hinanjocp/defaultFtpData/csv/13101_2.csv)):
 
 ```bash
-npx @geolonia/datamodels@0.3.17 convert \
+npx @geolonia/datamodels@0.3.18 convert \
   disaster/EvacuationSite gsi-emergency-site \
   13101_2.csv --set localGovernmentCode=131016
 ```
@@ -52,13 +52,13 @@ A list that follows no standard needs a mapping of your own: a YAML file that sa
 
 ```bash
 # 1. a first mapping
-npx @geolonia/datamodels@0.3.17 mapping \
+npx @geolonia/datamodels@0.3.18 mapping \
   disaster/EvacuationSite my-list.csv --out my-list.yaml
 # 3. check the first rows
-npx @geolonia/datamodels@0.3.17 convert \
+npx @geolonia/datamodels@0.3.18 convert \
   disaster/EvacuationSite my-list.yaml my-list.csv --check
 # 4. convert
-npx @geolonia/datamodels@0.3.17 convert \
+npx @geolonia/datamodels@0.3.18 convert \
   disaster/EvacuationSite my-list.yaml my-list.csv --out entities.json
 ```
 
@@ -94,7 +94,7 @@ The last line sums it up, for example `18 of 20 rows valid`. The exit code is 0 
 
 ### With an AI agent {#agent}
 
-An AI agent can fill in the TODOs with you. The [agent skill](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.17/skills/datamodels) of datamodels-toolkit (`skills/datamodels`) gives it the steps and the rules: never invent values, and ask about unclear columns. How to install it: [Agent skill](/en/toolkit/#agent-skill).
+An AI agent can fill in the TODOs with you. The [agent skill](https://github.com/geolonia/datamodels-toolkit/tree/v0.3.18/skills/datamodels) of datamodels-toolkit (`skills/datamodels`) gives it the steps and the rules: never invent values, and ask about unclear columns. How to install it: [Agent skill](/en/toolkit/#agent-skill).
 
 An example prompt:
 
@@ -107,7 +107,7 @@ Keep the finished mapping: it is the record of how the list was converted.
 For a new list, fill in the model's CSV template, one row per entity. No mapping is needed. The template is on the model page under **Download**, and `export` makes it too ([Exporting to other tools](/en/toolkit/export)).
 
 ```bash
-npx @geolonia/datamodels@0.3.17 convert \
+npx @geolonia/datamodels@0.3.18 convert \
   disaster/EvacuationSite csv-template sites.csv --out entities.json
 ```
 
