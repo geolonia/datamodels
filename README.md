@@ -40,6 +40,8 @@ Model folders follow the Smart Data Models layout so a model can be proposed ups
 
 ## Commands
 
+You need Node.js 24 or later and pnpm (the version in `packageManager` in `package.json`; without pnpm installed, `npx pnpm install` works too).
+
 ```bash
 pnpm install
 pnpm run check           # validate models, build dist/, check the release snapshots, dry-run the deploy

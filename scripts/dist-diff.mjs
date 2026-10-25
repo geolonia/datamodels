@@ -251,7 +251,8 @@ async function main() {
       worktree = join(tmp, 'base');
       console.error(`building ${label} in ${worktree}`);
       run('git', ['worktree', 'add', '--detach', worktree, sha], ROOT);
-      // Refs from before the switch to pnpm (2026-10) have package-lock.json.
+      // Refs from before the switch to pnpm (2026-10) have package-lock.json;
+      // drop the npm branch once comparing with such refs no longer matters.
       if (existsSync(join(worktree, 'pnpm-lock.yaml'))) {
         run('pnpm', ['install', '--frozen-lockfile'], worktree);
         run('pnpm', ['run', 'build'], worktree);
