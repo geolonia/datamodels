@@ -116,7 +116,7 @@ If the model fits but you need a few attributes of your own, write an extension,
 The export script below (`adapters/geonicdb/export.mjs`) is in this catalog's repository. Get it first; you need [Node.js](https://nodejs.org/) 24 or later:
 
 ```bash
-git clone https://github.com/geolonia/datamodels && cd datamodels && npm ci
+git clone https://github.com/geolonia/datamodels && cd datamodels && npx pnpm install
 ```
 
 <details class="rules">

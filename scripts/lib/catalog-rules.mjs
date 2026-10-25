@@ -45,7 +45,7 @@ export async function catalogRuleProblems(subjects) {
       if (!model.examples['example.json']) fail(mwhere, 'examples/example.json is required');
       if (model.kind === 'entity' && !model.examples['example-normalized.jsonld']) fail(mwhere, 'examples/example-normalized.jsonld is required');
 
-      // `npm run new-model` leaves TODO markers; a model is not done while any remain.
+      // `pnpm run new-model` leaves TODO markers; a model is not done while any remain.
       // A missing README is fine; an unreadable one must not skip the check.
       const readme = await readFile(join(model.dir, 'README.md'), 'utf8').catch((e) => { if (e.code !== 'ENOENT') fail(`${mwhere}/README.md`, `cannot be read (${e.code ?? e.message})`); return null; });
       for (const [file, value] of [['schema.json', schema], ['catalog.yaml', model.catalog], ['notes.yaml', model.notes], ['README.md', readme], ['examples/example.json', model.examples['example.json']], ['examples/example-normalized.jsonld', model.examples['example-normalized.jsonld']]]) {

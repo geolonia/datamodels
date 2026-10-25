@@ -3,7 +3,7 @@
 //   0. validate models/ (scripts/validate-models.mjs); abort on any failure
 //   1. generate the VitePress pages for every subject and model into site/,
 //      and the /adapters/ index pages (scripts/generate-pages.mjs, which
-//      npm run site:dev runs too)
+//      pnpm run site:dev runs too)
 //   2. vitepress build site  ->  dist/   (pages, search index, assets, 404)
 //   3. copy public/ on top    (_headers, _redirects header)
 //   4. publish the machine files from models/ (contexts, schemas, examples,

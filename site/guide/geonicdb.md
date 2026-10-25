@@ -118,7 +118,7 @@ GeonicDB は、その型のエンティティを作成・変更するたびに�
 下の書き出しスクリプト（`adapters/geonicdb/export.mjs`）は、このカタログのリポジトリにあります。先にリポジトリを取得します。[Node.js](https://nodejs.org/) 24 以降が要ります。
 
 ```bash
-git clone https://github.com/geolonia/datamodels && cd datamodels && npm ci
+git clone https://github.com/geolonia/datamodels && cd datamodels && npx pnpm install
 ```
 
 <details class="rules">

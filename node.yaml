@@ -1,7 +1,7 @@
 # datamodels.jp as a data model node (docs/node.md), in the format of
 # datamodels-toolkit: its commands read these settings, and so does the site's
 # build (scripts/lib/models.mjs, publish.mjs). The nodes that datamodels.jp
-# knows are in nodes.yaml, with their reviewed snapshot (npm run nodes).
+# knows are in nodes.yaml, with their reviewed snapshot (pnpm run nodes).
 baseUrl: https://datamodels.jp
 iris: slash
 languages: [ja, en]

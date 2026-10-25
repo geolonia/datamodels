@@ -1,0 +1,17 @@
+# pnpm settings for this repository (it has no workspace packages).
+
+# Install scripts are off; these two only fetch or check their platform binary
+# (esbuild for VitePress and wrangler, workerd for wrangler dev).
+allowBuilds:
+  esbuild: true
+  workerd: true
+
+# pnpm installs a new version only after it is a day old. Our own toolkit is
+# pinned right after each release, so it is the one exception.
+minimumReleaseAgeExclude:
+  - '@geolonia/datamodels'
+
+overrides:
+  # miniflare (part of wrangler) pins undici 7.29.1 exactly (GHSA-xjj6-f33q-929c).
+  # Remove this in the PR that moves wrangler to a miniflare with undici 7.30.1 or newer.
+  undici@7.29.1: 7.30.1

@@ -1,4 +1,4 @@
-// Adapter discovery (scripts/lib/adapters.mjs): the build and npm run site:dev
+// Adapter discovery (scripts/lib/adapters.mjs): the build and pnpm run site:dev
 // see the same adapters.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

@@ -1,5 +1,5 @@
 // Known data model nodes (nodes.yaml) and what their indexes say
-// (nodes.snapshot.json, written by npm run nodes and committed): a page that
+// (nodes.snapshot.json, written by pnpm run nodes and committed): a page that
 // lists them, and on each model page the models of other nodes built on it
 // (their extends, aliasOf and subClassOf), with the attributes they add. The
 // build reads only the snapshot, never the network, so a node that is down
@@ -32,7 +32,7 @@ export async function readNodeList(file = NODES_FILE) {
   });
 }
 
-// The largest index npm run nodes reads. Real ones are well under 1 MB (datamodels.jp: about 180 kB).
+// The largest index pnpm run nodes reads. Real ones are well under 1 MB (datamodels.jp: about 180 kB).
 export const MAX_INDEX_BYTES = 5_000_000;
 
 /**

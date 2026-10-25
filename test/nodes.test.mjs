@@ -94,7 +94,7 @@ test('builtOn finds aliases, subtypes and extensions of a type IRI', () => {
   assert.deepEqual(builtOn({ nodes: [] }, TASK), []);
 });
 
-test('npm run nodes reports the nodes the known nodes link to that nodes.yaml does not list (#222)', () => {
+test('pnpm run nodes reports the nodes the known nodes link to that nodes.yaml does not list (#222)', () => {
   const A = { url: 'https://a.example.org/', index: 'https://a.example.org/catalog.json' };
   const B = { url: 'https://b.example.org/', index: 'https://b.example.org/catalog.json' };
   const read = [

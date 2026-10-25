@@ -1,4 +1,4 @@
-// `npm run new-model` scaffolds a model that the validator rejects until the
+// `pnpm run new-model` scaffolds a model that the validator rejects until the
 // TODO markers are filled in, and names the unrecorded context change.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

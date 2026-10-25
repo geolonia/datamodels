@@ -10,7 +10,7 @@ inheritance: true
 language: en-US
 
 # Release snapshots are byte copies of models/<subject>/ written by
-# `npx datamodels release <subject>`. CI checks them: the snapshot of the
+# `pnpm exec datamodels release <subject>`. CI checks them: the snapshot of the
 # current version against the sources, all of them against main and the live
 # site (datamodels check --base --all-released). Reviewing them again only
 # duplicates the model diff.

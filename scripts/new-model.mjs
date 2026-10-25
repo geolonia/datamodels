@@ -1,11 +1,11 @@
 // Scaffold a new model in an existing subject.
 //
-//   npm run new-model -- <subject> <Type>           an entity type
-//   npm run new-model -- <subject> <Type> --value   a value type (like JapaneseAddress)
+//   pnpm run new-model -- <subject> <Type>           an entity type
+//   pnpm run new-model -- <subject> <Type> --value   a value type (like JapaneseAddress)
 //
 // Creates models/<subject>/<Type>/ with every file a model needs and adds the
 // type to the subject's context. The generated text carries TODO markers; the
-// validator rejects them, so `npm run check` lists what is left to write.
+// validator rejects them, so `pnpm run check` lists what is left to write.
 import { mkdir, readFile, writeFile, access } from 'node:fs/promises';
 import { join } from 'node:path';
 import { loadSubjects, subjectUrls, modelUrls, MODELS_DIR, CORE_CONTEXT_URL } from './lib/models.mjs';
@@ -14,7 +14,7 @@ const [subjectName, type] = process.argv.slice(2).filter((a) => !a.startsWith('-
 const isValue = process.argv.includes('--value');
 const die = (msg) => { console.error(msg); process.exit(1); };
 
-if (!subjectName || !type) die('usage: npm run new-model -- <subject> <Type> [--value]');
+if (!subjectName || !type) die('usage: pnpm run new-model -- <subject> <Type> [--value]');
 if (!/^[A-Z][A-Za-z0-9]*$/.test(type)) die(`type name "${type}" must be UpperCamelCase ASCII (letters and digits), for example RoadRestriction`);
 
 const subjects = await loadSubjects();
@@ -134,5 +134,5 @@ Next:
   1. Fill in the TODO markers (catalog.yaml, notes.yaml, schema.json, README.md).
   2. Add attributes to schema.json, their terms to the context, and ja/en descriptions to catalog.yaml.
   3. Write the examples (one fictional scenario for all subjects: https://datamodels.jp/guide/rules#examples).
-  4. Run: npm run validate:models   (lists what is still missing)
+  4. Run: pnpm run validate:models   (lists what is still missing)
 Recording the release snapshot is a maintainer step.`);
