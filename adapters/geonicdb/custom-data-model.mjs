@@ -3,18 +3,11 @@
 // exact catalog context so the broker uses the catalog vocabulary.
 import { attributesOf, subjectUrls, dateFormats } from '../../scripts/lib/models.mjs';
 
-// GeonicDB's datetime value type (and its alias date) accepts only a date-time,
-// so a value that may be a plain date is a string checked by a pattern:
-// YYYY-MM-DD, and for a date or date-time the time part GeonicDB's datetime
-// check requires (seconds and Z or an offset). GeonicDB compiles patterns only
-// without repeated groups that contain alternatives; this has none.
-// A string check rejects a typed value ({"@type": "Date" | "DateTime", ...}),
-// so these attributes need the plain string until GeonicDB can check "a date
-// or a date-time" (#185). Typed date-times pass datetime from GeonicDB v0.22.0.
-const DATE = '\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])';
-const TIME = 'T(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|[+-](?:[01]\\d|2[0-3]):[0-5]\\d)';
-export const DATE_PATTERN = `^${DATE}$`;
-export const DATE_OR_DATE_TIME_PATTERN = `^${DATE}(?:${TIME})?$`;
+// A value that may be a plain date (YYYY-MM-DD) is GeonicDB's date value type,
+// which from GeonicDB v0.24.0 accepts a date, a date-time and the typed
+// {"@type": "Date" | "DateTime", ...} values of the normalized examples (#185).
+// On v0.23.x and older, date is an alias of datetime: the model registers, but
+// a plain date is refused (400). datetime accepts typed date-times from v0.22.0.
 
 // Every attribute is sent with its own NGSI-LD type as ngsiType, VocabProperty
 // and JsonProperty included (#285). A GeonicDB that does not accept these two
@@ -67,19 +60,16 @@ function vocabValidation(validation, terms, where, fix) {
   return v;
 }
 
-/** The pattern for a string Property that may be a plain date, or undefined. */
-function datePattern(prop) {
-  if (prop['x-ngsi']?.type !== 'Property' || prop.type !== 'string') return undefined;
-  const dates = dateFormats(prop);
-  if (!dates.includes('date')) return undefined;
-  return dates.includes('date-time') ? DATE_OR_DATE_TIME_PATTERN : DATE_PATTERN;
+/** True for a string Property that may be a plain date. */
+function mayBeDate(prop) {
+  return prop['x-ngsi']?.type === 'Property' && prop.type === 'string' && dateFormats(prop).includes('date');
 }
 
 function valueTypeOf(prop) {
   const ngsi = prop['x-ngsi']?.type;
   if (ngsi === 'Relationship') return 'uri';
   if (ngsi === 'GeoProperty') return 'geojson';
-  if (datePattern(prop)) return 'string'; // may be a plain date: checked by the pattern
+  if (mayBeDate(prop)) return 'date';
   if (prop.format === 'date-time') return 'datetime';
   if (prop.allOf || prop.$ref) return 'object'; // value type referenced by $ref
   if (prop.format === 'uri') return 'uri';
@@ -148,7 +138,6 @@ export function toCustomDataModel(subject, model, { typePrefix = '', typeName, c
     }
     // A JsonProperty keeps its checks: GeonicDB applies them to the JSON itself,
     // which is what the schema describes.
-    if (datePattern(prop) && validation.pattern === undefined) validation.pattern = datePattern(prop);
     if (Object.keys(validation).length) d.validation = validation;
     propertyDetails[rename[name] ?? name] = d;
   }
