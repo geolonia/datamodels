@@ -79,7 +79,7 @@ geonic entities list --type RoadRestriction \
 
 - 登録すると `201 Created` が返ります。同じ型名のモデルが既にあれば、`Custom data model already exists` のエラー（HTTP 400）になります。登録したモデルを変えるときは `PATCH /custom-data-models/<Type>` か `geonic models update <Type> @model.json` を使います。
 - **Decision：** Decision のモデルには、VocabProperty と JsonProperty の属性があります。GeonicDB は、v0.23.0 からこの 2 つの型をモデルで受け付けます。それより古い GeonicDB では、登録が HTTP 400 のエラーになります。
-- **型付きの日時：** normalized の例では、日時を `{"@type": "DateTime", "@value": "…"}` の形で書いています。GeonicDB は、v0.22.0 からこの形を受け付けます。Task・Milestone・Project の例は、v0.24.0 から受け付けます。それより古い GeonicDB では、[jq](https://jqlang.org/) で日時を文字列に直します。Task などでは、`MODEL=task/Task` のように `MODEL` を変え、先にそのモデルを登録します。そのあと手順 2 の 2 つ目のコマンド（`curl -X POST … --data @entity.jsonld`）で送ります。CLI では `geonic entities create @entity.jsonld` です。
+- **型付きの日時：** normalized の例では、日時を `{"@type": "DateTime", "@value": "…"}` の形で書いています。GeonicDB は、v0.22.0 からこの形を受け付けます。Task・Milestone・Project の例は、v0.24.0 からそのまま受け付けます。それより古い GeonicDB では、[jq](https://jqlang.org/) で日時を文字列に直します。Task などでは、`MODEL=task/Task` のように `MODEL` を変え、先にそのモデルを登録します。そのあと手順 2 の 2 つ目のコマンド（`curl -X POST … --data @entity.jsonld`）で送ります。CLI では `geonic entities create @entity.jsonld` です。
 
   ```bash
   curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" -o typed.jsonld
@@ -87,7 +87,7 @@ geonic entities list --type RoadRestriction \
     typed.jsonld > entity.jsonld
   ```
 
-  Task と Milestone の `start`・`due`、Project の `start`・`end` は、日付だけの値も取ります。モデルでは、日付または日時を表す GeonicDB の `date` 型で定義しています（[#185](https://github.com/geolonia/datamodels/issues/185)）。v0.23.x 以前の GeonicDB では `date` が `datetime` と同じ意味なので、日付だけの値（`"2026-07-11"`）は HTTP 400 になります。自分のデータでは、`"validFrom": {"type": "Property", "value": "2026-07-08T09:00:00+09:00"}` のように文字列で送れます。
+  Task と Milestone の `start`・`due`、Project の `start`・`end` は、日付だけの値になることもあります。モデルでは、日付または日時を表す GeonicDB の `date` 型で定義しています（[#185](https://github.com/geolonia/datamodels/issues/185)）。v0.23.x 以前の GeonicDB では `date` が `datetime` と同じ意味なので、日付だけの値（`"2026-07-11"`）は HTTP 400 になります。Milestone の例は `due` が日付だけなので、jq で直しても v0.23.x 以前には送れません。自分のデータでは、`"validFrom": {"type": "Property", "value": "2026-07-08T09:00:00+09:00"}` のように文字列で送れます。
 - **GeonicDB CLI：** [geonicdb-cli](https://github.com/geolonia/geonicdb-cli)（`npm install -g @geolonia/geonicdb-cli@0.26.1`）。`geonic auth login` でテナント管理者としてログインすれば、API キーもポリシーも要りません。保存したログイン情報は `--api-key` より優先されるので、API キーで使うときは、先に `geonic auth logout` を実行してください。どのコマンドも、`--dry-run` を付けると、実際には送らずにリクエストの内容を表示します。
 - 自分のデータを送るときは、@context をボディに入れて（`application/ld+json`）送るか、`application/json` と `Link` ヘッダーで送ります。両方を同時には使いません。テナントは `NGSILD-Tenant` ヘッダーで指定します（[マルチテナンシー](https://docs.geonicdb.com/ja/core-concepts/multi-tenancy)）。
 

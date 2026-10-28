@@ -8,6 +8,8 @@ import { attributesOf, subjectUrls, dateFormats } from '../../scripts/lib/models
 // {"@type": "Date" | "DateTime", ...} values of the normalized examples (#185).
 // On v0.23.x and older, date is an alias of datetime: the model registers, but
 // a plain date is refused (400). datetime accepts typed date-times from v0.22.0.
+// An attribute that is only a date (no date-time) gets date too, which also
+// accepts a date-time; no catalog attribute is date-only today.
 
 // Every attribute is sent with its own NGSI-LD type as ngsiType, VocabProperty
 // and JsonProperty included (#285). A GeonicDB that does not accept these two
