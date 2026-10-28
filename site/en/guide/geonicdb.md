@@ -79,7 +79,7 @@ geonic entities list --type RoadRestriction \
 
 - Registering returns `201 Created`. If a model of that type already exists, it answers with the error `Custom data model already exists` (HTTP 400). To change a registered model, use `PATCH /custom-data-models/<Type>` or `geonic models update <Type> @model.json`.
 - **Decision:** the Decision model has VocabProperty and JsonProperty attributes. GeonicDB accepts these two types in a model from v0.23.0; an older GeonicDB answers HTTP 400.
-- **Typed dates:** the normalized example writes date-times as `{"@type": "DateTime", "@value": "…"}`. GeonicDB accepts this form from v0.22.0. With an older GeonicDB, and for the examples of Task, Milestone and Project (set `MODEL`, for example `MODEL=task/Task`, and register that model first), turn the typed dates into strings with [jq](https://jqlang.org/). Then send `entity.jsonld` with the second command of step 2 (`curl -X POST … --data @entity.jsonld`; with the CLI: `geonic entities create @entity.jsonld`):
+- **Typed dates:** the normalized example writes date-times as `{"@type": "DateTime", "@value": "…"}`. GeonicDB accepts this form from v0.22.0, and the examples of Task, Milestone and Project from v0.24.0. With an older GeonicDB, turn the typed dates into strings with [jq](https://jqlang.org/) (for the other models, such as Task, set `MODEL`, for example `MODEL=task/Task`, and register that model first). Then send `entity.jsonld` with the second command of step 2 (`curl -X POST … --data @entity.jsonld`; with the CLI: `geonic entities create @entity.jsonld`):
 
   ```bash
   curl -sSf "$BASE/examples/$MODEL/example-normalized.jsonld" -o typed.jsonld
@@ -87,7 +87,7 @@ geonic entities list --type RoadRestriction \
     typed.jsonld > entity.jsonld
   ```
 
-  Task and Milestone (`start`, `due`) and Project (`start`, `end`) need this even with v0.22.0 or later. These values may be a plain date, so the model declares them as text, and a text check does not accept a typed value ([#185](https://github.com/geolonia/datamodels/issues/185)). Your own data can send the plain string, as in `"validFrom": {"type": "Property", "value": "2026-07-08T09:00:00+09:00"}`.
+  Task and Milestone (`start`, `due`) and Project (`start`, `end`) may be a plain date. The model declares them with GeonicDB's `date` type, which means a date or a date-time ([#185](https://github.com/geolonia/datamodels/issues/185)). On GeonicDB v0.23.x and older, `date` means the same as `datetime`, so a plain date such as `"2026-07-11"` gets HTTP 400. The Milestone example has a plain date in `due`, so it fails on v0.23.x and older even after the jq step. Your own data can send the plain string, as in `"validFrom": {"type": "Property", "value": "2026-07-08T09:00:00+09:00"}`.
 - **GeonicDB CLI:** [geonicdb-cli](https://github.com/geolonia/geonicdb-cli) (`npm install -g @geolonia/geonicdb-cli@0.26.1`). Logged in as a tenant admin with `geonic auth login`, it needs no API key or policy. A saved login is used before `--api-key`, so run `geonic auth logout` first when you use an API key. Add `--dry-run` to any command to see the request without sending it.
 - For your own data, put the @context in the body (`application/ld+json`) or send `application/json` with the `Link` header, never both. The tenant header is `NGSILD-Tenant` ([multi-tenancy](https://docs.geonicdb.com/en/core-concepts/multi-tenancy)).
 
@@ -96,7 +96,7 @@ geonic entities list --type RoadRestriction \
 GeonicDB checks every entity of the type when it is created or changed, also in batches and through NGSIv2:
 
 - the required attributes are there;
-- each value has the right type (text, number, whole number, true or false, list, object, GeoJSON, URI, date-time in RFC 3339) and follows the rules: length, minimum and maximum, pattern, allowed values:
+- each value has the right type (text, number, whole number, true or false, list, object, GeoJSON, URI, date and date-time in RFC 3339) and follows the rules: length, minimum and maximum, pattern, allowed values:
   - a VocabProperty's allowed terms are compared as full IRIs, expanded with the @context you send, so `dpv:HumanNotInvolved` and `https://w3id.org/dpv#HumanNotInvolved` are the same term;
 - there are no attributes the model does not know (the catalog's definitions do not allow them);
 - combinations that must be unique are unique, if the definition declares them.
