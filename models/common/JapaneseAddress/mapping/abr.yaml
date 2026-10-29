@@ -1,0 +1,42 @@
+# Correspondence between JapaneseAddress and the Digital Agency's Address Base
+# Registry (アドレス・ベース・レジストリ): its town, lot-number, block and residence
+# datasets.
+standard:
+  name:
+    ja: デジタル庁 アドレス・ベース・レジストリ（町字、地番、住居表示の街区・住居のデータセット）
+    en: The Digital Agency's Address Base Registry (town, lot-number, and residential block and residence datasets)
+  url: https://www.digital.go.jp/policies/base_registry_address
+  license:
+    ja: 公共データ利用規約（第1.0版）（PDL1.0）。地番のデータ（地番マスター）には、登記所備付地図データ利用規約も適用される（上のページからリンクした「データの利用規約」を参照）。
+    en: Public Data License (version 1.0) (PDL1.0). The lot-number data (地番マスター) is also subject to the terms of use of the registry office map data (登記所備付地図データ利用規約); see the terms of use for the data linked from the page above.
+  note:
+    ja: "列の名前と意味は、上のページで公開されている「データフォーマット（仕様確定版）」（2024-01-15）で 2026-10-30 に確認した（2025 年 6 月版は公開準備中）。使うのはデータセット「03 町字」（mt_town）、「04 地番」（mt_parcel）、「05 住居表示-街区」（mt_rsdtdsp_blk）、「06 住居表示-住居」（mt_rsdtdsp_rsdt）。デジタル庁の abr-geocoder の結果もほぼ同じ名前を使う。ただし、丁目は chome（書き方）だけで chome_number は無く、lg_code と machiaza_id は structured_address ではなく ids の下にある。この表は対応を説明するもので、datamodels convert で変換するためのものではない。"
+    en: "Column names and meanings checked on 2026-10-30 in the registry's data format specification (データフォーマット（仕様確定版）, 2024-01-15) published on the page above; the June 2025 version is still being prepared. The datasets used are 03 towns (mt_town), 04 lot numbers (mt_parcel), 05 residential blocks (mt_rsdtdsp_blk) and 06 residences (mt_rsdtdsp_rsdt). The Digital Agency's abr-geocoder uses mostly the same names in its results, except that the chome is only the written form (chome, no chome_number) and lg_code and machiaza_id are under ids, not structured_address. This table explains the correspondence; it is not a conversion for datamodels convert."
+fields:
+  addressCountry: { to: null, note: { ja: データには無い。常に JP, en: not in the data; always JP }, value: JP }
+  postalCode: { to: post_code, note: { ja: 町字（mt_town）の列。郵便番号が複数あるとき（セミコロン区切り）は、ほかの情報で 1 つに決まる場合だけその番号を入れ、決まらなければ postalCode は省く, en: "a column of the town dataset (mt_town). When it holds several codes (separated by semicolons), use one only when other information decides which; otherwise leave postalCode out" } }
+  addressRegion: { to: pref }
+  addressLocality: { to: county + city + ward, note: { ja: 郡、市区町村、政令市の区をつなげる, en: "county, municipality and designated-city ward joined" } }
+  machiaza: { to: oaza_cho + koaza, note: { ja: 大字・町と小字をつなげる。丁目は JapaneseAddress の chome に入れる, en: oaza/town and koaza joined; the chome goes to the JapaneseAddress field chome } }
+  chome: { to: chome_number, note: { ja: chome_number は丁目の数字。レジストリの chome 列は「一丁目」のような書き方, en: "chome_number is the chome as digits; the registry's chome column is the written form, such as 一丁目" } }
+  banchi:
+    to: blk_num、prc_num1 + prc_num2 + prc_num3
+    note:
+      ja: 住居表示では街区符号（blk_num）。地番では本番（prc_num1）、支号（prc_num2）、支号の支号（prc_num3）をハイフンでつなげ、空の部分は省く（例：4638-1）。ハイフンでつなげるのはこのカタログの決まり。レジストリでは、例外的に数字以外を含むことがある。
+      en: "The block number (blk_num) in a residential-indication area. For a lot number, the main number (prc_num1), its sub-number (prc_num2) and the sub-number's sub-number (prc_num3), joined with hyphens and empty parts left out (for example 4638-1); joining with hyphens is this catalog's convention. The registry notes that these can exceptionally contain more than digits."
+  go:
+    to: rsdt_num + rsdt_num2
+    note:
+      ja: 住居番号（rsdt_num）。住居番号が 2 つの番号でできているとき（団地・中高層建物の特例や枝番）は、後の番号（rsdt_num2）をハイフンでつなげる（このカタログの決まり）。地番では空。
+      en: "The residence number (rsdt_num). When a residence number is made of two numbers (the special rule for housing complexes and high-rise buildings, or a branch number), the second one (rsdt_num2) is joined with a hyphen (this catalog's convention). Empty for a lot number."
+  residentialIndication:
+    to: rsdt_addr_flg
+    note:
+      ja: 1（住居表示実施）→true、0（住居表示非実施）→false。フラグは町字ごとで、住居表示の区域とそうでない区域が同じ町字にあるときは、その町字に 2 つのレコードがある。住所が当てはまる方のレコードの値を使う。
+      en: "1 (residential indication in force) → true, 0 (not in force) → false. The flag is per town: a town with both kinds of area has two records, and the value of the record the address belongs to is used."
+  localGovernmentCode: { to: lg_code }
+  jisPrefectureCode: { to: null, note: { ja: lg_code の先頭 2 桁, en: the first two digits of lg_code } }
+  jisMunicipalityCode: { to: null, note: { ja: lg_code の先頭 5 桁, en: the first five digits of lg_code } }
+  abrMachiazaId: { to: machiaza_id }
+  buildingName: { to: null, note: { ja: レジストリには無い, en: not in the registry } }
+  addressText: { to: null, note: { ja: レジストリには無い。各項目をつなげて作る, en: not in the registry; made by joining the fields } }
