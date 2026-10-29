@@ -1,0 +1,30 @@
+# Correspondence between JapaneseAddress and the Digital Agency's Address Base
+# Registry (アドレス・ベース・レジストリ): its town, block, residence and lot-number
+# datasets.
+standard:
+  name:
+    ja: デジタル庁 アドレス・ベース・レジストリ（町字、街区、住居、地番のデータセット）
+    en: The Digital Agency's Address Base Registry (town, block, residence and lot-number datasets)
+  url: https://www.digital.go.jp/policies/base_registry_address
+  license:
+    ja: アドレス・ベース・レジストリの「データの利用規約」（上のページからリンク）
+    en: The Address Base Registry's terms of use for the data (データの利用規約, linked from the page above)
+  note:
+    ja: "列の名前は、デジタル庁の abr-geocoder（https://github.com/digital-go-jp/abr-geocoder）の取り込み設定（abrdb/internal/schema/config_full.yaml、「ABR の CSV の仕様にもとづく」）で 2026-10-30 に確認した。レジストリのデータフォーマットの文書は公開準備中。abr-geocoder の結果も同じ名前を使う。住所は、町字（mt_town）、街区（mt_rsdtdsp_blk）、住居（mt_rsdtdsp_rsdt）、地番（mt_parcel）の別々のデータセットにある。この表は対応を説明するもので、datamodels convert で変換するためのものではない。"
+    en: "Column names checked on 2026-10-30 in the import configuration of the Digital Agency's abr-geocoder (https://github.com/digital-go-jp/abr-geocoder, abrdb/internal/schema/config_full.yaml, \"based on ABR CSV specifications\"); the registry's own data format document is still being prepared. abr-geocoder's results use the same names. The address is spread over separate datasets: towns (mt_town), blocks (mt_rsdtdsp_blk), residences (mt_rsdtdsp_rsdt) and lots (mt_parcel). This table explains the correspondence; it is not a conversion for datamodels convert."
+fields:
+  addressCountry: { to: null, note: { ja: データには無い。常に JP, en: not in the data; always JP }, value: JP }
+  postalCode: { to: post_code, note: { ja: 町字（mt_town）の列, en: a column of the town dataset (mt_town) } }
+  addressRegion: { to: pref }
+  addressLocality: { to: county、city、ward, note: { ja: 郡、市町村、政令市の区をつなげる, en: "county, municipality and designated-city ward joined" } }
+  machiaza: { to: oaza_cho、koaza, note: { ja: 大字・町と小字をつなげる。丁目は chome に分ける, en: oaza/town and koaza joined; chome goes to chome } }
+  chome: { to: chome_number, note: { ja: chome_number は数字。chome は「一丁目」のような書き方, en: "chome_number is the number; chome is the written form, such as 一丁目" } }
+  banchi: { to: blk_num、prc_num1〜3, note: { ja: 住居表示では街区符号（blk_num）。地番では prc_num1〜3 をハイフンでつなげる（例：4638-1）, en: "the block number (blk_num) in a residential-indication area; for a lot number, prc_num1 to 3 joined with hyphens (for example 4638-1)" } }
+  go: { to: rsdt_num、rsdt_num2, note: { ja: 住居番号。枝番（rsdt_num2）があればハイフンでつなげる。地番では空, en: "the residence number, with its branch number (rsdt_num2) joined by a hyphen when there is one; empty for a lot number" } }
+  residentialIndication: { to: rsdt_addr_flg, note: { ja: 1→true、0→false, en: "1→true, 0→false" } }
+  localGovernmentCode: { to: lg_code }
+  jisPrefectureCode: { to: null, note: { ja: lg_code の先頭 2 桁, en: the first two digits of lg_code } }
+  jisMunicipalityCode: { to: null, note: { ja: lg_code の先頭 5 桁, en: the first five digits of lg_code } }
+  abrMachiazaId: { to: machiaza_id }
+  buildingName: { to: null, note: { ja: レジストリには無い, en: not in the registry } }
+  addressText: { to: null, note: { ja: レジストリには無い。各項目をつなげて作る, en: not in the registry; made by joining the fields } }

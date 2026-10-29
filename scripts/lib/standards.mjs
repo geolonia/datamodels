@@ -77,6 +77,9 @@ export const STANDARDS = [
     'Facility/gif-facility': { ja: '施設', en: 'Facility' },
     'OpeningHours/gif-facility-hours': { ja: '施設の利用可能曜日・時刻', en: 'Facility, available days and times' },
   } },
+  { id: 'abr', name: { ja: 'アドレス・ベース・レジストリ（デジタル庁）', en: 'Address Base Registry (Digital Agency)' }, parts: {
+    'JapaneseAddress/abr': { ja: '町字・街区・住居・地番', en: 'Towns, blocks, residences and lots' },
+  } },
   { id: 'cao-hinanjo-guideline', name: { ja: '避難所運営等避難生活支援のためのガイドライン（内閣府）', en: 'Guideline for shelter operation and evacuation-life support (Cabinet Office)' }, parts: {
     'EvacuationShelter/cao-hinanjo-guideline': { ja: 'チェックリスト（令和6年12月改定）', en: 'Checklist (revised December 2024)' },
   } },
