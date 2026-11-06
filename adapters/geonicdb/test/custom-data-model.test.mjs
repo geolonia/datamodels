@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { loadSubjects, CORE_TERMS, CORE_CONTEXT_FIXTURE } from '../../../scripts/lib/models.mjs';
-import { toCustomDataModel, expandVocabTerm } from '../custom-data-model.mjs';
+import { toCustomDataModel, expandVocabTerm } from '../index.mjs';
 
 const subjects = await loadSubjects();
 const transportation = subjects.find((s) => s.name === 'transportation');
@@ -46,7 +46,7 @@ test('extend merges tenant attributes and declares the tenant context', () => {
 });
 
 test('extend cannot redefine a catalog attribute', () => {
-  assert.throws(() => toCustomDataModel(transportation, roadRestriction, { extend: { propertyDetails: { roadName: { ngsiType: 'Property', valueType: 'integer' } } } }), /redefines catalog attribute "roadName"/);
+  assert.throws(() => toCustomDataModel(transportation, roadRestriction, { extend: { propertyDetails: { roadName: { ngsiType: 'Property', valueType: 'integer' } } } }), /redefines attribute "roadName" of RoadRestriction/);
 });
 
 test('extend attributes need ngsiType and valueType', () => {
@@ -162,12 +162,12 @@ test('expandVocabTerm: definitions, cycles and absolute IRIs (#280)', () => {
 
 test('a VocabProperty term the context cannot expand fails the build clearly (#280)', () => {
   for (const term of ['nope:HumanNotInvolved', 'HumanNotInvolved']) {
-    assert.throws(() => decisionBody(withEnum('dpv:HumanNotInvolved', term)), (e) => e.message.includes(`Decision.humanInvolvement: the VocabProperty term "${term}" cannot be expanded`) && e.message.includes('models/decision/context.jsonld (or a context it imports)'), term);
+    assert.throws(() => decisionBody(withEnum('dpv:HumanNotInvolved', term)), (e) => e.message.includes(`Decision.humanInvolvement: the VocabProperty term "${term}" cannot be expanded`) && e.message.includes('decision/context.jsonld (or a context it imports)'), term);
   }
   const unloaded = { ...decisionSubject }; // a copy without the non-enumerable contextTerms
-  assert.throws(() => toCustomDataModel(unloaded, decision), /context's terms are not loaded; load the subject with loadSubjects\(\)/);
+  assert.throws(() => toCustomDataModel(unloaded, decision), /the terms of the decision context could not be read: the subject was not loaded with loadSubjects\(\)/);
   Object.defineProperty(unloaded, 'contextTermsError', { value: 'context imports https://example.com/x.jsonld, which is not a catalog context URL' });
-  assert.throws(() => toCustomDataModel(unloaded, decision), /context's terms are not loaded: context imports https:\/\/example\.com\/x\.jsonld, which is not a catalog context URL/);
+  assert.throws(() => toCustomDataModel(unloaded, decision), /the terms of the decision context could not be read: context imports https:\/\/example\.com\/x\.jsonld, which is not a catalog context URL/);
 });
 
 test('the contextTerms option expands the terms instead of the subject\'s (#280)', () => {

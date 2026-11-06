@@ -18,6 +18,7 @@ npx @geolonia/datamodels@0.3.18 export \
 | `table-schema` | `EvacuationSite.tableschema.json` | The [Table Schema](https://datapackage.org/standard/table-schema/) of those columns, to check the filled-in CSV file with `frictionless validate`. |
 | `ai` | `EvacuationSite.ai.json` | A strict JSON Schema for the structured output of an AI model, to extract entities from PDFs or e-mails in the shape of the model. |
 | `postgis` | `EvacuationSite.sql` | A PostgreSQL / PostGIS `CREATE TABLE` with constraints and a spatial index. |
+| `geonicdb` | `EvacuationSite.json` | A GeonicDB Custom Data Model body, to register the model in a tenant ([GeonicDB](/en/guide/geonicdb)). |
 
 Every file keeps the model's attribute names and IRIs, so the data converts to the NGSI-LD form and back. The files, named `<Type>.<ext>`, go into the `--out` folder (default: the current folder).
 
@@ -42,7 +43,7 @@ The Table Schema follows version 2 of the standard. Its titles and descriptions 
 
 ## Download from datamodels.jp {#download}
 
-You do not need the command for the models of datamodels.jp: each model page has these files under **Download**, for example [designated emergency evacuation site (EvacuationSite)](/en/models/disaster/EvacuationSite/). Each file is explained on [Adapters](/en/adapters/#downloads).
+You do not need the command for the models of datamodels.jp: each model page has these files under **Download**, for example [designated emergency evacuation site (EvacuationSite)](/en/models/disaster/EvacuationSite/). Each file is explained on [Adapters](/en/adapters/#downloads). The GeonicDB bodies are not on model pages; they are listed by model on [GeonicDB](/en/adapters/geonicdb/).
 
 These files are rebuilt with the site and are not covered by the promise that published files never change. If you need the exact file later, keep a copy and note the subject version it was made from.
 

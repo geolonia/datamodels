@@ -67,6 +67,7 @@ prerelease: true
 | `licenseUrl` | | Where the licence text is. Without it, the pages link the SPDX page of `license` |
 | `nodes` | | Other nodes this node knows, each with `url` and `index`. A `@context` may import theirs, and `build` reads schemas only from them. `extend` adds the node it reads from |
 | `prerelease` | | `true` before an official launch: published versions may still be corrected ([Versions](/en/toolkit/versions)) |
+| `adapters` | | Files for a product, which a node turns on. `[geonicdb]`: a GeonicDB Custom Data Model body per entity model ([Files for other tools](#adapters)) |
 
 `build` and `check` list every problem of `node.yaml` at once.
 
@@ -103,6 +104,8 @@ For each entity model, `build` writes the files of [`export`](/en/toolkit/export
 
 - A model may refer to a schema on another node, such as datamodels.jp's JapaneseAddress. `build` reads it online, only from the `schema/` folder of a node in `nodes`. When the schema is elsewhere, or cannot be read, the model gets no adapter files, and `build` says so.
 - These files are rebuilt every time. They are not covered by the promise that published files never change.
+
+With `adapters: [geonicdb]` in node.yaml, `build` also writes `adapters/geonicdb/<subject>/<Type>.json` for each entity model: the body that GeonicDB's `/custom-data-models` takes, with the model's `contextUrl`. GeonicDB can register the model from the file's URL (`sourceUrl`). It is a file for one product, so the model page does not link it; `catalog.json` lists it under `adapters`. It is made as datamodels.jp makes its own ([GeonicDB](/en/guide/geonicdb)).
 
 ## The pages {#pages}
 

@@ -18,6 +18,7 @@ npx @geolonia/datamodels@0.3.18 export \
 | `table-schema` | `EvacuationSite.tableschema.json` | CSV の列の [Table Schema](https://datapackage.org/standard/table-schema/) です。入力した CSV ファイルを `frictionless validate` で検証できます。 |
 | `ai` | `EvacuationSite.ai.json` | AI の構造化出力（strict な JSON Schema）です。PDF やメールから、モデルの形のままエンティティを取り出せます。 |
 | `postgis` | `EvacuationSite.sql` | PostgreSQL / PostGIS の `CREATE TABLE` です。制約と空間インデックス付きのテーブルができます。 |
+| `geonicdb` | `EvacuationSite.json` | GeonicDB の Custom Data Model の本文です。テナントにモデルを登録できます（[GeonicDB](/guide/geonicdb)）。 |
 
 どのファイルもモデルの属性名と IRI をそのまま使うので、NGSI-LD の形との間でデータを変換できます。ファイルは `<Type>.<拡張子>` の名前で、`--out` のフォルダー（省略すると今のフォルダー）に書きます。
 
@@ -42,7 +43,7 @@ Table Schema は、規格のバージョン 2 に従います。タイトルと�
 
 ## datamodels.jp からダウンロードする {#download}
 
-コマンドを使わなくても、datamodels.jp の各モデルのページの**ダウンロード**の行から、これらのファイルを取れます。例は[指定緊急避難場所（EvacuationSite）](/models/disaster/EvacuationSite/)です。ファイルごとの説明は[アダプター](/adapters/#downloads)にあります。
+コマンドを使わなくても、datamodels.jp の各モデルのページの**ダウンロード**の行から、これらのファイルを取れます。例は[指定緊急避難場所（EvacuationSite）](/models/disaster/EvacuationSite/)です。ファイルごとの説明は[アダプター](/adapters/#downloads)にあります。GeonicDB の本文はモデルのページにはなく、[GeonicDB](/adapters/geonicdb/) にモデルごとに並んでいます。
 
 これらのファイルはサイトと一緒に作り直されます。「公開したファイルは変えない」という約束の対象ではありません。あとで同じファイルが要るときは、ファイルを保存し、作ったときの分野のバージョンも記録してください。
 

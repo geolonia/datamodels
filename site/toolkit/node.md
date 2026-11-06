@@ -67,6 +67,7 @@ prerelease: true
 | `licenseUrl` | | ライセンスの本文がある URL。無ければ、ページは `license` の SPDX のページにリンクする |
 | `nodes` | | このノードが知っているほかのノード。それぞれに `url` と `index` を書く。`@context` はその `@context` を取り込める。`build` はスキーマをそこからだけ読む。`extend` は読んだノードを足す |
 | `prerelease` | | 正式公開の前は `true`。公開したバージョンをまだ直せる（[バージョン](/toolkit/versions)） |
+| `adapters` | | ノードが有効にする、製品向けのファイル。`[geonicdb]` は、エンティティのモデルごとに GeonicDB の Custom Data Model の本文を書き出す（[ほかのツール向けのファイル](#adapters)） |
 
 `build` と `check` は、`node.yaml` の問題をすべてまとめて示します。
 
@@ -103,6 +104,8 @@ npx @geolonia/datamodels@0.3.18 build my-models --out public
 
 - モデルが、ほかのノードのスキーマを参照することがあります。datamodels.jp の JapaneseAddress などです。`build` はこれをオンラインで読みますが、`nodes` にあるノードの `schema/` フォルダーからだけです。ほかの場所にあるときや読めないときは、そのモデルのほかのツール向けのファイル（CSV テンプレートなど）だけを書き出さず、`build` がそう知らせます。
 - これらのファイルは毎回作り直します。公開したファイルは変えない、という約束には含まれません。
+
+node.yaml に `adapters: [geonicdb]` と書くと、`build` はエンティティのモデルごとに `adapters/geonicdb/<subject>/<Type>.json` も書き出します。GeonicDB の `/custom-data-models` が受け取る本文で、モデルの `contextUrl` を含みます。GeonicDB は、このファイルの URL（`sourceUrl`）からモデルを登録できます。1 つの製品のためのファイルなので、モデルのページからはリンクしません。`catalog.json` では `adapters` に載ります。作り方は datamodels.jp のファイルと同じです（[GeonicDB](/guide/geonicdb)）。
 
 ## ページ {#pages}
 
