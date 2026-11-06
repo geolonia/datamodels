@@ -43,7 +43,7 @@ Table Schema は、規格のバージョン 2 に従います。タイトルと�
 
 ## datamodels.jp からダウンロードする {#download}
 
-コマンドを使わなくても、datamodels.jp の各モデルのページの**ダウンロード**の行から、これらのファイルを取れます。例は[指定緊急避難場所（EvacuationSite）](/models/disaster/EvacuationSite/)です。ファイルごとの説明は[アダプター](/adapters/#downloads)にあります。GeonicDB の本文はモデルのページにはなく、[GeonicDB](/adapters/geonicdb/) にモデルごとに並んでいます。
+コマンドを使わなくても、datamodels.jp の各モデルのページの**ダウンロード**の行から、これらのファイルを取れます。例は[指定緊急避難場所（EvacuationSite）](/models/disaster/EvacuationSite/)です。ファイルごとの説明は[アダプター](/adapters/#downloads)にあります。GeonicDB の本文はモデルのページにはありません。[GeonicDB](/adapters/geonicdb/) で、モデルごとに並んでいます。
 
 これらのファイルはサイトと一緒に作り直されます。「公開したファイルは変えない」という約束の対象ではありません。あとで同じファイルが要るときは、ファイルを保存し、作ったときの分野のバージョンも記録してください。
 
