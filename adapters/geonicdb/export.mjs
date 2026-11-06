@@ -20,7 +20,7 @@
 import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { loadSubjects, subjectUrls } from '../../scripts/lib/models.mjs';
-import { toCustomDataModel } from './custom-data-model.mjs';
+import { toCustomDataModel } from './index.mjs';
 
 const args = process.argv.slice(2);
 const subjectName = args.find((a) => !a.startsWith('--') && !args[args.indexOf(a) - 1]?.startsWith('--'));
