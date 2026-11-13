@@ -546,11 +546,23 @@ test('every tool answers with structured content, and the same JSON as text; a t
   for (const [name, args] of calls) {
     const { result } = await rpc('tools/call', { name, arguments: args });
     assert.ok(!result.isError, name);
+    assert.ok(result.structuredContent && typeof result.structuredContent === 'object' && !Array.isArray(result.structuredContent), name);
     assert.deepEqual(result.structuredContent, JSON.parse(result.content[0].text), name);
   }
   const { result } = await rpc('tools/call', { name: 'get_model', arguments: { model: 'NoSuchModel' } });
   assert.equal(result.isError, true);
   assert.equal(result.structuredContent, undefined);
+  // The same over the 2026-07-28 protocol, which names the tool in a header too.
+  const call2026 = async (args) => (await message(await send(
+    { jsonrpc: '2.0', id: ++id, method: 'tools/call', params: { name: 'get_model', arguments: args, _meta: MODERN_META } },
+    { headers: { ...HEADERS, 'mcp-protocol-version': '2026-07-28', 'mcp-method': 'tools/call', 'mcp-name': 'get_model' } },
+  ))).result;
+  const ok = await call2026({ model: 'Task' });
+  assert.ok(!ok.isError);
+  assert.deepEqual(ok.structuredContent, JSON.parse(ok.content[0].text));
+  const bad = await call2026({ model: 'NoSuchModel' });
+  assert.equal(bad.isError, true);
+  assert.equal(bad.structuredContent, undefined);
 });
 
 test('answers are plain JSON, whatever the client accepts', async () => {
