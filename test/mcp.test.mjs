@@ -536,6 +536,23 @@ test('a byte order mark does not hide a batch, and a single message after one is
   assert.equal((await message(r)).result.tools.length, 4);
 });
 
+test('every tool answers with structured content, and the same JSON as text; a tool error has none', async () => {
+  const calls = [
+    ['search_models', { query: 'task', limit: 1 }],
+    ['get_model', { model: 'Task', include_schema: false }],
+    ['find_attribute', { query: 'name', limit: 1 }],
+    ['validate', { model: 'Task', entity: { id: 'x', type: 'Task' } }],
+  ];
+  for (const [name, args] of calls) {
+    const { result } = await rpc('tools/call', { name, arguments: args });
+    assert.ok(!result.isError, name);
+    assert.deepEqual(result.structuredContent, JSON.parse(result.content[0].text), name);
+  }
+  const { result } = await rpc('tools/call', { name: 'get_model', arguments: { model: 'NoSuchModel' } });
+  assert.equal(result.isError, true);
+  assert.equal(result.structuredContent, undefined);
+});
+
 test('answers are plain JSON, whatever the client accepts', async () => {
   for (const accept of ['application/json', 'application/json, text/event-stream', '*/*']) {
     const r = await send({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'search_models', arguments: { query: 'task', limit: 1 } } }, { headers: { 'content-type': 'application/json', accept } });

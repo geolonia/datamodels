@@ -47,7 +47,8 @@ const CORS = {
 };
 
 const isObject = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
-const json = (data) => ({ content: [{ type: 'text', text: JSON.stringify(data) }] });
+// Every answer is a JSON object: as structured content, and as the same JSON text for clients that read only text.
+const json = (data) => ({ content: [{ type: 'text', text: JSON.stringify(data) }], structuredContent: data });
 const fail = (message) => ({ isError: true, content: [{ type: 'text', text: message }] });
 
 // ---------------------------------------------------------------------------
