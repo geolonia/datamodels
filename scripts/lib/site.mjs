@@ -250,7 +250,14 @@ function modelPage(lang, prefix, subject, model) {
   const subclassOf = parentIri && isCatalogIri(parentIri) ? modelForIri(subject, parentIri, { ownerOnly: true }) : null;
   const subclassOfExternal = parentIri && !isCatalogIri(parentIri) ? parentIri : null;
   const repo = 'https://github.com/geolonia/datamodels';
-  let md = front(`${model.type}`, desc);
+  // The localised title only when it says more than the type name.
+  const sameName = (a) => a.replace(/\s+/g, '').toLowerCase() === model.type.toLowerCase();
+  // The browser tab and search results show this title. The bare type name was the same in both
+  // languages and clashed with subject pages of the same name (Decision), so it says what the page is.
+  const pageTitle = lang === 'ja'
+    ? `${model.type}${sameName(title) ? ' ' : `（${title}）`}のデータモデル`
+    : `${model.type} data model`;
+  let md = front(pageTitle, desc);
   const playground = !isValue && model.examples['example.json'] && model.examples['example-normalized.jsonld'];
   // "<" escaped so no text can close the script block.
   if (playground) md += `<script setup>\nconst playground = ${JSON.stringify(playgroundData(lang, subject, model)).replaceAll('<', '\\u003c')}\n</script>\n\n`;
@@ -262,9 +269,7 @@ function modelPage(lang, prefix, subject, model) {
     const found = next ? modelForIri(subject, next) : null;
     md += `::: warning ${t.deprecated}\n${t.deprecatedNote(found ? modelLink(prefix, found) : next ? externalLink(next) : null)}\n:::\n\n`;
   }
-  // One language per page (the switcher gives the other); the localised title
-  // only when it says more than the type name.
-  const sameName = (a) => a.replace(/\s+/g, '').toLowerCase() === model.type.toLowerCase();
+  // One language per page (the switcher gives the other).
   if (!sameName(title)) md += `**${title}**\n\n`;
   md += `${mdText(desc)}\n\n`;
   md += `| | |\n|---|---|\n`;
