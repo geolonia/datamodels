@@ -525,7 +525,7 @@ test('a JsonProperty without its json member in key-values form fails', () =>
 
 test('an unknown x-ngsi.type fails', () =>
   withMutatedModels((d) => editJson(join(d, 'transportation', 'RoadRestriction', 'schema.json'), (s) => { s.properties.roadName['x-ngsi'] = { type: 'ListProperty' }; }),
-    /roadName: x-ngsi\.type must be one of Property, Relationship, GeoProperty, JsonProperty, VocabProperty/));
+    /roadName: x-ngsi\.type must be one of Property, Relationship, GeoProperty, (LanguageProperty, )?JsonProperty, VocabProperty/));
 
 test('a VocabProperty value the contexts do not define fails', () =>
   withMutatedModels((d) => useJsonAndVocab(d, { vocab: 'closedAtNight' }), /attribute "statusLabel": the vocab value expands to https:\/\/uri\.etsi\.org\/ngsi-ld\/default-context\/closedAtNight/));

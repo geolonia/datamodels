@@ -1,0 +1,17 @@
+# Subject metadata. One context per subject, versioned; the version below is the
+# version of context.jsonld and of every schema in this subject.
+name: fieldservice
+version: 1.0.0
+title:
+  ja: 訪問サービス
+  en: Field service
+# One line for the subject card on the model list.
+summary:
+  ja: 現場での作業の依頼、品目、車両、班、日ごとのルート
+  en: "Requests for work at a place, catalogue items, vehicles, crews and daily routes"
+description:
+  ja: "決まった場所に出向いて行う仕事の依頼と、その計画に必要なデータです。粗大ごみや災害ごみの収集、配達、修理、点検のように、誰かが依頼し、班が車両で日と順番を決めて回る仕事を扱います。依頼の時間の幅、作業時間、量、必要な技能と、車両の積載量、勤務時間、技能は、ルート最適化（VRP）のソフトウェアがそのまま読める形にします。計画の結果は、日ごとのルートとして残します。"
+  en: "Requests for work done at a place, and the data needed to plan it: collecting bulky or disaster waste, deliveries, repairs, inspections, and other work that someone asks for and a crew does with a vehicle on a day and in an order it plans. The time windows, service times, amounts and skills of a request, and the capacity, working hours and skills of a vehicle, have the shape route optimisation (VRP) software reads. The result of planning is kept as the routes of a day."
+source: minted            # minted | profile | global
+origin:
+  note: Drafted from a bulky waste collection demo for two municipalities (Nishinomiya and Ashiya, Hyogo) on an NGSI-LD broker (GeonicDB), whose requests are checked by rules and planned with a route optimiser, and from a survey of existing standards (Open311 GeoReport v2, Smart Data Models FleetVehicle and FleetVehicleOperation, schema.org, the job and vehicle format of VROOM).

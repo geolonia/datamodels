@@ -1,0 +1,141 @@
+{
+  "@context": [
+    "https://datamodels.jp/context/fieldservice/v1.jsonld",
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
+  ],
+  "id": "urn:ngsi-ld:ServiceRequest:131016-2026-0716-0042",
+  "type": "ServiceRequest",
+  "serviceCode": {
+    "type": "Property",
+    "value": "bulky-waste"
+  },
+  "localGovernmentCode": {
+    "type": "Property",
+    "value": "131016"
+  },
+  "provider": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:Organization:131016"
+  },
+  "requestedAt": {
+    "type": "Property",
+    "value": {
+      "@type": "DateTime",
+      "@value": "2026-07-14T09:20:00+09:00"
+    }
+  },
+  "requestStatus": {
+    "type": "Property",
+    "value": "scheduled"
+  },
+  "statusLabel": {
+    "type": "Property",
+    "value": "収集日決定"
+  },
+  "location": {
+    "type": "GeoProperty",
+    "value": {
+      "type": "Point",
+      "coordinates": [
+        139.7703,
+        35.6956
+      ]
+    }
+  },
+  "area": {
+    "type": "Property",
+    "value": "kanda"
+  },
+  "lines": {
+    "type": "Property",
+    "value": [
+      {
+        "item": "urn:ngsi-ld:CatalogItem:131016:sofa-2-seats",
+        "quantity": 1,
+        "name": "ソファー（2人以上用）"
+      }
+    ]
+  },
+  "serviceDuration": {
+    "type": "Property",
+    "value": "PT8M"
+  },
+  "load": {
+    "type": "Property",
+    "value": [
+      3
+    ]
+  },
+  "skills": {
+    "type": "Property",
+    "value": [
+      "two-person"
+    ]
+  },
+  "priority": {
+    "type": "Property",
+    "value": 2
+  },
+  "timeWindows": {
+    "type": "Property",
+    "value": [
+      {
+        "start": "2026-07-16T08:00:00+09:00",
+        "end": "2026-07-16T16:00:00+09:00"
+      },
+      {
+        "start": "2026-07-17T08:00:00+09:00",
+        "end": "2026-07-17T16:00:00+09:00"
+      }
+    ]
+  },
+  "preferredDate": {
+    "type": "Property",
+    "value": {
+      "@type": "Date",
+      "@value": "2026-07-16"
+    }
+  },
+  "flexibility": {
+    "type": "Property",
+    "value": "preferred"
+  },
+  "scheduledDate": {
+    "type": "Property",
+    "value": {
+      "@type": "Date",
+      "@value": "2026-07-16"
+    }
+  },
+  "scheduledWindow": {
+    "type": "Property",
+    "value": {
+      "start": "2026-07-16T08:00:00+09:00",
+      "end": "2026-07-16T12:00:00+09:00"
+    }
+  },
+  "routePlan": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:RoutePlan:131016:kanda:2026-07-16"
+  },
+  "fee": {
+    "type": "Property",
+    "value": 1600
+  },
+  "priceCurrency": {
+    "type": "Property",
+    "value": "JPY"
+  },
+  "requester": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:Person:resident-0042"
+  },
+  "description": {
+    "type": "Property",
+    "value": "大雨で1階が浸水し、ソファーが水を吸って使えなくなりました。"
+  },
+  "source": {
+    "type": "Property",
+    "value": "https://requests.example.jp/2026-0716-0042"
+  }
+}
