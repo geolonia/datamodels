@@ -82,7 +82,7 @@
         "cancelled",
         "rejected"
       ],
-      "description": "State: received, scheduled (a day is set), in-progress, completed, cancelled, rejected (cannot be done). Open311 open is received to in-progress; closed is the rest. When no value fits, leave it out and write statusLabel",
+      "description": "State: received, scheduled (a day is set), in-progress, completed, cancelled, rejected (cannot be done). Open311 open covers received to in-progress, and closed the rest. When no value fits, leave it out and write statusLabel",
       "x-ngsi": {
         "type": "Property"
       },
@@ -104,12 +104,13 @@
           "const": "Point"
         }
       },
-      "description": "Where the work is done (for example where the items are put out); a point only",
+      "description": "Where the work is done (for example where the items are put out); a point only. It can stand in for an address",
       "x-ngsi": {
         "type": "GeoProperty",
         "model": "https://datamodels.jp/ns/common/Geometry"
       },
-      "x-iri": "https://uri.etsi.org/ngsi-ld/location"
+      "x-iri": "https://uri.etsi.org/ngsi-ld/location",
+      "x-personal-data": true
     },
     "area": {
       "type": "string",
@@ -167,7 +168,7 @@
         "minimum": 0
       },
       "minItems": 1,
-      "description": "What it takes of a vehicle's capacity, one number per dimension; the provider sets the dimensions and units and keeps them in step with the vehicles' capacity (for example [volume units]); the amount of route optimisation",
+      "description": "What it takes of a vehicle's capacity, one number per dimension; the provider sets the dimensions and units and keeps them in step with the vehicles' capacity (for example one dimension: volume, counted in points the provider sets); the amount of route optimisation",
       "x-ngsi": {
         "type": "Property"
       },
@@ -288,15 +289,15 @@
       },
       "x-iri": "https://datamodels.jp/ns/fieldservice/routePlan"
     },
-    "refersTo": {
+    "task": {
       "type": "string",
       "format": "uri",
-      "description": "The work item made from this request, such as a Task in an issue tracker",
+      "description": "The work item made from this request: a Task (task subject). Task's refersTo is the other way round: what a task is about",
       "x-ngsi": {
         "type": "Relationship",
-        "target": "any"
+        "target": "https://datamodels.jp/ns/task/Task"
       },
-      "x-iri": "https://datamodels.jp/ns/task/refersTo"
+      "x-iri": "https://datamodels.jp/ns/fieldservice/task"
     },
     "fee": {
       "type": "number",
@@ -327,14 +328,14 @@
       "x-iri": "https://datamodels.jp/ns/fieldservice/requester",
       "x-personal-data": true
     },
-    "description": {
+    "requesterNote": {
       "type": "string",
       "minLength": 1,
       "description": "A description in the requester's words; it may contain personal data",
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "http://purl.org/dc/terms/description",
+      "x-iri": "https://datamodels.jp/ns/fieldservice/requesterNote",
       "x-personal-data": true
     },
     "source": {

@@ -19,7 +19,7 @@
     {
       "item": "urn:ngsi-ld:CatalogItem:131016:sofa-2-seats",
       "quantity": 1,
-      "name": "ソファー（2人以上用）"
+      "name": "ソファー（2人以上用）、ソファーベッドなど"
     }
   ],
   "serviceDuration": "PT8M",
@@ -51,6 +51,6 @@
   "fee": 1600,
   "priceCurrency": "JPY",
   "requester": "urn:ngsi-ld:Person:resident-0042",
-  "description": "大雨で1階が浸水し、ソファーが水を吸って使えなくなりました。",
+  "requesterNote": "大雨で1階が浸水し、ソファーが水を吸って使えなくなりました。",
   "source": "https://requests.example.jp/2026-0716-0042"
 }

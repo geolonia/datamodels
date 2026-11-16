@@ -8,8 +8,8 @@ status: draft
 tags: [field-service, route-optimisation, workforce]
 attributes:
   name:
-    ja: "班の呼び名（例：収集班 A）"
-    en: "What the provider calls the crew (for example 収集班 A, collection team A)"
+    ja: "班の呼び名。言語ごとに書きます（例：{\"ja\": \"収集班 A\", \"en\": \"Collection team A\"}）。"
+    en: "What the provider calls the crew, per language (for example {\"ja\": \"収集班 A\", \"en\": \"Collection team A\"})"
   provider:
     ja: "作業を引き受ける組織（自治体、委託先など）"
     en: "The organisation that does the work (a municipality, a contractor)"
@@ -26,8 +26,8 @@ attributes:
     ja: "出発する拠点（Facility）"
     en: "Where the work starts: a Facility"
   workingHours:
-    ja: "働ける曜日と時間（OpeningHours の値のリスト）。ルート最適化の、車両の time window の元になります。"
-    en: "When it can work, as a list of OpeningHours values (days of the week, start and end time); the source of a vehicle's time window in route optimisation"
+    ja: "班が働ける曜日と時間（OpeningHours の値のリスト）。車両の workingHours と重なる時間だけ計画します。"
+    en: "When the crew can work, as a list of OpeningHours values; only the time it shares with its vehicle's workingHours is planned"
   assignedVehicle:
     ja: "ふだん使う車両（ServiceVehicle）。日ごとの組み合わせは RoutePlan に残ります。"
     en: "The vehicle it usually works with: a ServiceVehicle. The pairing of each day is in the RoutePlan"

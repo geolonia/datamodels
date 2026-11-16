@@ -211,7 +211,7 @@
                   "type": "string",
                   "format": "uri"
                 },
-                "location": {
+                "position": {
                   "type": "array",
                   "minItems": 2,
                   "maxItems": 2,
@@ -240,11 +240,12 @@
           }
         }
       },
-      "description": "One route per vehicle: the vehicle, crew, start and end time, distance (metres), duration, load, and its stops in order (start, job, break, end); a job stop names its request, with arrival and departure times",
+      "description": "One route per vehicle: the vehicle, crew, start and end time, distance (metres), duration, load, and its stops in order (start, job, break, end); a job stop names its request, with its position and arrival and departure times. The positions repeat the requests' locations",
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://datamodels.jp/ns/fieldservice/routes"
+      "x-iri": "https://datamodels.jp/ns/fieldservice/routes",
+      "x-personal-data": true
     },
     "unassigned": {
       "type": "array",

@@ -6,8 +6,11 @@
   "id": "urn:ngsi-ld:Crew:131016:field-team-a",
   "type": "Crew",
   "name": {
-    "type": "Property",
-    "value": "収集班 A"
+    "type": "LanguageProperty",
+    "languageMap": {
+      "ja": "収集班 A",
+      "en": "Collection team A"
+    }
   },
   "provider": {
     "type": "Relationship",

@@ -48,16 +48,13 @@
       "@id": "https://schema.org/provider",
       "@type": "@id"
     },
-    "refersTo": {
-      "@id": "https://datamodels.jp/ns/task/refersTo",
-      "@type": "@id"
-    },
     "requestStatus": "fs:requestStatus",
     "requestedAt": "fs:requestedAt",
     "requester": {
       "@id": "fs:requester",
       "@type": "@id"
     },
+    "requesterNote": "fs:requesterNote",
     "routePlan": {
       "@id": "fs:routePlan",
       "@type": "@id"
@@ -76,12 +73,16 @@
     "skills": "fs:skills",
     "source": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/source",
     "statusLabel": "https://datamodels.jp/ns/task/statusLabel",
+    "task": {
+      "@id": "fs:task",
+      "@type": "@id"
+    },
     "timeWindows": "fs:timeWindows",
     "totalDistance": "fs:totalDistance",
     "totalDuration": "fs:totalDuration",
     "unassigned": "fs:unassigned",
-    "validFrom": "https://schema.org/validFrom",
-    "validThrough": "https://schema.org/validThrough",
+    "validFrom": "https://smartdatamodels.org/validFrom",
+    "validTo": "https://smartdatamodels.org/dataModel.Alert/validTo",
     "vehicle": {
       "@id": "https://smartdatamodels.org/dataModel.Transportation/vehicle",
       "@type": "@id"

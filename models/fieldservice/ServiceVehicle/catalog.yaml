@@ -8,8 +8,8 @@ status: draft
 tags: [field-service, route-optimisation, fleet]
 attributes:
   name:
-    ja: "呼び名（例：2号車）"
-    en: "What the provider calls it (for example 2号車, truck 2)"
+    ja: "呼び名。言語ごとに書きます（例：{\"ja\": \"2号車\", \"en\": \"Truck 2\"}）。"
+    en: "What the provider calls it, per language (for example {\"ja\": \"2号車\", \"en\": \"Truck 2\"})"
   vehicle:
     ja: "車両そのもの（Smart Data Models の Vehicle）。FleetVehicle と同じ意味です。"
     en: "The physical vehicle (a Smart Data Models Vehicle), as in FleetVehicle"

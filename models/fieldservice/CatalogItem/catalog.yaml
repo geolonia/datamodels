@@ -47,17 +47,17 @@ attributes:
     ja: "現場での作業時間。ISO 8601 の期間（例：PT5M）。ルート最適化の service time にあたります。"
     en: "Time spent at the place, as an ISO 8601 duration (for example PT5M); the service time of route optimisation"
   load:
-    ja: "車両の積載量のうち、この作業で使う量。次元ごとの数で、次元と単位は提供者が決めて、車両の capacity と揃えます（例：[容積の単位]）。ルート最適化の amount にあたります。"
-    en: "What it takes of a vehicle's capacity, one number per dimension; the provider sets the dimensions and units and keeps them in step with the vehicles' capacity (for example [volume units]); the amount of route optimisation"
+    ja: "車両の積載量のうち、この作業で使う量。次元ごとの数で、次元と単位は提供者が決めて、車両の capacity と揃えます（例：容積を提供者が決めた点数で数える 1 次元）。ルート最適化の amount にあたります。"
+    en: "What it takes of a vehicle's capacity, one number per dimension; the provider sets the dimensions and units and keeps them in step with the vehicles' capacity (for example one dimension: volume, counted in points the provider sets); the amount of route optimisation"
   skills:
     ja: "作業に必要なこと（例：two-person、carry-out）。ルート最適化の skills にあたり、車両や班の skills と照らし合わせます。語は提供者が決めます。"
     en: "What the work needs (for example two-person, carry-out); the skills of route optimisation, matched against a vehicle's or crew's skills. The provider sets the words"
   validFrom:
-    ja: "この内容（手数料など）が有効になった日"
-    en: "From when this entry (its fee, for example) applies"
-  validThrough:
-    ja: "この内容が有効な最後の日"
-    en: "The last day this entry applies"
+    ja: "この内容（手数料など）が有効になった日（RoadRestriction と同じ用語）"
+    en: "From when this entry (its fee, for example) applies (the same term as in RoadRestriction)"
+  validTo:
+    ja: "この内容が有効な最後の日（RoadRestriction と同じ用語）"
+    en: "The last day this entry applies (the same term as in RoadRestriction)"
   source:
     ja: "データの出典（URL など）"
     en: "Where the data comes from (a URL, for example)"
