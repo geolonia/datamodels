@@ -30,7 +30,7 @@
       "@id": "https://datamodels.jp/ns/fieldservice/",
       "@type": "owl:Ontology",
       "label": {
-        "ja": "訪問サービス",
+        "ja": "現場作業",
         "en": "Field service"
       },
       "comment": {
@@ -274,8 +274,8 @@
         "en": "load"
       },
       "comment": {
-        "ja": "車両の積載量のうち、この作業で使う量。次元ごとの数で、次元と単位は提供者が決めて、車両の capacity と揃えます（例：[容積の単位]）。ルート最適化の amount にあたります。",
-        "en": "What it takes of a vehicle's capacity, one number per dimension; the provider sets the dimensions and units and keeps them in step with the vehicles' capacity (for example [volume units]); the amount of route optimisation"
+        "ja": "車両の積載量のうち、この作業で使う量。次元ごとの数で、次元と単位は提供者が決めて、車両の capacity と揃えます（例：容積を提供者が決めた点数で数える 1 次元）。ルート最適化の amount にあたります。",
+        "en": "What it takes of a vehicle's capacity, one number per dimension; the provider sets the dimensions and units and keeps them in step with the vehicles' capacity (for example one dimension: volume, counted in points the provider sets); the amount of route optimisation"
       },
       "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
       "seeAlso": "https://datamodels.jp/models/fieldservice/CatalogItem/#load"
@@ -385,6 +385,19 @@
       "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceRequest/#requester"
     },
     {
+      "@id": "https://datamodels.jp/ns/fieldservice/requesterNote",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "requesterNote"
+      },
+      "comment": {
+        "ja": "依頼した人の言葉での説明。個人を特定できることが書かれることがあります。",
+        "en": "A description in the requester's words; it may contain personal data"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceRequest/#requesterNote"
+    },
+    {
       "@id": "https://datamodels.jp/ns/fieldservice/requestStatus",
       "@type": "rdf:Property",
       "label": {
@@ -392,7 +405,7 @@
       },
       "comment": {
         "ja": "状態：received（受付）、scheduled（日が決まった）、in-progress（作業中）、completed（完了）、cancelled（取消）、rejected（受けられない）。Open311 の open は received から in-progress、closed は残りにあたります。合う値がなければ省き、statusLabel を書きます。",
-        "en": "State: received, scheduled (a day is set), in-progress, completed, cancelled, rejected (cannot be done). Open311 open is received to in-progress; closed is the rest. When no value fits, leave it out and write statusLabel"
+        "en": "State: received, scheduled (a day is set), in-progress, completed, cancelled, rejected (cannot be done). Open311 open covers received to in-progress, and closed the rest. When no value fits, leave it out and write statusLabel"
       },
       "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
       "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceRequest/#requestStatus"
@@ -417,8 +430,8 @@
         "en": "routes"
       },
       "comment": {
-        "ja": "車両ごとのルート。車両、班、出発と帰着の時刻、距離（メートル）、時間、積んだ量と、止まる所（start、job、break、end）の順番です。job には依頼（request）、着く時刻と出る時刻を書きます。",
-        "en": "One route per vehicle: the vehicle, crew, start and end time, distance (metres), duration, load, and its stops in order (start, job, break, end); a job stop names its request, with arrival and departure times"
+        "ja": "車両ごとのルート。車両、班、出発と帰着の時刻、距離（メートル）、時間、積んだ量と、止まる所（start、job、break、end）の順番です。job には依頼（request）、位置、着く時刻と出る時刻を書きます。位置は依頼の location と同じです。",
+        "en": "One route per vehicle: the vehicle, crew, start and end time, distance (metres), duration, load, and its stops in order (start, job, break, end); a job stop names its request, with its position and arrival and departure times. The positions repeat the requests' locations"
       },
       "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
       "seeAlso": "https://datamodels.jp/models/fieldservice/RoutePlan/#routes"
@@ -528,6 +541,19 @@
       "seeAlso": "https://datamodels.jp/models/fieldservice/CatalogItem/#skills"
     },
     {
+      "@id": "https://datamodels.jp/ns/fieldservice/task",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "task"
+      },
+      "comment": {
+        "ja": "この依頼から作った作業（task 分野の Task）。Task の refersTo は反対向きで、作業が何についてかを指します。",
+        "en": "The work item made from this request: a Task (task subject). Task's refersTo is the other way round: what a task is about"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceRequest/#task"
+    },
+    {
       "@id": "https://datamodels.jp/ns/fieldservice/timeWindows",
       "@type": "rdf:Property",
       "label": {
@@ -599,8 +625,8 @@
         "en": "workingHours"
       },
       "comment": {
-        "ja": "働ける曜日と時間（OpeningHours の値のリスト）。ルート最適化の、車両の time window の元になります。",
-        "en": "When it can work, as a list of OpeningHours values (days of the week, start and end time); the source of a vehicle's time window in route optimisation"
+        "ja": "班が働ける曜日と時間（OpeningHours の値のリスト）。車両の workingHours と重なる時間だけ計画します。",
+        "en": "When the crew can work, as a list of OpeningHours values; only the time it shares with its vehicle's workingHours is planned"
       },
       "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
       "seeAlso": "https://datamodels.jp/models/fieldservice/Crew/#workingHours"

@@ -38,8 +38,8 @@ attributes:
     ja: "計画した依頼（ServiceRequest）。入らなかったものも含みます。key-values の形では、1 件でも配列です。"
     en: "The requests planned, those left unassigned included: ServiceRequests. Always an array in the key-values form, even with one"
   routes:
-    ja: "車両ごとのルート。車両、班、出発と帰着の時刻、距離（メートル）、時間、積んだ量と、止まる所（start、job、break、end）の順番です。job には依頼（request）、着く時刻と出る時刻を書きます。"
-    en: "One route per vehicle: the vehicle, crew, start and end time, distance (metres), duration, load, and its stops in order (start, job, break, end); a job stop names its request, with arrival and departure times"
+    ja: "車両ごとのルート。車両、班、出発と帰着の時刻、距離（メートル）、時間、積んだ量と、止まる所（start、job、break、end）の順番です。job には依頼（request）、位置、着く時刻と出る時刻を書きます。位置は依頼の location と同じです。"
+    en: "One route per vehicle: the vehicle, crew, start and end time, distance (metres), duration, load, and its stops in order (start, job, break, end); a job stop names its request, with its position and arrival and departure times. The positions repeat the requests' locations"
   unassigned:
     ja: "入らなかった依頼（ServiceRequest の ID）。全部入ったときは空の配列です。"
     en: "The requests that did not fit (ServiceRequest ids); an empty array when all did"

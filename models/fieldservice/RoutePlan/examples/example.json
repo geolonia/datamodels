@@ -28,7 +28,7 @@
       "stops": [
         {
           "kind": "start",
-          "location": [
+          "position": [
             139.75354,
             35.693947
           ],
@@ -37,7 +37,7 @@
         {
           "kind": "job",
           "request": "urn:ngsi-ld:ServiceRequest:131016-2026-0716-0042",
-          "location": [
+          "position": [
             139.7703,
             35.6956
           ],
@@ -49,7 +49,7 @@
         },
         {
           "kind": "end",
-          "location": [
+          "position": [
             139.75354,
             35.693947
           ],

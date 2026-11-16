@@ -1,7 +1,12 @@
 {
   "id": "urn:ngsi-ld:ServiceVehicle:131016:truck-02",
   "type": "ServiceVehicle",
-  "name": "2号車",
+  "name": {
+    "languageMap": {
+      "ja": "2号車",
+      "en": "Truck 2"
+    }
+  },
   "vehicle": "urn:ngsi-ld:Vehicle:131016-truck-02",
   "fleetVehicleType": "Waste collection",
   "provider": "urn:ngsi-ld:Organization:131016",

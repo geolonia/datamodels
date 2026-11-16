@@ -3,14 +3,8 @@
   "type": "CatalogItem",
   "name": {
     "languageMap": {
-      "ja": "ソファー（2人以上用）",
-      "en": "Sofa (two seats or more)"
-    }
-  },
-  "description": {
-    "languageMap": {
-      "ja": "ソファーベッドも同じ料金です。",
-      "en": "A sofa bed has the same fee."
+      "ja": "ソファー（2人以上用）、ソファーベッドなど",
+      "en": "Sofa (two seats or more), sofa bed and the like"
     }
   },
   "serviceCode": "bulky-waste",

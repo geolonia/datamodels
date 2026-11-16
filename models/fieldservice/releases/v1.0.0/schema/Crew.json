@@ -36,11 +36,18 @@
       ]
     },
     "name": {
-      "type": "string",
-      "minLength": 1,
-      "description": "What the provider calls the crew (for example 収集班 A, collection team A)",
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "What the provider calls the crew, per language (for example {\"ja\": \"収集班 A\", \"en\": \"Collection team A\"})",
       "x-ngsi": {
-        "type": "Property"
+        "type": "LanguageProperty"
       },
       "x-iri": "https://uri.etsi.org/ngsi-ld/name"
     },
@@ -102,7 +109,7 @@
       "items": {
         "$ref": "https://datamodels.jp/schema/common/OpeningHours/v1.0.0.json"
       },
-      "description": "When it can work, as a list of OpeningHours values (days of the week, start and end time); the source of a vehicle's time window in route optimisation",
+      "description": "When the crew can work, as a list of OpeningHours values; only the time it shares with its vehicle's workingHours is planned",
       "x-ngsi": {
         "type": "Property",
         "model": "https://datamodels.jp/ns/common/OpeningHours"

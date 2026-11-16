@@ -178,7 +178,7 @@
         "minimum": 0
       },
       "minItems": 1,
-      "description": "What it takes of a vehicle's capacity, one number per dimension; the provider sets the dimensions and units and keeps them in step with the vehicles' capacity (for example [volume units]); the amount of route optimisation",
+      "description": "What it takes of a vehicle's capacity, one number per dimension; the provider sets the dimensions and units and keeps them in step with the vehicles' capacity (for example one dimension: volume, counted in points the provider sets); the amount of route optimisation",
       "x-ngsi": {
         "type": "Property"
       },
@@ -201,20 +201,20 @@
     "validFrom": {
       "type": "string",
       "format": "date",
-      "description": "From when this entry (its fee, for example) applies",
+      "description": "From when this entry (its fee, for example) applies (the same term as in RoadRestriction)",
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://schema.org/validFrom"
+      "x-iri": "https://smartdatamodels.org/validFrom"
     },
-    "validThrough": {
+    "validTo": {
       "type": "string",
       "format": "date",
-      "description": "The last day this entry applies",
+      "description": "The last day this entry applies (the same term as in RoadRestriction)",
       "x-ngsi": {
         "type": "Property"
       },
-      "x-iri": "https://schema.org/validThrough"
+      "x-iri": "https://smartdatamodels.org/dataModel.Alert/validTo"
     },
     "source": {
       "type": "string",

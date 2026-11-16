@@ -3,7 +3,7 @@
 name: fieldservice
 version: 1.0.0
 title:
-  ja: 訪問サービス
+  ja: 現場作業
   en: Field service
 # One line for the subject card on the model list.
 summary:

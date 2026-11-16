@@ -52,7 +52,7 @@
       {
         "item": "urn:ngsi-ld:CatalogItem:131016:sofa-2-seats",
         "quantity": 1,
-        "name": "ソファー（2人以上用）"
+        "name": "ソファー（2人以上用）、ソファーベッドなど"
       }
     ]
   },
@@ -130,7 +130,7 @@
     "type": "Relationship",
     "object": "urn:ngsi-ld:Person:resident-0042"
   },
-  "description": {
+  "requesterNote": {
     "type": "Property",
     "value": "大雨で1階が浸水し、ソファーが水を吸って使えなくなりました。"
   },
