@@ -1,0 +1,14 @@
+notes:
+  - ja: "このモデルは、Smart Data Models の FleetVehicle（dataModel.Transportation、https://github.com/smart-data-models/dataModel.Transportation/tree/master/FleetVehicle ）のサブクラスです。vehicle と fleetVehicleType は FleetVehicle と同じ IRI と意味です。FleetVehicle には計画に使う項目（積載量、技能、拠点、働ける時間）がないので、VROOM の vehicle に合わせて足しました。"
+    en: "A subclass of Smart Data Models FleetVehicle (dataModel.Transportation, https://github.com/smart-data-models/dataModel.Transportation/tree/master/FleetVehicle): vehicle and fleetVehicleType keep FleetVehicle's IRIs and meaning. FleetVehicle has nothing to plan with (capacity, skills, depots, working hours); those were added after the vehicle of VROOM."
+  - ja: "ルート最適化の項目は、VROOM（https://github.com/VROOM-Project/vroom/blob/master/docs/API.md 、BSD-2-Clause）の入力と出力に合わせています。VROOM の形は、jsprit や OR-Tools など、ほかの VRP のソフトウェアの考え方（job、vehicle、time window、amount と capacity、skills、service time）と共通です。値の単位は、そのまま渡せる形にしました。時刻は日時（ISO 8601）で、VROOM が使う秒数への変換は使う側でします。"
+    en: "The route optimisation fields follow the input and output of VROOM (https://github.com/VROOM-Project/vroom/blob/master/docs/API.md, BSD-2-Clause), whose concepts (job, vehicle, time window, amount and capacity, skills, service time) other VRP software such as jsprit and OR-Tools shares. Times are date-times (ISO 8601); converting them to the seconds VROOM uses is left to the client."
+  - ja: "検討した上流（2026-11-17）：Smart Data Models の Vehicle は車両そのもの（ナンバー、車種、位置）で、計画の単位ではありません。vehicle で指します。FleetVehicle の operator（運転する人）は、個人を指すため使いません。班は Crew で表します。"
+    en: "Upstream considered (2026-11-17). Smart Data Models Vehicle is the physical vehicle (plate, model, position), not a unit of planning; vehicle points to it. FleetVehicle's operator (the driver, a person) is not used, as it names a person; crews are Crew entities."
+  - ja: "workingHours は common 分野の OpeningHours の値のリストで、曜日と時間を書きます。特定の日の休みや時間の変更は、その日の計画（RoutePlan）で扱います。拠点は facility 分野の Facility を指します。例では、facility 分野の例の千代田区役所を拠点にしています。"
+    en: "workingHours is a list of OpeningHours values (common subject): days of the week and times. A day off or other hours on one day belong to that day's plan (RoutePlan). Depots are Facility entities (facility subject); the example uses the facility example, Chiyoda City Hall, as the depot."
+  - ja: "グループで決めること：今ある実データは、デモの車両の設定（西宮市と芦屋市の 3 地区）だけです。カタログに載せる条件の「実データ」をどう考えるかを決めてください。"
+    en: "For the group to decide: the only real data so far is the vehicle settings of a demo (three areas of Nishinomiya and Ashiya). Whether that meets the catalog's \"real data\" condition is for the group."
+  - ja: "ドラフト（draft）です。分野の名前 fieldservice と名前空間 https://datamodels.jp/ns/fieldservice/ は、新しい分野としてグループが決めます。"
+    en: "Draft. The subject name fieldservice and the namespace https://datamodels.jp/ns/fieldservice/ are for the group to decide, as a new subject."
+license: CC0 1.0 (machine-readable files), CC BY 4.0 (prose); see /LICENSE-CONTENT.md

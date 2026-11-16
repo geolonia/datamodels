@@ -1,0 +1,14 @@
+notes:
+  - ja: "このモデルは、VROOM などのルート最適化で、車両と一緒に計画する人の班に基づいています。schema.org の Organization（班は組織の一部）に近いのですが、計画に使う項目（人数、技能、働ける時間）を持たせるため、独自の型にしました。"
+    en: "Built on the crews that route optimisation such as VROOM plans together with vehicles. schema.org Organization (a crew is part of an organisation) is close, but a crew needs fields to plan with (size, skills, working hours), so it is the catalog's own type."
+  - ja: "検討した上流（2026-11-17）：Smart Data Models の Organization と Person（dataModel.Organization）は、組織と人の記述で、班の人数や技能を持ちません。schema.org の Organization のサブクラスにすると、組織の名前、住所、連絡先など、班には合わない属性がついてきます。"
+    en: "Upstream considered (2026-11-17). Smart Data Models Organization and Person (dataModel.Organization) describe organisations and people, with no size or skills of a crew. A subclass of schema.org Organization would bring attributes that do not fit a crew (legal name, address, contacts)."
+  - ja: "個人情報：班の人の名前や連絡先は持ちません。人を表すときは、別のエンティティにして、見せる相手を分けてください。"
+    en: "Personal data: no names or contacts of the members. To describe people, keep them in other entities, with their own access limits."
+  - ja: "車両と分けた理由：日によって、班と車両の組み合わせは変わります。assignedVehicle はふだんの組み合わせで、その日の組み合わせは RoutePlan の routes に残ります。"
+    en: "Why apart from vehicles: crews and vehicles pair differently from day to day. assignedVehicle is the usual pairing; the pairing of a day is in the routes of its RoutePlan."
+  - ja: "グループで決めること：ServiceVehicle と同じく、今ある実データはデモの設定だけです。"
+    en: "For the group to decide: as with ServiceVehicle, the only real data so far is a demo's settings."
+  - ja: "ドラフト（draft）です。分野の名前 fieldservice と名前空間 https://datamodels.jp/ns/fieldservice/ は、新しい分野としてグループが決めます。"
+    en: "Draft. The subject name fieldservice and the namespace https://datamodels.jp/ns/fieldservice/ are for the group to decide, as a new subject."
+license: CC0 1.0 (machine-readable files), CC BY 4.0 (prose); see /LICENSE-CONTENT.md

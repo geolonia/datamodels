@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://datamodels.jp/schema/fieldservice/ServiceVehicle/v1.0.0.json",
+  "title": "ServiceVehicle",
+  "description": "One vehicle used for the work, as planning sees it: capacity, skills, start and end depot and working hours, so it maps directly to a vehicle of route optimisation (VRP) software. A subclass of Smart Data Models FleetVehicle (one vehicle of a fleet); the physical vehicle (plate and the like) is the Vehicle that vehicle points to.",
+  "x-subclass-of": "https://smartdatamodels.org/dataModel.Transportation/FleetVehicle",
+  "x-version": "1.0.0",
+  "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
+  "x-model-tags": "field service, route optimisation, fleet",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uri",
+      "description": "Entity id (URN)"
+    },
+    "type": {
+      "type": "string",
+      "const": "ServiceVehicle",
+      "description": "Entity type"
+    },
+    "@context": {
+      "description": "JSON-LD context of the entity, optional: a context URL or a list of context URLs",
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "minItems": 1
+        }
+      ]
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "What the provider calls it (for example 2号車, truck 2)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://uri.etsi.org/ngsi-ld/name"
+    },
+    "vehicle": {
+      "type": "string",
+      "format": "uri",
+      "description": "The physical vehicle (a Smart Data Models Vehicle), as in FleetVehicle",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "https://smartdatamodels.org/dataModel.Transportation/Vehicle"
+      },
+      "x-iri": "https://smartdatamodels.org/dataModel.Transportation/vehicle"
+    },
+    "fleetVehicleType": {
+      "type": "string",
+      "minLength": 1,
+      "description": "What the vehicle is used for, as in FleetVehicle (for example Waste collection)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://smartdatamodels.org/dataModel.Transportation/fleetVehicleType"
+    },
+    "provider": {
+      "type": "string",
+      "format": "uri",
+      "description": "The organisation that does the work (a municipality, a contractor)",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "agent"
+      },
+      "x-iri": "https://schema.org/provider"
+    },
+    "localGovernmentCode": {
+      "type": "string",
+      "pattern": "^\\d{6}$",
+      "description": "Local government code (6 digits) of the municipality it works for",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/common/localGovernmentCode"
+    },
+    "capacity": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": 0
+      },
+      "minItems": 1,
+      "description": "How much it can carry, one number per dimension, in the dimensions and units of the requests' load; the capacity of route optimisation",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/capacity"
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "What the vehicle can do (for example two-person); a request goes only to a vehicle that has all its skills",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/skills"
+    },
+    "depot": {
+      "type": "string",
+      "format": "uri",
+      "description": "Where the work starts: a Facility",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "https://datamodels.jp/ns/facility/Facility"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/depot"
+    },
+    "endDepot": {
+      "type": "string",
+      "format": "uri",
+      "description": "Where the work ends: a Facility; without it, the vehicle returns to depot",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "https://datamodels.jp/ns/facility/Facility"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/endDepot"
+    },
+    "workingHours": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "https://datamodels.jp/schema/common/OpeningHours/v1.0.0.json"
+      },
+      "description": "When it can work, as a list of OpeningHours values (days of the week, start and end time); the source of a vehicle's time window in route optimisation",
+      "x-ngsi": {
+        "type": "Property",
+        "model": "https://datamodels.jp/ns/common/OpeningHours"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/workingHours"
+    },
+    "maxStops": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "The most stops in a day",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/maxStops"
+    },
+    "maxWorkDuration": {
+      "type": "string",
+      "pattern": "^P(?!$)(\\d+D)?(T(?=\\d)(\\d+H)?(\\d+M)?(\\d+(\\.\\d+)?S)?)?$",
+      "description": "The longest working time in a day, as an ISO 8601 duration",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/maxWorkDuration"
+    },
+    "crew": {
+      "type": "string",
+      "format": "uri",
+      "description": "The crew that works with this vehicle: a Crew",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "https://datamodels.jp/ns/fieldservice/Crew"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/crew"
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Where the data comes from (a URL, for example)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/source"
+    }
+  },
+  "required": [
+    "id",
+    "type",
+    "capacity"
+  ],
+  "additionalProperties": false
+}

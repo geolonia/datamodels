@@ -1,0 +1,309 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://datamodels.jp/schema/fieldservice/RoutePlan/v1.0.0.json",
+  "title": "RoutePlan",
+  "description": "The plan of the work of one day in one area: a route per vehicle (the requests in order, with arrival and departure times) and the requests that did not fit. It keeps the result of route optimisation (VRP) software (routes and unassigned) as it is. What was actually driven can be recorded with Smart Data Models FleetVehicleOperation.",
+  "x-version": "1.0.0",
+  "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
+  "x-model-tags": "field service, route optimisation, planning",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uri",
+      "description": "Entity id (URN)"
+    },
+    "type": {
+      "type": "string",
+      "const": "RoutePlan",
+      "description": "Entity type"
+    },
+    "@context": {
+      "description": "JSON-LD context of the entity, optional: a context URL or a list of context URLs",
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "minItems": 1
+        }
+      ]
+    },
+    "provider": {
+      "type": "string",
+      "format": "uri",
+      "description": "The organisation that does the work (a municipality, a contractor)",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "agent"
+      },
+      "x-iri": "https://schema.org/provider"
+    },
+    "localGovernmentCode": {
+      "type": "string",
+      "pattern": "^\\d{6}$",
+      "description": "Local government code (6 digits) of the municipality the plan is for",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/common/localGovernmentCode"
+    },
+    "area": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The planning area, as the provider names it",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/area"
+    },
+    "planDate": {
+      "type": "string",
+      "format": "date",
+      "description": "The day the plan is for",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/planDate"
+    },
+    "planStatus": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "confirmed",
+        "in-progress",
+        "completed",
+        "cancelled"
+      ],
+      "description": "State: draft, confirmed, in-progress, completed, cancelled. When no value fits, leave it out and write statusLabel",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/planStatus"
+    },
+    "statusLabel": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The source system's own status name, unchanged. Required when the status is left out",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/task/statusLabel"
+    },
+    "planner": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The software that made the plan, with its version (for example VROOM 1.14)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/planner"
+    },
+    "computedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the plan was computed",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/computedAt"
+    },
+    "vehicles": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "The vehicles of the plan: ServiceVehicles. Always an array in the key-values form, even with one",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "https://datamodels.jp/ns/fieldservice/ServiceVehicle",
+        "multi": true
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/vehicles"
+    },
+    "serviceRequests": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "The requests planned, those left unassigned included: ServiceRequests. Always an array in the key-values form, even with one",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "https://datamodels.jp/ns/fieldservice/ServiceRequest",
+        "multi": true
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/serviceRequests"
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "vehicle",
+          "stops"
+        ],
+        "properties": {
+          "vehicle": {
+            "type": "string",
+            "format": "uri"
+          },
+          "crew": {
+            "type": "string",
+            "format": "uri"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "distance": {
+            "type": "number",
+            "minimum": 0
+          },
+          "duration": {
+            "type": "string",
+            "pattern": "^P(?!$)(\\d+D)?(T(?=\\d)(\\d+H)?(\\d+M)?(\\d+(\\.\\d+)?S)?)?$"
+          },
+          "load": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0
+            },
+            "minItems": 1
+          },
+          "stops": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind"
+              ],
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "start",
+                    "job",
+                    "break",
+                    "end"
+                  ]
+                },
+                "request": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "location": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "items": {
+                    "type": "number"
+                  }
+                },
+                "arrival": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "departure": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "load": {
+                  "type": "array",
+                  "items": {
+                    "type": "number",
+                    "minimum": 0
+                  },
+                  "minItems": 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "description": "One route per vehicle: the vehicle, crew, start and end time, distance (metres), duration, load, and its stops in order (start, job, break, end); a job stop names its request, with arrival and departure times",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/routes"
+    },
+    "unassigned": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      },
+      "uniqueItems": true,
+      "description": "The requests that did not fit (ServiceRequest ids); an empty array when all did",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/unassigned"
+    },
+    "totalDistance": {
+      "type": "number",
+      "minimum": 0,
+      "description": "The distance of all routes together, in metres",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/totalDistance"
+    },
+    "totalDuration": {
+      "type": "string",
+      "pattern": "^P(?!$)(\\d+D)?(T(?=\\d)(\\d+H)?(\\d+M)?(\\d+(\\.\\d+)?S)?)?$",
+      "description": "The time of all routes together, as an ISO 8601 duration",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/totalDuration"
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Where the data comes from (a URL, for example)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/source"
+    }
+  },
+  "required": [
+    "id",
+    "type",
+    "planDate",
+    "routes"
+  ],
+  "anyOf": [
+    {
+      "required": [
+        "planStatus"
+      ]
+    },
+    {
+      "required": [
+        "statusLabel"
+      ]
+    }
+  ],
+  "additionalProperties": false
+}

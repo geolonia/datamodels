@@ -294,7 +294,7 @@ test('get_model: one self-contained schema that validates the example, the conte
     const validate = new Ajv2020({ allErrors: true, strict: false });
     addFormats(validate);
     const check = validate.compile(r.schema);
-    const plain = Object.fromEntries(Object.entries(r.example.data).map(([k, v]) => [k, v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length === 1 && ('json' in v || 'vocab' in v) ? Object.values(v)[0] : v]));
+    const plain = Object.fromEntries(Object.entries(r.example.data).map(([k, v]) => [k, v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length === 1 && ('json' in v || 'vocab' in v || 'languageMap' in v) ? Object.values(v)[0] : v]));
     assert.ok(check(plain), `${m.type}: ${validate.errorsText(check.errors)}`);
   }
   // By type name or IRI, without the schema, with the normalized example.
@@ -314,7 +314,7 @@ test('find_attribute finds a name exactly, an attribute by its meaning, and attr
   let r = await call('find_attribute', { query: 'MAXCAPACITY' });
   assert.equal(r.results[0].name, 'maxCapacity', 'the exact name first, in any case');
   assert.ok(r.results[0].iri && r.results[0].ngsiType && r.results[0].models.length);
-  r = await call('find_attribute', { query: 'capacity' });
+  r = await call('find_attribute', { query: 'maxcap' });
   assert.equal(r.results[0].name, 'maxCapacity', 'a part of a name');
   r = await call('find_attribute', { query: 'https://uri.etsi.org/ngsi-ld/location' });
   assert.equal(r.results[0].name, 'location', 'by IRI');
@@ -359,10 +359,10 @@ test('validate agrees with Ajv, the validator CI uses, on broken copies of every
     const copies = [{ ...kv, notAnAttribute: 1 }, ...Object.keys(kv).filter((k) => k !== 'id' && k !== 'type').map((k) => ({ ...kv, [k]: k === 'location' ? { type: 'Point' } : 12345 }))];
     for (const entity of copies) {
       const r = await call('validate', { model: `${m.subject}/${m.type}`, entity, form: 'key-values' });
-      if (r.error) continue; // a JsonProperty/VocabProperty without its wrapper: refused before the schema
-      const plain = Object.fromEntries(Object.entries(entity).map(([k, v]) => [k, v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length === 1 && ('json' in v || 'vocab' in v) ? Object.values(v)[0] : v]));
+      if (r.error) continue; // a LanguageProperty/JsonProperty/VocabProperty without its wrapper: refused before the schema
+      const plain = Object.fromEntries(Object.entries(entity).map(([k, v]) => [k, v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length === 1 && ('json' in v || 'vocab' in v || 'languageMap' in v) ? Object.values(v)[0] : v]));
       const ringProblem = r.problems.some((p) => /does not close/.test(p.message));
-      if (!ringProblem && !r.problems.some((p) => /\{"(json|vocab)"/.test(p.message))) assert.equal(r.valid, check(plain), `${m.type}: ${JSON.stringify(entity).slice(0, 200)}`);
+      if (!ringProblem && !r.problems.some((p) => /\{"(json|vocab|languageMap)"/.test(p.message))) assert.equal(r.valid, check(plain), `${m.type}: ${JSON.stringify(entity).slice(0, 200)}`);
     }
   }
 });
