@@ -1,6 +1,5 @@
 node_modules/
 .wrangler/
-.serena/
 dist/
 site/models/
 site/en/models/
