@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { readNode, catalogUrls, loadSubjects as loadNodeSubjects, attributesOf } from '@geolonia/datamodels/build';
+import { MAX_CONTEXT_IMPORT_DEPTH } from './file-limits.mjs';
 
 export const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 // DATAMODELS_MODELS_DIR lets the test suite point the loader at a mutated copy.
@@ -76,14 +77,17 @@ export function splitContext(doc) {
 /**
  * All term definitions a context document provides: imported catalog contexts
  * first (resolved by version, see releases.mjs), inline definitions last.
+ * Imports nest at most MAX_CONTEXT_IMPORT_DEPTH levels (#293), which also ends
+ * a context that imports itself.
  */
-export async function resolveContextTerms(doc, subjects, resolveDocument) {
+export async function resolveContextTerms(doc, subjects, resolveDocument, chain = []) {
   const { imports, inlineTerms } = splitContext(doc);
   const terms = {};
   for (const url of imports) {
+    if (chain.length >= MAX_CONTEXT_IMPORT_DEPTH) throw new Error(`context imports nest deeper than ${MAX_CONTEXT_IMPORT_DEPTH} levels (${[...chain, url].join(' -> ')})`);
     const imported = await resolveDocument(url, subjects);
     if (!imported) throw new Error(`context imports ${url}, which is not a catalog context URL`);
-    Object.assign(terms, await resolveContextTerms(imported, subjects, resolveDocument));
+    Object.assign(terms, await resolveContextTerms(imported, subjects, resolveDocument, [...chain, url]));
   }
   return Object.assign(terms, inlineTerms);
 }

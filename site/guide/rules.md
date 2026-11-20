@@ -44,6 +44,14 @@ description: カタログに載せるモデル、このカタログのモデル�
 - 共通の構造は [common](/models/common/) の値型を使います。住所は [JapaneseAddress](/models/common/JapaneseAddress/)、`location` などの位置は [Geometry](/models/common/Geometry/)、連絡先は [ContactPoint](/models/common/ContactPoint/)、利用できる時間は [OpeningHours](/models/common/OpeningHours/) です。使えるジオメトリを絞るときは `$ref` の横で制約します（DesignatedShelter は点だけ）。`$ref` は、`https://datamodels.jp/schema/` で始まる絶対 URL か、`#` で始まる同じファイルの中への参照にします。相対パスやほかのサイトを指すと、CI が失敗します。
 - 既にある型に名前だけ合わせたいときは、別名（`x-alias-of`）を使います。属性も必須項目も同じです。
 - 属性を足したいとき、型を分けたいときは、サブクラス（`x-subclass-of`）を使います。同じ名前の属性は親と同じ意味で、親の必須項目は残ります。CI はどちらも検査します。親は、schema.org、Smart Data Models、NGSI-LD core の型でもかまいません。たとえば common の ContactPoint は、schema.org の ContactPoint のサブクラスです。そのとき CI が検査するのは、IRI がこれらの名前空間にあることと、名前がクラス名のように大文字で始まることだけです。クラスが実在するかは検査しないので、IRI を開いて確かめてください。
+- ファイルは小さく単純にします。公開したファイルは、ほかの人のバリデーターや JSON-LD プロセッサーが読むからです。CI は次のものを弾きます。
+  - 256 KB を超えるファイル
+  - 32 段より深く入れ子になった JSON や YAML
+  - `$ref` が 100 個を超えるスキーマ
+  - 256 文字を超える `pattern`。または `(a+)+` のように、長さの変わるグループを繰り返す `pattern`（合わない文字列では、時間が指数的に増えます）
+  - import の入れ子が 3 段以上になるコンテキスト
+
+  カタログのファイルは、この上限よりずっと小さく収まっています。上限を超えそうなモデルは、先に issue で相談してください。
 
 ## 日本の標準との対応表 {#mapping}
 

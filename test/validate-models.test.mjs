@@ -535,3 +535,21 @@ test('a key-values vocab that differs from the normalized example fails', () =>
     await useJsonAndVocab(d);
     await editJson(join(d, 'transportation', 'RoadRestriction', 'examples', 'example.json'), (e) => { e.statusLabel = { vocab: 'closedAtNight' }; });
   }, /attribute "statusLabel": vocab \["closedAtNight"\] differs from example-normalized\.jsonld/));
+
+// #293: the limits on contributed files stop the run before anything else reads the files.
+test('a file over the size limit fails, and nothing else runs', () =>
+  withMutatedModels((d) => writeFile(join(d, 'task', 'Task', 'README.md'), 'x'.repeat(256 * 1024 + 1)),
+    /^Model validation failed \(1\):\n {2}models\/task\/Task\/README\.md: is 262145 bytes; at most 262144 \(256 KB\)\n/));
+test('an example nested deeper than 32 levels fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'task', 'Task', 'examples', 'example.json'), (e) => { let v = 'x'; for (let i = 0; i < 32; i++) v = [v]; e.description = v; }),
+    /models\/task\/Task\/examples\/example\.json: nests deeper than 32 levels/));
+test('a nested quantifier in a schema pattern fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'task', 'Task', 'schema.json'), (s) => { s.properties.name.pattern = '^(a+)+$'; }),
+    /models\/task\/Task\/schema\.json: \/properties\/name\/pattern repeats a group whose length varies/));
+test('a nested quantifier in a release snapshot patternProperties name fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'common', 'releases', 'v1.0.0', 'schema', 'ContactPoint.json'), (s) => { s.patternProperties = { '^(x-\\w*)*$': {} }; }),
+    /models\/common\/releases\/v1\.0\.0\/schema\/ContactPoint\.json: \/patternProperties "\^\(x-\\\\w\*\)\*\$" repeats a group/));
+// Task has one $ref of its own, so 100 more make 101.
+test('more than 100 $refs in one schema fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'task', 'Task', 'schema.json'), (s) => { s.$defs = Object.fromEntries(Array.from({ length: 100 }, (_, i) => [`r${i}`, { $ref: '#' }])); }),
+    /models\/task\/Task\/schema\.json: has 101 \$refs; at most 100/));

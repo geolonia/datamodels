@@ -6,7 +6,7 @@
   "scope_subpath": null,
   "description": "datamodels.jp publishes data models for Japan as files at URLs that are meant never to change. People and programs store those URLs in their data: type and attribute IRIs, @context URLs, schema URLs. The catalogue is built from this repository: anyone can send a pull request, maintainers review and merge it, and Cloudflare Workers Builds deploys main. The catalogue stores no data of its users, has no login and runs no service for data except a read-only MCP server.",
   "confidence": {
-    "documented": 272,
+    "documented": 276,
     "inferred": 0
   },
   "components": [
@@ -689,6 +689,14 @@
       "source": "scripts/lib/catalog-rules.mjs comment: A schema references only this catalog's schemas or a place inside the file"
     },
     {
+      "property": "P-FILE-LIMITS",
+      "violation_symptom": "x-cpu-exhaustion",
+      "severity_tier": "security",
+      "conditions": "files under models/ at most 256 KB, nesting 32, 100 $refs per schema, patterns at most 256 characters and without nested quantifiers, context imports at most two levels; a CI rule since #293",
+      "provenance": "documented",
+      "source": "scripts/lib/file-limits.mjs header: Limits on the contributed files"
+    },
+    {
       "property": "P-DIGESTS-PUBLISHED",
       "violation_symptom": "wrong-output",
       "severity_tier": "correctness",
@@ -841,7 +849,7 @@
     },
     {
       "property": "D-CONTRIBUTED-FILE-LIMITS",
-      "reason": "stated by maintainer ruling (2026-10); no size, nesting, $ref count, import depth or pattern limit",
+      "reason": "stated by maintainer ruling (2026-10), narrowed for #293; CI enforces only coarse limits (P-FILE-LIMITS); the pattern rule finds only nested quantifiers; generated files are not checked",
       "false_friend": false,
       "provenance": "documented",
       "source": "maintainer ruling, 2026-10"
@@ -899,7 +907,7 @@
     "before the launch, do not reference catalogue files from production data",
     "name the alias in stored data; use the exact version for audits",
     "cache or bundle contexts; give the JSON-LD loader a timeout and host allow-list",
-    "limit $ref resolution to datamodels.jp; bound pattern evaluation, size and import depth",
+    "limit $ref resolution to datamodels.jp; bound pattern evaluation, size and import depth; the catalogue limits are coarse",
     "escape text before rendering; never let an agent follow it as an instruction",
     "decide which attributes are personal data and protect them",
     "validate data in your own pipeline; the validate tool is advisory",
@@ -969,7 +977,7 @@
     {
       "reported_as": "/ns/ redirects, so it is an open redirect",
       "why_safe": "Covers iri-negotiation; symptom 'open-redirect'. Exact-match conditions (§1.15): the `Location` is a same-origin path: the 303 to `/vocab/<subject>/v<major>.jsonld` or a 302 generated into `_redirects` from `models/`.",
-      "cites": "properties_provided[10]",
+      "cites": "properties_provided[11]",
       "suppression": "Location is a same-origin path: the 303 to /vocab/<subject>/v<major>.jsonld or a generated 302"
     },
     {

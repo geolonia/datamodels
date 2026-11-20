@@ -1,10 +1,10 @@
 # threat-model.yaml — derived index; the prose threat model (threat-model.md) is canonical.
 schema: threat-model-sidecar/v2
 project: datamodels
-prose_version: "threat-model.md@sha256:bad0f09ffa8ef0e8ea904ee3534ed9374d071d2334a8d991e1de62ee79d2a4f6"
+prose_version: "threat-model.md@sha256:c4438d90f01f0bd0cffaf2624b30379e31e7afc07c39eb403b0a49b648ab2cd3"
 model_status: accepted
 triage_policy: strict
-confidence: {documented: 217, maintainer: 55, inferred: 0, assumption: 0}
+confidence: {documented: 223, maintainer: 53, inferred: 0, assumption: 0}
 
 generation:
   model: "Claude Opus 5.5 (claude-opus-5-5)"
@@ -376,12 +376,12 @@ entry_points:
 contract_dimensions:
   - {component: published-files, dimension: numeric-domain, status: claimed, conditions: "semantic versions; alias vX points to the latest X.y.z", property_id: P-ALIAS-ADDITIVE, provenance: {kind: documented, source: "docs/design.md \"URL scheme and hosting contract\" item 6"}}
   - {component: published-files, dimension: failure-atomicity, status: disclaimed, conditions: "a deploy replaces the whole tree; no guarantee during a deploy", property_id: D-NO-AVAILABILITY-SLA, provenance: {kind: maintainer, date: "2026-10"}}
-  - {component: published-files, dimension: recursive-cyclic-topology, status: disclaimed, conditions: "no guard for consumers against deep import chains or large documents", property_id: D-CONTRIBUTED-FILE-LIMITS, provenance: {kind: maintainer, date: "2026-10"}}
+  - {component: published-files, dimension: recursive-cyclic-topology, status: claimed, conditions: "context imports at most two levels deep, so a cycle fails CI; nesting at most 32 levels", property_id: P-FILE-LIMITS, provenance: {kind: documented, source: "scripts/lib/models.mjs resolveContextTerms comment: \"Imports nest at most MAX_CONTEXT_IMPORT_DEPTH levels\""}}
   - {component: published-files, dimension: callback-execution, status: not-applicable, conditions: "static files run no code on the server", provenance: {kind: documented, source: "wrangler.jsonc run_worker_first comment"}}
   - {component: published-files, dimension: serialization-reconstruction, status: claimed, conditions: "files labelled by Content-Type", property_id: P-HEADERS, provenance: {kind: documented, source: "docs/design.md \"URL scheme and hosting contract\" item 2"}}
   - {component: published-files, dimension: reference-lifecycle, status: claimed, conditions: "term IRIs keep their meaning and keep resolving", property_id: P-IRI-RESOLVES, provenance: {kind: documented, source: "docs/design.md \"URL scheme and hosting contract\" items 3 and 4"}}
   - {component: published-files, dimension: concurrency-reentrancy, status: not-applicable, conditions: "read-only files", provenance: {kind: documented, source: "public/_headers header comment"}}
-  - {component: published-files, dimension: resource-complexity, status: disclaimed, conditions: "no size or shape limit on what consumers download and process", property_id: D-CONTRIBUTED-FILE-LIMITS, provenance: {kind: maintainer, date: "2026-10"}}
+  - {component: published-files, dimension: resource-complexity, status: claimed, conditions: "coarse limits on size, nesting, $refs and patterns; the rest is D-CONTRIBUTED-FILE-LIMITS", property_id: P-FILE-LIMITS, provenance: {kind: documented, source: "scripts/lib/file-limits.mjs header: \"Limits on the contributed files\""}}
   - {component: published-files, dimension: x-version-immutability, status: claimed, conditions: "exact-version context, vocabulary and schema files, after the launch", property_id: P-PUBLISHED-IMMUTABLE, provenance: {kind: documented, source: "docs/design.md \"URL scheme and hosting contract\" item 1"}}
   - {component: iri-negotiation, dimension: numeric-domain, status: claimed, conditions: "q values parsed as numbers; non-finite counts as 0", property_id: P-NEGOTIATION-FALLBACK, provenance: {kind: documented, source: "worker/index.mjs qualities comment"}}
   - {component: iri-negotiation, dimension: failure-atomicity, status: claimed, conditions: "any error falls back to the static answer", property_id: P-NEGOTIATION-FALLBACK, provenance: {kind: documented, source: "worker/index.mjs comment: \"Any error below falls back to the static answer\""}}
@@ -407,7 +407,7 @@ contract_dimensions:
   - {component: build-validation, dimension: serialization-reconstruction, status: claimed, conditions: "schemas reference only catalogue schemas or pointers inside the file; a CI rule since #292", property_id: P-REFS-CATALOG-ONLY, provenance: {kind: documented, source: "scripts/lib/catalog-rules.mjs comment: \"References stay inside the catalog\""}}
   - {component: build-validation, dimension: reference-lifecycle, status: claimed, conditions: "a published version without a snapshot fails --all-released", property_id: P-PUBLISHED-IMMUTABLE, provenance: {kind: documented, source: "README \"Adding or changing a model\" step 3"}}
   - {component: build-validation, dimension: concurrency-reentrancy, status: not-applicable, conditions: "a single build process per run", provenance: {kind: documented, source: "scripts/build.mjs header"}}
-  - {component: build-validation, dimension: resource-complexity, status: disclaimed, conditions: "no limit on the size of contributed files", property_id: D-CONTRIBUTED-FILE-LIMITS, provenance: {kind: maintainer, date: "2026-10"}}
+  - {component: build-validation, dimension: resource-complexity, status: claimed, conditions: "a file over a limit stops the validator before the toolkit and the catalogue rules read it", property_id: P-FILE-LIMITS, provenance: {kind: documented, source: "scripts/validate-models.mjs header: \"A file over a limit stops the run here\""}}
   - {component: listings, dimension: numeric-domain, status: claimed, conditions: "node text cut to 200 characters; versions X.Y.Z only", property_id: P-OUTSIDER-TEXT-PLAIN, provenance: {kind: documented, source: "scripts/lib/nodes.mjs cleanText comment"}}
   - {component: listings, dimension: failure-atomicity, status: claimed, conditions: "an unreachable node keeps its previous entry; snapshot written then renamed", property_id: P-OUTSIDER-TEXT-PLAIN, provenance: {kind: documented, source: "scripts/fetch-nodes.mjs header"}}
   - {component: listings, dimension: recursive-cyclic-topology, status: not-applicable, conditions: "flat records", provenance: {kind: documented, source: "scripts/lib/nodes.mjs nodeEntry"}}
@@ -838,6 +838,13 @@ properties_claimed:
     conditions: "schema $ref and $dynamicRef targets are catalogue schema URLs or pointers inside the file, in the sources and the release snapshots; a CI rule since #292"
     violation_symptoms: [bad-data-accepted]
     provenance: {kind: documented, source: "scripts/lib/catalog-rules.mjs comment: \"A schema references only this catalog's schemas or a place inside the file\""}
+  - id: P-FILE-LIMITS
+    kind: resource-bound
+    components: [build-validation, published-files]
+    tier: security-critical
+    conditions: "files under models/ at most 256 KB, nesting 32, 100 $refs per schema, patterns at most 256 characters and without nested quantifiers, context imports at most two levels; a CI rule since #293"
+    violation_symptoms: [x-cpu-exhaustion]
+    provenance: {kind: documented, source: "scripts/lib/file-limits.mjs header: \"Limits on the contributed files\""}
   - id: P-DIGESTS-PUBLISHED
     kind: correctness
     components: [build-validation, published-files]
@@ -914,7 +921,7 @@ properties_disclaimed:
   - {id: D-RATE-LIMIT-BEST-EFFORT, components: [mcp-server], conditions: "stated; per address or /64, per location, approximate, fails open", tier: correctness-only, false_friend: true, provenance: {kind: documented, source: "worker/limit.mjs allowed comment"}}
   - {id: D-VALIDATE-NOT-ASSURANCE, components: [mcp-server, build-validation], conditions: "stated; schema conformance only, @context not checked", tier: correctness-only, false_friend: true, provenance: {kind: documented, source: "worker/mcp.mjs validate description: \"its @context is not checked\""}}
   - {id: D-PERSONAL-DATA-MARKER, components: [published-files, build-validation], conditions: "stated by maintainer ruling (2026-10); x-personal-data is a marker only", tier: security-critical, false_friend: true, provenance: {kind: maintainer, date: "2026-10"}}
-  - {id: D-CONTRIBUTED-FILE-LIMITS, components: [published-files, build-validation], conditions: "stated by maintainer ruling (2026-10); no size, nesting, $ref count, import depth or pattern limit", tier: security-critical, false_friend: false, provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: D-CONTRIBUTED-FILE-LIMITS, components: [published-files, build-validation], conditions: "stated by maintainer ruling (2026-10), narrowed for #293; CI enforces only coarse limits (P-FILE-LIMITS); the pattern rule finds only nested quantifiers; generated files are not checked", tier: security-critical, false_friend: false, provenance: {kind: maintainer, date: "2026-10"}}
   - {id: D-AGENT-TEXT, components: [mcp-server, published-files], conditions: "stated by maintainer ruling (2026-10); text reaches agents as written", tier: security-critical, false_friend: false, provenance: {kind: maintainer, date: "2026-10"}}
   - {id: D-LISTED-CONTENT-UNREVIEWED, components: [listings], conditions: "stated; listed as reported, domain not checked", tier: correctness-only, false_friend: true, provenance: {kind: documented, source: "CONTRIBUTING.md \"Adding a listed extension\" steps 3 and 4"}}
   - {id: D-STATUS-NOT-REVIEW, components: [published-files], conditions: "stated; stable means two adopters, self-reported; DCO is an agreement", tier: correctness-only, false_friend: true, provenance: {kind: documented, source: "docs/design.md \"Versioning and lifecycle\""}}
@@ -925,7 +932,7 @@ downstream_responsibilities:
   - {id: R-NO-PRERELEASE-PRODUCTION, component: published-files, statement: "before the launch, do not reference catalogue files from production data", enforces: [never-changed-before-launch], provenance: {kind: documented, source: "site/en/guide/urls.md"}}
   - {id: R-ALIAS-IN-DATA, component: published-files, statement: "name the alias in stored data; use the exact version for audits", enforces: [alias-bytes-stable], provenance: {kind: documented, source: "docs/design.md \"URL scheme and hosting contract\" item 6"}}
   - {id: R-CACHE-CONTEXTS, component: published-files, statement: "cache or bundle contexts; give the JSON-LD loader a timeout and host allow-list", enforces: [D-NO-AVAILABILITY-SLA], provenance: {kind: maintainer, date: "2026-10"}}
-  - {id: R-BOUND-PROCESSORS, component: published-files, statement: "limit $ref resolution to datamodels.jp; bound pattern evaluation, size and import depth", enforces: [bound-consumer-processors], provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: R-BOUND-PROCESSORS, component: published-files, statement: "limit $ref resolution to datamodels.jp; bound pattern evaluation, size and import depth; the catalogue limits are coarse", enforces: [bound-consumer-processors], provenance: {kind: maintainer, date: "2026-10"}}
   - {id: R-TEXT-AS-DATA, component: published-files, statement: "escape text before rendering; never let an agent follow it as an instruction", enforces: [text-safe], provenance: {kind: maintainer, date: "2026-10"}}
   - {id: R-OWN-PERSONAL-DATA, component: published-files, statement: "decide which attributes are personal data and protect them", enforces: [D-PERSONAL-DATA-MARKER], provenance: {kind: maintainer, date: "2026-10"}}
   - {id: R-OWN-VALIDATION, component: mcp-server, statement: "validate data in your own pipeline; the validate tool is advisory", enforces: [valid-means-safe], provenance: {kind: documented, source: "worker/mcp.mjs validate description"}}

@@ -283,8 +283,9 @@ belong in issues, not in the threat model:
    done: other nodes legitimately reference datamodels.jp while building
    offline, so the toolkit keeps the note, and the catalogue rule makes the
    case unreachable here (Q13).
-4. Size, nesting and `pattern` limits for contributed files, or a documented
-   decision not to have them (Q16).
+4. ~~Size, nesting and `pattern` limits for contributed files, or a documented
+   decision not to have them~~ Done in #293 (2026-11-21): CI limits on size,
+   nesting, `$ref`s, `pattern`s and context imports (Q16).
 5. Update `docs/design.md`: the non-goals, "Term IRIs resolve ... No content
    negotiation in 1.0.0" and the "Hosting" paragraph about Worker scripts
    (Q2).
@@ -335,6 +336,20 @@ belong in issues, not in the threat model:
   minutes and drops a failed read, so `D-NEGOTIATION-STALE-MAJOR` narrows to
   about ten minutes (with the 303's own cache). Companions edited by hand and
   validated as above.
+- 2026-11-21, #293: new property `P-FILE-LIMITS` (`scripts/lib/file-limits.mjs`,
+  and the import depth in `resolveContextTerms`). Changed: the
+  `D-CONTRIBUTED-FILE-LIMITS` disclaimer, which narrows to what the coarse
+  limits leave out, three matrix rows, §1.7 "Size, shape and rate", the §1.12
+  attack classes, the §1.13 consumer obligation and the §1.16 trigger. The
+  `P-REFS-CATALOG-ONLY` text was corrected: its check is required for merging
+  since #291. The limits sit well above the catalog's files (largest 22 KB,
+  nesting 10, 8 `$ref`s, one level of imports); the maintainer chose CI limits
+  over a written "no limits" on 2026-11-21. The backtest routing table was not
+  in the working tree, so the cases were re-routed by reading: the changed
+  area moves reports over a limit to `VALID` and leaves other slow patterns
+  closed against the disclaimer. Companions edited by hand (a property
+  inserted in the JSON shifts the `properties_provided` indexes after it) and
+  validated as above (90 passed, the usual length warning).
 
 ## Files
 

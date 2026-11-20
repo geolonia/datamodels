@@ -1,5 +1,8 @@
 // Validate every subject and model in models/. Runs in the build and in CI.
 //
+//   0. the limits on the files (scripts/lib/file-limits.mjs, #293): size,
+//      nesting, $refs and patterns. A file over a limit stops the run here,
+//      before the steps below read it.
 //   1. the toolkit's check of the node (`datamodels check --offline`, #226):
 //      schemas and examples, the normalized form and its JSON-LD round trip,
 //      the @contexts and the x-iri of every attribute, the vocabularies,
@@ -18,12 +21,14 @@ import { checkNode } from '@geolonia/datamodels/build';
 import { loadSubjects, ROOT, MODELS_DIR } from './lib/models.mjs';
 import { catalogRuleProblems } from './lib/catalog-rules.mjs';
 import { reportFailures } from './lib/ci-summary.mjs';
+import { fileLimitProblems } from './lib/file-limits.mjs';
 
 // The node is the repository: node.yaml and models/. The tests point MODELS_DIR at a changed copy of models/.
 const failures = [];
 let subjects;
 let temp;
-try {
+failures.push(...(await fileLimitProblems(MODELS_DIR)));
+if (!failures.length) try {
   let nodeDir = ROOT;
   if (resolve(MODELS_DIR) !== join(ROOT, 'models')) {
     temp = await mkdtemp(join(tmpdir(), 'datamodels-node-'));
