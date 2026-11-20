@@ -2,7 +2,7 @@
 // vocabulary, browsers the page, unknown IRIs a 404.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import worker, { prefersJsonLd } from '../worker/index.mjs';
+import worker, { prefersJsonLd, MAJORS_TTL_MS, resetMajors } from '../worker/index.mjs';
 
 // The static assets as the Worker sees them: _redirects for known IRIs, catalog.json, else 404.
 const env = {
@@ -71,4 +71,80 @@ test('an error in the script falls back to the static answer', async () => {
   const r = await worker.fetch(broken, env);
   assert.equal(r.status, 302);
   assert.equal(r.headers.get('location'), '/models/task/Task/');
+});
+
+// The same assets, with catalog.json as given (#298); the IRIs answer as in `env` above.
+const withCatalog = (catalog) => ({
+  ASSETS: {
+    async fetch(input) {
+      const { pathname } = new URL(typeof input === 'string' ? input : input.url ?? input);
+      if (pathname === '/catalog.json') return catalog();
+      return env.ASSETS.fetch(input);
+    },
+  },
+});
+const jsonLd = (e) => worker.fetch(new Request('https://datamodels.jp/ns/task/Task', { headers: { accept: 'application/ld+json' } }), e);
+const v1 = withCatalog(() => Response.json({ models: [{ subject: 'task', version: '1.0.0' }] }));
+const v2 = withCatalog(() => Response.json({ models: [{ subject: 'task', version: '2.0.0' }] }));
+
+test('the subject majors are read again after five minutes', async (t) => {
+  resetMajors();
+  t.after(resetMajors);
+  t.mock.timers.enable({ apis: ['Date'], now: 1_000_000 });
+  assert.equal((await jsonLd(v1)).headers.get('location'), '/vocab/task/v1.jsonld');
+  t.mock.timers.tick(MAJORS_TTL_MS - 1);
+  assert.equal((await jsonLd(v2)).headers.get('location'), '/vocab/task/v1.jsonld', 'still cached');
+  t.mock.timers.tick(1);
+  assert.equal((await jsonLd(v2)).headers.get('location'), '/vocab/task/v2.jsonld', 'read again');
+});
+
+test('a failed read of catalog.json is not cached', async (t) => {
+  resetMajors();
+  t.after(resetMajors);
+  t.mock.timers.enable({ apis: ['Date'], now: 1_000_000 });
+  let reads = 0;
+  const failing = withCatalog(() => { reads++; return new Response('error', { status: 500 }); });
+  const r = await jsonLd(failing);
+  assert.equal(r.status, 302, 'the static answer');
+  assert.equal(r.headers.get('location'), '/models/task/Task/');
+  assert.equal((await jsonLd(failing)).status, 302);
+  assert.equal(reads, 2, 'read again on the next request');
+  // Same moment, catalog.json back: the next request reads it at once.
+  assert.equal((await jsonLd(v1)).status, 303);
+  // A thrown fetch is not cached either.
+  t.mock.timers.tick(MAJORS_TTL_MS);
+  const throwing = withCatalog(() => { throw new Error('network'); });
+  assert.equal((await jsonLd(throwing)).status, 302);
+  assert.equal((await jsonLd(v2)).headers.get('location'), '/vocab/task/v2.jsonld');
+});
+
+test('a read of catalog.json that outlives its five minutes is not answered from', async (t) => {
+  resetMajors();
+  t.after(resetMajors);
+  t.mock.timers.enable({ apis: ['Date'], now: 1_000_000 });
+  let release;
+  const slow = withCatalog(() => new Promise((resolve) => { release = () => resolve(Response.json({ models: [{ subject: 'task', version: '1.0.0' }] })); }));
+  const pending = jsonLd(slow);
+  await new Promise((r) => setImmediate(r));
+  // A new major version is released and the slow read's five minutes pass.
+  t.mock.timers.tick(MAJORS_TTL_MS);
+  assert.equal((await jsonLd(v2)).headers.get('location'), '/vocab/task/v2.jsonld', 'a new read');
+  release();
+  assert.equal((await pending).headers.get('location'), '/vocab/task/v2.jsonld', 'the slow request uses the current read');
+});
+
+test('a read that fails after it was replaced still gives the static answer', async (t) => {
+  resetMajors();
+  t.after(resetMajors);
+  t.mock.timers.enable({ apis: ['Date'], now: 1_000_000 });
+  let fail;
+  const failing = withCatalog(() => new Promise((resolve) => { fail = () => resolve(new Response('error', { status: 500 })); }));
+  const pending = jsonLd(failing);
+  await new Promise((r) => setImmediate(r));
+  t.mock.timers.tick(MAJORS_TTL_MS);
+  const newer = jsonLd(v2); // replaces the entry while the first read is open
+  fail();
+  const r = await pending;
+  assert.equal(r.status, 302, 'the static answer, not the newer read');
+  assert.equal((await newer).headers.get('location'), '/vocab/task/v2.jsonld');
 });

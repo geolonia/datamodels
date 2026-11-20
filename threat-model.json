@@ -869,10 +869,10 @@
     },
     {
       "property": "D-NEGOTIATION-STALE-MAJOR",
-      "reason": "stated by maintainer ruling (2026-10); cached subject majors may be stale after a major release until the isolate is recycled; a non-OK read of catalog.json is cached as empty the same way",
+      "reason": "stated by maintainer ruling (2026-10), narrowed for #298 (2026-11); subject majors kept per isolate for five minutes and a 303 cached for five more, so up to about ten minutes stale after a major release; a failed read of catalog.json is not kept",
       "false_friend": false,
       "provenance": "documented",
-      "source": "maintainer ruling, 2026-10"
+      "source": "worker/index.mjs comment: a new major version reaches JSON-LD clients within about ten minutes"
     },
     {
       "property": "D-REPO-CODE-RUNS",
