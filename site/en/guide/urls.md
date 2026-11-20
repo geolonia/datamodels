@@ -48,6 +48,22 @@ A new version does not replace the old one: `v1.0.0` stays at its URL, and the v
 - **An attribute** that is being replaced is marked deprecated in the schema and on the model page. It stays at least until the next minor version and is removed only in a major version.
 - **A model** that should not be used for new work is marked deprecated. It stays published at the same URLs. If there is a replacement, its page and `catalog.json` name it (`supersededBy`).
 
+## Verifying a file {#verify}
+
+`digests` in `catalog.json` lists a SHA-256 digest for every versioned file: the `@context`, vocabulary and JSON Schemas of every published version (for example `/schema/common/Geometry/v1.0.0.json`). The form is the one Subresource Integrity uses, `sha256-<base64>`.
+
+- **Pin it:** write the digest of each file you use into your own configuration or lock file, and compare it whenever you load the file. A change no longer goes unnoticed.
+- **Compare with the repository:** every published version is also in the GitHub repository, under `models/<subject>/releases/v<version>/`. A digest computed from there is checked over a different path than the one datamodels.jp serves.
+
+To compute a digest, run the command below and put `sha256-` in front of its output; the result has the same form as the values in `digests`.
+
+```bash
+curl -s https://datamodels.jp/schema/common/Geometry/v1.0.0.json \
+  | openssl dgst -sha256 -binary | openssl base64 -A
+```
+
+The digests come from the same site as the files. They show that a copy or a cache matches what was published, but not that the site itself was not changed; for that, compare with the files in the repository. There are no signatures. During the pre-release, before the official launch, a published file may still be corrected, and its digest changes with it.
+
 ## All URLs
 
 <div class="url-list">
