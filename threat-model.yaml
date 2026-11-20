@@ -1,10 +1,10 @@
 # threat-model.yaml — derived index; the prose threat model (threat-model.md) is canonical.
 schema: threat-model-sidecar/v2
 project: datamodels
-prose_version: "threat-model.md@sha256:fa127ce6f023918cf3d16f3a7f91f3f87af362fa513c9857c922063764a811b8"
+prose_version: "threat-model.md@sha256:8a736633cc4ebfb61d8ca302e54a437ea4cf660f1b2fa3be7ab3537d91375557"
 model_status: accepted
 triage_policy: strict
-confidence: {documented: 204, maintainer: 64, inferred: 0, assumption: 0}
+confidence: {documented: 215, maintainer: 57, inferred: 0, assumption: 0}
 
 generation:
   model: "Claude Opus 5.5 (claude-opus-5-5)"
@@ -83,7 +83,7 @@ host_side_effects:
   - effect: outbound-network-production-build
     stance: absent
     components: [build-validation]
-    conditions: "build:deploy runs datamodels check --offline; npm ci reaches the npm registry"
+    conditions: "build:deploy runs datamodels check --offline; the pnpm install before it reaches the npm registry"
     provenance: {kind: maintainer, date: "2026-10"}
   - effect: outbound-network-pull-request-check
     stance: present
@@ -93,7 +93,7 @@ host_side_effects:
   - effect: outbound-network-maintainer-commands
     stance: present
     components: [listings, supply-chain]
-    conditions: "npm run nodes fetches node indexes; npm run check:live fetches datamodels.jp"
+    conditions: "pnpm run nodes fetches node indexes; pnpm run check:live fetches datamodels.jp, by hand and from the Check live site workflow"
     provenance: {kind: documented, source: "scripts/fetch-nodes.mjs header: \"read the catalog.json of every node in nodes.yaml\""}
   - effect: child-processes
     stance: present
@@ -296,8 +296,8 @@ entry_points:
         attacker_controllable: true
         control_kinds: [callback-code, resource-name]
         obligation_id: review-dependencies
-        caller_must_enforce: "review of dependency changes; npm ci installs exactly the lockfile"
-        provenance: {kind: maintainer, date: "2026-10"}
+        caller_must_enforce: "review of dependency changes; pnpm install --frozen-lockfile installs exactly the lockfile; install scripts only for esbuild and workerd; new versions only after a day, except the toolkit; an override pins undici past a miniflare pin"
+        provenance: {kind: documented, source: "pnpm-workspace.yaml comments: \"Install scripts are off\" and \"pnpm installs a new version only after it is a day old\""}
   - id: listing-files
     component: listings
     parameters:
@@ -337,6 +337,11 @@ entry_points:
         control_kinds: [callback-code]
         caller_must_enforce: "none — P-CI-TOKENS-SCOPED"
         provenance: {kind: documented, source: ".github/workflows/check-worker.yml permissions: contents: read"}
+      - name: check_run_commit
+        attacker_controllable: false
+        control_kinds: [callback-code]
+        caller_must_enforce: "none — P-CI-TOKENS-SCOPED"
+        provenance: {kind: documented, source: ".github/workflows/check-live.yml comment: \"The check run's commit must be on main: the job runs repository code\""}
   - id: workers-builds
     component: supply-chain
     parameters:
@@ -412,7 +417,7 @@ contract_dimensions:
   - {component: listings, dimension: concurrency-reentrancy, status: not-applicable, conditions: "maintainer command, run once", provenance: {kind: documented, source: "scripts/fetch-nodes.mjs header"}}
   - {component: listings, dimension: resource-complexity, status: claimed, conditions: "15-second timeout per node; text cut to 200 characters", property_id: P-OUTSIDER-TEXT-PLAIN, provenance: {kind: documented, source: "scripts/fetch-nodes.mjs TIMEOUT"}}
   - {component: supply-chain, dimension: numeric-domain, status: not-applicable, conditions: "no numeric input", provenance: {kind: documented, source: ".github/workflows/check-worker.yml"}}
-  - {component: supply-chain, dimension: failure-atomicity, status: claimed, conditions: "org ruleset main-protection requires one approval, last-push approval, code-owner review and resolved threads, with bypass for a repository role and one team; org ruleset security-suite requires its Security Suite workflow; no check from this repository's own workflows is required, so the --base comparison does not block a merge; after the launch a merged change to a published file is VALID however it got in", property_id: P-PUBLISHED-IMMUTABLE, provenance: {kind: maintainer, date: "2026-10"}}
+  - {component: supply-chain, dimension: failure-atomicity, status: claimed, conditions: "org ruleset main-protection requires one approval, last-push approval, code-owner review and resolved threads, with bypass for a repository role and one team; org ruleset security-suite requires its Security Suite workflow; since 2026-10-26 (#291) branch protection requires Build and dry-run deploy (the --base comparison) and Japanese and English pages, up to date, for administrators too; after the launch a merged change to a published file is VALID however it got in", property_id: P-PUBLISHED-IMMUTABLE, provenance: {kind: documented, source: "docs/deployment.md \"main also requires the pull-request checks\""}}
   - {component: supply-chain, dimension: recursive-cyclic-topology, status: not-applicable, conditions: "no recursive input", provenance: {kind: documented, source: ".github/workflows/check-worker.yml"}}
   - {component: supply-chain, dimension: callback-execution, status: claimed, conditions: "pull-request code runs only with read-only tokens; deploy rights only in Workers Builds", property_id: P-NO-DEPLOY-CREDENTIAL-IN-GITHUB, provenance: {kind: documented, source: "docs/deployment.md \"no credential lives in GitHub\""}}
   - {component: supply-chain, dimension: serialization-reconstruction, status: claimed, conditions: "untrusted text read as data, never interpolated into a shell command", property_id: P-CI-TOKENS-SCOPED, provenance: {kind: documented, source: ".github/workflows/similar-models.yml header"}}
@@ -606,7 +611,7 @@ dependencies:
     violation_disposition: "OUT-OF-MODEL: dependency-contract"
     provenance: {kind: documented, source: "docs/design.md \"Hosting\""}
   - name: cloudflare-workers-builds
-    relied_on_for: "building main with the configured commands; previews only for branches of this repository (a dashboard setting); holding the deploy credential"
+    relied_on_for: "building main with the configured commands; nothing else, since preview builds are off (a dashboard setting); reporting the check run that starts the Check live site workflow; holding the deploy credential"
     relied_on_properties: [build-configured-branch-only]
     caller_obligations_acknowledged: []
     adversary_capabilities_forwarded: []
@@ -743,14 +748,14 @@ build_flags:
       - {property_id: P-PUBLISHED-IMMUTABLE, effect: preserves}
     provenance: {kind: documented, source: ".github/workflows/check-worker.yml \"Compare the published versions with the base branch\""}
   - name: preview-builds
-    default: "on, branches of this repository only (a dashboard setting)"
+    default: "off since 2026-10-26 (a dashboard setting); preview_urls stays true"
     security_relevant: true
     maintainer_stance: supported
     affects_properties:
       - {property_id: P-NO-DEPLOY-CREDENTIAL-IN-GITHUB, effect: preserves}
-    provenance: {kind: maintainer, date: "2026-10"}
+    provenance: {kind: documented, source: "docs/deployment.md \"Preview builds are off since 2026-10-26\""}
   - name: mcp-limiter-absent
-    default: "present in production and previews"
+    default: "present in production, and in previews when they are on"
     security_relevant: false
     maintainer_stance: dev-only
     affects_properties: []
@@ -886,14 +891,14 @@ properties_claimed:
     kind: integrity
     components: [supply-chain]
     tier: security-critical
-    conditions: "Workers Builds deploys main; builds only branches of this repository"
+    conditions: "Workers Builds deploys main and builds nothing else; preview builds are off"
     violation_symptoms: [integrity-bypass]
     provenance: {kind: documented, source: "docs/deployment.md \"no credential lives in GitHub\""}
   - id: P-CI-TOKENS-SCOPED
     kind: integrity
     components: [supply-chain]
     tier: security-critical
-    conditions: "the four workflows in this repository; the organisation's Security Suite workflow is outside this model"
+    conditions: "the five workflows in this repository; issues: write only in similar-models.yml and the report job of check-live.yml; the organisation's Security Suite workflow is outside this model"
     violation_symptoms: [integrity-bypass]
     provenance: {kind: documented, source: ".github/workflows/similar-models.yml header"}
 
@@ -929,13 +934,13 @@ downstream_responsibilities:
   - {id: R-VERIFY-AGAINST-SNAPSHOT, component: published-files, statement: "to verify bytes, pin the digest from catalog.json, or compare with the release snapshot in the repository", enforces: [D-NO-SIGNATURE, P-DIGESTS-PUBLISHED], provenance: {kind: documented, source: "site/en/guide/urls.md \"Verifying a file\""}}
   - {id: R-FOLLOW-NS-REDIRECTS, component: iri-negotiation, statement: "follow 302 and 303 redirects from /ns/*", enforces: [redirect-exact-version], provenance: {kind: documented, source: "site/en/guide/urls.md \"The promises\" item 3"}}
   - {id: R-EXPECT-429, component: mcp-server, statement: "expect 429 after 100 requests a minute from one address", enforces: [D-RATE-LIMIT-BEST-EFFORT], provenance: {kind: documented, source: "docs/deployment.md \"/mcp is rate-limited\""}}
-  - {id: R-OPERATOR-ZONE-RULE, component: supply-chain, statement: "operator keeps the BIC rule and runs check:live after a deploy", enforces: [D-BIC-NOT-ACCESS-CONTROL], provenance: {kind: documented, source: "docs/deployment.md \"After a deploy, run npm run check:live\""}}
+  - {id: R-OPERATOR-ZONE-RULE, component: supply-chain, statement: "operator keeps the BIC rule, watches the repository's issues and acts on the issue the Check live site workflow opens", enforces: [D-BIC-NOT-ACCESS-CONTROL], provenance: {kind: documented, source: "docs/deployment.md \"the maintainers watch this repository's issues\""}}
   - {id: R-OPERATOR-DOMAIN, component: supply-chain, statement: "operator keeps datamodels.jp registered and the zone in the same account", enforces: [P-IRI-RESOLVES], provenance: {kind: documented, source: "docs/design.md \"Decision 1\""}}
-  - {id: R-OPERATOR-BUILDS, component: supply-chain, statement: "operator keeps Workers Builds on main, previews only for own branches, preview_urls true", enforces: [P-NO-DEPLOY-CREDENTIAL-IN-GITHUB], provenance: {kind: documented, source: "docs/deployment.md"}}
+  - {id: R-OPERATOR-BUILDS, component: supply-chain, statement: "operator keeps Workers Builds on main only, preview_urls true", enforces: [P-NO-DEPLOY-CREDENTIAL-IN-GITHUB], provenance: {kind: documented, source: "docs/deployment.md"}}
   - {id: R-OPERATOR-LIMIT-SYNC, component: mcp-server, statement: "operator keeps RATE_LIMIT equal to both MCP_LIMITER declarations", enforces: [D-RATE-LIMIT-BEST-EFFORT], provenance: {kind: documented, source: "wrangler.jsonc ratelimits comment"}}
   - {id: R-OPERATOR-RETIRED-PREVIEW, component: supply-chain, statement: "operator keeps models.geonicdb.com detached", enforces: [P-IRI-RESOLVES], provenance: {kind: documented, source: "docs/deployment.md"}}
   - {id: R-OPERATOR-LAUNCH, component: published-files, statement: "at the launch, set prerelease: false", enforces: [P-PUBLISHED-IMMUTABLE], provenance: {kind: documented, source: "README \"Pre-release exception\""}}
-  - {id: R-OPERATOR-GREEN-MERGE, component: supply-chain, statement: "merge only after the pull-request check is green", enforces: [P-PUBLISHED-IMMUTABLE], provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: R-OPERATOR-GREEN-MERGE, component: supply-chain, statement: "keep the branch protection of main requiring the Build and dry-run deploy check", enforces: [P-PUBLISHED-IMMUTABLE], provenance: {kind: documented, source: "docs/deployment.md \"main also requires the pull-request checks\""}}
 
 known_misuses:
   - {id: M-PIN-PRERELEASE, components: [published-files], pattern: "pinning a pre-release exact version and its hash for integrity", safer_alternative: "wait for the launch or keep your own copy", provenance: {kind: documented, source: "README \"Pre-release exception\""}}

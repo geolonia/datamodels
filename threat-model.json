@@ -6,7 +6,7 @@
   "scope_subpath": null,
   "description": "datamodels.jp publishes data models for Japan as files at URLs that are meant never to change. People and programs store those URLs in their data: type and attribute IRIs, @context URLs, schema URLs. The catalogue is built from this repository: anyone can send a pull request, maintainers review and merge it, and Cloudflare Workers Builds deploys main. The catalogue stores no data of its users, has no login and runs no service for data except a read-only MCP server.",
   "confidence": {
-    "documented": 268,
+    "documented": 272,
     "inferred": 0
   },
   "components": [
@@ -144,7 +144,7 @@
     },
     {
       "component": "supply-chain",
-      "boundary": "Build boundary: Workers Builds runs npm ci, npm run build:deploy and wrangler deploy on main with the operator's deploy rights; every locked package and repository script runs there (docs/deployment.md).",
+      "boundary": "Build boundary: Workers Builds installs the dependencies with pnpm from pnpm-lock.yaml, then runs npm run build:deploy and wrangler deploy on main with the operator's deploy rights; every locked package and repository script runs there (docs/deployment.md).",
       "provenance": "documented",
       "reachability_precondition": "lets someone without merge rights change what is deployed, or obtain a credential"
     }
@@ -425,7 +425,7 @@
       "parameter": "package_files",
       "attacker_controllable": "yes",
       "component": "build-validation",
-      "caller_must_enforce": "review of dependency changes; npm ci installs exactly the lockfile",
+      "caller_must_enforce": "review of dependency changes; pnpm install --frozen-lockfile installs exactly the lockfile; install scripts only for esbuild and workerd; new versions only after a day, except the toolkit; an override pins undici past a miniflare pin",
       "provenance": "documented",
       "source": "maintainer ruling, 2026-10"
     },
@@ -484,6 +484,15 @@
       "source": ".github/workflows/check-worker.yml permissions: contents: read"
     },
     {
+      "entry_point": "ci-workflows",
+      "parameter": "check_run_commit",
+      "attacker_controllable": "no",
+      "component": "supply-chain",
+      "caller_must_enforce": "none — P-CI-TOKENS-SCOPED",
+      "provenance": "documented",
+      "source": ".github/workflows/check-live.yml comment: The check run's commit must be on main: the job runs repository code"
+    },
+    {
       "entry_point": "workers-builds",
       "parameter": "main_commit",
       "attacker_controllable": "no",
@@ -524,10 +533,10 @@
     "assumes": [
       "**Runtime.** The Worker runs on Cloudflare Workers with `compatibility_date` 2026-08-01; static files are served by Workers static assets from `./dist` with `_headers` and `_redirects`.",
       "**Transport.** TLS terminates at Cloudflare for the custom domain, which `wrangler deploy` creates with its certificate.",
-      "**Build host.** Node 24; Workers Builds and GitHub-hosted runners provide it. Workers Builds builds only branches of this repository, a setting in the Cloudflare dashboard; only branches in this repository get a preview URL."
+      "**Build host.** Node 24; Workers Builds and GitHub-hosted runners provide it. Workers Builds builds only `main`: preview builds are off, a setting in the Cloudflare dashboard."
     ],
     "does_not": [
-      "**Zone rule.** A configuration rule on the `datamodels.jp` zone turns off Browser Integrity Check for the machine-readable paths and `/mcp`. It lives in the Cloudflare dashboard, not in the repository. `npm run check:live` fails when it goes missing. The check is run by hand after a deploy, not by CI.",
+      "**Zone rule.** A configuration rule on the `datamodels.jp` zone turns off Browser Integrity Check for the machine-readable paths and `/mcp`. It lives in the Cloudflare dashboard, not in the repository. `pnpm run check:live` fails when it goes missing. The workflow \"Check live site\" runs it after every Workers Builds deploy of `main` and once a day, and a failure opens an issue.",
       "**Domain.** `datamodels.jp` is registered in Route 53 in the GeonicDB AWS account, with name servers delegated to Cloudflare. `datamodel.jp` is not registered: `docs/design.md` calls it \"available as a typo guard\", and the JPRS whois has no record of it (checked 2026-10-17).",
       "**Concurrency.** The Worker keeps per-isolate caches of public files (the MCP index, schemas, compiled validators, the subject majors). No state is shared between requests except these."
     ],
@@ -560,15 +569,15 @@
     },
     {
       "name": "preview-builds",
-      "default": "on, branches of this repository only (a dashboard setting)",
+      "default": "off since 2026-10-26 (a dashboard setting); preview_urls stays true",
       "effect": "preserves P-NO-DEPLOY-CREDENTIAL-IN-GITHUB",
       "discouraged": false,
       "provenance": "documented",
-      "source": "maintainer ruling, 2026-10"
+      "source": "docs/deployment.md \"Preview builds are off since 2026-10-26\""
     },
     {
       "name": "mcp-limiter-absent",
-      "default": "present in production and previews",
+      "default": "present in production, and in previews when they are on",
       "effect": "no effect on claimed properties",
       "discouraged": false,
       "provenance": "documented",
@@ -739,7 +748,7 @@
       "property": "P-NO-DEPLOY-CREDENTIAL-IN-GITHUB",
       "violation_symptom": "integrity-bypass",
       "severity_tier": "security",
-      "conditions": "Workers Builds deploys main; builds only branches of this repository",
+      "conditions": "Workers Builds deploys main and builds nothing else; preview builds are off",
       "provenance": "documented",
       "source": "docs/deployment.md \"no credential lives in GitHub\""
     },
@@ -747,7 +756,7 @@
       "property": "P-CI-TOKENS-SCOPED",
       "violation_symptom": "integrity-bypass",
       "severity_tier": "security",
-      "conditions": "the four workflows in this repository; the organisation's Security Suite workflow is outside this model",
+      "conditions": "the five workflows in this repository; issues: write only in similar-models.yml and the report job of check-live.yml; the organisation's Security Suite workflow is outside this model",
       "provenance": "documented",
       "source": ".github/workflows/similar-models.yml header"
     }
@@ -899,13 +908,13 @@
     "to verify bytes, pin the digest from catalog.json, or compare with the release snapshot in the repository",
     "follow 302 and 303 redirects from /ns/*",
     "expect 429 after 100 requests a minute from one address",
-    "operator keeps the BIC rule and runs check:live after a deploy",
+    "operator keeps the BIC rule, watches the repository's issues and acts on the issue the Check live site workflow opens",
     "operator keeps datamodels.jp registered and the zone in the same account",
-    "operator keeps Workers Builds on main, previews only for own branches, preview_urls true",
+    "operator keeps Workers Builds on main only, preview_urls true",
     "operator keeps RATE_LIMIT equal to both MCP_LIMITER declarations",
     "operator keeps models.geonicdb.com detached",
     "at the launch, set prerelease: false",
-    "merge only after the pull-request check is green"
+    "keep the branch protection of main requiring the Build and dry-run deploy check"
   ],
   "known_misuse": [
     {

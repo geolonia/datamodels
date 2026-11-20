@@ -1,0 +1,130 @@
+name: Check live site
+
+# Checks the deployed site against the URL contract (`pnpm run check:live`,
+# scripts/check-live.mjs, #297): status codes, content types, CORS, caching,
+# the released files against their snapshots, the digests in catalog.json and
+# the Browser Integrity Check exception. It reads the public site only, so no
+# Cloudflare credential is needed and none lives in GitHub.
+#
+# When it runs:
+# - after every Workers Builds deploy of main: Cloudflare reports the check
+#   run "Workers Builds: datamodels" on the commit it deployed (a deploy by
+#   hand, `pnpm run deploy`, reports none and is covered by the daily run);
+# - once a day, so a change made outside a deploy (a dashboard setting, a
+#   cache rule, a custom domain) shows up too;
+# - by hand from main (Actions → Check live site → Run workflow).
+#
+# A failed check opens an issue (or comments on the open one), because a
+# failed run started by a bot or a schedule notifies nobody reliably. The
+# issue reaches whoever watches this repository's issues.
+#
+# A schedule pauses after 60 days without activity in the repository; the
+# deploy trigger does not.
+on:
+  check_run:
+    types: [completed]
+  schedule:
+    - cron: '17 21 * * *' # 06:17 JST
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  check:
+    name: check:live
+    # check_run fires for every check run in the repository: only Cloudflare's
+    # successful production build of main counts as a deploy.
+    if: >-
+      (github.event_name == 'schedule') ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') || (
+        github.event.check_run.app.slug == 'cloudflare-workers-and-pages' &&
+        github.event.check_run.name == 'Workers Builds: datamodels' &&
+        github.event.check_run.conclusion == 'success' &&
+        github.event.check_run.check_suite.head_branch == 'main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      # check:live reads node.yaml (pre-release or launched cache rule) and the
+      # release snapshots, so it runs from the deployed commit. A schedule or a
+      # manual run checks the head of main.
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          ref: ${{ github.event.check_run.head_sha || github.sha }}
+          fetch-depth: 0
+
+      # The check run's commit must be on main: the job runs repository code.
+      - name: Confirm the commit is on main
+        run: |
+          git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
+          if ! git merge-base --is-ancestor HEAD origin/main; then
+            echo "::error::$(git rev-parse HEAD) is not on main; not checking it"
+            exit 1
+          fi
+
+      # Reads the pnpm version from "packageManager" in package.json.
+      - name: Set up pnpm
+        uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      # One retry after five and a half minutes: right after a deploy, a
+      # cached catalog.json (max-age=300) can still be the previous one.
+      # Checks run in parallel (a queue would drop all but one waiting check).
+      # A check whose commit is no longer the head of main stops instead of
+      # failing: the newer commit is checked when it deploys, and the old
+      # commit's rules (node.yaml) may no longer match the site.
+      - name: Check the live site
+        run: |
+          pnpm run check:live && exit 0
+          echo "::warning::check:live failed; trying again in five and a half minutes"
+          sleep 330
+          git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
+          if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then
+            echo "::notice::main has moved on; its newer commit is checked when it deploys"
+            exit 0
+          fi
+          pnpm run check:live
+
+  report:
+    name: Open an issue
+    needs: check
+    if: failure()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # One report at a time, so two failures cannot both open an issue.
+    concurrency:
+      group: check-live-report
+      cancel-in-progress: false
+    permissions:
+      issues: write
+    steps:
+      - name: Open or update the issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          COMMIT: ${{ github.event.check_run.head_sha || github.sha }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          title='check:live fails on datamodels.jp'
+          body="\`pnpm run check:live\` failed ($EVENT, commit $COMMIT): $RUN_URL
+
+          The log lists every contract violation. Fix the cause, run the workflow again (Actions → Check live site → Run workflow), then close this issue."
+          number=$(gh issue list --state open --search "\"$title\" in:title" --json number,title \
+            --jq "map(select(.title == \"$title\")) | .[0].number // empty")
+          if [ -n "$number" ]; then
+            gh issue comment "$number" --body "$body"
+          else
+            gh issue create --title "$title" --body "$body" --label bug --label 'Priority: High'
+          fi
