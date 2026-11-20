@@ -3,7 +3,7 @@
 Canonical docs (do not duplicate here): README.md (layout, commands, model workflow), CONTRIBUTING.md (ja/en; PR steps, DCO, extensions, proposal bundles), docs/design.md (URL contract, versioning, decisions), docs/deployment.md (Cloudflare), AGENTS.md (org policy, issue intake).
 
 Source map beyond README's layout block:
-- `scripts/*.mjs` = CLI entrypoints wired in package.json; shared logic in `scripts/lib/*.mjs` (one module per concern: build/publish, releases, vocab, graph, site page gen, llms/mcp index, nodes, extensions, similar-models).
+- `scripts/*.mjs` = CLI entrypoints wired in package.json; shared logic in `scripts/lib/*.mjs`.
 - Catalog-only validation rules: `scripts/lib/catalog-rules.mjs`; generic model checks come from `@geolonia/datamodels` (= datamodels-toolkit, pinned exact version) via `datamodels check`.
 - `worker/` = Cloudflare Worker serving dist/ (+ MCP endpoint `mcp.mjs`, validate, rate limit).
 - `adapters/<name>/` = per-tool outputs (geonicdb, postgis, csv, table-schema, ai); tests live beside them (`adapters/**/*.test.mjs`).
