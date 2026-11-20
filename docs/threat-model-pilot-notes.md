@@ -293,7 +293,8 @@ belong in issues, not in the threat model:
    (2026-11-20): digests in `catalog.json` and a page section; no
    signatures (Q9).
 7. Document what `x-personal-data` means and does not mean (Q22).
-8. Run `npm run check:live` automatically after a deploy (Q23).
+8. ~~Run `npm run check:live` automatically after a deploy~~ Done in #297
+   (2026-11-20): the "Check live site" workflow (Q23).
 9. ~~A `SECURITY.md` in the repository that links this model, as the first
    pilot did after its wave (Q6).~~ Done in this pull request.
 10. Refresh the IRI Worker's cached subject majors, or accept the stale
@@ -324,6 +325,11 @@ belong in issues, not in the threat model:
   trigger. The maintainer chose digests and documentation over signatures
   (Sigstore would need a signing workflow outside Workers Builds and tooling
   on the consumer's side). Companions edited by hand and validated as above.
+- 2026-11-20, #297 and #312: `check:live` runs in CI after every deploy and
+  daily (a failure opens an issue), and the model describes the build as it
+  is (pnpm, the `npm run build:deploy` build command, no preview builds, the
+  required checks on `main`). Companions edited by hand and validated as above
+  (90 passed, the usual length warning).
 
 ## Files
 
