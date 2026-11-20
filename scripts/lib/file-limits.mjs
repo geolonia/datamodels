@@ -46,7 +46,7 @@ function quantifierAt(p, i) {
   } else return null;
   if (p[i + len] === '?') len++; // lazy
   // `?` (at most once) does not count as varying: (-?\d)+ is safe, and (a?)+ is left to review.
-  return { len, repeats: max > 1, varies: max > min && max > 1 };
+  return { len, repeats: max > 1, varies: max > min && max > 1, optional: max > min };
 }
 
 // True when a single-character atom (`.`, `\d`, `[^/]`, `x`) can match `ch`; unsure counts as yes.
@@ -60,15 +60,18 @@ function literalOf(src) {
   return null;
 }
 // A group such as (\d+\.) or ([a-z]+-): it ends with a separator, unquantified, that no other
-// atom of the group can match, so every repetition ends at the next separator and the text
-// splits into repetitions one way only. Not when the group has alternatives or inner groups.
+// atom of the group can match, so every repetition ends at the next separator, and at most one
+// other atom has a count that varies (`?` included), so a repetition splits one way only:
+// (\d+\d+\.)+ and (\d+\d?\.)+ do not count. Not when the group has alternatives or inner groups.
 function endsWithSeparator(group) {
   const { atoms, alt } = group;
   if (alt || atoms.length < 2) return false;
   const last = atoms[atoms.length - 1];
   const sep = !last.q && last.src !== null ? literalOf(last.src) : null;
   if (sep === null) return false;
-  return atoms.slice(0, -1).every((a) => a.src !== null && !atomMatches(a.src, sep));
+  const rest = atoms.slice(0, -1);
+  if (rest.filter((a) => a.q?.optional).length > 1) return false;
+  return rest.every((a) => a.src !== null && !atomMatches(a.src, sep));
 }
 
 /**
@@ -138,7 +141,7 @@ export function patternProblem(p) {
   if (typeof p !== 'string') return null;
   if (p.length > MAX_PATTERN_LENGTH) return `is ${p.length} characters long; at most ${MAX_PATTERN_LENGTH}`;
   try { new RegExp(p, 'u'); } catch (e) { return `is not a valid regular expression (${e.message})`; }
-  if (hasNestedQuantifier(p)) return 'repeats a group whose length varies, as in (a+)+, which can take exponential time to fail; rewrite it without the nesting, or end the group with a separator nothing else in it matches, as in (\\d+\\.)+';
+  if (hasNestedQuantifier(p)) return 'repeats a group whose length varies, as in (a+)+, which can take exponential time to fail; rewrite it without the nesting, or keep one part of varying length and end the group with a separator nothing else in it matches, as in (\\d+\\.)+';
   return null;
 }
 
