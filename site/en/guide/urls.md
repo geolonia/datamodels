@@ -58,11 +58,11 @@ A new version does not replace the old one: `v1.0.0` stays at its URL, and the v
   - `vocab.jsonld`: `/vocab/<subject>/v<version>.jsonld`
   - `schema/<Type>.json`: `/schema/<subject>/<Type>/v<version>.json`
 
-To compute a digest, run the command below and put `sha256-` in front of its output; the result has the same form as the values in `digests`.
+To compute a digest, run the command below (it saves the file first, so a failed download prints nothing) and put `sha256-` in front of its output; the result has the same form as the values in `digests`.
 
 ```bash
-curl -fsS https://datamodels.jp/schema/common/Geometry/v1.0.0.json \
-  | openssl dgst -sha256 -binary | openssl base64 -A
+curl -fsSo Geometry.json https://datamodels.jp/schema/common/Geometry/v1.0.0.json \
+  && openssl dgst -sha256 -binary Geometry.json | openssl base64 -A
 ```
 
 The digests come from the same site as the files. They show that a copy or a cache matches what was published, but not that the site itself was not changed; for that, compare with the files in the repository. There are no signatures.

@@ -58,11 +58,11 @@ description: どの URL を使うか、何が変わらないか、バージョ�
   - `vocab.jsonld`：`/vocab/<subject>/v<version>.jsonld`
   - `schema/<Type>.json`：`/schema/<subject>/<Type>/v<version>.json`
 
-ダイジェストは、次のコマンドで計算できます。出力の前に `sha256-` を付けると、`digests` の値と同じ形になります。
+ダイジェストは、次のコマンドで計算できます。ファイルを保存してから計算するので、ダウンロードに失敗したときは何も出力しません。出力の前に `sha256-` を付けると、`digests` の値と同じ形になります。
 
 ```bash
-curl -fsS https://datamodels.jp/schema/common/Geometry/v1.0.0.json \
-  | openssl dgst -sha256 -binary | openssl base64 -A
+curl -fsSo Geometry.json https://datamodels.jp/schema/common/Geometry/v1.0.0.json \
+  && openssl dgst -sha256 -binary Geometry.json | openssl base64 -A
 ```
 
 ダイジェストは、ファイルと同じサイトから配信されます。手元のコピーやキャッシュが公開されたファイルと同じかは確かめられますが、サイトそのものが書き換えられたときは防げません。そのときは、リポジトリのファイルと比べます。署名はありません。
