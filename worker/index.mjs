@@ -42,7 +42,7 @@ export function prefersJsonLd(accept) {
 // A failed read is not kept: that request gets the static answer, and the next
 // one reads again.
 export const MAJORS_TTL_MS = 5 * 60 * 1000;
-let majors = null; // { at, map: Promise<Map<subject, major>> }
+let majors = null; // { at, map: Promise<Map<subject, major> | null> }, null when the read failed
 /** Forgets the cached majors (tests). */
 export function resetMajors() { majors = null; }
 /** The current entry: the cached one while it is younger than five minutes, else a new read. */
@@ -53,7 +53,7 @@ function majorsEntry(env, request) {
     entry.map = env.ASSETS.fetch(new URL('/catalog.json', request.url))
       .then((r) => { if (!r.ok) throw new Error(`catalog.json: ${r.status}`); return r.json(); })
       .then((catalog) => new Map((catalog.models ?? []).map((m) => [m.subject, String(m.version ?? '').split('.')[0]])))
-      .catch(() => { if (majors === entry) majors = null; return new Map(); });
+      .catch(() => { if (majors === entry) majors = null; return null; });
     majors = entry;
   }
   return majors;
@@ -62,12 +62,13 @@ function majorsEntry(env, request) {
 async function subjectMajor(env, request, subject) {
   const entry = majorsEntry(env, request);
   let map = await entry.map;
+  // A failed read gives the static answer, even if a newer read is pending.
+  if (!map) return null;
   // A read that outlived its five minutes (or was replaced meanwhile) is not
-  // answered from: the request waits for the current read instead, once. A
-  // failed read has cleared the cache and answers with the static page.
+  // answered from: the request waits for the current read instead, once.
   const outdated = majors === entry ? Date.now() - entry.at >= MAJORS_TTL_MS : majors !== null;
   if (outdated) map = await majorsEntry(env, request).map;
-  return map.get(subject) || null;
+  return map?.get(subject) || null;
 }
 
 export default {

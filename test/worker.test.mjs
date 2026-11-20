@@ -132,3 +132,19 @@ test('a read of catalog.json that outlives its five minutes is not answered from
   release();
   assert.equal((await pending).headers.get('location'), '/vocab/task/v2.jsonld', 'the slow request uses the current read');
 });
+
+test('a read that fails after it was replaced still gives the static answer', async (t) => {
+  resetMajors();
+  t.after(resetMajors);
+  t.mock.timers.enable({ apis: ['Date'], now: 1_000_000 });
+  let fail;
+  const failing = withCatalog(() => new Promise((resolve) => { fail = () => resolve(new Response('error', { status: 500 })); }));
+  const pending = jsonLd(failing);
+  await new Promise((r) => setImmediate(r));
+  t.mock.timers.tick(MAJORS_TTL_MS);
+  const newer = jsonLd(v2); // replaces the entry while the first read is open
+  fail();
+  const r = await pending;
+  assert.equal(r.status, 302, 'the static answer, not the newer read');
+  assert.equal((await newer).headers.get('location'), '/vocab/task/v2.jsonld');
+});
