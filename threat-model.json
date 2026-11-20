@@ -675,7 +675,7 @@
       "property": "P-REFS-CATALOG-ONLY",
       "violation_symptom": "bad-data-accepted",
       "severity_tier": "correctness",
-      "conditions": "schema $ref and $dynamicRef targets are catalogue schema URLs or pointers inside the file; a CI rule since #292",
+      "conditions": "schema $ref and $dynamicRef targets are catalogue schema URLs or pointers inside the file, in the sources and the release snapshots; a CI rule since #292",
       "provenance": "documented",
       "source": "scripts/lib/catalog-rules.mjs comment: A schema references only this catalog's schemas or a place inside the file"
     },

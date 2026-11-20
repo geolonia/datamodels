@@ -621,15 +621,17 @@ are listed, or properties the maintainer ratified (2026-10).
     `catalog-rules.mjs`; no flag skips it. Planned profiles of upstream models
     would import commit-pinned GitHub URLs and change this property (§1.16).
 
-- **`P-REFS-CATALOG-ONLY` — published schemas reference only catalogue schemas.** A schema's `$ref` or `$dynamicRef` is a `#` pointer or an absolute URL under `https://datamodels.jp/schema/`; anything else, a relative reference included, fails CI *(documented, scripts/lib/catalog-rules.mjs comment: "A schema references only this catalog's schemas or a place inside the file")*. Enforced by CI since #292 (2026-11); before that it was a review rule *(maintainer, 2026-10)*.
+- **`P-REFS-CATALOG-ONLY` — published schemas reference only catalogue schemas.** A schema's `$ref` or `$dynamicRef` is a `#` pointer or an absolute, normalised URL under `https://datamodels.jp/schema/` without a query or an encoded slash; anything else, a relative reference included, fails CI, in the current sources and in the release snapshots *(documented, scripts/lib/catalog-rules.mjs comment: "A schema references only this catalog's schemas or a place inside the file")*. Enforced by CI since #292 (2026-11); before that it was a review rule *(maintainer, 2026-10)*.
   - Symptom: `bad-data-accepted` (a consumer's validator follows a reference
     to a host the catalogue does not control).
   - Tier: correctness-only *(maintainer, 2026-10)*.
-  - *Voided by*: nothing. The rule is `schemaRefProblems` at
-    `scripts/lib/catalog-rules.mjs:32`, called for every model at
-    `scripts/lib/catalog-rules.mjs:69`; `scripts/validate-models.mjs` runs it
-    in CI and in the build, and no flag skips it. Its test is
-    `test/schema-refs.test.mjs`. The rule reads only schema keywords: a
+  - *Voided by*: nothing. The rule is `schemaRefProblems` in
+    `scripts/lib/catalog-rules.mjs`, which `catalogRuleProblems` calls for
+    the schema of every model and for every schema file of every release
+    snapshot; `scripts/validate-models.mjs` runs it in CI and in the build,
+    and no flag skips it. Search:
+    `grep -n "schemaRefProblems" scripts/lib/catalog-rules.mjs`. Its tests are `test/schema-refs.test.mjs`
+    and two cases in `test/validate-models.test.mjs`. The rule reads only schema keywords: a
     `$ref` key inside `const`, `enum`, `default`, `examples` or an `x-`
     annotation is data, not a reference.
 

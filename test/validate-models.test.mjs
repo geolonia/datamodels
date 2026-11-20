@@ -121,6 +121,11 @@ test('a schema $ref to another site fails', () =>
   withMutatedModels((d) => editJson(join(d, 'facility', 'MedicalInstitution', 'schema.json'), (s) => { s.properties.address.$ref = 'https://example.org/address.json'; }),
     /facility\/MedicalInstitution\/schema\.json: \/properties\/address\/\$ref "https:\/\/example\.org\/address\.json" must be a "#" pointer/));
 
+// The release snapshots are published as well, so their schemas are checked too.
+test('a $ref to another site in a release snapshot schema fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'common', 'releases', 'v1.0.0', 'schema', 'ContactPoint.json'), (s) => { s.properties.telephone.$ref = 'https://example.org/tel.json'; }),
+    /models\/common\/releases\/v1\.0\.0\/schema\/ContactPoint\.json: \/properties\/telephone\/\$ref "https:\/\/example\.org\/tel\.json" must be a "#" pointer/));
+
 test('an attribute missing from the context fails', () =>
   withMutatedModels((d) => editJson(join(d, 'transportation', 'context.jsonld'), (c) => { delete inlineTerms(c).roadName; }),
     /RoadRestriction: the attribute roadName is not in the @context/));

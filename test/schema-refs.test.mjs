@@ -21,11 +21,23 @@ test('a reference to another site, over http, relative or outside /schema/ fails
     'https://datamodels.jp/schema/../context/common/v1.jsonld',
     'https://datamodels.jp/ns/common/Geometry',
     'https://datamodels.jp.example.org/schema/x.json',
+    'https://datamodels.jp@example.org/schema/x.json',
+    'https://datamodels.jp/schema/x/..%2f..%2fcontext/y.json',
+    'https://datamodels.jp/schema/x/%5cy.json',
+    'https://datamodels.jp/schema/x.json?v=1',
+    // Not normalised: written as the URL parser would write it, the text shows where the reference points.
+    'HTTPS://datamodels.jp/schema/common/Geometry/v1.0.0.json',
+    'https://datamodels.jp:443/schema/common/Geometry/v1.0.0.json',
   ]) {
     const problems = schemaRefProblems(at(ref));
     assert.equal(problems.length, 1, ref);
-    assert.match(problems[0], /must be a "#" pointer or a https:\/\/datamodels\.jp\/schema\/ URL/);
+    assert.match(problems[0], /must be a "#" pointer or an absolute https:\/\/datamodels\.jp\/schema\/ URL in normalised form/);
   }
+});
+
+test('refs under patternProperties and dependentSchemas are checked', () => {
+  const schema = { patternProperties: { '^x': { $ref: 'https://example.org/p.json' } }, dependentSchemas: { a: { $ref: 'https://example.org/d.json' } } };
+  assert.equal(schemaRefProblems(schema).length, 2);
 });
 
 test('$dynamicRef and a ref that is not a string are checked too', () => {
@@ -35,7 +47,7 @@ test('$dynamicRef and a ref that is not a string are checked too', () => {
 
 test('refs are found in nested and array keywords, with their path', () => {
   const schema = { $defs: { X: { anyOf: [{ $ref: '#/$defs/Y' }, { items: { $ref: 'https://example.org/i.json' } }] } } };
-  assert.deepEqual(schemaRefProblems(schema), ['/$defs/X/anyOf/1/items/$ref "https://example.org/i.json" must be a "#" pointer or a https://datamodels.jp/schema/ URL']);
+  assert.deepEqual(schemaRefProblems(schema), ['/$defs/X/anyOf/1/items/$ref "https://example.org/i.json" must be a "#" pointer or an absolute https://datamodels.jp/schema/ URL in normalised form']);
 });
 
 test('a property named $ref and data keywords are not references', () => {
