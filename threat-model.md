@@ -40,9 +40,10 @@
   2026-11-20, for geolonia/datamodels#298 (a change to a disclaimer). The IRI
   Worker keeps the subject majors for five minutes and no longer keeps a
   failed read of `catalog.json`, so `D-NEGOTIATION-STALE-MAJOR` narrows to a
-  window of minutes. The backtest's stale-major case still closes against it
-  within that window; a report of a stale answer long after a release is now
-  `VALID` against nothing claimed, a correctness bug.
+  window of about ten minutes. The backtest's stale-major case still closes
+  against it within that window; a report of a stale answer later than that
+  is no longer covered by the disclaimer and is triaged as a correctness bug
+  in the IRI Worker (the disclaimer's tier).
 - **Date / author**: 2026-10-16, drafted for the maintainer, Daniel Kastl, who
   ratified the claims of the first draft in one wave on 2026-10-16.
 - **Generation metadata**: produced with AI assistance. Model/agent: Claude
@@ -431,8 +432,8 @@ instructions).
 | `iri-negotiation` | failure and exception atomicity | claimed | any error falls back to the static answer | §1.11 `P-NEGOTIATION-FALLBACK` | *(documented, worker/index.mjs comment: "Any error below falls back to the static answer")* |
 | `iri-negotiation` | recursive or cyclic topology | N/A — no recursive input | | §1.7 | *(documented, worker/index.mjs header)* |
 | `iri-negotiation` | callback and collaborator execution | N/A — no caller-supplied code | | §1.7 | *(documented, worker/index.mjs header)* |
-| `iri-negotiation` | serialization and reconstruction | N/A — reads only `catalog.json` from the build | | §1.7 | *(documented, worker/index.mjs comment: "from catalog.json (read once per isolate)")* |
-| `iri-negotiation` | reference and object lifecycle | disclaimed | an isolate keeps the subject majors for five minutes; after a major release it may send the old major's vocabulary until then | §1.12 `D-NEGOTIATION-STALE-MAJOR` | *(documented, worker/index.mjs comment: "An isolate keeps them for five minutes")* |
+| `iri-negotiation` | serialization and reconstruction | N/A — reads only `catalog.json` from the build | | §1.7 | *(documented, worker/index.mjs comment: "The major version of each subject, from catalog.json")* |
+| `iri-negotiation` | reference and object lifecycle | disclaimed | an isolate keeps the subject majors for five minutes; after a major release it may send the old major's vocabulary until then | §1.12 `D-NEGOTIATION-STALE-MAJOR` | *(documented, worker/index.mjs comment: "a new major version reaches JSON-LD clients within about ten minutes")* |
 | `iri-negotiation` | concurrency and reentrancy | claimed | one shared promise per isolate for five minutes; a thrown or non-OK read is dropped, the requests waiting on it get the static answer, and the next request reads again | §1.11 `P-NEGOTIATION-FALLBACK` | *(documented, worker/index.mjs comment: "A failed read is not kept")* |
 | `iri-negotiation` | resource complexity | claimed | linear in the length of the `Accept` header | §1.11 `P-NEGOTIATION-FALLBACK` | *(maintainer, 2026-10)* |
 | `mcp-server` | numeric domain and representational limits | claimed | 64 KiB, 1,000 keys, 64 levels, 200-character text arguments, `limit` 1–50 | §1.11 `P-MCP-BOUNDED` | *(documented, worker/mcp.mjs `validate` tool description: "The request may be at most")* |
@@ -823,7 +824,7 @@ rested on silence were turned into stated limits by maintainer ruling
 | `D-AGENT-TEXT` | filtering of text meant to steer AI agents | stated by maintainer ruling (2026-10). Descriptions, notes and listings reach agents through `llms.txt`, `catalog.json` and MCP answers as written | security-critical | no | *(maintainer, 2026-10)* |
 | `D-LISTED-CONTENT-UNREVIEWED` | review or endorsement of listed extensions and node models | stated. Content is listed as the owner reported it; whether the domain is the owner's is not checked; the review only checks that the reporter represents the organisation | correctness-only | yes: "listed on datamodels.jp" is not "endorsed" | *(documented, CONTRIBUTING.md "Adding a listed extension" steps 3 and 4)* |
 | `D-STATUS-NOT-REVIEW` | a security review behind `stable`, `ADOPTERS.yaml` or a DCO sign-off | stated. `stable` means two independent adopters; adopters are self-reported; the sign-off is an agreement to the DCO, not an identity check | correctness-only | yes | *(documented, docs/design.md "Versioning and lifecycle": "Entries are self-reported with a link")* |
-| `D-NEGOTIATION-STALE-MAJOR` | a 303 that always names the subject's current major version | stated by maintainer ruling (2026-10), narrowed for #298 (2026-11). An isolate of the IRI Worker keeps the subject majors for five minutes, and caches may keep a 303 for five more (`max-age=300`), so for up to about ten minutes after a new major version a JSON-LD client may be sent to the old major's vocabulary. A failed read of `catalog.json` is not kept | correctness-only | no | *(documented, worker/index.mjs comment: "An isolate keeps them for five minutes")* |
+| `D-NEGOTIATION-STALE-MAJOR` | a 303 that always names the subject's current major version | stated by maintainer ruling (2026-10), narrowed for #298 (2026-11). An isolate of the IRI Worker keeps the subject majors for five minutes, and caches may keep a 303 for five more (`max-age=300`), so for up to about ten minutes after a new major version a JSON-LD client may be sent to the old major's vocabulary. A failed read of `catalog.json` is not kept | correctness-only | no | *(documented, worker/index.mjs comment: "a new major version reaches JSON-LD clients within about ten minutes")* |
 | `D-REPO-CODE-RUNS` | isolation of the build from repository code | stated. Adapter modules and scripts run with the rights of the build (CI's read-only token; after merge, Workers Builds, and the read-only "Check live site" job on the merged commit) | security-critical | no | *(documented, scripts/lib/adapters.mjs header)* |
 
 Well-known attack classes for a catalogue of schemas and contexts that the

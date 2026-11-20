@@ -2,7 +2,7 @@
 // vocabulary, browsers the page, unknown IRIs a 404.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import worker, { prefersJsonLd, MAJORS_TTL_MS } from '../worker/index.mjs';
+import worker, { prefersJsonLd, MAJORS_TTL_MS, resetMajors } from '../worker/index.mjs';
 
 // The static assets as the Worker sees them: _redirects for known IRIs, catalog.json, else 404.
 const env = {
@@ -73,7 +73,7 @@ test('an error in the script falls back to the static answer', async () => {
   assert.equal(r.headers.get('location'), '/models/task/Task/');
 });
 
-// The same assets, with catalog.json as given (#298).
+// The same assets, with catalog.json as given (#298); the IRIs answer as in `env` above.
 const withCatalog = (catalog) => ({
   ASSETS: {
     async fetch(input) {
@@ -88,8 +88,9 @@ const v1 = withCatalog(() => Response.json({ models: [{ subject: 'task', version
 const v2 = withCatalog(() => Response.json({ models: [{ subject: 'task', version: '2.0.0' }] }));
 
 test('the subject majors are read again after five minutes', async (t) => {
-  // Far enough ahead that what earlier tests cached has expired.
-  t.mock.timers.enable({ apis: ['Date'], now: Date.now() + 10 * MAJORS_TTL_MS });
+  resetMajors();
+  t.after(resetMajors);
+  t.mock.timers.enable({ apis: ['Date'], now: 1_000_000 });
   assert.equal((await jsonLd(v1)).headers.get('location'), '/vocab/task/v1.jsonld');
   t.mock.timers.tick(MAJORS_TTL_MS - 1);
   assert.equal((await jsonLd(v2)).headers.get('location'), '/vocab/task/v1.jsonld', 'still cached');
@@ -98,7 +99,9 @@ test('the subject majors are read again after five minutes', async (t) => {
 });
 
 test('a failed read of catalog.json is not cached', async (t) => {
-  t.mock.timers.enable({ apis: ['Date'], now: Date.now() + 20 * MAJORS_TTL_MS });
+  resetMajors();
+  t.after(resetMajors);
+  t.mock.timers.enable({ apis: ['Date'], now: 1_000_000 });
   let reads = 0;
   const failing = withCatalog(() => { reads++; return new Response('error', { status: 500 }); });
   const r = await jsonLd(failing);

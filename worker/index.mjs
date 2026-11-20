@@ -37,11 +37,14 @@ export function prefersJsonLd(accept) {
 }
 
 // The major version of each subject, from catalog.json. An isolate keeps them
-// for five minutes, as long as caches keep catalog.json (max-age=300), so a new
-// major version reaches JSON-LD clients within minutes (#298). A failed read is
-// not kept: that request gets the static answer, and the next one reads again.
+// for five minutes, and caches keep a 303 for five more (max-age=300 below), so
+// a new major version reaches JSON-LD clients within about ten minutes (#298).
+// A failed read is not kept: that request gets the static answer, and the next
+// one reads again.
 export const MAJORS_TTL_MS = 5 * 60 * 1000;
 let majors = null; // { at, map: Promise<Map<subject, major>> }
+/** Forgets the cached majors (tests). */
+export function resetMajors() { majors = null; }
 async function subjectMajor(env, request, subject) {
   const now = Date.now();
   if (!majors || now - majors.at >= MAJORS_TTL_MS) {
