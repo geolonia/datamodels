@@ -7,14 +7,19 @@ name: Check live site
 # Cloudflare credential is needed and none lives in GitHub.
 #
 # When it runs:
-# - after every production deploy: Cloudflare Workers Builds reports the
-#   check run "Workers Builds: datamodels" on the commit it deployed from main;
+# - after every Workers Builds deploy of main: Cloudflare reports the check
+#   run "Workers Builds: datamodels" on the commit it deployed (a deploy by
+#   hand, `pnpm run deploy`, reports none and is covered by the daily run);
 # - once a day, so a change made outside a deploy (a dashboard setting, a
 #   cache rule, a custom domain) shows up too;
-# - by hand (Actions → Check live site → Run workflow).
+# - by hand from main (Actions → Check live site → Run workflow).
 #
 # A failed check opens an issue (or comments on the open one), because a
-# failed run started by a bot or a schedule notifies nobody reliably.
+# failed run started by a bot or a schedule notifies nobody reliably. The
+# issue reaches whoever watches this repository's issues.
+#
+# A schedule pauses after 60 days without activity in the repository; the
+# deploy trigger does not.
 on:
   check_run:
     types: [completed]
@@ -30,7 +35,8 @@ jobs:
     # check_run fires for every check run in the repository: only Cloudflare's
     # successful production build of main counts as a deploy.
     if: >-
-      github.event_name != 'check_run' || (
+      (github.event_name == 'schedule') ||
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') || (
         github.event.check_run.app.slug == 'cloudflare-workers-and-pages' &&
         github.event.check_run.name == 'Workers Builds: datamodels' &&
         github.event.check_run.conclusion == 'success' &&
@@ -59,7 +65,10 @@ jobs:
       - name: Confirm the commit is on main
         run: |
           git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
-          git merge-base --is-ancestor HEAD origin/main
+          if ! git merge-base --is-ancestor HEAD origin/main; then
+            echo "::error::$(git rev-parse HEAD) is not on main; not checking it"
+            exit 1
+          fi
 
       # Reads the pnpm version from "packageManager" in package.json.
       - name: Set up pnpm
@@ -74,13 +83,13 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      # One retry after five minutes: right after a deploy, a cached
-      # catalog.json (max-age=300) can still be the previous one.
+      # One retry after five and a half minutes: right after a deploy, a
+      # cached catalog.json (max-age=300) can still be the previous one.
       - name: Check the live site
         run: |
           pnpm run check:live && exit 0
-          echo "::warning::check:live failed; trying again in five minutes"
-          sleep 300
+          echo "::warning::check:live failed; trying again in five and a half minutes"
+          sleep 330
           pnpm run check:live
 
   report:
@@ -89,6 +98,10 @@ jobs:
     if: failure()
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    # One report at a time, so two failures cannot both open an issue.
+    concurrency:
+      group: check-live-report
+      cancel-in-progress: false
     permissions:
       issues: write
     steps:

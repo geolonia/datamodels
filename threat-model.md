@@ -26,9 +26,11 @@
   so no routing changes.
   2026-11-20, for geolonia/datamodels#297 and #312 (§1.16 triggers: the
   deploy path and the branch rules). `check:live` runs in CI after every
-  deploy and once a day, and a failure opens an issue, so `P-PUBLISHED-IMMUTABLE`
-  and `P-DIGESTS-PUBLISHED` are checked on the live site without an operator
-  step. The build is described as it is: pnpm with `pnpm-lock.yaml`, the
+  Workers Builds deploy of `main` and once a day, and a failure opens an
+  issue, so `P-PUBLISHED-IMMUTABLE` and `P-DIGESTS-PUBLISHED` are checked on
+  the live site without an operator step; a deploy by hand waits up to a day
+  for the check. The new workflow is a fifth one under `P-CI-TOKENS-SCOPED`
+  and an input in §1.7. The build is described as it is: pnpm with `pnpm-lock.yaml`, the
   build command `npm run build:deploy` (until 2026-10-26 it was `npm run
   build`, so the release check did not guard a deploy before then), and no
   preview builds since 2026-10-26. `main` requires the two pull-request
@@ -67,7 +69,7 @@
   default, open as question `QN` in §1.18.
 - **Glossary**: a short plain-language glossary is at the end of this document
   (Appendix A).
-- **Confidence**: 213 documented / 58 maintainer / 0 inferred / 0 assumption.
+- **Confidence**: 215 documented / 57 maintainer / 0 inferred / 0 assumption.
   Counted as the plugin's validator counts, over §1.2 to §1.19: one count per
   parenthesised tag, by its first kind; the tags in this header and its legend
   are not counted.
@@ -287,7 +289,7 @@ Reachability preconditions:
 - **Zone rule.** A configuration rule on the `datamodels.jp` zone turns off
   Browser Integrity Check for the machine-readable paths and `/mcp`. It lives
   in the Cloudflare dashboard, not in the repository *(documented, docs/deployment.md "Machine-readable files: no Browser Integrity Check")*.
-  `pnpm run check:live` fails when it goes missing *(documented, docs/deployment.md: "`pnpm run check:live` fetches those paths with that user agent and fails if the rule goes missing")*. The workflow "Check live site" runs it after every deploy and once a day, and a failure opens an issue *(documented, .github/workflows/check-live.yml header: "Checks the deployed site against the URL contract")*.
+  `pnpm run check:live` fails when it goes missing *(documented, docs/deployment.md: "`pnpm run check:live` fetches those paths with that user agent and fails if the rule goes missing")*. The workflow "Check live site" runs it after every Workers Builds deploy of `main` and once a day, and a failure opens an issue *(documented, .github/workflows/check-live.yml header: "Checks the deployed site against the URL contract")*.
 - **Domain.** `datamodels.jp` is registered in Route 53 in the GeonicDB AWS
   account, with name servers delegated to Cloudflare *(documented, docs/design.md "Decision 1": "Registration: Route 53 in the GeonicDB AWS account")*.
   `datamodel.jp` is not registered: `docs/design.md` calls it "available as a
@@ -322,7 +324,7 @@ Reachability preconditions:
 | `--offline` on `datamodels check` | used by `build:deploy` (production) and `validate:models` | skips the comparison with the live site and records a schema whose `$ref` points to another site as "not validated" (a note) | supported; the online comparison runs only in the pull-request check | *(documented, package.json `build:deploy` script)* |
 | `--base origin/<base>` | used only in the pull-request job of `check-worker.yml` | compares release snapshots with the base branch | supported | *(documented, .github/workflows/check-worker.yml step "Compare the published versions with the base branch")* |
 | Preview builds on workers.dev | off since 2026-10-26 (a dashboard setting); `preview_urls` stays `true` | when turned on again: same static tree and Worker; the zone's Browser Integrity Check rule does not apply; the same `MCP_LIMITER` namespace is declared again | supported for review, not for consumers | *(documented, docs/deployment.md: "Preview builds are off since 2026-10-26")* |
-| `MCP_LIMITER` binding absent | present in production and previews | no rate limit (`allowed()` returns true) | dev-only (tests, `wrangler dev`) | *(documented, worker/limit.mjs `allowed` comment: "No binding (the tests; wrangler dev simulates it): no limit")* |
+| `MCP_LIMITER` binding absent | present in production, and in previews when they are on | no rate limit (`allowed()` returns true) | dev-only (tests, `wrangler dev`) | *(documented, worker/limit.mjs `allowed` comment: "No binding (the tests; wrangler dev simulates it): no limit")* |
 | `CHECK_MACHINE_UA=1` | unset | runs the user-agent checks of `check:live` against a preview too | dev-only | *(documented, docs/deployment.md "unless `CHECK_MACHINE_UA=1` is set")* |
 | `run_worker_first` list | `["/ns/*", "/mcp"]` | which paths run code at all | supported; adding a path is a §1.16 trigger | *(documented, wrangler.jsonc `assets` comment)* |
 
@@ -374,7 +376,7 @@ the individual fields of `catalog.yaml`, `notes.yaml` and `ADOPTERS.yaml`
 | pull request | `node.yaml` (`prerelease`, `baseUrl`, licence) | **yes** | data | review; the toolkit refuses `prerelease` going back to `true` or disappearing once the base branch has it | *(documented, CONTRIBUTING.md "Pull request steps" and README "Pre-release exception")* |
 | pull request | `adapters/<name>/index.mjs` and other adapter code | **yes** | callback-code | review: the build imports it and runs it | *(documented, scripts/lib/adapters.mjs header: "loads its default export")* |
 | pull request | `scripts/`, `worker/`, `site/.vitepress/`, `wrangler.jsonc` | **yes** | callback-code | review: CI runs it with a read-only token; after merge Workers Builds runs and deploys it | *(documented, .github/workflows/check-worker.yml steps "Test" and "Validate, build and dry-run deploy")* |
-| pull request | `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml` | **yes** | callback-code, resource-name | review of dependency changes; `pnpm install --frozen-lockfile` installs exactly the lockfile; install scripts run only for `esbuild` and `workerd`; a new version is installed only after a day, except the toolkit | *(documented, pnpm-workspace.yaml comment: "Install scripts are off")* |
+| pull request | `package.json`, `pnpm-lock.yaml`, `pnpm-workspace.yaml` | **yes** | callback-code, resource-name | review of dependency changes; `pnpm install --frozen-lockfile` installs exactly the lockfile; install scripts run only for `esbuild` and `workerd`; a new version is installed only after a day, except the toolkit; an override pins `undici` past a miniflare pin | *(documented, pnpm-workspace.yaml comments: "Install scripts are off" and "pnpm installs a new version only after it is a day old")* |
 | pull request | `extensions/<name>.yaml` | **yes**, listing owner via PR | data | review checks only that the reporter represents the organisation; CI checks form and plain text | *(documented, CONTRIBUTING.md "Adding a listed extension" step 4: "The content is listed as the owner reported it, without review")* |
 | pull request | `nodes.yaml` | **yes** | resource-name | review; nodes are added only by a reviewed pull request | *(documented, scripts/fetch-nodes.mjs comment: "Nodes are listed only by a reviewed pull request (#219)")* |
 | `pnpm run nodes` | a node's `catalog.json` | **yes**, node operator | data, size | maintainer reviews the snapshot diff; text reduced to plain text, URLs to plain http(s) | *(documented, scripts/lib/nodes.mjs `cleanText` comment: "Text from other sites ends up in Markdown pages (and Vue): plain text only")* |
@@ -382,6 +384,7 @@ the individual fields of `catalog.yaml`, `notes.yaml` and `ADOPTERS.yaml`
 | `similar-models.yml` | issue title and body | **yes**, any GitHub user | data | read from the event file as data; the job has `issues: write` | *(documented, .github/workflows/similar-models.yml header: "nothing from the issue reaches a shell command")* |
 | `dist-diff.yml`, `check-worker.yml` | the pull request's merge commit | **yes** | callback-code | runs with `contents: read`, `persist-credentials: false` | *(documented, .github/workflows/check-worker.yml `permissions: contents: read`)* |
 | Workers Builds | `main` at the merged commit | no — merged by a maintainer | callback-code | n/a | *(documented, docs/deployment.md: "deploys `main`")* |
+| `check-live.yml` | the commit of a `check_run` event, then its code (`pnpm install`, `check:live`) | no: only Cloudflare's successful "Workers Builds: datamodels" check run on `main` starts it, and the job stops unless the commit is on `main` | callback-code | runs with `contents: read`, `persist-credentials: false`; the issue job has only `issues: write` and checks out nothing | *(documented, .github/workflows/check-live.yml comment: "The check run's commit must be on main: the job runs repository code")* |
 | Workers Builds | dashboard settings (build and deploy commands, branch control) | no — operator | data | n/a | *(documented, docs/deployment.md "Dashboard settings on the `datamodels` Worker")* |
 | zone | the Browser Integrity Check configuration rule | no — operator | data | n/a | *(documented, docs/deployment.md expression under "Machine-readable files: no Browser Integrity Check")* |
 | consumer | the published files themselves, as input to the consumer's own processors | **yes**, from the consumer's point of view: written by contributors, reviewed by maintainers | data, size, resource-name | the consumer bounds its JSON-LD loader and schema validator (§1.13) | *(maintainer, 2026-10)* |
@@ -454,7 +457,7 @@ instructions).
 | `supply-chain` | numeric domain and representational limits | N/A — no numeric input | | §1.7 | *(documented, .github/workflows/check-worker.yml)* |
 | `supply-chain` | failure and exception atomicity | claimed | the organisation's ruleset "main-protection" requires one approval, approval of the last push, code-owner review and resolved threads, and forbids deletion and non-fast-forward pushes, with bypass for a repository role and one team; the organisation's ruleset "security-suite" requires its Security Suite workflow (zizmor, betterleaks, pinact, bumblebee). Since 2026-10-26 (#291) the branch protection of `main` also requires the "Build and dry-run deploy" check, which runs the `--base` comparison, and "Japanese and English pages", with the branch up to date, for administrators too; after the launch a merged change to a published file is `VALID` however it got in | §1.11 `P-PUBLISHED-IMMUTABLE` | *(documented, docs/deployment.md: "`main` also requires the pull-request checks")* |
 | `supply-chain` | recursive or cyclic topology | N/A | no recursive input | §1.7 | *(documented, .github/workflows/check-worker.yml)* |
-| `supply-chain` | callback and collaborator execution | claimed | pull-request code runs only with read-only tokens; deploy rights exist only in Workers Builds on branches of this repository | §1.11 `P-NO-DEPLOY-CREDENTIAL-IN-GITHUB`, `P-CI-TOKENS-SCOPED` | *(documented, docs/deployment.md: "no credential lives in GitHub")* |
+| `supply-chain` | callback and collaborator execution | claimed | pull-request code runs only with read-only tokens; deploy rights exist only in Workers Builds, which builds only `main` | §1.11 `P-NO-DEPLOY-CREDENTIAL-IN-GITHUB`, `P-CI-TOKENS-SCOPED` | *(documented, docs/deployment.md: "no credential lives in GitHub")* |
 | `supply-chain` | serialization and reconstruction | claimed | untrusted text (issue, PR description) is read as data, never interpolated into a shell command | §1.11 `P-CI-TOKENS-SCOPED` | *(documented, .github/workflows/similar-models.yml header)* |
 | `supply-chain` | reference and object lifecycle | N/A — no long-lived objects | | §1.7 | *(documented, .github/workflows/check-worker.yml)* |
 | `supply-chain` | concurrency and reentrancy | N/A — GitHub and Cloudflare serialise runs | | §1.9 | *(documented, .github/workflows/dist-diff.yml `concurrency` block)* |
@@ -747,8 +750,8 @@ are listed, or properties the maintainer ratified (2026-10).
 - **`P-NO-DEPLOY-CREDENTIAL-IN-GITHUB` — nothing in GitHub can deploy.** No
   Cloudflare token lives in GitHub; CI only runs a dry-run deploy; Workers Builds
   deploys `main` *(documented, docs/deployment.md: "no credential lives in GitHub")*.
-  Workers Builds builds only branches of this repository, a setting in the
-  Cloudflare dashboard *(maintainer, 2026-10)*.
+  Workers Builds builds only `main`; preview builds are off, a setting in the
+  Cloudflare dashboard *(documented, docs/deployment.md: "Preview builds are off since 2026-10-26")*.
   - Symptom: `integrity-bypass` (someone without merge rights changes what
     datamodels.jp serves).
   - Tier: security-critical.
@@ -756,18 +759,23 @@ are listed, or properties the maintainer ratified (2026-10).
     `grep -rn "secrets\.\|CLOUDFLARE" .github/workflows` — 0 hits.
 
 - **`P-CI-TOKENS-SCOPED` — untrusted text in CI is data, and tokens are
-  narrow.** Every workflow in this repository runs with `contents: read`; only `similar-models.yml`
-  adds `issues: write` and reads the issue from the event file as data; the
-  pull-request description is passed in an environment variable
+  narrow.** Every workflow in this repository runs with `contents: read` or
+  less; two jobs add `issues: write`: `similar-models.yml`, which reads the
+  issue from the event file as data, and the report job of `check-live.yml`,
+  which checks out nothing and passes only the event name, a commit SHA and
+  the run URL through environment variables; the pull-request description is
+  passed in an environment variable
   *(documented, .github/workflows/similar-models.yml header: "nothing from the issue reaches a shell command")*.
-  - Covers the four workflows in `.github/workflows/`. The organisation's
+  - Covers the five workflows in `.github/workflows/`. The organisation's
     Security Suite workflow, which an organisation ruleset requires on every
     pull request, is outside this model *(maintainer, 2026-10)*.
   - Symptom: `integrity-bypass` (an issue or a pull request gets the token to
     act).
   - Tier: security-critical.
   - *Voided by*: nothing. The permission lines are
-    `.github/workflows/similar-models.yml:26` (`issues: write`) and
+    `.github/workflows/similar-models.yml:26` (`issues: write`),
+    `.github/workflows/check-live.yml:106` (`issues: write`),
+    `.github/workflows/check-live.yml:52` (`contents: read`) and
     `.github/workflows/check-worker.yml:17` (`contents: read`). Search:
     `grep -n "permissions\|: write" .github/workflows/*.yml`.
 
@@ -809,7 +817,7 @@ rested on silence were turned into stated limits by maintainer ruling
 | `D-LISTED-CONTENT-UNREVIEWED` | review or endorsement of listed extensions and node models | stated. Content is listed as the owner reported it; whether the domain is the owner's is not checked; the review only checks that the reporter represents the organisation | correctness-only | yes: "listed on datamodels.jp" is not "endorsed" | *(documented, CONTRIBUTING.md "Adding a listed extension" steps 3 and 4)* |
 | `D-STATUS-NOT-REVIEW` | a security review behind `stable`, `ADOPTERS.yaml` or a DCO sign-off | stated. `stable` means two independent adopters; adopters are self-reported; the sign-off is an agreement to the DCO, not an identity check | correctness-only | yes | *(documented, docs/design.md "Versioning and lifecycle": "Entries are self-reported with a link")* |
 | `D-NEGOTIATION-STALE-MAJOR` | a 303 that always names the subject's current major version | stated by maintainer ruling (2026-10). The IRI Worker caches the subject majors per isolate; after a new major version an isolate may send JSON-LD clients to the old major's vocabulary until it is recycled. A non-OK read of `catalog.json` is cached as an empty map the same way (`worker/index.mjs:43`), so that isolate gives JSON-LD clients the static answer until it is recycled | correctness-only | no | *(maintainer, 2026-10)* |
-| `D-REPO-CODE-RUNS` | isolation of the build from repository code | stated. Adapter modules and scripts run with the rights of the build (CI's read-only token; after merge, Workers Builds) | security-critical | no | *(documented, scripts/lib/adapters.mjs header)* |
+| `D-REPO-CODE-RUNS` | isolation of the build from repository code | stated. Adapter modules and scripts run with the rights of the build (CI's read-only token; after merge, Workers Builds, and the read-only "Check live site" job on the merged commit) | security-critical | no | *(documented, scripts/lib/adapters.mjs header)* |
 
 Well-known attack classes for a catalogue of schemas and contexts that the
 project leaves to the consumer:
@@ -871,8 +879,9 @@ project leaves to the consumer:
 **Operator (Geolonia), for the claims above to hold:**
 
 - Keep the zone's Browser Integrity Check rule, and act on the issue
-  "check:live fails on datamodels.jp" that the "Check live site" workflow opens
-  *(documented, docs/deployment.md: "opens the issue \"check:live fails on datamodels.jp\"")*.
+  "check:live fails on datamodels.jp" that the "Check live site" workflow opens;
+  it mentions nobody, so watch this repository's issues
+  *(documented, docs/deployment.md: "the maintainers watch this repository's issues")*.
 - Keep `datamodels.jp` registered and the zone in the same Cloudflare account
   *(documented, docs/design.md "Decision 1")*.
 - Keep Workers Builds building `main` only, and `preview_urls` true
@@ -1015,8 +1024,8 @@ export: `description` (the exporter takes the first paragraph of §1.2) and
 `inferred` with no text); the published JSON carries the §1.4 boundary for
 each family with `documented` provenance, matching §1.4. The JSON schema
 has no **maintainer** kind, so the export counts maintainer-ratified claims as
-documented: its confidence reads 271 documented and 0 inferred, the sum of the
-213 documented and 58 maintainer claims counted here. The JSON's `dispositions`
+documented: its confidence reads 272 documented and 0 inferred, the sum of the
+215 documented and 57 maintainer claims counted here. The JSON's `dispositions`
 array has nine values, not ten: the plugin's `schema.json` (commit `192fd60`)
 allows exactly nine and has no value for `OUT-OF-MODEL: dependency-contract`,
 so that disposition, which §1.9 and §1.17 use, appears only here and in the

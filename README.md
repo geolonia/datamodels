@@ -48,7 +48,7 @@ pnpm run check           # validate models, build dist/, check the release snaps
 pnpm test                # validator, vocabulary and adapter tests
 pnpm run validate:models # datamodels check --offline (datamodels-toolkit) on this repository, plus the catalog's own rules
 pnpm run site:dev        # local site with generated model pages
-pnpm run check:live      # verify the deployed site against the URL contract and the release snapshots (CI runs it after every deploy and daily)
+pnpm run check:live      # verify the deployed site against the URL contract and the release snapshots (CI runs it after every Workers Builds deploy and daily)
 pnpm run dist:diff       # build origin/main (or --base <ref>) and this tree, list what differs in dist/; CI shows it on every pull request
 pnpm exec datamodels release <subject>  # snapshot the current version (maintainers, last step before merging)
 pnpm run new-model -- <subject> <Type> [--value]   # scaffold a model; the validator lists the TODOs left
