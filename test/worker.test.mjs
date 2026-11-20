@@ -117,3 +117,18 @@ test('a failed read of catalog.json is not cached', async (t) => {
   assert.equal((await jsonLd(throwing)).status, 302);
   assert.equal((await jsonLd(v2)).headers.get('location'), '/vocab/task/v2.jsonld');
 });
+
+test('a read of catalog.json that outlives its five minutes is not answered from', async (t) => {
+  resetMajors();
+  t.after(resetMajors);
+  t.mock.timers.enable({ apis: ['Date'], now: 1_000_000 });
+  let release;
+  const slow = withCatalog(() => new Promise((resolve) => { release = () => resolve(Response.json({ models: [{ subject: 'task', version: '1.0.0' }] })); }));
+  const pending = jsonLd(slow);
+  await new Promise((r) => setImmediate(r));
+  // A new major version is released and the slow read's five minutes pass.
+  t.mock.timers.tick(MAJORS_TTL_MS);
+  assert.equal((await jsonLd(v2)).headers.get('location'), '/vocab/task/v2.jsonld', 'a new read');
+  release();
+  assert.equal((await pending).headers.get('location'), '/vocab/task/v2.jsonld', 'the slow request uses the current read');
+});

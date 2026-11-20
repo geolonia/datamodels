@@ -45,7 +45,8 @@ export const MAJORS_TTL_MS = 5 * 60 * 1000;
 let majors = null; // { at, map: Promise<Map<subject, major>> }
 /** Forgets the cached majors (tests). */
 export function resetMajors() { majors = null; }
-async function subjectMajor(env, request, subject) {
+/** The current entry: the cached one while it is younger than five minutes, else a new read. */
+function majorsEntry(env, request) {
   const now = Date.now();
   if (!majors || now - majors.at >= MAJORS_TTL_MS) {
     const entry = { at: now, map: null };
@@ -55,7 +56,18 @@ async function subjectMajor(env, request, subject) {
       .catch(() => { if (majors === entry) majors = null; return new Map(); });
     majors = entry;
   }
-  return (await majors.map).get(subject) || null;
+  return majors;
+}
+
+async function subjectMajor(env, request, subject) {
+  const entry = majorsEntry(env, request);
+  let map = await entry.map;
+  // A read that outlived its five minutes (or was replaced meanwhile) is not
+  // answered from: the request waits for the current read instead, once. A
+  // failed read has cleared the cache and answers with the static page.
+  const outdated = majors === entry ? Date.now() - entry.at >= MAJORS_TTL_MS : majors !== null;
+  if (outdated) map = await majorsEntry(env, request).map;
+  return map.get(subject) || null;
 }
 
 export default {
