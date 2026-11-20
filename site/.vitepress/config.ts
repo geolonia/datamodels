@@ -8,6 +8,7 @@ import { defineConfig, type DefaultTheme } from 'vitepress'
 import { loadSubjects, subjectUrls, modelUrls, BASE_URL } from '../../scripts/lib/models.mjs'
 import { tokenize } from './search-tokenize.mjs'
 import { endUrlsAtNonAscii } from './linkify.mjs'
+import { addXDefault } from './sitemap.mjs'
 
 const subjects = await loadSubjects()
 // The toolkit release this build runs, as the other nodes show it: in the footer and a generator tag.
@@ -210,7 +211,8 @@ export default defineConfig({
   base: '/',
   cleanUrls: true,
   // sitemap.xml for search engines; robots.txt (public/) points to it.
-  sitemap: { hostname: SITE_URL },
+  // With x-default added, as in each page's own hreflang links (sitemap.mjs).
+  sitemap: { hostname: SITE_URL, transformItems: addXDefault },
   lastUpdated: false,
   // Links to the machine files and IRIs are not pages; everything else must resolve.
   ignoreDeadLinks: [/^\/(context|schema|examples|adapters|vocab|catalog|ns|LICENSE-CONTENT|llms\.txt)/],
