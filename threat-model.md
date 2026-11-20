@@ -18,6 +18,12 @@
   the rule; every other claim is unchanged and stays bound to the commit
   above. The backtest's external-`$ref` case still routes `VALID` against
   `P-REFS-CATALOG-ONLY`, now against a CI rule.
+  2026-11-20, for geolonia/datamodels#295 (a §1.16 trigger: a published
+  digest for consumers). New property `P-DIGESTS-PUBLISHED`; `D-NO-SIGNATURE`
+  narrows to signatures, the §1.13 consumer obligation names the digests, and
+  the §1.16 trigger follows. The maintainer chose digests and documentation
+  over signatures on 2026-11-20. No backtest case concerned verifying bytes,
+  so no routing changes.
 - **Date / author**: 2026-10-16, drafted for the maintainer, Daniel Kastl, who
   ratified the claims of the first draft in one wave on 2026-10-16.
 - **Generation metadata**: produced with AI assistance. Model/agent: Claude
@@ -50,7 +56,7 @@
   default, open as question `QN` in §1.18.
 - **Glossary**: a short plain-language glossary is at the end of this document
   (Appendix A).
-- **Confidence**: 201 documented / 63 maintainer / 0 inferred / 0 assumption.
+- **Confidence**: 204 documented / 64 maintainer / 0 inferred / 0 assumption.
   Counted as the plugin's validator counts, over §1.2 to §1.19: one count per
   parenthesised tag, by its first kind; the tags in this header and its legend
   are not counted.
@@ -640,6 +646,20 @@ are listed, or properties the maintainer ratified (2026-10).
     `dependentSchemas` and `dependencies` are names, and the schemas under
     them are read.
 
+- **`P-DIGESTS-PUBLISHED` — `catalog.json` lists the digest of every exact-version file.** `digests` maps the URL of every exact-version file (the contexts, vocabularies and schemas of every published version) to its SHA-256 digest in the Subresource Integrity form, computed at build time from the bytes written to `dist/` *(documented, scripts/lib/publish.mjs comment: "A digest per exact-version file, from the bytes written to dist/")*. `pnpm run check:live` checks that the digest of every released file equals its release snapshot's, and that every other listed file is served with its digest *(documented, scripts/check-live.mjs comment: "Digests (#295)")*. A digest shows that a copy matches what the site published, not who published it (`D-NO-SIGNATURE`) *(maintainer, 2026-11)*.
+  - Symptom: `wrong-output` (a consumer that pinned a digest rejects a good
+    file, or a copy is checked against a wrong value).
+  - Tier: correctness-only *(maintainer, 2026-11)*.
+  - *Voided by*:
+    - `check:live` is run by hand after a deploy (§1.13, operator), so a
+      digest that differs from the served bytes is found only then;
+    - `catalog.json` is cached for 5 minutes, so right after a deploy a
+      reader can get the previous digests;
+    - during the pre-release a published file may be corrected in place, and
+      its digest changes with it (`D-PRERELEASE-CORRECTIONS`).
+    Search: `grep -n "exactDigests\|sriDigest" scripts/lib/publish.mjs scripts/check-live.mjs`;
+    tests in `test/digests.test.mjs`.
+
 - **`P-NEGOTIATION-FALLBACK` — the IRI Worker is never worse than the static
   answer.** Only GET and HEAD for IRIs that `_redirects` already answers are
   negotiated; a client that ranks JSON-LD above HTML gets a 303 to the
@@ -759,7 +779,7 @@ rested on silence were turned into stated limits by maintainer ruling
 | --- | --- | --- | --- | --- | --- |
 | `D-PRERELEASE-CORRECTIONS` | immutability before the official launch | stated. While `prerelease: true`, the published files of a subject's current version, `v1.0.0` included, may be corrected in place; exact versions get a 5-minute cache. Only the current version: a change to an older release is `VALID` even before the launch, although CI only notes it. Ends when the launch sets `prerelease: false` | security-critical | no | *(documented, site/en/guide/urls.md: "Do not reference them from production data before the launch")* |
 | `D-UNVERSIONED-FILES` | stable bytes for files that have no version in their URL | stated. Examples, mapping files, adapter files, `catalog.json`, `llms.txt`, `/mcp/index.json`, pages and aliases change with any build | correctness-only | no | *(documented, docs/design.md "Adapters": "not part of the release snapshots"; public/_headers "Mapping files (YAML, RFC 9512). Not versioned")* |
-| `D-NO-SIGNATURE` | signatures, published digests or any way to verify bytes except comparing with the release snapshot in the repository | stated by maintainer ruling (2026-10): no signatures; the release snapshot in the repository is the reference copy. The hash manifest was retired on 2026-10-14 (#226) | security-critical | no | *(maintainer, 2026-10)* |
+| `D-NO-SIGNATURE` | signatures, or any proof of who published a file | stated by maintainer ruling (2026-10), narrowed for #295 (2026-11): no signatures. `catalog.json` lists SHA-256 digests (`P-DIGESTS-PUBLISHED`), but they come from the same site as the files, so they do not show who published them; the release snapshot in the repository is the reference copy that does not depend on the site. The hash manifest was retired on 2026-10-14 (#226) | security-critical | no | *(maintainer, 2026-11)* |
 | `D-CACHE-HINT` | integrity from `Cache-Control: immutable` | stated. The header tells caches how long to keep a file; it proves nothing about its content | correctness-only | yes: a cache directive is not an integrity guarantee | *(documented, scripts/lib/cache.mjs header: "After the official launch exact versions never change, so they are cached for a year as immutable")* |
 | `D-NO-AVAILABILITY-SLA` | uptime, a mirror, or atomic deploys | stated by maintainer ruling (2026-10) for uptime and in docs/design.md for the mirror ("not needed for 1.0.0"). `P-IRI-RESOLVES` promises that IRIs are kept, not that every request succeeds | correctness-only | no | *(maintainer, 2026-10)* |
 | `D-NO-CONFIDENTIALITY` | confidentiality of anything served | stated. Every file and answer is public; CORS is open | correctness-only | no | *(documented, public/_headers header comment: "Nothing here is private")* |
@@ -823,8 +843,10 @@ project leaves to the consumer:
   only added *(documented, catalog.schema.json `description`: "consumers must ignore unknown fields")*.
 - Treat node models (`"source": "node"`) and listed extensions as other
   people's claims (`D-LISTED-CONTENT-UNREVIEWED`) *(documented, CONTRIBUTING.md "Adding a listed extension" step 4)*.
-- To verify bytes, compare with `models/<subject>/releases/vX.Y.Z/` in the
-  repository; there is no signature (`D-NO-SIGNATURE`) *(maintainer, 2026-10)*.
+- To verify bytes, pin the digest from `digests` in `catalog.json`
+  (`P-DIGESTS-PUBLISHED`), or compare with `models/<subject>/releases/vX.Y.Z/`
+  in the repository, the copy that does not depend on the site; there is no
+  signature (`D-NO-SIGNATURE`) *(documented, site/en/guide/urls.md "Verifying a file")*.
 - Follow redirects from `/ns/*`: 302 to a page for browsers, 303 to the
   vocabulary for JSON-LD clients *(documented, site/en/guide/urls.md "The promises" item 3)*.
 - Expect 429 from `/mcp` after 100 requests a minute from one address
@@ -896,7 +918,8 @@ Revise the model when any of these happens:
   planned pinned mirror under `/context/mirror/`.
 - A change of the rule on `$ref` targets (`P-REFS-CATALOG-ONLY`, a CI rule
   since #292), or a size limit on contributed files.
-- A published digest, signature or new manifest for consumers.
+- A signature or a new manifest for consumers, or a change of the digests in
+  `catalog.json` (`P-DIGESTS-PUBLISHED`, since #295).
 - Nodes read during the build instead of from the reviewed snapshot.
 - A change of the deploy path: a deploy token in GitHub, Workers Builds
   building forks, or another host.

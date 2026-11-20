@@ -288,8 +288,10 @@ belong in issues, not in the threat model:
 5. Update `docs/design.md`: the non-goals, "Term IRIs resolve ... No content
    negotiation in 1.0.0" and the "Hosting" paragraph about Worker scripts
    (Q2).
-6. Decide whether consumers get digests or signatures, or a documented
-   pointer to the release snapshots as the reference copy (Q9).
+6. ~~Decide whether consumers get digests or signatures, or a documented
+   pointer to the release snapshots as the reference copy~~ Done in #295
+   (2026-11-20): digests in `catalog.json` and a page section; no
+   signatures (Q9).
 7. Document what `x-personal-data` means and does not mean (Q22).
 8. Run `npm run check:live` automatically after a deploy (Q23).
 9. ~~A `SECURITY.md` in the repository that links this model, as the first
@@ -317,6 +319,11 @@ belong in issues, not in the threat model:
   the YAML and JSON entries edited by hand (not re-exported, which would need
   the exporter's hand completion again), checked with the pinned validator
   (`192fd60`: 90 passed, the usual length warning).
+- 2026-11-20, #295: new property `P-DIGESTS-PUBLISHED`, `D-NO-SIGNATURE`
+  narrowed to signatures, the §1.13 consumer obligation and the §1.16
+  trigger. The maintainer chose digests and documentation over signatures
+  (Sigstore would need a signing workflow outside Workers Builds and tooling
+  on the consumer's side). Companions edited by hand and validated as above.
 
 ## Files
 

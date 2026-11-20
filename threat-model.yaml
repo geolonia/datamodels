@@ -1,10 +1,10 @@
 # threat-model.yaml — derived index; the prose threat model (threat-model.md) is canonical.
 schema: threat-model-sidecar/v2
 project: datamodels
-prose_version: "threat-model.md@sha256:3143d8fc636df5313ab2d293375c9a365f37df2a0c0767a213e0e9f02730dff0"
+prose_version: "threat-model.md@sha256:fa127ce6f023918cf3d16f3a7f91f3f87af362fa513c9857c922063764a811b8"
 model_status: accepted
 triage_policy: strict
-confidence: {documented: 201, maintainer: 63, inferred: 0, assumption: 0}
+confidence: {documented: 204, maintainer: 64, inferred: 0, assumption: 0}
 
 generation:
   model: "Claude Opus 5.5 (claude-opus-5-5)"
@@ -833,6 +833,13 @@ properties_claimed:
     conditions: "schema $ref and $dynamicRef targets are catalogue schema URLs or pointers inside the file, in the sources and the release snapshots; a CI rule since #292"
     violation_symptoms: [bad-data-accepted]
     provenance: {kind: documented, source: "scripts/lib/catalog-rules.mjs comment: \"A schema references only this catalog's schemas or a place inside the file\""}
+  - id: P-DIGESTS-PUBLISHED
+    kind: correctness
+    components: [build-validation, published-files]
+    tier: correctness-only
+    conditions: "catalog.json digests: SHA-256 of every exact-version file, from the bytes written to dist/; check:live compares them with the snapshots and the served bytes; since #295"
+    violation_symptoms: [wrong-output]
+    provenance: {kind: documented, source: "scripts/lib/publish.mjs comment: \"A digest per exact-version file, from the bytes written to dist/\""}
   - id: P-NEGOTIATION-FALLBACK
     kind: correctness
     components: [iri-negotiation]
@@ -893,7 +900,7 @@ properties_claimed:
 properties_disclaimed:
   - {id: D-PRERELEASE-CORRECTIONS, components: [published-files, build-validation], conditions: "stated; while prerelease is true, only the current version may be corrected in place; a change to an older release is VALID", tier: security-critical, false_friend: false, provenance: {kind: documented, source: "site/en/guide/urls.md \"Do not reference them from production data before the launch\""}}
   - {id: D-UNVERSIONED-FILES, components: [published-files], conditions: "stated; examples, mapping files, adapter files, catalog.json, llms.txt, MCP index, pages, aliases", tier: correctness-only, false_friend: false, provenance: {kind: documented, source: "docs/design.md \"Adapters\": \"not part of the release snapshots\""}}
-  - {id: D-NO-SIGNATURE, components: [published-files], conditions: "stated by maintainer ruling (2026-10); no signatures; the release snapshot in the repository is the reference copy", tier: security-critical, false_friend: false, provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: D-NO-SIGNATURE, components: [published-files], conditions: "stated by maintainer ruling (2026-10), narrowed for #295 (2026-11); no signatures; catalog.json digests come from the same site; the release snapshot in the repository is the reference copy that does not depend on the site", tier: security-critical, false_friend: false, provenance: {kind: maintainer, date: "2026-11"}}
   - {id: D-CACHE-HINT, components: [published-files], conditions: "stated; Cache-Control immutable is a cache directive", tier: correctness-only, false_friend: true, provenance: {kind: documented, source: "scripts/lib/cache.mjs header"}}
   - {id: D-NO-AVAILABILITY-SLA, components: [published-files, iri-negotiation, mcp-server], conditions: "stated by maintainer ruling (2026-10) for uptime; in docs/design.md for the mirror", tier: correctness-only, false_friend: false, provenance: {kind: maintainer, date: "2026-10"}}
   - {id: D-NO-CONFIDENTIALITY, components: [published-files, iri-negotiation, mcp-server], conditions: "stated; everything public, CORS open", tier: correctness-only, false_friend: false, provenance: {kind: documented, source: "public/_headers header comment: \"Nothing here is private\""}}
@@ -919,7 +926,7 @@ downstream_responsibilities:
   - {id: R-OWN-VALIDATION, component: mcp-server, statement: "validate data in your own pipeline; the validate tool is advisory", enforces: [valid-means-safe], provenance: {kind: documented, source: "worker/mcp.mjs validate description"}}
   - {id: R-IGNORE-UNKNOWN-FIELDS, component: published-files, statement: "ignore unknown fields in catalog.json", enforces: [unversioned-files-stable], provenance: {kind: documented, source: "catalog.schema.json description"}}
   - {id: R-LISTINGS-ARE-CLAIMS, component: listings, statement: "treat node models and listed extensions as other people's claims", enforces: [listing-endorsed], provenance: {kind: documented, source: "CONTRIBUTING.md \"Adding a listed extension\" step 4"}}
-  - {id: R-VERIFY-AGAINST-SNAPSHOT, component: published-files, statement: "to verify bytes, compare with the release snapshot in the repository", enforces: [D-NO-SIGNATURE], provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: R-VERIFY-AGAINST-SNAPSHOT, component: published-files, statement: "to verify bytes, pin the digest from catalog.json, or compare with the release snapshot in the repository", enforces: [D-NO-SIGNATURE, P-DIGESTS-PUBLISHED], provenance: {kind: documented, source: "site/en/guide/urls.md \"Verifying a file\""}}
   - {id: R-FOLLOW-NS-REDIRECTS, component: iri-negotiation, statement: "follow 302 and 303 redirects from /ns/*", enforces: [redirect-exact-version], provenance: {kind: documented, source: "site/en/guide/urls.md \"The promises\" item 3"}}
   - {id: R-EXPECT-429, component: mcp-server, statement: "expect 429 after 100 requests a minute from one address", enforces: [D-RATE-LIMIT-BEST-EFFORT], provenance: {kind: documented, source: "docs/deployment.md \"/mcp is rate-limited\""}}
   - {id: R-OPERATOR-ZONE-RULE, component: supply-chain, statement: "operator keeps the BIC rule and runs check:live after a deploy", enforces: [D-BIC-NOT-ACCESS-CONTROL], provenance: {kind: documented, source: "docs/deployment.md \"After a deploy, run npm run check:live\""}}
