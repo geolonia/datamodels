@@ -1,0 +1,38 @@
+{
+  "id": "urn:ngsi-ld:ServiceVehicle:131016:truck-02",
+  "type": "ServiceVehicle",
+  "name": {
+    "languageMap": {
+      "ja": "2号車",
+      "en": "Truck 2"
+    }
+  },
+  "vehicle": "urn:ngsi-ld:Vehicle:131016-truck-02",
+  "fleetVehicleType": "Waste collection",
+  "provider": "urn:ngsi-ld:Organization:131016",
+  "localGovernmentCode": "131016",
+  "capacity": [
+    20
+  ],
+  "skills": [
+    "two-person"
+  ],
+  "depot": "urn:ngsi-ld:Facility:131016-131016F00001",
+  "workingHours": [
+    {
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "opens": "08:00",
+      "closes": "16:00"
+    }
+  ],
+  "maxStops": 30,
+  "maxWorkDuration": "PT8H",
+  "crew": "urn:ngsi-ld:Crew:131016:field-team-a"
+}

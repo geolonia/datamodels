@@ -19,10 +19,11 @@ Every model page has its example in both forms. Often you do not need to write t
   - Property: `{ "type": "Property", "value": … }`.
   - Relationship: `{ "type": "Relationship", "object": … }`.
   - GeoProperty: `{ "type": "GeoProperty", "value": … }`.
+  - LanguageProperty: `{ "type": "LanguageProperty", "languageMap": { "ja": …, "en": … } }`.
   - JsonProperty: `{ "type": "JsonProperty", "json": … }`.
   - VocabProperty: `{ "type": "VocabProperty", "vocab": … }`.
 
-  In key-values form, a JsonProperty and a VocabProperty keep their member: `{ "json": … }`, `{ "vocab": … }`. The JSON Schema describes the value inside, so remove that member before you validate key-values data against the schema. Both are NGSI-LD 1.8 types: check that your broker supports them before you use a model that has them.
+  In key-values form, a LanguageProperty, a JsonProperty and a VocabProperty keep their member: `{ "languageMap": … }`, `{ "json": … }`, `{ "vocab": … }`. The JSON Schema describes the value inside, so remove that member before you validate key-values data against the schema. JsonProperty and VocabProperty are NGSI-LD 1.8 types: check that your broker supports them before you use a model that has them.
 - The value of a date-time Property (`format: date-time` in the schema) becomes `{ "@type": "DateTime", "@value": … }`, and that of a date Property (`format: date`) `{ "@type": "Date", "@value": … }`. A Property that takes either ("date or date-time" on the model page) follows its value: `2026-07-11` is a Date, `2026-07-11T09:00:00+09:00` a DateTime.
 - A multi-valued attribute (marked "(multiple)" in the attribute table; for example `assignee` on Task) becomes an array with one instance per value, each with a `datasetId`. The catalog's examples use the form `urn:ngsi-ld:dataset:<attribute>:<n>`.
 - The `@context` lists the version alias of the subject's @context and the NGSI-LD core context.

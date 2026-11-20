@@ -1,0 +1,36 @@
+title:
+  ja: "作業班"
+  en: "Crew"
+description:
+  ja: "一緒に作業する人の班 1 つです。人数、技能、拠点、働ける時間を持ちます。班の人の名前や連絡先は持ちません。車両と班を分けておくと、日によって組み合わせを変えられます。"
+  en: "One team of people who work together: its size, skills, depot and working hours. It holds no names or contacts of its members. Keeping crews apart from vehicles lets the pairing change from day to day."
+status: draft
+tags: [field-service, route-optimisation, workforce]
+attributes:
+  name:
+    ja: "班の呼び名。言語ごとに書きます（例：{\"ja\": \"収集班 A\", \"en\": \"Collection team A\"}）。"
+    en: "What the provider calls the crew, per language (for example {\"ja\": \"収集班 A\", \"en\": \"Collection team A\"})"
+  provider:
+    ja: "作業を引き受ける組織（自治体、委託先など）"
+    en: "The organisation that does the work (a municipality, a contractor)"
+  localGovernmentCode:
+    ja: "作業する自治体の全国地方公共団体コード（6 桁）"
+    en: "Local government code (6 digits) of the municipality it works for"
+  size:
+    ja: "人数"
+    en: "How many people"
+  skills:
+    ja: "班ができること（例：two-person、carry-out）。車両の skills と合わせて、依頼の skills と照らし合わせます。"
+    en: "What the crew can do (for example two-person, carry-out); together with the vehicle's skills, matched against a request's skills"
+  depot:
+    ja: "出発する拠点（Facility）"
+    en: "Where the work starts: a Facility"
+  workingHours:
+    ja: "班が働ける曜日と時間（OpeningHours の値のリスト）。車両の workingHours と重なる時間だけ計画します。"
+    en: "When the crew can work, as a list of OpeningHours values; only the time it shares with its vehicle's workingHours is planned"
+  assignedVehicle:
+    ja: "ふだん使う車両（ServiceVehicle）。日ごとの組み合わせは RoutePlan に残ります。"
+    en: "The vehicle it usually works with: a ServiceVehicle. The pairing of each day is in the RoutePlan"
+  source:
+    ja: "データの出典（URL など）"
+    en: "Where the data comes from (a URL, for example)"

@@ -1,0 +1,370 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://datamodels.jp/schema/fieldservice/ServiceRequest/v1.0.0.json",
+  "title": "ServiceRequest",
+  "description": "A request for work at a place: collecting bulky or disaster waste, a delivery, a repair, an inspection. It says what (items and how many), where, and when (time windows, and how much the requester needs that day), with the service time, the amount and the skills it needs, so it maps directly to a job of route optimisation (VRP) software. It holds no name or contact of the requester; requester points to another entity when needed.",
+  "x-version": "1.0.0",
+  "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
+  "x-model-tags": "field service, route optimisation, Open311",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uri",
+      "description": "Entity id (URN)"
+    },
+    "type": {
+      "type": "string",
+      "const": "ServiceRequest",
+      "description": "Entity type"
+    },
+    "@context": {
+      "description": "JSON-LD context of the entity, optional: a context URL or a list of context URLs",
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "minItems": 1
+        }
+      ]
+    },
+    "serviceCode": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The kind of request, as a code the provider sets (for example bulky-waste); Open311 service_code",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/serviceCode"
+    },
+    "localGovernmentCode": {
+      "type": "string",
+      "pattern": "^\\d{6}$",
+      "description": "Local government code (全国地方公共団体コード, 6 digits) of the municipality responsible; Open311 jurisdiction_id",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/common/localGovernmentCode"
+    },
+    "provider": {
+      "type": "string",
+      "format": "uri",
+      "description": "The organisation that does the work (a municipality, a contractor)",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "agent"
+      },
+      "x-iri": "https://schema.org/provider"
+    },
+    "requestedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the request was made (Open311 requested_datetime)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/requestedAt"
+    },
+    "requestStatus": {
+      "type": "string",
+      "enum": [
+        "received",
+        "scheduled",
+        "in-progress",
+        "completed",
+        "cancelled",
+        "rejected"
+      ],
+      "description": "State: received, scheduled (a day is set), in-progress, completed, cancelled, rejected (cannot be done). Open311 open covers received to in-progress, and closed the rest. When no value fits, leave it out and write statusLabel",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/requestStatus"
+    },
+    "statusLabel": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The source system's own status name, unchanged. Required when the status is left out",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/task/statusLabel"
+    },
+    "location": {
+      "$ref": "https://datamodels.jp/schema/common/Geometry/v1.0.0.json",
+      "properties": {
+        "type": {
+          "const": "Point"
+        }
+      },
+      "description": "Where the work is done (for example where the items are put out); a point only. It can stand in for an address",
+      "x-ngsi": {
+        "type": "GeoProperty",
+        "model": "https://datamodels.jp/ns/common/Geometry"
+      },
+      "x-iri": "https://uri.etsi.org/ngsi-ld/location",
+      "x-personal-data": true
+    },
+    "area": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The planning area, as the provider names it",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/area"
+    },
+    "lines": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "item",
+          "quantity"
+        ],
+        "properties": {
+          "item": {
+            "type": "string",
+            "format": "uri"
+          },
+          "quantity": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "description": "What is asked for: one line per CatalogItem, with its id, the quantity and its name at the time of the request",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/lines"
+    },
+    "serviceDuration": {
+      "type": "string",
+      "pattern": "^P(?!$)(\\d+D)?(T(?=\\d)(\\d+H)?(\\d+M)?(\\d+(\\.\\d+)?S)?)?$",
+      "description": "Time spent at the place, as an ISO 8601 duration (for example PT5M); the service time of route optimisation",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/serviceDuration"
+    },
+    "load": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": 0
+      },
+      "minItems": 1,
+      "description": "What it takes of a vehicle's capacity, one number per dimension; the provider sets the dimensions and units and keeps them in step with the vehicles' capacity (for example one dimension: volume, counted in points the provider sets); the amount of route optimisation",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/load"
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "What the work needs (for example two-person, carry-out); the skills of route optimisation, matched against a vehicle's or crew's skills. The provider sets the words",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/skills"
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9,
+      "description": "Priority 0 to 9: 1 highest, 9 lowest, 0 undefined (RFC 8984, as in Task)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/task/priority"
+    },
+    "timeWindows": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "start",
+          "end"
+        ],
+        "additionalProperties": false
+      },
+      "description": "When the work may be done, as a list of start and end date-times; the time windows of route optimisation: nothing is planned outside them",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/timeWindows"
+    },
+    "preferredDate": {
+      "type": "string",
+      "format": "date",
+      "description": "The day the requester would like",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/preferredDate"
+    },
+    "flexibility": {
+      "type": "string",
+      "enum": [
+        "fixed",
+        "preferred",
+        "any"
+      ],
+      "description": "How much the requester needs that day: fixed (it must be that day), preferred (they would like it), any (any day)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/flexibility"
+    },
+    "scheduledDate": {
+      "type": "string",
+      "format": "date",
+      "description": "The day the work is planned for",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/scheduledDate"
+    },
+    "scheduledWindow": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "end": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "additionalProperties": false,
+      "description": "The planned time window, when one is set",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/scheduledWindow"
+    },
+    "routePlan": {
+      "type": "string",
+      "format": "uri",
+      "description": "The plan of the day this request is in: a RoutePlan",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "https://datamodels.jp/ns/fieldservice/RoutePlan"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/routePlan"
+    },
+    "task": {
+      "type": "string",
+      "format": "uri",
+      "description": "The work item made from this request: a Task (task subject). Task's refersTo is the other way round: what a task is about",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "https://datamodels.jp/ns/task/Task"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/task"
+    },
+    "fee": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Fee, in priceCurrency",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/fee"
+    },
+    "priceCurrency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$",
+      "description": "Currency (ISO 4217, for example JPY)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://schema.org/priceCurrency"
+    },
+    "requester": {
+      "type": "string",
+      "format": "uri",
+      "description": "Who asked: a link to their entity. Names and contacts are not kept here but in that entity, so access to them can be limited separately",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "agent"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/requester",
+      "x-personal-data": true
+    },
+    "requesterNote": {
+      "type": "string",
+      "minLength": 1,
+      "description": "A description in the requester's words; it may contain personal data",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/requesterNote",
+      "x-personal-data": true
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Where the data comes from (a URL, for example)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/source"
+    }
+  },
+  "required": [
+    "id",
+    "type",
+    "serviceCode",
+    "location"
+  ],
+  "anyOf": [
+    {
+      "required": [
+        "requestStatus"
+      ]
+    },
+    {
+      "required": [
+        "statusLabel"
+      ]
+    }
+  ],
+  "additionalProperties": false
+}

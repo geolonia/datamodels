@@ -1,0 +1,32 @@
+{
+  "id": "urn:ngsi-ld:Crew:131016:field-team-a",
+  "type": "Crew",
+  "name": {
+    "languageMap": {
+      "ja": "収集班 A",
+      "en": "Collection team A"
+    }
+  },
+  "provider": "urn:ngsi-ld:Organization:131016",
+  "localGovernmentCode": "131016",
+  "size": 2,
+  "skills": [
+    "two-person"
+  ],
+  "depot": "urn:ngsi-ld:Facility:131016-131016F00001",
+  "workingHours": [
+    {
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "opens": "08:00",
+      "closes": "16:00"
+    }
+  ],
+  "assignedVehicle": "urn:ngsi-ld:ServiceVehicle:131016:truck-02"
+}

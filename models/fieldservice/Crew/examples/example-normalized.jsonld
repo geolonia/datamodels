@@ -1,0 +1,58 @@
+{
+  "@context": [
+    "https://datamodels.jp/context/fieldservice/v1.jsonld",
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
+  ],
+  "id": "urn:ngsi-ld:Crew:131016:field-team-a",
+  "type": "Crew",
+  "name": {
+    "type": "LanguageProperty",
+    "languageMap": {
+      "ja": "収集班 A",
+      "en": "Collection team A"
+    }
+  },
+  "provider": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:Organization:131016"
+  },
+  "localGovernmentCode": {
+    "type": "Property",
+    "value": "131016"
+  },
+  "size": {
+    "type": "Property",
+    "value": 2
+  },
+  "skills": {
+    "type": "Property",
+    "value": [
+      "two-person"
+    ]
+  },
+  "depot": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:Facility:131016-131016F00001"
+  },
+  "workingHours": {
+    "type": "Property",
+    "value": [
+      {
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ],
+        "opens": "08:00",
+        "closes": "16:00"
+      }
+    ]
+  },
+  "assignedVehicle": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:ServiceVehicle:131016:truck-02"
+  }
+}

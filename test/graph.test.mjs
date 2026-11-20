@@ -108,8 +108,8 @@ test('a model page graph shows the model and its neighbours only, each neighbour
   assert.match(svg, /class="node entity center"/);
   assert.doesNotMatch(svg, /href="\/en\/models\/task\/Project\/"/, 'the model itself is not a link');
   assert.match(svg, /<a href="\/en\/models\/task\/Task\/"/);
-  // Task's links besides Project (milestone, parent/relatedTo, refersTo, assignee/author, location).
-  assert.match(svg, /class="more"[^>]*>5 more links →</);
+  // Task's links besides Project (milestone, parent/relatedTo, refersTo, assignee/author, location, ServiceRequest.task).
+  assert.match(svg, /class="more"[^>]*>6 more links →</);
   // Milestone's one link besides Project (Task.milestone): singular.
   assert.match(svg, /class="more"[^>]*>1 more link →</);
   assert.match(svg, /↻ parent/);

@@ -1,0 +1,635 @@
+{
+  "@context": {
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "label": {
+      "@id": "rdfs:label",
+      "@container": "@language"
+    },
+    "comment": {
+      "@id": "rdfs:comment",
+      "@container": "@language"
+    },
+    "subClassOf": {
+      "@id": "rdfs:subClassOf",
+      "@type": "@id"
+    },
+    "isDefinedBy": {
+      "@id": "rdfs:isDefinedBy",
+      "@type": "@id"
+    },
+    "seeAlso": {
+      "@id": "rdfs:seeAlso",
+      "@type": "@id"
+    },
+    "versionInfo": "owl:versionInfo"
+  },
+  "@graph": [
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/",
+      "@type": "owl:Ontology",
+      "label": {
+        "ja": "現場作業",
+        "en": "Field service"
+      },
+      "comment": {
+        "ja": "決まった場所に出向いて行う仕事の依頼と、その計画に必要なデータです。粗大ごみや災害ごみの収集、配達、修理、点検のように、誰かが依頼し、班が車両で日と順番を決めて回る仕事を扱います。依頼の時間の幅、作業時間、量、必要な技能と、車両の積載量、勤務時間、技能は、ルート最適化（VRP）のソフトウェアがそのまま読める形にします。計画の結果は、日ごとのルートとして残します。",
+        "en": "Requests for work done at a place, and the data needed to plan it: collecting bulky or disaster waste, deliveries, repairs, inspections, and other work that someone asks for and a crew does with a vehicle on a day and in an order it plans. The time windows, service times, amounts and skills of a request, and the capacity, working hours and skills of a vehicle, have the shape route optimisation (VRP) software reads. The result of planning is kept as the routes of a day."
+      },
+      "versionInfo": "1.0.0",
+      "seeAlso": "https://datamodels.jp/context/fieldservice/v1.0.0.jsonld"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/CatalogItem",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "依頼できる品目",
+        "en": "Catalogue item"
+      },
+      "comment": {
+        "ja": "提供者が依頼を受ける品目の 1 つです。粗大ごみの品目と手数料の一覧の 1 行などにあたります。受けない品目も、どこへ持っていけばよいかと一緒に載せられます。作業時間、量、必要な技能を持たせると、依頼の値をここから計算できます。名前と説明は、複数の言語で書けます（LanguageProperty）。",
+        "en": "One item a provider takes requests for, such as one row of a city's list of bulky waste items and fees. Items it does not take can be listed too, with where to take them instead. With a service time, an amount and skills, the values of a request can be computed from its items. The name and description can be given in several languages (LanguageProperty)."
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/CatalogItem/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/Crew",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "作業班",
+        "en": "Crew"
+      },
+      "comment": {
+        "ja": "一緒に作業する人の班 1 つです。人数、技能、拠点、働ける時間を持ちます。班の人の名前や連絡先は持ちません。車両と班を分けておくと、日によって組み合わせを変えられます。",
+        "en": "One team of people who work together: its size, skills, depot and working hours. It holds no names or contacts of its members. Keeping crews apart from vehicles lets the pairing change from day to day."
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/Crew/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/RoutePlan",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "日ごとのルート",
+        "en": "Route plan"
+      },
+      "comment": {
+        "ja": "ある日、ある地区の作業の計画です。車両ごとのルート（回る依頼の順番と、着く時刻と出る時刻）と、入らなかった依頼を持ちます。ルート最適化（VRP）のソフトウェアの結果（routes と unassigned）をそのまま残せます。計画を実際に走った記録は、Smart Data Models の FleetVehicleOperation で表せます。",
+        "en": "The plan of the work of one day in one area: a route per vehicle (the requests in order, with arrival and departure times) and the requests that did not fit. It keeps the result of route optimisation (VRP) software (routes and unassigned) as it is. What was actually driven can be recorded with Smart Data Models FleetVehicleOperation."
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/RoutePlan/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/ServiceRequest",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "訪問の依頼",
+        "en": "Service request"
+      },
+      "comment": {
+        "ja": "ある場所での作業の依頼です。粗大ごみや災害ごみの収集、配達、修理、点検などにあたります。何を（品目と数）、どこで、いつ（時間の幅と、その日がどれだけ必要か）を表し、作業時間、量、必要な技能も持つので、ルート最適化（VRP）のソフトウェアの job にそのまま渡せます。依頼した人の名前や連絡先は持たず、必要なら requester で別のエンティティを指します。",
+        "en": "A request for work at a place: collecting bulky or disaster waste, a delivery, a repair, an inspection. It says what (items and how many), where, and when (time windows, and how much the requester needs that day), with the service time, the amount and the skills it needs, so it maps directly to a job of route optimisation (VRP) software. It holds no name or contact of the requester; requester points to another entity when needed."
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceRequest/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/ServiceVehicle",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "作業車両",
+        "en": "Service vehicle"
+      },
+      "comment": {
+        "ja": "作業に使う車両 1 台を、計画に使う形で表します。積載量、技能、出発と帰着の拠点、働ける時間で、ルート最適化（VRP）のソフトウェアの vehicle にそのまま渡せます。Smart Data Models の FleetVehicle（車隊の中の 1 台）のサブクラスで、車両そのもの（ナンバーなど）は vehicle で Vehicle を指します。",
+        "en": "One vehicle used for the work, as planning sees it: capacity, skills, start and end depot and working hours, so it maps directly to a vehicle of route optimisation (VRP) software. A subclass of Smart Data Models FleetVehicle (one vehicle of a fleet); the physical vehicle (plate and the like) is the Vehicle that vehicle points to."
+      },
+      "subClassOf": "https://smartdatamodels.org/dataModel.Transportation/FleetVehicle",
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceVehicle/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/accepted",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "accepted"
+      },
+      "comment": {
+        "ja": "この種類の依頼として受けるか。受けない品目は、alternative でどこへ持っていくかを示します。",
+        "en": "Whether it is taken with this kind of request; for an item that is not, alternative says where to take it"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/CatalogItem/#accepted"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/alternative",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "alternative"
+      },
+      "comment": {
+        "ja": "受けない品目の出し方（家電リサイクル、販売店の引き取りなど）",
+        "en": "Where to take an item that is not taken (home appliance recycling, the shop that sold it)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/CatalogItem/#alternative"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/area",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "area"
+      },
+      "comment": {
+        "ja": "計画の単位となる地区。提供者が決めた名前です。",
+        "en": "The planning area, as the provider names it"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/RoutePlan/#area"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/assignedVehicle",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "assignedVehicle"
+      },
+      "comment": {
+        "ja": "ふだん使う車両（ServiceVehicle）。日ごとの組み合わせは RoutePlan に残ります。",
+        "en": "The vehicle it usually works with: a ServiceVehicle. The pairing of each day is in the RoutePlan"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/Crew/#assignedVehicle"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/capacity",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "capacity"
+      },
+      "comment": {
+        "ja": "積載量。次元ごとの数で、依頼の load と同じ次元と単位にします。ルート最適化の capacity にあたります。",
+        "en": "How much it can carry, one number per dimension, in the dimensions and units of the requests' load; the capacity of route optimisation"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceVehicle/#capacity"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/computedAt",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "computedAt"
+      },
+      "comment": {
+        "ja": "計画を計算した日時",
+        "en": "When the plan was computed"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/RoutePlan/#computedAt"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/crew",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "crew"
+      },
+      "comment": {
+        "ja": "この車両で働く班（Crew）",
+        "en": "The crew that works with this vehicle: a Crew"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceVehicle/#crew"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/depot",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "depot"
+      },
+      "comment": {
+        "ja": "出発する拠点（Facility）",
+        "en": "Where the work starts: a Facility"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/Crew/#depot"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/endDepot",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "endDepot"
+      },
+      "comment": {
+        "ja": "帰着する拠点（Facility）。無ければ depot に戻ります。",
+        "en": "Where the work ends: a Facility; without it, the vehicle returns to depot"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceVehicle/#endDepot"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/fee",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "fee"
+      },
+      "comment": {
+        "ja": "手数料（priceCurrency の通貨で）",
+        "en": "Fee, in priceCurrency"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/CatalogItem/#fee"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/flexibility",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "flexibility"
+      },
+      "comment": {
+        "ja": "その日がどれだけ必要か：fixed（その日でないと困る）、preferred（できればその日）、any（いつでもよい）",
+        "en": "How much the requester needs that day: fixed (it must be that day), preferred (they would like it), any (any day)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceRequest/#flexibility"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/lines",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "lines"
+      },
+      "comment": {
+        "ja": "依頼の中身。CatalogItem ごとに 1 行で、品目の ID、数、依頼したときの名前です。",
+        "en": "What is asked for: one line per CatalogItem, with its id, the quantity and its name at the time of the request"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceRequest/#lines"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/load",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "load"
+      },
+      "comment": {
+        "ja": "車両の積載量のうち、この作業で使う量。次元ごとの数で、次元と単位は提供者が決めて、車両の capacity と揃えます（例：容積を提供者が決めた点数で数える 1 次元）。ルート最適化の amount にあたります。",
+        "en": "What it takes of a vehicle's capacity, one number per dimension; the provider sets the dimensions and units and keeps them in step with the vehicles' capacity (for example one dimension: volume, counted in points the provider sets); the amount of route optimisation"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/CatalogItem/#load"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/maxStops",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "maxStops"
+      },
+      "comment": {
+        "ja": "1 日に回れる件数の上限",
+        "en": "The most stops in a day"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceVehicle/#maxStops"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/maxWorkDuration",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "maxWorkDuration"
+      },
+      "comment": {
+        "ja": "1 日に働ける時間の上限（ISO 8601 の期間）",
+        "en": "The longest working time in a day, as an ISO 8601 duration"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceVehicle/#maxWorkDuration"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/planDate",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "planDate"
+      },
+      "comment": {
+        "ja": "計画した日（作業する日）",
+        "en": "The day the plan is for"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/RoutePlan/#planDate"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/planner",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "planner"
+      },
+      "comment": {
+        "ja": "計画に使ったソフトウェアとその版（例：VROOM 1.14）",
+        "en": "The software that made the plan, with its version (for example VROOM 1.14)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/RoutePlan/#planner"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/planStatus",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "planStatus"
+      },
+      "comment": {
+        "ja": "状態：draft（案）、confirmed（確定）、in-progress（実行中）、completed（完了）、cancelled（取消）。合う値がなければ省き、statusLabel を書きます。",
+        "en": "State: draft, confirmed, in-progress, completed, cancelled. When no value fits, leave it out and write statusLabel"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/RoutePlan/#planStatus"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/preferredDate",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "preferredDate"
+      },
+      "comment": {
+        "ja": "依頼した人が望む日",
+        "en": "The day the requester would like"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceRequest/#preferredDate"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/requestedAt",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "requestedAt"
+      },
+      "comment": {
+        "ja": "依頼を受けた日時（Open311 の requested_datetime）",
+        "en": "When the request was made (Open311 requested_datetime)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceRequest/#requestedAt"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/requester",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "requester"
+      },
+      "comment": {
+        "ja": "依頼した人（そのエンティティ）。名前や連絡先はここに入れず、別のエンティティに置いて、見せる相手を分けます。",
+        "en": "Who asked: a link to their entity. Names and contacts are not kept here but in that entity, so access to them can be limited separately"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceRequest/#requester"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/requesterNote",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "requesterNote"
+      },
+      "comment": {
+        "ja": "依頼した人の言葉での説明。個人を特定できることが書かれることがあります。",
+        "en": "A description in the requester's words; it may contain personal data"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceRequest/#requesterNote"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/requestStatus",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "requestStatus"
+      },
+      "comment": {
+        "ja": "状態：received（受付）、scheduled（日が決まった）、in-progress（作業中）、completed（完了）、cancelled（取消）、rejected（受けられない）。Open311 の open は received から in-progress、closed は残りにあたります。合う値がなければ省き、statusLabel を書きます。",
+        "en": "State: received, scheduled (a day is set), in-progress, completed, cancelled, rejected (cannot be done). Open311 open covers received to in-progress, and closed the rest. When no value fits, leave it out and write statusLabel"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceRequest/#requestStatus"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/routePlan",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "routePlan"
+      },
+      "comment": {
+        "ja": "この依頼を入れた日ごとのルート（RoutePlan）",
+        "en": "The plan of the day this request is in: a RoutePlan"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceRequest/#routePlan"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/routes",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "routes"
+      },
+      "comment": {
+        "ja": "車両ごとのルート。車両、班、出発と帰着の時刻、距離（メートル）、時間、積んだ量と、止まる所（start、job、break、end）の順番です。job には依頼（request）、位置、着く時刻と出る時刻を書きます。位置は依頼の location と同じです。",
+        "en": "One route per vehicle: the vehicle, crew, start and end time, distance (metres), duration, load, and its stops in order (start, job, break, end); a job stop names its request, with its position and arrival and departure times. The positions repeat the requests' locations"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/RoutePlan/#routes"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/scheduledDate",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "scheduledDate"
+      },
+      "comment": {
+        "ja": "決まった作業日",
+        "en": "The day the work is planned for"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceRequest/#scheduledDate"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/scheduledWindow",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "scheduledWindow"
+      },
+      "comment": {
+        "ja": "決まった時間の幅（決まっているとき）",
+        "en": "The planned time window, when one is set"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceRequest/#scheduledWindow"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/serviceCode",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "serviceCode"
+      },
+      "comment": {
+        "ja": "依頼の種類を表すコード（例：bulky-waste）。提供者が決めます。Open311 の service_code にあたります。",
+        "en": "The kind of request, as a code the provider sets (for example bulky-waste); Open311 service_code"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/CatalogItem/#serviceCode"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/serviceDuration",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "serviceDuration"
+      },
+      "comment": {
+        "ja": "現場での作業時間。ISO 8601 の期間（例：PT5M）。ルート最適化の service time にあたります。",
+        "en": "Time spent at the place, as an ISO 8601 duration (for example PT5M); the service time of route optimisation"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/CatalogItem/#serviceDuration"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/serviceRequests",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "serviceRequests"
+      },
+      "comment": {
+        "ja": "計画した依頼（ServiceRequest）。入らなかったものも含みます。key-values の形では、1 件でも配列です。",
+        "en": "The requests planned, those left unassigned included: ServiceRequests. Always an array in the key-values form, even with one"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/RoutePlan/#serviceRequests"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/size",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "size"
+      },
+      "comment": {
+        "ja": "人数",
+        "en": "How many people"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/Crew/#size"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/sizeNote",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "sizeNote"
+      },
+      "comment": {
+        "ja": "大きさの条件。提供者の書き方のままです（例：幅90cm以下）。",
+        "en": "Size condition, as the provider writes it (for example 幅90cm以下, width 90 cm or less)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/CatalogItem/#sizeNote"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/skills",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "skills"
+      },
+      "comment": {
+        "ja": "作業に必要なこと（例：two-person、carry-out）。ルート最適化の skills にあたり、車両や班の skills と照らし合わせます。語は提供者が決めます。",
+        "en": "What the work needs (for example two-person, carry-out); the skills of route optimisation, matched against a vehicle's or crew's skills. The provider sets the words"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/CatalogItem/#skills"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/task",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "task"
+      },
+      "comment": {
+        "ja": "この依頼から作った作業（task 分野の Task）。Task の refersTo は反対向きで、作業が何についてかを指します。",
+        "en": "The work item made from this request: a Task (task subject). Task's refersTo is the other way round: what a task is about"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceRequest/#task"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/timeWindows",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "timeWindows"
+      },
+      "comment": {
+        "ja": "作業してよい時間の幅（開始と終了の日時）のリスト。ルート最適化の time windows で、この外には計画しません。",
+        "en": "When the work may be done, as a list of start and end date-times; the time windows of route optimisation: nothing is planned outside them"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/ServiceRequest/#timeWindows"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/totalDistance",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "totalDistance"
+      },
+      "comment": {
+        "ja": "すべてのルートの距離の合計（メートル）",
+        "en": "The distance of all routes together, in metres"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/RoutePlan/#totalDistance"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/totalDuration",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "totalDuration"
+      },
+      "comment": {
+        "ja": "すべてのルートの時間の合計（ISO 8601 の期間）",
+        "en": "The time of all routes together, as an ISO 8601 duration"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/RoutePlan/#totalDuration"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/unassigned",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "unassigned"
+      },
+      "comment": {
+        "ja": "入らなかった依頼（ServiceRequest の ID）。全部入ったときは空の配列です。",
+        "en": "The requests that did not fit (ServiceRequest ids); an empty array when all did"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/RoutePlan/#unassigned"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/vehicles",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "vehicles"
+      },
+      "comment": {
+        "ja": "計画に使った車両（ServiceVehicle）。key-values の形では、1 台でも配列です。",
+        "en": "The vehicles of the plan: ServiceVehicles. Always an array in the key-values form, even with one"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/RoutePlan/#vehicles"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/fieldservice/workingHours",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "workingHours"
+      },
+      "comment": {
+        "ja": "班が働ける曜日と時間（OpeningHours の値のリスト）。車両の workingHours と重なる時間だけ計画します。",
+        "en": "When the crew can work, as a list of OpeningHours values; only the time it shares with its vehicle's workingHours is planned"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
+      "seeAlso": "https://datamodels.jp/models/fieldservice/Crew/#workingHours"
+    }
+  ]
+}
