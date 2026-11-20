@@ -603,8 +603,9 @@ are listed, or properties the maintainer ratified (2026-10).
       ("not validated") instead of a problem (toolkit `src/build/check.mjs`,
       the `loadSchema` option of `Ajv2020` and the `Unavailable` branch). The
       production build runs offline: `--offline` is passed at
-      `package.json:23`. `P-REFS-CATALOG-ONLY` keeps that case out: CI
-      refuses such a `$ref`, so no merged schema reaches it *(documented, scripts/lib/catalog-rules.mjs comment: "References stay inside the catalog")*.
+      `package.json:23`. `P-REFS-CATALOG-ONLY` keeps that case out: the
+      rule fails such a `$ref` in the pull-request CI and in the deploy build,
+      which stops before `dist/`, so such a schema is not published *(documented, scripts/lib/catalog-rules.mjs comment: "References stay inside the catalog")*.
 
 - **`P-CONTEXT-IMPORTS-CATALOG` — catalogue contexts import only catalogue
   contexts.** A subject context may list other contexts only by a catalogue
@@ -621,7 +622,7 @@ are listed, or properties the maintainer ratified (2026-10).
     `catalog-rules.mjs`; no flag skips it. Planned profiles of upstream models
     would import commit-pinned GitHub URLs and change this property (§1.16).
 
-- **`P-REFS-CATALOG-ONLY` — published schemas reference only catalogue schemas.** A schema's `$ref` or `$dynamicRef` is a `#` pointer or an absolute, normalised URL under `https://datamodels.jp/schema/` without a query or an encoded slash; anything else, a relative reference included, fails CI, in the current sources and in the release snapshots *(documented, scripts/lib/catalog-rules.mjs comment: "A schema references only this catalog's schemas or a place inside the file")*. Enforced by CI since #292 (2026-11); before that it was a review rule *(maintainer, 2026-10)*.
+- **`P-REFS-CATALOG-ONLY` — published schemas reference only catalogue schemas.** A schema's `$ref` or `$dynamicRef` is a `#` pointer or an absolute, normalised URL under `https://datamodels.jp/schema/` without a query or an encoded slash; anything else, a relative reference included, fails the pull-request CI and the deploy build (`scripts/build.mjs` runs the validator before anything reaches `dist/`), in the current sources and in the release snapshots. The CI check is not required for merging (see the `supply-chain` row of the matrix), so a merged schema that breaks the rule stops the deploy instead of being published *(documented, scripts/lib/catalog-rules.mjs comment: "A schema references only this catalog's schemas or a place inside the file")*. Enforced by CI since #292 (2026-11); before that it was a review rule *(maintainer, 2026-10)*.
   - Symptom: `bad-data-accepted` (a consumer's validator follows a reference
     to a host the catalogue does not control).
   - Tier: correctness-only *(maintainer, 2026-10)*.
@@ -630,10 +631,14 @@ are listed, or properties the maintainer ratified (2026-10).
     the schema of every model and for every schema file of every release
     snapshot; `scripts/validate-models.mjs` runs it in CI and in the build,
     and no flag skips it. Search:
-    `grep -n "schemaRefProblems" scripts/lib/catalog-rules.mjs`. Its tests are `test/schema-refs.test.mjs`
-    and two cases in `test/validate-models.test.mjs`. The rule reads only schema keywords: a
-    `$ref` key inside `const`, `enum`, `default`, `examples` or an `x-`
-    annotation is data, not a reference.
+    `grep -n "schemaRefProblems" scripts/lib/catalog-rules.mjs`.
+    Its tests are `test/schema-refs.test.mjs` and two cases in
+    `test/validate-models.test.mjs`. The rule reads only schema keywords: a
+    `$ref` key inside `const`, `enum`, `default`, `examples`,
+    `dependentRequired` or an `x-` annotation is data, not a reference; the
+    names under `properties`, `patternProperties`, `$defs`, `definitions`,
+    `dependentSchemas` and `dependencies` are names, and the schemas under
+    them are read.
 
 - **`P-NEGOTIATION-FALLBACK` — the IRI Worker is never worse than the static
   answer.** Only GET and HEAD for IRIs that `_redirects` already answers are
@@ -778,8 +783,8 @@ project leaves to the consumer:
   catalogue publishes contexts; it does not control how processors fetch them.
 - **Remote `$ref` resolution.** A schema validator that follows `$ref`s to
   any host can be made to fetch URLs. Today every `$ref` in `models/` points
-  to `https://datamodels.jp/schema/` or inside the same document, and CI
-  keeps it that way (`P-REFS-CATALOG-ONLY`); consumers still decide which
+  to `https://datamodels.jp/schema/` or inside the same document, and the
+  catalogue's rule keeps it that way (`P-REFS-CATALOG-ONLY`); consumers still decide which
   hosts their validator may reach.
 - **Regular-expression denial of service.** A `pattern` in a schema runs in
   the consumer's validator.

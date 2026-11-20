@@ -25,6 +25,7 @@ test('a reference to another site, over http, relative or outside /schema/ fails
     'https://datamodels.jp/schema/x/..%2f..%2fcontext/y.json',
     'https://datamodels.jp/schema/x/%5cy.json',
     'https://datamodels.jp/schema/x.json?v=1',
+    'https://datamodels.jp/schema/x.json?',
     // Not normalised: written as the URL parser would write it, the text shows where the reference points.
     'HTTPS://datamodels.jp/schema/common/Geometry/v1.0.0.json',
     'https://datamodels.jp:443/schema/common/Geometry/v1.0.0.json',
@@ -35,9 +36,13 @@ test('a reference to another site, over http, relative or outside /schema/ fails
   }
 });
 
-test('refs under patternProperties and dependentSchemas are checked', () => {
-  const schema = { patternProperties: { '^x': { $ref: 'https://example.org/p.json' } }, dependentSchemas: { a: { $ref: 'https://example.org/d.json' } } };
-  assert.equal(schemaRefProblems(schema).length, 2);
+test('refs under patternProperties, dependentSchemas and dependencies are checked, also below a property named like a keyword', () => {
+  const schema = { patternProperties: { '^x': { $ref: 'https://example.org/p.json' } }, dependentSchemas: { a: { $ref: 'https://example.org/d.json' } }, dependencies: { const: { $ref: 'https://example.org/c.json' }, b: ['a'] } };
+  assert.equal(schemaRefProblems(schema).length, 3);
+});
+
+test('a ? inside the fragment is allowed', () => {
+  assert.deepEqual(schemaRefProblems({ $ref: 'https://datamodels.jp/schema/x.json#/$defs/a?b' }), []);
 });
 
 test('$dynamicRef and a ref that is not a string are checked too', () => {
@@ -58,6 +63,7 @@ test('a property named $ref and data keywords are not references', () => {
     default: { $ref: 'https://example.org/c' },
     examples: [{ $ref: 'https://example.org/d' }],
     'x-note': { $ref: 'https://example.org/e' },
+    dependentRequired: { $ref: ['name'], $dynamicRef: ['other'] },
   };
   assert.deepEqual(schemaRefProblems(schema), []);
 });

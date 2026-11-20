@@ -12,16 +12,18 @@ import { extensionProblems } from './extensions.mjs';
 const isLink = (u) => { if (typeof u !== 'string') return false; try { const x = new URL(u); return (x.protocol === 'https:' || x.protocol === 'http:') && x.hostname !== ''; } catch { return false; } };
 const isObject = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
 
-// Keywords whose value is data, not a schema: a "$ref" key inside them is not a reference.
-const DATA_KEYWORDS = new Set(['const', 'enum', 'default', 'examples']);
-// Keywords whose value maps names to schemas: the names are not keywords, the values are schemas.
-const SCHEMA_MAPS = new Set(['properties', 'patternProperties', '$defs', 'definitions', 'dependentSchemas']);
+// Keywords whose value is data, not a schema: a "$ref" key inside them is not a reference
+// (dependentRequired maps property names to lists of property names).
+const DATA_KEYWORDS = new Set(['const', 'enum', 'default', 'examples', 'dependentRequired']);
+// Keywords whose value maps names to schemas: the names are not keywords, the values are schemas
+// (draft-07 dependencies may also map a name to a list of names, which holds no reference).
+const SCHEMA_MAPS = new Set(['properties', 'patternProperties', '$defs', 'definitions', 'dependentSchemas', 'dependencies']);
 const SCHEMA_PREFIX = `${BASE_URL}/schema/`;
 const isCatalogSchemaRef = (ref) => {
   if (ref.startsWith('#')) return true;
   // Absolute and already normalised (no "../", default port or upper-case host), so the text shows where it points;
   // no query, and no encoded slash or backslash that another resolver could decode into a path outside /schema/.
-  try { const u = new URL(ref); return u.href === ref && u.href.startsWith(SCHEMA_PREFIX) && !u.search && !/%2f|%5c/i.test(u.pathname); } catch { return false; }
+  try { const u = new URL(ref); return u.href === ref && u.href.startsWith(SCHEMA_PREFIX) && !ref.split('#')[0].includes('?') && !/%2f|%5c/i.test(u.pathname); } catch { return false; }
 };
 /**
  * A schema references only this catalog's schemas or a place inside the file
