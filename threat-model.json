@@ -6,7 +6,7 @@
   "scope_subpath": null,
   "description": "datamodels.jp publishes data models for Japan as files at URLs that are meant never to change. People and programs store those URLs in their data: type and attribute IRIs, @context URLs, schema URLs. The catalogue is built from this repository: anyone can send a pull request, maintainers review and merge it, and Cloudflare Workers Builds deploys main. The catalogue stores no data of its users, has no login and runs no service for data except a read-only MCP server.",
   "confidence": {
-    "documented": 264,
+    "documented": 268,
     "inferred": 0
   },
   "components": [
@@ -680,6 +680,14 @@
       "source": "scripts/lib/catalog-rules.mjs comment: A schema references only this catalog's schemas or a place inside the file"
     },
     {
+      "property": "P-DIGESTS-PUBLISHED",
+      "violation_symptom": "wrong-output",
+      "severity_tier": "correctness",
+      "conditions": "catalog.json digests: SHA-256 of every exact-version file, from the bytes written to dist/; check:live compares them with the snapshots and the served bytes; since #295",
+      "provenance": "documented",
+      "source": "scripts/lib/publish.mjs comment: A digest per exact-version file, from the bytes written to dist/"
+    },
+    {
       "property": "P-NEGOTIATION-FALLBACK",
       "violation_symptom": "wrong-output, x-open-redirect",
       "severity_tier": "correctness",
@@ -761,10 +769,10 @@
     },
     {
       "property": "D-NO-SIGNATURE",
-      "reason": "stated by maintainer ruling (2026-10); no signatures; the release snapshot in the repository is the reference copy",
+      "reason": "stated by maintainer ruling (2026-10), narrowed for #295 (2026-11); no signatures; catalog.json digests come from the same site; the release snapshot in the repository is the reference copy that does not depend on the site",
       "false_friend": false,
       "provenance": "documented",
-      "source": "maintainer ruling, 2026-10"
+      "source": "maintainer ruling, 2026-11"
     },
     {
       "property": "D-CACHE-HINT",
@@ -888,7 +896,7 @@
     "validate data in your own pipeline; the validate tool is advisory",
     "ignore unknown fields in catalog.json",
     "treat node models and listed extensions as other people's claims",
-    "to verify bytes, compare with the release snapshot in the repository",
+    "to verify bytes, pin the digest from catalog.json, or compare with the release snapshot in the repository",
     "follow 302 and 303 redirects from /ns/*",
     "expect 429 after 100 requests a minute from one address",
     "operator keeps the BIC rule and runs check:live after a deploy",
@@ -952,7 +960,7 @@
     {
       "reported_as": "/ns/ redirects, so it is an open redirect",
       "why_safe": "Covers iri-negotiation; symptom 'open-redirect'. Exact-match conditions (§1.15): the `Location` is a same-origin path: the 303 to `/vocab/<subject>/v<major>.jsonld` or a 302 generated into `_redirects` from `models/`.",
-      "cites": "properties_provided[9]",
+      "cites": "properties_provided[10]",
       "suppression": "Location is a same-origin path: the 303 to /vocab/<subject>/v<major>.jsonld or a generated 302"
     },
     {

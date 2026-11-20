@@ -48,6 +48,27 @@ A new version does not replace the old one: `v1.0.0` stays at its URL, and the v
 - **An attribute** that is being replaced is marked deprecated in the schema and on the model page. It stays at least until the next minor version and is removed only in a major version.
 - **A model** that should not be used for new work is marked deprecated. It stays published at the same URLs. If there is a replacement, its page and `catalog.json` name it (`supersededBy`).
 
+## Verifying a file {#verify}
+
+`digests` in `catalog.json` lists a SHA-256 digest for every versioned file: the `@context`, vocabulary and JSON Schemas of every published version (for example `/schema/common/Geometry/v1.0.0.json`). The form is the one Subresource Integrity uses, `sha256-<base64>`.
+
+- **Pin it:** write the digest of each file you use into your own configuration or lock file, and compare it whenever you load the file. A change no longer goes unnoticed. During the pre-release, before the official launch, a published file may still be corrected, and its digest changes with it.
+- **Compare with the repository:** every published version is also in the GitHub repository, under `models/<subject>/releases/v<version>/`. A digest computed from there is checked over a different path than the one datamodels.jp serves. The files in the repository match the URLs as follows:
+  - `context.jsonld`: `/context/<subject>/v<version>.jsonld`
+  - `vocab.jsonld`: `/vocab/<subject>/v<version>.jsonld`
+  - `schema/<Type>.json`: `/schema/<subject>/<Type>/v<version>.json`
+
+To compute a digest, run the command below (it saves the file to a temporary file first, so a failed download prints nothing, and removes it at the end) and put `sha256-` in front of its output; the result has the same form as the values in `digests`.
+
+```bash
+f=$(mktemp)
+curl -fsSo "$f" https://datamodels.jp/schema/common/Geometry/v1.0.0.json \
+  && openssl dgst -sha256 -binary "$f" | openssl base64 -A
+rm -f "$f"
+```
+
+The digests come from the same site as the files. They show that a copy or a cache matches what was published, but not that the site itself was not changed; for that, compare with the files in the repository. There are no signatures.
+
 ## All URLs
 
 <div class="url-list">

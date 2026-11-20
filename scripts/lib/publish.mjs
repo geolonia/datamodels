@@ -4,6 +4,7 @@
 // against catalog.schema.json, the licence file, the redirect and cache rules.
 import { writeFile, readFile, appendFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { createHash } from 'node:crypto';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { publishCatalog, catalogEntry as tkCatalogEntry, attributeEntries as tkAttributeEntries, termRedirects as tkTermRedirects } from '@geolonia/datamodels/build';
@@ -22,6 +23,20 @@ export const CATALOG_TEXTS = { ...(NODE.title ? { title: NODE.title } : {}), ...
 
 /** The attributes of a model as catalog.json lists them (#156). */
 export const attributeEntries = (model) => tkAttributeEntries(model, options);
+
+/** The Subresource Integrity form of a file's SHA-256 digest: sha256-<base64>. */
+export const sriDigest = (bytes) => `sha256-${createHash('sha256').update(bytes).digest('base64')}`;
+
+/**
+ * The digests of the exact-version files written to `outDir`, keyed by URL
+ * and sorted, so the same files give the same object. `exactPaths` are the
+ * site paths the toolkit wrote (a snapshotted current version appears twice).
+ */
+export async function exactDigests(outDir, exactPaths) {
+  const out = {};
+  for (const path of [...new Set(exactPaths)].sort()) out[`${NODE.baseUrl}${path}`] = sriDigest(await readFile(join(outDir, path)));
+  return out;
+}
 
 /** One model in catalog.json; `adapterUrls`: adapter name to URL. */
 export const catalogEntry = (subject, model, adapterUrls = {}) => tkCatalogEntry(subject, model, { ...options, adapterUrls });
@@ -49,6 +64,9 @@ export const catalogHead = (nodes = []) => ({ formatVersion: 1, generatedAt: new
 export async function publishModels(subjects, adapters = [], { nodes = [], outDir = DIST } = {}) {
   const { generatedAt, formatVersion, ...head } = catalogHead(nodes);
   const { catalog, exactPaths, redirects } = await publishCatalog(subjects, { ...options, outDir, head, adapters, now: new Date(generatedAt) });
+  // A digest per exact-version file, from the bytes written to dist/ (#295): consumers pin it or compare a copy with it.
+  catalog.digests = await exactDigests(outDir, exactPaths);
+  await writeFile(join(outDir, 'catalog.json'), json(catalog));
   const ajv = new Ajv2020({ allErrors: true, strict: false }); addFormats(ajv);
   const schema = JSON.parse(await readFile(join(ROOT, 'catalog.schema.json'), 'utf8'));
   const validate = ajv.compile(schema);

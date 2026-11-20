@@ -106,7 +106,7 @@ The same format as [datamodels.jp's catalog.json](https://datamodels.jp/catalog.
 
 **Required at the top:** `formatVersion`, `generatedAt`, `publisher`, `license` (the publisher decides; `datamodels init` suggests CC0, as datamodels.jp uses), `models`.
 
-**Optional at the top:** `title` and `description` (when `node.yaml` has them: the node's name and what it publishes, each a text in every language of the node; the pages use the title as the site's name, else "Data models by" and the publisher's name; datamodels.jp's catalog.json has both), `licenseUrl`, `nodes`. The keys come in this order: `formatVersion`, `generatedAt`, `title`, `description`, `publisher`, `license`, `licenseUrl`, `nodes`, `models`.
+**Optional at the top:** `title` and `description` (when `node.yaml` has them: the node's name and what it publishes, each a text in every language of the node; the pages use the title as the site's name, else "Data models by" and the publisher's name; datamodels.jp's catalog.json has both), `licenseUrl`, `nodes`, `digests`. The keys come in this order: `formatVersion`, `generatedAt`, `title`, `description`, `publisher`, `license`, `licenseUrl`, `nodes`, `models`, then `digests`. `digests` (datamodels.jp only, for now; #295) maps the URL of every exact-version file to its SHA-256 digest, `sha256-<base64>`; the toolkit does not write it.
 
 **Required for every model:** `type`, `typeIri`, `subject`, `version`, `status`, `title`, `description`, `contextUrl`, `schemaUrl`, `vocabularyUrl`, `pageUrl`. `title` and `description` have at least one language (`ja`, `en` or another BCP 47 tag).
 

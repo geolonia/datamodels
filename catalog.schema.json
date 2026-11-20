@@ -68,6 +68,17 @@
       "format": "uri",
       "description": "The licence terms of the catalog files and pages."
     },
+    "digests": {
+      "type": "object",
+      "description": "The SHA-256 digest of every exact-version file the node serves (contexts, vocabularies and schemas of every published version), keyed by its URL, in the Subresource Integrity form sha256-<base64>. A consumer can pin a digest, or recompute it from the release snapshot in the node's repository. The digests come from the same site as the files: they show that a copy matches what the node published, not who published it (see /guide/urls#verify).",
+      "propertyNames": {
+        "format": "uri"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "^sha256-[A-Za-z0-9+/]{43}=$"
+      }
+    },
     "nodes": {
       "type": "array",
       "description": "Other data model nodes that datamodels.jp knows (nodes.yaml, reviewed in a pull request): each by its base URL and the URL of its catalog.json. Tools find the network of nodes by following these links (docs/node.md, section 5).",
