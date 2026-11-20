@@ -41,7 +41,7 @@ description: カタログに載せるモデル、このカタログのモデル�
 - 状態の属性（`progress`、`openingStatus`、`restrictionStatus` など）の値の一覧は決まっています。合う値がないときは状態の属性を省き、`statusLabel` に元の呼び方を書きます（そのとき `statusLabel` は必須）。近い値に無理に当てはめないでください。
 - NGSI-LD core context の予約語は再定義しません。`status`、`description`、`location`、`createdAt`、`modifiedAt`、`observedAt` などです。CI が弾きます。`status` が要るときは `incidentStatus` のように名前を変えます。
 - モデルは分野でまとめ、地域名・顧客名・案件名ではまとめません。
-- 共通の構造は [common](/models/common/) の値型を使います。住所は [JapaneseAddress](/models/common/JapaneseAddress/)、`location` などの位置は [Geometry](/models/common/Geometry/)、連絡先は [ContactPoint](/models/common/ContactPoint/)、利用できる時間は [OpeningHours](/models/common/OpeningHours/) です。使えるジオメトリを絞るときは `$ref` の横で制約します（DesignatedShelter は点だけ）。
+- 共通の構造は [common](/models/common/) の値型を使います。住所は [JapaneseAddress](/models/common/JapaneseAddress/)、`location` などの位置は [Geometry](/models/common/Geometry/)、連絡先は [ContactPoint](/models/common/ContactPoint/)、利用できる時間は [OpeningHours](/models/common/OpeningHours/) です。使えるジオメトリを絞るときは `$ref` の横で制約します（DesignatedShelter は点だけ）。`$ref` は、`https://datamodels.jp/schema/` で始まる絶対 URL か、`#` で始まる同じファイルの中への参照にします。相対パスやほかのサイトを指すと、CI が失敗します。
 - 既にある型に名前だけ合わせたいときは、別名（`x-alias-of`）を使います。属性も必須項目も同じです。
 - 属性を足したいとき、型を分けたいときは、サブクラス（`x-subclass-of`）を使います。同じ名前の属性は親と同じ意味で、親の必須項目は残ります。CI はどちらも検査します。親は、schema.org、Smart Data Models、NGSI-LD core の型でもかまいません。たとえば common の ContactPoint は、schema.org の ContactPoint のサブクラスです。そのとき CI が検査するのは、IRI がこれらの名前空間にあることと、名前がクラス名のように大文字で始まることだけです。クラスが実在するかは検査しないので、IRI を開いて確かめてください。
 

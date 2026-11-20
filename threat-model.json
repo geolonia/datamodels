@@ -6,7 +6,7 @@
   "scope_subpath": null,
   "description": "datamodels.jp publishes data models for Japan as files at URLs that are meant never to change. People and programs store those URLs in their data: type and attribute IRIs, @context URLs, schema URLs. The catalogue is built from this repository: anyone can send a pull request, maintainers review and merge it, and Cloudflare Workers Builds deploys main. The catalogue stores no data of its users, has no login and runs no service for data except a read-only MCP server.",
   "confidence": {
-    "documented": 262,
+    "documented": 264,
     "inferred": 0
   },
   "components": [
@@ -675,9 +675,9 @@
       "property": "P-REFS-CATALOG-ONLY",
       "violation_symptom": "bad-data-accepted",
       "severity_tier": "correctness",
-      "conditions": "schema $ref targets are catalogue schemas or pointers inside the file; a review rule",
+      "conditions": "schema $ref and $dynamicRef targets are catalogue schema URLs or pointers inside the file, in the sources and the release snapshots; a CI rule since #292",
       "provenance": "documented",
-      "source": "maintainer ruling, 2026-10"
+      "source": "scripts/lib/catalog-rules.mjs comment: A schema references only this catalog's schemas or a place inside the file"
     },
     {
       "property": "P-NEGOTIATION-FALLBACK",

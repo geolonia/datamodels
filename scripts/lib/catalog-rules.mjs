@@ -4,13 +4,52 @@
 // @contexts, mapping files, aliases and subclasses); this checks what only
 // this catalog asks for.
 import { readFile } from 'node:fs/promises';
-import { join } from 'node:path';
-import { attributesOf, resolveContextTerms, CORE_TERMS, isCatalogIri, externalParentProblem } from './models.mjs';
+import { join, relative } from 'node:path';
+import { attributesOf, resolveContextTerms, CORE_TERMS, isCatalogIri, externalParentProblem, BASE_URL } from './models.mjs';
 import { resolveContextDocument, listReleases } from './releases.mjs';
 import { extensionProblems } from './extensions.mjs';
 
 const isLink = (u) => { if (typeof u !== 'string') return false; try { const x = new URL(u); return (x.protocol === 'https:' || x.protocol === 'http:') && x.hostname !== ''; } catch { return false; } };
 const isObject = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
+
+// Keywords whose value is data, not a schema: a "$ref" key inside them is not a reference
+// (dependentRequired maps property names to lists of property names).
+const DATA_KEYWORDS = new Set(['const', 'enum', 'default', 'examples', 'dependentRequired']);
+// Keywords whose value maps names to schemas: the names are not keywords, the values are schemas
+// (draft-07 dependencies may also map a name to a list of names, which holds no reference).
+const SCHEMA_MAPS = new Set(['properties', 'patternProperties', '$defs', 'definitions', 'dependentSchemas', 'dependencies']);
+const SCHEMA_PREFIX = `${BASE_URL}/schema/`;
+const isCatalogSchemaRef = (ref) => {
+  if (ref.startsWith('#')) return true;
+  // Absolute and already normalised (no "../", default port or upper-case host), so the text shows where it points;
+  // no query, and no encoded slash or backslash that another resolver could decode into a path outside /schema/.
+  try { const u = new URL(ref); return u.href === ref && u.href.startsWith(SCHEMA_PREFIX) && !ref.split('#')[0].includes('?') && !/%2f|%5c/i.test(u.pathname); } catch { return false; }
+};
+/**
+ * A schema references only this catalog's schemas or a place inside the file
+ * (threat model P-REFS-CATALOG-ONLY, #292): a validator that follows a
+ * reference to another site checks data against rules this catalog does not
+ * control, and the offline build cannot compile such a schema, so its examples
+ * would go unvalidated. Returns one message per `$ref` / `$dynamicRef` that breaks it.
+ */
+export function schemaRefProblems(schema) {
+  const out = [];
+  const walk = (node, path) => {
+    if (Array.isArray(node)) { node.forEach((v, i) => walk(v, `${path}/${i}`)); return; }
+    if (!isObject(node)) return;
+    for (const [k, v] of Object.entries(node)) {
+      if (DATA_KEYWORDS.has(k) || k.startsWith('x-')) continue;
+      if (k === '$ref' || k === '$dynamicRef') {
+        if (typeof v !== 'string' || !isCatalogSchemaRef(v)) out.push(`${path}/${k} ${JSON.stringify(v)} must be a "#" pointer or an absolute ${SCHEMA_PREFIX} URL in normalised form`);
+      } else if (SCHEMA_MAPS.has(k) && isObject(v)) {
+        for (const [name, sub] of Object.entries(v)) walk(sub, `${path}/${k}/${name}`);
+      } else walk(v, `${path}/${k}`);
+    }
+  };
+  walk(schema, '');
+  return out;
+}
+
 /** The problems of the catalog's own rules, as "models/<subject>/...: <problem>" lines. */
 export async function catalogRuleProblems(subjects) {
   const out = [];
@@ -22,13 +61,22 @@ export async function catalogRuleProblems(subjects) {
     try { ctxTerms = await resolveContextTerms(subject.context, subjects, resolveContextDocument); } catch (e) { fail(`${where}/context.jsonld`, e.message); }
     // The core terms are left to the broker: the catalog redefines none of them, not even with the same IRI.
     for (const term of Object.keys(subject.inlineTerms)) if (CORE_TERMS.has(term)) fail(`${where}/context.jsonld`, `redefines core context term "${term}" (protected)`);
-    const published = [subject.version, ...(await listReleases(subject)).map((r) => r.version)];
+    const releases = await listReleases(subject);
+    const published = [subject.version, ...releases.map((r) => r.version)];
+    // The release snapshots are published too: their schemas follow the same reference rule (#292).
+    for (const release of releases) for (const f of release.files) {
+      if (!f.url.startsWith(SCHEMA_PREFIX)) continue;
+      const file = `${where}/${relative(subject.dir, f.path)}`;
+      try { for (const msg of schemaRefProblems(JSON.parse(await readFile(f.path, 'utf8')))) fail(file, msg); } catch (e) { fail(file, `cannot be read (${e.message})`); }
+    }
 
     for (const model of subject.models) {
       const mwhere = `${where}/${model.type}`;
       const { schema } = model;
       // Every schema says its version, so a copied file shows where it came from (a wrong one the toolkit reports).
       if (schema['x-version'] === undefined) fail(`${mwhere}/schema.json`, `x-version must be ${subject.version} (subject version)`);
+      // References stay inside the catalog: the offline build would only note a schema on another site, not validate it.
+      for (const msg of schemaRefProblems(schema)) fail(`${mwhere}/schema.json`, msg);
       // A value type is a term of the context too, as every entity type is.
       if (model.kind === 'value' && !ctxTerms[model.type]) fail(`${where}/context.jsonld`, `does not define type "${model.type}"`);
       // Another vocabulary's class only from the known namespaces: a typo in its IRI cannot be checked by fetching it.

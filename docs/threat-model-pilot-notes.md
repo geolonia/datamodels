@@ -277,9 +277,12 @@ belong in issues, not in the threat model:
    blocks a merge (Q7).
 2. In the toolkit: during the pre-release, let the `--base` comparison accept
    corrections only for the current version, as the README says (Q4).
-3. A catalogue rule that a schema's `$ref` points to `https://datamodels.jp/`
-   or inside the file, and a problem instead of a note when such a schema
-   cannot be compiled offline (Q13).
+3. ~~A catalogue rule that a schema's `$ref` points to `https://datamodels.jp/`
+   or inside the file~~ Done in #292 (2026-11-20). The second half, a problem
+   instead of a note when such a schema cannot be compiled offline, was not
+   done: other nodes legitimately reference datamodels.jp while building
+   offline, so the toolkit keeps the note, and the catalogue rule makes the
+   case unreachable here (Q13).
 4. Size, nesting and `pattern` limits for contributed files, or a documented
    decision not to have them (Q16).
 5. Update `docs/design.md`: the non-goals, "Term IRIs resolve ... No content
@@ -302,6 +305,18 @@ belong in issues, not in the threat model:
 13. Register `datamodel.jp` as the typo guard `docs/design.md` names, or
     remove it from the design document; it is not registered (JPRS whois,
     2026-10-17).
+
+## Revisions
+
+- 2026-11-20, #292: `P-REFS-CATALOG-ONLY` moved from a review rule to a CI rule
+  (`schemaRefProblems` in `scripts/lib/catalog-rules.mjs`). Changed: that
+  property, the matching void of `P-EXAMPLES-CONFORM`, the matrix row, §1.13
+  "Remote `$ref` resolution" and the §1.16 trigger. The backtest's
+  external-`$ref` case still routes `VALID` against `P-REFS-CATALOG-ONLY`,
+  now against a CI rule; no other case touches the changed area. Companions:
+  the YAML and JSON entries edited by hand (not re-exported, which would need
+  the exporter's hand completion again), checked with the pinned validator
+  (`192fd60`: 90 passed, the usual length warning).
 
 ## Files
 

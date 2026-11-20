@@ -6,7 +6,8 @@
 //      mapping files, aliases and subclasses, catalog.yaml and notes.yaml
 //   2. the catalog's own rules (scripts/lib/catalog-rules.mjs): ADOPTERS.yaml,
 //      TODO markers, both example files, x-version and x-ngsi.type stated,
-//      no product-specific keys, known namespaces for x-subclass-of, extensions
+//      no product-specific keys, $ref only to catalog schemas,
+//      known namespaces for x-subclass-of, extensions
 //
 // Offline: the build does not depend on other sites. On a pull request, CI
 // compares the published versions with main and online (datamodels check --base).
