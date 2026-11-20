@@ -43,11 +43,6 @@ jobs:
         github.event.check_run.check_suite.head_branch == 'main')
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    # On the job, not the workflow: every other check run starts a run of
-    # this workflow too, and those must not replace a queued check.
-    concurrency:
-      group: check-live
-      cancel-in-progress: false
     permissions:
       contents: read
     steps:
@@ -85,11 +80,20 @@ jobs:
 
       # One retry after five and a half minutes: right after a deploy, a
       # cached catalog.json (max-age=300) can still be the previous one.
+      # Checks run in parallel (a queue would drop all but one waiting check).
+      # A check whose commit is no longer the head of main stops instead of
+      # failing: the newer commit is checked when it deploys, and the old
+      # commit's rules (node.yaml) may no longer match the site.
       - name: Check the live site
         run: |
           pnpm run check:live && exit 0
           echo "::warning::check:live failed; trying again in five and a half minutes"
           sleep 330
+          git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
+          if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then
+            echo "::notice::main has moved on; its newer commit is checked when it deploys"
+            exit 0
+          fi
           pnpm run check:live
 
   report:

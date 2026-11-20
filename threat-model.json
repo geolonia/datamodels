@@ -536,7 +536,7 @@
       "**Build host.** Node 24; Workers Builds and GitHub-hosted runners provide it. Workers Builds builds only `main`: preview builds are off, a setting in the Cloudflare dashboard."
     ],
     "does_not": [
-      "**Zone rule.** A configuration rule on the `datamodels.jp` zone turns off Browser Integrity Check for the machine-readable paths and `/mcp`. It lives in the Cloudflare dashboard, not in the repository. `pnpm run check:live` fails when it goes missing. The workflow \"Check live site\" runs it after every deploy and once a day, and a failure opens an issue.",
+      "**Zone rule.** A configuration rule on the `datamodels.jp` zone turns off Browser Integrity Check for the machine-readable paths and `/mcp`. It lives in the Cloudflare dashboard, not in the repository. `pnpm run check:live` fails when it goes missing. The workflow \"Check live site\" runs it after every Workers Builds deploy of `main` and once a day, and a failure opens an issue.",
       "**Domain.** `datamodels.jp` is registered in Route 53 in the GeonicDB AWS account, with name servers delegated to Cloudflare. `datamodel.jp` is not registered: `docs/design.md` calls it \"available as a typo guard\", and the JPRS whois has no record of it (checked 2026-10-17).",
       "**Concurrency.** The Worker keeps per-isolate caches of public files (the MCP index, schemas, compiled validators, the subject majors). No state is shared between requests except these."
     ],
@@ -569,11 +569,11 @@
     },
     {
       "name": "preview-builds",
-      "default": "on, branches of this repository only (a dashboard setting)",
+      "default": "off since 2026-10-26 (a dashboard setting); preview_urls stays true",
       "effect": "preserves P-NO-DEPLOY-CREDENTIAL-IN-GITHUB",
       "discouraged": false,
       "provenance": "documented",
-      "source": "maintainer ruling, 2026-10"
+      "source": "docs/deployment.md \"Preview builds are off since 2026-10-26\""
     },
     {
       "name": "mcp-limiter-absent",

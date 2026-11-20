@@ -325,7 +325,7 @@ belong in issues, not in the threat model:
   trigger. The maintainer chose digests and documentation over signatures
   (Sigstore would need a signing workflow outside Workers Builds and tooling
   on the consumer's side). Companions edited by hand and validated as above.
-- 2026-11-20, #297 and #312: `check:live` runs in CI after every deploy and
+- 2026-11-20, #297 and #312: `check:live` runs in CI after every Workers Builds deploy of `main` and
   daily (a failure opens an issue), and the model describes the build as it
   is (pnpm, the `npm run build:deploy` build command, no preview builds, the
   required checks on `main`). Companions edited by hand and validated as above

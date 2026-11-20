@@ -536,7 +536,7 @@ are listed, or properties the maintainer ratified (2026-10).
   build fails when a snapshot differs from the sources or the current version
   has none, and the pull-request check fails when a snapshot file changed or
   disappeared compared with the base branch and the live site *(documented, README "Adding or changing a model" step 3)*.
-  After every deploy and once a day, `pnpm run check:live` compares the
+  After every Workers Builds deploy of `main` and once a day, `pnpm run check:live` compares the
   served bytes of every released file with its snapshot, and a failure opens
   an issue *(documented, .github/workflows/check-live.yml header: "Checks the deployed site against the URL contract")*.
   - Symptom: `integrity-bypass` (a consumer that fetched a version earlier gets
@@ -669,7 +669,8 @@ are listed, or properties the maintainer ratified (2026-10).
     file, or a copy is checked against a wrong value).
   - Tier: correctness-only *(maintainer, 2026-11)*.
   - *Voided by*:
-    - `check:live` runs after every deploy and once a day, so a digest that
+    - `check:live` runs after every Workers Builds deploy of `main` and once
+      a day (a deploy by hand waits for the daily run), so a digest that
       differs from the served bytes stands until the next run, and until
       someone acts on the issue it opens;
     - `catalog.json` is cached for 5 minutes, so right after a deploy a
@@ -774,8 +775,8 @@ are listed, or properties the maintainer ratified (2026-10).
   - Tier: security-critical.
   - *Voided by*: nothing. The permission lines are
     `.github/workflows/similar-models.yml:26` (`issues: write`),
-    `.github/workflows/check-live.yml:106` (`issues: write`),
-    `.github/workflows/check-live.yml:52` (`contents: read`) and
+    `.github/workflows/check-live.yml:110` (`issues: write`),
+    `.github/workflows/check-live.yml:47` (`contents: read`) and
     `.github/workflows/check-worker.yml:17` (`contents: read`). Search:
     `grep -n "permissions\|: write" .github/workflows/*.yml`.
 
