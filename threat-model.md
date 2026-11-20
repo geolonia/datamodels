@@ -11,6 +11,13 @@
   `main` (2026-10-14). The repository has no release tags, so the model is
   bound to the commit. A report against a later commit is triaged against the
   model as it stood at that commit, not against this model.
+- **Revisions**: 2026-11-20, for geolonia/datamodels#292 (a §1.16 trigger: a
+  rule that restricts `$ref` targets). `P-REFS-CATALOG-ONLY` is enforced by a
+  CI rule instead of by review, and the matching void of `P-EXAMPLES-CONFORM` can no
+  longer be reached. The revised claims hold from the merge of the pull request that adds
+  the rule; every other claim is unchanged and stays bound to the commit
+  above. The backtest's external-`$ref` case still routes `VALID` against
+  `P-REFS-CATALOG-ONLY`, now against a CI rule.
 - **Date / author**: 2026-10-16, drafted for the maintainer, Daniel Kastl, who
   ratified the claims of the first draft in one wave on 2026-10-16.
 - **Generation metadata**: produced with AI assistance. Model/agent: Claude
@@ -43,7 +50,7 @@
   default, open as question `QN` in §1.18.
 - **Glossary**: a short plain-language glossary is at the end of this document
   (Appendix A).
-- **Confidence**: 198 documented / 64 maintainer / 0 inferred / 0 assumption.
+- **Confidence**: 201 documented / 63 maintainer / 0 inferred / 0 assumption.
   Counted as the plugin's validator counts, over §1.2 to §1.19: one count per
   parenthesised tag, by its first kind; the tags in this header and its legend
   are not counted.
@@ -413,7 +420,7 @@ instructions).
 | `build-validation` | failure and exception atomicity | claimed | validation runs before anything is written to `dist/`; a failure stops the build | §1.11 `P-EXAMPLES-CONFORM` | *(documented, scripts/build.mjs comment: "Validate before anything is published")* |
 | `build-validation` | recursive or cyclic topology | claimed | a context imports only catalogue contexts at a version that exists; `via` cycles in mapping files fail | §1.11 `P-CONTEXT-IMPORTS-CATALOG`, `P-EXAMPLES-CONFORM` | *(documented, README "Converting a published list" and scripts/lib/catalog-rules.mjs comment: "what that URL really serves must exist")* |
 | `build-validation` | callback and collaborator execution | disclaimed | adapter modules and scripts in the repository run with the build's rights; review is the only control | §1.12 `D-REPO-CODE-RUNS` | *(documented, scripts/lib/adapters.mjs header)* |
-| `build-validation` | serialization and reconstruction | claimed | schemas reference only catalogue schemas or pointers inside the file; kept by review, not by a CI rule | §1.11 `P-REFS-CATALOG-ONLY` | *(maintainer, 2026-10)* |
+| `build-validation` | serialization and reconstruction | claimed | schemas reference only catalogue schemas or pointers inside the file; a CI rule since #292 | §1.11 `P-REFS-CATALOG-ONLY` | *(documented, scripts/lib/catalog-rules.mjs comment: "References stay inside the catalog")* |
 | `build-validation` | reference and object lifecycle | claimed | a published version without a snapshot fails `--all-released` | §1.11 `P-PUBLISHED-IMMUTABLE` | *(documented, README "Adding or changing a model" step 3: "`npm run check` fails if a snapshot differs from the sources or the current version has none")* |
 | `build-validation` | concurrency and reentrancy | N/A — a single build process per run | | §1.5 | *(documented, scripts/build.mjs header)* |
 | `build-validation` | resource complexity | disclaimed | no limit on the size of contributed files | §1.12 `D-CONTRIBUTED-FILE-LIMITS` | *(maintainer, 2026-10)* |
@@ -596,7 +603,8 @@ are listed, or properties the maintainer ratified (2026-10).
       ("not validated") instead of a problem (toolkit `src/build/check.mjs`,
       the `loadSchema` option of `Ajv2020` and the `Unavailable` branch). The
       production build runs offline: `--offline` is passed at
-      `package.json:23`. `P-REFS-CATALOG-ONLY` keeps that case out by review.
+      `package.json:23`. `P-REFS-CATALOG-ONLY` keeps that case out: CI
+      refuses such a `$ref`, so no merged schema reaches it *(documented, scripts/lib/catalog-rules.mjs comment: "References stay inside the catalog")*.
 
 - **`P-CONTEXT-IMPORTS-CATALOG` — catalogue contexts import only catalogue
   contexts.** A subject context may list other contexts only by a catalogue
@@ -613,18 +621,17 @@ are listed, or properties the maintainer ratified (2026-10).
     `catalog-rules.mjs`; no flag skips it. Planned profiles of upstream models
     would import commit-pinned GitHub URLs and change this property (§1.16).
 
-- **`P-REFS-CATALOG-ONLY` — published schemas reference only catalogue
-  schemas.** A schema's `$ref` points to `https://datamodels.jp/schema/` or
-  inside the same file. This is a review rule, not a CI rule; a merged schema
-  with a `$ref` to another host is `VALID` against it *(maintainer, 2026-10)*.
+- **`P-REFS-CATALOG-ONLY` — published schemas reference only catalogue schemas.** A schema's `$ref` or `$dynamicRef` is a `#` pointer or an absolute URL under `https://datamodels.jp/schema/`; anything else, a relative reference included, fails CI *(documented, scripts/lib/catalog-rules.mjs comment: "A schema references only this catalog's schemas or a place inside the file")*. Enforced by CI since #292 (2026-11); before that it was a review rule *(maintainer, 2026-10)*.
   - Symptom: `bad-data-accepted` (a consumer's validator follows a reference
     to a host the catalogue does not control).
   - Tier: correctness-only *(maintainer, 2026-10)*.
-  - *Voided by*: a merge that review did not catch; offline, such a schema is
-    only noted, not refused, and the production build passes `--offline` at
-    `package.json:23`. Search for the current state:
-    `grep -rhn '"\$ref": "http' models --include=schema.json | grep -v 'https://datamodels.jp/schema/'`
-    — 0 hits at the bound commit.
+  - *Voided by*: nothing. The rule is `schemaRefProblems` at
+    `scripts/lib/catalog-rules.mjs:32`, called for every model at
+    `scripts/lib/catalog-rules.mjs:69`; `scripts/validate-models.mjs` runs it
+    in CI and in the build, and no flag skips it. Its test is
+    `test/schema-refs.test.mjs`. The rule reads only schema keywords: a
+    `$ref` key inside `const`, `enum`, `default`, `examples` or an `x-`
+    annotation is data, not a reference.
 
 - **`P-NEGOTIATION-FALLBACK` — the IRI Worker is never worse than the static
   answer.** Only GET and HEAD for IRIs that `_redirects` already answers are
@@ -769,7 +776,7 @@ project leaves to the consumer:
   catalogue publishes contexts; it does not control how processors fetch them.
 - **Remote `$ref` resolution.** A schema validator that follows `$ref`s to
   any host can be made to fetch URLs. Today every `$ref` in `models/` points
-  to `https://datamodels.jp/schema/` or inside the same document, and review
+  to `https://datamodels.jp/schema/` or inside the same document, and CI
   keeps it that way (`P-REFS-CATALOG-ONLY`); consumers still decide which
   hosts their validator may reach.
 - **Regular-expression denial of service.** A `pattern` in a schema runs in
@@ -880,8 +887,8 @@ Revise the model when any of these happens:
 - A catalogue context that imports a context from another site (the planned
   profiles of upstream models import commit-pinned GitHub URLs), or the
   planned pinned mirror under `/context/mirror/`.
-- A rule that restricts or allows `$ref` targets, or a size limit on
-  contributed files.
+- A change of the rule on `$ref` targets (`P-REFS-CATALOG-ONLY`, a CI rule
+  since #292), or a size limit on contributed files.
 - A published digest, signature or new manifest for consumers.
 - Nodes read during the build instead of from the reviewed snapshot.
 - A change of the deploy path: a deploy token in GitHub, Workers Builds

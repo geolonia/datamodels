@@ -116,6 +116,11 @@ test('redefining a protected core term fails', () =>
   withMutatedModels((d) => editJson(join(d, 'disaster', 'context.jsonld'), (c) => { inlineTerms(c).status = 'disaster:status'; }),
     /redefines core context term "status"/));
 
+// #292: the offline build only notes a schema on another site, so the catalog refuses the reference.
+test('a schema $ref to another site fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'facility', 'MedicalInstitution', 'schema.json'), (s) => { s.properties.address.$ref = 'https://example.org/address.json'; }),
+    /facility\/MedicalInstitution\/schema\.json: \/properties\/address\/\$ref "https:\/\/example\.org\/address\.json" must be a "#" pointer/));
+
 test('an attribute missing from the context fails', () =>
   withMutatedModels((d) => editJson(join(d, 'transportation', 'context.jsonld'), (c) => { delete inlineTerms(c).roadName; }),
     /RoadRestriction: the attribute roadName is not in the @context/));

@@ -153,6 +153,7 @@ CI on every pull request validates:
 - context coverage of every attribute, no redefinition of core terms, unique type IRIs, alias equality and subclass consistency;
 - the vocabulary's subclass relations;
 - no product-specific keys in schemas;
+- schema `$ref`s only to `https://datamodels.jp/schema/` or inside the same file (#292);
 - every published version against its release snapshot; then a dry-run deploy.
 
 Every validator rule has a test proving that it fires.
