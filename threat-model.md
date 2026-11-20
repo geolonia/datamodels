@@ -37,6 +37,12 @@
   checks since 2026-10-26 (#291), which removes "a merge that does not wait
   for a green check" from what voids `P-PUBLISHED-IMMUTABLE`. No backtest
   case concerned the build or the deploy, so no routing changes.
+  2026-11-20, for geolonia/datamodels#298 (a change to a disclaimer). The IRI
+  Worker keeps the subject majors for five minutes and no longer keeps a
+  failed read of `catalog.json`, so `D-NEGOTIATION-STALE-MAJOR` narrows to a
+  window of minutes. The backtest's stale-major case still closes against it
+  within that window; a report of a stale answer long after a release is now
+  `VALID` against nothing claimed, a correctness bug.
 - **Date / author**: 2026-10-16, drafted for the maintainer, Daniel Kastl, who
   ratified the claims of the first draft in one wave on 2026-10-16.
 - **Generation metadata**: produced with AI assistance. Model/agent: Claude
@@ -69,7 +75,7 @@
   default, open as question `QN` in §1.18.
 - **Glossary**: a short plain-language glossary is at the end of this document
   (Appendix A).
-- **Confidence**: 215 documented / 57 maintainer / 0 inferred / 0 assumption.
+- **Confidence**: 217 documented / 55 maintainer / 0 inferred / 0 assumption.
   Counted as the plugin's validator counts, over §1.2 to §1.19: one count per
   parenthesised tag, by its first kind; the tags in this header and its legend
   are not counted.
@@ -426,8 +432,8 @@ instructions).
 | `iri-negotiation` | recursive or cyclic topology | N/A — no recursive input | | §1.7 | *(documented, worker/index.mjs header)* |
 | `iri-negotiation` | callback and collaborator execution | N/A — no caller-supplied code | | §1.7 | *(documented, worker/index.mjs header)* |
 | `iri-negotiation` | serialization and reconstruction | N/A — reads only `catalog.json` from the build | | §1.7 | *(documented, worker/index.mjs comment: "from catalog.json (read once per isolate)")* |
-| `iri-negotiation` | reference and object lifecycle | disclaimed | the subject majors are cached per isolate; after a major release an isolate may send the old major's vocabulary until it is recycled | §1.12 `D-NEGOTIATION-STALE-MAJOR` | *(maintainer, 2026-10)* |
-| `iri-negotiation` | concurrency and reentrancy | claimed | one shared promise per isolate; a thrown read is dropped and retried, while a non-OK answer is cached as an empty map until the isolate is recycled (`D-NEGOTIATION-STALE-MAJOR`), and requests then get the static answer | §1.11 `P-NEGOTIATION-FALLBACK` | *(documented, worker/index.mjs `subjectMajor` (`.catch(() => { majors = null; ...`))* |
+| `iri-negotiation` | reference and object lifecycle | disclaimed | an isolate keeps the subject majors for five minutes; after a major release it may send the old major's vocabulary until then | §1.12 `D-NEGOTIATION-STALE-MAJOR` | *(documented, worker/index.mjs comment: "An isolate keeps them for five minutes")* |
+| `iri-negotiation` | concurrency and reentrancy | claimed | one shared promise per isolate for five minutes; a thrown or non-OK read is dropped, the requests waiting on it get the static answer, and the next request reads again | §1.11 `P-NEGOTIATION-FALLBACK` | *(documented, worker/index.mjs comment: "A failed read is not kept")* |
 | `iri-negotiation` | resource complexity | claimed | linear in the length of the `Accept` header | §1.11 `P-NEGOTIATION-FALLBACK` | *(maintainer, 2026-10)* |
 | `mcp-server` | numeric domain and representational limits | claimed | 64 KiB, 1,000 keys, 64 levels, 200-character text arguments, `limit` 1–50 | §1.11 `P-MCP-BOUNDED` | *(documented, worker/mcp.mjs `validate` tool description: "The request may be at most")* |
 | `mcp-server` | failure and exception atomicity | claimed | stateless: a failed request leaves nothing behind; a failed index or schema read is not cached | §1.11 `P-MCP-STATELESS` | *(documented, worker/mcp.mjs comment: "A failed read is not kept")* |
@@ -817,7 +823,7 @@ rested on silence were turned into stated limits by maintainer ruling
 | `D-AGENT-TEXT` | filtering of text meant to steer AI agents | stated by maintainer ruling (2026-10). Descriptions, notes and listings reach agents through `llms.txt`, `catalog.json` and MCP answers as written | security-critical | no | *(maintainer, 2026-10)* |
 | `D-LISTED-CONTENT-UNREVIEWED` | review or endorsement of listed extensions and node models | stated. Content is listed as the owner reported it; whether the domain is the owner's is not checked; the review only checks that the reporter represents the organisation | correctness-only | yes: "listed on datamodels.jp" is not "endorsed" | *(documented, CONTRIBUTING.md "Adding a listed extension" steps 3 and 4)* |
 | `D-STATUS-NOT-REVIEW` | a security review behind `stable`, `ADOPTERS.yaml` or a DCO sign-off | stated. `stable` means two independent adopters; adopters are self-reported; the sign-off is an agreement to the DCO, not an identity check | correctness-only | yes | *(documented, docs/design.md "Versioning and lifecycle": "Entries are self-reported with a link")* |
-| `D-NEGOTIATION-STALE-MAJOR` | a 303 that always names the subject's current major version | stated by maintainer ruling (2026-10). The IRI Worker caches the subject majors per isolate; after a new major version an isolate may send JSON-LD clients to the old major's vocabulary until it is recycled. A non-OK read of `catalog.json` is cached as an empty map the same way (`worker/index.mjs:43`), so that isolate gives JSON-LD clients the static answer until it is recycled | correctness-only | no | *(maintainer, 2026-10)* |
+| `D-NEGOTIATION-STALE-MAJOR` | a 303 that always names the subject's current major version | stated by maintainer ruling (2026-10), narrowed for #298 (2026-11). An isolate of the IRI Worker keeps the subject majors for five minutes, and caches may keep a 303 for five more (`max-age=300`), so for up to about ten minutes after a new major version a JSON-LD client may be sent to the old major's vocabulary. A failed read of `catalog.json` is not kept | correctness-only | no | *(documented, worker/index.mjs comment: "An isolate keeps them for five minutes")* |
 | `D-REPO-CODE-RUNS` | isolation of the build from repository code | stated. Adapter modules and scripts run with the rights of the build (CI's read-only token; after merge, Workers Builds, and the read-only "Check live site" job on the merged commit) | security-critical | no | *(documented, scripts/lib/adapters.mjs header)* |
 
 Well-known attack classes for a catalogue of schemas and contexts that the
@@ -1026,7 +1032,7 @@ export: `description` (the exporter takes the first paragraph of §1.2) and
 each family with `documented` provenance, matching §1.4. The JSON schema
 has no **maintainer** kind, so the export counts maintainer-ratified claims as
 documented: its confidence reads 272 documented and 0 inferred, the sum of the
-215 documented and 57 maintainer claims counted here. The JSON's `dispositions`
+217 documented and 55 maintainer claims counted here. The JSON's `dispositions`
 array has nine values, not ten: the plugin's `schema.json` (commit `192fd60`)
 allows exactly nine and has no value for `OUT-OF-MODEL: dependency-contract`,
 so that disposition, which §1.9 and §1.17 use, appears only here and in the

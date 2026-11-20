@@ -1,10 +1,10 @@
 # threat-model.yaml — derived index; the prose threat model (threat-model.md) is canonical.
 schema: threat-model-sidecar/v2
 project: datamodels
-prose_version: "threat-model.md@sha256:8a736633cc4ebfb61d8ca302e54a437ea4cf660f1b2fa3be7ab3537d91375557"
+prose_version: "threat-model.md@sha256:69e0cb5fe7d3e111d9a22697e08f3a2242743a115ea3a07889f39c668b9cebe7"
 model_status: accepted
 triage_policy: strict
-confidence: {documented: 215, maintainer: 57, inferred: 0, assumption: 0}
+confidence: {documented: 217, maintainer: 55, inferred: 0, assumption: 0}
 
 generation:
   model: "Claude Opus 5.5 (claude-opus-5-5)"
@@ -388,8 +388,8 @@ contract_dimensions:
   - {component: iri-negotiation, dimension: recursive-cyclic-topology, status: not-applicable, conditions: "no recursive input", provenance: {kind: documented, source: "worker/index.mjs header"}}
   - {component: iri-negotiation, dimension: callback-execution, status: not-applicable, conditions: "no caller-supplied code", provenance: {kind: documented, source: "worker/index.mjs header"}}
   - {component: iri-negotiation, dimension: serialization-reconstruction, status: not-applicable, conditions: "reads only catalog.json from the build", provenance: {kind: documented, source: "worker/index.mjs comment: \"from catalog.json (read once per isolate)\""}}
-  - {component: iri-negotiation, dimension: reference-lifecycle, status: disclaimed, conditions: "subject majors cached per isolate; stale after a major release until recycled", property_id: D-NEGOTIATION-STALE-MAJOR, provenance: {kind: maintainer, date: "2026-10"}}
-  - {component: iri-negotiation, dimension: concurrency-reentrancy, status: claimed, conditions: "one shared promise per isolate; a thrown read is dropped and retried; a non-OK read is cached as empty until the isolate is recycled (D-NEGOTIATION-STALE-MAJOR)", property_id: P-NEGOTIATION-FALLBACK, provenance: {kind: documented, source: "worker/index.mjs subjectMajor"}}
+  - {component: iri-negotiation, dimension: reference-lifecycle, status: disclaimed, conditions: "subject majors kept per isolate for five minutes; stale after a major release until then", property_id: D-NEGOTIATION-STALE-MAJOR, provenance: {kind: documented, source: "worker/index.mjs comment: \"An isolate keeps them for five minutes\""}}
+  - {component: iri-negotiation, dimension: concurrency-reentrancy, status: claimed, conditions: "one shared promise per isolate for five minutes; a thrown or non-OK read is dropped, waiting requests get the static answer, and the next request reads again", property_id: P-NEGOTIATION-FALLBACK, provenance: {kind: documented, source: "worker/index.mjs comment: \"A failed read is not kept\""}}
   - {component: iri-negotiation, dimension: resource-complexity, status: claimed, conditions: "linear in the length of the Accept header", property_id: P-NEGOTIATION-FALLBACK, provenance: {kind: maintainer, date: "2026-10"}}
   - {component: mcp-server, dimension: numeric-domain, status: claimed, conditions: "64 KiB, 1,000 keys, 64 levels, 200-character text, limit 1-50", property_id: P-MCP-BOUNDED, provenance: {kind: documented, source: "worker/mcp.mjs validate tool description"}}
   - {component: mcp-server, dimension: failure-atomicity, status: claimed, conditions: "stateless; failed reads are not cached", property_id: P-MCP-STATELESS, provenance: {kind: documented, source: "worker/mcp.mjs comment: \"A failed read is not kept\""}}
@@ -918,7 +918,7 @@ properties_disclaimed:
   - {id: D-AGENT-TEXT, components: [mcp-server, published-files], conditions: "stated by maintainer ruling (2026-10); text reaches agents as written", tier: security-critical, false_friend: false, provenance: {kind: maintainer, date: "2026-10"}}
   - {id: D-LISTED-CONTENT-UNREVIEWED, components: [listings], conditions: "stated; listed as reported, domain not checked", tier: correctness-only, false_friend: true, provenance: {kind: documented, source: "CONTRIBUTING.md \"Adding a listed extension\" steps 3 and 4"}}
   - {id: D-STATUS-NOT-REVIEW, components: [published-files], conditions: "stated; stable means two adopters, self-reported; DCO is an agreement", tier: correctness-only, false_friend: true, provenance: {kind: documented, source: "docs/design.md \"Versioning and lifecycle\""}}
-  - {id: D-NEGOTIATION-STALE-MAJOR, components: [iri-negotiation], conditions: "stated by maintainer ruling (2026-10); cached subject majors may be stale after a major release until the isolate is recycled; a non-OK read of catalog.json is cached as empty the same way", tier: correctness-only, false_friend: false, provenance: {kind: maintainer, date: "2026-10"}}
+  - {id: D-NEGOTIATION-STALE-MAJOR, components: [iri-negotiation], conditions: "stated by maintainer ruling (2026-10), narrowed for #298 (2026-11); subject majors kept per isolate for five minutes and a 303 cached for five more, so up to about ten minutes stale after a major release; a failed read of catalog.json is not kept", tier: correctness-only, false_friend: false, provenance: {kind: documented, source: "worker/index.mjs comment: \"An isolate keeps them for five minutes\""}}
   - {id: D-REPO-CODE-RUNS, components: [build-validation, supply-chain], conditions: "stated; adapter modules and scripts run with the build's rights", tier: security-critical, false_friend: false, provenance: {kind: documented, source: "scripts/lib/adapters.mjs header"}}
 
 downstream_responsibilities:

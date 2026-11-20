@@ -36,14 +36,23 @@ export function prefersJsonLd(accept) {
   return json > 0 && json > html;
 }
 
-// The major version of each subject, from catalog.json (read once per isolate).
-let majors = null;
+// The major version of each subject, from catalog.json. An isolate keeps them
+// for five minutes, as long as caches keep catalog.json (max-age=300), so a new
+// major version reaches JSON-LD clients within minutes (#298). A failed read is
+// not kept: that request gets the static answer, and the next one reads again.
+export const MAJORS_TTL_MS = 5 * 60 * 1000;
+let majors = null; // { at, map: Promise<Map<subject, major>> }
 async function subjectMajor(env, request, subject) {
-  majors ??= env.ASSETS.fetch(new URL('/catalog.json', request.url))
-    .then((r) => (r.ok ? r.json() : { models: [] }))
-    .then((catalog) => new Map((catalog.models ?? []).map((m) => [m.subject, String(m.version ?? '').split('.')[0]])))
-    .catch(() => { majors = null; return new Map(); });
-  return (await majors).get(subject) || null;
+  const now = Date.now();
+  if (!majors || now - majors.at >= MAJORS_TTL_MS) {
+    const entry = { at: now, map: null };
+    entry.map = env.ASSETS.fetch(new URL('/catalog.json', request.url))
+      .then((r) => { if (!r.ok) throw new Error(`catalog.json: ${r.status}`); return r.json(); })
+      .then((catalog) => new Map((catalog.models ?? []).map((m) => [m.subject, String(m.version ?? '').split('.')[0]])))
+      .catch(() => { if (majors === entry) majors = null; return new Map(); });
+    majors = entry;
+  }
+  return (await majors.map).get(subject) || null;
 }
 
 export default {

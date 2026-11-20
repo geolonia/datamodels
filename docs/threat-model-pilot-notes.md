@@ -297,8 +297,9 @@ belong in issues, not in the threat model:
    the "Check live site" workflow (Q23).
 9. ~~A `SECURITY.md` in the repository that links this model, as the first
    pilot did after its wave (Q6).~~ Done in this pull request.
-10. Refresh the IRI Worker's cached subject majors, or accept the stale
-    window in writing (Q19).
+10. ~~Refresh the IRI Worker's cached subject majors, or accept the stale
+    window in writing~~ Done in #298: five minutes per isolate, failed reads
+    not kept (Q19).
 11. Upstream to Alpha-Omega: document the §1.11 bullet format the validator
     expects; let the exporter read §1.1's description paragraph and §1.4; a
     data-catalogue profile with a "what a published file can do to its reader"
@@ -330,6 +331,10 @@ belong in issues, not in the threat model:
   is (pnpm, the `npm run build:deploy` build command, no preview builds, the
   required checks on `main`). Companions edited by hand and validated as above
   (90 passed, the usual length warning).
+- 2026-11-20, #298: the IRI Worker keeps the subject majors for five
+  minutes and drops a failed read, so `D-NEGOTIATION-STALE-MAJOR` narrows to
+  about ten minutes (with the 303's own cache). Companions edited by hand and
+  validated as above.
 
 ## Files
 
