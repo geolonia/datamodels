@@ -47,8 +47,9 @@ So far, every model in the catalog is the catalog's own type; upstream names are
   - a file over 256 KB
   - JSON or YAML nested deeper than 32 levels
   - a schema with more than 100 `$ref`s
-  - a `pattern` longer than 256 characters, or one that repeats a group whose length varies, such as `(a+)+` (on a string that does not match, its time grows exponentially)
+  - a `pattern` longer than 256 characters, or one that repeats a group whose length varies, such as `(a+)+` (on a string that does not match, its time grows exponentially). A group that ends with a separator nothing else in the group matches is fine, such as `(\d+\.)+` or `([a-z]+-)*`
   - a context whose imports nest more than two levels deep
+  - a symbolic link, or a JSON or YAML file that does not parse
 
   The catalog's files are far below these limits. If a model needs more, open an issue first.
 

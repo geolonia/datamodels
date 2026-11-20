@@ -8,16 +8,14 @@ import { join, relative } from 'node:path';
 import { attributesOf, resolveContextTerms, CORE_TERMS, isCatalogIri, externalParentProblem, BASE_URL } from './models.mjs';
 import { resolveContextDocument, listReleases } from './releases.mjs';
 import { extensionProblems } from './extensions.mjs';
+import { DATA_KEYWORDS, SCHEMA_MAPS } from './file-limits.mjs';
 
 const isLink = (u) => { if (typeof u !== 'string') return false; try { const x = new URL(u); return (x.protocol === 'https:' || x.protocol === 'http:') && x.hostname !== ''; } catch { return false; } };
 const isObject = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
 
-// Keywords whose value is data, not a schema: a "$ref" key inside them is not a reference
-// (dependentRequired maps property names to lists of property names).
-const DATA_KEYWORDS = new Set(['const', 'enum', 'default', 'examples', 'dependentRequired']);
-// Keywords whose value maps names to schemas: the names are not keywords, the values are schemas
-// (draft-07 dependencies may also map a name to a list of names, which holds no reference).
-const SCHEMA_MAPS = new Set(['properties', 'patternProperties', '$defs', 'definitions', 'dependentSchemas', 'dependencies']);
+// DATA_KEYWORDS (values that are data, not schemas) and SCHEMA_MAPS (names mapped to schemas;
+// draft-07 dependencies may also map a name to a list of names, which holds no reference)
+// are shared with the limits in file-limits.mjs.
 const SCHEMA_PREFIX = `${BASE_URL}/schema/`;
 const isCatalogSchemaRef = (ref) => {
   if (ref.startsWith('#')) return true;

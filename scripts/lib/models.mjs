@@ -3,7 +3,6 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { readNode, catalogUrls, loadSubjects as loadNodeSubjects, attributesOf } from '@geolonia/datamodels/build';
-import { MAX_CONTEXT_IMPORT_DEPTH } from './file-limits.mjs';
 
 export const ROOT = dirname(dirname(dirname(fileURLToPath(import.meta.url))));
 // DATAMODELS_MODELS_DIR lets the test suite point the loader at a mutated copy.
@@ -73,6 +72,9 @@ export function splitContext(doc) {
   const parts = Array.isArray(doc['@context']) ? doc['@context'] : [doc['@context']];
   return { imports: parts.filter((p) => typeof p === 'string'), inlineTerms: Object.assign({}, ...parts.filter((p) => p && typeof p === 'object')) };
 }
+
+/** How deep context imports may nest (#293, one of the limits on contributed files). */
+export const MAX_CONTEXT_IMPORT_DEPTH = 2;
 
 /**
  * All term definitions a context document provides: imported catalog contexts

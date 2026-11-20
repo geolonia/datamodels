@@ -685,7 +685,7 @@ are listed, or properties the maintainer ratified (2026-10).
     `dependentSchemas` and `dependencies` are names, and the schemas under
     them are read.
 
-- **`P-FILE-LIMITS` — contributed files stay within coarse limits.** Every file under `models/`, the release snapshots included, is at most 256 KB; JSON and YAML files nest at most 32 levels; a schema has at most 100 `$ref`s, and each `pattern` and `patternProperties` name is a valid regular expression of at most 256 characters that does not repeat a group whose length varies, as `(a+)+` does; a context's imports nest at most two levels, so an import cycle fails too *(documented, scripts/lib/file-limits.mjs header: "Limits on the contributed files")*. `scripts/validate-models.mjs` checks the limits first and stops there when a file is over one, so neither the toolkit nor the catalogue rules read it; the validator runs in "Build and dry-run deploy", which `main` requires, and in the deploy build *(documented, scripts/validate-models.mjs header: "A file over a limit stops the run here")*. Enforced by CI since #293 (2026-11); before that it was a review rule *(maintainer, 2026-10)*.
+- **`P-FILE-LIMITS` — contributed files stay within coarse limits.** Every file under `models/`, the release snapshots included, is a regular file (a symbolic link fails and is not followed) of at most 256 KB; JSON and YAML files (by extension, in any case) parse and nest at most 32 levels; a schema has at most 100 `$ref`s, and each `pattern` and `patternProperties` name is a valid regular expression of at most 256 characters that does not repeat a group whose length varies, as `(a+)+` does, unless the group ends with a separator nothing else in it matches, as in `(\d+\.)+`; a context's imports nest at most two levels, so an import cycle fails too *(documented, scripts/lib/file-limits.mjs header: "Limits on the contributed files")*. `scripts/validate-models.mjs` checks the limits first and stops there when a file is over one, so neither the toolkit nor the catalogue rules read it; the validator runs in "Build and dry-run deploy", which `main` requires, and in the deploy build *(documented, scripts/validate-models.mjs header: "A file over a limit stops the run here")*. Enforced by CI since #293 (2026-11); before that it was a review rule *(maintainer, 2026-10)*.
   - Symptom: `x-cpu-exhaustion` (a consumer's validator or JSON-LD
     processor spends a long time, or much memory, on a published file).
   - Tier: security-critical, as the disclaimer it narrows
@@ -693,12 +693,14 @@ are listed, or properties the maintainer ratified (2026-10).
   - *Voided by*:
     - the `pattern` rule is a heuristic: it finds the nested-quantifier form
       only, and a slow `pattern` of another form, such as overlapping
-      alternatives in `(a|a)+`, passes (`D-CONTRIBUTED-FILE-LIMITS`);
+      alternatives in `(a|aa)+` or a backreference, passes
+      (`D-CONTRIBUTED-FILE-LIMITS`);
     - the files generated from `models/` (vocabularies, `catalog.json`,
       `llms.txt`, pages) are not checked against the limits, only their
       sources;
-    - a file that is not valid JSON or YAML is skipped by the limits and
-      reported by the toolkit instead.
+    - files other than JSON and YAML (Markdown, text) are checked for size
+      only, and the `$ref` and `pattern` rules read only the schema files
+      (`schema.json` and the release snapshots' `schema/*.json`).
     The limits are constants in `scripts/lib/file-limits.mjs`; the depth of
     context imports is checked in `resolveContextTerms`
     (`scripts/lib/models.mjs`). Search:

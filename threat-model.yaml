@@ -1,7 +1,7 @@
 # threat-model.yaml — derived index; the prose threat model (threat-model.md) is canonical.
 schema: threat-model-sidecar/v2
 project: datamodels
-prose_version: "threat-model.md@sha256:c4438d90f01f0bd0cffaf2624b30379e31e7afc07c39eb403b0a49b648ab2cd3"
+prose_version: "threat-model.md@sha256:15b3246f50ff93fb6f243840ec6ed26c03ef7c4d4c6822366f79061feac0f4dd"
 model_status: accepted
 triage_policy: strict
 confidence: {documented: 223, maintainer: 53, inferred: 0, assumption: 0}
@@ -842,7 +842,7 @@ properties_claimed:
     kind: resource-bound
     components: [build-validation, published-files]
     tier: security-critical
-    conditions: "files under models/ at most 256 KB, nesting 32, 100 $refs per schema, patterns at most 256 characters and without nested quantifiers, context imports at most two levels; a CI rule since #293"
+    conditions: "regular files under models/ (no links) at most 256 KB; JSON and YAML parse and nest at most 32 levels; 100 $refs per schema; patterns at most 256 characters and without nested quantifiers unless separated; context imports at most two levels; a CI rule since #293"
     violation_symptoms: [x-cpu-exhaustion]
     provenance: {kind: documented, source: "scripts/lib/file-limits.mjs header: \"Limits on the contributed files\""}
   - id: P-DIGESTS-PUBLISHED
