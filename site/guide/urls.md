@@ -52,17 +52,20 @@ description: どの URL を使うか、何が変わらないか、バージョ�
 
 `catalog.json` の `digests` には、バージョン付きのファイルごとの SHA-256 ダイジェストがあります。対象は、公開したすべてのバージョンの `@context`、語彙、JSON Schema です（例：`/schema/common/Geometry/v1.0.0.json`）。書き方は、Subresource Integrity と同じ `sha256-<base64>` です。
 
-- **固定する**：使うファイルのダイジェストを、自分の設定やロックファイルに書いておきます。読み込むたびに比べると、内容が変わったときに気づけます。
-- **リポジトリと比べる**：公開したバージョンのファイルは、GitHub のリポジトリの `models/<subject>/releases/v<version>/` にもあります。そこから計算したダイジェストは、配信元の datamodels.jp とは別の経路で確かめた値になります。
+- **固定する**：使うファイルのダイジェストを、自分の設定やロックファイルに書いておきます。読み込むたびに比べると、内容が変わったときに気づけます。ただし、正式公開までのプレリリースの間は、公開したファイルを直すことがあり、そのときはダイジェストも変わります。
+- **リポジトリと比べる**：公開したバージョンのファイルは、GitHub のリポジトリの `models/<subject>/releases/v<version>/` にもあります。そこから計算したダイジェストは、配信元の datamodels.jp とは別の経路で確かめた値になります。リポジトリのファイルと URL は、次のように対応します。
+  - `context.jsonld`：`/context/<subject>/v<version>.jsonld`
+  - `vocab.jsonld`：`/vocab/<subject>/v<version>.jsonld`
+  - `schema/<Type>.json`：`/schema/<subject>/<Type>/v<version>.json`
 
 ダイジェストは、次のコマンドで計算できます。出力の前に `sha256-` を付けると、`digests` の値と同じ形になります。
 
 ```bash
-curl -s https://datamodels.jp/schema/common/Geometry/v1.0.0.json \
+curl -fsS https://datamodels.jp/schema/common/Geometry/v1.0.0.json \
   | openssl dgst -sha256 -binary | openssl base64 -A
 ```
 
-ダイジェストは、ファイルと同じサイトから配信されます。手元のコピーやキャッシュが公開されたファイルと同じかは確かめられますが、サイトそのものが書き換えられたときは防げません。そのときは、リポジトリのファイルと比べます。署名はありません。正式公開までのプレリリースの間は、公開したファイルを直すことがあり、そのときはダイジェストも変わります。
+ダイジェストは、ファイルと同じサイトから配信されます。手元のコピーやキャッシュが公開されたファイルと同じかは確かめられますが、サイトそのものが書き換えられたときは防げません。そのときは、リポジトリのファイルと比べます。署名はありません。
 
 ## URL の一覧
 

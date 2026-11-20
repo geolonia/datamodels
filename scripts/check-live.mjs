@@ -113,23 +113,32 @@ for (const [url, type, marker] of [[CATALOG_LICENSE.licenseUrl, 'text/html', 'CC
 }
 
 let firstAdapterUrl, firstMappingUrl;
-const r = await fetch(swap(`${BASE_URL}/catalog.json`));
+const r = await fetch(swap(`${BASE_URL}/catalog.json`), { cache: 'no-store' });
 expect(r.ok, `catalog.json: ${r.status}`);
 if (r.ok) {
   const c = await r.json();
   expect(c.formatVersion === 1 && Array.isArray(c.models), 'catalog.json: unexpected shape');
   // Digests (#295): one per exact-version file, each released file's equal to its snapshot's, and every one
   // matching the bytes served now. A consumer that pins a digest must be able to rely on all three.
-  const digests = c.digests ?? {};
-  expect(Object.keys(digests).length, 'catalog.json: no digests');
-  for (const subject of subjects) for (const release of await listReleases(subject)) for (const f of release.files) {
-    expect(digests[f.url] === sriDigest(await readFile(f.path)), `catalog.json: digest of ${f.url} is ${digests[f.url] ?? 'missing'}, not the release snapshot's`);
-  }
-  for (const [url, digest] of Object.entries(digests)) {
-    try {
-      const res = await fetch(swap(url), { cache: 'no-store' });
-      expect(res.ok && sriDigest(Buffer.from(await res.arrayBuffer())) === digest, `${swap(url)}: ${res.ok ? 'served bytes do not match the digest in catalog.json' : res.status}`);
-    } catch (e) { failures.push(`${swap(url)}: ${e.message}`); }
+  // catalog.json is cached for 5 minutes, so right after a deploy it may still be the old one.
+  const stale = '(deploy not live yet, or a stale cache of catalog.json)';
+  const digests = c.digests;
+  if (!digests || !Object.keys(digests).length) failures.push(`catalog.json: no digests ${stale}`);
+  else {
+    // Released files: the snapshot comparison above already checked the served bytes, so digest = snapshot is enough.
+    const released = new Set();
+    for (const subject of subjects) for (const release of await listReleases(subject)) for (const f of release.files) {
+      released.add(f.url);
+      expect(digests[f.url] === sriDigest(await readFile(f.path)), `catalog.json: digest of ${f.url} is ${digests[f.url] ?? 'missing'}, not the release snapshot's ${stale}`);
+    }
+    // The others (a current version without a snapshot yet) against the bytes served now.
+    for (const [url, digest] of Object.entries(digests)) {
+      if (released.has(url)) continue;
+      try {
+        const res = await fetch(swap(url), { cache: 'no-store' });
+        expect(res.ok && sriDigest(Buffer.from(await res.arrayBuffer())) === digest, `${swap(url)}: ${res.ok ? `served bytes do not match the digest in catalog.json ${stale}` : res.status}`);
+      } catch (e) { failures.push(`${swap(url)}: ${e.message}`); }
+    }
   }
   // Adapter files are listed per model in the catalog; each must be served with the type of its extension (public/_headers).
   const adapterType = (url) => (url.endsWith('.csv') ? 'text/csv' : url.endsWith('.sql') ? 'application/sql' : 'application/json');
