@@ -44,6 +44,19 @@
   against it within that window; a report of a stale answer later than that
   is no longer covered by the disclaimer and is triaged as a correctness bug
   in the IRI Worker (the disclaimer's tier).
+  2026-11-21, for geolonia/datamodels#293 (a §1.16 trigger: limits on
+  contributed files). New property `P-FILE-LIMITS`: CI and the build reject a
+  file over 256 KB, JSON or YAML nested deeper than 32 levels, a schema with
+  more than 100 `$ref`s, a `pattern` over 256 characters or one that repeats
+  a group whose length varies, and context imports nested more than two
+  levels, which also ends an import cycle. `D-CONTRIBUTED-FILE-LIMITS`
+  narrows to what these coarse limits leave out. The text of
+  `P-REFS-CATALOG-ONLY` no longer says that its CI check is not required for
+  merging, which #291 changed. Re-routed for the changed area: a report of a
+  published file over a limit, or of a nested-quantifier `pattern`, routes
+  `VALID` against `P-FILE-LIMITS`; a slow `pattern` of another form still
+  closes against the narrowed disclaimer. The routing table is producer-side
+  and not in this checkout, so the published backtest figures are unchanged.
 - **Date / author**: 2026-10-16, drafted for the maintainer, Daniel Kastl, who
   ratified the claims of the first draft in one wave on 2026-10-16.
 - **Generation metadata**: produced with AI assistance. Model/agent: Claude
@@ -76,7 +89,7 @@
   default, open as question `QN` in §1.18.
 - **Glossary**: a short plain-language glossary is at the end of this document
   (Appendix A).
-- **Confidence**: 217 documented / 55 maintainer / 0 inferred / 0 assumption.
+- **Confidence**: 223 documented / 53 maintainer / 0 inferred / 0 assumption.
   Counted as the plugin's validator counts, over §1.2 to §1.19: one count per
   parenthesised tag, by its first kind; the tags in this header and its legend
   are not counted.
@@ -404,9 +417,10 @@ the individual fields of `catalog.yaml`, `notes.yaml` and `ADOPTERS.yaml`
   IPv6 address by its /64), counted per Cloudflare location and approximately
   *(documented, docs/deployment.md: "100 requests a minute per client address, an IPv6 address by its /64, counted per Cloudflare location")*.
 - **Static files.** No limit set by this repository; Cloudflare serves them.
-- **Contributed files.** No size, nesting, `$ref` count or regular-expression
-  limit is checked for schemas, contexts, examples or mapping files
-  *(maintainer, 2026-10)*.
+- **Contributed files.** At most 256 KB per file, 32 levels of nesting in
+  JSON and YAML, 100 `$ref`s per schema, 256 characters per `pattern` and
+  two levels of context imports; a `pattern` that repeats a group whose length
+  varies fails (`P-FILE-LIMITS`) *(documented, scripts/lib/file-limits.mjs header: "Limits on the contributed files")*.
 - **Node indexes.** Text fields are cut to 200 characters on one line
   *(documented, scripts/lib/nodes.mjs `cleanText` comment: "plain text only, one line, not too long")*.
 
@@ -421,12 +435,12 @@ instructions).
 | --- | --- | --- | --- | --- | --- |
 | `published-files` | numeric domain and representational limits | claimed | versions are semantic versions; an alias `vX` points to the latest `X.y.z` | §1.11 `P-ALIAS-ADDITIVE` | *(documented, docs/design.md "URL scheme and hosting contract" item 6)* |
 | `published-files` | failure and exception atomicity | disclaimed | a deploy replaces the whole tree; no guarantee about what a client sees during a deploy | §1.12 `D-NO-AVAILABILITY-SLA` | *(maintainer, 2026-10)* |
-| `published-files` | recursive or cyclic topology | disclaimed | a context imports other catalog contexts; nothing in the files guards a consumer's processor against deep import chains or large documents | §1.12 `D-CONTRIBUTED-FILE-LIMITS` | *(maintainer, 2026-10)* |
+| `published-files` | recursive or cyclic topology | claimed | a context imports other catalog contexts at most two levels deep, so an import cycle fails CI; nesting is at most 32 levels | §1.11 `P-FILE-LIMITS` | *(documented, scripts/lib/models.mjs `resolveContextTerms` comment: "Imports nest at most MAX_CONTEXT_IMPORT_DEPTH levels")* |
 | `published-files` | callback and collaborator execution | N/A — static files run no code on the server | | §1.4 | *(documented, wrangler.jsonc `run_worker_first` comment)* |
 | `published-files` | serialization and reconstruction | claimed | files are JSON, JSON-LD, YAML, CSV, SQL as labelled by `Content-Type` | §1.11 `P-HEADERS` | *(documented, docs/design.md "URL scheme and hosting contract" item 2)* |
 | `published-files` | reference and object lifecycle | claimed | term IRIs keep their meaning and keep resolving; no `retired` status | §1.11 `P-IRI-RESOLVES`, `P-TERM-MEANING-STABLE` | *(documented, docs/design.md "URL scheme and hosting contract" items 3 and 4)* |
 | `published-files` | concurrency and reentrancy | N/A — read-only files | | §1.5 | *(documented, public/_headers header comment: "Nothing here is private")* |
-| `published-files` | resource complexity | disclaimed | no size or shape limit on what consumers download and process | §1.12 `D-CONTRIBUTED-FILE-LIMITS` | *(maintainer, 2026-10)* |
+| `published-files` | resource complexity | claimed | coarse limits on size, nesting, `$ref`s and `pattern`s; what they leave out, such as a slow `pattern` without nested quantifiers, is `D-CONTRIBUTED-FILE-LIMITS` | §1.11 `P-FILE-LIMITS` | *(documented, scripts/lib/file-limits.mjs header: "Limits on the contributed files")* |
 | `published-files` | x-version-immutability | claimed | exact-version context, vocabulary and schema files, after the launch | §1.11 `P-PUBLISHED-IMMUTABLE`; before the launch §1.12 `D-PRERELEASE-CORRECTIONS` | *(documented, docs/design.md "URL scheme and hosting contract" item 1)* |
 | `iri-negotiation` | numeric domain and representational limits | claimed | `q` values parsed as numbers; a non-finite value counts as 0 | §1.11 `P-NEGOTIATION-FALLBACK` | *(documented, worker/index.mjs `qualities` comment: "The quality (0 to 1) the Accept header gives each media type")* |
 | `iri-negotiation` | failure and exception atomicity | claimed | any error falls back to the static answer | §1.11 `P-NEGOTIATION-FALLBACK` | *(documented, worker/index.mjs comment: "Any error below falls back to the static answer")* |
@@ -452,7 +466,7 @@ instructions).
 | `build-validation` | serialization and reconstruction | claimed | schemas reference only catalogue schemas or pointers inside the file; a CI rule since #292 | §1.11 `P-REFS-CATALOG-ONLY` | *(documented, scripts/lib/catalog-rules.mjs comment: "References stay inside the catalog")* |
 | `build-validation` | reference and object lifecycle | claimed | a published version without a snapshot fails `--all-released` | §1.11 `P-PUBLISHED-IMMUTABLE` | *(documented, README "Adding or changing a model" step 3: "`pnpm run check` fails if a snapshot differs from the sources or the current version has none")* |
 | `build-validation` | concurrency and reentrancy | N/A — a single build process per run | | §1.5 | *(documented, scripts/build.mjs header)* |
-| `build-validation` | resource complexity | disclaimed | no limit on the size of contributed files | §1.12 `D-CONTRIBUTED-FILE-LIMITS` | *(maintainer, 2026-10)* |
+| `build-validation` | resource complexity | claimed | a file over the size, nesting, `$ref` or `pattern` limit stops the validator before the toolkit and the catalogue rules read it; the import depth is checked after the toolkit has read the contexts | §1.11 `P-FILE-LIMITS` | *(documented, scripts/validate-models.mjs header: "A file over a limit stops the run here")* |
 | `listings` | numeric domain and representational limits | claimed | node text cut to 200 characters; versions `X.Y.Z` only | §1.11 `P-OUTSIDER-TEXT-PLAIN` | *(documented, scripts/lib/nodes.mjs `cleanText` comment)* |
 | `listings` | failure and exception atomicity | claimed | a node that does not answer keeps its previous entry; the snapshot is written to a temporary file and renamed | §1.11 `P-OUTSIDER-TEXT-PLAIN` | *(documented, scripts/fetch-nodes.mjs header: "A node that does not answer keeps its previous entry")* |
 | `listings` | recursive or cyclic topology | N/A — flat records | | §1.7 | *(documented, scripts/lib/nodes.mjs `nodeEntry`)* |
@@ -653,7 +667,7 @@ are listed, or properties the maintainer ratified (2026-10).
     `catalog-rules.mjs`; no flag skips it. Planned profiles of upstream models
     would import commit-pinned GitHub URLs and change this property (§1.16).
 
-- **`P-REFS-CATALOG-ONLY` — published schemas reference only catalogue schemas.** A schema's `$ref` or `$dynamicRef` is a `#` pointer or an absolute, normalised URL under `https://datamodels.jp/schema/` without a query or an encoded slash; anything else, a relative reference included, fails the pull-request CI and the deploy build (`scripts/build.mjs` runs the validator before anything reaches `dist/`), in the current sources and in the release snapshots. The CI check is not required for merging (see the `supply-chain` row of the matrix), so a merged schema that breaks the rule stops the deploy instead of being published *(documented, scripts/lib/catalog-rules.mjs comment: "A schema references only this catalog's schemas or a place inside the file")*. Enforced by CI since #292 (2026-11); before that it was a review rule *(maintainer, 2026-10)*.
+- **`P-REFS-CATALOG-ONLY` — published schemas reference only catalogue schemas.** A schema's `$ref` or `$dynamicRef` is a `#` pointer or an absolute, normalised URL under `https://datamodels.jp/schema/` without a query or an encoded slash; anything else, a relative reference included, fails the pull-request CI and the deploy build (`scripts/build.mjs` runs the validator before anything reaches `dist/`), in the current sources and in the release snapshots. The check is part of "Build and dry-run deploy", which `main` requires since #291 (see the `supply-chain` row of the matrix); a schema that still reached `main` would stop the deploy instead of being published *(documented, scripts/lib/catalog-rules.mjs comment: "A schema references only this catalog's schemas or a place inside the file")*. Enforced by CI since #292 (2026-11); before that it was a review rule *(maintainer, 2026-10)*.
   - Symptom: `bad-data-accepted` (a consumer's validator follows a reference
     to a host the catalogue does not control).
   - Tier: correctness-only *(maintainer, 2026-10)*.
@@ -670,6 +684,30 @@ are listed, or properties the maintainer ratified (2026-10).
     names under `properties`, `patternProperties`, `$defs`, `definitions`,
     `dependentSchemas` and `dependencies` are names, and the schemas under
     them are read.
+
+- **`P-FILE-LIMITS` — contributed files stay within coarse limits.** Every file under `models/`, the release snapshots included, is a regular file (a symbolic link fails and is not followed) of at most 256 KB; JSON and YAML files (by extension, in any case) parse and nest at most 32 levels; a schema has at most 100 `$ref`s, and each `pattern` and `patternProperties` name is a valid regular expression of at most 256 characters that does not repeat a group whose length varies through `*`, `+` or a `{n,m}` range, as `(a+)+` does (a group whose only varying part is optional, as in `(a?)+`, is not counted), unless the group has one part of varying length, no alternatives and no inner groups, and ends with a separator nothing else in it matches, as in `(\d+\.)+`; a context's imports nest at most two levels, so an import cycle fails too *(documented, scripts/lib/file-limits.mjs header: "Limits on the contributed files")*. `scripts/validate-models.mjs` checks the limits on single files first (all but the import depth) and stops there when a file is over one, so neither the toolkit nor the catalogue rules read it; the import depth is checked later, when `resolveContextTerms` resolves the current contexts and every snapshot context after the toolkit has read them; the validator runs in "Build and dry-run deploy", which `main` requires, and in the deploy build *(documented, scripts/validate-models.mjs header: "A file over a limit stops the run here")*. Enforced by CI since #293 (2026-11); before that it was a review rule *(maintainer, 2026-10)*.
+  - Symptom: `x-cpu-exhaustion` (a consumer's validator or JSON-LD
+    processor spends a long time, or much memory, on a published file).
+  - Tier: security-critical, as the disclaimer it narrows
+    (`D-CONTRIBUTED-FILE-LIMITS`) *(maintainer, 2026-10)*.
+  - *Voided by*:
+    - the `pattern` rule is a heuristic: it finds the nested-quantifier form
+      only, and a slow `pattern` of another form, such as overlapping
+      alternatives in `(a|aa)+`, an optional part in `(a?)+` or a
+      backreference, passes
+      (`D-CONTRIBUTED-FILE-LIMITS`);
+    - the files generated from `models/` (vocabularies, `catalog.json`,
+      `llms.txt`, pages) are not checked against the limits, only their
+      sources;
+    - files other than JSON and YAML (Markdown, text) are checked for size
+      only, and the `$ref` and `pattern` rules read only the schema files
+      (`schema.json` and the release snapshots' `schema/*.json`).
+    The limits are constants in `scripts/lib/file-limits.mjs`; the depth of
+    context imports is checked in `resolveContextTerms`
+    (`scripts/lib/models.mjs`). Search:
+    `grep -n "MAX_" scripts/lib/file-limits.mjs`. The tests are
+    `test/file-limits.test.mjs` and five cases in
+    `test/validate-models.test.mjs`.
 
 - **`P-DIGESTS-PUBLISHED` — `catalog.json` lists the digest of every exact-version file.** `digests` maps the URL of every exact-version file (the contexts, vocabularies and schemas of every published version) to its SHA-256 digest in the Subresource Integrity form, computed at build time from the bytes written to `dist/` *(documented, scripts/lib/publish.mjs comment: "A digest per exact-version file, from the bytes written to dist/")*. `pnpm run check:live` checks that the digest of every released file equals its release snapshot's, and that every other listed file is served with its digest *(documented, scripts/check-live.mjs comment: "Digests (#295)")*. A digest shows that a copy matches what the site published, not who published it (`D-NO-SIGNATURE`) *(maintainer, 2026-11)*.
   - Symptom: `wrong-output` (a consumer that pinned a digest rejects a good
@@ -820,7 +858,7 @@ rested on silence were turned into stated limits by maintainer ruling
 | `D-RATE-LIMIT-BEST-EFFORT` | a hard or fair rate limit on `/mcp` | stated. 100 a minute per address or /64, per Cloudflare location, approximate; users of hosted connectors share their provider's addresses; a failing limiter lets requests through | correctness-only | yes: the limit is not a denial-of-service defence | *(documented, worker/limit.mjs `allowed` comment: "A failing limiter lets the request through, as the data is public and the tools only read")* |
 | `D-VALIDATE-NOT-ASSURANCE` | any statement beyond schema conformance from validation (CI or MCP `validate`) | stated. `valid: true` means the JSON Schema and the listed NGSI-LD checks passed; the `@context` is not checked; nothing is said about safety for HTML, truth, authorisation or personal data | correctness-only | yes: "valid" is not "safe" | *(documented, worker/mcp.mjs `validate` description: "its @context is not checked")* |
 | `D-PERSONAL-DATA-MARKER` | any handling of personal data | stated by maintainer ruling (2026-10). `x-personal-data: true` marks an attribute; the toolkit checks only that the value is `true` or absent. The catalogue holds no data, and the marker does not say how data must be protected, stored or classified under any law; an attribute without it may still be personal data | security-critical | yes: a marker is not a protection | *(maintainer, 2026-10)* |
-| `D-CONTRIBUTED-FILE-LIMITS` | limits that protect a consumer's processor from a published file | stated by maintainer ruling (2026-10). No limit on size, nesting, number of `$ref`s, depth of context imports, or the complexity of `pattern` expressions in schemas; review is the control | security-critical | no | *(maintainer, 2026-10)* |
+| `D-CONTRIBUTED-FILE-LIMITS` | limits that make a published file cheap for a consumer's processor | stated by maintainer ruling (2026-10), narrowed for #293 (2026-11). CI enforces only coarse limits (`P-FILE-LIMITS`): a file within them can still cost a processor time and memory, the `pattern` rule finds only nested quantifiers, and the generated files are not checked; review is the control for the rest | security-critical | no | *(maintainer, 2026-10)* |
 | `D-AGENT-TEXT` | filtering of text meant to steer AI agents | stated by maintainer ruling (2026-10). Descriptions, notes and listings reach agents through `llms.txt`, `catalog.json` and MCP answers as written | security-critical | no | *(maintainer, 2026-10)* |
 | `D-LISTED-CONTENT-UNREVIEWED` | review or endorsement of listed extensions and node models | stated. Content is listed as the owner reported it; whether the domain is the owner's is not checked; the review only checks that the reporter represents the organisation | correctness-only | yes: "listed on datamodels.jp" is not "endorsed" | *(documented, CONTRIBUTING.md "Adding a listed extension" steps 3 and 4)* |
 | `D-STATUS-NOT-REVIEW` | a security review behind `stable`, `ADOPTERS.yaml` or a DCO sign-off | stated. `stable` means two independent adopters; adopters are self-reported; the sign-off is an agreement to the DCO, not an identity check | correctness-only | yes | *(documented, docs/design.md "Versioning and lifecycle": "Entries are self-reported with a link")* |
@@ -839,9 +877,11 @@ project leaves to the consumer:
   catalogue's rule keeps it that way (`P-REFS-CATALOG-ONLY`); consumers still decide which
   hosts their validator may reach.
 - **Regular-expression denial of service.** A `pattern` in a schema runs in
-  the consumer's validator.
+  the consumer's validator. CI rejects the nested-quantifier form
+  (`P-FILE-LIMITS`), not every slow `pattern`.
 - **Expansion blow-up.** Deep context imports and large documents cost a
-  JSON-LD processor time and memory.
+  JSON-LD processor time and memory. CI bounds both (`P-FILE-LIMITS`), but
+  a document within the limits is not free to process.
 - **YAML aliases.** Mapping files are YAML; a parser that expands aliases
   without a limit can be made to allocate a lot.
 - **Indirect prompt injection.** Text in a model can be read by an agent as an
@@ -862,8 +902,9 @@ project leaves to the consumer:
   (`D-NO-AVAILABILITY-SLA`) *(maintainer, 2026-10)*.
 - Treat schemas, contexts and mapping files as input to your own processors:
   limit `$ref` resolution to `https://datamodels.jp/`, bound the time your
-  validator spends on `pattern`, and bound document size and import depth
-  (`D-CONTRIBUTED-FILE-LIMITS`) *(maintainer, 2026-10)*.
+  validator spends on `pattern`, and bound document size and import depth;
+  the catalogue's own limits are coarse (`P-FILE-LIMITS`,
+  `D-CONTRIBUTED-FILE-LIMITS`) *(maintainer, 2026-10)*.
 - Treat every text field as untrusted: escape it before rendering, and never
   let an agent act on it as an instruction (`D-AGENT-TEXT`) *(maintainer, 2026-10)*.
 - Decide yourself which attributes are personal data and how to protect them;
@@ -951,7 +992,8 @@ Revise the model when any of these happens:
   profiles of upstream models import commit-pinned GitHub URLs), or the
   planned pinned mirror under `/context/mirror/`.
 - A change of the rule on `$ref` targets (`P-REFS-CATALOG-ONLY`, a CI rule
-  since #292), or a size limit on contributed files.
+  since #292), or of the limits on contributed files (`P-FILE-LIMITS`, since
+  #293).
 - A signature or a new manifest for consumers, or a change of the digests in
   `catalog.json` (`P-DIGESTS-PUBLISHED`, since #295).
 - Nodes read during the build instead of from the reviewed snapshot.
@@ -1032,8 +1074,8 @@ export: `description` (the exporter takes the first paragraph of §1.2) and
 `inferred` with no text); the published JSON carries the §1.4 boundary for
 each family with `documented` provenance, matching §1.4. The JSON schema
 has no **maintainer** kind, so the export counts maintainer-ratified claims as
-documented: its confidence reads 272 documented and 0 inferred, the sum of the
-217 documented and 55 maintainer claims counted here. The JSON's `dispositions`
+documented: its confidence reads 276 documented and 0 inferred, the sum of the
+223 documented and 53 maintainer claims counted here. The JSON's `dispositions`
 array has nine values, not ten: the plugin's `schema.json` (commit `192fd60`)
 allows exactly nine and has no value for `OUT-OF-MODEL: dependency-contract`,
 so that disposition, which §1.9 and §1.17 use, appears only here and in the

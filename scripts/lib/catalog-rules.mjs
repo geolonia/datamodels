@@ -8,16 +8,14 @@ import { join, relative } from 'node:path';
 import { attributesOf, resolveContextTerms, CORE_TERMS, isCatalogIri, externalParentProblem, BASE_URL } from './models.mjs';
 import { resolveContextDocument, listReleases } from './releases.mjs';
 import { extensionProblems } from './extensions.mjs';
+import { DATA_KEYWORDS, SCHEMA_MAPS } from './file-limits.mjs';
 
 const isLink = (u) => { if (typeof u !== 'string') return false; try { const x = new URL(u); return (x.protocol === 'https:' || x.protocol === 'http:') && x.hostname !== ''; } catch { return false; } };
 const isObject = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
 
-// Keywords whose value is data, not a schema: a "$ref" key inside them is not a reference
-// (dependentRequired maps property names to lists of property names).
-const DATA_KEYWORDS = new Set(['const', 'enum', 'default', 'examples', 'dependentRequired']);
-// Keywords whose value maps names to schemas: the names are not keywords, the values are schemas
-// (draft-07 dependencies may also map a name to a list of names, which holds no reference).
-const SCHEMA_MAPS = new Set(['properties', 'patternProperties', '$defs', 'definitions', 'dependentSchemas', 'dependencies']);
+// DATA_KEYWORDS (values that are data, not schemas) and SCHEMA_MAPS (names mapped to schemas;
+// draft-07 dependencies may also map a name to a list of names, which holds no reference)
+// are shared with the limits in file-limits.mjs.
 const SCHEMA_PREFIX = `${BASE_URL}/schema/`;
 const isCatalogSchemaRef = (ref) => {
   if (ref.startsWith('#')) return true;
@@ -63,6 +61,13 @@ export async function catalogRuleProblems(subjects) {
     for (const term of Object.keys(subject.inlineTerms)) if (CORE_TERMS.has(term)) fail(`${where}/context.jsonld`, `redefines core context term "${term}" (protected)`);
     const releases = await listReleases(subject);
     const published = [subject.version, ...releases.map((r) => r.version)];
+    // A snapshot's context is published too: its imports resolve and nest at most two levels (#293),
+    // also when no current context imports that version.
+    for (const release of releases) for (const f of release.files) {
+      if (!f.url.startsWith(`${BASE_URL}/context/`)) continue;
+      const file = `${where}/${relative(subject.dir, f.path)}`;
+      try { await resolveContextTerms(JSON.parse(await readFile(f.path, 'utf8')), subjects, resolveContextDocument); } catch (e) { fail(file, e.message); }
+    }
     // The release snapshots are published too: their schemas follow the same reference rule (#292).
     for (const release of releases) for (const f of release.files) {
       if (!f.url.startsWith(SCHEMA_PREFIX)) continue;

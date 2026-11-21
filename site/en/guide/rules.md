@@ -43,6 +43,15 @@ So far, every model in the catalog is the catalog's own type; upstream names are
 - Group models by subject (topic), never by region, customer or project.
 - Use the [common](/en/models/common/) value types for shared structures: [JapaneseAddress](/en/models/common/JapaneseAddress/) for addresses, [Geometry](/en/models/common/Geometry/) for `location` and other locations, [ContactPoint](/en/models/common/ContactPoint/) for contacts, [OpeningHours](/en/models/common/OpeningHours/) for opening hours. When a model allows fewer geometry types, narrow it next to the `$ref` (DesignatedShelter allows only a Point). A `$ref` is an absolute URL that starts with `https://datamodels.jp/schema/`, or a reference inside the same file that starts with `#`; a relative path or another site fails CI.
 - To give an existing type another name, use an alias (`x-alias-of`: same attributes, same required fields). To add attributes or to keep a type separate, use a subclass (`x-subclass-of`: attributes with the same name keep the parent's meaning, the parent's required attributes stay required). CI checks both. The parent may also be a schema.org, Smart Data Models or NGSI-LD core type (common's ContactPoint is a subclass of schema.org ContactPoint); then CI checks only that the IRI is in one of these namespaces and that its name starts with a capital letter, as class names do. CI does not check that the class exists, so open the IRI to make sure.
+- Keep the files small and simple: the published files are input to other people's validators and JSON-LD processors. CI rejects:
+  - a file over 256 KB
+  - JSON or YAML nested deeper than 32 levels
+  - a schema with more than 100 `$ref`s
+  - a `pattern` longer than 256 characters, or one that repeats a group whose length varies, such as `(a+)+` (on a string that does not match, its time grows exponentially). A group that ends with a separator is fine when it has one part of varying length, no alternatives (`|`) and no inner groups, and nothing else in it matches the separator, such as `(\d+\.)+` or `([a-z]+-)*` (but not `((?:[a-z]+)-)+`). The check is a heuristic: some slow forms, such as `(a|aa)+` and `(a?)+`, pass it, and review checks them
+  - a context whose imports nest more than two levels deep
+  - a symbolic link, or a JSON or YAML file that does not parse
+
+  The catalog's files are far below these limits. If a model needs more, open an issue first.
 
 ## Mapping to Japanese standards {#mapping}
 
