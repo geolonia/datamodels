@@ -61,6 +61,13 @@ export async function catalogRuleProblems(subjects) {
     for (const term of Object.keys(subject.inlineTerms)) if (CORE_TERMS.has(term)) fail(`${where}/context.jsonld`, `redefines core context term "${term}" (protected)`);
     const releases = await listReleases(subject);
     const published = [subject.version, ...releases.map((r) => r.version)];
+    // A snapshot's context is published too: its imports resolve and nest at most two levels (#293),
+    // also when no current context imports that version.
+    for (const release of releases) for (const f of release.files) {
+      if (!f.url.startsWith(`${BASE_URL}/context/`)) continue;
+      const file = `${where}/${relative(subject.dir, f.path)}`;
+      try { await resolveContextTerms(JSON.parse(await readFile(f.path, 'utf8')), subjects, resolveContextDocument); } catch (e) { fail(file, e.message); }
+    }
     // The release snapshots are published too: their schemas follow the same reference rule (#292).
     for (const release of releases) for (const f of release.files) {
       if (!f.url.startsWith(SCHEMA_PREFIX)) continue;

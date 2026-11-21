@@ -47,7 +47,7 @@ So far, every model in the catalog is the catalog's own type; upstream names are
   - a file over 256 KB
   - JSON or YAML nested deeper than 32 levels
   - a schema with more than 100 `$ref`s
-  - a `pattern` longer than 256 characters, or one that repeats a group whose length varies, such as `(a+)+` (on a string that does not match, its time grows exponentially). A group with one part of varying length that ends with a separator nothing else in the group matches is fine, such as `(\d+\.)+` or `([a-z]+-)*`
+  - a `pattern` longer than 256 characters, or one that repeats a group whose length varies, such as `(a+)+` (on a string that does not match, its time grows exponentially). A group that ends with a separator is fine when it has one part of varying length, no alternatives (`|`) and no inner groups, and nothing else in it matches the separator, such as `(\d+\.)+` or `([a-z]+-)*` (but not `((?:[a-z]+)-)+`). The check is a heuristic: some slow forms, such as `(a|aa)+` and `(a?)+`, pass it, and review checks them
   - a context whose imports nest more than two levels deep
   - a symbolic link, or a JSON or YAML file that does not parse
 

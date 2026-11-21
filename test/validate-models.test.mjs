@@ -549,6 +549,10 @@ test('a nested quantifier in a schema pattern fails', () =>
 test('a nested quantifier in a release snapshot patternProperties name fails', () =>
   withMutatedModels((d) => editJson(join(d, 'common', 'releases', 'v1.0.0', 'schema', 'ContactPoint.json'), (s) => { s.patternProperties = { '^(x-\\w*)*$': {} }; }),
     /models\/common\/releases\/v1\.0\.0\/schema\/ContactPoint\.json: \/patternProperties "\^\(x-\\\\w\*\)\*\$" repeats a group/));
+// A snapshot context is resolved on its own, even when no current context imports that version.
+test('a release snapshot context whose imports nest too deep fails', () =>
+  withMutatedModels((d) => editJson(join(d, 'common', 'releases', 'v1.0.0', 'context.jsonld'), (c) => { c['@context'] = ['https://datamodels.jp/context/common/v1.0.0.jsonld', c['@context']]; }),
+    /models\/common\/releases\/v1\.0\.0\/context\.jsonld: context imports nest deeper than 2 levels/));
 // Task has one $ref of its own, so 100 more make 101.
 test('more than 100 $refs in one schema fails', () =>
   withMutatedModels((d) => editJson(join(d, 'task', 'Task', 'schema.json'), (s) => { s.$defs = Object.fromEntries(Array.from({ length: 100 }, (_, i) => [`r${i}`, { $ref: '#' }])); }),
