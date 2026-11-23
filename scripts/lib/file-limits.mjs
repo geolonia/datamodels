@@ -50,8 +50,10 @@ function quantifierAt(p, i) {
 }
 
 // True when a single-character atom (`.`, `\d`, `[^/]`, `x`) can match `ch`; unsure counts as yes.
+// Tested with the i and s flags whatever the pattern says, since a modifier group such as (?i:
+// can turn them on for a part of it: A and [a-z] overlap there, and . matches a line break.
 function atomMatches(src, ch) {
-  try { return new RegExp(`^(?:${src})$`, 'u').test(ch); } catch { return true; }
+  try { return new RegExp(`^(?:${src})$`, 'uis').test(ch); } catch { return true; }
 }
 // The separator a group starts or ends with: a literal character, or an escaped punctuation character such as `\.`.
 function literalOf(src) {
@@ -108,7 +110,7 @@ export function hasNestedQuantifier(p) {
       while (j < p.length && p[j] !== ']') j += p[j] === '\\' ? 2 : 1;
       i = j + 1;
     } else if (c === '(') {
-      // (?: (?= (?! (?<= (?<! (?<name> and the modifier groups (?i: (?-s: (?ims-i: (Node 22 and later).
+      // (?: (?= (?! (?<= (?<! (?<name> and the modifier groups (?i: (?-s: (?ims-i:.
       const prefix = /^\(\?(?:[ims]*(?:-[ims]+)?:|=|!|<=|<!|<[A-Za-z_$][\w$]*>)/.exec(p.slice(i));
       // Any other (? is syntax this parser does not know: counted as nested, so it fails safe.
       if (!prefix && p[i + 1] === '?') return true;

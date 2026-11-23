@@ -47,7 +47,7 @@ So far, every model in the catalog is the catalog's own type; upstream names are
   - a file over 256 KB
   - JSON or YAML nested deeper than 32 levels
   - a schema with more than 100 `$ref`s
-  - a `pattern` longer than 256 characters, or one that repeats a group whose length varies, such as `(a+)+` (on a string that does not match, its time grows exponentially). A group that ends or starts with a separator is fine when it has one part of varying length, no alternatives (`|`) and no inner groups, and nothing else in it matches the separator, such as `(\d+\.)+`, `([a-z]+-)*` or the subtags of a language tag, `(-[A-Za-z0-9]{2,8})*` (but not `((?:[a-z]+)-)+`). The check is a heuristic: some slow forms, such as `(a|aa)+`, `(a?)+` and several repeated groups in a row (`(a*-)*(a*-)*`), pass it, and review checks them
+  - a `pattern` longer than 256 characters, or one that repeats a group whose length varies, such as `(a+)+` (on a string that does not match, its time grows exponentially). A group that ends or starts with a separator is fine when it has one part of varying length, no alternatives (`|`) and no inner groups, and nothing else in it matches the separator (upper and lower case count as the same letter), such as `(\d+\.)+`, `([a-z]+-)*` or the subtags of a language tag, `(-[A-Za-z0-9]{2,8})*` (but not `((?:[a-z]+)-)+`). The check is a heuristic: some slow forms, such as `(a|aa)+`, `(a?)+` and several repeated groups in a row (`(a*-)*(a*-)*`), pass it, and review checks them
   - a context whose imports nest more than two levels deep
   - a symbolic link, or a JSON or YAML file that does not parse
 
