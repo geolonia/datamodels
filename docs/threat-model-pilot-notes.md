@@ -294,7 +294,8 @@ belong in issues, not in the threat model:
    pointer to the release snapshots as the reference copy~~ Done in #295
    (2026-11-20): digests in `catalog.json` and a page section; no
    signatures (Q9).
-7. Document what `x-personal-data` means and does not mean (Q22).
+7. ~~Document what `x-personal-data` means and does not mean (Q22).~~ Done
+   in #296 (2026-11-23).
 8. ~~Run `npm run check:live` automatically after a deploy~~ Done in #297:
    the "Check live site" workflow (Q23).
 9. ~~A `SECURITY.md` in the repository that links this model, as the first
@@ -357,6 +358,10 @@ belong in issues, not in the threat model:
   JSON-LD clients) and "Hosting" (the Worker runs only for `/ns/*` and
   `/mcp`). Not a §1.16 trigger: the §1.3 item now cites the design document,
   and no property or disclaimer changed.
+- 2026-11-23, #296: the rules guide, the README and the model pages with a
+  "personal data" label explain `x-personal-data` as a hint, as
+  `D-PERSONAL-DATA-MARKER` states. Not a §1.16 trigger: no property or
+  disclaimer changed.
 
 ## Files
 

@@ -201,7 +201,8 @@ const M = {
     licenceText: (href) => `[CC0 1.0](${href})：ファイル（@context、JSON Schema、例）は条件なしで使えます`,
     attribute: '属性', field: 'フィールド', description: '説明', valueCol: '値',
     example: '例', simple: 'key-values の形', ngsi: 'normalized の形（NGSI-LD）', tryIt: '試す', files: 'ファイル',
-    requiredMark: '必須', requiredNote: '* は必須の属性です。', linkHeaderIntro: '本文に @context を書かずに送るときの Link ヘッダー：',
+    requiredMark: '必須', requiredNote: '* は必須の属性です。',
+    personalNote: (href) => `「個人情報」は、個人情報がよく入る属性の目安です。印のない属性にも入りえます。どう守るかは、データを保存する人が決めます（[個人情報の印](${href})）。`, linkHeaderIntro: '本文に @context を書かずに送るときの Link ヘッダー：',
     use: 'このモデルを使う', useValue: (use) => `他のモデルは、属性の値としてこの値型を参照します。その属性を持つデータを検証すると、この値型のスキーマも読み込まれます（[JSON を検証する](${use})）。`,
     standards: '参照している標準', standardsNote: 'このモデルが対応している標準と、項目ごとの対応です。開くと対応表が見られます。',
     fieldsMapped: (n, total) => `${total} 項目中 ${n} 項目が対応`, openStandard: '標準を開く', standardLicence: 'この標準のライセンス', mappingFile: (file, guide, converts) => `${converts ? 'この標準のデータを変換するための対応表' : 'この標準との対応表'}（YAML）: ${file}（説明は${guide('対応表')}）`, notesTitle: '注記', historyTitle: (n) => `変更の記録（${n} 件）`,
@@ -218,7 +219,8 @@ const M = {
     licenceText: (href) => `[CC0 1.0](${href}): the files (@context, JSON Schema, examples) can be used without conditions`,
     attribute: 'Attribute', field: 'Field', description: 'Description', valueCol: 'Value',
     example: 'Example', simple: 'key-values form', ngsi: 'normalized form (NGSI-LD)', tryIt: 'Try it', files: 'Files',
-    requiredMark: 'required', requiredNote: '* required', linkHeaderIntro: 'The Link header, for sending data without @context in the body:',
+    requiredMark: 'required', requiredNote: '* required',
+    personalNote: (href) => `"Personal data" marks attributes that often hold personal data. It is a hint: other attributes can hold it too, and whoever stores the data decides how to protect it ([Personal data](${href})).`, linkHeaderIntro: 'The Link header, for sending data without @context in the body:',
     use: 'Using this model', useValue: (use) => `Other models use this value type as the value of an attribute. Checking data that has such an attribute reads this schema too ([Validate JSON](${use})).`,
     standards: 'Referenced standards', standardsNote: 'The standards this model corresponds to, field by field. Open one to see its table.',
     fieldsMapped: (n, total) => `${n} of ${total} fields`, openStandard: 'Open the standard', standardLicence: 'Licence of this standard', mappingFile: (file, guide, converts) => `${converts ? 'Mapping file (YAML) for converting data from this standard' : 'Mapping file (YAML) for this standard'}: ${file} (see ${guide('Mapping files')})`, notesTitle: 'Notes', historyTitle: (n) => `Change history (${n})`,
@@ -302,6 +304,7 @@ function modelPage(lang, prefix, subject, model) {
     }
     md += `\n</div>\n\n`;
     if (required.size) md += `<small>${l.requiredNote}</small>\n\n`;
+    if (attributesOf(model).some(([, prop]) => prop['x-personal-data'])) md += `<small>${l.personalNote(`${prefix}/guide/rules#personal-data`)}</small>\n\n`;
   }
   md += `## ${l.use} {#use}\n\n`;
   if (isValue) md += `${l.useValue(`${prefix}/guide/use#validate`)}\n\n`;

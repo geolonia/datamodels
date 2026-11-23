@@ -91,3 +91,11 @@ test('a subclass of a schema.org type links the external IRI; a catalog parent l
   const toilet = renderModelPage('en', '/en', subjects, facility, facility.models.find((m) => m.type === 'PublicToilet'));
   assert.match(toilet, /^\| Subclass of \| A subclass of \[Facility\]\(\/en\/models\/facility\/Facility\/\)/m);
 });
+
+test('a model with a personal-data attribute explains the label and links the rules; other models do not', () => {
+  const decision = subjects.find((s) => s.name === 'decision');
+  const Decision = decision.models.find((m) => m.type === 'Decision');
+  assert.match(renderModelPage('en', '/en', subjects, decision, Decision), /<small>"Personal data" marks attributes .*\(\[Personal data\]\(\/en\/guide\/rules#personal-data\)\)\.<\/small>/);
+  assert.match(renderModelPage('ja', '', subjects, decision, Decision), /<small>「個人情報」は.*（\[個人情報の印\]\(\/guide\/rules#personal-data\)）。<\/small>/);
+  assert.doesNotMatch(renderModelPage('en', '/en', subjects, task, Task), /rules#personal-data/);
+});

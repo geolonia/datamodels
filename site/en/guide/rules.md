@@ -53,6 +53,18 @@ So far, every model in the catalog is the catalog's own type; upstream names are
 
   The catalog's files are far below these limits. If a model needs more, open an issue first.
 
+## Personal data {#personal-data}
+
+`x-personal-data: true` on an attribute in `schema.json` marks an attribute that often holds personal data. Model pages show it as a red "personal data" label. Add it to attributes that hold information about a person. For example, `reviewedBy` in [Decision](/en/models/decision/Decision/#reviewedBy) holds an account identifier, not a name, and is marked because the account belongs to a person.
+
+The marker is a hint, not a compliance statement:
+
+- It does not say how the data must be protected, stored or kept, or how a law classifies it.
+- An attribute without the marker can still hold personal data, for example a free-text note, or a location that shows where someone lives.
+- CI checks only that the value is `true` or that the marker is absent.
+
+Whoever stores the data decides which attributes are personal data in their system and how to protect them.
+
 ## Mapping to Japanese standards {#mapping}
 
 A mapping file (`mapping/*.yaml`) says how a model relates to a standard, so that data that follows the standard can be used with the model directly. The catalog keeps its mapping files few (decided 2026-10-12):

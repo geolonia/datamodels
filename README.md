@@ -38,6 +38,8 @@ docs/deployment.md        how the site is built and served (Cloudflare)
 
 Model folders follow the Smart Data Models layout so a model can be proposed upstream unchanged. Schemas carry no product-specific keys; the validator rejects them.
 
+`x-personal-data: true` marks an attribute that often holds personal data. It is a hint, not a compliance statement: an attribute without it can still hold personal data, and whoever stores the data decides what is personal data and how to protect it ([Rules for models](https://datamodels.jp/en/guide/rules#personal-data)).
+
 ## Commands
 
 You need Node.js 24 or later and pnpm (the version in `packageManager` in `package.json`; without pnpm installed, `npx pnpm install` works too).
