@@ -1,7 +1,7 @@
 # threat-model.yaml — derived index; the prose threat model (threat-model.md) is canonical.
 schema: threat-model-sidecar/v2
 project: datamodels
-prose_version: "threat-model.md@sha256:14072ee71bd7815abdb2d007f4b4a52693e1f629f9b385b39a9332cdd07f0fb8"
+prose_version: "threat-model.md@sha256:ed99422d9c8da0a9b2cb176ed89a92ca33a5e89870f662dc419114210d605f2e"
 model_status: accepted
 triage_policy: strict
 confidence: {documented: 223, maintainer: 53, inferred: 0, assumption: 0}
@@ -935,7 +935,7 @@ downstream_responsibilities:
   - {id: R-BOUND-PROCESSORS, component: published-files, statement: "limit $ref resolution to datamodels.jp; bound pattern evaluation, size and import depth; the catalogue limits are coarse", enforces: [bound-consumer-processors], provenance: {kind: maintainer, date: "2026-10"}}
   - {id: R-TEXT-AS-DATA, component: published-files, statement: "escape text before rendering; never let an agent follow it as an instruction", enforces: [text-safe], provenance: {kind: maintainer, date: "2026-10"}}
   - {id: R-OWN-PERSONAL-DATA, component: published-files, statement: "decide which attributes are personal data and protect them", enforces: [D-PERSONAL-DATA-MARKER], provenance: {kind: maintainer, date: "2026-10"}}
-  - {id: R-OWN-VALIDATION, component: mcp-server, statement: "validate data in your own pipeline; the validate tool is advisory", enforces: [valid-means-safe], provenance: {kind: documented, source: "worker/mcp.mjs validate description"}}
+  - {id: R-OWN-VALIDATION, component: mcp-server, statement: "validate data in your own pipeline; the validate tool is advisory", enforces: [valid-means-safe], provenance: {kind: documented, source: "docs/design.md \"Non-goals\""}}
   - {id: R-IGNORE-UNKNOWN-FIELDS, component: published-files, statement: "ignore unknown fields in catalog.json", enforces: [unversioned-files-stable], provenance: {kind: documented, source: "catalog.schema.json description"}}
   - {id: R-LISTINGS-ARE-CLAIMS, component: listings, statement: "treat node models and listed extensions as other people's claims", enforces: [listing-endorsed], provenance: {kind: documented, source: "CONTRIBUTING.md \"Adding a listed extension\" step 4"}}
   - {id: R-VERIFY-AGAINST-SNAPSHOT, component: published-files, statement: "to verify bytes, pin the digest from catalog.json, or compare with the release snapshot in the repository", enforces: [D-NO-SIGNATURE, P-DIGESTS-PUBLISHED], provenance: {kind: documented, source: "site/en/guide/urls.md \"Verifying a file\""}}
@@ -952,7 +952,7 @@ downstream_responsibilities:
 known_misuses:
   - {id: M-PIN-PRERELEASE, components: [published-files], pattern: "pinning a pre-release exact version and its hash for integrity", safer_alternative: "wait for the launch or keep your own copy", provenance: {kind: documented, source: "README \"Pre-release exception\""}}
   - {id: M-FETCH-WITHOUT-CACHE, components: [published-files], pattern: "fetching contexts on every request without a cache", safer_alternative: "cache or bundle contexts", provenance: {kind: maintainer, date: "2026-10"}}
-  - {id: M-VALID-AS-SAFE, components: [mcp-server, build-validation], pattern: "reading valid: true as safe", safer_alternative: "escape and authorise in your own system", provenance: {kind: documented, source: "worker/mcp.mjs validate description"}}
+  - {id: M-VALID-AS-SAFE, components: [mcp-server, build-validation], pattern: "reading valid: true as safe", safer_alternative: "escape and authorise in your own system", provenance: {kind: documented, source: "docs/design.md \"Non-goals\""}}
   - {id: M-MARKER-AS-COMPLIANCE, components: [published-files], pattern: "reading x-personal-data as a compliance statement", safer_alternative: "decide per attribute", provenance: {kind: maintainer, date: "2026-10"}}
   - {id: M-LISTING-AS-ENDORSEMENT, components: [listings], pattern: "trusting an extension's IRIs because the catalogue lists them", safer_alternative: "check the owner's domain", provenance: {kind: documented, source: "CONTRIBUTING.md \"Adding a listed extension\" step 3"}}
   - {id: M-AGENT-FOLLOWS-TEXT, components: [mcp-server], pattern: "an agent acting on an instruction found in catalogue text", safer_alternative: "treat answers as data", provenance: {kind: maintainer, date: "2026-10"}}

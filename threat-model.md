@@ -234,7 +234,7 @@ a family with its own release cadence and adversary gets its own document
 - **A general validation service.** The catalogue offers no general
   validation service or SPARQL endpoint. Content negotiation on `/ns/*`
   (#196) and the MCP server at `/mcp` with its `validate` tool (#223) are in
-  scope; `validate` is an aid for agents, bounded and advisory *(documented, docs/design.md "Non-goals": "The MCP server's `validate` tool is an aid for agents, not a validation service")*.
+  scope; `validate` is an aid for agents, bounded and advisory *(documented, docs/design.md "Non-goals": "its answer is advisory")*.
   Until #294 the design document still listed content negotiation and a
   validation API as non-goals for 1.0.0, and the model read them as
   superseded *(maintainer, 2026-10)*.
@@ -918,7 +918,7 @@ project leaves to the consumer:
   `x-personal-data` is a hint (`D-PERSONAL-DATA-MARKER`) *(maintainer, 2026-10)*.
 - Validate your data with your own pipeline; the MCP `validate` tool is an aid
   for agents, and its answer is not an assurance (`D-VALIDATE-NOT-ASSURANCE`)
-  *(documented, worker/mcp.mjs `validate` description)*.
+  *(documented, docs/design.md "Non-goals": "its answer is advisory")*.
 - Ignore unknown fields in `catalog.json`; within a `formatVersion`, fields are
   only added *(documented, catalog.schema.json `description`: "consumers must ignore unknown fields")*.
 - Treat node models (`"source": "node"`) and listed extensions as other

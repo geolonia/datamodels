@@ -50,9 +50,9 @@ Three facts in the task brief had changed by the bound commit (`e554242`,
   the manifest for consumers, so there is no published digest (Q9).
 - **There is a validation API of sorts.** The MCP server at `/mcp` (#223)
   has a `validate` tool, and `/ns/*` does content negotiation (#196), while
-  `docs/design.md` still listed both as non-goals for 1.0.0 (Q2; updated in
-  #294). The model
-  covers the MCP server as a component family of its own.
+  `docs/design.md` still listed both as non-goals for 1.0.0 (Q2; updated
+  in #294). The model covers the MCP server as a component family of its
+  own.
 - **The immutability check does not block a merge.** Two organisation
   rulesets apply to `main`. "main-protection" requires one approval, approval
   of the last push, code-owner review and resolved threads, forbids deletion
@@ -193,7 +193,7 @@ answers changed beyond promoting tags:
   Proposed: yes.
 - Q2 `docs/design.md` non-goals are superseded by `/ns/*` negotiation and the
   MCP `validate` tool; `validate` is advisory, not a validation service.
-  Proposed: yes.
+  Proposed: yes. (`docs/design.md` updated in #294.)
 - Q3 `prerelease: true` is supported until the launch; a current-version
   correction before it is by design. Proposed: yes.
 - Q4 Before the launch, "older releases are never corrected" is enforced by
