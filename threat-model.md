@@ -90,7 +90,12 @@
   still splits one way only. Re-routed for the changed area: a report of a
   slow `pattern` that passes through this exception routes `VALID` against
   `P-FILE-LIMITS`, as one through the trailing-separator exception does;
-  other slow forms still close against `D-CONTRIBUTED-FILE-LIMITS`.
+  other slow forms still close against `D-CONTRIBUTED-FILE-LIMITS`. The
+  self-review found that the parser read modifier groups such as `(?i:` as a
+  group starting with a `?` separator, so `(?i:a+)+` would have passed: the
+  parser now knows them, an unknown `(?` counts as nested, and no syntax
+  character counts as a separator. Several separated groups in a row
+  (`(a*-)*(a*-)*`, polynomial) were added to the voided-by list.
 - **Date / author**: 2026-10-16, drafted for the maintainer, Daniel Kastl, who
   ratified the claims of the first draft in one wave on 2026-10-16.
 - **Generation metadata**: produced with AI assistance. Model/agent: Claude
@@ -727,7 +732,8 @@ are listed, or properties the maintainer ratified (2026-10).
   - *Voided by*:
     - the `pattern` rule is a heuristic: it finds the nested-quantifier form
       only, and a slow `pattern` of another form, such as overlapping
-      alternatives in `(a|aa)+`, an optional part in `(a?)+` or a
+      alternatives in `(a|aa)+`, an optional part in `(a?)+`, several
+      separated groups in a row such as `(a*-)*(a*-)*` (polynomial), or a
       backreference, passes
       (`D-CONTRIBUTED-FILE-LIMITS`);
     - the files generated from `models/` (vocabularies, `catalog.json`,

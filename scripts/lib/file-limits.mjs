@@ -55,7 +55,8 @@ function atomMatches(src, ch) {
 }
 // The separator a group starts or ends with: a literal character, or an escaped punctuation character such as `\.`.
 function literalOf(src) {
-  if (src.length === 1 && !'.^$'.includes(src)) return src;
+  // Never a regular-expression syntax character: `?` after a `(` the parser misread, say.
+  if (src.length === 1 && !'.^$?*+()[]{}|\\'.includes(src)) return src;
   if (src.length === 2 && src[0] === '\\' && /[^A-Za-z0-9]/.test(src[1])) return src[1];
   return null;
 }
@@ -72,6 +73,7 @@ function separated(group) {
     const sep = !edge.q && edge.src !== null ? literalOf(edge.src) : null;
     if (sep === null) return false;
     const rest = atoms.filter((_, k) => k !== at);
+    // An inner group is an atom with no source (src null), so `rest.every` below rejects it.
     if (rest.filter((a) => a.q?.optional).length > 1) return false;
     return rest.every((a) => a.src !== null && !atomMatches(a.src, sep));
   };
@@ -106,7 +108,10 @@ export function hasNestedQuantifier(p) {
       while (j < p.length && p[j] !== ']') j += p[j] === '\\' ? 2 : 1;
       i = j + 1;
     } else if (c === '(') {
-      const prefix = /^\(\?(?::|=|!|<=|<!|<[A-Za-z_$][\w$]*>)/.exec(p.slice(i));
+      // (?: (?= (?! (?<= (?<! (?<name> and the modifier groups (?i: (?-s: (?ims-i: (Node 22 and later).
+      const prefix = /^\(\?(?:[ims]*(?:-[ims]+)?:|=|!|<=|<!|<[A-Za-z_$][\w$]*>)/.exec(p.slice(i));
+      // Any other (? is syntax this parser does not know: counted as nested, so it fails safe.
+      if (!prefix && p[i + 1] === '?') return true;
       i += prefix ? prefix[0].length : 1;
       stack.push(frame(!!prefix && /^\(\?(=|!|<=|<!)$/.test(prefix[0])));
       continue;
