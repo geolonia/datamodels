@@ -50,8 +50,9 @@ Three facts in the task brief had changed by the bound commit (`e554242`,
   the manifest for consumers, so there is no published digest (Q9).
 - **There is a validation API of sorts.** The MCP server at `/mcp` (#223)
   has a `validate` tool, and `/ns/*` does content negotiation (#196), while
-  `docs/design.md` still lists both as non-goals for 1.0.0 (Q2). The model
-  covers the MCP server as a component family of its own.
+  `docs/design.md` still listed both as non-goals for 1.0.0 (Q2; updated
+  in #294). The model covers the MCP server as a component family of its
+  own.
 - **The immutability check does not block a merge.** Two organisation
   rulesets apply to `main`. "main-protection" requires one approval, approval
   of the last push, code-owner review and resolved threads, forbids deletion
@@ -192,7 +193,7 @@ answers changed beyond promoting tags:
   Proposed: yes.
 - Q2 `docs/design.md` non-goals are superseded by `/ns/*` negotiation and the
   MCP `validate` tool; `validate` is advisory, not a validation service.
-  Proposed: yes.
+  Proposed: yes. (`docs/design.md` updated in #294.)
 - Q3 `prerelease: true` is supported until the launch; a current-version
   correction before it is by design. Proposed: yes.
 - Q4 Before the launch, "older releases are never corrected" is enforced by
@@ -286,9 +287,9 @@ belong in issues, not in the threat model:
 4. ~~Size, nesting and `pattern` limits for contributed files, or a documented
    decision not to have them~~ Done in #293 (2026-11-21): CI limits on size,
    nesting, `$ref`s, `pattern`s and context imports (Q16).
-5. Update `docs/design.md`: the non-goals, "Term IRIs resolve ... No content
+5. ~~Update `docs/design.md`: the non-goals, "Term IRIs resolve ... No content
    negotiation in 1.0.0" and the "Hosting" paragraph about Worker scripts
-   (Q2).
+   (Q2).~~ Done in #294 (2026-11-23).
 6. ~~Decide whether consumers get digests or signatures, or a documented
    pointer to the release snapshots as the reference copy~~ Done in #295
    (2026-11-20): digests in `catalog.json` and a page section; no
@@ -350,6 +351,12 @@ belong in issues, not in the threat model:
   closed against the disclaimer. Companions edited by hand (a property
   inserted in the JSON shifts the `properties_provided` indexes after it) and
   validated as above (90 passed, the usual length warning).
+- 2026-11-23, #294: `docs/design.md` now describes the runtime paths: the
+  non-goals (no general validation service; `validate` on `/mcp` is bounded
+  and advisory), term IRIs (302 for browsers, 303 to the vocabulary for
+  JSON-LD clients) and "Hosting" (the Worker runs only for `/ns/*` and
+  `/mcp`). Not a §1.16 trigger: the §1.3 item now cites the design document,
+  and no property or disclaimer changed.
 
 ## Files
 

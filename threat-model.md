@@ -57,6 +57,13 @@
   `VALID` against `P-FILE-LIMITS`; a slow `pattern` of another form still
   closes against the narrowed disclaimer. The routing table is producer-side
   and not in this checkout, so the published backtest figures are unchanged.
+  2026-11-23, for geolonia/datamodels#294 (a documentation change, not a
+  §1.16 trigger). `docs/design.md` now states the runtime paths the model
+  already covered: the non-goals name no validation service but the bounded
+  MCP `validate`, term IRIs negotiate (302 for browsers, 303 to the
+  vocabulary for JSON-LD clients), and the Worker runs only for `/ns/*` and
+  `/mcp`. The §1.3 item cites the design document instead of the ruling; no
+  property or disclaimer changed.
 - **Date / author**: 2026-10-16, drafted for the maintainer, Daniel Kastl, who
   ratified the claims of the first draft in one wave on 2026-10-16.
 - **Generation metadata**: produced with AI assistance. Model/agent: Claude
@@ -224,13 +231,13 @@ a family with its own release cadence and adversary gets its own document
 
 - **Runtime services for data.** The catalogue stores no consumer data, has
   no accounts and offers no write operation *(documented, site/en/ai.md "Using it from an agent": "It needs no login, only reads, and answers from the files of this site")*.
-- **A general validation service.** `docs/design.md` lists "Runtime services
-  (validation API, SPARQL, content negotiation) in 1.0.0" as a non-goal
-  *(documented, docs/design.md "Non-goals")*. Since then, content negotiation
-  on `/ns/*` (#196) and an MCP `validate` tool (#223) were added. This model
-  treats both as in scope and reads the non-goal as superseded on those two
-  points; the catalogue offers no general validation service, and `validate`
-  is an aid for agents, bounded and advisory *(maintainer, 2026-10)*.
+- **A general validation service.** The catalogue offers no general
+  validation service or SPARQL endpoint. Content negotiation on `/ns/*`
+  (#196) and the MCP server at `/mcp` with its `validate` tool (#223) are in
+  scope; `validate` is an aid for agents, bounded and advisory *(documented, docs/design.md "Non-goals": "its answer is advisory")*.
+  Until #294 the design document still listed content negotiation and a
+  validation API as non-goals for 1.0.0, and the model read them as
+  superseded *(maintainer, 2026-10)*.
 - **Replacing Smart Data Models or running an ontology registry**
   *(documented, docs/design.md "Non-goals")*.
 - **Hosting other people's extended models.** Extensions are listed, not
@@ -911,7 +918,7 @@ project leaves to the consumer:
   `x-personal-data` is a hint (`D-PERSONAL-DATA-MARKER`) *(maintainer, 2026-10)*.
 - Validate your data with your own pipeline; the MCP `validate` tool is an aid
   for agents, and its answer is not an assurance (`D-VALIDATE-NOT-ASSURANCE`)
-  *(documented, worker/mcp.mjs `validate` description)*.
+  *(documented, docs/design.md "Non-goals": "its answer is advisory")*.
 - Ignore unknown fields in `catalog.json`; within a `formatVersion`, fields are
   only added *(documented, catalog.schema.json `description`: "consumers must ignore unknown fields")*.
 - Treat node models (`"source": "node"`) and listed extensions as other
