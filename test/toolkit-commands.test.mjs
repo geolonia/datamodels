@@ -31,8 +31,9 @@ const PLACEHOLDER = /^(?:[XYZ](?:\.[XYZ])*|<[\w.-]+>)$/;
 
 /** The hand-written Markdown pages: in git or new, but not the generated ones that .gitignore lists. */
 async function pages() {
-  const { stdout } = await run('git', ['ls-files', '--cached', '--others', '--exclude-standard', '--', 'site/*.md'], { cwd: ROOT });
-  return [...new Set(stdout.split('\n').filter(Boolean))].sort();
+  // -z: names as they are, not quoted (git quotes non-ASCII names such as 日本語.md otherwise).
+  const { stdout } = await run('git', ['ls-files', '-z', '--cached', '--others', '--exclude-standard', '--', 'site/*.md'], { cwd: ROOT });
+  return [...new Set(stdout.split('\0').filter(Boolean))].sort();
 }
 
 /** The lines in the code blocks of a page, of any language: [{ line, text }], with lines continued by a backslash joined. */
@@ -58,12 +59,15 @@ function codeLines(markdown) {
   return out;
 }
 
-/** Words of a shell command up to its end (|, &&, ;, a redirect or a comment), with quotes removed. */
+/**
+ * Words of a shell command up to its end, with quotes removed. The command ends at an
+ * unquoted operator (; | & < >), with or without spaces around it, or at a comment.
+ */
 function words(text) {
   const out = [];
-  for (const m of text.matchAll(/'([^']*)'|"((?:[^"\\]|\\.)*)"|(\S+)/g)) {
-    if (m[3] !== undefined && /^(\||&&|;|<|>|\d?>|#)/.test(m[3])) break;
-    out.push(m[1] ?? m[2] ?? m[3]);
+  for (const m of text.matchAll(/'([^']*)'|"((?:[^"\\]|\\.)*)"|([;|&<>])|([^\s'"|;&<>]+)/g)) {
+    if (m[3] !== undefined || m[4]?.startsWith('#')) break;
+    out.push(m[1] ?? m[2] ?? m[4]);
   }
   return out;
 }
