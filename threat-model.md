@@ -64,6 +64,12 @@
   vocabulary for JSON-LD clients), and the Worker runs only for `/ns/*` and
   `/mcp`. The §1.3 item cites the design document instead of the ruling; no
   property or disclaimer changed.
+  2026-11-23, for geolonia/datamodels#296 (a documentation change, not a
+  §1.16 trigger). The rules guide (`/guide/rules#personal-data`, both
+  languages), the README and every model page that shows the "personal
+  data" label now explain what `D-PERSONAL-DATA-MARKER` states: the marker is
+  a hint, an attribute without it can still hold personal data, and whoever
+  stores the data decides how to protect it. The disclaimer is unchanged.
 - **Date / author**: 2026-10-16, drafted for the maintainer, Daniel Kastl, who
   ratified the claims of the first draft in one wave on 2026-10-16.
 - **Generation metadata**: produced with AI assistance. Model/agent: Claude
