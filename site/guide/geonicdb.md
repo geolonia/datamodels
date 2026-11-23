@@ -79,6 +79,8 @@ geonic entities list --type RoadRestriction \
 
 - 登録すると `201 Created` が返ります。同じ型名のモデルが既にあれば、`Custom data model already exists` のエラー（HTTP 409）になります。GeonicDB は、v0.25.0 からこのエラーを HTTP 409 で返します。それより古い GeonicDB では HTTP 400 です。登録したモデルを変えるときは `PATCH /custom-data-models/<Type>` か `geonic models update <Type> @model.json` を使います。
 - **Decision：** Decision のモデルには、VocabProperty と JsonProperty の属性があります。GeonicDB は、v0.23.0 からこの 2 つの型をモデルで受け付けます。それより古い GeonicDB では、登録が HTTP 400 のエラーになります。
+- **GeonicDB v0.25.0 以降：** モデルは、Relationship が指す型（`objectType`）と、リストのルール（`items`、`minItems`、`uniqueItems`）を持ちます。GeonicDB は、v0.25.0 からこれらを受け付けます。それより古い GeonicDB では、ほとんどのモデルの登録が HTTP 400 のエラーになります（[#300](https://github.com/geolonia/datamodels/issues/300)）。
+- **期間：** Task の `estimatedDuration`（`PT2H`）のような期間のパターンは、モデルに入れていません。GeonicDB v0.25.0 以降が、このパターンを受け付けないためです（[geolonia/geonicdb#4180](https://github.com/geolonia/geonicdb/issues/4180)）。そのため GeonicDB は、値が文字列であることだけを検証します。
 - **型付きの日時：** normalized の例では、日時を `{"@type": "DateTime", "@value": "…"}` の形で書いています。GeonicDB は、v0.22.0 からこの形を受け付けます。Task・Milestone・Project の例は、v0.24.0 からそのまま受け付けます。それより古い GeonicDB では、[jq](https://jqlang.org/) で日時を文字列に直します。Task などでは、`MODEL=task/Task` のように `MODEL` を変え、先にそのモデルを登録します。そのあと手順 2 の 2 つ目のコマンド（`curl -X POST … --data @entity.jsonld`）で送ります。CLI では `geonic entities create @entity.jsonld` です。
 
   ```bash
@@ -98,13 +100,17 @@ GeonicDB は、その型のエンティティを作成・変更するたびに�
 - 必須の属性があること
 - 値の型が合っていること（文字列、数値、整数、真偽値、リスト、オブジェクト、GeoJSON、URI、RFC 3339 の日付と日時）と、長さ、最小値・最大値、パターン、許される値のルールを守っていること
   - VocabProperty の許される値は、送った @context で完全な IRI に直して比べること（`dpv:HumanNotInvolved` と書いても、完全な IRI で書いても同じ値）
+- リストの中の値が、許される値、個数、重複なしのルールを守っていること（GeonicDB v0.25.0 以降）。中の値が文字列、数値、真偽値のときです
+- データが `objectType` で Relationship の指す型を書いたとき、その型が合っていること。別の型を書いたデータは受け付けません（GeonicDB v0.25.0 以降）
 - モデルに無い属性が含まれていないこと（カタログの定義では許していません）
 - 一意でなければならない組み合わせが一意であること（定義で宣言していれば）
 
 検証しないこと：
 
-- リストの中の値（許される値、最低の個数など）。リストであることだけを検証します（カタログの JSON Schema は中の値も検証します。`datamodels convert` の変換時など）。
-- 属性が Property と Relationship のどちらで送られたか、Relationship がどの型を指しているか。
+- オブジェクトや値型のリストの中の値（`workingHours` の OpeningHours など）。個数だけを検証します（カタログの JSON Schema は中の値も検証します。`datamodels convert` の変換時など）。
+- 属性が Property と Relationship のどちらで送られたか。
+- データが `objectType` を書かないときの、Relationship が指す型。GeonicDB は、指す先のエンティティを調べません。
+- 期間の書式（上の注を参照）。
 - モデルを登録していない型のエンティティ。そのまま保存されます。
 - 型を複数持つエンティティの 2 つめ以降の型。検証するのは 1 つめの型だけです。
 - モデルを登録・変更する前からあるエンティティ。変更の影響は、試しに実行して確かめられます。何も変えずに、モデルに合わなくなるエンティティの数と例が返ります。

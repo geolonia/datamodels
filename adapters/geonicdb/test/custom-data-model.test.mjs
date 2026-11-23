@@ -174,17 +174,20 @@ test('the contextTerms option expands the terms instead of the subject\'s (#280)
   assert.deepEqual(decisionBody(withEnum('x'), { contextTerms: { x: 'https://e.example/x' } }).humanInvolvement.validation.enum, ['https://e.example/x']);
 });
 
-test('a VocabProperty gets no pattern or length check, and the build says so; a JsonProperty keeps its checks (#280)', (t) => {
+test('a VocabProperty gets no pattern or length check, and the build says so; a JsonProperty list gets list rules only (#280, #300)', (t) => {
   const warn = t.mock.method(console, 'warn', () => {});
   const model = structuredClone(decision);
   Object.assign(model.schema.properties.humanInvolvement, { pattern: '^dpv:', minLength: 1, maxLength: 80 });
-  Object.assign(model.schema.properties.answers, { minimum: 0, enum: [[]] });
+  Object.assign(model.schema.properties.answers, { minimum: 0, enum: [[]], minItems: 1 });
   const d = decisionBody(model);
   assert.deepEqual(Object.keys(d.humanInvolvement.validation), ['enum'], 'written for the compact term, not the IRI');
-  assert.equal(warn.mock.callCount(), 1);
-  assert.match(warn.mock.calls[0].arguments[0], /^Decision\.humanInvolvement: GeonicDB adapter: pattern, minLength, maxLength of a VocabProperty not sent/);
-  // GeonicDB applies a JsonProperty's checks to the JSON itself, as the schema describes it.
-  assert.deepEqual(d.answers.validation, { minimum: 0, enum: [[]] });
+  const notes = warn.mock.calls.map((c) => c.arguments[0]);
+  assert.equal(notes.length, 2, notes.join('\n'));
+  assert.ok(notes.some((n) => /^Decision\.humanInvolvement: GeonicDB adapter: pattern, minLength, maxLength of a VocabProperty not sent/.test(n)), notes.join('\n'));
+  // answers is a list: GeonicDB v0.25.0 and later take only list rules there and refuse scalar ones (#300).
+  assert.equal(d.answers.valueType, 'array');
+  assert.deepEqual(d.answers.validation, { minItems: 1 });
+  assert.ok(notes.some((n) => /^Decision\.answers: GeonicDB adapter: minimum, enum at the top level of a list not sent/.test(n)), notes.join('\n'));
 });
 
 test('extension attributes follow the same GeonicDB rules (#280, #285)', (t) => {
