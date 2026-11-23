@@ -82,6 +82,15 @@
   `P-NEGOTIATION-FALLBACK`, `P-MCP-NO-OUTBOUND`, `P-MCP-STATELESS` and
   `P-MCP-BOUNDED` were re-read and corrected; some were already off before
   this change.
+  2026-11-23, for geolonia/datamodels#326 (a §1.16 trigger: the `pattern`
+  rule of `P-FILE-LIMITS`). A repeated group may also start with its
+  separator, as the subtags of a language tag do in
+  `(-[A-Za-z0-9]{2,8})*`, the pattern of every LanguageProperty schema; the
+  same conditions apply as for a group that ends with one, so a repetition
+  still splits one way only. Re-routed for the changed area: a report of a
+  slow `pattern` that passes through this exception routes `VALID` against
+  `P-FILE-LIMITS`, as one through the trailing-separator exception does;
+  other slow forms still close against `D-CONTRIBUTED-FILE-LIMITS`.
 - **Date / author**: 2026-10-16, drafted for the maintainer, Daniel Kastl, who
   ratified the claims of the first draft in one wave on 2026-10-16.
 - **Generation metadata**: produced with AI assistance. Model/agent: Claude
@@ -710,7 +719,7 @@ are listed, or properties the maintainer ratified (2026-10).
     `dependentSchemas` and `dependencies` are names, and the schemas under
     them are read.
 
-- **`P-FILE-LIMITS` — contributed files stay within coarse limits.** Every file under `models/`, the release snapshots included, is a regular file (a symbolic link fails and is not followed) of at most 256 KB; JSON and YAML files (by extension, in any case) parse and nest at most 32 levels; a schema has at most 100 `$ref`s, and each `pattern` and `patternProperties` name is a valid regular expression of at most 256 characters that does not repeat a group whose length varies through `*`, `+` or a `{n,m}` range, as `(a+)+` does (a group whose only varying part is optional, as in `(a?)+`, is not counted), unless the group has one part of varying length, no alternatives and no inner groups, and ends with a separator nothing else in it matches, as in `(\d+\.)+`; a context's imports nest at most two levels, so an import cycle fails too *(documented, scripts/lib/file-limits.mjs header: "Limits on the contributed files")*. `scripts/validate-models.mjs` checks the limits on single files first (all but the import depth) and stops there when a file is over one, so neither the toolkit nor the catalogue rules read it; the import depth is checked later, when `resolveContextTerms` resolves the current contexts and every snapshot context after the toolkit has read them; the validator runs in "Build and dry-run deploy", which `main` requires, and in the deploy build *(documented, scripts/validate-models.mjs header: "A file over a limit stops the run here")*. Enforced by CI since #293 (2026-11); before that it was a review rule *(maintainer, 2026-10)*.
+- **`P-FILE-LIMITS` — contributed files stay within coarse limits.** Every file under `models/`, the release snapshots included, is a regular file (a symbolic link fails and is not followed) of at most 256 KB; JSON and YAML files (by extension, in any case) parse and nest at most 32 levels; a schema has at most 100 `$ref`s, and each `pattern` and `patternProperties` name is a valid regular expression of at most 256 characters that does not repeat a group whose length varies through `*`, `+` or a `{n,m}` range, as `(a+)+` does (a group whose only varying part is optional, as in `(a?)+`, is not counted), unless the group has one part of varying length, no alternatives and no inner groups, and ends or starts with a separator nothing else in it matches, as in `(\d+\.)+` or `(-[A-Za-z0-9]{2,8})*`; a context's imports nest at most two levels, so an import cycle fails too *(documented, scripts/lib/file-limits.mjs header: "Limits on the contributed files")*. `scripts/validate-models.mjs` checks the limits on single files first (all but the import depth) and stops there when a file is over one, so neither the toolkit nor the catalogue rules read it; the import depth is checked later, when `resolveContextTerms` resolves the current contexts and every snapshot context after the toolkit has read them; the validator runs in "Build and dry-run deploy", which `main` requires, and in the deploy build *(documented, scripts/validate-models.mjs header: "A file over a limit stops the run here")*. Enforced by CI since #293 (2026-11); before that it was a review rule *(maintainer, 2026-10)*.
   - Symptom: `x-cpu-exhaustion` (a consumer's validator or JSON-LD
     processor spends a long time, or much memory, on a published file).
   - Tier: security-critical, as the disclaimer it narrows

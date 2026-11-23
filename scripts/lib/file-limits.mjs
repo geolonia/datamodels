@@ -53,32 +53,37 @@ function quantifierAt(p, i) {
 function atomMatches(src, ch) {
   try { return new RegExp(`^(?:${src})$`, 'u').test(ch); } catch { return true; }
 }
-// The separator a group ends with: a literal character, or an escaped punctuation character such as `\.`.
+// The separator a group starts or ends with: a literal character, or an escaped punctuation character such as `\.`.
 function literalOf(src) {
   if (src.length === 1 && !'.^$'.includes(src)) return src;
   if (src.length === 2 && src[0] === '\\' && /[^A-Za-z0-9]/.test(src[1])) return src[1];
   return null;
 }
-// A group such as (\d+\.) or ([a-z]+-): it ends with a separator, unquantified, that no other
-// atom of the group can match, so every repetition ends at the next separator, and at most one
-// other atom has a count that varies (`?` included), so a repetition splits one way only:
-// (\d+\d+\.)+ and (\d+\d?\.)+ do not count. Not when the group has alternatives or inner groups.
-function endsWithSeparator(group) {
+// A group such as (\d+\.) or ([a-z]+-), or (-[a-z0-9]{2,8}) as in a language tag: it ends or
+// starts with a separator, unquantified, that no other atom of the group can match, so every
+// repetition ends (or starts) at a separator, and at most one other atom has a count that varies
+// (`?` included), so a repetition splits one way only: (\d+\d+\.)+ and (\d+\d?\.)+ do not count.
+// Not when the group has alternatives or inner groups.
+function separated(group) {
   const { atoms, alt } = group;
   if (alt || atoms.length < 2) return false;
-  const last = atoms[atoms.length - 1];
-  const sep = !last.q && last.src !== null ? literalOf(last.src) : null;
-  if (sep === null) return false;
-  const rest = atoms.slice(0, -1);
-  if (rest.filter((a) => a.q?.optional).length > 1) return false;
-  return rest.every((a) => a.src !== null && !atomMatches(a.src, sep));
+  const bySeparatorAt = (at) => {
+    const edge = atoms[at];
+    const sep = !edge.q && edge.src !== null ? literalOf(edge.src) : null;
+    if (sep === null) return false;
+    const rest = atoms.filter((_, k) => k !== at);
+    if (rest.filter((a) => a.q?.optional).length > 1) return false;
+    return rest.every((a) => a.src !== null && !atomMatches(a.src, sep));
+  };
+  return bySeparatorAt(atoms.length - 1) || bySeparatorAt(0);
 }
 
 /**
  * True when a group whose length varies is itself repeated, as in (a+)+,
  * (a*)*, (a{1,9})+ or ((ab)*c)+: the classic form of a pattern that
- * backtracks exponentially. A group that ends with a separator its other
- * parts cannot match, as in (\d+\.)+, is not counted: it splits one way only.
+ * backtracks exponentially. A group that ends or starts with a separator its
+ * other parts cannot match, as in (\d+\.)+ or (-[a-z0-9]{2,8})*, is not
+ * counted: it splits one way only.
  * A heuristic: it does not prove a pattern safe (overlapping alternatives like
  * (a|aa)+ pass), review still checks the rest. `p` must be a valid regular
  * expression.
@@ -124,7 +129,7 @@ export function hasNestedQuantifier(p) {
     if (group) {
       // A lookaround matches no text, so its content does not make the enclosing group vary.
       if (!group.look) {
-        if (group.varies && q?.repeats && !endsWithSeparator(group)) return true;
+        if (group.varies && q?.repeats && !separated(group)) return true;
         if (group.varies || q?.varies) top.varies = true;
       }
       top.atoms.push({ src: null, q });
@@ -141,7 +146,7 @@ export function patternProblem(p) {
   if (typeof p !== 'string') return null;
   if (p.length > MAX_PATTERN_LENGTH) return `is ${p.length} characters long; at most ${MAX_PATTERN_LENGTH}`;
   try { new RegExp(p, 'u'); } catch (e) { return `is not a valid regular expression (${e.message})`; }
-  if (hasNestedQuantifier(p)) return 'repeats a group whose length varies, as in (a+)+, which can take exponential time to fail; rewrite it without the nesting, or keep one part of varying length and end the group with a separator nothing else in it matches, as in (\\d+\\.)+';
+  if (hasNestedQuantifier(p)) return 'repeats a group whose length varies, as in (a+)+, which can take exponential time to fail; rewrite it without the nesting, or keep one part of varying length and end or start the group with a separator nothing else in it matches, as in (\\d+\\.)+ or (-[a-z0-9]+)*';
   return null;
 }
 
