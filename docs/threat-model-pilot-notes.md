@@ -368,6 +368,10 @@ belong in issues, not in the threat model:
 - 2026-11-23, #340: `/mcp` answers and the `/ns/*` 303 send `nosniff`, which
   `_headers` cannot add to Worker answers; found in the self-review of #337.
   Not a §1.16 trigger: no property claims the header.
+- 2026-11-23, for #326: the `pattern` rule of `P-FILE-LIMITS` also accepts a
+  group that starts with its separator, as in `(-[A-Za-z0-9]{2,8})*`, after
+  the language-tag pattern of the first LanguageProperty schemas failed it.
+  A §1.16 trigger, re-routed by reading as for #293.
 
 ## Files
 
