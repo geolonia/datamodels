@@ -537,7 +537,7 @@
     ],
     "does_not": [
       "**Zone rule.** A configuration rule on the `datamodels.jp` zone turns off Browser Integrity Check for the machine-readable paths and `/mcp`. It lives in the Cloudflare dashboard, not in the repository. `pnpm run check:live` fails when it goes missing. The workflow \"Check live site\" runs it after every Workers Builds deploy of `main` and once a day, and a failure opens an issue.",
-      "**Domain.** `datamodels.jp` is registered in Route 53 in the GeonicDB AWS account, with name servers delegated to Cloudflare. `datamodel.jp` is not registered: `docs/design.md` calls it \"available as a typo guard\", and the JPRS whois has no record of it (checked 2026-10-17).",
+      "**Domain.** `datamodels.jp` is registered in Route 53 in the GeonicDB AWS account, with name servers delegated to Cloudflare. No look-alike domain is held: `datamodel.jp` is not registered (the JPRS whois has no record of it, checked 2026-10-17), and the design document no longer names it as a typo guard.",
       "**Concurrency.** The Worker keeps per-isolate caches of public files (the MCP index, schemas, compiled validators, the subject majors). No state is shared between requests except these."
     ],
     "provenance": "documented"

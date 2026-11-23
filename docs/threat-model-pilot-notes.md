@@ -309,9 +309,9 @@ belong in issues, not in the threat model:
     dimension.
 12. For `geolonia/skills`: the data-catalogue questions in the table above,
     next to the first pilot's hosted-service questions.
-13. Register `datamodel.jp` as the typo guard `docs/design.md` names, or
+13. ~~Register `datamodel.jp` as the typo guard `docs/design.md` names, or
     remove it from the design document; it is not registered (JPRS whois,
-    2026-10-17).
+    2026-10-17).~~ Removed in #299 (2026-11-23): no look-alike domain is held.
 
 ## Revisions
 
@@ -362,6 +362,9 @@ belong in issues, not in the threat model:
   "personal data" label explain `x-personal-data` as a hint, as
   `D-PERSONAL-DATA-MARKER` states. Not a §1.16 trigger: no property or
   disclaimer changed.
+- 2026-11-23, #299: the maintainer chose not to register `datamodel.jp`;
+  `docs/design.md`, §1.5 "Domain" and the §1.12 look-alike class now say
+  that no look-alike domain is held. Not a §1.16 trigger.
 
 ## Files
 

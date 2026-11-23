@@ -70,6 +70,10 @@
   data" label now explain what `D-PERSONAL-DATA-MARKER` states: the marker is
   a hint, an attribute without it can still hold personal data, and whoever
   stores the data decides how to protect it. The disclaimer is unchanged.
+  2026-11-23, for geolonia/datamodels#299 (a documentation change, not a
+  §1.16 trigger). `datamodel.jp` will not be registered; `docs/design.md` no
+  longer names it as a typo guard, and §1.5 "Domain" and the §1.12
+  look-alike class say that no look-alike domain is held.
 - **Date / author**: 2026-10-16, drafted for the maintainer, Daniel Kastl, who
   ratified the claims of the first draft in one wave on 2026-10-16.
 - **Generation metadata**: produced with AI assistance. Model/agent: Claude
@@ -325,9 +329,9 @@ Reachability preconditions:
   `pnpm run check:live` fails when it goes missing *(documented, docs/deployment.md: "`pnpm run check:live` fetches those paths with that user agent and fails if the rule goes missing")*. The workflow "Check live site" runs it after every Workers Builds deploy of `main` and once a day, and a failure opens an issue *(documented, .github/workflows/check-live.yml header: "Checks the deployed site against the URL contract")*.
 - **Domain.** `datamodels.jp` is registered in Route 53 in the GeonicDB AWS
   account, with name servers delegated to Cloudflare *(documented, docs/design.md "Decision 1": "Registration: Route 53 in the GeonicDB AWS account")*.
-  `datamodel.jp` is not registered: `docs/design.md` calls it "available as a
-  typo guard", and the JPRS whois has no record of it (checked 2026-10-17)
-  *(documented, docs/design.md "Decision 1": "`datamodel.jp` is available as a typo guard")*.
+  No look-alike domain is held: `datamodel.jp` is not registered (the JPRS
+  whois has no record of it, checked 2026-10-17), and the design document
+  no longer names it as a typo guard *(documented, docs/design.md "Decision 1": "No look-alike domain is held as a typo guard")*.
 - **Build host.** Node 24 *(documented, package.json `engines`)*; Workers
   Builds and GitHub-hosted runners provide it. Workers Builds builds only
   `main`: preview builds are off, a setting in the Cloudflare dashboard
@@ -899,8 +903,8 @@ project leaves to the consumer:
   without a limit can be made to allocate a lot.
 - **Indirect prompt injection.** Text in a model can be read by an agent as an
   instruction.
-- **Look-alike domains.** No look-alike domain is held; `datamodel.jp`, named
-  in `docs/design.md` as a typo guard, is not registered.
+- **Look-alike domains.** No look-alike domain is held, `datamodel.jp`
+  included (decided 2026-11-23, #299).
 
 ## 1.13 Downstream responsibilities
 
