@@ -40,6 +40,7 @@ test('a JSON-LD client gets a 303 to the subject vocabulary, for types, attribut
     assert.equal(r.headers.get('location'), location, path);
     assert.equal(r.headers.get('vary'), 'Accept');
     assert.equal(r.headers.get('access-control-allow-origin'), '*');
+    assert.equal(r.headers.get('x-content-type-options'), 'nosniff');
   }
 });
 

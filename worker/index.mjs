@@ -93,6 +93,7 @@ export default {
               location: `/vocab/${subject}/v${major}.jsonld`,
               vary: 'Accept',
               'access-control-allow-origin': '*',
+              'x-content-type-options': 'nosniff',
               'cache-control': 'public, max-age=300',
             },
           });

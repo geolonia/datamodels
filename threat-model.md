@@ -74,6 +74,14 @@
   §1.16 trigger). `datamodel.jp` will not be registered; `docs/design.md` no
   longer names it as a typo guard, and §1.5 "Domain" and the §1.12
   look-alike class say that no look-alike domain is held.
+  2026-11-23, for geolonia/datamodels#340 (a hardening, not a §1.16
+  trigger). Answers of `/mcp` and the 303 of `/ns/*` now carry
+  `X-Content-Type-Options: nosniff`, as the static files do through
+  `public/_headers`; `pnpm run check:live` checks it on `/mcp`. No property
+  claims the header, so none changed. The line numbers cited in
+  `P-NEGOTIATION-FALLBACK`, `P-MCP-NO-OUTBOUND`, `P-MCP-STATELESS` and
+  `P-MCP-BOUNDED` were re-read and corrected; some were already off before
+  this change.
 - **Date / author**: 2026-10-16, drafted for the maintainer, Daniel Kastl, who
   ratified the claims of the first draft in one wave on 2026-10-16.
 - **Generation metadata**: produced with AI assistance. Model/agent: Claude
@@ -750,8 +758,8 @@ are listed, or properties the maintainer ratified (2026-10).
   - Symptom: `wrong-output` (wrong target) or `x-open-redirect` (a target off
     the origin).
   - Tier: correctness-only.
-  - Voided by: nothing. The fallback is `worker/index.mjs:81`; the 303 target is
-    built at `worker/index.mjs:68` from a subject matched by `[a-z0-9-]+`.
+  - Voided by: nothing. The fallback is `worker/index.mjs:107`; the 303 target is
+    built at `worker/index.mjs:93` from a subject matched by `[a-z0-9-]+`.
 
 - **`P-MCP-NO-OUTBOUND` — the MCP server fetches nothing from another site.**
   The tools read only the built tree through the assets binding
@@ -760,11 +768,11 @@ are listed, or properties the maintainer ratified (2026-10).
   - Symptom: `x-ssrf` (a request makes the Worker fetch a URL the client
     chose).
   - Tier: security-critical.
-  - *Voided by*: nothing. The refusal is `worker/mcp.mjs:96`. Search:
+  - *Voided by*: nothing. The refusal is `worker/mcp.mjs:100`. Search:
     `grep -n "fetch(" worker/*.mjs` — 5 hits: `env.ASSETS.fetch` at
-    `index.mjs` lines 42 and 54 and `mcp.mjs` line 65, the `fetch` method of
-    the exported handler (`index.mjs` line 50), and the SDK handler's `fetch`
-    (`mcp.mjs` line 399); none takes a client-chosen URL.
+    `index.mjs` lines 53 and 79 and `mcp.mjs` line 69, the `fetch` method of
+    the exported handler (`index.mjs` line 75), and the SDK handler's `fetch`
+    (`mcp.mjs` line 403); none takes a client-chosen URL.
 
 - **`P-MCP-STATELESS` — one MCP request cannot see another's data.** Each
   request gets a fresh server; nothing is kept between requests except the
@@ -772,9 +780,9 @@ are listed, or properties the maintainer ratified (2026-10).
   - Symptom: `info-leak`.
   - Tier: security-critical.
   - Voided by: nothing. Search: `grep -n "new Map\|WeakMap" worker/mcp.mjs` —
-    the caches (`stores`, line 57) hold the index, published schemas and
+    the caches (`stores`, line 61) hold the index, published schemas and
     compiled validators, keyed by the assets binding and model id; `handlers`
-    (line 315) holds the MCP handler per assets binding and no request data;
+    (line 319) holds the MCP handler per assets binding and no request data;
     the other hits are local maps built per call.
 
 - **`P-MCP-BOUNDED` — one MCP request does bounded work.** At most 64 KiB of
@@ -786,8 +794,8 @@ are listed, or properties the maintainer ratified (2026-10).
     is not, and many requests from many addresses are not (`D-RATE-LIMIT-BEST-EFFORT`) *(maintainer, 2026-10)*.
   - Symptom: `x-cpu-exhaustion`.
   - Tier: correctness-only *(maintainer, 2026-10)*.
-  - Voided by: nothing in code. The body cap is `worker/mcp.mjs:371` and the
-    streaming check in `readBody`; batches are refused at `worker/mcp.mjs:380`.
+  - Voided by: nothing in code. The body cap is `worker/mcp.mjs:375` and the
+    streaming check in `readBody`; batches are refused at `worker/mcp.mjs:384`.
 
 - **`P-OUTSIDER-TEXT-PLAIN` — listed text cannot add markup to the
   catalogue's pages.** Extension files may hold only plain text and plain
