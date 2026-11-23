@@ -50,15 +50,16 @@ function quantifierAt(p, i) {
 }
 
 // True when a single-character atom (`.`, `\d`, `[^/]`, `x`) can match `ch`; unsure counts as yes.
-// Tested with the i and s flags whatever the pattern says, since a modifier group such as (?i:
-// can turn them on for a part of it: A and [a-z] overlap there, and . matches a line break.
+// Tested with s, and both without and with i, since a modifier group such as (?i: can turn it
+// on for a part of the pattern: A and [a-z] overlap with i, and [^a] matches A only without it.
 function atomMatches(src, ch) {
-  try { return new RegExp(`^(?:${src})$`, 'uis').test(ch); } catch { return true; }
+  try { return new RegExp(`^(?:${src})$`, 'us').test(ch) || new RegExp(`^(?:${src})$`, 'uis').test(ch); } catch { return true; }
 }
 // The separator a group starts or ends with: a literal character, or an escaped punctuation character such as `\.`.
 function literalOf(src) {
   // Never a regular-expression syntax character: `?` after a `(` the parser misread, say.
-  if (src.length === 1 && !'.^$?*+()[]{}|\\'.includes(src)) return src;
+  // Nor half of a surrogate pair: under the u flag the pair is one character.
+  if (src.length === 1 && !'.^$?*+()[]{}|\\'.includes(src) && !/[\uD800-\uDFFF]/.test(src)) return src;
   if (src.length === 2 && src[0] === '\\' && /[^A-Za-z0-9]/.test(src[1])) return src[1];
   return null;
 }
@@ -128,7 +129,7 @@ export function hasNestedQuantifier(p) {
       i++;
       continue;
     } else {
-      i++;
+      i += p.codePointAt(i) > 0xffff ? 2 : 1; // a character outside the BMP is one atom under the u flag
     }
     const top = stack[stack.length - 1];
     const q = quantifierAt(p, i);

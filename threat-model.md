@@ -97,7 +97,11 @@
   character counts as a separator. A second pass found that `(?i:` and
   `(?s:` also change what overlaps the separator, as in `(?i:(A[a-z]+)+)`:
   the overlap is now tested as if `i` and `s` were on, which also rejects
-  such groups outside a modifier group. Several separated groups in a row
+  such groups outside a modifier group; since `i` can also narrow a negated
+  class (`[^a]` matches `A` only without it), overlap counts with `i` on or
+  off. A character outside the BMP is one atom and never a separator, so
+  `(😀[😀]+)+` is rejected (both found by CodeRabbit). Several separated
+  groups in a row
   (`(a*-)*(a*-)*`, polynomial) were added to the voided-by list.
 - **Date / author**: 2026-10-16, drafted for the maintainer, Daniel Kastl, who
   ratified the claims of the first draft in one wave on 2026-10-16.
