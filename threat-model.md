@@ -330,8 +330,8 @@ Reachability preconditions:
 - **Domain.** `datamodels.jp` is registered in Route 53 in the GeonicDB AWS
   account, with name servers delegated to Cloudflare *(documented, docs/design.md "Decision 1": "Registration: Route 53 in the GeonicDB AWS account")*.
   No look-alike domain is held: `datamodel.jp` is not registered (the JPRS
-  whois has no record of it, checked 2026-10-17), and the design document
-  no longer names it as a typo guard *(documented, docs/design.md "Decision 1": "No look-alike domain is held as a typo guard")*.
+  whois has no record of it, checked 2026-10-17 and 2026-11-23), and the
+  design document no longer lists it as a typo guard *(documented, docs/design.md "Decision 1": "No look-alike domain is held as a typo guard")*.
 - **Build host.** Node 24 *(documented, package.json `engines`)*; Workers
   Builds and GitHub-hosted runners provide it. Workers Builds builds only
   `main`: preview builds are off, a setting in the Cloudflare dashboard

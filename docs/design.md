@@ -36,7 +36,7 @@ A public, versioned, bilingual catalog of data models that work in practice in J
 
 ## Decision 1: Domain name
 
-**Decision (2026-09-18, Slack thread with Hal Seki and 宮内さん): `datamodels.jp`, the permanent IRI base for every subject.** No look-alike domain is held as a typo guard: `datamodel.jp` was once named for that, but it was never registered, and holding it was dropped (2026-11-23, #299).
+**Decision (2026-09-18, Slack thread with Hal Seki and 宮内さん): `datamodels.jp`, the permanent IRI base for every subject.** No look-alike domain is held as a typo guard: `datamodel.jp` was once named for that, but it was never registered, and the plan to register it was dropped (2026-11-23, #299).
 
 The first choice, `models.geonicdb.com` (morning of 2026-09-18), tied a commons to one product. Once the catalog was framed as a digital commons usable by other brokers and by Japanese standard datasets, a product domain would have been wrong in every IRI. "smart" was avoided: `smartdatamodels.org` is the name of the FIWARE / TM Forum initiative, and a `.jp` variant would read as its Japan branch. `datamodels.org` is taken. `.jp` states who operates the catalog, requires a Japanese registrant (Geolonia) and says nothing about the protocol, so the name survives a move away from NGSI-LD.
 
