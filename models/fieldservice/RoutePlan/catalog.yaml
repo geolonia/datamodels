@@ -1,0 +1,54 @@
+title:
+  ja: "日ごとのルート"
+  en: "Route plan"
+description:
+  ja: "ある日、ある地区の作業の計画です。車両ごとのルート（回る依頼の順番と、着く時刻と出る時刻）と、入らなかった依頼を持ちます。ルート最適化（VRP）のソフトウェアの結果（routes と unassigned）をそのまま残せます。計画を実際に走った記録は、Smart Data Models の FleetVehicleOperation で表せます。"
+  en: "The plan of the work of one day in one area: a route per vehicle (the requests in order, with arrival and departure times) and the requests that did not fit. It keeps the result of route optimisation (VRP) software (routes and unassigned) as it is. What was actually driven can be recorded with Smart Data Models FleetVehicleOperation."
+status: draft
+tags: [field-service, route-optimisation, planning]
+attributes:
+  provider:
+    ja: "作業を引き受ける組織（自治体、委託先など）"
+    en: "The organisation that does the work (a municipality, a contractor)"
+  localGovernmentCode:
+    ja: "計画する自治体の全国地方公共団体コード（6 桁）"
+    en: "Local government code (6 digits) of the municipality the plan is for"
+  area:
+    ja: "計画の単位となる地区。提供者が決めた名前です。"
+    en: "The planning area, as the provider names it"
+  planDate:
+    ja: "計画した日（作業する日）"
+    en: "The day the plan is for"
+  planStatus:
+    ja: "状態：draft（案）、confirmed（確定）、in-progress（実行中）、completed（完了）、cancelled（取消）。合う値がなければ省き、statusLabel を書きます。"
+    en: "State: draft, confirmed, in-progress, completed, cancelled. When no value fits, leave it out and write statusLabel"
+  statusLabel:
+    ja: "元のシステムの状態名をそのまま。状態の値が合わないときは必須です。"
+    en: "The source system's own status name, unchanged. Required when the status is left out"
+  planner:
+    ja: "計画に使ったソフトウェアとその版（例：VROOM 1.14）"
+    en: "The software that made the plan, with its version (for example VROOM 1.14)"
+  computedAt:
+    ja: "計画を計算した日時"
+    en: "When the plan was computed"
+  vehicles:
+    ja: "計画に使った車両（ServiceVehicle）。key-values の形では、1 台でも配列です。"
+    en: "The vehicles of the plan: ServiceVehicles. Always an array in the key-values form, even with one"
+  serviceRequests:
+    ja: "計画した依頼（ServiceRequest）。入らなかったものも含みます。key-values の形では、1 件でも配列です。"
+    en: "The requests planned, those left unassigned included: ServiceRequests. Always an array in the key-values form, even with one"
+  routes:
+    ja: "車両ごとのルート。車両、班、出発と帰着の時刻、距離（メートル）、時間、積んだ量と、止まる所（start、job、break、end）の順番です。job には依頼（request）、位置、着く時刻と出る時刻を書きます。位置は依頼の location と同じです。"
+    en: "One route per vehicle: the vehicle, crew, start and end time, distance (metres), duration, load, and its stops in order (start, job, break, end); a job stop names its request, with its position and arrival and departure times. The positions repeat the requests' locations"
+  unassigned:
+    ja: "入らなかった依頼（ServiceRequest の ID）。全部入ったときは空の配列です。"
+    en: "The requests that did not fit (ServiceRequest ids); an empty array when all did"
+  totalDistance:
+    ja: "すべてのルートの距離の合計（メートル）"
+    en: "The distance of all routes together, in metres"
+  totalDuration:
+    ja: "すべてのルートの時間の合計（ISO 8601 の期間）"
+    en: "The time of all routes together, as an ISO 8601 duration"
+  source:
+    ja: "データの出典（URL など）"
+    en: "Where the data comes from (a URL, for example)"

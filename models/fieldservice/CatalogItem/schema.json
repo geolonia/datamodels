@@ -1,0 +1,237 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://datamodels.jp/schema/fieldservice/CatalogItem/v1.0.0.json",
+  "title": "CatalogItem",
+  "description": "One item a provider takes requests for, such as one row of a city's list of bulky waste items and fees. Items it does not take can be listed too, with where to take them instead. With a service time, an amount and skills, the values of a request can be computed from its items. The label and the note can be given in several languages (LanguageProperty).",
+  "x-version": "1.0.0",
+  "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
+  "x-model-tags": "field service, catalogue, fees, multilingual",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uri",
+      "description": "Entity id (URN)"
+    },
+    "type": {
+      "type": "string",
+      "const": "CatalogItem",
+      "description": "Entity type"
+    },
+    "@context": {
+      "description": "JSON-LD context of the entity, optional: a context URL or a list of context URLs",
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "minItems": 1
+        }
+      ]
+    },
+    "label": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[A-Za-z]{2,3}(-[A-Za-z0-9]{1,8})*$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Name, per language (for example {\"ja\": \"ソファー（2人以上用）\", \"en\": \"Sofa (two seats or more)\"}); the Japanese as the provider's list writes it",
+      "x-ngsi": {
+        "type": "LanguageProperty"
+      },
+      "x-iri": "http://www.w3.org/2000/01/rdf-schema#label"
+    },
+    "note": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[A-Za-z]{2,3}(-[A-Za-z0-9]{1,8})*$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Description of the item (what it covers, for example), per language, a LanguageProperty like label",
+      "x-ngsi": {
+        "type": "LanguageProperty"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/note"
+    },
+    "serviceCode": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The kind of request, as a code the provider sets (for example bulky-waste); Open311 service_code",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/serviceCode"
+    },
+    "localGovernmentCode": {
+      "type": "string",
+      "pattern": "^\\d{6}$",
+      "description": "Local government code (全国地方公共団体コード, 6 digits) of the municipality responsible; Open311 jurisdiction_id",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/common/localGovernmentCode"
+    },
+    "provider": {
+      "type": "string",
+      "format": "uri",
+      "description": "The organisation that does the work (a municipality, a contractor)",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "agent"
+      },
+      "x-iri": "https://schema.org/provider"
+    },
+    "category": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Category: the provider's section, or a short word such as furniture or appliance",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://schema.org/category"
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "Words to find it by, such as other names",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://schema.org/keywords"
+    },
+    "accepted": {
+      "type": "boolean",
+      "description": "Whether it is taken with this kind of request; for an item that is not, alternative says where to take it",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/accepted"
+    },
+    "alternative": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Where to take an item that is not taken (home appliance recycling, the shop that sold it)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/alternative"
+    },
+    "fee": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Fee, in priceCurrency",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/fee"
+    },
+    "priceCurrency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$",
+      "description": "Currency (ISO 4217, for example JPY)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://schema.org/priceCurrency"
+    },
+    "sizeNote": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Size condition, as the provider writes it (for example 幅90cm以下, width 90 cm or less)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/sizeNote"
+    },
+    "serviceDuration": {
+      "type": "string",
+      "pattern": "^P(?!$)(\\d+D)?(T(?=\\d)(\\d+H)?(\\d+M)?(\\d+(\\.\\d+)?S)?)?$",
+      "description": "Time spent at the place, as an ISO 8601 duration (for example PT5M); the service time of route optimisation",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/serviceDuration"
+    },
+    "load": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": 0
+      },
+      "minItems": 1,
+      "description": "What it takes of a vehicle's capacity, one number per dimension; the provider sets the dimensions and units and keeps them in step with the vehicles' capacity (for example one dimension: volume, counted in points the provider sets); the amount of route optimisation",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/load"
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "What the work needs (for example two-person, carry-out); the skills of route optimisation, matched against a vehicle's or crew's skills. The provider sets the words",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/skills"
+    },
+    "validFrom": {
+      "type": "string",
+      "format": "date",
+      "description": "From when this entry (its fee, for example) applies (the same term as in RoadRestriction)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://smartdatamodels.org/validFrom"
+    },
+    "validTo": {
+      "type": "string",
+      "format": "date",
+      "description": "The last day this entry applies (the same term as in RoadRestriction)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://smartdatamodels.org/dataModel.Alert/validTo"
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Where the data comes from (a URL, for example)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/source"
+    }
+  },
+  "required": [
+    "id",
+    "type",
+    "label",
+    "serviceCode",
+    "accepted"
+  ],
+  "additionalProperties": false
+}

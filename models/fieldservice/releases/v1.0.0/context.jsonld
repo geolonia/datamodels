@@ -1,0 +1,100 @@
+{
+  "@context": [
+    "https://datamodels.jp/context/common/v1.0.0.jsonld",
+    {
+      "fs": "https://datamodels.jp/ns/fieldservice/",
+      "ServiceRequest": "fs:ServiceRequest",
+      "CatalogItem": "fs:CatalogItem",
+      "ServiceVehicle": "fs:ServiceVehicle",
+      "Crew": "fs:Crew",
+      "RoutePlan": "fs:RoutePlan",
+      "accepted": "fs:accepted",
+      "alternative": "fs:alternative",
+      "area": "fs:area",
+      "assignedVehicle": {
+        "@id": "fs:assignedVehicle",
+        "@type": "@id"
+      },
+      "capacity": "fs:capacity",
+      "category": "https://schema.org/category",
+      "computedAt": "fs:computedAt",
+      "crew": {
+        "@id": "fs:crew",
+        "@type": "@id"
+      },
+      "depot": {
+        "@id": "fs:depot",
+        "@type": "@id"
+      },
+      "endDepot": {
+        "@id": "fs:endDepot",
+        "@type": "@id"
+      },
+      "fee": "fs:fee",
+      "fleetVehicleType": "https://smartdatamodels.org/dataModel.Transportation/fleetVehicleType",
+      "flexibility": "fs:flexibility",
+      "keywords": "https://schema.org/keywords",
+      "label": "http://www.w3.org/2000/01/rdf-schema#label",
+      "lines": "fs:lines",
+      "load": "fs:load",
+      "localGovernmentCode": "https://datamodels.jp/ns/common/localGovernmentCode",
+      "maxStops": "fs:maxStops",
+      "maxWorkDuration": "fs:maxWorkDuration",
+      "note": "fs:note",
+      "planDate": "fs:planDate",
+      "planStatus": "fs:planStatus",
+      "planner": "fs:planner",
+      "preferredDate": "fs:preferredDate",
+      "priceCurrency": "https://schema.org/priceCurrency",
+      "priority": "https://datamodels.jp/ns/task/priority",
+      "provider": {
+        "@id": "https://schema.org/provider",
+        "@type": "@id"
+      },
+      "requestStatus": "fs:requestStatus",
+      "requestedAt": "fs:requestedAt",
+      "requester": {
+        "@id": "fs:requester",
+        "@type": "@id"
+      },
+      "requesterNote": "fs:requesterNote",
+      "routePlan": {
+        "@id": "fs:routePlan",
+        "@type": "@id"
+      },
+      "routes": "fs:routes",
+      "scheduledDate": "fs:scheduledDate",
+      "scheduledWindow": "fs:scheduledWindow",
+      "serviceCode": "fs:serviceCode",
+      "serviceDuration": "fs:serviceDuration",
+      "serviceRequests": {
+        "@id": "fs:serviceRequests",
+        "@type": "@id"
+      },
+      "size": "fs:size",
+      "sizeNote": "fs:sizeNote",
+      "skills": "fs:skills",
+      "source": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/source",
+      "statusLabel": "https://datamodels.jp/ns/task/statusLabel",
+      "task": {
+        "@id": "fs:task",
+        "@type": "@id"
+      },
+      "timeWindows": "fs:timeWindows",
+      "totalDistance": "fs:totalDistance",
+      "totalDuration": "fs:totalDuration",
+      "unassigned": "fs:unassigned",
+      "validFrom": "https://smartdatamodels.org/validFrom",
+      "validTo": "https://smartdatamodels.org/dataModel.Alert/validTo",
+      "vehicle": {
+        "@id": "https://smartdatamodels.org/dataModel.Transportation/vehicle",
+        "@type": "@id"
+      },
+      "vehicles": {
+        "@id": "fs:vehicles",
+        "@type": "@id"
+      },
+      "workingHours": "fs:workingHours"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "id": "urn:ngsi-ld:ServiceRequest:131016-2026-0716-0042",
+  "type": "ServiceRequest",
+  "serviceCode": "bulky-waste",
+  "localGovernmentCode": "131016",
+  "provider": "urn:ngsi-ld:Organization:131016",
+  "requestedAt": "2026-07-14T09:20:00+09:00",
+  "requestStatus": "scheduled",
+  "statusLabel": "収集日決定",
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      139.7703,
+      35.6956
+    ]
+  },
+  "area": "kanda",
+  "lines": [
+    {
+      "item": "urn:ngsi-ld:CatalogItem:131016:sofa-2-seats",
+      "quantity": 1,
+      "name": "ソファー（2人以上用）、ソファーベッドなど"
+    }
+  ],
+  "serviceDuration": "PT8M",
+  "load": [
+    3
+  ],
+  "skills": [
+    "two-person"
+  ],
+  "priority": 2,
+  "timeWindows": [
+    {
+      "start": "2026-07-16T08:00:00+09:00",
+      "end": "2026-07-16T16:00:00+09:00"
+    },
+    {
+      "start": "2026-07-17T08:00:00+09:00",
+      "end": "2026-07-17T16:00:00+09:00"
+    }
+  ],
+  "preferredDate": "2026-07-16",
+  "flexibility": "preferred",
+  "scheduledDate": "2026-07-16",
+  "scheduledWindow": {
+    "start": "2026-07-16T08:00:00+09:00",
+    "end": "2026-07-16T12:00:00+09:00"
+  },
+  "routePlan": "urn:ngsi-ld:RoutePlan:131016:kanda:2026-07-16",
+  "fee": 1600,
+  "priceCurrency": "JPY",
+  "requester": "urn:ngsi-ld:Person:resident-0042",
+  "requesterNote": "大雨で1階が浸水し、ソファーが水を吸って使えなくなりました。",
+  "source": "https://requests.example.jp/2026-0716-0042"
+}

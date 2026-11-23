@@ -1,0 +1,115 @@
+{
+  "@context": [
+    "https://datamodels.jp/context/fieldservice/v1.jsonld",
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
+  ],
+  "id": "urn:ngsi-ld:RoutePlan:131016:kanda:2026-07-16",
+  "type": "RoutePlan",
+  "provider": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:Organization:131016"
+  },
+  "localGovernmentCode": {
+    "type": "Property",
+    "value": "131016"
+  },
+  "area": {
+    "type": "Property",
+    "value": "kanda"
+  },
+  "planDate": {
+    "type": "Property",
+    "value": {
+      "@type": "Date",
+      "@value": "2026-07-16"
+    }
+  },
+  "planStatus": {
+    "type": "Property",
+    "value": "confirmed"
+  },
+  "planner": {
+    "type": "Property",
+    "value": "VROOM 1.14"
+  },
+  "computedAt": {
+    "type": "Property",
+    "value": {
+      "@type": "DateTime",
+      "@value": "2026-07-15T17:05:00+09:00"
+    }
+  },
+  "vehicles": [
+    {
+      "type": "Relationship",
+      "object": "urn:ngsi-ld:ServiceVehicle:131016:truck-02",
+      "datasetId": "urn:ngsi-ld:dataset:vehicles:1"
+    }
+  ],
+  "serviceRequests": [
+    {
+      "type": "Relationship",
+      "object": "urn:ngsi-ld:ServiceRequest:131016-2026-0716-0042",
+      "datasetId": "urn:ngsi-ld:dataset:serviceRequests:1"
+    }
+  ],
+  "routes": {
+    "type": "Property",
+    "value": [
+      {
+        "vehicle": "urn:ngsi-ld:ServiceVehicle:131016:truck-02",
+        "crew": "urn:ngsi-ld:Crew:131016:field-team-a",
+        "start": "2026-07-16T08:00:00+09:00",
+        "end": "2026-07-16T08:46:00+09:00",
+        "distance": 5400,
+        "duration": "PT46M",
+        "load": [
+          3
+        ],
+        "stops": [
+          {
+            "kind": "start",
+            "position": [
+              139.75354,
+              35.693947
+            ],
+            "departure": "2026-07-16T08:00:00+09:00"
+          },
+          {
+            "kind": "job",
+            "request": "urn:ngsi-ld:ServiceRequest:131016-2026-0716-0042",
+            "position": [
+              139.7703,
+              35.6956
+            ],
+            "arrival": "2026-07-16T08:15:00+09:00",
+            "departure": "2026-07-16T08:23:00+09:00",
+            "load": [
+              3
+            ]
+          },
+          {
+            "kind": "end",
+            "position": [
+              139.75354,
+              35.693947
+            ],
+            "arrival": "2026-07-16T08:46:00+09:00"
+          }
+        ]
+      }
+    ]
+  },
+  "unassigned": {
+    "type": "Property",
+    "value": []
+  },
+  "totalDistance": {
+    "type": "Property",
+    "value": 5400
+  },
+  "totalDuration": {
+    "type": "Property",
+    "value": "PT46M"
+  }
+}

@@ -19,10 +19,11 @@ description: エンティティの 2 つの形（key-values と normalized）と
   - Property：`{ "type": "Property", "value": … }`。
   - Relationship：`{ "type": "Relationship", "object": … }`。
   - GeoProperty：`{ "type": "GeoProperty", "value": … }`。
+  - LanguageProperty：`{ "type": "LanguageProperty", "languageMap": { "ja": …, "en": … } }`。
   - JsonProperty：`{ "type": "JsonProperty", "json": … }`。
   - VocabProperty：`{ "type": "VocabProperty", "vocab": … }`。
 
-  JsonProperty と VocabProperty は、key-values の形でもメンバーを残します（`{ "json": … }`、`{ "vocab": … }`）。JSON Schema が表すのは中の値です。key-values の形のデータをスキーマで検証するときは、このメンバーを外してください。この 2 つは NGSI-LD 1.8 の型です。使う前に、ブローカーが対応しているかを確かめてください。
+  LanguageProperty、JsonProperty、VocabProperty は、key-values の形でもメンバーを残します。`{ "languageMap": … }`、`{ "json": … }`、`{ "vocab": … }` の形です。JSON Schema が表すのは中の値です。key-values の形のデータをスキーマで検証するときは、このメンバーを外してください。JsonProperty と VocabProperty は NGSI-LD 1.8 の型です。使う前に、ブローカーが対応しているかを確かめてください。
 - 日時の Property（スキーマの `format: date-time`）の値は `{ "@type": "DateTime", "@value": … }` にします。日付の Property（`format: date`）は `{ "@type": "Date", "@value": … }` です。日付でも日時でもよい Property（モデルのページで「日付または日時」）は、値に合わせます。`2026-07-11` なら Date、`2026-07-11T09:00:00+09:00` なら DateTime です。
 - 複数の値を持つ属性（属性の表で「複数可」と示すもの。Task の `assignee` など）は、値ごとに 1 つのインスタンスを並べた配列にし、それぞれに `datasetId` を付けます。カタログの例は `urn:ngsi-ld:dataset:<属性名>:<番号>` の形を使っています。
 - `@context` には、分野の @context のバージョンの別名と、NGSI-LD のコアコンテキストを並べます。

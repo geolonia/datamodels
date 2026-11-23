@@ -1,0 +1,51 @@
+title:
+  ja: "作業車両"
+  en: "Service vehicle"
+description:
+  ja: "作業に使う車両 1 台を、計画に使う形で表します。積載量、技能、出発と帰着の拠点、働ける時間で、ルート最適化（VRP）のソフトウェアの vehicle にそのまま渡せます。Smart Data Models の FleetVehicle（車隊の中の 1 台）のサブクラスで、車両そのもの（ナンバーなど）は vehicle で Vehicle を指します。"
+  en: "One vehicle used for the work, as planning sees it: capacity, skills, start and end depot and working hours, so it maps directly to a vehicle of route optimisation (VRP) software. A subclass of Smart Data Models FleetVehicle (one vehicle of a fleet); the physical vehicle (plate and the like) is the Vehicle that vehicle points to."
+status: draft
+tags: [field-service, route-optimisation, fleet]
+attributes:
+  label:
+    ja: "呼び名。言語ごとに書きます（例：{\"ja\": \"2号車\", \"en\": \"Truck 2\"}）。"
+    en: "What the provider calls it, per language (for example {\"ja\": \"2号車\", \"en\": \"Truck 2\"})"
+  vehicle:
+    ja: "車両そのもの（Smart Data Models の Vehicle）。FleetVehicle と同じ意味です。"
+    en: "The physical vehicle (a Smart Data Models Vehicle), as in FleetVehicle"
+  fleetVehicleType:
+    ja: "車両の用途（FleetVehicle と同じ意味。例：Waste collection）"
+    en: "What the vehicle is used for, as in FleetVehicle (for example Waste collection)"
+  provider:
+    ja: "作業を引き受ける組織（自治体、委託先など）"
+    en: "The organisation that does the work (a municipality, a contractor)"
+  localGovernmentCode:
+    ja: "作業する自治体の全国地方公共団体コード（6 桁）"
+    en: "Local government code (6 digits) of the municipality it works for"
+  capacity:
+    ja: "積載量。次元ごとの数で、依頼の load と同じ次元と単位にします。ルート最適化の capacity にあたります。"
+    en: "How much it can carry, one number per dimension, in the dimensions and units of the requests' load; the capacity of route optimisation"
+  skills:
+    ja: "車両ができること（例：two-person）。依頼の skills がすべてここにある車両だけが、その依頼に割り当てられます。"
+    en: "What the vehicle can do (for example two-person); a request goes only to a vehicle that has all its skills"
+  depot:
+    ja: "出発する拠点（Facility）"
+    en: "Where the work starts: a Facility"
+  endDepot:
+    ja: "帰着する拠点（Facility）。無ければ depot に戻ります。"
+    en: "Where the work ends: a Facility; without it, the vehicle returns to depot"
+  workingHours:
+    ja: "働ける曜日と時間（OpeningHours の値のリスト）。ルート最適化の、車両の time window の元になります。"
+    en: "When it can work, as a list of OpeningHours values (days of the week, start and end time); the source of a vehicle's time window in route optimisation"
+  maxStops:
+    ja: "1 日に回れる件数の上限"
+    en: "The most stops in a day"
+  maxWorkDuration:
+    ja: "1 日に働ける時間の上限（ISO 8601 の期間）"
+    en: "The longest working time in a day, as an ISO 8601 duration"
+  crew:
+    ja: "この車両で働く班（Crew）"
+    en: "The crew that works with this vehicle: a Crew"
+  source:
+    ja: "データの出典（URL など）"
+    en: "Where the data comes from (a URL, for example)"

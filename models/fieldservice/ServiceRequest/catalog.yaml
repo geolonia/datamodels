@@ -1,0 +1,84 @@
+title:
+  ja: "訪問の依頼"
+  en: "Service request"
+description:
+  ja: "ある場所での作業の依頼です。粗大ごみや災害ごみの収集、配達、修理、点検などにあたります。何を（品目と数）、どこで、いつ（時間の幅と、その日がどれだけ必要か）を表し、作業時間、量、必要な技能も持つので、ルート最適化（VRP）のソフトウェアの job にそのまま渡せます。依頼した人の名前や連絡先は持たず、必要なら requester で別のエンティティを指します。"
+  en: "A request for work at a place: collecting bulky or disaster waste, a delivery, a repair, an inspection. It says what (items and how many), where, and when (time windows, and how much the requester needs that day), with the service time, the amount and the skills it needs, so it maps directly to a job of route optimisation (VRP) software. It holds no name or contact of the requester; requester points to another entity when needed."
+status: draft
+tags: [field-service, route-optimisation, open311]
+attributes:
+  serviceCode:
+    ja: "依頼の種類を表すコード（例：bulky-waste）。提供者が決めます。Open311 の service_code にあたります。"
+    en: "The kind of request, as a code the provider sets (for example bulky-waste); Open311 service_code"
+  localGovernmentCode:
+    ja: "依頼を受け持つ自治体の全国地方公共団体コード（6 桁）。Open311 の jurisdiction_id にあたります。"
+    en: "Local government code (全国地方公共団体コード, 6 digits) of the municipality responsible; Open311 jurisdiction_id"
+  provider:
+    ja: "作業を引き受ける組織（自治体、委託先など）"
+    en: "The organisation that does the work (a municipality, a contractor)"
+  requestedAt:
+    ja: "依頼を受けた日時（Open311 の requested_datetime）"
+    en: "When the request was made (Open311 requested_datetime)"
+  requestStatus:
+    ja: "状態：received（受付）、scheduled（日が決まった）、in-progress（作業中）、completed（完了）、cancelled（取消）、rejected（受けられない）。Open311 の open は received から in-progress、closed は残りにあたります。合う値がなければ省き、statusLabel を書きます。"
+    en: "State: received, scheduled (a day is set), in-progress, completed, cancelled, rejected (cannot be done). Open311 open covers received to in-progress, and closed the rest. When no value fits, leave it out and write statusLabel"
+  statusLabel:
+    ja: "元のシステムの状態名をそのまま。状態の値が合わないときは必須です。"
+    en: "The source system's own status name, unchanged. Required when the status is left out"
+  location:
+    ja: "作業する場所（品目を出す場所など）。点だけです。住所の代わりになりえます。"
+    en: "Where the work is done (for example where the items are put out); a point only. It can stand in for an address"
+  area:
+    ja: "計画の単位となる地区。提供者が決めた名前です。"
+    en: "The planning area, as the provider names it"
+  lines:
+    ja: "依頼の中身。CatalogItem ごとに 1 行で、品目の ID、数、依頼したときの名前です。"
+    en: "What is asked for: one line per CatalogItem, with its id, the quantity and its name at the time of the request"
+  serviceDuration:
+    ja: "現場での作業時間。ISO 8601 の期間（例：PT5M）。ルート最適化の service time にあたります。"
+    en: "Time spent at the place, as an ISO 8601 duration (for example PT5M); the service time of route optimisation"
+  load:
+    ja: "車両の積載量のうち、この作業で使う量。次元ごとの数で、次元と単位は提供者が決めて、車両の capacity と揃えます（例：容積を提供者が決めた点数で数える 1 次元）。ルート最適化の amount にあたります。"
+    en: "What it takes of a vehicle's capacity, one number per dimension; the provider sets the dimensions and units and keeps them in step with the vehicles' capacity (for example one dimension: volume, counted in points the provider sets); the amount of route optimisation"
+  skills:
+    ja: "作業に必要なこと（例：two-person、carry-out）。ルート最適化の skills にあたり、車両や班の skills と照らし合わせます。語は提供者が決めます。"
+    en: "What the work needs (for example two-person, carry-out); the skills of route optimisation, matched against a vehicle's or crew's skills. The provider sets the words"
+  priority:
+    ja: "優先度 0〜9。1 が最高、9 が最低で、0 は未定義です（RFC 8984、Task と同じ）。"
+    en: "Priority 0 to 9: 1 highest, 9 lowest, 0 undefined (RFC 8984, as in Task)"
+  timeWindows:
+    ja: "作業してよい時間の幅（開始と終了の日時）のリスト。ルート最適化の time windows で、この外には計画しません。"
+    en: "When the work may be done, as a list of start and end date-times; the time windows of route optimisation: nothing is planned outside them"
+  preferredDate:
+    ja: "依頼した人が望む日"
+    en: "The day the requester would like"
+  flexibility:
+    ja: "その日がどれだけ必要か：fixed（その日でないと困る）、preferred（できればその日）、any（いつでもよい）"
+    en: "How much the requester needs that day: fixed (it must be that day), preferred (they would like it), any (any day)"
+  scheduledDate:
+    ja: "決まった作業日"
+    en: "The day the work is planned for"
+  scheduledWindow:
+    ja: "決まった時間の幅（決まっているとき）"
+    en: "The planned time window, when one is set"
+  routePlan:
+    ja: "この依頼を入れた日ごとのルート（RoutePlan）"
+    en: "The plan of the day this request is in: a RoutePlan"
+  task:
+    ja: "この依頼から作った作業（task 分野の Task）。Task の refersTo は反対向きで、作業が何についてかを指します。"
+    en: "The work item made from this request: a Task (task subject). Task's refersTo is the other way round: what a task is about"
+  fee:
+    ja: "手数料（priceCurrency の通貨で）"
+    en: "Fee, in priceCurrency"
+  priceCurrency:
+    ja: "通貨（ISO 4217、例：JPY）"
+    en: "Currency (ISO 4217, for example JPY)"
+  requester:
+    ja: "依頼した人（そのエンティティ）。名前や連絡先はここに入れず、別のエンティティに置いて、見せる相手を分けます。"
+    en: "Who asked: a link to their entity. Names and contacts are not kept here but in that entity, so access to them can be limited separately"
+  requesterNote:
+    ja: "依頼した人の言葉での説明。個人を特定できることが書かれることがあります。"
+    en: "A description in the requester's words; it may contain personal data"
+  source:
+    ja: "データの出典（URL など）"
+    en: "Where the data comes from (a URL, for example)"

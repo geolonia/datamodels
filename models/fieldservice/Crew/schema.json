@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://datamodels.jp/schema/fieldservice/Crew/v1.0.0.json",
+  "title": "Crew",
+  "description": "One team of people who work together: its size, skills, depot and working hours. It holds no names or contacts of its members. Keeping crews apart from vehicles lets the pairing change from day to day.",
+  "x-version": "1.0.0",
+  "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
+  "x-model-tags": "field service, route optimisation, workforce",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uri",
+      "description": "Entity id (URN)"
+    },
+    "type": {
+      "type": "string",
+      "const": "Crew",
+      "description": "Entity type"
+    },
+    "@context": {
+      "description": "JSON-LD context of the entity, optional: a context URL or a list of context URLs",
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "minItems": 1
+        }
+      ]
+    },
+    "label": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[A-Za-z]{2,3}(-[A-Za-z0-9]{1,8})*$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "What the provider calls the crew, per language (for example {\"ja\": \"収集班 A\", \"en\": \"Collection team A\"})",
+      "x-ngsi": {
+        "type": "LanguageProperty"
+      },
+      "x-iri": "http://www.w3.org/2000/01/rdf-schema#label"
+    },
+    "provider": {
+      "type": "string",
+      "format": "uri",
+      "description": "The organisation that does the work (a municipality, a contractor)",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "agent"
+      },
+      "x-iri": "https://schema.org/provider"
+    },
+    "localGovernmentCode": {
+      "type": "string",
+      "pattern": "^\\d{6}$",
+      "description": "Local government code (6 digits) of the municipality it works for",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/common/localGovernmentCode"
+    },
+    "size": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "How many people",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/size"
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "description": "What the crew can do (for example two-person, carry-out); together with the vehicle's skills, matched against a request's skills",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/skills"
+    },
+    "depot": {
+      "type": "string",
+      "format": "uri",
+      "description": "Where the work starts: a Facility",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "https://datamodels.jp/ns/facility/Facility"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/depot"
+    },
+    "workingHours": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "https://datamodels.jp/schema/common/OpeningHours/v1.0.0.json"
+      },
+      "description": "When the crew can work, as a list of OpeningHours values; only the time it shares with its vehicle's workingHours is planned",
+      "x-ngsi": {
+        "type": "Property",
+        "model": "https://datamodels.jp/ns/common/OpeningHours"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/workingHours"
+    },
+    "assignedVehicle": {
+      "type": "string",
+      "format": "uri",
+      "description": "The vehicle it usually works with: a ServiceVehicle. The pairing of each day is in the RoutePlan",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "https://datamodels.jp/ns/fieldservice/ServiceVehicle"
+      },
+      "x-iri": "https://datamodels.jp/ns/fieldservice/assignedVehicle"
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Where the data comes from (a URL, for example)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://smart-data-models.github.io/data-models/terms.jsonld#/definitions/source"
+    }
+  },
+  "required": [
+    "id",
+    "type",
+    "size"
+  ],
+  "additionalProperties": false
+}
