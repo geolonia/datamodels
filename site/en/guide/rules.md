@@ -61,7 +61,7 @@ The marker is a hint, not a compliance statement:
 
 - It does not say how the data must be protected, stored or kept, or how a law classifies it.
 - An attribute without the marker can still hold personal data, for example a free-text note, or a location that shows where someone lives.
-- CI checks only that the value is `true` or that the marker is absent.
+- CI checks only that the value is `true` or that the marker is absent, and only on the model's own attributes (the top-level properties of `schema.json`). Put the marker there: the model page shows the label only for those attributes.
 
 Whoever stores the data decides which attributes are personal data in their system and how to protect them.
 
