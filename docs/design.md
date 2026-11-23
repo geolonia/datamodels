@@ -31,7 +31,7 @@ A public, versioned, bilingual catalog of data models that work in practice in J
 ## Non-goals
 
 - Replacing Smart Data Models or running a general ontology registry.
-- Runtime services (validation API, SPARQL, content negotiation) in 1.0.0. The site is static.
+- A general validation service or SPARQL endpoint. The site is static files, with two exceptions run by a small Worker script (see "Hosting"): content negotiation on the term IRIs (`/ns/*`, #196), and the read-only MCP server at `/mcp` (#223). The MCP server's `validate` tool is an aid for agents, not a validation service: it is rate limited, bounds the size and depth of what it checks, and its answer is advisory; the published JSON Schemas are the reference.
 - Breadth for its own sake. Models come from real implementations.
 
 ## Decision 1: Domain name
@@ -100,7 +100,7 @@ Contract:
 
 1. **Immutability.** A published exact-version file never changes and is never removed. Every published version is a release snapshot in `models/<subject>/releases/`; CI fails when a snapshot differs from the sources, when the current version has none, or when a pull request changes or removes a published version (`datamodels check --base --all-released`, compared with main and with the live site), and `pnpm run check:live` compares the served bytes after every deploy. When the live site cannot be reached, the pull request check still compares the snapshots with main and notes that the online comparison was skipped. The hash manifest that did this before was retired on 2026-10-14, after its 28 hashes were found equal to the snapshots (#226). For consumers, `catalog.json` lists a SHA-256 digest of every exact-version file (`digests`, #295), computed at build time from the files written to `dist/`; `pnpm run check:live` checks that the snapshots, the digests and the served bytes agree. There are no signatures (/guide/urls#verify).
 2. **Headers.** `.jsonld` as `application/ld+json`, schemas as `application/schema+json`, CORS open, `Cache-Control: public, max-age=31536000, immutable` for exact versions and a short max-age for aliases. During the pre-release, when exact versions may still be corrected in place, the build gives them the aliases' short max-age instead (`prerelease` in `node.yaml`, `scripts/lib/cache.mjs`).
-3. **Term IRIs resolve** to the documenting page, and the namespace IRI to the subject page. No content negotiation in 1.0.0.
+3. **Term IRIs resolve** to the documenting page, and the namespace IRI to the subject page: a browser gets a 302 to the page (from `_redirects`). A client that ranks JSON-LD above HTML in `Accept` gets a 303 See Other to the subject's vocabulary, `/vocab/<subject>/vX.jsonld`, which defines every type and attribute IRI of the subject (#196). An unknown `/ns/` path stays a 404.
 4. **Term IRIs never change meaning.** A breaking change mints a new IRI; the old one stays published and documented.
 5. **Upstream IRIs are never re-minted.**
 6. **Data names the alias.** Stored data, `Link` headers, the examples and adapter output use the alias `vX.jsonld`: within a major version a term's meaning never changes, so data only gains new terms. The exact version is for audits and for reproducing a result (decided 2026-09-30, #117).
@@ -186,7 +186,7 @@ Decided 2026-09-29 (#121). The site credits Geolonia, which runs the catalog, an
 
 ## Hosting
 
-Cloudflare Workers static assets, deployed by Cloudflare Workers Builds from `main`; no deploy credential is stored in GitHub, and CI only runs a dry-run deploy. `_headers` and `_redirects` carry the URL contract: one `*` per rule, headers from several matching rules are joined unless detached with `! Header`, so the exact-version cache rules are generated per file. A Worker script would stop `_headers` and `_redirects` from applying, so any host-level redirect belongs in a Redirect Rule on the zone instead. Cloudflare Pages was not chosen because Cloudflare directs new projects to Workers; GitHub Pages cannot set response headers.
+Cloudflare Workers static assets, deployed by Cloudflare Workers Builds from `main`; no deploy credential is stored in GitHub, and CI only runs a dry-run deploy. `_headers` and `_redirects` carry the URL contract: one `*` per rule, headers from several matching rules are joined unless detached with `! Header`, so the exact-version cache rules are generated per file. A Worker script runs only for `/ns/*` and `/mcp` (`run_worker_first` in `wrangler.jsonc`), so `_headers` and `_redirects` keep applying to every other path, and only those two count towards the Workers request quota. On `/ns/*` the script takes the static answer from the assets binding, `_redirects` included, and only replaces it with the 303 for JSON-LD clients; `/mcp` sets its own headers. A new path for the script must be added to `run_worker_first`, and any host-level redirect belongs in a Redirect Rule on the zone. Cloudflare Pages was not chosen because Cloudflare directs new projects to Workers; GitHub Pages cannot set response headers.
 
 ## Licensing and contribution
 
