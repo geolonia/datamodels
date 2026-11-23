@@ -8,11 +8,11 @@ status: draft
 tags: [field-service, catalogue, fees, multilingual]
 attributes:
   label:
-    ja: "名前。言語ごとに書きます（例：{\"ja\": \"ソファー（2人以上用）\", \"en\": \"Sofa (two seats or more)\"}）。日本語は提供者の一覧の書き方のままにします。"
+    ja: "呼び名。言語ごとに書きます（例：{\"ja\": \"ソファー（2人以上用）\", \"en\": \"Sofa (two seats or more)\"}）。日本語は提供者の一覧の書き方のままにします。"
     en: "Name, per language (for example {\"ja\": \"ソファー（2人以上用）\", \"en\": \"Sofa (two seats or more)\"}); the Japanese as the provider's list writes it"
   note:
-    ja: "説明。言語ごとに書きます。"
-    en: "Description, per language"
+    ja: "品目の説明（何が対象かなど）。label と同じく、言語ごとに書きます（LanguageProperty）。"
+    en: "Description of the item (what it covers, for example), per language, a LanguageProperty like label"
   serviceCode:
     ja: "依頼の種類を表すコード（例：bulky-waste）。提供者が決めます。Open311 の service_code にあたります。"
     en: "The kind of request, as a code the provider sets (for example bulky-waste); Open311 service_code"

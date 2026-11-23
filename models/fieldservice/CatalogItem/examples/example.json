@@ -7,6 +7,12 @@
       "en": "Sofa (two seats or more), sofa bed and the like"
     }
   },
+  "note": {
+    "languageMap": {
+      "ja": "2 人以上が座れるソファーと、ソファーベッドが対象です。",
+      "en": "Sofas that seat two or more, and sofa beds."
+    }
+  },
   "serviceCode": "bulky-waste",
   "localGovernmentCode": "131016",
   "provider": "urn:ngsi-ld:Organization:131016",

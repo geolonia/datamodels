@@ -313,8 +313,8 @@
         "en": "note"
       },
       "comment": {
-        "ja": "説明。言語ごとに書きます。",
-        "en": "Description, per language"
+        "ja": "品目の説明（何が対象かなど）。label と同じく、言語ごとに書きます（LanguageProperty）。",
+        "en": "Description of the item (what it covers, for example), per language, a LanguageProperty like label"
       },
       "isDefinedBy": "https://datamodels.jp/ns/fieldservice/",
       "seeAlso": "https://datamodels.jp/models/fieldservice/CatalogItem/#note"

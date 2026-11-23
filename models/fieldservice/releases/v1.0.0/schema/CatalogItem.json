@@ -61,7 +61,7 @@
         "type": "string",
         "minLength": 1
       },
-      "description": "Description, per language",
+      "description": "Description of the item (what it covers, for example), per language, a LanguageProperty like label",
       "x-ngsi": {
         "type": "LanguageProperty"
       },
