@@ -882,3 +882,10 @@ test('rings and other problems: exactly as many as the answer holds stays comple
   assert.equal(ringsOf(r), 0);
   assert.equal(r.complete, false);
 });
+
+test('an answer of the 2026-07-28 handler carries nosniff and CORS too (#340)', async () => {
+  const r = await modern('tools/list');
+  assert.equal(r.status, 200);
+  assert.equal(r.headers.get('x-content-type-options'), 'nosniff');
+  assert.equal(r.headers.get('access-control-allow-origin'), '*');
+});

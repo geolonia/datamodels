@@ -47,7 +47,7 @@ const CORS = {
 };
 // Every answer of /mcp carries these. The Worker answers /mcp itself, so the
 // /* rule of public/_headers (CORS, nosniff) does not apply here (#340).
-const HEADERS = { ...CORS, 'x-content-type-options': 'nosniff' };
+const RESPONSE_HEADERS = { ...CORS, 'x-content-type-options': 'nosniff' };
 
 const isObject = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
 // Every answer is a JSON object: as structured content, and as the same JSON text for clients that read only text.
@@ -317,7 +317,7 @@ export function createServer(env) {
 }
 
 const handlers = new WeakMap();
-const jsonRpcError = (status, code, message, headers = {}) => Response.json({ jsonrpc: '2.0', error: { code, message }, id: null }, { status, headers: { ...HEADERS, ...headers } });
+const jsonRpcError = (status, code, message, headers = {}) => Response.json({ jsonrpc: '2.0', error: { code, message }, id: null }, { status, headers: { ...RESPONSE_HEADERS, ...headers } });
 
 // What the SDK reports through onerror when it refuses a client's request: not
 // a fault of this server, so not logged.
@@ -364,7 +364,7 @@ async function serveLegacy(env, request, parsedBody) {
 
 /** Answer one request to /mcp. */
 export async function handleMcp(request, env) {
-  if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: HEADERS });
+  if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: RESPONSE_HEADERS });
   if (request.method !== 'POST') {
     return jsonRpcError(405, -32000, `Method not allowed. This is an MCP server (Streamable HTTP, stateless): send JSON-RPC messages with POST. About it: ${ABOUT_URL}`, { allow: 'POST, OPTIONS' });
   }
@@ -403,7 +403,7 @@ export async function handleMcp(request, env) {
       res = await handler.fetch(inner, { parsedBody: message });
     }
     const out = new Response(res.body, res);
-    for (const [k, v] of Object.entries(HEADERS)) out.headers.set(k, v);
+    for (const [k, v] of Object.entries(RESPONSE_HEADERS)) out.headers.set(k, v);
     return out;
   } catch (e) {
     console.error('mcp:', e);
