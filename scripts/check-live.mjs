@@ -195,6 +195,8 @@ try {
   const serverName = init.ok ? (await mcpMessage(init)).result?.serverInfo?.name : undefined;
   expect(serverName === 'datamodels.jp', `${origin}/mcp: initialize ${init.status}, server ${serverName}`);
   const list = await mcp({ jsonrpc: '2.0', id: 2, method: 'tools/list' });
+  // The Worker answers /mcp itself, so _headers does not reach it (#340).
+  expect(list.headers.get('x-content-type-options') === 'nosniff', `${origin}/mcp: X-Content-Type-Options ${list.headers.get('x-content-type-options')}, expected nosniff`);
   const tools = list.ok ? ((await mcpMessage(list)).result?.tools ?? []).map((t) => t.name).sort() : [];
   expect(JSON.stringify(tools) === JSON.stringify(MCP_TOOLS), `${origin}/mcp: tools/list ${list.status}, tools ${tools.join(', ') || 'none'}, expected ${MCP_TOOLS.join(', ')}`);
 } catch (e) { failures.push(`${origin}/mcp: ${e.message}`); }

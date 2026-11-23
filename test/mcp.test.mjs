@@ -85,6 +85,24 @@ test('a body that is not JSON is a parse error; another content type is refused;
   assert.equal(r.headers.get('access-control-allow-origin'), '*');
 });
 
+test('every answer carries nosniff and CORS: success, errors and the preflight (#340)', async () => {
+  const limited = { ...env, MCP_LIMITER: { async limit() { return { success: false }; } } };
+  const answers = {
+    200: await send({ jsonrpc: '2.0', id: 1, method: 'tools/list' }),
+    204: await send(undefined, { method: 'OPTIONS' }),
+    400: await send('{'),
+    405: await send(undefined, { method: 'GET' }),
+    413: await send('x'.repeat(MAX_BODY_BYTES + 1)),
+    415: await send('hello', { headers: { ...HEADERS, 'content-type': 'text/plain' } }),
+    429: await send({ jsonrpc: '2.0', id: 1, method: 'tools/list' }, { e: limited }),
+  };
+  for (const [status, r] of Object.entries(answers)) {
+    assert.equal(r.status, Number(status));
+    assert.equal(r.headers.get('x-content-type-options'), 'nosniff', status);
+    assert.equal(r.headers.get('access-control-allow-origin'), '*', status);
+  }
+});
+
 test('a JSON-RPC batch is refused with 400 (MCP dropped batches in 2025-06-18)', async () => {
   const one = { jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'get_model', arguments: { model: 'Task' } } };
   for (const body of [JSON.stringify([one, { ...one, id: 2 }]), ` \n\t[${JSON.stringify(one)}]`]) {

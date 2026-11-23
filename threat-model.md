@@ -74,6 +74,11 @@
   §1.16 trigger). `datamodel.jp` will not be registered; `docs/design.md` no
   longer names it as a typo guard, and §1.5 "Domain" and the §1.12
   look-alike class say that no look-alike domain is held.
+  2026-11-23, for geolonia/datamodels#340 (a hardening, not a §1.16
+  trigger). Answers of `/mcp` and the 303 of `/ns/*` now carry
+  `X-Content-Type-Options: nosniff`, as the static files do through
+  `public/_headers`; `pnpm run check:live` checks it on `/mcp`. No property
+  claims the header, so none changed.
 - **Date / author**: 2026-10-16, drafted for the maintainer, Daniel Kastl, who
   ratified the claims of the first draft in one wave on 2026-10-16.
 - **Generation metadata**: produced with AI assistance. Model/agent: Claude

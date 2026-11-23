@@ -365,6 +365,9 @@ belong in issues, not in the threat model:
 - 2026-11-23, #299: the maintainer chose not to register `datamodel.jp`;
   `docs/design.md`, §1.5 "Domain" and the §1.12 look-alike class now say
   that no look-alike domain is held. Not a §1.16 trigger.
+- 2026-11-23, #340: `/mcp` answers and the `/ns/*` 303 send `nosniff`, which
+  `_headers` cannot add to Worker answers; found in the self-review of #337.
+  Not a §1.16 trigger: no property claims the header.
 
 ## Files
 
