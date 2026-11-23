@@ -5,7 +5,7 @@
   ],
   "id": "urn:ngsi-ld:Crew:131016:field-team-a",
   "type": "Crew",
-  "name": {
+  "label": {
     "type": "LanguageProperty",
     "languageMap": {
       "ja": "収集班 A",

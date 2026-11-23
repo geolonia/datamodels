@@ -9,6 +9,6 @@ notes:
     en: "Personal data: no name, address or phone number. requester points to another entity, so access to it can be limited separately; requesterNote is in the requester's words and may identify them, and location, the point where the items are put out, can stand in for an address; requester, requesterNote and location carry x-personal-data. When publishing, blur location to the town level. A per-request source link, or the items in lines (a care bed, say), can tell something about a person too."
   - ja: "例：2026 年 7 月の千代田区の大雨（このカタログの共通の場面）で、神田須田町の住民が、浸水したソファーの収集を頼んだ依頼です。品目と手数料（ソファー（2人以上用）、ソファーベッドなど 1,600 円）は千代田区の公開している一覧（2026-04-01 更新）のとおりで、依頼、人、番号は架空です。load の 3 は、例のために決めた容積の点数（2号車の capacity は 20）で、区の一覧にはありません。"
     en: "Example: during the July 2026 heavy rain in Chiyoda (the catalog's shared scenario), a resident of Kanda-Sudachō asks for a flood-damaged sofa to be collected. The item and its fee (two-seat-or-more sofa, 1,600 yen) are as Chiyoda publishes them (updated 2026-04-01); the request, the person and the numbers are invented. The load of 3 is a volume score made up for the example (truck 2's capacity is 20); Chiyoda's list has none."
-  - ja: "ドラフト（draft）です。分野の名前 fieldservice と名前空間 https://datamodels.jp/ns/fieldservice/ は、新しい分野としてグループが決めます。"
-    en: "Draft. The subject name fieldservice and the namespace https://datamodels.jp/ns/fieldservice/ are for the group to decide, as a new subject."
+  - ja: "ドラフト（draft）です。分野の名前 fieldservice と名前空間 https://datamodels.jp/ns/fieldservice/ は、2026-11-23 に決めました（#326）。"
+    en: "Draft. The subject name fieldservice and the namespace https://datamodels.jp/ns/fieldservice/ were decided on 2026-11-23 (#326)."
 license: CC0 1.0 (machine-readable files), CC BY 4.0 (prose); see /LICENSE-CONTENT.md

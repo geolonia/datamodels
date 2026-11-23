@@ -7,7 +7,7 @@ description:
 status: draft
 tags: [field-service, route-optimisation, workforce]
 attributes:
-  name:
+  label:
     ja: "班の呼び名。言語ごとに書きます（例：{\"ja\": \"収集班 A\", \"en\": \"Collection team A\"}）。"
     en: "What the provider calls the crew, per language (for example {\"ja\": \"収集班 A\", \"en\": \"Collection team A\"})"
   provider:

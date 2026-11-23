@@ -35,7 +35,7 @@
         }
       ]
     },
-    "name": {
+    "label": {
       "type": "object",
       "minProperties": 1,
       "propertyNames": {
@@ -49,7 +49,7 @@
       "x-ngsi": {
         "type": "LanguageProperty"
       },
-      "x-iri": "https://uri.etsi.org/ngsi-ld/name"
+      "x-iri": "http://www.w3.org/2000/01/rdf-schema#label"
     },
     "provider": {
       "type": "string",

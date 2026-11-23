@@ -5,7 +5,7 @@
   ],
   "id": "urn:ngsi-ld:CatalogItem:131016:sofa-2-seats",
   "type": "CatalogItem",
-  "name": {
+  "label": {
     "type": "LanguageProperty",
     "languageMap": {
       "ja": "ソファー（2人以上用）、ソファーベッドなど",

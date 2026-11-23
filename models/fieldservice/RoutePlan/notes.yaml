@@ -7,8 +7,8 @@ notes:
     en: "Upstream considered (2026-11-17). Smart Data Models FleetVehicleOperation (dataModel.Transportation) records one run of one vehicle, with its actual start and end; it has no plan (routes not yet driven, requests that did not fit), so it is not used as the type. What was driven can be recorded with FleetVehicleOperation. GTFS trips and stop_times (dataModel.UrbanMobility) are fixed timetabled runs, not an order of requests that changes every day."
   - ja: "routes は 1 つの Property で、中の車両や依頼の ID は Relationship になりません。ブローカーで関係をたどるために、vehicles と serviceRequests を複数の値の Relationship として別に持ちます（key-values の形では常に配列、normalized の形ではインスタンスごとに datasetId）。ServiceRequest の routePlan は、反対向きの関係です。routes の止まる所の位置（position）は依頼の location と同じなので、routes にも x-personal-data を付けました。"
     en: "routes is one Property, so the vehicle and request ids inside it are not Relationships. To follow links in a broker, vehicles and serviceRequests are kept apart as multi-valued Relationships (always arrays in the key-values form, one instance per target with a datasetId in the normalized form). ServiceRequest's routePlan is the link the other way. The stop positions in routes repeat the requests' locations, so routes carries x-personal-data too."
-  - ja: "グループで決めること：ServiceVehicle と同じく、今ある実データはデモで計算したルートだけです。"
-    en: "For the group to decide: as with ServiceVehicle, the only real data so far is the routes a demo computes."
-  - ja: "ドラフト（draft）です。分野の名前 fieldservice と名前空間 https://datamodels.jp/ns/fieldservice/ は、新しい分野としてグループが決めます。"
-    en: "Draft. The subject name fieldservice and the namespace https://datamodels.jp/ns/fieldservice/ are for the group to decide, as a new subject."
+  - ja: "実データ：ServiceVehicle と同じく、今あるのはデモで計算したルートだけです。実データがそろうまで、ドラフトとして載せます（2026-11-23 決定、#326）。"
+    en: "Real data: as with ServiceVehicle, the only data so far is the routes a demo computes. The model is listed as a draft until real data exists (decided 2026-11-23, #326)."
+  - ja: "ドラフト（draft）です。分野の名前 fieldservice と名前空間 https://datamodels.jp/ns/fieldservice/ は、2026-11-23 に決めました（#326）。"
+    en: "Draft. The subject name fieldservice and the namespace https://datamodels.jp/ns/fieldservice/ were decided on 2026-11-23 (#326)."
 license: CC0 1.0 (machine-readable files), CC BY 4.0 (prose); see /LICENSE-CONTENT.md

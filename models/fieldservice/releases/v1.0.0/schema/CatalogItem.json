@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://datamodels.jp/schema/fieldservice/CatalogItem/v1.0.0.json",
   "title": "CatalogItem",
-  "description": "One item a provider takes requests for, such as one row of a city's list of bulky waste items and fees. Items it does not take can be listed too, with where to take them instead. With a service time, an amount and skills, the values of a request can be computed from its items. The name and description can be given in several languages (LanguageProperty).",
+  "description": "One item a provider takes requests for, such as one row of a city's list of bulky waste items and fees. Items it does not take can be listed too, with where to take them instead. With a service time, an amount and skills, the values of a request can be computed from its items. The label and the note can be given in several languages (LanguageProperty).",
   "x-version": "1.0.0",
   "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
   "x-model-tags": "field service, catalogue, fees, multilingual",
@@ -35,7 +35,7 @@
         }
       ]
     },
-    "name": {
+    "label": {
       "type": "object",
       "minProperties": 1,
       "propertyNames": {
@@ -49,9 +49,9 @@
       "x-ngsi": {
         "type": "LanguageProperty"
       },
-      "x-iri": "https://uri.etsi.org/ngsi-ld/name"
+      "x-iri": "http://www.w3.org/2000/01/rdf-schema#label"
     },
-    "description": {
+    "note": {
       "type": "object",
       "minProperties": 1,
       "propertyNames": {
@@ -65,7 +65,7 @@
       "x-ngsi": {
         "type": "LanguageProperty"
       },
-      "x-iri": "http://purl.org/dc/terms/description"
+      "x-iri": "https://datamodels.jp/ns/fieldservice/note"
     },
     "serviceCode": {
       "type": "string",
@@ -229,7 +229,7 @@
   "required": [
     "id",
     "type",
-    "name",
+    "label",
     "serviceCode",
     "accepted"
   ],

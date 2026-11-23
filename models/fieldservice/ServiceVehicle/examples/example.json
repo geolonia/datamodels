@@ -1,7 +1,7 @@
 {
   "id": "urn:ngsi-ld:ServiceVehicle:131016:truck-02",
   "type": "ServiceVehicle",
-  "name": {
+  "label": {
     "languageMap": {
       "ja": "2号車",
       "en": "Truck 2"
