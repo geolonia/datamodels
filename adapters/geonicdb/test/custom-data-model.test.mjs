@@ -178,6 +178,7 @@ test('a VocabProperty gets no pattern or length check, and the build says so; a 
   const warn = t.mock.method(console, 'warn', () => {});
   const model = structuredClone(decision);
   Object.assign(model.schema.properties.humanInvolvement, { pattern: '^dpv:', minLength: 1, maxLength: 80 });
+  // Rules made up for the test: the catalog's answers has none of them.
   Object.assign(model.schema.properties.answers, { minimum: 0, enum: [[]], minItems: 1 });
   const d = decisionBody(model);
   assert.deepEqual(Object.keys(d.humanInvolvement.validation), ['enum'], 'written for the compact term, not the IRI');
@@ -209,4 +210,40 @@ test('extension attributes follow the same GeonicDB rules (#280, #285)', (t) => 
   assert.ok(!('validation' in lengthOnly.level));
   const notAList = { propertyDetails: { level: { ...level, validation: { enum: 'dpv:HumanNotInvolved' } } } };
   assert.throws(() => decisionBody(decision, { extend: notAList }), /extension attribute "level": the enum of a VocabProperty must be a list of terms, not "dpv:HumanNotInvolved"/);
+});
+
+// #300: what the published files send to GeonicDB v0.25.0 and later.
+test('#300: a Relationship with one catalog type sends it as objectType; any and agent send none', (t) => {
+  t.mock.method(console, 'warn', () => {});
+  const task = subjects.find((s) => s.name === 'task');
+  const d = toCustomDataModel(task, task.models.find((m) => m.type === 'Task')).propertyDetails;
+  assert.equal(d.project.objectType, 'https://datamodels.jp/ns/task/Project');
+  assert.equal(d.milestone.objectType, 'https://datamodels.jp/ns/task/Milestone');
+  assert.equal(d.parent.objectType, 'https://datamodels.jp/ns/task/Task');
+  for (const name of ['refersTo', 'assignee', 'author']) assert.equal(Object.hasOwn(d[name], 'objectType'), false, name);
+});
+
+test('#300: a list sends the rules of its items and its length', () => {
+  const disaster = subjects.find((s) => s.name === 'disaster');
+  const d = toCustomDataModel(disaster, disaster.models.find((m) => m.type === 'EvacuationSite')).propertyDetails;
+  assert.deepEqual(d.hazardTypes.validation, {
+    items: { enum: ['flood', 'landslide', 'stormSurge', 'earthquake', 'tsunami', 'greatFire', 'inlandFlood', 'eruption'] },
+    minItems: 1,
+    uniqueItems: true,
+  });
+  // A multi-valued Relationship is several instances, not a list: no list rules.
+  const task = subjects.find((s) => s.name === 'task');
+  const relatedTo = toCustomDataModel(task, task.models.find((m) => m.type === 'Task')).propertyDetails.relatedTo;
+  assert.equal(relatedTo.valueType, 'uri');
+  assert.equal(Object.hasOwn(relatedTo, 'validation'), false);
+});
+
+test('#300: no model sends the duration pattern GeonicDB refuses (geolonia/geonicdb#4180)', (t) => {
+  t.mock.method(console, 'warn', () => {});
+  for (const subject of subjects) {
+    for (const model of subject.models.filter((m) => m.kind !== 'value')) {
+      const body = JSON.stringify(toCustomDataModel(subject, model));
+      assert.ok(!body.includes('^P(?!$)'), `${subject.name}/${model.type}`);
+    }
+  }
 });
