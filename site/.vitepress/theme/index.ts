@@ -62,7 +62,9 @@ const SourceLine = defineComponent({
 })
 
 // Above the title of every page with prose: the source line, and the Copy menu
-// at the right (#345). They wrap onto two lines on a narrow screen.
+// at the right (#345). They wrap onto two lines on a narrow screen. The home
+// pages (layout: home) and the 404 page have neither; the home pages' Markdown
+// is still published (/index.md, /en/index.md).
 const DocHeader = defineComponent({
   setup() {
     return () => h('div', { class: 'doc-header' }, [h(SourceLine), h(CopyMenu)])

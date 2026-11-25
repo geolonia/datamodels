@@ -4,7 +4,9 @@
   in an AI chat, connects an AI tool through MCP, and on a model page copies the
   example or the schema URL. The Markdown is the page's .md version, written by
   the build (scripts/lib/page-markdown.mjs) at the path of the page's source.
-  A menu button (WAI-ARIA APG): arrow keys move, Escape closes and returns focus.
+  Only in the built site: `vitepress dev` answers /x.md with a Vite module.
+  A menu button (WAI-ARIA APG): Enter, Space or ArrowDown opens it, arrow keys
+  move, Enter or Space chooses, Escape closes and returns focus.
 -->
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
@@ -15,24 +17,24 @@ const route = useRoute()
 
 const TEXT = {
   ja: {
-    copy: 'ページをコピー', copied: 'コピーしました', failed: 'コピーできませんでした', more: 'ほかの操作',
+    copy: 'ページをコピー', copied: 'コピーしました', failed: 'コピーできませんでした', more: 'ほかの操作', newTab: '（新しいタブ）',
     view: ['Markdown で表示', 'このページをテキストで開く'],
     claude: ['Claude で開く', 'このページについて Claude に聞く'],
     chatgpt: ['ChatGPT で開く', 'このページについて ChatGPT に聞く'],
     mcp: ['MCP で接続', 'AI ツールからカタログを使う'],
     example: ['例の JSON をコピー', 'key-values の形の例'],
     schema: ['スキーマの URL をコピー', 'JSON Schema（バージョンの別名）'],
-    prompt: (url: string) => `${url} を読んで、この内容について私の質問に答えてください。`,
+    prompt: (url: string) => `次のページを読んで、内容について私の質問に答えてください: ${url}`,
   },
   en: {
-    copy: 'Copy page', copied: 'Copied', failed: 'Could not copy', more: 'More actions',
+    copy: 'Copy page', copied: 'Copied', failed: 'Could not copy', more: 'More actions', newTab: ' (new tab)',
     view: ['View as Markdown', 'Open this page as plain text'],
     claude: ['Open in Claude', 'Ask Claude about this page'],
     chatgpt: ['Open in ChatGPT', 'Ask ChatGPT about this page'],
     mcp: ['Connect with MCP', 'Use the catalog from an AI tool'],
     example: ['Copy example JSON', 'The example in key-values form'],
     schema: ['Copy schema URL', 'The JSON Schema (version alias)'],
-    prompt: (url: string) => `Read ${url} and answer my questions about it.`,
+    prompt: (url: string) => `Read this page and answer my questions about it: ${url}`,
   },
 }
 const t = computed(() => (lang.value === 'ja' ? TEXT.ja : TEXT.en))
@@ -44,13 +46,16 @@ const mdPath = computed(() => `/${page.value.relativePath}`)
 const mdUrl = () => document.querySelector<HTMLLinkElement>('link[rel="alternate"][type="text/markdown"]')?.href
   ?? new URL(mdPath.value, location.origin).href
 const mcpHref = computed(() => (lang.value === 'ja' ? '/ai#mcp-server' : '/en/ai#mcp-server'))
+const prompt = () => encodeURIComponent(t.value.prompt(mdUrl()))
 
+// A link (href) or an action (run). External links open in a new tab.
 type Item = { key: string, label: string, hint: string, external?: boolean, href?: () => string, run?: () => Promise<void> }
 const items = computed<Item[]>(() => {
   const list: Item[] = [
     { key: 'view', label: t.value.view[0], hint: t.value.view[1], external: true, href: () => mdPath.value },
-    { key: 'claude', label: t.value.claude[0], hint: t.value.claude[1], external: true, href: () => `https://claude.ai/new?q=${encodeURIComponent(t.value.prompt(mdUrl()))}` },
-    { key: 'chatgpt', label: t.value.chatgpt[0], hint: t.value.chatgpt[1], external: true, href: () => `https://chatgpt.com/?q=${encodeURIComponent(t.value.prompt(mdUrl()))}` },
+    { key: 'claude', label: t.value.claude[0], hint: t.value.claude[1], external: true, href: () => `https://claude.ai/new?q=${prompt()}` },
+    // hints=search: ChatGPT reads the page instead of answering from memory.
+    { key: 'chatgpt', label: t.value.chatgpt[0], hint: t.value.chatgpt[1], external: true, href: () => `https://chatgpt.com/?hints=search&q=${prompt()}` },
     { key: 'mcp', label: t.value.mcp[0], hint: t.value.mcp[1], href: () => mcpHref.value },
   ]
   // A model page: its example and schema (frontmatter written by scripts/lib/site.mjs).
@@ -69,13 +74,17 @@ async function fetchText(path: string) {
 }
 
 const status = ref<'' | 'copied' | 'failed'>('')
+const label = computed(() => (status.value === 'copied' ? t.value.copied : status.value === 'failed' ? t.value.failed : t.value.copy))
 let timer: ReturnType<typeof setTimeout> | undefined
 // The text is fetched after the click. Safari only lets a page write to the clipboard
 // within the click, so the write starts at once and waits for the text (ClipboardItem).
+// Browsers without ClipboardItem (Firefox before 127) write when the text has arrived.
 async function copy(text: Promise<string>) {
+  text.catch(() => {})   // a failed fetch is reported below, never as an unhandled rejection
   try {
     if (typeof ClipboardItem !== 'undefined' && navigator.clipboard?.write) {
       const blob = text.then((s) => new Blob([s], { type: 'text/plain' }))
+      blob.catch(() => {})
       await navigator.clipboard.write([new ClipboardItem({ 'text/plain': blob })])
     } else {
       await navigator.clipboard.writeText(await text)
@@ -89,18 +98,17 @@ async function copy(text: Promise<string>) {
 }
 const copyPage = () => copy(fetchText(mdPath.value))
 
-// The menu.
+// The menu. Its entries are read from the DOM when needed, so they always match what is shown.
 const open = ref(false)
 const root = ref<HTMLElement | null>(null)
 const toggle = ref<HTMLButtonElement | null>(null)
-const entries = ref<HTMLElement[]>([])
+const entries = () => [...(root.value?.querySelectorAll<HTMLElement>('[role="menuitem"]') ?? [])]
 
 function focusItem(i: number) {
-  const n = entries.value.length
-  entries.value[((i % n) + n) % n]?.focus()
+  const list = entries()
+  if (list.length) list[((i % list.length) + list.length) % list.length].focus()
 }
 async function show(focus = 0) {
-  entries.value = []
   open.value = true
   await nextTick()
   focusItem(focus)
@@ -110,28 +118,41 @@ function hide(returnFocus = true) {
   if (returnFocus) toggle.value?.focus()
 }
 function onToggleKey(e: KeyboardEvent) {
-  if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(0) }
-  else if (e.key === 'ArrowUp') { e.preventDefault(); show(entries.value.length ? entries.value.length - 1 : items.value.length - 1) }
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open.value ? hide() : show(0) }
+  else if (e.key === 'ArrowDown') { e.preventDefault(); show(0) }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); show(-1) }
+  else if (e.key === 'Escape' && open.value) { e.preventDefault(); hide() }
 }
 function onMenuKey(e: KeyboardEvent) {
-  const i = entries.value.indexOf(document.activeElement as HTMLElement)
+  const i = entries().indexOf(document.activeElement as HTMLElement)
   if (e.key === 'ArrowDown') { e.preventDefault(); focusItem(i + 1) }
   else if (e.key === 'ArrowUp') { e.preventDefault(); focusItem(i - 1) }
   else if (e.key === 'Home') { e.preventDefault(); focusItem(0) }
   else if (e.key === 'End') { e.preventDefault(); focusItem(-1) }
   else if (e.key === 'Escape') { e.preventDefault(); hide() }
-  else if (e.key === 'Tab') hide(false)
+  // Space chooses a link too (a link only answers Enter by itself); the click keeps target=_blank.
+  else if (e.key === ' ' && i >= 0) { e.preventDefault(); entries()[i].click() }
 }
+// After an action focus goes back to the button; after a link the browser or router moves it.
 async function choose(item: Item) {
   if (item.run) await item.run()
-  hide(!item.external)
+  hide(!item.href)
 }
 
-// A click elsewhere closes it; so does going to another page.
-function onDocClick(e: MouseEvent) { if (open.value && !root.value?.contains(e.target as Node)) hide(false) }
-watch(open, (v) => { if (v) document.addEventListener('click', onDocClick); else document.removeEventListener('click', onDocClick) })
+// A tap or click elsewhere, or focus moving out, closes it; so does going to another page.
+// pointerdown: iOS Safari does not send click to the document for a tap on plain text.
+function onOutside(e: Event) { if (open.value && !root.value?.contains(e.target as Node)) hide(false) }
+watch(open, (v) => {
+  for (const type of ['pointerdown', 'focusin']) {
+    if (v) document.addEventListener(type, onOutside)
+    else document.removeEventListener(type, onOutside)
+  }
+})
 watch(() => route.path, () => { open.value = false; status.value = '' })
-onBeforeUnmount(() => { document.removeEventListener('click', onDocClick); clearTimeout(timer) })
+onBeforeUnmount(() => {
+  for (const type of ['pointerdown', 'focusin']) document.removeEventListener(type, onOutside)
+  clearTimeout(timer)
+})
 </script>
 
 <template>
@@ -139,7 +160,10 @@ onBeforeUnmount(() => { document.removeEventListener('click', onDocClick); clear
     <div class="copy-menu-buttons">
       <button type="button" class="copy-menu-main" @click="copyPage">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></svg>
-        <span>{{ status === 'copied' ? t.copied : status === 'failed' ? t.failed : t.copy }}</span>
+        <!-- All three labels take the same place, so the button keeps the width of the longest. -->
+        <span class="copy-menu-labels">
+          <span v-for="s in [t.copy, t.copied, t.failed]" :key="s" :class="{ shown: s === label }" :aria-hidden="s !== label">{{ s }}</span>
+        </span>
       </button>
       <button
         ref="toggle" type="button" class="copy-menu-toggle" aria-haspopup="menu" :aria-expanded="open"
@@ -148,23 +172,19 @@ onBeforeUnmount(() => { document.removeEventListener('click', onDocClick); clear
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
       </button>
     </div>
-    <span class="visually-hidden" role="status">{{ status === 'copied' ? t.copied : status === 'failed' ? t.failed : '' }}</span>
+    <span class="visually-hidden" role="status">{{ status ? label : '' }}</span>
     <ul v-if="open" class="copy-menu-list" role="menu" :aria-label="t.more" @keydown="onMenuKey">
       <li v-for="item in items" :key="item.key" role="none">
         <a
-          v-if="item.href" :ref="(el) => { if (el) entries[items.indexOf(item)] = el as HTMLElement }"
-          role="menuitem" tabindex="-1" :href="item.href()" :target="item.external ? '_blank' : undefined"
-          :rel="item.external ? 'noopener' : undefined" @click="choose(item)"
+          v-if="item.href" role="menuitem" tabindex="-1" :href="item.href()" :aria-describedby="`copy-menu-hint-${item.key}`"
+          :target="item.external ? '_blank' : undefined" :rel="item.external ? 'noopener' : undefined" @click="choose(item)"
         >
-          <span class="label">{{ item.label }}<span v-if="item.external" class="ext" aria-hidden="true"> ↗</span></span>
-          <span class="hint">{{ item.hint }}</span>
+          <span class="label">{{ item.label }}<span v-if="item.external" class="ext" aria-hidden="true"> ↗</span><span v-if="item.external" class="visually-hidden">{{ t.newTab }}</span></span>
+          <span :id="`copy-menu-hint-${item.key}`" class="hint" aria-hidden="true">{{ item.hint }}</span>
         </a>
-        <button
-          v-else :ref="(el) => { if (el) entries[items.indexOf(item)] = el as HTMLElement }"
-          role="menuitem" tabindex="-1" type="button" @click="choose(item)"
-        >
+        <button v-else role="menuitem" tabindex="-1" type="button" :aria-describedby="`copy-menu-hint-${item.key}`" @click="choose(item)">
           <span class="label">{{ item.label }}</span>
-          <span class="hint">{{ item.hint }}</span>
+          <span :id="`copy-menu-hint-${item.key}`" class="hint" aria-hidden="true">{{ item.hint }}</span>
         </button>
       </li>
     </ul>
@@ -183,6 +203,9 @@ onBeforeUnmount(() => { document.removeEventListener('click', onDocClick); clear
 }
 .copy-menu-buttons button:hover { background: var(--vp-c-default-soft); }
 .copy-menu-toggle { border-left: 1px solid var(--vp-c-border); padding: 4px 8px !important; }
+.copy-menu-labels { display: grid; }
+.copy-menu-labels > span { grid-area: 1 / 1; visibility: hidden; }
+.copy-menu-labels > .shown { visibility: visible; }
 .copy-menu-buttons button:focus-visible, .copy-menu-list :is(a, button):focus-visible {
   outline: 2px solid var(--vp-c-brand-1); outline-offset: -2px;
 }
@@ -197,9 +220,12 @@ onBeforeUnmount(() => { document.removeEventListener('click', onDocClick); clear
   display: flex; flex-direction: column; gap: 2px; width: 100%; padding: 8px 10px; border-radius: 6px;
   text-align: left; text-decoration: none; color: var(--vp-c-text-1);
 }
-.copy-menu-list :is(a, button):hover, .copy-menu-list :is(a, button):focus { background: var(--vp-c-default-soft); }
+/* Hover and keyboard focus are highlighted; the first entry focused after a mouse click is not. */
+.copy-menu-list :is(a, button):is(:hover, :focus-visible) { background: var(--vp-c-default-soft); }
+.copy-menu-list :is(a, button):focus:not(:focus-visible) { outline: none; }
 .label { font-size: 14px; font-weight: 500; }
 .ext { color: var(--vp-c-text-3); }
 .hint { font-size: 12px; color: var(--vp-c-text-2); }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media print { .copy-menu { display: none; } }
 </style>
