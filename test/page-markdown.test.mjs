@@ -3,9 +3,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
-import { join } from 'node:path';
-import { pageMarkdown, unknownComponents, pageUrl, markdownUrl } from '../scripts/lib/page-markdown.mjs';
+import { dirname, join } from 'node:path';
+import { pageMarkdown, unknownComponents, pageUrl, markdownUrl, expandIncludes } from '../scripts/lib/page-markdown.mjs';
 import { ROOT } from '../scripts/lib/models.mjs';
 
 const page = (body, fm = 'title: T') => `---\n${fm}\n---\n\n${body}\n`;
@@ -91,7 +92,7 @@ test('a diagram becomes its description; a standard in <details> a heading with 
 });
 
 test('a component the converter does not know is reported', () => {
-  assert.deepEqual(unknownComponents('<Foo bar="1" />\n`<Type>` and\n```\n<Bar/>\n```\n<Badge text="x" />'), ['Foo']);
+  assert.deepEqual(unknownComponents('<Foo bar="1" />\n`<Type>` and\n```\n<Bar/>\n::: info\n```\n<Badge text="x" />\n::: details More\n:::'), ['<Foo>', '::: details']);
 });
 
 // The hand-written pages, as git tracks them: the generated ones are rewritten by other
@@ -115,4 +116,55 @@ test('a script or style split by another one is removed too, in any case', () =>
   const md = pageMarkdown(page('# T\n\n<scr<script>x</script>ipt>alert(1)</script>\n<STYLE>a{}</STYLE\t bar>\n<script>b</script\n x>\nText.'), 'en/x.md');
   assert.ok(!/<script|<style|alert/i.test(md), md);
   assert.ok(md.includes('Text.'));
+});
+
+test('lines of a code block are kept, also comments that look like headings', () => {
+  const md = pageMarkdown(page('# T\n\n```bash\n# install\n# run\nnpm i\n\n\n# end\n```'), 'en/x.md');
+  assert.ok(md.includes('```bash\n# install\n# run\nnpm i\n\n\n# end\n```'), md);
+});
+
+test('a page without a heading gets its title above its code, not inside it', () => {
+  const md = pageMarkdown(page('```bash\n# install\nnpm i\n```', 'title: Setup'), 'en/x.md');
+  assert.match(md, /^# Setup\n\nSource: [^\n]+\n\n```bash\n# install\nnpm i\n```\n$/);
+});
+
+test('comments for the authors and empty anchors are left out; comments in code stay', () => {
+  const md = pageMarkdown(page('# T\n\n<!-- languages: own code -->\n<!--\nlong\n-->\n<div id="extensions" class="old-anchor"></div>\nText.\n\n```html\n<!-- kept -->\n```'), 'en/x.md');
+  assert.ok(!/languages|long|old-anchor/.test(md), md);
+  assert.ok(md.includes('<!-- kept -->'));
+});
+
+test('the home page title is one line, also where the hero breaks it', () => {
+  const en = pageMarkdown(page('', 'layout: home\ntitle: x\nhero:\n  text: <span>Data</span> models<br>at <b>stable</b> URLs'), 'en/index.md');
+  assert.match(en, /^# Data models at stable URLs\n\nSource: /);
+  // Japanese has no spaces between words.
+  const ja = pageMarkdown(page('', 'layout: home\ntitle: x\nhero:\n  text: 日本で使える<br>データモデル'), 'index.md');
+  assert.match(ja, /^# 日本で使えるデータモデル\n\n出典: /);
+});
+
+test('an included region is expanded (the licence page)', () => {
+  const md = pageMarkdown(expandIncludes(readFileSync(join(ROOT, 'site', 'en', 'LICENSE-CONTENT.md'), 'utf8'), join(ROOT, 'site', 'en')), 'en/LICENSE-CONTENT.md');
+  assert.ok(md.includes('CC BY 4.0') && md.length > 2000, md.slice(0, 500));
+  assert.ok(!md.includes('<!--'), 'no include or region markers');
+});
+
+const fenced = (text) => {
+  const lines = [];
+  let fence = null;
+  for (const line of text.split('\n')) {
+    const f = /^\s*(`{3,}|~{3,})/.exec(line);
+    if (fence) { if (f && line.trim().replace(/[`~]/g, '') === '') fence = null; else lines.push(line); }
+    else if (f) fence = f[1];
+  }
+  return lines;
+};
+
+test('every line of every code block of a page is in its Markdown version', () => {
+  for (const rel of handWritten()) {
+    const source = expandIncludes(readFileSync(join(ROOT, 'site', rel), 'utf8'), dirname(join(ROOT, 'site', rel)));
+    const md = fenced(pageMarkdown(source, rel));
+    // A tip box quotes its lines with "> ".
+    const missing = fenced(source).filter((l) => !md.includes(l) && !md.includes(`> ${l}`));
+    assert.deepEqual(missing, [], rel);
+  }
 });
