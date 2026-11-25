@@ -3,7 +3,8 @@
 // playground on model pages (ExamplePlayground.vue), pan and zoom for the
 // relationship graphs (GraphViewer.vue), the extension builder
 // (ExtensionBuilder.vue, on /guide/extend) and a
-// pre-release banner above the navigation on every page. Remove the banner
+// pre-release banner above the navigation on every page, and the Copy menu
+// above the title of every page with prose (CopyMenu.vue). Remove the banner
 // (and --vp-layout-top-height in custom.css) at the official launch.
 // The 404 page (NotFound, below) speaks the language of the address.
 // Without VitePress' Inter: the site uses IBM Plex (below) and the system fonts for Japanese.
@@ -22,6 +23,7 @@ import './custom.css'
 import ModelIndex from './ModelIndex.vue'
 import GraphViewer from './GraphViewer.vue'
 import ExampleTabs from './ExampleTabs.vue'
+import CopyMenu from './CopyMenu.vue'
 
 const PrereleaseBanner = defineComponent({
   setup() {
@@ -56,6 +58,16 @@ const SourceLine = defineComponent({
         h('a', { href: lang.value === 'ja' ? '/LICENSE-CONTENT' : '/en/LICENSE-CONTENT' }, 'CC BY 4.0'),
       ])
     }
+  },
+})
+
+// Above the title of every page with prose: the source line, and the Copy menu
+// at the right (#345). They wrap onto two lines on a narrow screen. The home
+// pages (layout: home) and the 404 page have neither; the home pages' Markdown
+// is still published (/index.md, /en/index.md).
+const DocHeader = defineComponent({
+  setup() {
+    return () => h('div', { class: 'doc-header' }, [h(SourceLine), h(CopyMenu)])
   },
 })
 
@@ -138,6 +150,6 @@ export default {
     app.component('ExtensionBuilder', defineAsyncComponent(() => import('./ExtensionBuilder.vue')))
   },
   Layout() {
-    return h(DefaultTheme.Layout, null, { 'layout-top': () => h(PrereleaseBanner), 'doc-before': () => h(SourceLine), 'not-found': () => h(NotFound) })
+    return h(DefaultTheme.Layout, null, { 'layout-top': () => h(PrereleaseBanner), 'doc-before': () => h(DocHeader), 'not-found': () => h(NotFound) })
   },
 }

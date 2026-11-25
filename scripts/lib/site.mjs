@@ -83,7 +83,9 @@ const statusBadge = (lang, prefix, status) => `<a class="stage-link" href="${pre
 export const plainText = (s) => String(s ?? '')
   .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/`([^`]*)`/g, '$1').replace(/\*\*([^*]+)\*\*/g, '$1')
   .replace(/\s+/g, ' ').trim();
-const front = (title, description) => `---\ntitle: ${JSON.stringify(title)}\ndescription: ${JSON.stringify(plainText(description))}\n---\n\n`;
+// extra: more frontmatter, such as the URLs the Copy menu of a model page offers (CopyMenu.vue).
+const front = (title, description, extra = {}) => `---\ntitle: ${JSON.stringify(title)}\ndescription: ${JSON.stringify(plainText(description))}\n${
+  Object.entries(extra).filter(([, v]) => v).map(([k, v]) => `${k}: ${JSON.stringify(v)}\n`).join('')}---\n\n`;
 // "#85" in a note is an issue of this repository, as on GitHub.
 // After a space, a bracket or Japanese punctuation (「2026-09-30、#118」).
 export const issueLinks = (s) => s.replace(/(^|[\s(（、，。])#(\d+)\b/g, '$1[#$2](https://github.com/geolonia/datamodels/issues/$2)');
@@ -261,7 +263,8 @@ function modelPage(lang, prefix, subject, model) {
   const pageTitle = lang === 'ja'
     ? `${model.type}${sameName(title) ? ' ' : `（${title}）`}のデータモデル`
     : `${model.type} data model`;
-  let md = front(pageTitle, desc);
+  const urls = modelUrls(subject, model);
+  let md = front(pageTitle, desc, { schemaUrl: urls.schemaAlias, exampleUrl: model.examples['example.json'] ? `${urls.examples}example.json` : null });
   const playground = !isValue && model.examples['example.json'] && model.examples['example-normalized.jsonld'];
   // "<" escaped so no text can close the script block.
   if (playground) md += `<script setup>\nconst playground = ${JSON.stringify(playgroundData(lang, subject, model)).replaceAll('<', '\\u003c')}\n</script>\n\n`;

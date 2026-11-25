@@ -237,7 +237,11 @@
 .model-graph-legend .other::before { width: 14px; height: 10px; border: 1.5px dashed var(--vp-c-brand-1); border-radius: 3px; }
 
 /* Canonical URL and licence at the top of every doc page (theme/index.ts). */
-.source-line { margin: 0 0 12px; font-size: 12px; line-height: 1.5; color: var(--vp-c-text-3); overflow-wrap: anywhere; }
+/* The source line and the Copy menu (CopyMenu.vue) above the title; on a narrow
+ * screen the menu goes to the right of its own line. */
+.doc-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; margin: 0 0 12px; }
+.doc-header .copy-menu { margin-left: auto; }
+.source-line { margin: 0; flex: 1 1 18rem; font-size: 12px; line-height: 1.5; color: var(--vp-c-text-3); overflow-wrap: anywhere; }
 .source-line a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .source-line a:hover { color: var(--vp-c-brand-1); }
 

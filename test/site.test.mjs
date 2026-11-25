@@ -99,3 +99,10 @@ test('a model with a personal-data attribute explains the label and links the ru
   assert.match(renderModelPage('ja', '', subjects, decision, Decision), /<small>「個人情報」は.*（\[個人情報の印\]\(\/guide\/rules#personal-data\)）。<\/small>/);
   assert.doesNotMatch(renderModelPage('en', '/en', subjects, task, Task), /rules#personal-data/);
 });
+
+// The Copy menu (site/.vitepress/theme/CopyMenu.vue) offers these on a model page.
+test('a model page names its schema and example in the frontmatter, for the Copy menu', () => {
+  const front = /^---\n([\s\S]*?)\n---/.exec(renderModelPage('en', '/en', subjects, task, Task))[1];
+  assert.match(front, /^schemaUrl: "https:\/\/datamodels\.jp\/schema\/task\/Task\/v1\.json"$/m);
+  assert.match(front, /^exampleUrl: "https:\/\/datamodels\.jp\/examples\/task\/Task\/example\.json"$/m);
+});
