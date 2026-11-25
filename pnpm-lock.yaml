@@ -207,8 +207,8 @@ importers:
         specifier: 5.3.0
         version: 5.3.0
       '@geolonia/datamodels':
-        specifier: 0.4.3
-        version: 0.4.3(chokidar@3.6.0)(supports-color@10.2.2)
+        specifier: 0.4.4
+        version: 0.4.4(chokidar@3.6.0)(supports-color@10.2.2)
       '@modelcontextprotocol/server':
         specifier: 2.4.0
         version: 2.4.0
@@ -586,8 +586,8 @@ packages:
   '@fontsource/ibm-plex-sans@5.3.0':
     resolution: {integrity: sha512-CbE4CbbEEZJX860XyUiRpsksXIQR8Rp2XDva2VO53NJox9tVNtusrysd2x5YkUEY3ErQ66W1IiiQL8/wihhw5w==}
 
-  '@geolonia/datamodels@0.4.3':
-    resolution: {integrity: sha512-7OEwt0GHSloRRFpVpB5FLUMH1trAHPEQmckBjm6Lk9u/NldKnPU3eMqUEBbRW0SZuBFjAZroSqBHktW8dSf1aw==}
+  '@geolonia/datamodels@0.4.4':
+    resolution: {integrity: sha512-O6NZ3XLZjZCzkR3IjOQo/7WkgKWbgZL3Qwv+XTY8fnakJRMI5BRYWZtIR0XEYC8L0c/VQn7KUMSI24DQY8fYLw==}
     engines: {node: '>=24'}
     hasBin: true
 
@@ -3491,7 +3491,7 @@ snapshots:
 
   '@fontsource/ibm-plex-sans@5.3.0': {}
 
-  '@geolonia/datamodels@0.4.3(chokidar@3.6.0)(supports-color@10.2.2)':
+  '@geolonia/datamodels@0.4.4(chokidar@3.6.0)(supports-color@10.2.2)':
     dependencies:
       '@11ty/eleventy': 3.1.8(chokidar@3.6.0)(supports-color@10.2.2)
       '@clack/prompts': 1.9.0

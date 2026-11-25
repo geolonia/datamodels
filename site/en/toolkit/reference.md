@@ -10,7 +10,7 @@ Every command of `datamodels`, with its arguments, options, defaults and exit co
 Run a command with `npx` ([Running it](/en/toolkit/#run)):
 
 ```bash
-npx @geolonia/datamodels@0.4.3 search 避難
+npx @geolonia/datamodels@0.4.4 search 避難
 ```
 
 ## For every command {#general}
