@@ -112,7 +112,7 @@ test('every page converts, with no component tag, script or container left', asy
 });
 
 test('a script or style split by another one is removed too, in any case', () => {
-  const md = pageMarkdown(page('# T\n\n<scr<script>x</script>ipt>alert(1)</script>\n<STYLE>a{}</STYLE>\nText.'), 'en/x.md');
+  const md = pageMarkdown(page('# T\n\n<scr<script>x</script>ipt>alert(1)</script>\n<STYLE>a{}</STYLE\t bar>\n<script>b</script\n x>\nText.'), 'en/x.md');
   assert.ok(!/<script|<style|alert/i.test(md), md);
   assert.ok(md.includes('Text.'));
 });

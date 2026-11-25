@@ -154,8 +154,8 @@ export function pageMarkdown(source, relativePath) {
   const front = /^---\n([\s\S]*?)\n---\n?/.exec(source);
   if (front) { fm = parseYaml(front[1]) ?? {}; body = source.slice(front[0].length); }
   let script;
-  body = removeAll(body, /<script\b[^>]*>([\s\S]*?)<\/script\s*>\n?/gi, (_, s) => { script ??= s; return ''; });
-  body = removeAll(body, /<style\b[^>]*>[\s\S]*?<\/style\s*>\n?/gi);
+  body = removeAll(body, /<script\b[^>]*>([\s\S]*?)<\/script\b[^>]*>\n?/gi, (_, s) => { script ??= s; return ''; });
+  body = removeAll(body, /<style\b[^>]*>[\s\S]*?<\/style\b[^>]*>\n?/gi);
 
   const out = [];
   let fence = null;          // the fence that opened the code block we are in
