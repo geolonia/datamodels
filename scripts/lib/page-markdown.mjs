@@ -43,6 +43,13 @@ const attr = (tag, name) => {
   return m ? (m[1] ?? m[2]) : undefined;
 };
 
+// Remove what a pattern matches until nothing is left, so that removing one
+// match cannot join the text around it into a new one (<scr<script>ipt>).
+const removeAll = (s, re, fn = () => '') => {
+  for (let prev; prev !== s;) { prev = s; s = s.replace(re, fn); }
+  return s;
+};
+
 const decode = (s) => s.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
 
 // The inline HTML of one line, outside code spans, as Markdown.
@@ -106,7 +113,7 @@ function modelList(script, base) {
 
 // The home page: its hero and cards are in the frontmatter.
 function homePage(fm, base, lang) {
-  const plain = (s) => inline(String(s ?? ''), base).replace(/<[^>]+>/g, '');
+  const plain = (s) => removeAll(inline(String(s ?? ''), base), /<[^>]*>/g).replace(/[<>]/g, '');
   const t = TEXT[lang];
   let out = `# ${plain(fm.hero?.text) || fm.title}\n\n`;
   if (fm.hero?.tagline) out += `${plain(fm.hero.tagline)}\n\n`;
@@ -147,8 +154,8 @@ export function pageMarkdown(source, relativePath) {
   const front = /^---\n([\s\S]*?)\n---\n?/.exec(source);
   if (front) { fm = parseYaml(front[1]) ?? {}; body = source.slice(front[0].length); }
   let script;
-  body = body.replace(/<script\b[^>]*>([\s\S]*?)<\/script>\n?/g, (_, s) => { script = s; return ''; });
-  body = body.replace(/<style\b[^>]*>[\s\S]*?<\/style>\n?/g, '');
+  body = removeAll(body, /<script\b[^>]*>([\s\S]*?)<\/script\s*>\n?/gi, (_, s) => { script ??= s; return ''; });
+  body = removeAll(body, /<style\b[^>]*>[\s\S]*?<\/style\s*>\n?/gi);
 
   const out = [];
   let fence = null;          // the fence that opened the code block we are in
