@@ -46,8 +46,15 @@ const attr = (tag, name) => {
   return m ? (m[1] ?? m[2]) : undefined;
 };
 
-// The line that opens a code block: indent, fence, info string (no backtick in it).
-const FENCE = /^(\s*)(`{3,}|~{3,})([^`]*)$/;
+// The line that opens a code block (CommonMark): indent, fence and info string.
+// A backtick fence's info string has no backtick; a tilde fence's may.
+function openFence(line) {
+  const m = /^(\s*)(?:(`{3,})([^`]*)|(~{3,})(.*))$/.exec(line);
+  return m && { indent: m[1], fence: m[2] ?? m[4], info: m[3] ?? m[5] };
+}
+
+// The line that closes it: the same character, at least as many, then only spaces.
+const closesFence = (line, fence) => new RegExp(`^\\s*\\${fence[0]}{${fence.length},}\\s*$`).test(line);
 
 // Apply fn to the text outside code blocks; code blocks stay as they are.
 function outsideFences(text, fn) {
@@ -57,11 +64,11 @@ function outsideFences(text, fn) {
   for (const line of text.split('\n')) {
     if (fence) {
       parts[parts.length - 1].push(line);
-      if (line.trim().startsWith(fence) && line.trim().replace(/[`~]/g, '') === '') fence = null;
+      if (closesFence(line, fence)) fence = null;
       continue;
     }
-    const f = FENCE.exec(line);
-    if (f) { parts.push(prose, [line]); prose = []; fence = f[2]; continue; }
+    const f = openFence(line);
+    if (f) { parts.push(prose, [line]); prose = []; fence = f.fence; continue; }
     prose.push(line);
   }
   parts.push(prose);
@@ -161,9 +168,9 @@ export function unknownComponents(source) {
   const found = new Set();
   let fence = null;
   for (const line of source.split('\n')) {
-    const f = /^\s*(`{3,}|~{3,})/.exec(line);
-    if (f) { if (!fence) fence = f[1]; else if (line.trim().startsWith(fence)) fence = null; continue; }
-    if (fence) continue;
+    if (fence) { if (closesFence(line, fence)) fence = null; continue; }
+    const f = openFence(line);
+    if (f) { fence = f.fence; continue; }
     const c = /^\s*:::+\s*([a-z-]+)/.exec(line);
     if (c && !CONTAINERS.has(c[1])) found.add(`::: ${c[1]}`);
     for (const part of line.split(/`+[^`]*`+/)) for (const [, name] of part.matchAll(/<([A-Z][A-Za-z]+)[\s/>]/g)) if (!KNOWN.has(name)) found.add(`<${name}>`);
@@ -206,7 +213,7 @@ export function pageMarkdown(source, relativePath) {
   for (const line of body.split('\n')) {
     if (fence) {
       push(line, true);
-      if (line.trim().startsWith(fence) && line.trim().replace(/[`~]/g, '') === '') fence = null;
+      if (closesFence(line, fence)) fence = null;
       continue;
     }
     if (skip) { if (line.includes(skip)) skip = null; continue; }
@@ -216,14 +223,14 @@ export function pageMarkdown(source, relativePath) {
       if (line.includes('</svg>')) { const label = attr(svg, 'aria-label'); if (label) push(`_${t.diagram}: ${decode(label)}_`); svg = null; }
       continue;
     }
-    const f = FENCE.exec(line);
+    const f = openFence(line);
     if (f) {
-      fence = f[2];
+      fence = f.fence;
       // The info string: the language, then VitePress' [tab label], {line highlights} or title.
-      const lang = /^[^\s[{]*/.exec(f[3].trim())[0];
-      const label = /\[([^\]]+)\]/.exec(f[3]);
+      const lang = /^[^\s[{]*/.exec(f.info.trim())[0];
+      const label = /\[([^\]]+)\]/.exec(f.info);
       if (label) { push(`**${label[1]}**`); push(''); }
-      push(`${f[1]}${f[2]}${lang}`, true);
+      push(`${f.indent}${f.fence}${lang}`, true);
       continue;
     }
     const trimmed = line.trim();

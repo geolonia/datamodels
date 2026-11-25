@@ -182,3 +182,9 @@ test('a fence with highlights or a title is a code block; the language stays', (
   assert.ok(md.includes('After [x](https://datamodels.jp/y).'), md);
   assert.ok(md.includes('**Tab**\n\n```json\n{}\n```'), md);
 });
+
+test('a tilde fence may have backticks in its info string; a closing fence uses the same character', () => {
+  const md = pageMarkdown(page('# T\n\n~~~html title=`example`\n<script>alert(1)</script>\n~~~\n\n~~~html\n~~~```\n<script>keep()</script>\n~~~~\n\nAfter.'), 'en/x.md');
+  assert.ok(md.includes('~~~html\n<script>alert(1)</script>\n~~~'), md);
+  assert.ok(md.includes('~~~html\n~~~```\n<script>keep()</script>\n~~~~\n\nAfter.'), md);
+});
