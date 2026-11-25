@@ -91,8 +91,10 @@ for (const subject of subjects) for (const release of await listReleases(subject
   expect(sha(Buffer.from(await res.arrayBuffer())) === sha(await readFile(f.path)), `${swap(f.url)}: served bytes differ from the release snapshot ${f.path} (deploy not live yet, or a stale cache)`);
 }
 
-// Indexes for search engines and AI tools.
-for (const [path, type, marker] of [['/llms.txt', 'text/plain', '# datamodels.jp'], ['/sitemap.xml', 'application/xml', '<urlset'], ['/robots.txt', 'text/plain', 'Sitemap:']]) {
+// Indexes for search engines and AI tools, and the Markdown version of a page in each
+// language (scripts/lib/page-markdown.mjs): text/plain from the /*.md rule in _headers.
+for (const [path, type, marker] of [['/llms.txt', 'text/plain', '# datamodels.jp'], ['/sitemap.xml', 'application/xml', '<urlset'], ['/robots.txt', 'text/plain', 'Sitemap:'],
+  ['/en/guide/use.md', 'text/plain; charset=utf-8', 'Source: https://datamodels.jp/en/guide/use'], ['/models/index.md', 'text/plain; charset=utf-8', '出典: https://datamodels.jp/models/']]) {
   try {
     const res = await fetch(`${origin}${path}`);
     const body = res.ok ? await res.text() : '';

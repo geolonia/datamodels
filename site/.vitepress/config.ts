@@ -198,7 +198,8 @@ const nav = (prefix: '' | '/en', lang: 'ja' | 'en'): DefaultTheme.NavItem[] => [
   { text: lang === 'ja' ? 'ツールキット' : 'Toolkit', link: `${prefix}/toolkit/`, activeMatch: `^${prefix}/toolkit/` },
 ]
 
-const SITE_URL = 'https://datamodels.jp';
+// The site's address, from node.yaml (baseUrl).
+const SITE_URL = BASE_URL;
 // The fallback description of a page without its own, in the page's language (share previews).
 const DESCRIPTION = {
   ja: '日本で使えるデータモデルのカタログ。JSON Schema、JSON-LD の @context、語彙を変わらない URL で公開し、NGSI-LD にそのまま使えます',
@@ -251,6 +252,8 @@ export default defineConfig({
       ['meta', { property: 'og:description', content: description }],
       ['meta', { property: 'og:url', content: `${SITE_URL}/${path}` }],
       ['link', { rel: 'canonical', href: `${SITE_URL}/${path}` }],
+      // The page as Markdown, for AI tools (scripts/lib/page-markdown.mjs): the path of its source.
+      ['link', { rel: 'alternate', type: 'text/markdown', href: `${SITE_URL}/${pageData.relativePath}` }],
     );
     // The same page in the other language, for search engines (hreflang). A reader of any other
     // language gets the English page (x-default): more of them read English than Japanese.
