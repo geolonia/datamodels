@@ -61,5 +61,9 @@
   Cache-Control: public, max-age=300
 /catalog.schema.json
   Content-Type: application/schema+json; charset=utf-8
-/LICENSE-CONTENT.md
+# The Markdown version of every page (scripts/lib/page-markdown.mjs) and the
+# raw licence texts (LICENSE-CONTENT.md). text/plain, not text/markdown: browsers
+# show it instead of downloading it ("View as Markdown"), and the Japanese
+# needs the charset.
+/*.md
   Content-Type: text/plain; charset=utf-8

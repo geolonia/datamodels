@@ -251,6 +251,8 @@ export default defineConfig({
       ['meta', { property: 'og:description', content: description }],
       ['meta', { property: 'og:url', content: `${SITE_URL}/${path}` }],
       ['link', { rel: 'canonical', href: `${SITE_URL}/${path}` }],
+      // The page as Markdown, for AI tools (scripts/lib/page-markdown.mjs): the path of its source.
+      ['link', { rel: 'alternate', type: 'text/markdown', href: `${SITE_URL}/${pageData.relativePath}` }],
     );
     // The same page in the other language, for search engines (hreflang). A reader of any other
     // language gets the English page (x-default): more of them read English than Japanese.
