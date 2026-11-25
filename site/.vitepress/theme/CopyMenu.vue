@@ -133,9 +133,12 @@ function onMenuKey(e: KeyboardEvent) {
   // Space chooses a link too (a link only answers Enter by itself); the click keeps target=_blank.
   else if (e.key === ' ' && i >= 0) { e.preventDefault(); entries()[i].click() }
 }
-// After an action focus goes back to the button; after a link the browser or router moves it.
-async function choose(item: Item) {
-  if (item.run) await item.run()
+// The menu closes at once. After an action focus goes back to the button; after a link the
+// browser or router moves it. A copy goes on in the background (its clipboard write has
+// started inside the click, as Safari needs) and shows its result on the button, so a slow
+// fetch never takes focus back from where the user has gone since.
+function choose(item: Item) {
+  item.run?.()
   hide(!item.href)
 }
 
