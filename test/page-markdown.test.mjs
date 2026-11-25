@@ -103,7 +103,8 @@ const handWritten = () => execFileSync('git', ['ls-files', '-z', '--', 'site/*.m
 // The pages in the repository (hand-written; the generated ones are checked by the build).
 test('every page converts, with no component tag, script or container left', async () => {
   for (const rel of handWritten()) {
-    const source = await readFile(join(ROOT, 'site', rel), 'utf8');
+    // Read as the build reads it: with its includes expanded.
+    const source = expandIncludes(await readFile(join(ROOT, 'site', rel), 'utf8'), dirname(join(ROOT, 'site', rel)));
     assert.deepEqual(unknownComponents(source), [], rel);
     const md = pageMarkdown(source, rel);
     const outside = md.replace(/^(`{3,}|~{3,})[^\n]*\n[\s\S]*?^\1\s*$/gm, '').replace(/`+[^`\n]*`+/g, '');
@@ -167,4 +168,17 @@ test('every line of every code block of a page is in its Markdown version', () =
     const missing = fenced(source).filter((l) => !md.includes(l) && !md.includes(`> ${l}`));
     assert.deepEqual(missing, [], rel);
   }
+});
+
+test('a script or style in a code block stays, and is not taken for the page data', () => {
+  const md = pageMarkdown(page('<script setup>\nconst cards = []\n</script>\n\n# T\n\n```html\n<script type="application/ld+json">{"a":1}</script>\n<style>p{}</style>\n```'), 'en/x.md');
+  assert.ok(md.includes('```html\n<script type="application/ld+json">{"a":1}</script>\n<style>p{}</style>\n```'), md);
+  assert.ok(!md.includes('const cards'));
+});
+
+test('a fence with highlights or a title is a code block; the language stays', () => {
+  const md = pageMarkdown(page('# T\n\n```js {1,3}\nconst a = `<a href="/x">x</a>`;\n```\n\nAfter [x](/y).\n\n```json title="x" [Tab]\n{}\n```'), 'en/x.md');
+  assert.ok(md.includes('```js\nconst a = `<a href="/x">x</a>`;\n```'), md);
+  assert.ok(md.includes('After [x](https://datamodels.jp/y).'), md);
+  assert.ok(md.includes('**Tab**\n\n```json\n{}\n```'), md);
 });

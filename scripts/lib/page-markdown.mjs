@@ -16,8 +16,10 @@ import { readdir, readFile, writeFile, access } from 'node:fs/promises';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { parse as parseYaml } from 'yaml';
+import { BASE_URL } from './models.mjs';
 
-const SITE_URL = 'https://datamodels.jp';
+// The site's address, from node.yaml (baseUrl), like every other URL the build writes.
+const SITE_URL = BASE_URL;
 
 const TEXT = {
   ja: { source: '出典', text: '文章は', tip: 'ヒント', warning: '注意', diagram: '図', builder: '拡張ビルダーは、ウェブページで使えます', more: '詳しく' },
@@ -43,6 +45,28 @@ const attr = (tag, name) => {
   const m = new RegExp(`(?:^|\\s)${name}=(?:"([^"]*)"|'([^']*)')`).exec(tag);
   return m ? (m[1] ?? m[2]) : undefined;
 };
+
+// The line that opens a code block: indent, fence, info string (no backtick in it).
+const FENCE = /^(\s*)(`{3,}|~{3,})([^`]*)$/;
+
+// Apply fn to the text outside code blocks; code blocks stay as they are.
+function outsideFences(text, fn) {
+  const parts = [];
+  let prose = [];
+  let fence = null;
+  for (const line of text.split('\n')) {
+    if (fence) {
+      parts[parts.length - 1].push(line);
+      if (line.trim().startsWith(fence) && line.trim().replace(/[`~]/g, '') === '') fence = null;
+      continue;
+    }
+    const f = FENCE.exec(line);
+    if (f) { parts.push(prose, [line]); prose = []; fence = f[2]; continue; }
+    prose.push(line);
+  }
+  parts.push(prose);
+  return parts.map((lines, i) => (i % 2 ? lines.join('\n') : fn(lines.join('\n')))).join('\n');
+}
 
 // Remove what a pattern matches until nothing is left, so that removing one
 // match cannot join the text around it into a new one (<scr<script>ipt>).
@@ -160,8 +184,12 @@ export function pageMarkdown(source, relativePath) {
   const front = /^---\n([\s\S]*?)\n---\n?/.exec(source);
   if (front) { fm = parseYaml(front[1]) ?? {}; body = source.slice(front[0].length); }
   let script;
-  body = removeAll(body, /<script\b[^>]*>([\s\S]*?)<\/script\b[^>]*>\n?/gi, (_, s) => { script ??= s; return ''; });
-  body = removeAll(body, /<style\b[^>]*>[\s\S]*?<\/style\b[^>]*>\n?/gi);
+  // The page's own <script setup> and <style>, outside code blocks only: an example
+  // of a script in a code block stays, and is never taken for the page's data.
+  body = outsideFences(body, (text) => {
+    text = removeAll(text, /<script\b[^>]*>([\s\S]*?)<\/script\b[^>]*>\n?/gi, (_, s) => { script ??= s; return ''; });
+    return removeAll(text, /<style\b[^>]*>[\s\S]*?<\/style\b[^>]*>\n?/gi);
+  });
 
   // { text, code }: lines of code blocks are written as they are and never
   // changed afterwards (no heading search, pruning or whitespace clean-up).
@@ -188,11 +216,14 @@ export function pageMarkdown(source, relativePath) {
       if (line.includes('</svg>')) { const label = attr(svg, 'aria-label'); if (label) push(`_${t.diagram}: ${decode(label)}_`); svg = null; }
       continue;
     }
-    const f = /^(\s*)(`{3,}|~{3,})(\S*)\s*(?:\[([^\]]+)\])?\s*$/.exec(line);
+    const f = FENCE.exec(line);
     if (f) {
       fence = f[2];
-      if (f[4]) { push(`**${f[4]}**`); push(''); }
-      push(`${f[1]}${f[2]}${f[3]}`, true);
+      // The info string: the language, then VitePress' [tab label], {line highlights} or title.
+      const lang = /^[^\s[{]*/.exec(f[3].trim())[0];
+      const label = /\[([^\]]+)\]/.exec(f[3]);
+      if (label) { push(`**${label[1]}**`); push(''); }
+      push(`${f[1]}${f[2]}${lang}`, true);
       continue;
     }
     const trimmed = line.trim();
