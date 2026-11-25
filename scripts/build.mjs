@@ -11,11 +11,13 @@
 //      append the generated redirects and exact-version cache header rules
 //   5. write /llms.txt (scripts/lib/llms.mjs); VitePress writes sitemap.xml
 //   6. write the MCP server's lookup index, /mcp/index.json (scripts/lib/mcp-index.mjs)
+//   7. write the Markdown version of every page, next to its .html
+//      (scripts/lib/page-markdown.mjs, #345)
 //
 // A versioned file that has been published must never be rewritten with
 // different content: the validation checks every release snapshot against the
 // sources, and build:deploy runs datamodels check --all-released after this.
-import { cp, rm, access, writeFile } from 'node:fs/promises';
+import { cp, rm, access, readdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { spawnSync } from 'node:child_process';
@@ -25,6 +27,7 @@ import { publishModels } from './lib/publish.mjs';
 import { readNodeList, readSnapshot } from './lib/nodes.mjs';
 import { llmsTxt } from './lib/llms.mjs';
 import { writeMcpIndex, MCP_INDEX_PATH } from './lib/mcp-index.mjs';
+import { writePageMarkdown } from './lib/page-markdown.mjs';
 import { BASE_URL } from './lib/models.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -50,6 +53,8 @@ await cp(src, out, { recursive: true });
 const published = await publishModels(subjects, adapters, { nodes: await readNodeList() });
 await writeFile(join(out, 'llms.txt'), await llmsTxt(subjects));
 await writeMcpIndex(out, published.catalog, await readSnapshot(), BASE_URL);
+// After publishModels: the raw LICENSE-CONTENT.md it writes is kept, not replaced by the page's.
+const markdown = await writePageMarkdown(site, out);
 
 // The hosting contract depends on these files being served. Fail loudly
 // rather than deploy a tree without them.
@@ -62,4 +67,14 @@ for (const required of ['adapters/index.html', 'en/adapters/index.html']) await 
 for (const subject of subjects) for (const model of subject.models) for (const m of model.mappings ?? []) {
   await access(join(out, 'mapping', subject.name, model.type, `${m.name}.yaml`));
 }
-console.log(`built ${out}: ${published.subjects} subject(s), ${published.models} model(s)`);
+// Every page has its Markdown version (each page's head names it, site/.vitepress/config.ts).
+for (const page of await htmlPages(out)) {
+  if (page === '404.html') continue;
+  await access(join(out, page.replace(/\.html$/, '.md'))).catch(() => { throw new Error(`${page} has no Markdown version`); });
+}
+console.log(`built ${out}: ${published.subjects} subject(s), ${published.models} model(s), ${markdown.length} Markdown page(s)`);
+
+async function htmlPages(dir) {
+  const files = await readdir(dir, { recursive: true });
+  return files.map((f) => String(f).split('\\').join('/')).filter((f) => f.endsWith('.html') && !f.startsWith('assets/'));
+}
