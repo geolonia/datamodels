@@ -19,7 +19,7 @@ const TEXT = {
   ja: {
     // The button shows a short label (it sits in a narrow row); its name, its title and the
     // announcement say the whole thing.
-    copy: 'コピー', copyPage: 'ページをコピー', shown: { copied: '完了', failed: '失敗' },
+    copy: 'コピー', copyPage: 'ページをコピー', sep: '：', shown: { copied: '完了', failed: '失敗' },
     copied: 'コピーしました', failed: 'コピーできませんでした', more: 'ほかの操作', newTab: '（新しいタブ）',
     view: ['Markdown で表示', 'このページをテキストで開く'],
     claude: ['Claude で開く', 'このページについて Claude に聞く'],
@@ -30,7 +30,7 @@ const TEXT = {
     prompt: (url: string) => `次のページを読んで、内容について私の質問に答えてください: ${url}`,
   },
   en: {
-    copy: 'Copy', copyPage: 'Copy page', shown: { copied: 'Copied', failed: 'Failed' },
+    copy: 'Copy', copyPage: 'Copy page', sep: ': ', shown: { copied: 'Copied', failed: 'Failed' },
     copied: 'Copied', failed: 'Could not copy', more: 'More actions', newTab: ' (new tab)',
     view: ['View as Markdown', 'Open this page as plain text'],
     claude: ['Open in Claude', 'Ask Claude about this page'],
@@ -80,6 +80,8 @@ async function fetchText(path: string) {
 const status = ref<'' | 'copied' | 'failed'>('')
 const label = computed(() => (status.value ? t.value[status.value] : ''))
 const shown = computed(() => (status.value ? t.value.shown[status.value] : t.value.copy))
+// The button's name holds the label it shows (WCAG 2.5.3), also "Copied" or "Failed" for a moment.
+const name = computed(() => (status.value ? t.value.copyPage + t.value.sep + shown.value : t.value.copyPage))
 let timer: ReturnType<typeof setTimeout> | undefined
 // The text is fetched after the click. Safari only lets a page write to the clipboard
 // within the click, so the write starts at once and waits for the text (ClipboardItem).
@@ -166,7 +168,7 @@ onBeforeUnmount(() => {
 <template>
   <div ref="root" class="copy-menu">
     <div class="copy-menu-buttons">
-      <button type="button" class="copy-menu-main" :aria-label="t.copyPage" :title="t.copyPage" @click="copyPage">
+      <button type="button" class="copy-menu-main" :aria-label="name" :title="t.copyPage" @click="copyPage">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></svg>
         <!-- All three labels take the same place, so the button keeps the width of the longest. -->
         <span class="copy-menu-labels">
