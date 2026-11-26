@@ -42,6 +42,7 @@
       "statusLabel": "tm:statusLabel",
       "structure": "housing:structure",
       "totalFloorArea": "housing:totalFloorArea",
+      "unitBranchNumber": "housing:unitBranchNumber",
       "unitNumber": "housing:unitNumber",
       "urgencyLevel": "housing:urgencyLevel",
       "url": "https://schema.org/url",

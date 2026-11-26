@@ -12,9 +12,10 @@ standard:
     ja: "このモデルの元になった仕様。コード値は、仕様書のコード一覧のコード（3 桁）を英語の値にしている。対応は各属性の説明のとおり。入れていないエンティティ：所有者・共有者、関係者、相続人とその外部連携（D0016〜D0034、D0039、D0040）、履歴（D0009〜D0013、D0038）、対応のステータス（D0014）、補助事業（D0011）、市区町村単位の集計（D1001〜D1004）。"
     en: "The specification this model was designed from. Code values are English tokens for the 3-digit codes of the specification's code lists, as each attribute description gives them. Entities left out: owners and co-owners, related persons, heirs and their links to other systems (D0016 to D0034, D0039, D0040), histories (D0009 to D0013, D0038), case status (D0014), subsidies (D0011), municipal totals (D1001 to D1004)."
 fields:
-  managementNumber: { to: D0001-0001 空き家等管理番号, note: { ja: 建物や土地ごとに一意。空き室は unitNumber と合わせて区別する, en: "unique per building or lot; a vacant unit is told apart together with unitNumber" } }
+  managementNumber: { to: D0001-0001 空き家等管理番号, note: { ja: 建物や土地ごとに一意。空き室は unitNumber、unitBranchNumber と合わせて区別する, en: "unique per building or lot; a vacant unit is told apart together with unitNumber and unitBranchNumber" } }
   localGovernmentCode: { to: D0001-0017 全国地方公共団体コード, note: { ja: 管理番号の先頭 6 桁と同じ, en: the same as the first 6 digits of the management number } }
   unitNumber: { to: D0036-0002 室・区画_室番号, note: { ja: "仕様書は、入力が無いとき 000 にする。このモデルでは省く", en: "the specification writes 000 when there is none; this model leaves it out" } }
+  unitBranchNumber: { to: D0036-0003 室・区画_枝番 }
   address: { to: "D0001-0004〜0006, 0008〜0011 郵便番号、市区町村、町字、街区符号、建物名・棟番号・部屋番号、D0001-0017〜0023 アドレス・ベース・レジストリのコード", note: { ja: 詳細は JapaneseAddress, en: see JapaneseAddress } }
   location: { to: "D0001-0015 経度, D0001-0016 緯度", note: { ja: "仕様書の意味定義では、緯度と経度の説明が入れ替わっている。項目名で対応させる", en: "the specification's definitions of 緯度 and 経度 are swapped; the item names are what counts" } }
   parcelNumber: { to: D0001-0007 地番, note: { ja: "D0001-0012 土地_筆番号（1 筆の土地が複数に分かれるときの番号）は入れていない", en: "D0001-0012 土地_筆番号 (the number when one lot is split) is left out" } }

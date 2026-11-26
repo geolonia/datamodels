@@ -39,7 +39,7 @@
     "managementNumber": {
       "type": "string",
       "pattern": "^\\d{12}$",
-      "description": "Number of the vacant house in the municipality's register (空き家等管理番号, D0001-0001): the 6-digit local government code followed by a 6-digit serial number in the order of registration. Unique nationwide for a building or lot; vacant units of one building share it and are told apart by unitNumber",
+      "description": "Number of the vacant house in the municipality's register (空き家等管理番号, D0001-0001): the 6-digit local government code followed by a 6-digit serial number in the order of registration. Unique nationwide for a building or lot; vacant units of one building share it and are told apart by unitNumber and unitBranchNumber",
       "x-ngsi": {
         "type": "Property"
       },
@@ -56,11 +56,20 @@
     },
     "unitNumber": {
       "type": "string",
-      "description": "Room or unit number when the record is one vacant unit of an apartment or row house (室・区画_室番号, D0036). Left out for a whole building. Together with managementNumber it identifies the unit",
+      "description": "Room or unit number when the record is one vacant unit of an apartment or row house (室・区画_室番号, D0036). Left out for a whole building. Together with managementNumber and unitBranchNumber it identifies the unit",
       "x-ngsi": {
         "type": "Property"
       },
       "x-iri": "https://datamodels.jp/ns/housing/unitNumber"
+    },
+    "unitBranchNumber": {
+      "type": "string",
+      "pattern": "^\\d{3}$",
+      "description": "Branch number (室・区画_枝番, D0036-0003, 3 digits) the municipality gives when the room number does not tell units apart; 000 when there is none. Only with unitNumber",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/unitBranchNumber"
     },
     "address": {
       "$ref": "https://datamodels.jp/schema/common/JapaneseAddress/v1.0.0.json",
@@ -281,8 +290,15 @@
     },
     "constructionDate": {
       "type": "string",
-      "pattern": "^\\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\\d|3[01]))?)?$",
-      "description": "When the building was built (建築年月日), as YYYY-MM-DD, or YYYY-MM or YYYY when only that is known",
+      "anyOf": [
+        {
+          "pattern": "^\\d{4}(-(0[1-9]|1[0-2]))?$"
+        },
+        {
+          "pattern": "^\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|02-(0[1-9]|1\\d|2\\d))$"
+        }
+      ],
+      "description": "When the building was built (建築年月日), as YYYY-MM-DD, or YYYY-MM or YYYY when only that is known. A full date is checked against the length of its month; 29 February is accepted in every year",
       "x-ngsi": {
         "type": "Property"
       },
@@ -421,6 +437,40 @@
     "type",
     "managementNumber",
     "localGovernmentCode"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "designationGrounds"
+        ]
+      },
+      "then": {
+        "required": [
+          "vacantHouseCategory"
+        ],
+        "properties": {
+          "vacantHouseCategory": {
+            "enum": [
+              "poorlyManaged",
+              "specified"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "unitBranchNumber"
+        ]
+      },
+      "then": {
+        "required": [
+          "unitNumber"
+        ]
+      }
+    }
   ],
   "additionalProperties": false
 }

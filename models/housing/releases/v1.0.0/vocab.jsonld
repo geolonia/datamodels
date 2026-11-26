@@ -283,8 +283,8 @@
         "en": "managementNumber"
       },
       "comment": {
-        "ja": "空き家台帳での管理番号（空き家等管理番号）。全国地方公共団体コード 6 桁と、登録順の通し番号 6 桁の 12 桁です。建物や土地ごとに全国で一意で、同じ建物の空き室は同じ番号を持ち、unitNumber で区別します。",
-        "en": "Number in the municipality's vacant house register (空き家等管理番号): the 6-digit local government code and a 6-digit serial number in order of registration, 12 digits. Unique nationwide for a building or lot; vacant units of one building share it and are told apart by unitNumber"
+        "ja": "空き家台帳での管理番号（空き家等管理番号）。全国地方公共団体コード 6 桁と、登録順の通し番号 6 桁の 12 桁です。建物や土地ごとに全国で一意で、同じ建物の空き室は同じ番号を持ち、unitNumber と unitBranchNumber で区別します。",
+        "en": "Number in the municipality's vacant house register (空き家等管理番号): the 6-digit local government code and a 6-digit serial number in order of registration, 12 digits. Unique nationwide for a building or lot; vacant units of one building share it and are told apart by unitNumber and unitBranchNumber"
       },
       "isDefinedBy": "https://datamodels.jp/ns/housing/",
       "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#managementNumber"
@@ -472,14 +472,27 @@
       "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#totalFloorArea"
     },
     {
+      "@id": "https://datamodels.jp/ns/housing/unitBranchNumber",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "unitBranchNumber"
+      },
+      "comment": {
+        "ja": "室番号で区別できないときに担当者が付ける枝番（室・区画_枝番、3 桁）。無ければ 000 です。unitNumber と一緒に使います。",
+        "en": "Branch number (室・区画_枝番, 3 digits) given when the room number does not tell units apart; 000 when there is none. Only with unitNumber"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#unitBranchNumber"
+    },
+    {
       "@id": "https://datamodels.jp/ns/housing/unitNumber",
       "@type": "rdf:Property",
       "label": {
         "en": "unitNumber"
       },
       "comment": {
-        "ja": "共同住宅や長屋の 1 室を扱うときの室番号（室・区画_室番号）。建物全体なら省きます。managementNumber と合わせて、空き室を区別します。",
-        "en": "Room or unit number when the record is one vacant unit of an apartment or row house (室・区画_室番号). Left out for a whole building. Together with managementNumber it identifies the unit"
+        "ja": "共同住宅や長屋の 1 室を扱うときの室番号（室・区画_室番号）。建物全体なら省きます。managementNumber、unitBranchNumber と合わせて、空き室を区別します。",
+        "en": "Room or unit number when the record is one vacant unit of an apartment or row house (室・区画_室番号). Left out for a whole building. Together with managementNumber and unitBranchNumber it identifies the unit"
       },
       "isDefinedBy": "https://datamodels.jp/ns/housing/",
       "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#unitNumber"

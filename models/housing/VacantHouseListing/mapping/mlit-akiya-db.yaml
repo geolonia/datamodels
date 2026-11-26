@@ -12,7 +12,7 @@ standard:
     ja: "D0035 不動産情報プラットフォーム・バンク登録情報は、1 件の空き家に登録①〜⑩を並べる。このモデルでは登録 1 件が 1 エンティティ。項目は登録①の ID で示す（②〜⑩も同じ）。入れていない項目：本人同意の有無フラグ（D0035-0004、0005）、所内担当部署、対応の最終更新者。"
     en: "D0035 (akiya bank registration) lists registrations ① to ⑩ on one vacant house; in this model each registration is one entity. Items are given with the IDs of registration ① (② to ⑩ alike). Left out: the consent flags (D0035-0004, 0005), the department in charge and the last editor."
 fields:
-  vacantHouse: { to: "D0035-0001 空き家等管理番号, D0035-0002 室・区画_室番号", note: { ja: "VacantHouse の id は、管理番号から作る。空き室なら室番号も付ける（VacantHouse の notes）。D0035-0003 室・区画_枝番は入れていない", en: "the VacantHouse id is made from the management number, with the room number for a vacant unit (see the VacantHouse notes). D0035-0003 室・区画_枝番 is left out" } }
+  vacantHouse: { to: "D0035-0001 空き家等管理番号, D0035-0002 室・区画_室番号, D0035-0003 室・区画_枝番", note: { ja: "VacantHouse の id は、管理番号から作る。空き室なら室番号と枝番も付ける（VacantHouse の notes）", en: "the VacantHouse id is made from the management number, with the room and branch numbers for a vacant unit (see the VacantHouse notes)" } }
   localGovernmentCode: { to: 全国地方公共団体コード, note: { ja: 管理番号の先頭 6 桁, en: the first 6 digits of the management number } }
   listingNumber: { to: D0035-0006 不動産情報プラットフォーム・バンク登録番号, note: { ja: "仕様書では 10 桁の数字。市区町村の空き家バンクの番号は英字や記号を含むことがあるので、このモデルは文字列にする", en: "a 10-digit number in the specification; municipal akiya banks often use letters and signs, so this model takes a string" } }
   listedOn: { to: D0035-0007 登録年月日 }
