@@ -64,7 +64,7 @@ npx @geolonia/datamodels@0.4.4 convert \
 
 Give `convert` your file as a path (`./my-list.yaml`) or a name that ends in `.yaml` or `.yml`. Any other name is read as the name of a mapping file in the catalog. Your mapping follows the same [conversion rules](/en/guide/mapping#convert) as the catalog's mapping files. In `via` it may name a catalog mapping, or another file of your own, relative to the folder of your mapping (`address.yaml`): a via that ends in `.yaml` or `.yml` is a file.
 
-A mapping file is configuration, like a script: `convert` follows it with your rights. Its `via` can read any `.yaml` or `.yml` file you can read, also outside the mapping's folder, and the mapping decides what goes into the entities. Read a mapping file from someone else before you use it, as you would a script. `convert` limits the work one can cause (at most 1000 `via` expansions per row), but not which files it reads.
+A mapping file is configuration, like a script: `convert` follows it with your rights. Its `via` can read any `.yaml` or `.yml` file you can read, also outside the mapping's folder, and the mapping decides what goes into the entities. Read a mapping file from someone else before you use it, as you would a script. `convert` caps only how far one row's `via` references expand (at most 1000), not which files it reads.
 
 About the first version that `mapping` writes:
 
