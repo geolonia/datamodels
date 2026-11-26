@@ -2,7 +2,8 @@
 // vocabulary, browsers the page, unknown IRIs a 404.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import worker, { prefersJsonLd, MAJORS_TTL_MS, resetMajors } from '../worker/index.mjs';
+import worker from '../worker/index.mjs';
+import { prefersJsonLd, MAJORS_TTL_MS, resetMajors } from '../worker/negotiate.mjs';
 
 // The static assets as the Worker sees them: _redirects for known IRIs, catalog.json, else 404.
 const env = {

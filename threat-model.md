@@ -103,6 +103,12 @@
   `(😀[😀]+)+` is rejected (both found by CodeRabbit). Several separated
   groups in a row
   (`(a*-)*(a*-)*`, polynomial) were added to the voided-by list.
+  2026-11-26, for geolonia/datamodels#348 (not a §1.16 trigger). The IRI
+  Worker's helpers (`prefersJsonLd`, the subject majors and their cache) moved
+  from `worker/index.mjs` to `worker/negotiate.mjs`, because the Workers
+  runtime refuses a main module whose named exports are not handlers. The
+  citations follow the code; no claim changed. CI now starts the Worker in the
+  local runtime (`scripts/check-worker-start.mjs`).
 - **Date / author**: 2026-10-16, drafted for the maintainer, Daniel Kastl, who
   ratified the claims of the first draft in one wave on 2026-10-16.
 - **Generation metadata**: produced with AI assistance. Model/agent: Claude
@@ -415,9 +421,9 @@ the individual fields of `catalog.yaml`, `notes.yaml` and `ADOPTERS.yaml`
 | static files `GET /<path>` | request path | **yes**, any client | resource-name | nothing; only files in `dist/` exist, anything else is the 404 page | *(documented, wrangler.jsonc `assets` "not_found_handling": "404-page")* |
 | static files `GET /<path>` | request headers (Accept, User-Agent, Origin) | **yes** | data | nothing; static answers do not depend on them | *(documented, public/_headers header comment: "CORS is open for everything. Nothing here is private")* |
 | `GET /ns/<subject>/<Term>` | path | **yes** | resource-name | nothing; only paths that `_redirects` answers with a 3xx are negotiated, subject matched by `^/ns/([a-z0-9-]+)/` | *(documented, worker/index.mjs header: "Only IRIs the catalog knows are answered that way: an unknown /ns/ path stays a 404")* |
-| `GET /ns/<subject>/<Term>` | `Accept` header | **yes** | data | nothing; a tie goes to the page, wildcards are not counted | *(documented, worker/index.mjs `prefersJsonLd` comment: "a tie goes to the page")* |
+| `GET /ns/<subject>/<Term>` | `Accept` header | **yes** | data | nothing; a tie goes to the page, wildcards are not counted | *(documented, worker/negotiate.mjs `prefersJsonLd` comment: "a tie goes to the page")* |
 | `GET /ns/<subject>/<Term>` | method | **yes** | data | nothing; only GET and HEAD are negotiated | *(documented, worker/index.mjs comment: "Only reads are negotiated; a preflight or a POST gets the static answer")* |
-| `GET /ns/...` | `catalog.json` read through the assets binding | no — built from the reviewed repository | data | n/a | *(documented, worker/index.mjs comment: "The major version of each subject, from catalog.json")* |
+| `GET /ns/...` | `catalog.json` read through the assets binding | no — built from the reviewed repository | data | n/a | *(documented, worker/negotiate.mjs comment: "The major version of each subject, from catalog.json")* |
 | `POST /mcp` | method | **yes** | data | nothing; only POST and OPTIONS are served, other methods get 405 | *(documented, worker/mcp.mjs `handleMcp`: "send JSON-RPC messages with POST")* |
 | `POST /mcp` | `Content-Length` and body bytes | **yes** | size | nothing; bodies over 64 KiB are refused while streaming (`MAX_BODY_BYTES`) | *(documented, worker/mcp.mjs `MAX_BODY_BYTES` comment: "The largest request body accepted")* |
 | `POST /mcp` | `Content-Type` | **yes** | data | nothing; anything but JSON gets 415 | *(documented, worker/mcp.mjs `handleMcp`: "Content-Type must be application/json")* |
@@ -488,13 +494,13 @@ instructions).
 | `published-files` | concurrency and reentrancy | N/A — read-only files | | §1.5 | *(documented, public/_headers header comment: "Nothing here is private")* |
 | `published-files` | resource complexity | claimed | coarse limits on size, nesting, `$ref`s and `pattern`s; what they leave out, such as a slow `pattern` without nested quantifiers, is `D-CONTRIBUTED-FILE-LIMITS` | §1.11 `P-FILE-LIMITS` | *(documented, scripts/lib/file-limits.mjs header: "Limits on the contributed files")* |
 | `published-files` | x-version-immutability | claimed | exact-version context, vocabulary and schema files, after the launch | §1.11 `P-PUBLISHED-IMMUTABLE`; before the launch §1.12 `D-PRERELEASE-CORRECTIONS` | *(documented, docs/design.md "URL scheme and hosting contract" item 1)* |
-| `iri-negotiation` | numeric domain and representational limits | claimed | `q` values parsed as numbers; a non-finite value counts as 0 | §1.11 `P-NEGOTIATION-FALLBACK` | *(documented, worker/index.mjs `qualities` comment: "The quality (0 to 1) the Accept header gives each media type")* |
+| `iri-negotiation` | numeric domain and representational limits | claimed | `q` values parsed as numbers; a non-finite value counts as 0 | §1.11 `P-NEGOTIATION-FALLBACK` | *(documented, worker/negotiate.mjs `qualities` comment: "The quality (0 to 1) the Accept header gives each media type")* |
 | `iri-negotiation` | failure and exception atomicity | claimed | any error falls back to the static answer | §1.11 `P-NEGOTIATION-FALLBACK` | *(documented, worker/index.mjs comment: "Any error below falls back to the static answer")* |
 | `iri-negotiation` | recursive or cyclic topology | N/A — no recursive input | | §1.7 | *(documented, worker/index.mjs header)* |
 | `iri-negotiation` | callback and collaborator execution | N/A — no caller-supplied code | | §1.7 | *(documented, worker/index.mjs header)* |
-| `iri-negotiation` | serialization and reconstruction | N/A — reads only `catalog.json` from the build | | §1.7 | *(documented, worker/index.mjs comment: "The major version of each subject, from catalog.json")* |
-| `iri-negotiation` | reference and object lifecycle | disclaimed | an isolate keeps the subject majors for five minutes; after a major release it may send the old major's vocabulary until then | §1.12 `D-NEGOTIATION-STALE-MAJOR` | *(documented, worker/index.mjs comment: "a new major version reaches JSON-LD clients within about ten minutes")* |
-| `iri-negotiation` | concurrency and reentrancy | claimed | one shared promise per isolate for five minutes; a thrown or non-OK read is dropped, the requests waiting on it get the static answer, and the next request reads again; a read that outlives its five minutes is not answered from | §1.11 `P-NEGOTIATION-FALLBACK` | *(documented, worker/index.mjs comment: "A failed read is not kept")* |
+| `iri-negotiation` | serialization and reconstruction | N/A — reads only `catalog.json` from the build | | §1.7 | *(documented, worker/negotiate.mjs comment: "The major version of each subject, from catalog.json")* |
+| `iri-negotiation` | reference and object lifecycle | disclaimed | an isolate keeps the subject majors for five minutes; after a major release it may send the old major's vocabulary until then | §1.12 `D-NEGOTIATION-STALE-MAJOR` | *(documented, worker/negotiate.mjs comment: "a new major version reaches JSON-LD clients within about ten minutes")* |
+| `iri-negotiation` | concurrency and reentrancy | claimed | one shared promise per isolate for five minutes; a thrown or non-OK read is dropped, the requests waiting on it get the static answer, and the next request reads again; a read that outlives its five minutes is not answered from | §1.11 `P-NEGOTIATION-FALLBACK` | *(documented, worker/negotiate.mjs comment: "A failed read is not kept")* |
 | `iri-negotiation` | resource complexity | claimed | linear in the length of the `Accept` header | §1.11 `P-NEGOTIATION-FALLBACK` | *(maintainer, 2026-10)* |
 | `mcp-server` | numeric domain and representational limits | claimed | 64 KiB, 1,000 keys, 64 levels, 200-character text arguments, `limit` 1–50 | §1.11 `P-MCP-BOUNDED` | *(documented, worker/mcp.mjs `validate` tool description: "The request may be at most")* |
 | `mcp-server` | failure and exception atomicity | claimed | stateless: a failed request leaves nothing behind; a failed index or schema read is not cached | §1.11 `P-MCP-STATELESS` | *(documented, worker/mcp.mjs comment: "A failed read is not kept")* |
@@ -780,8 +786,8 @@ are listed, or properties the maintainer ratified (2026-10).
   - Symptom: `wrong-output` (wrong target) or `x-open-redirect` (a target off
     the origin).
   - Tier: correctness-only.
-  - Voided by: nothing. The fallback is `worker/index.mjs:107`; the 303 target is
-    built at `worker/index.mjs:93` from a subject matched by `[a-z0-9-]+`.
+  - Voided by: nothing. The fallback is `worker/index.mjs:55`; the 303 target is
+    built at `worker/index.mjs:41` from a subject matched by `[a-z0-9-]+`.
 
 - **`P-MCP-NO-OUTBOUND` — the MCP server fetches nothing from another site.**
   The tools read only the built tree through the assets binding
@@ -909,7 +915,7 @@ rested on silence were turned into stated limits by maintainer ruling
 | `D-AGENT-TEXT` | filtering of text meant to steer AI agents | stated by maintainer ruling (2026-10). Descriptions, notes and listings reach agents through `llms.txt`, `catalog.json` and MCP answers as written | security-critical | no | *(maintainer, 2026-10)* |
 | `D-LISTED-CONTENT-UNREVIEWED` | review or endorsement of listed extensions and node models | stated. Content is listed as the owner reported it; whether the domain is the owner's is not checked; the review only checks that the reporter represents the organisation | correctness-only | yes: "listed on datamodels.jp" is not "endorsed" | *(documented, CONTRIBUTING.md "Adding a listed extension" steps 3 and 4)* |
 | `D-STATUS-NOT-REVIEW` | a security review behind `stable`, `ADOPTERS.yaml` or a DCO sign-off | stated. `stable` means two independent adopters; adopters are self-reported; the sign-off is an agreement to the DCO, not an identity check | correctness-only | yes | *(documented, docs/design.md "Versioning and lifecycle": "Entries are self-reported with a link")* |
-| `D-NEGOTIATION-STALE-MAJOR` | a 303 that always names the subject's current major version | stated by maintainer ruling (2026-10), narrowed for #298 (2026-11). An isolate of the IRI Worker keeps the subject majors for five minutes, and caches may keep a 303 for five more (`max-age=300`), so for up to about ten minutes after a new major version a JSON-LD client may be sent to the old major's vocabulary. A failed read of `catalog.json` is not kept | correctness-only | no | *(documented, worker/index.mjs comment: "a new major version reaches JSON-LD clients within about ten minutes")* |
+| `D-NEGOTIATION-STALE-MAJOR` | a 303 that always names the subject's current major version | stated by maintainer ruling (2026-10), narrowed for #298 (2026-11). An isolate of the IRI Worker keeps the subject majors for five minutes, and caches may keep a 303 for five more (`max-age=300`), so for up to about ten minutes after a new major version a JSON-LD client may be sent to the old major's vocabulary. A failed read of `catalog.json` is not kept | correctness-only | no | *(documented, worker/negotiate.mjs comment: "a new major version reaches JSON-LD clients within about ten minutes")* |
 | `D-REPO-CODE-RUNS` | isolation of the build from repository code | stated. Adapter modules and scripts run with the rights of the build (CI's read-only token; after merge, Workers Builds, and the read-only "Check live site" job on the merged commit) | security-critical | no | *(documented, scripts/lib/adapters.mjs header)* |
 
 Well-known attack classes for a catalogue of schemas and contexts that the

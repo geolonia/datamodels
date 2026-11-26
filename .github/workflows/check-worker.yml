@@ -56,6 +56,13 @@ jobs:
       - name: Validate, build and dry-run deploy
         run: pnpm run check
 
+      # Starts the Worker in the local Workers runtime (wrangler dev, no
+      # Cloudflare account) and sends one JSON-LD request to /ns/* and one MCP
+      # request to /mcp. The dry run above only bundles the Worker, and the tests
+      # import it in Node, so neither notices a module workerd refuses (#348).
+      - name: Start the Worker locally
+        run: pnpm run check:worker-start
+
       # A pull request must not change or drop a published version (a release
       # snapshot in models/<subject>/releases/), on GitHub or online, and every
       # current version has its snapshot. Before the official launch, in-place
