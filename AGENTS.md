@@ -23,6 +23,7 @@ Owner: See catalog-info.yaml
 
 ## Constraints
 
+- `worker/index.mjs` exports only the Worker handler (`export default`): the Workers runtime reads every named export of the main module as an entrypoint and refuses a number or object (#348). Put helpers and constants in another module (`worker/negotiate.mjs`); `pnpm run check:worker-start` starts the Worker to catch it.
 - Do not commit secrets.
 - Prefer small PRs with tests.
 

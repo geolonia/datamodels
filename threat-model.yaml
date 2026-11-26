@@ -1,7 +1,7 @@
 # threat-model.yaml — derived index; the prose threat model (threat-model.md) is canonical.
 schema: threat-model-sidecar/v2
 project: datamodels
-prose_version: "threat-model.md@sha256:e52e99bf047cca91d66c0a276b8c573c6c6c529ed95e681067a71e832f292db0"
+prose_version: "threat-model.md@sha256:a57ccdbfcfce75e9aeee6d4a68eaeeb898626457a072a008b265be463ed7ae40"
 model_status: accepted
 triage_policy: strict
 confidence: {documented: 223, maintainer: 53, inferred: 0, assumption: 0}
@@ -132,7 +132,7 @@ entry_points:
         attacker_controllable: true
         control_kinds: [data]
         caller_must_enforce: "none — P-NEGOTIATION-FALLBACK"
-        provenance: {kind: documented, source: "worker/index.mjs prefersJsonLd comment: \"a tie goes to the page\""}
+        provenance: {kind: documented, source: "worker/negotiate.mjs prefersJsonLd comment: \"a tie goes to the page\""}
       - name: method
         attacker_controllable: true
         control_kinds: [data]
@@ -143,7 +143,7 @@ entry_points:
         control_kinds: [data]
         obligation_id: keep-build-reviewed
         caller_must_enforce: "only reviewed, merged commits are built"
-        provenance: {kind: documented, source: "worker/index.mjs comment: \"The major version of each subject, from catalog.json\""}
+        provenance: {kind: documented, source: "worker/negotiate.mjs comment: \"The major version of each subject, from catalog.json\""}
   - id: "POST /mcp"
     component: mcp-server
     parameters:
@@ -383,13 +383,13 @@ contract_dimensions:
   - {component: published-files, dimension: concurrency-reentrancy, status: not-applicable, conditions: "read-only files", provenance: {kind: documented, source: "public/_headers header comment"}}
   - {component: published-files, dimension: resource-complexity, status: claimed, conditions: "coarse limits on size, nesting, $refs and patterns; the rest is D-CONTRIBUTED-FILE-LIMITS", property_id: P-FILE-LIMITS, provenance: {kind: documented, source: "scripts/lib/file-limits.mjs header: \"Limits on the contributed files\""}}
   - {component: published-files, dimension: x-version-immutability, status: claimed, conditions: "exact-version context, vocabulary and schema files, after the launch", property_id: P-PUBLISHED-IMMUTABLE, provenance: {kind: documented, source: "docs/design.md \"URL scheme and hosting contract\" item 1"}}
-  - {component: iri-negotiation, dimension: numeric-domain, status: claimed, conditions: "q values parsed as numbers; non-finite counts as 0", property_id: P-NEGOTIATION-FALLBACK, provenance: {kind: documented, source: "worker/index.mjs qualities comment"}}
+  - {component: iri-negotiation, dimension: numeric-domain, status: claimed, conditions: "q values parsed as numbers; non-finite counts as 0", property_id: P-NEGOTIATION-FALLBACK, provenance: {kind: documented, source: "worker/negotiate.mjs qualities comment"}}
   - {component: iri-negotiation, dimension: failure-atomicity, status: claimed, conditions: "any error falls back to the static answer", property_id: P-NEGOTIATION-FALLBACK, provenance: {kind: documented, source: "worker/index.mjs comment: \"Any error below falls back to the static answer\""}}
   - {component: iri-negotiation, dimension: recursive-cyclic-topology, status: not-applicable, conditions: "no recursive input", provenance: {kind: documented, source: "worker/index.mjs header"}}
   - {component: iri-negotiation, dimension: callback-execution, status: not-applicable, conditions: "no caller-supplied code", provenance: {kind: documented, source: "worker/index.mjs header"}}
-  - {component: iri-negotiation, dimension: serialization-reconstruction, status: not-applicable, conditions: "reads only catalog.json from the build", provenance: {kind: documented, source: "worker/index.mjs comment: \"The major version of each subject, from catalog.json\""}}
-  - {component: iri-negotiation, dimension: reference-lifecycle, status: disclaimed, conditions: "subject majors kept per isolate for five minutes; stale after a major release until then", property_id: D-NEGOTIATION-STALE-MAJOR, provenance: {kind: documented, source: "worker/index.mjs comment: \"a new major version reaches JSON-LD clients within about ten minutes\""}}
-  - {component: iri-negotiation, dimension: concurrency-reentrancy, status: claimed, conditions: "one shared promise per isolate for five minutes; a thrown or non-OK read is dropped, waiting requests get the static answer, and the next request reads again; a read that outlives its five minutes is not answered from", property_id: P-NEGOTIATION-FALLBACK, provenance: {kind: documented, source: "worker/index.mjs comment: \"A failed read is not kept\""}}
+  - {component: iri-negotiation, dimension: serialization-reconstruction, status: not-applicable, conditions: "reads only catalog.json from the build", provenance: {kind: documented, source: "worker/negotiate.mjs comment: \"The major version of each subject, from catalog.json\""}}
+  - {component: iri-negotiation, dimension: reference-lifecycle, status: disclaimed, conditions: "subject majors kept per isolate for five minutes; stale after a major release until then", property_id: D-NEGOTIATION-STALE-MAJOR, provenance: {kind: documented, source: "worker/negotiate.mjs comment: \"a new major version reaches JSON-LD clients within about ten minutes\""}}
+  - {component: iri-negotiation, dimension: concurrency-reentrancy, status: claimed, conditions: "one shared promise per isolate for five minutes; a thrown or non-OK read is dropped, waiting requests get the static answer, and the next request reads again; a read that outlives its five minutes is not answered from", property_id: P-NEGOTIATION-FALLBACK, provenance: {kind: documented, source: "worker/negotiate.mjs comment: \"A failed read is not kept\""}}
   - {component: iri-negotiation, dimension: resource-complexity, status: claimed, conditions: "linear in the length of the Accept header", property_id: P-NEGOTIATION-FALLBACK, provenance: {kind: maintainer, date: "2026-10"}}
   - {component: mcp-server, dimension: numeric-domain, status: claimed, conditions: "64 KiB, 1,000 keys, 64 levels, 200-character text, limit 1-50", property_id: P-MCP-BOUNDED, provenance: {kind: documented, source: "worker/mcp.mjs validate tool description"}}
   - {component: mcp-server, dimension: failure-atomicity, status: claimed, conditions: "stateless; failed reads are not cached", property_id: P-MCP-STATELESS, provenance: {kind: documented, source: "worker/mcp.mjs comment: \"A failed read is not kept\""}}
@@ -925,7 +925,7 @@ properties_disclaimed:
   - {id: D-AGENT-TEXT, components: [mcp-server, published-files], conditions: "stated by maintainer ruling (2026-10); text reaches agents as written", tier: security-critical, false_friend: false, provenance: {kind: maintainer, date: "2026-10"}}
   - {id: D-LISTED-CONTENT-UNREVIEWED, components: [listings], conditions: "stated; listed as reported, domain not checked", tier: correctness-only, false_friend: true, provenance: {kind: documented, source: "CONTRIBUTING.md \"Adding a listed extension\" steps 3 and 4"}}
   - {id: D-STATUS-NOT-REVIEW, components: [published-files], conditions: "stated; stable means two adopters, self-reported; DCO is an agreement", tier: correctness-only, false_friend: true, provenance: {kind: documented, source: "docs/design.md \"Versioning and lifecycle\""}}
-  - {id: D-NEGOTIATION-STALE-MAJOR, components: [iri-negotiation], conditions: "stated by maintainer ruling (2026-10), narrowed for #298 (2026-11); subject majors kept per isolate for five minutes and a 303 cached for five more, so up to about ten minutes stale after a major release; a failed read of catalog.json is not kept", tier: correctness-only, false_friend: false, provenance: {kind: documented, source: "worker/index.mjs comment: \"a new major version reaches JSON-LD clients within about ten minutes\""}}
+  - {id: D-NEGOTIATION-STALE-MAJOR, components: [iri-negotiation], conditions: "stated by maintainer ruling (2026-10), narrowed for #298 (2026-11); subject majors kept per isolate for five minutes and a 303 cached for five more, so up to about ten minutes stale after a major release; a failed read of catalog.json is not kept", tier: correctness-only, false_friend: false, provenance: {kind: documented, source: "worker/negotiate.mjs comment: \"a new major version reaches JSON-LD clients within about ten minutes\""}}
   - {id: D-REPO-CODE-RUNS, components: [build-validation, supply-chain], conditions: "stated; adapter modules and scripts run with the build's rights", tier: security-critical, false_friend: false, provenance: {kind: documented, source: "scripts/lib/adapters.mjs header"}}
 
 downstream_responsibilities:
