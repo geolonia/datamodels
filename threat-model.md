@@ -798,8 +798,8 @@ are listed, or properties the maintainer ratified (2026-10).
   - Tier: security-critical.
   - *Voided by*: nothing. The refusal is `worker/mcp.mjs:100`. Search:
     `grep -n "fetch(" worker/*.mjs` — 5 hits: `env.ASSETS.fetch` at
-    `index.mjs` lines 53 and 79 and `mcp.mjs` line 69, the `fetch` method of
-    the exported handler (`index.mjs` line 75), and the SDK handler's `fetch`
+    `negotiate.mjs` line 42, `index.mjs` line 27 and `mcp.mjs` line 69, the
+    `fetch` method of the exported handler (`index.mjs` line 23), and the SDK handler's `fetch`
     (`mcp.mjs` line 403); none takes a client-chosen URL.
 
 - **`P-MCP-STATELESS` — one MCP request cannot see another's data.** Each
