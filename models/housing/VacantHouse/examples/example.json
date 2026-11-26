@@ -1,0 +1,48 @@
+{
+  "id": "urn:ngsi-ld:VacantHouse:131016000123",
+  "type": "VacantHouse",
+  "managementNumber": "131016000123",
+  "localGovernmentCode": "131016",
+  "address": {
+    "addressCountry": "JP",
+    "addressRegion": "東京都",
+    "addressLocality": "千代田区",
+    "machiaza": "神田佐久間町",
+    "chome": "3",
+    "banchi": "21",
+    "localGovernmentCode": "131016",
+    "addressText": "東京都千代田区神田佐久間町3-21"
+  },
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      139.776912,
+      35.698431
+    ]
+  },
+  "parcelNumber": "3-21",
+  "registeredBuildingNumber": "3-21",
+  "vacantHouseCategory": "poorlyManaged",
+  "designationGrounds": [
+    "collapseRisk"
+  ],
+  "poorlyManagedDesignatedOn": "2026-07-21",
+  "deteriorationLevel": "C",
+  "urgencyLevel": "high",
+  "vacantSince": "2019-04-01",
+  "buildingType": "detachedHouse",
+  "ownershipType": "sole",
+  "structure": "wood",
+  "constructionDate": "1968",
+  "floorsAboveGround": 2,
+  "floorsBelowGround": 0,
+  "totalFloorArea": 78.5,
+  "siteArea": 52.9,
+  "landCategory": "residentialLand",
+  "roadFrontage": true,
+  "frontRoadType": "deemedRoad",
+  "frontRoadWidth": 3.6,
+  "inHazardArea": true,
+  "inUtilizationPromotionArea": false,
+  "remarks": "2026 年 7 月の大雨のあと、近隣から屋根の破損の通報あり"
+}

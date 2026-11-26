@@ -1,0 +1,31 @@
+# Correspondence between VacantHouseListing and appendix 7 (データ項目一覧) of MLIT's
+# 空き家データベースシステム標準仕様書, version 1.0. Items are given as data item ID and Japanese name.
+standard:
+  name:
+    ja: 空き家データベースシステム標準仕様書（第1.0版、令和7年4月）別紙7 データ項目一覧（国土交通省 住宅局）
+    en: "Standard specification of the vacant house database system, version 1.0 (April 2025), appendix 7: data items (MLIT Housing Bureau)"
+  url: https://www.mlit.go.jp/jutakukentiku/house/jutakukentiku_house_fr3_000061.html
+  license:
+    ja: "国土交通省ウェブサイトの利用規約（政府標準利用規約（第2.0版）に準拠、CC BY 4.0 と互換）"
+    en: "Terms of use of the MLIT website (following the Government Standard Terms of Use, version 2.0, compatible with CC BY 4.0)"
+  note:
+    ja: "D0035 不動産情報プラットフォーム・バンク登録情報は、1 件の空き家に登録①〜⑩を並べる。このモデルでは登録 1 件が 1 エンティティ。項目は登録①の ID で示す（②〜⑩も同じ）。入れていない項目：本人同意の有無フラグ（D0035-0004、0005）、所内担当部署、対応の最終更新者。"
+    en: "D0035 (akiya bank registration) lists registrations ① to ⑩ on one vacant house; in this model each registration is one entity. Items are given with the IDs of registration ① (② to ⑩ alike). Left out: the consent flags (D0035-0004, 0005), the department in charge and the last editor."
+fields:
+  vacantHouse: { to: "D0035-0001 空き家等管理番号", note: { ja: 管理番号から VacantHouse の id を作る, en: the VacantHouse id is made from the management number } }
+  localGovernmentCode: { to: 全国地方公共団体コード, note: { ja: 管理番号の先頭 6 桁, en: the first 6 digits of the management number } }
+  listingNumber: { to: D0035-0006 不動産情報プラットフォーム・バンク登録番号 }
+  listedOn: { to: D0035-0007 登録年月日 }
+  withdrawnOn: { to: D0035-0008 取消年月日 }
+  agentName: { to: D0035-0011 事業者 }
+  dealStatus: { to: "D0035-0012 成約状況コード（取引状況ステータスコード 044）" }
+  contractType: { to: "D0035-0013 成約形態管理コード（コード 045）" }
+  salePrice: { to: "D0003-0014 所有者等希望売買価格（土地）, D0003-0032 所有者等希望売買価格（家屋）", note: { ja: 2 つの合計, en: the sum of the two } }
+  monthlyRent: { to: "D0003-0015 所有者等希望賃貸価格（土地）, D0003-0033 所有者等希望賃貸価格（家屋）", note: { ja: 2 つの合計, en: the sum of the two } }
+  address: { to: D0001 土地・家屋の所在地情報, note: { ja: 公開する範囲にとどめる, en: only as much as is published } }
+  location: { to: "D0001-0015 経度, D0001-0016 緯度", note: { ja: 公開する範囲にとどめる, en: only as much as is published } }
+  name: { to: null, note: { ja: 仕様書に無い, en: not in the specification } }
+  statusLabel: { to: null, note: { ja: 仕様書に無い, en: not in the specification } }
+  offerType: { to: null, note: { ja: 仕様書に無い。希望売買価格、希望賃貸価格のどちらがあるかで分かることが多い, en: "not in the specification; usually follows from which asking price is given" } }
+  url: { to: null, note: { ja: 仕様書に無い, en: not in the specification } }
+  description: { to: null, note: { ja: 仕様書に無い, en: not in the specification } }

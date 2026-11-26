@@ -1,0 +1,111 @@
+title:
+  ja: "空き家"
+  en: "Vacant house"
+description:
+  ja: "市区町村が空家法に基づいて管理する空き家（または空き室）1 件のデータです。所在地、土地と建物、市区町村による区分（管理不全空家等、特定空家等など）を表します。属性とコードは、国土交通省の「空き家データベースシステム標準仕様書」（第 1.0 版）に合わせています。所有者、相続人、措置の履歴は含みません。"
+  en: "One vacant house (or vacant unit) in the register a municipality keeps under the Vacant Houses Act: where it is, the land and building, and how the municipality classifies it (poorly managed, specified and others). Attributes and codes follow MLIT's 空き家データベースシステム標準仕様書 (version 1.0). Owners, heirs and the history of measures are not part of it."
+status: draft
+tags:
+  - housing
+  - akiya
+  - municipality
+attributes:
+  managementNumber:
+    ja: "空き家台帳での管理番号（空き家等管理番号）。全国地方公共団体コード 6 桁と、登録順の通し番号 6 桁の 12 桁で、全国で一意です。"
+    en: "Number in the municipality's vacant house register (空き家等管理番号): the 6-digit local government code and a 6-digit serial number in order of registration, 12 digits, unique nationwide"
+  localGovernmentCode:
+    ja: "台帳を管理する市区町村の全国地方公共団体コード（検査数字を含む 6 桁）"
+    en: "Local government code (6 digits including the check digit) of the municipality that keeps the register"
+  unitNumber:
+    ja: "共同住宅や長屋の 1 室を扱うときの室番号（室・区画_室番号）。建物全体なら省きます。"
+    en: "Room or unit number when the record is one vacant unit of an apartment or row house (室・区画_室番号). Left out for a whole building"
+  address:
+    ja: "所在地（JapaneseAddress）。郵便番号、市区町村、町字、街区符号、建物名と、アドレス・ベース・レジストリのコードです。"
+    en: "Address of the vacant house (JapaneseAddress): postal code, municipality, town, block, building name and the Address Base Registry codes"
+  location:
+    ja: "位置（点）。緯度と経度です。"
+    en: "Location (a point): latitude and longitude"
+  parcelNumber:
+    ja: "土地の登記上の地番。住所の番地とは違うことがあります。"
+    en: "Lot number of the land in the land registry (地番); it can differ from the address"
+  landRealEstateNumber:
+    ja: "法務局の登記簿で土地に付いた不動産番号（13 桁）"
+    en: "Real estate number of the land in the Legal Affairs Bureau's registry (13 digits)"
+  buildingRealEstateNumber:
+    ja: "法務局の登記簿で建物に付いた不動産番号（13 桁）"
+    en: "Real estate number of the building in the Legal Affairs Bureau's registry (13 digits)"
+  registeredBuildingNumber:
+    ja: "登記上の家屋番号。ふつうは地番と同じで、1 筆に建物が複数あるときは枝番を付けます。"
+    en: "Building number in the registry (家屋番号): usually the lot number, with a branch number when one lot has several buildings"
+  vacantHouseCategory:
+    ja: "空家法での区分（MLIT のコード 012）：poorlyManaged（001 管理不全空家等、法第 13 条）、specified（002 特定空家等、法第 22 条）、notApplicable（003 どちらにも当たらない空き家。構造上住宅と認められないもの、取り壊し予定のものなど）、other（004 その他の空き家）、vacantUnit（005 空き室）、notVacant（006 非空き家：調べたら使われていた）"
+    en: "Category under the Vacant Houses Act (MLIT code 012): poorlyManaged (001 管理不全空家等, Art. 13), specified (002 特定空家等, Art. 22), notApplicable (003, neither, for example not structurally a dwelling or to be demolished), other (004 その他の空き家), vacantUnit (005 空き室), notVacant (006: found to be in use)"
+  designationGrounds:
+    ja: "管理不全空家等や特定空家等とした理由（MLIT のコード 034、法の 4 つの状態）：collapseRisk（001 倒壊等著しく保安上危険となるおそれ）、sanitaryHazard（002 著しく衛生上有害となるおそれ）、landscapeDamage（003 著しく景観を損なっている）、livingEnvironment（004 周辺の生活環境の保全を図るために放置することが不適切）。vacantHouseCategory が poorlyManaged か specified のときだけ使います。"
+    en: "Why the house is a poorly managed or specified vacant house (MLIT code 034, the four conditions of the Act): collapseRisk (001), sanitaryHazard (002), landscapeDamage (003), livingEnvironment (004). Only with vacantHouseCategory poorlyManaged or specified"
+  poorlyManagedDesignatedOn:
+    ja: "管理不全空家等（法第 13 条）に認定した日"
+    en: "Day the house was designated a poorly managed vacant house (Art. 13)"
+  poorlyManagedRevokedOn:
+    ja: "管理不全空家等の認定を解除した日"
+    en: "Day the designation as a poorly managed vacant house was lifted"
+  specifiedDesignatedOn:
+    ja: "特定空家等（法第 22 条）に認定した日"
+    en: "Day the house was designated a specified vacant house (Art. 22)"
+  specifiedRevokedOn:
+    ja: "特定空家等の認定を解除した日"
+    en: "Day the designation as a specified vacant house was lifted"
+  deteriorationLevel:
+    ja: "老朽危険度判定表による老朽度（MLIT のコード 013：A、B、C、D）。各段階の意味は、市区町村の判定表が決めます。"
+    en: "Deterioration grade from the municipality's deterioration and danger assessment (MLIT code 013: A, B, C, D). The municipality's assessment sheet defines the grades"
+  urgencyLevel:
+    ja: "市区町村が判断した対応の緊急度（MLIT のコード 014）：high（高）、medium（中）、low（低）。害獣が出たときに高くする、などです。"
+    en: "How urgently the municipality should act (MLIT code 014): high, medium, low; for example high when vermin appear"
+  vacantSince:
+    ja: "空き家になったとみられる日（空き家開始日）"
+    en: "Day the house probably became vacant, as far as the municipality knows"
+  buildingType:
+    ja: "建物が何に使われていたか（MLIT のコード 053）：detachedHouse（001 戸建住宅）、otherResidential（002 戸建以外の住宅：共同住宅など）、shop（003 店舗）、dormitory（004 寄宿舎）、office（005 事務所）、inn（006 旅館）、restaurant（007 料理店）、factory（008 工場）、warehouse（009 倉庫）、garage（010 車庫）、powerStation（011 発電所）、substation（012 変電所）、other（013 その他：診療所、集会所など）"
+    en: "What the building was used for (MLIT code 053): detachedHouse, otherResidential (apartments, row houses), shop, dormitory, office, inn, restaurant, factory, warehouse, garage, powerStation, substation, other"
+  ownershipType:
+    ja: "所有の形（MLIT のコード 054）：sole（002 ワンオーナー）、sectional（001 区分所有）"
+    en: "Form of ownership (MLIT code 054): sole (002, one owner of the whole), sectional (001, condominium units)"
+  structure:
+    ja: "建物の構造（MLIT のコード 011）：wood（001 木造）、aluminium（002 アルミ造）、lightSteel（003 軽量鉄骨造）、heavySteel（004 重量鉄骨造）、reinforcedConcrete（005 鉄筋コンクリート造）、steelReinforcedConcrete（006 鉄骨鉄筋コンクリート造）、concreteFilledSteelTube（007 コンクリート充填鋼管構造）、concreteBlock（008 コンクリートブロック造）"
+    en: "Structure of the building (MLIT code 011): wood, aluminium, lightSteel, heavySteel, reinforcedConcrete, steelReinforcedConcrete, concreteFilledSteelTube, concreteBlock"
+  constructionDate:
+    ja: "建築された時期（建築年月日）。YYYY-MM-DD で、分かるのが年月や年だけなら YYYY-MM や YYYY です。"
+    en: "When the building was built, as YYYY-MM-DD, or YYYY-MM or YYYY when only that is known"
+  floorsAboveGround:
+    ja: "地上の階数"
+    en: "Number of floors above ground"
+  floorsBelowGround:
+    ja: "地下の階数"
+    en: "Number of floors below ground"
+  totalFloorArea:
+    ja: "延べ床面積（平方メートル）"
+    en: "Total floor area of the building, in square metres"
+  siteArea:
+    ja: "敷地面積（平方メートル）"
+    en: "Area of the site, in square metres"
+  landCategory:
+    ja: "登記上の地目（MLIT のコード 007）：paddyField（田）、field（畑）、residentialLand（宅地）、schoolLand（学校用地）、railwayLand（鉄道用地）、saltField（塩田）、mineralSpringLand（鉱泉地）、pond（池沼）、forest（山林）、pasture（牧場）、wasteland（原野）、cemetery（墓地）、templeGrounds（境内地）、canalLand（運河用地）、waterworksLand（水道用地）、drainageChannel（用悪水路）、reservoir（ため池）、embankment（堤）、ditch（井溝）、protectionForest（保安林）、publicRoad（公衆用道路）、park（公園）、miscellaneousLand（雑種地）、other（その他）"
+    en: "Category of the land in the register (MLIT code 007, the land categories of the Real Property Registration Act), from paddyField (田) and residentialLand (宅地) to miscellaneousLand (雑種地) and other"
+  roadFrontage:
+    ja: "敷地が道路に接していれば true（接道の有無）。接していなければ、ふつうは建て替えられません。"
+    en: "true when the site touches a road. Without it, the building usually cannot be rebuilt"
+  frontRoadType:
+    ja: "敷地が接する道路の種類（建築基準法第 42 条、MLIT のコード 051）：publicRoad（001 1 項 1 号）、developmentRoad（002 1 項 2 号 開発道路）、existingRoad（003 1 項 3 号 既存道路）、plannedRoad（004 1 項 4 号 計画道路）、designatedRoad（005 1 項 5 号 位置指定道路）、deemedRoad（006 2 項道路）"
+    en: "Kind of road the site touches, by Art. 42 of the Building Standards Act (MLIT code 051): publicRoad, developmentRoad, existingRoad, plannedRoad, designatedRoad, deemedRoad (Art. 42(2))"
+  frontRoadWidth:
+    ja: "敷地が接する道路の幅員（メートル）"
+    en: "Width of the road the site touches, in metres"
+  inHazardArea:
+    ja: "敷地が土砂災害や洪水浸水の想定区域にあれば true"
+    en: "true when the site is in a landslide or flood inundation hazard area"
+  inUtilizationPromotionArea:
+    ja: "敷地が空家等活用促進区域（法第 7 条）にあれば true"
+    en: "true when the site is in a vacant house utilization promotion area (Art. 7 of the Act)"
+  remarks:
+    ja: "備考。建物の特徴などです。"
+    en: "Remarks, such as features of the building"

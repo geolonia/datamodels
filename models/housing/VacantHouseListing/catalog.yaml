@@ -1,0 +1,64 @@
+title:
+  ja: "空き家バンクの物件"
+  en: "Akiya bank listing"
+description:
+  ja: "市区町村が空き家バンクで売買や賃貸に出す物件 1 件のデータです。何を、いくらで出しているかと、取引の状態を表します。国土交通省の「空き家データベースシステム標準仕様書」（第 1.0 版）の、空き家バンクの登録情報に基づいています。"
+  en: "One property a municipality offers on its akiya bank for sale or rent: what is offered, at what price, and the state of the deal. Built on the akiya bank registration items of MLIT's 空き家データベースシステム標準仕様書 (version 1.0)."
+status: draft
+tags:
+  - housing
+  - akiya
+  - akiya-bank
+  - municipality
+attributes:
+  vacantHouse:
+    ja: "この物件にあたる、市区町村の台帳の空き家（VacantHouse）。台帳を VacantHouse で管理しているときに使います。"
+    en: "The vacant house in the municipality's register that this listing is for, when the register is kept as VacantHouse entities"
+  localGovernmentCode:
+    ja: "空き家バンクを運営する市区町村の全国地方公共団体コード（検査数字を含む 6 桁）"
+    en: "Local government code (6 digits including the check digit) of the municipality that runs the akiya bank"
+  listingNumber:
+    ja: "空き家バンク（不動産情報プラットフォーム・バンク）での登録番号"
+    en: "Number of the property in the akiya bank (real estate information platform)"
+  name:
+    ja: "空き家バンクに載せる物件の名前"
+    en: "Title of the listing as shown on the akiya bank"
+  address:
+    ja: "公開する所在地（JapaneseAddress）。番地まで公開しないときは、町字までにします。"
+    en: "Address as published (JapaneseAddress). It may stop at the town (町字) when the municipality does not publish the full address"
+  location:
+    ja: "位置（点）。正確な場所を公開しないときは、ずらしたり丸めたりします。"
+    en: "Location (a point). It may be moved or rounded when the municipality does not publish the exact place"
+  listedOn:
+    ja: "空き家バンクに登録した日"
+    en: "Day the property was put on the akiya bank"
+  withdrawnOn:
+    ja: "空き家バンクの登録を取り消した日"
+    en: "Day the listing was taken off the akiya bank"
+  dealStatus:
+    ja: "取引の状態（MLIT のコード 044）：available（001 取引なし）、negotiating（002 交渉中）、contracted（003 成約済み）。合う値がないときは省き、statusLabel に元の呼び方を書きます。"
+    en: "State of the deal (MLIT code 044): available (001), negotiating (002), contracted (003). When no value fits, leave it out and give the local wording in statusLabel"
+  statusLabel:
+    ja: "空き家バンクでの状態の呼び方（例：受付中、商談中、成約済み）。dealStatus を省いたときは必須です。"
+    en: "The deal state in the akiya bank's own wording (e.g. 受付中, 商談中, 成約済み). Required when dealStatus is left out"
+  offerType:
+    ja: "売るか貸すか。両方のこともあります：sale（売買）、rent（賃貸）"
+    en: "Whether the property is offered for sale, for rent or both: sale, rent"
+  contractType:
+    ja: "成約したときの契約の種類（MLIT のコード 045）：sale（001 売買成約）、rent（002 賃貸成約）"
+    en: "Kind of contract once contracted (MLIT code 045): sale (001), rent (002)"
+  salePrice:
+    ja: "売買の希望価格（円、土地と建物の合計）"
+    en: "Asking price in yen, land and building together"
+  monthlyRent:
+    ja: "賃貸の希望賃料（円・月額、土地と建物の合計）"
+    en: "Asking rent per month in yen, land and building together"
+  agentName:
+    ja: "物件を扱う不動産事業者の名称"
+    en: "Name of the real estate agent that handles the listing"
+  url:
+    ja: "空き家バンクの物件ページ"
+    en: "Page of the listing on the akiya bank"
+  description:
+    ja: "空き家バンクに載せる物件の説明"
+    en: "Description of the property as shown on the akiya bank"

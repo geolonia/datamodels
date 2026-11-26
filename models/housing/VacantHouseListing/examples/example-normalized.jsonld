@@ -1,0 +1,83 @@
+{
+  "@context": [
+    "https://datamodels.jp/context/housing/v1.jsonld",
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
+  ],
+  "id": "urn:ngsi-ld:VacantHouseListing:131016-R08-014",
+  "type": "VacantHouseListing",
+  "vacantHouse": {
+    "type": "Relationship",
+    "object": "urn:ngsi-ld:VacantHouse:131016000123"
+  },
+  "localGovernmentCode": {
+    "type": "Property",
+    "value": "131016"
+  },
+  "listingNumber": {
+    "type": "Property",
+    "value": "R08-014"
+  },
+  "name": {
+    "type": "Property",
+    "value": "神田佐久間町の木造 2 階建て"
+  },
+  "address": {
+    "type": "Property",
+    "value": {
+      "addressCountry": "JP",
+      "addressRegion": "東京都",
+      "addressLocality": "千代田区",
+      "machiaza": "神田佐久間町",
+      "chome": "3",
+      "localGovernmentCode": "131016",
+      "addressText": "東京都千代田区神田佐久間町3丁目"
+    }
+  },
+  "location": {
+    "type": "GeoProperty",
+    "value": {
+      "type": "Point",
+      "coordinates": [
+        139.777,
+        35.698
+      ]
+    }
+  },
+  "listedOn": {
+    "type": "Property",
+    "value": {
+      "@type": "Date",
+      "@value": "2026-10-01"
+    }
+  },
+  "dealStatus": {
+    "type": "Property",
+    "value": "available"
+  },
+  "statusLabel": {
+    "type": "Property",
+    "value": "受付中"
+  },
+  "offerType": {
+    "type": "Property",
+    "value": [
+      "sale"
+    ]
+  },
+  "salePrice": {
+    "type": "Property",
+    "value": 12800000
+  },
+  "agentName": {
+    "type": "Property",
+    "value": "神田不動産（架空）"
+  },
+  "url": {
+    "type": "Property",
+    "value": "https://akiya-bank.example.jp/listings/R08-014"
+  },
+  "description": {
+    "type": "Property",
+    "value": "昭和 43 年築の木造 2 階建て。屋根の補修が必要です。"
+  }
+}

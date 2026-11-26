@@ -1,0 +1,17 @@
+# Subject metadata. One context per subject, versioned; the version below is the
+# version of context.jsonld and of every schema in this subject.
+name: housing
+version: 1.0.0
+title:
+  ja: 住宅
+  en: Housing
+# One line for the subject card on the model list.
+summary:
+  ja: 空き家と空き家バンクの物件
+  en: "Vacant houses (akiya) and akiya bank listings"
+description:
+  ja: "住宅のデータです。いまは空き家を扱います。市区町村が空家法に基づいて管理する空き家の台帳と、空き家バンクに載せる物件を表します。国土交通省の「空き家データベースシステム標準仕様書」（第 1.0 版、2025 年 4 月）のデータ項目とコードに基づいています。"
+  en: "Data about housing. For now it covers vacant houses (akiya): the register a municipality keeps under the Vacant Houses Act, and the properties it lists on an akiya bank. Based on the data items and codes of MLIT's 空き家データベースシステム標準仕様書 (standard specification of the vacant house database system, version 1.0, April 2025)."
+source: minted            # minted | profile | global
+origin:
+  note: Proposed on 2026-11-26 for a municipal akiya application on GeonicDB; the attributes follow MLIT's standard specification rather than that one application.
