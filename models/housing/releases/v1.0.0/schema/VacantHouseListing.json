@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://datamodels.jp/schema/housing/VacantHouseListing/v1.0.0.json",
+  "title": "VacantHouseListing",
+  "description": "One property a municipality offers on its akiya bank (空き家バンク) for sale or rent: what is offered, at what price, and the state of the deal. Built on the akiya bank registration items of MLIT's 空き家データベースシステム標準仕様書 (version 1.0, April 2025)",
+  "x-version": "1.0.0",
+  "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
+  "x-model-tags": "housing, akiya, akiya-bank, municipality, Japan",
+  "x-derived-from": "https://www.mlit.go.jp/jutakukentiku/house/jutakukentiku_house_fr3_000061.html",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uri",
+      "description": "Entity id (URN)"
+    },
+    "type": {
+      "type": "string",
+      "const": "VacantHouseListing",
+      "description": "Entity type"
+    },
+    "@context": {
+      "description": "JSON-LD context of the entity, optional: a context URL or a list of context URLs",
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "minItems": 1
+        }
+      ]
+    },
+    "vacantHouse": {
+      "type": "string",
+      "format": "uri",
+      "description": "The vacant house in the municipality's register that this listing is for, when the register is kept as VacantHouse entities",
+      "x-ngsi": {
+        "type": "Relationship",
+        "target": "https://datamodels.jp/ns/housing/VacantHouse"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/vacantHouse"
+    },
+    "localGovernmentCode": {
+      "type": "string",
+      "pattern": "^\\d{6}$",
+      "description": "Local government code of the municipality that runs the akiya bank (全国地方公共団体コード, 6 digits)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/common/localGovernmentCode"
+    },
+    "listingNumber": {
+      "type": "string",
+      "description": "Number of the property in the akiya bank or real estate information platform (不動産情報プラットフォーム・バンク登録番号, D0035)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/listingNumber"
+    },
+    "name": {
+      "type": "string",
+      "description": "Title of the listing as shown on the akiya bank",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://uri.etsi.org/ngsi-ld/name"
+    },
+    "address": {
+      "$ref": "https://datamodels.jp/schema/common/JapaneseAddress/v1.0.0.json",
+      "description": "Address of the property as published, as a JapaneseAddress value (common subject). It may stop at the town (町字) when the municipality does not publish the full address",
+      "x-ngsi": {
+        "type": "Property",
+        "model": "https://datamodels.jp/ns/common/JapaneseAddress"
+      },
+      "x-iri": "https://schema.org/address"
+    },
+    "location": {
+      "$ref": "https://datamodels.jp/schema/common/Geometry/v1.0.0.json",
+      "properties": {
+        "type": {
+          "const": "Point"
+        }
+      },
+      "description": "Where the property is, as a point. It may be moved or rounded when the municipality does not publish the exact place",
+      "x-ngsi": {
+        "type": "GeoProperty",
+        "model": "https://datamodels.jp/ns/common/Geometry"
+      },
+      "x-iri": "https://uri.etsi.org/ngsi-ld/location"
+    },
+    "listedOn": {
+      "type": "string",
+      "format": "date",
+      "description": "Day the property was put on the akiya bank (登録年月日)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/listedOn"
+    },
+    "withdrawnOn": {
+      "type": "string",
+      "format": "date",
+      "description": "Day the listing was taken off the akiya bank (取消年月日)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/withdrawnOn"
+    },
+    "dealStatus": {
+      "type": "string",
+      "enum": [
+        "available",
+        "negotiating",
+        "contracted"
+      ],
+      "description": "State of the deal (取引状況ステータスコード, MLIT code 044): available (001 取引なし), negotiating (002 交渉中), contracted (003 成約済み). When no value fits, leave it out and give the local wording in statusLabel",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/dealStatus"
+    },
+    "statusLabel": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The deal state in the akiya bank's own wording (受付中, 商談中, 成約済み). Required when dealStatus is left out",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/task/statusLabel"
+    },
+    "offerType": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": [
+          "sale",
+          "rent"
+        ]
+      },
+      "description": "Whether the property is offered for sale, for rent or both",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/offerType"
+    },
+    "contractType": {
+      "type": "string",
+      "enum": [
+        "sale",
+        "rent"
+      ],
+      "description": "Kind of contract once contracted (成約形態管理コード, MLIT code 045): sale (001 売買成約), rent (002 賃貸成約)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/contractType"
+    },
+    "salePrice": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Asking price in yen for land and building together (所有者等希望売買価格, the land and building items added up)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/salePrice"
+    },
+    "monthlyRent": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Asking rent per month in yen for land and building together (所有者等希望賃貸価格, the land and building items added up)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/monthlyRent"
+    },
+    "agentName": {
+      "type": "string",
+      "description": "Name of the real estate agent that handles the listing (事業者)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/agentName"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Page of the listing on the akiya bank",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://schema.org/url"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the property as shown on the akiya bank",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "http://purl.org/dc/terms/description"
+    }
+  },
+  "required": [
+    "id",
+    "type",
+    "localGovernmentCode",
+    "listingNumber"
+  ],
+  "anyOf": [
+    {
+      "required": [
+        "dealStatus"
+      ]
+    },
+    {
+      "required": [
+        "statusLabel"
+      ]
+    }
+  ],
+  "additionalProperties": false
+}

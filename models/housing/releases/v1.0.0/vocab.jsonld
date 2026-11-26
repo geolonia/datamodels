@@ -1,0 +1,566 @@
+{
+  "@context": {
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "label": {
+      "@id": "rdfs:label",
+      "@container": "@language"
+    },
+    "comment": {
+      "@id": "rdfs:comment",
+      "@container": "@language"
+    },
+    "subClassOf": {
+      "@id": "rdfs:subClassOf",
+      "@type": "@id"
+    },
+    "isDefinedBy": {
+      "@id": "rdfs:isDefinedBy",
+      "@type": "@id"
+    },
+    "seeAlso": {
+      "@id": "rdfs:seeAlso",
+      "@type": "@id"
+    },
+    "versionInfo": "owl:versionInfo"
+  },
+  "@graph": [
+    {
+      "@id": "https://datamodels.jp/ns/housing/",
+      "@type": "owl:Ontology",
+      "label": {
+        "ja": "住宅",
+        "en": "Housing"
+      },
+      "comment": {
+        "ja": "住宅のデータです。いまは空き家を扱います。市区町村が空家法に基づいて管理する空き家の台帳と、空き家バンクに載せる物件を表します。国土交通省の「空き家データベースシステム標準仕様書」（第 1.0 版、2025 年 4 月）のデータ項目とコードに基づいています。",
+        "en": "Data about housing. For now it covers vacant houses (akiya): the register a municipality keeps under the Vacant Houses Act, and the properties it lists on an akiya bank. Based on the data items and codes of MLIT's 空き家データベースシステム標準仕様書 (standard specification of the vacant house database system, version 1.0, April 2025)."
+      },
+      "versionInfo": "1.0.0",
+      "seeAlso": "https://datamodels.jp/context/housing/v1.0.0.jsonld"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/VacantHouse",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "空き家",
+        "en": "Vacant house"
+      },
+      "comment": {
+        "ja": "市区町村が空家法に基づいて管理する空き家（または空き室）1 件のデータです。所在地、土地と建物、市区町村による区分（管理不全空家等、特定空家等など）を表します。属性とコードは、国土交通省の「空き家データベースシステム標準仕様書」（第 1.0 版）に合わせています。所有者、相続人、措置の履歴は含みません。",
+        "en": "One vacant house (or vacant unit) in the register a municipality keeps under the Vacant Houses Act: where it is, the land and building, and how the municipality classifies it (poorly managed, specified and others). Attributes and codes follow MLIT's 空き家データベースシステム標準仕様書 (version 1.0). Owners, heirs and the history of measures are not part of it."
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/VacantHouseListing",
+      "@type": "rdfs:Class",
+      "label": {
+        "ja": "空き家バンクの物件",
+        "en": "Akiya bank listing"
+      },
+      "comment": {
+        "ja": "市区町村が空き家バンクで売買や賃貸に出す物件 1 件のデータです。何を、いくらで出しているかと、取引の状態を表します。国土交通省の「空き家データベースシステム標準仕様書」（第 1.0 版）の、空き家バンクの登録情報に基づいています。",
+        "en": "One property a municipality offers on its akiya bank for sale or rent: what is offered, at what price, and the state of the deal. Built on the akiya bank registration items of MLIT's 空き家データベースシステム標準仕様書 (version 1.0)."
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouseListing/"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/agentName",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "agentName"
+      },
+      "comment": {
+        "ja": "物件を扱う不動産事業者の名称",
+        "en": "Name of the real estate agent that handles the listing"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouseListing/#agentName"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/buildingRealEstateNumber",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "buildingRealEstateNumber"
+      },
+      "comment": {
+        "ja": "法務局の登記簿で建物に付いた不動産番号（13 桁）",
+        "en": "Real estate number of the building in the Legal Affairs Bureau's registry (13 digits)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#buildingRealEstateNumber"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/buildingType",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "buildingType"
+      },
+      "comment": {
+        "ja": "建物が何に使われていたか（MLIT のコード 053）：detachedHouse（001 戸建住宅）、otherResidential（002 戸建以外の住宅：共同住宅など）、shop（003 店舗）、dormitory（004 寄宿舎）、office（005 事務所）、inn（006 旅館）、restaurant（007 料理店）、factory（008 工場）、warehouse（009 倉庫）、garage（010 車庫）、powerStation（011 発電所）、substation（012 変電所）、other（013 その他：診療所、集会所など）",
+        "en": "What the building was used for (MLIT code 053): detachedHouse, otherResidential (apartments, row houses), shop, dormitory, office, inn, restaurant, factory, warehouse, garage, powerStation, substation, other"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#buildingType"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/constructionDate",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "constructionDate"
+      },
+      "comment": {
+        "ja": "建築された時期（建築年月日）。YYYY-MM-DD で、分かるのが年月や年だけなら YYYY-MM や YYYY です。",
+        "en": "When the building was built, as YYYY-MM-DD, or YYYY-MM or YYYY when only that is known"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#constructionDate"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/contractType",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "contractType"
+      },
+      "comment": {
+        "ja": "成約したときの契約の種類（MLIT のコード 045）：sale（001 売買成約）、rent（002 賃貸成約）",
+        "en": "Kind of contract once contracted (MLIT code 045): sale (001), rent (002)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouseListing/#contractType"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/dealStatus",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "dealStatus"
+      },
+      "comment": {
+        "ja": "取引の状態（MLIT のコード 044）：available（001 取引なし）、negotiating（002 交渉中）、contracted（003 成約済み）。合う値がないときは省き、statusLabel に元の呼び方を書きます。",
+        "en": "State of the deal (MLIT code 044): available (001), negotiating (002), contracted (003). When no value fits, leave it out and give the local wording in statusLabel"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouseListing/#dealStatus"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/designationGrounds",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "designationGrounds"
+      },
+      "comment": {
+        "ja": "管理不全空家等や特定空家等とした理由（MLIT のコード 034、法の 4 つの状態）：collapseRisk（001 倒壊等著しく保安上危険となるおそれ）、sanitaryHazard（002 著しく衛生上有害となるおそれ）、landscapeDamage（003 著しく景観を損なっている）、livingEnvironment（004 周辺の生活環境の保全を図るために放置することが不適切）。vacantHouseCategory が poorlyManaged か specified のときだけ使います。",
+        "en": "Why the house is a poorly managed or specified vacant house (MLIT code 034, the four conditions of the Act): collapseRisk (001), sanitaryHazard (002), landscapeDamage (003), livingEnvironment (004). Only with vacantHouseCategory poorlyManaged or specified"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#designationGrounds"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/deteriorationLevel",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "deteriorationLevel"
+      },
+      "comment": {
+        "ja": "老朽危険度判定表による老朽度（MLIT のコード 013：A、B、C、D）。各段階の意味は、市区町村の判定表が決めます。",
+        "en": "Deterioration grade from the municipality's deterioration and danger assessment (MLIT code 013: A, B, C, D). The municipality's assessment sheet defines the grades"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#deteriorationLevel"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/frontRoadType",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "frontRoadType"
+      },
+      "comment": {
+        "ja": "敷地が接する道路の種類（建築基準法第 42 条、MLIT のコード 051）：publicRoad（001 1 項 1 号）、developmentRoad（002 1 項 2 号 開発道路）、existingRoad（003 1 項 3 号 既存道路）、plannedRoad（004 1 項 4 号 計画道路）、designatedRoad（005 1 項 5 号 位置指定道路）、deemedRoad（006 2 項道路）",
+        "en": "Kind of road the site touches, by Art. 42 of the Building Standards Act (MLIT code 051): publicRoad, developmentRoad, existingRoad, plannedRoad, designatedRoad, deemedRoad (Art. 42(2))"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#frontRoadType"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/frontRoadWidth",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "frontRoadWidth"
+      },
+      "comment": {
+        "ja": "敷地が接する道路の幅員（メートル）",
+        "en": "Width of the road the site touches, in metres"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#frontRoadWidth"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/inHazardArea",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "inHazardArea"
+      },
+      "comment": {
+        "ja": "敷地が土砂災害や洪水浸水の想定区域にあれば true",
+        "en": "true when the site is in a landslide or flood inundation hazard area"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#inHazardArea"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/inUtilizationPromotionArea",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "inUtilizationPromotionArea"
+      },
+      "comment": {
+        "ja": "敷地が空家等活用促進区域（法第 7 条）にあれば true",
+        "en": "true when the site is in a vacant house utilization promotion area (Art. 7 of the Act)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#inUtilizationPromotionArea"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/landCategory",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "landCategory"
+      },
+      "comment": {
+        "ja": "登記上の地目（MLIT のコード 007）：paddyField（田）、field（畑）、residentialLand（宅地）、schoolLand（学校用地）、railwayLand（鉄道用地）、saltField（塩田）、mineralSpringLand（鉱泉地）、pond（池沼）、forest（山林）、pasture（牧場）、wasteland（原野）、cemetery（墓地）、templeGrounds（境内地）、canalLand（運河用地）、waterworksLand（水道用地）、drainageChannel（用悪水路）、reservoir（ため池）、embankment（堤）、ditch（井溝）、protectionForest（保安林）、publicRoad（公衆用道路）、park（公園）、miscellaneousLand（雑種地）、other（その他）",
+        "en": "Category of the land in the register (MLIT code 007, the land categories of the Real Property Registration Act), from paddyField (田) and residentialLand (宅地) to miscellaneousLand (雑種地) and other"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#landCategory"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/landRealEstateNumber",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "landRealEstateNumber"
+      },
+      "comment": {
+        "ja": "法務局の登記簿で土地に付いた不動産番号（13 桁）",
+        "en": "Real estate number of the land in the Legal Affairs Bureau's registry (13 digits)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#landRealEstateNumber"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/listedOn",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "listedOn"
+      },
+      "comment": {
+        "ja": "空き家バンクに登録した日",
+        "en": "Day the property was put on the akiya bank"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouseListing/#listedOn"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/listingNumber",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "listingNumber"
+      },
+      "comment": {
+        "ja": "空き家バンク（不動産情報プラットフォーム・バンク）での登録番号",
+        "en": "Number of the property in the akiya bank (real estate information platform)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouseListing/#listingNumber"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/managementNumber",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "managementNumber"
+      },
+      "comment": {
+        "ja": "空き家台帳での管理番号（空き家等管理番号）。全国地方公共団体コード 6 桁と、登録順の通し番号 6 桁の 12 桁です。建物や土地ごとに全国で一意で、同じ建物の空き室は同じ番号を持ち、unitNumber と unitBranchNumber で区別します。",
+        "en": "Number in the municipality's vacant house register (空き家等管理番号): the 6-digit local government code and a 6-digit serial number in order of registration, 12 digits. Unique nationwide for a building or lot; vacant units of one building share it and are told apart by unitNumber and unitBranchNumber"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#managementNumber"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/monthlyRent",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "monthlyRent"
+      },
+      "comment": {
+        "ja": "賃貸の希望賃料（円・月額、土地と建物の合計）",
+        "en": "Asking rent per month in yen, land and building together"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouseListing/#monthlyRent"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/offerType",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "offerType"
+      },
+      "comment": {
+        "ja": "売るか貸すか。両方のこともあります：sale（売買）、rent（賃貸）",
+        "en": "Whether the property is offered for sale, for rent or both: sale, rent"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouseListing/#offerType"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/ownershipType",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "ownershipType"
+      },
+      "comment": {
+        "ja": "所有の形（MLIT のコード 054）：sole（002 ワンオーナー）、sectional（001 区分所有）",
+        "en": "Form of ownership (MLIT code 054): sole (002, one owner of the whole), sectional (001, condominium units)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#ownershipType"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/parcelNumber",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "parcelNumber"
+      },
+      "comment": {
+        "ja": "土地の登記上の地番。住所の番地とは違うことがあります。",
+        "en": "Lot number of the land in the land registry (地番); it can differ from the address"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#parcelNumber"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/poorlyManagedDesignatedOn",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "poorlyManagedDesignatedOn"
+      },
+      "comment": {
+        "ja": "管理不全空家等（法第 13 条）に認定した日",
+        "en": "Day the house was designated a poorly managed vacant house (Art. 13)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#poorlyManagedDesignatedOn"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/poorlyManagedRevokedOn",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "poorlyManagedRevokedOn"
+      },
+      "comment": {
+        "ja": "管理不全空家等の認定を解除した日",
+        "en": "Day the designation as a poorly managed vacant house was lifted"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#poorlyManagedRevokedOn"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/registeredBuildingNumber",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "registeredBuildingNumber"
+      },
+      "comment": {
+        "ja": "登記上の家屋番号。ふつうは地番と同じで、1 筆に建物が複数あるときは枝番を付けます。",
+        "en": "Building number in the registry (家屋番号): usually the lot number, with a branch number when one lot has several buildings"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#registeredBuildingNumber"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/roadFrontage",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "roadFrontage"
+      },
+      "comment": {
+        "ja": "敷地が道路に接していれば true（接道の有無）。接していなければ、ふつうは建て替えられません。",
+        "en": "true when the site touches a road. Without it, the building usually cannot be rebuilt"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#roadFrontage"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/salePrice",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "salePrice"
+      },
+      "comment": {
+        "ja": "売買の希望価格（円、土地と建物の合計）",
+        "en": "Asking price in yen, land and building together"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouseListing/#salePrice"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/siteArea",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "siteArea"
+      },
+      "comment": {
+        "ja": "敷地面積（平方メートル）",
+        "en": "Area of the site, in square metres"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#siteArea"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/specifiedDesignatedOn",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "specifiedDesignatedOn"
+      },
+      "comment": {
+        "ja": "特定空家等（法第 22 条）に認定した日",
+        "en": "Day the house was designated a specified vacant house (Art. 22)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#specifiedDesignatedOn"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/specifiedRevokedOn",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "specifiedRevokedOn"
+      },
+      "comment": {
+        "ja": "特定空家等の認定を解除した日",
+        "en": "Day the designation as a specified vacant house was lifted"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#specifiedRevokedOn"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/structure",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "structure"
+      },
+      "comment": {
+        "ja": "建物の構造（MLIT のコード 011）：wood（001 木造）、aluminium（002 アルミ造）、lightSteel（003 軽量鉄骨造）、heavySteel（004 重量鉄骨造）、reinforcedConcrete（005 鉄筋コンクリート造）、steelReinforcedConcrete（006 鉄骨鉄筋コンクリート造）、concreteFilledSteelTube（007 コンクリート充填鋼管構造）、concreteBlock（008 コンクリートブロック造）",
+        "en": "Structure of the building (MLIT code 011): wood, aluminium, lightSteel, heavySteel, reinforcedConcrete, steelReinforcedConcrete, concreteFilledSteelTube, concreteBlock"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#structure"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/totalFloorArea",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "totalFloorArea"
+      },
+      "comment": {
+        "ja": "延べ床面積（平方メートル）",
+        "en": "Total floor area of the building, in square metres"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#totalFloorArea"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/unitBranchNumber",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "unitBranchNumber"
+      },
+      "comment": {
+        "ja": "室番号で区別できないときに担当者が付ける枝番（室・区画_枝番、3 桁）。無ければ 000 です。unitNumber と一緒に使います。",
+        "en": "Branch number (室・区画_枝番, 3 digits) given when the room number does not tell units apart; 000 when there is none. Only with unitNumber"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#unitBranchNumber"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/unitNumber",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "unitNumber"
+      },
+      "comment": {
+        "ja": "共同住宅や長屋の 1 室を扱うときの室番号（室・区画_室番号）。建物全体なら省きます。managementNumber、unitBranchNumber と合わせて、空き室を区別します。",
+        "en": "Room or unit number when the record is one vacant unit of an apartment or row house (室・区画_室番号). Left out for a whole building. Together with managementNumber and unitBranchNumber it identifies the unit"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#unitNumber"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/urgencyLevel",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "urgencyLevel"
+      },
+      "comment": {
+        "ja": "市区町村が判断した対応の緊急度（MLIT のコード 014）：high（高）、medium（中）、low（低）。害獣が出たときに高くする、などです。",
+        "en": "How urgently the municipality should act (MLIT code 014): high, medium, low; for example high when vermin appear"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#urgencyLevel"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/vacantHouse",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "vacantHouse"
+      },
+      "comment": {
+        "ja": "この物件にあたる、市区町村の台帳の空き家（VacantHouse）。台帳を VacantHouse で管理しているときに使います。",
+        "en": "The vacant house in the municipality's register that this listing is for, when the register is kept as VacantHouse entities"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouseListing/#vacantHouse"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/vacantHouseCategory",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "vacantHouseCategory"
+      },
+      "comment": {
+        "ja": "空家法での区分（MLIT のコード 012）：poorlyManaged（001 管理不全空家等、法第 13 条）、specified（002 特定空家等、法第 22 条）、notApplicable（003 どちらにも当たらない空き家。構造上住宅と認められないもの、取り壊し予定のものなど）、other（004 その他の空き家）、vacantUnit（005 空き室）、notVacant（006 非空き家：調べたら使われていた）",
+        "en": "Category under the Vacant Houses Act (MLIT code 012): poorlyManaged (001 管理不全空家等, Art. 13), specified (002 特定空家等, Art. 22), notApplicable (003, neither, for example not structurally a dwelling or to be demolished), other (004 その他の空き家), vacantUnit (005 空き室), notVacant (006: found to be in use)"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#vacantHouseCategory"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/vacantSince",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "vacantSince"
+      },
+      "comment": {
+        "ja": "空き家になったとみられる日（空き家開始日）",
+        "en": "Day the house probably became vacant, as far as the municipality knows"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouse/#vacantSince"
+    },
+    {
+      "@id": "https://datamodels.jp/ns/housing/withdrawnOn",
+      "@type": "rdf:Property",
+      "label": {
+        "en": "withdrawnOn"
+      },
+      "comment": {
+        "ja": "空き家バンクの登録を取り消した日",
+        "en": "Day the listing was taken off the akiya bank"
+      },
+      "isDefinedBy": "https://datamodels.jp/ns/housing/",
+      "seeAlso": "https://datamodels.jp/models/housing/VacantHouseListing/#withdrawnOn"
+    }
+  ]
+}

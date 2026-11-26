@@ -1,0 +1,139 @@
+{
+  "@context": [
+    "https://datamodels.jp/context/housing/v1.jsonld",
+    "https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.8.jsonld"
+  ],
+  "id": "urn:ngsi-ld:VacantHouse:131016000123",
+  "type": "VacantHouse",
+  "managementNumber": {
+    "type": "Property",
+    "value": "131016000123"
+  },
+  "localGovernmentCode": {
+    "type": "Property",
+    "value": "131016"
+  },
+  "address": {
+    "type": "Property",
+    "value": {
+      "addressCountry": "JP",
+      "addressRegion": "東京都",
+      "addressLocality": "千代田区",
+      "machiaza": "神田佐久間町",
+      "chome": "3",
+      "banchi": "99",
+      "localGovernmentCode": "131016",
+      "addressText": "東京都千代田区神田佐久間町3-99"
+    }
+  },
+  "location": {
+    "type": "GeoProperty",
+    "value": {
+      "type": "Point",
+      "coordinates": [
+        139.776912,
+        35.698431
+      ]
+    }
+  },
+  "parcelNumber": {
+    "type": "Property",
+    "value": "3-99"
+  },
+  "registeredBuildingNumber": {
+    "type": "Property",
+    "value": "3-99"
+  },
+  "vacantHouseCategory": {
+    "type": "Property",
+    "value": "poorlyManaged"
+  },
+  "designationGrounds": {
+    "type": "Property",
+    "value": [
+      "collapseRisk"
+    ]
+  },
+  "poorlyManagedDesignatedOn": {
+    "type": "Property",
+    "value": {
+      "@type": "Date",
+      "@value": "2026-07-21"
+    }
+  },
+  "deteriorationLevel": {
+    "type": "Property",
+    "value": "C"
+  },
+  "urgencyLevel": {
+    "type": "Property",
+    "value": "high"
+  },
+  "vacantSince": {
+    "type": "Property",
+    "value": {
+      "@type": "Date",
+      "@value": "2019-04-01"
+    }
+  },
+  "buildingType": {
+    "type": "Property",
+    "value": "detachedHouse"
+  },
+  "ownershipType": {
+    "type": "Property",
+    "value": "sole"
+  },
+  "structure": {
+    "type": "Property",
+    "value": "wood"
+  },
+  "constructionDate": {
+    "type": "Property",
+    "value": "1968"
+  },
+  "floorsAboveGround": {
+    "type": "Property",
+    "value": 2
+  },
+  "floorsBelowGround": {
+    "type": "Property",
+    "value": 0
+  },
+  "totalFloorArea": {
+    "type": "Property",
+    "value": 78.5
+  },
+  "siteArea": {
+    "type": "Property",
+    "value": 52.9
+  },
+  "landCategory": {
+    "type": "Property",
+    "value": "residentialLand"
+  },
+  "roadFrontage": {
+    "type": "Property",
+    "value": true
+  },
+  "frontRoadType": {
+    "type": "Property",
+    "value": "deemedRoad"
+  },
+  "frontRoadWidth": {
+    "type": "Property",
+    "value": 3.6
+  },
+  "inHazardArea": {
+    "type": "Property",
+    "value": true
+  },
+  "inUtilizationPromotionArea": {
+    "type": "Property",
+    "value": false
+  },
+  "remarks": {
+    "type": "Property",
+    "value": "2026 年 7 月の大雨のあと、近隣から屋根の破損の通報あり"
+  }
+}

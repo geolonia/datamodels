@@ -1,0 +1,48 @@
+# Correspondence between VacantHouse and appendix 7 (データ項目一覧) of MLIT's
+# 空き家データベースシステム標準仕様書, version 1.0. Items are given as data item ID and Japanese name.
+standard:
+  name:
+    ja: 空き家データベースシステム標準仕様書（第1.0版、令和7年4月）別紙7 データ項目一覧（国土交通省 住宅局）
+    en: "Standard specification of the vacant house database system, version 1.0 (April 2025), appendix 7: data items (MLIT Housing Bureau)"
+  url: https://www.mlit.go.jp/jutakukentiku/house/jutakukentiku_house_fr3_000061.html
+  license:
+    ja: "国土交通省ウェブサイトの利用規約（政府標準利用規約（第2.0版）に準拠、CC BY 4.0 と互換）"
+    en: "Terms of use of the MLIT website (following the Government Standard Terms of Use, version 2.0, compatible with CC BY 4.0)"
+  note:
+    ja: "このモデルの元になった仕様。コード値は、仕様書のコード一覧のコード（3 桁）を英語の値にしている。対応は各属性の説明のとおり。入れていないエンティティ：所有者・共有者、関係者、相続人とその外部連携（D0016〜D0034、D0039、D0040）、履歴（D0009〜D0013、D0038）、対応のステータス（D0014）、補助事業（D0011）、市区町村単位の集計（D1001〜D1004）。"
+    en: "The specification this model was designed from. Code values are English tokens for the 3-digit codes of the specification's code lists, as each attribute description gives them. Entities left out: owners and co-owners, related persons, heirs and their links to other systems (D0016 to D0034, D0039, D0040), histories (D0009 to D0013, D0038), case status (D0014), subsidies (D0011), municipal totals (D1001 to D1004)."
+fields:
+  managementNumber: { to: D0001-0001 空き家等管理番号, note: { ja: 建物や土地ごとに一意。空き室は unitNumber、unitBranchNumber と合わせて区別する, en: "unique per building or lot; a vacant unit is told apart together with unitNumber and unitBranchNumber" } }
+  localGovernmentCode: { to: D0001-0017 全国地方公共団体コード, note: { ja: 管理番号の先頭 6 桁と同じ, en: the same as the first 6 digits of the management number } }
+  unitNumber: { to: D0036-0002 室・区画_室番号, note: { ja: "仕様書は、入力が無いとき 000 にする。このモデルでは省く", en: "the specification writes 000 when there is none; this model leaves it out" } }
+  unitBranchNumber: { to: D0036-0003 室・区画_枝番 }
+  address: { to: "D0001-0004〜0006, 0008〜0011 郵便番号、市区町村、町字、街区符号、建物名・棟番号・部屋番号、D0001-0017〜0023 アドレス・ベース・レジストリのコード", note: { ja: 詳細は JapaneseAddress, en: see JapaneseAddress } }
+  location: { to: "D0001-0015 経度, D0001-0016 緯度", note: { ja: "仕様書の意味定義では、緯度と経度の説明が入れ替わっている。項目名で対応させる", en: "the specification's definitions of 緯度 and 経度 are swapped; the item names are what counts" } }
+  parcelNumber: { to: D0001-0007 地番, note: { ja: "D0001-0012 土地_筆番号（1 筆の土地が複数に分かれるときの番号）は入れていない", en: "D0001-0012 土地_筆番号 (the number when one lot is split) is left out" } }
+  landRealEstateNumber: { to: D0001-0002 不動産番号（土地） }
+  buildingRealEstateNumber: { to: D0001-0003 不動産番号（家屋） }
+  registeredBuildingNumber: { to: D0001-0014 家屋番号（家屋） }
+  vacantHouseCategory: { to: "D0037-0006 空家法法令種別コード（コード 012）", note: { ja: D0037-0002 物件区分コード（052）の「その他」は、空き家でない物件。notVacant か、エンティティを作らない, en: "物件区分コード (052) その他 is a property that is not a vacant house: notVacant, or no entity" } }
+  designationGrounds: { to: "D0008-0012 管理不全空家等_状態コード, D0008-0017 特定空家等_状態コード（コード 034）", note: { ja: 仕様書は区分ごとに 1 つのコード。このモデルは今の区分の理由を配列にする, en: "the specification has one code per category; this model lists the grounds of the current category" } }
+  poorlyManagedDesignatedOn: { to: D0008-0013 管理不全空家等_認定年月日 }
+  poorlyManagedRevokedOn: { to: D0008-0014 管理不全空家等_認定解除年月日 }
+  specifiedDesignatedOn: { to: D0008-0018 特定空家等_認定年月日 }
+  specifiedRevokedOn: { to: D0008-0019 特定空家等_認定解除年月日 }
+  deteriorationLevel: { to: "D0008-0005 老朽度レベルコード（コード 013）" }
+  urgencyLevel: { to: "D0008-0009 緊急度レベルコード（コード 014）" }
+  vacantSince: { to: D0008-0008 空き家開始日 }
+  buildingType: { to: "D0037-0003 建物種別コード（コード 053）", note: { ja: "D0037-0004、D0003-0023 の建物用途コード（010）は、ほぼ同じ区分で、戸建と共同住宅の分け方だけが違う", en: "the building use code (010) of D0037-0004 and D0003-0023 has nearly the same values; only the split between detached and other housing differs" } }
+  ownershipType: { to: "D0037-0005 所有形態区分コード（コード 054）" }
+  structure: { to: "D0003-0026 建物の構造コード（コード 011）" }
+  constructionDate: { to: D0003-0018 建築年月日, note: { ja: 仕様書は YYYYMMDD。年や年月しか分からないときのために、このモデルは短い形も認める, en: "the specification uses YYYYMMDD; this model also allows a year or year and month" } }
+  floorsAboveGround: { to: D0003-0024 建物の階数（地上） }
+  floorsBelowGround: { to: D0003-0025 建物の階数（地下） }
+  totalFloorArea: { to: D0003-0019 延べ床面積, note: { ja: 仕様書は単位を定めていない。このモデルは平方メートル, en: "the specification gives no unit; this model uses square metres" } }
+  siteArea: { to: D0003-0011 敷地面積, note: { ja: 仕様書は単位を定めていない。このモデルは平方メートル, en: "the specification gives no unit; this model uses square metres" } }
+  landCategory: { to: "D0037-0008 土地種別コード（台帳地目コード 007）" }
+  roadFrontage: { to: D0003-0005 接道_有無フラグ, note: { ja: "1 なら true、0 なら false", en: "1 is true, 0 is false" } }
+  frontRoadType: { to: "D0003-0007 接道_道路種別コード（コード 051）" }
+  frontRoadWidth: { to: D0003-0006 接道_幅員, note: { ja: 仕様書は単位を定めていない。このモデルはメートル, en: "the specification gives no unit; this model uses metres" } }
+  inHazardArea: { to: D0002-0008 土砂災害・洪水浸水想定地域フラグ, note: { ja: "1 なら true、0 なら false", en: "1 is true, 0 is false" } }
+  inUtilizationPromotionArea: { to: D0002-0015 空家等活用促進区域の対象有無フラグ, note: { ja: "1 なら true、0 なら false", en: "1 is true, 0 is false" } }
+  remarks: { to: "D0003-0035 建物の特徴, D0001-0013 土地・建物_補足" }

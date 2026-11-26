@@ -1,0 +1,476 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://datamodels.jp/schema/housing/VacantHouse/v1.0.0.json",
+  "title": "VacantHouse",
+  "description": "One vacant house (or vacant unit) in the register a municipality keeps under the Vacant Houses Act (空家等対策の推進に関する特別措置法): where it is, the land and building, and how the municipality classifies it. Attributes and codes follow MLIT's 空き家データベースシステム標準仕様書 (version 1.0, April 2025). Owners, heirs and the history of measures are not part of it",
+  "x-version": "1.0.0",
+  "x-license-url": "https://datamodels.jp/LICENSE-CONTENT",
+  "x-model-tags": "housing, akiya, municipality, Japan",
+  "x-derived-from": "https://www.mlit.go.jp/jutakukentiku/house/jutakukentiku_house_fr3_000061.html",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uri",
+      "description": "Entity id (URN)"
+    },
+    "type": {
+      "type": "string",
+      "const": "VacantHouse",
+      "description": "Entity type"
+    },
+    "@context": {
+      "description": "JSON-LD context of the entity, optional: a context URL or a list of context URLs",
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "minItems": 1
+        }
+      ]
+    },
+    "managementNumber": {
+      "type": "string",
+      "pattern": "^\\d{12}$",
+      "description": "Number of the vacant house in the municipality's register (空き家等管理番号, D0001-0001): the 6-digit local government code followed by a 6-digit serial number in the order of registration. Unique nationwide for a building or lot; vacant units of one building share it and are told apart by unitNumber and unitBranchNumber",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/managementNumber"
+    },
+    "localGovernmentCode": {
+      "type": "string",
+      "pattern": "^\\d{6}$",
+      "description": "Local government code of the municipality that keeps the register (全国地方公共団体コード, 6 digits)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/common/localGovernmentCode"
+    },
+    "unitNumber": {
+      "type": "string",
+      "description": "Room or unit number when the record is one vacant unit of an apartment or row house (室・区画_室番号, D0036). Left out for a whole building. Together with managementNumber and unitBranchNumber it identifies the unit",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/unitNumber"
+    },
+    "unitBranchNumber": {
+      "type": "string",
+      "pattern": "^\\d{3}$",
+      "description": "Branch number (室・区画_枝番, D0036-0003, 3 digits) the municipality gives when the room number does not tell units apart; 000 when there is none. Only with unitNumber",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/unitBranchNumber"
+    },
+    "address": {
+      "$ref": "https://datamodels.jp/schema/common/JapaneseAddress/v1.0.0.json",
+      "description": "Address of the vacant house, as a JapaneseAddress value (common subject) (所在地: 郵便番号, 市区町村, 町字, 街区符号, 建物名, Address Base Registry codes)",
+      "x-ngsi": {
+        "type": "Property",
+        "model": "https://datamodels.jp/ns/common/JapaneseAddress"
+      },
+      "x-iri": "https://schema.org/address"
+    },
+    "location": {
+      "$ref": "https://datamodels.jp/schema/common/Geometry/v1.0.0.json",
+      "properties": {
+        "type": {
+          "const": "Point"
+        }
+      },
+      "description": "Where the vacant house is, as a point (緯度, 経度)",
+      "x-ngsi": {
+        "type": "GeoProperty",
+        "model": "https://datamodels.jp/ns/common/Geometry"
+      },
+      "x-iri": "https://uri.etsi.org/ngsi-ld/location"
+    },
+    "parcelNumber": {
+      "type": "string",
+      "description": "Lot number of the land in the land registry (地番), which can differ from the address",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/parcelNumber"
+    },
+    "landRealEstateNumber": {
+      "type": "string",
+      "pattern": "^\\d{13}$",
+      "description": "Real estate number of the land in the registry of the Legal Affairs Bureau (不動産番号（土地）, 13 digits)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/landRealEstateNumber"
+    },
+    "buildingRealEstateNumber": {
+      "type": "string",
+      "pattern": "^\\d{13}$",
+      "description": "Real estate number of the building in the registry of the Legal Affairs Bureau (不動産番号（家屋）, 13 digits)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/buildingRealEstateNumber"
+    },
+    "registeredBuildingNumber": {
+      "type": "string",
+      "description": "Building number in the registry (家屋番号). Usually the lot number, with a branch number when one lot has several buildings",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/registeredBuildingNumber"
+    },
+    "vacantHouseCategory": {
+      "type": "string",
+      "enum": [
+        "poorlyManaged",
+        "specified",
+        "notApplicable",
+        "other",
+        "vacantUnit",
+        "notVacant"
+      ],
+      "description": "Category under the Vacant Houses Act (空き家種別コード, MLIT code 012): poorlyManaged (001 管理不全空家等, Art. 13), specified (002 特定空家等, Art. 22), notApplicable (003, neither, for example not structurally a dwelling or to be demolished), other (004 その他の空き家), vacantUnit (005 空き室), notVacant (006 非空き家: found to be in use)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/vacantHouseCategory"
+    },
+    "designationGrounds": {
+      "type": "array",
+      "uniqueItems": true,
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": [
+          "collapseRisk",
+          "sanitaryHazard",
+          "landscapeDamage",
+          "livingEnvironment"
+        ]
+      },
+      "description": "Why the house is a poorly managed or specified vacant house (状態コード, MLIT code 034, the four conditions of the Act): collapseRisk (001 倒壊等著しく保安上危険), sanitaryHazard (002 著しく衛生上有害), landscapeDamage (003 著しく景観を損なっている), livingEnvironment (004 周辺の生活環境の保全上不適切). Only with vacantHouseCategory poorlyManaged or specified",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/designationGrounds"
+    },
+    "poorlyManagedDesignatedOn": {
+      "type": "string",
+      "format": "date",
+      "description": "Day the house was designated a poorly managed vacant house (管理不全空家等_認定年月日, Art. 13)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/poorlyManagedDesignatedOn"
+    },
+    "poorlyManagedRevokedOn": {
+      "type": "string",
+      "format": "date",
+      "description": "Day the designation as a poorly managed vacant house was lifted (管理不全空家等_認定解除年月日)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/poorlyManagedRevokedOn"
+    },
+    "specifiedDesignatedOn": {
+      "type": "string",
+      "format": "date",
+      "description": "Day the house was designated a specified vacant house (特定空家等_認定年月日, Art. 22)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/specifiedDesignatedOn"
+    },
+    "specifiedRevokedOn": {
+      "type": "string",
+      "format": "date",
+      "description": "Day the designation as a specified vacant house was lifted (特定空家等_認定解除年月日)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/specifiedRevokedOn"
+    },
+    "deteriorationLevel": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "description": "Deterioration grade from the municipality's deterioration and danger assessment (老朽度レベルコード, MLIT code 013: A, B, C, D). What each grade means is set by the municipality's assessment sheet",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/deteriorationLevel"
+    },
+    "urgencyLevel": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "description": "How urgently the municipality should act (緊急度レベルコード, MLIT code 014): high (高), medium (中), low (低), for example high when vermin appear",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/urgencyLevel"
+    },
+    "vacantSince": {
+      "type": "string",
+      "format": "date",
+      "description": "Day the house probably became vacant (空き家開始日), as far as the municipality knows",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/vacantSince"
+    },
+    "buildingType": {
+      "type": "string",
+      "enum": [
+        "detachedHouse",
+        "otherResidential",
+        "shop",
+        "dormitory",
+        "office",
+        "inn",
+        "restaurant",
+        "factory",
+        "warehouse",
+        "garage",
+        "powerStation",
+        "substation",
+        "other"
+      ],
+      "description": "What the building was used for (建物種別コード, MLIT code 053): detachedHouse (001 戸建住宅), otherResidential (002 戸建以外の住宅, apartments and row houses), shop (003), dormitory (004), office (005), inn (006 旅館), restaurant (007 料理店), factory (008), warehouse (009), garage (010), powerStation (011), substation (012), other (013, clinics, meeting halls and others)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/buildingType"
+    },
+    "ownershipType": {
+      "type": "string",
+      "enum": [
+        "sole",
+        "sectional"
+      ],
+      "description": "Form of ownership (所有形態区分コード, MLIT code 054): sole (002 ワンオーナー, one owner of the whole), sectional (001 区分所有, condominium units)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/ownershipType"
+    },
+    "structure": {
+      "type": "string",
+      "enum": [
+        "wood",
+        "aluminium",
+        "lightSteel",
+        "heavySteel",
+        "reinforcedConcrete",
+        "steelReinforcedConcrete",
+        "concreteFilledSteelTube",
+        "concreteBlock"
+      ],
+      "description": "Structure of the building (建物構造コード, MLIT code 011): wood (001 W), aluminium (002 AL), lightSteel (003 軽量鉄骨 S), heavySteel (004 重量鉄骨 S), reinforcedConcrete (005 RC), steelReinforcedConcrete (006 SRC), concreteFilledSteelTube (007 CFT), concreteBlock (008 CB)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/structure"
+    },
+    "constructionDate": {
+      "type": "string",
+      "anyOf": [
+        {
+          "pattern": "^\\d{4}(-(0[1-9]|1[0-2]))?$"
+        },
+        {
+          "pattern": "^\\d{4}-((0[13578]|1[02])-(0[1-9]|[12]\\d|3[01])|(0[469]|11)-(0[1-9]|[12]\\d|30)|02-(0[1-9]|1\\d|2\\d))$"
+        }
+      ],
+      "description": "When the building was built (建築年月日), as YYYY-MM-DD, or YYYY-MM or YYYY when only that is known. A full date is checked against the length of its month; 29 February is accepted in every year",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/constructionDate"
+    },
+    "floorsAboveGround": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of floors above ground (建物の階数（地上）)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://smartdatamodels.org/dataModel.Building/floorsAboveGround"
+    },
+    "floorsBelowGround": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Number of floors below ground (建物の階数（地下）)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://smartdatamodels.org/dataModel.Building/floorsBelowGround"
+    },
+    "totalFloorArea": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Total floor area of the building in square metres (延べ床面積)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/totalFloorArea"
+    },
+    "siteArea": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Area of the site in square metres (敷地面積)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/siteArea"
+    },
+    "landCategory": {
+      "type": "string",
+      "enum": [
+        "paddyField",
+        "field",
+        "residentialLand",
+        "schoolLand",
+        "railwayLand",
+        "saltField",
+        "mineralSpringLand",
+        "pond",
+        "forest",
+        "pasture",
+        "wasteland",
+        "cemetery",
+        "templeGrounds",
+        "canalLand",
+        "waterworksLand",
+        "drainageChannel",
+        "reservoir",
+        "embankment",
+        "ditch",
+        "protectionForest",
+        "publicRoad",
+        "park",
+        "miscellaneousLand",
+        "other"
+      ],
+      "description": "Category of the land in the register (台帳地目コード, MLIT code 007, the land categories of the Real Property Registration Act): paddyField (001 田), field (002 畑), residentialLand (003 宅地), schoolLand (004 学校用地), railwayLand (005 鉄道用地), saltField (006 塩田), mineralSpringLand (007 鉱泉地), pond (008 池沼), forest (009 山林), pasture (010 牧場), wasteland (011 原野), cemetery (012 墓地), templeGrounds (013 境内地), canalLand (014 運河用地), waterworksLand (015 水道用地), drainageChannel (016 用悪水路), reservoir (017 ため池), embankment (018 堤), ditch (019 井溝), protectionForest (020 保安林), publicRoad (021 公衆用道路), park (022 公園), miscellaneousLand (023 雑種地), other (024)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/landCategory"
+    },
+    "roadFrontage": {
+      "type": "boolean",
+      "description": "true when the site touches a road (接道_有無フラグ: 1 → true, 0 → false). Without it, the building usually cannot be rebuilt",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/roadFrontage"
+    },
+    "frontRoadType": {
+      "type": "string",
+      "enum": [
+        "publicRoad",
+        "developmentRoad",
+        "existingRoad",
+        "plannedRoad",
+        "designatedRoad",
+        "deemedRoad"
+      ],
+      "description": "Kind of road the site touches, by Art. 42 of the Building Standards Act (道路種別コード, MLIT code 051): publicRoad (001, 42(1)(i)), developmentRoad (002, 42(1)(ii) 開発道路), existingRoad (003, 42(1)(iii) 既存道路), plannedRoad (004, 42(1)(iv) 計画道路), designatedRoad (005, 42(1)(v) 位置指定道路), deemedRoad (006, 42(2) みなし道路)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/frontRoadType"
+    },
+    "frontRoadWidth": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Width of the road the site touches, in metres (接道_幅員)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/frontRoadWidth"
+    },
+    "inHazardArea": {
+      "type": "boolean",
+      "description": "true when the site is in a landslide or flood inundation hazard area (土砂災害・洪水浸水想定地域フラグ)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/inHazardArea"
+    },
+    "inUtilizationPromotionArea": {
+      "type": "boolean",
+      "description": "true when the site is in a vacant house utilization promotion area (空家等活用促進区域, Art. 7 of the Act)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/housing/inUtilizationPromotionArea"
+    },
+    "remarks": {
+      "type": "string",
+      "description": "Remarks (備考, 建物の特徴)",
+      "x-ngsi": {
+        "type": "Property"
+      },
+      "x-iri": "https://datamodels.jp/ns/facility/remarks"
+    }
+  },
+  "required": [
+    "id",
+    "type",
+    "managementNumber",
+    "localGovernmentCode"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "designationGrounds"
+        ]
+      },
+      "then": {
+        "required": [
+          "vacantHouseCategory"
+        ],
+        "properties": {
+          "vacantHouseCategory": {
+            "enum": [
+              "poorlyManaged",
+              "specified"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "unitBranchNumber"
+        ]
+      },
+      "then": {
+        "required": [
+          "unitNumber"
+        ]
+      }
+    }
+  ],
+  "additionalProperties": false
+}

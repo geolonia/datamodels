@@ -1,0 +1,34 @@
+{
+  "id": "urn:ngsi-ld:VacantHouseListing:131016-R08-014",
+  "type": "VacantHouseListing",
+  "vacantHouse": "urn:ngsi-ld:VacantHouse:131016000123",
+  "localGovernmentCode": "131016",
+  "listingNumber": "R08-014",
+  "name": "神田佐久間町の木造 2 階建て",
+  "address": {
+    "addressCountry": "JP",
+    "addressRegion": "東京都",
+    "addressLocality": "千代田区",
+    "machiaza": "神田佐久間町",
+    "chome": "3",
+    "localGovernmentCode": "131016",
+    "addressText": "東京都千代田区神田佐久間町3丁目"
+  },
+  "location": {
+    "type": "Point",
+    "coordinates": [
+      139.777,
+      35.698
+    ]
+  },
+  "listedOn": "2026-10-01",
+  "dealStatus": "available",
+  "statusLabel": "受付中",
+  "offerType": [
+    "sale"
+  ],
+  "salePrice": 12800000,
+  "agentName": "神田不動産（架空）",
+  "url": "https://akiya-bank.example.jp/listings/R08-014",
+  "description": "昭和 43 年築の木造 2 階建て。屋根の補修が必要です。"
+}

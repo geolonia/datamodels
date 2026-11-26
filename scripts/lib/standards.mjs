@@ -89,6 +89,10 @@ export const STANDARDS = [
   { id: 'mlit-road-info', name: { ja: '道路情報提供システム（国土交通省）', en: 'Road Information Provision System (MLIT)' }, parts: {
     'RoadRestriction/mlit-road-info-prvs': { ja: '通行規制情報', en: 'Traffic regulation information' },
   } },
+  { id: 'mlit-akiya-db', name: { ja: '空き家データベースシステム標準仕様書（国土交通省）', en: 'Standard specification of the vacant house database system (MLIT)' }, parts: {
+    'VacantHouse/mlit-akiya-db': { ja: '別紙7 データ項目一覧：空き家の所在地・分類・詳細・評価', en: 'Appendix 7 data items: location, classification, details and assessment' },
+    'VacantHouseListing/mlit-akiya-db': { ja: '別紙7 データ項目一覧：不動産情報プラットフォーム・バンク登録情報', en: 'Appendix 7 data items: akiya bank registration' },
+  } },
   { id: 'smart-data-models', name: { ja: 'Smart Data Models', en: 'Smart Data Models' }, parts: {
     'Task/iudx-issuereporting': { ja: 'IssueReporting（IUDX 由来）', en: 'IssueReporting (from IUDX)' },
     'Task/open311': { ja: 'Open311 GeoReport v2 service_requests', en: 'Open311 GeoReport v2 service_requests' },
