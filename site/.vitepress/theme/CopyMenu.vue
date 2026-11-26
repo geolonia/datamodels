@@ -17,7 +17,10 @@ const route = useRoute()
 
 const TEXT = {
   ja: {
-    copy: 'ページをコピー', copied: 'コピーしました', failed: 'コピーできませんでした', more: 'ほかの操作', newTab: '（新しいタブ）',
+    // The button shows a short label (it sits in a narrow row); its name, its title and the
+    // announcement say the whole thing.
+    copy: 'コピー', copyPage: 'ページをコピー', shown: { copied: '完了', failed: '失敗' },
+    copied: 'コピーしました', failed: 'コピーできませんでした', more: 'ほかの操作', newTab: '（新しいタブ）',
     view: ['Markdown で表示', 'このページをテキストで開く'],
     claude: ['Claude で開く', 'このページについて Claude に聞く'],
     chatgpt: ['ChatGPT で開く', 'このページについて ChatGPT に聞く'],
@@ -27,7 +30,8 @@ const TEXT = {
     prompt: (url: string) => `次のページを読んで、内容について私の質問に答えてください: ${url}`,
   },
   en: {
-    copy: 'Copy page', copied: 'Copied', failed: 'Could not copy', more: 'More actions', newTab: ' (new tab)',
+    copy: 'Copy', copyPage: 'Copy page', shown: { copied: 'Copied', failed: 'Failed' },
+    copied: 'Copied', failed: 'Could not copy', more: 'More actions', newTab: ' (new tab)',
     view: ['View as Markdown', 'Open this page as plain text'],
     claude: ['Open in Claude', 'Ask Claude about this page'],
     chatgpt: ['Open in ChatGPT', 'Ask ChatGPT about this page'],
@@ -74,7 +78,8 @@ async function fetchText(path: string) {
 }
 
 const status = ref<'' | 'copied' | 'failed'>('')
-const label = computed(() => (status.value === 'copied' ? t.value.copied : status.value === 'failed' ? t.value.failed : t.value.copy))
+const label = computed(() => (status.value ? t.value[status.value] : ''))
+const shown = computed(() => (status.value ? t.value.shown[status.value] : t.value.copy))
 let timer: ReturnType<typeof setTimeout> | undefined
 // The text is fetched after the click. Safari only lets a page write to the clipboard
 // within the click, so the write starts at once and waits for the text (ClipboardItem).
@@ -161,11 +166,11 @@ onBeforeUnmount(() => {
 <template>
   <div ref="root" class="copy-menu">
     <div class="copy-menu-buttons">
-      <button type="button" class="copy-menu-main" @click="copyPage">
+      <button type="button" class="copy-menu-main" :aria-label="t.copyPage" :title="t.copyPage" @click="copyPage">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></svg>
         <!-- All three labels take the same place, so the button keeps the width of the longest. -->
         <span class="copy-menu-labels">
-          <span v-for="s in [t.copy, t.copied, t.failed]" :key="s" :class="{ shown: s === label }" :aria-hidden="s !== label">{{ s }}</span>
+          <span v-for="s in [t.copy, t.shown.copied, t.shown.failed]" :key="s" :class="{ shown: s === shown }" aria-hidden="true">{{ s }}</span>
         </span>
       </button>
       <button
@@ -175,7 +180,7 @@ onBeforeUnmount(() => {
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
       </button>
     </div>
-    <span class="visually-hidden" role="status">{{ status ? label : '' }}</span>
+    <span class="visually-hidden" role="status">{{ label }}</span>
     <ul v-if="open" class="copy-menu-list" role="menu" :aria-label="t.more" @keydown="onMenuKey">
       <li v-for="item in items" :key="item.key" role="none">
         <a
