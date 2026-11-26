@@ -238,12 +238,14 @@ test('#300: a list sends the rules of its items and its length', () => {
   assert.equal(Object.hasOwn(relatedTo, 'validation'), false);
 });
 
-test('#300: no model sends the duration pattern GeonicDB refuses (geolonia/geonicdb#4180)', (t) => {
+test('the duration patterns are sent: exactly the 5 models with a duration, for GeonicDB v0.29.0 (geolonia/geonicdb#4180)', (t) => {
   t.mock.method(console, 'warn', () => {});
+  const withDuration = [];
   for (const subject of subjects) {
     for (const model of subject.models.filter((m) => m.kind !== 'value')) {
-      const body = JSON.stringify(toCustomDataModel(subject, model));
-      assert.ok(!body.includes('^P(?!$)'), `${subject.name}/${model.type}`);
+      if (JSON.stringify(toCustomDataModel(subject, model)).includes('^P(?!$)')) withDuration.push(`${subject.name}/${model.type}`);
     }
   }
+  // The guide (site/guide/geonicdb.md) names these as the models GeonicDB v0.25.0 to v0.28.x refuse.
+  assert.deepEqual(withDuration.sort(), ['fieldservice/CatalogItem', 'fieldservice/RoutePlan', 'fieldservice/ServiceRequest', 'fieldservice/ServiceVehicle', 'task/Task']);
 });

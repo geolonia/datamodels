@@ -79,8 +79,7 @@ geonic entities list --type RoadRestriction \
 
 - Registering returns `201 Created`. If a model of that type already exists, it answers with the error `Custom data model already exists` (HTTP 409). GeonicDB answers HTTP 409 from v0.25.0; an older GeonicDB answers HTTP 400. To change a registered model, use `PATCH /custom-data-models/<Type>` or `geonic models update <Type> @model.json`.
 - **Decision:** the Decision model has VocabProperty and JsonProperty attributes. GeonicDB accepts these two types in a model from v0.23.0; an older GeonicDB answers HTTP 400.
-- **GeonicDB v0.25.0 or later:** the models give the type a Relationship points to (`objectType`) and the rules of a list (`items`, `minItems`, `uniqueItems`). GeonicDB accepts them from v0.25.0; an older GeonicDB answers HTTP 400 for the 13 models that have them, of the 17 ([#300](https://github.com/geolonia/datamodels/issues/300)).
-- **Durations:** the models do not give the pattern of a duration such as Task's `estimatedDuration` (`PT2H`), because GeonicDB v0.25.0 and later refuse it ([geolonia/geonicdb#4180](https://github.com/geolonia/geonicdb/issues/4180)). GeonicDB then checks only that the value is text.
+- **GeonicDB v0.29.0 or later:** the models give the type a Relationship points to (`objectType`), the rules of a list (`items`, `minItems`, `uniqueItems`) and the pattern of a duration such as Task's `estimatedDuration` (`PT2H`). GeonicDB accepts the first two from v0.25.0 ([#300](https://github.com/geolonia/datamodels/issues/300)) and the duration pattern from v0.29.0 ([geolonia/geonicdb#4180](https://github.com/geolonia/geonicdb/issues/4180)). An older GeonicDB answers HTTP 400 for the models that have them: 13 of the 17 before v0.25.0, and the 5 with a duration (Task, CatalogItem, ServiceRequest, ServiceVehicle, RoutePlan) on v0.25.0 to v0.28.x.
 - **Typed dates:** the normalized example writes date-times as `{"@type": "DateTime", "@value": "…"}`. GeonicDB accepts this form from v0.22.0, and the examples of Task, Milestone and Project from v0.24.0. With an older GeonicDB, turn the typed dates into strings with [jq](https://jqlang.org/) (for the other models, such as Task, set `MODEL`, for example `MODEL=task/Task`, and register that model first). Then send `entity.jsonld` with the second command of step 2 (`curl -X POST … --data @entity.jsonld`; with the CLI: `geonic entities create @entity.jsonld`):
 
   ```bash
@@ -110,7 +109,6 @@ It does not check:
 - the values inside a list of objects or value types, such as `workingHours` (OpeningHours): only the number of items (the catalog's JSON Schema checks them, for example during `datamodels convert`);
 - whether an attribute is sent as a Property or a Relationship;
 - which type a Relationship points to, when the data does not name it with `objectType`: GeonicDB does not look up the entity it points to;
-- the format of a duration (see the note above);
 - entities of a type that has no registered model: they are stored as they are;
 - the other types of an entity with several types: only the first type is checked;
 - entities that existed before the model was registered or changed. To see how a change would affect them, send it with `PATCH /custom-data-models/<Type>?dryRun=true` (GeonicDB v0.17.0 or later) or `geonic models update <Type> @model.json --api-dry-run` (geonicdb-cli 0.25.0 or later): nothing changes, and the answer says how many entities would break the model, with examples.
