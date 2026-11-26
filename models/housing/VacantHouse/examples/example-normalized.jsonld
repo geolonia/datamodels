@@ -21,9 +21,9 @@
       "addressLocality": "千代田区",
       "machiaza": "神田佐久間町",
       "chome": "3",
-      "banchi": "21",
+      "banchi": "99",
       "localGovernmentCode": "131016",
-      "addressText": "東京都千代田区神田佐久間町3-21"
+      "addressText": "東京都千代田区神田佐久間町3-99"
     }
   },
   "location": {
@@ -38,11 +38,11 @@
   },
   "parcelNumber": {
     "type": "Property",
-    "value": "3-21"
+    "value": "3-99"
   },
   "registeredBuildingNumber": {
     "type": "Property",
-    "value": "3-21"
+    "value": "3-99"
   },
   "vacantHouseCategory": {
     "type": "Property",

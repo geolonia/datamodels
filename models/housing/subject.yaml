@@ -14,4 +14,5 @@ description:
   en: "Data about housing. For now it covers vacant houses (akiya): the register a municipality keeps under the Vacant Houses Act, and the properties it lists on an akiya bank. Based on the data items and codes of MLIT's 空き家データベースシステム標準仕様書 (standard specification of the vacant house database system, version 1.0, April 2025)."
 source: minted            # minted | profile | global
 origin:
-  note: Proposed on 2026-11-26 for a municipal akiya application on GeonicDB; the attributes follow MLIT's standard specification rather than that one application.
+  note: Proposed on 2026-11-26 from MLIT's standard specification of the vacant house database system, with a municipal akiya application as the first planned user.
+  repository: https://github.com/geolonia/datamodels/pull/353

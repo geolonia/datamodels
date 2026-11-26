@@ -39,7 +39,7 @@
     "managementNumber": {
       "type": "string",
       "pattern": "^\\d{12}$",
-      "description": "Number of the vacant house in the municipality's register (空き家等管理番号, D0001-0001): the 6-digit local government code followed by a 6-digit serial number in the order of registration. Unique nationwide",
+      "description": "Number of the vacant house in the municipality's register (空き家等管理番号, D0001-0001): the 6-digit local government code followed by a 6-digit serial number in the order of registration. Unique nationwide for a building or lot; vacant units of one building share it and are told apart by unitNumber",
       "x-ngsi": {
         "type": "Property"
       },
@@ -56,7 +56,7 @@
     },
     "unitNumber": {
       "type": "string",
-      "description": "Room or unit number when the record is one vacant unit of an apartment or row house (室・区画_室番号, D0036). Left out for a whole building",
+      "description": "Room or unit number when the record is one vacant unit of an apartment or row house (室・区画_室番号, D0036). Left out for a whole building. Together with managementNumber it identifies the unit",
       "x-ngsi": {
         "type": "Property"
       },
@@ -129,7 +129,7 @@
         "vacantUnit",
         "notVacant"
       ],
-      "description": "Category under the Vacant Houses Act (空き家種別コード, MLIT code 012): poorlyManaged (001 管理不全空家等, Art. 13), specified (002 特定空家等, Art. 22), notApplicable (003, neither and not to be, for example not structurally a dwelling or to be demolished), other (004 その他の空き家), vacantUnit (005 空き室), notVacant (006 非空き家: found to be in use)",
+      "description": "Category under the Vacant Houses Act (空き家種別コード, MLIT code 012): poorlyManaged (001 管理不全空家等, Art. 13), specified (002 特定空家等, Art. 22), notApplicable (003, neither, for example not structurally a dwelling or to be demolished), other (004 その他の空き家), vacantUnit (005 空き室), notVacant (006 非空き家: found to be in use)",
       "x-ngsi": {
         "type": "Property"
       },
@@ -255,7 +255,7 @@
         "sole",
         "sectional"
       ],
-      "description": "Form of ownership (所有形態区分コード, MLIT code 054): sole (002 ワンオーナー, one owner or co-owners of the whole), sectional (001 区分所有, condominium units)",
+      "description": "Form of ownership (所有形態区分コード, MLIT code 054): sole (002 ワンオーナー, one owner of the whole), sectional (001 区分所有, condominium units)",
       "x-ngsi": {
         "type": "Property"
       },
@@ -281,7 +281,7 @@
     },
     "constructionDate": {
       "type": "string",
-      "pattern": "^\\d{4}(-\\d{2}(-\\d{2})?)?$",
+      "pattern": "^\\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\\d|3[01]))?)?$",
       "description": "When the building was built (建築年月日), as YYYY-MM-DD, or YYYY-MM or YYYY when only that is known",
       "x-ngsi": {
         "type": "Property"

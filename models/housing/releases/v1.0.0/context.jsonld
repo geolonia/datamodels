@@ -39,7 +39,7 @@
       "siteArea": "housing:siteArea",
       "specifiedDesignatedOn": "housing:specifiedDesignatedOn",
       "specifiedRevokedOn": "housing:specifiedRevokedOn",
-      "statusLabel": "https://datamodels.jp/ns/task/statusLabel",
+      "statusLabel": "tm:statusLabel",
       "structure": "housing:structure",
       "totalFloorArea": "housing:totalFloorArea",
       "unitNumber": "housing:unitNumber",

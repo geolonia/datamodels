@@ -12,12 +12,12 @@ standard:
     ja: "このモデルの元になった仕様。コード値は、仕様書のコード一覧のコード（3 桁）を英語の値にしている。対応は各属性の説明のとおり。入れていないエンティティ：所有者・共有者、関係者、相続人とその外部連携（D0016〜D0034、D0039、D0040）、履歴（D0009〜D0013、D0038）、対応のステータス（D0014）、補助事業（D0011）、市区町村単位の集計（D1001〜D1004）。"
     en: "The specification this model was designed from. Code values are English tokens for the 3-digit codes of the specification's code lists, as each attribute description gives them. Entities left out: owners and co-owners, related persons, heirs and their links to other systems (D0016 to D0034, D0039, D0040), histories (D0009 to D0013, D0038), case status (D0014), subsidies (D0011), municipal totals (D1001 to D1004)."
 fields:
-  managementNumber: { to: D0001-0001 空き家等管理番号 }
+  managementNumber: { to: D0001-0001 空き家等管理番号, note: { ja: 建物や土地ごとに一意。空き室は unitNumber と合わせて区別する, en: "unique per building or lot; a vacant unit is told apart together with unitNumber" } }
   localGovernmentCode: { to: D0001-0017 全国地方公共団体コード, note: { ja: 管理番号の先頭 6 桁と同じ, en: the same as the first 6 digits of the management number } }
   unitNumber: { to: D0036-0002 室・区画_室番号, note: { ja: "仕様書は、入力が無いとき 000 にする。このモデルでは省く", en: "the specification writes 000 when there is none; this model leaves it out" } }
-  address: { to: "D0001-0004〜0011 郵便番号、市区町村、町字、街区符号、建物名・棟番号・部屋番号、D0001-0017〜0023 アドレス・ベース・レジストリのコード", note: { ja: 詳細は JapaneseAddress, en: see JapaneseAddress } }
+  address: { to: "D0001-0004〜0006, 0008〜0011 郵便番号、市区町村、町字、街区符号、建物名・棟番号・部屋番号、D0001-0017〜0023 アドレス・ベース・レジストリのコード", note: { ja: 詳細は JapaneseAddress, en: see JapaneseAddress } }
   location: { to: "D0001-0015 経度, D0001-0016 緯度", note: { ja: "仕様書の意味定義では、緯度と経度の説明が入れ替わっている。項目名で対応させる", en: "the specification's definitions of 緯度 and 経度 are swapped; the item names are what counts" } }
-  parcelNumber: { to: D0001-0007 地番 }
+  parcelNumber: { to: D0001-0007 地番, note: { ja: "D0001-0012 土地_筆番号（1 筆の土地が複数に分かれるときの番号）は入れていない", en: "D0001-0012 土地_筆番号 (the number when one lot is split) is left out" } }
   landRealEstateNumber: { to: D0001-0002 不動産番号（土地） }
   buildingRealEstateNumber: { to: D0001-0003 不動産番号（家屋） }
   registeredBuildingNumber: { to: D0001-0014 家屋番号（家屋） }
@@ -36,12 +36,12 @@ fields:
   constructionDate: { to: D0003-0018 建築年月日, note: { ja: 仕様書は YYYYMMDD。年や年月しか分からないときのために、このモデルは短い形も認める, en: "the specification uses YYYYMMDD; this model also allows a year or year and month" } }
   floorsAboveGround: { to: D0003-0024 建物の階数（地上） }
   floorsBelowGround: { to: D0003-0025 建物の階数（地下） }
-  totalFloorArea: { to: D0003-0019 延べ床面積 }
-  siteArea: { to: D0003-0011 敷地面積 }
+  totalFloorArea: { to: D0003-0019 延べ床面積, note: { ja: 仕様書は単位を定めていない。このモデルは平方メートル, en: "the specification gives no unit; this model uses square metres" } }
+  siteArea: { to: D0003-0011 敷地面積, note: { ja: 仕様書は単位を定めていない。このモデルは平方メートル, en: "the specification gives no unit; this model uses square metres" } }
   landCategory: { to: "D0037-0008 土地種別コード（台帳地目コード 007）" }
   roadFrontage: { to: D0003-0005 接道_有無フラグ, note: { ja: "1 なら true、0 なら false", en: "1 is true, 0 is false" } }
   frontRoadType: { to: "D0003-0007 接道_道路種別コード（コード 051）" }
-  frontRoadWidth: { to: D0003-0006 接道_幅員 }
+  frontRoadWidth: { to: D0003-0006 接道_幅員, note: { ja: 仕様書は単位を定めていない。このモデルはメートル, en: "the specification gives no unit; this model uses metres" } }
   inHazardArea: { to: D0002-0008 土砂災害・洪水浸水想定地域フラグ, note: { ja: "1 なら true、0 なら false", en: "1 is true, 0 is false" } }
   inUtilizationPromotionArea: { to: D0002-0015 空家等活用促進区域の対象有無フラグ, note: { ja: "1 なら true、0 なら false", en: "1 is true, 0 is false" } }
   remarks: { to: "D0003-0035 建物の特徴, D0001-0013 土地・建物_補足" }

@@ -11,14 +11,14 @@ tags:
   - municipality
 attributes:
   managementNumber:
-    ja: "空き家台帳での管理番号（空き家等管理番号）。全国地方公共団体コード 6 桁と、登録順の通し番号 6 桁の 12 桁で、全国で一意です。"
-    en: "Number in the municipality's vacant house register (空き家等管理番号): the 6-digit local government code and a 6-digit serial number in order of registration, 12 digits, unique nationwide"
+    ja: "空き家台帳での管理番号（空き家等管理番号）。全国地方公共団体コード 6 桁と、登録順の通し番号 6 桁の 12 桁です。建物や土地ごとに全国で一意で、同じ建物の空き室は同じ番号を持ち、unitNumber で区別します。"
+    en: "Number in the municipality's vacant house register (空き家等管理番号): the 6-digit local government code and a 6-digit serial number in order of registration, 12 digits. Unique nationwide for a building or lot; vacant units of one building share it and are told apart by unitNumber"
   localGovernmentCode:
     ja: "台帳を管理する市区町村の全国地方公共団体コード（検査数字を含む 6 桁）"
     en: "Local government code (6 digits including the check digit) of the municipality that keeps the register"
   unitNumber:
-    ja: "共同住宅や長屋の 1 室を扱うときの室番号（室・区画_室番号）。建物全体なら省きます。"
-    en: "Room or unit number when the record is one vacant unit of an apartment or row house (室・区画_室番号). Left out for a whole building"
+    ja: "共同住宅や長屋の 1 室を扱うときの室番号（室・区画_室番号）。建物全体なら省きます。managementNumber と合わせて、空き室を区別します。"
+    en: "Room or unit number when the record is one vacant unit of an apartment or row house (室・区画_室番号). Left out for a whole building. Together with managementNumber it identifies the unit"
   address:
     ja: "所在地（JapaneseAddress）。郵便番号、市区町村、町字、街区符号、建物名と、アドレス・ベース・レジストリのコードです。"
     en: "Address of the vacant house (JapaneseAddress): postal code, municipality, town, block, building name and the Address Base Registry codes"
